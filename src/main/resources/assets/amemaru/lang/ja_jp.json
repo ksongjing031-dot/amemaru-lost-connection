@@ -2,8 +2,8 @@
   "key.categories.amemaru": "AMEMARU: LOST CONNECTION",
   "key.amemaru.status": "ステータス画面を開く",
 
-  "hud.amemaru.hp": "HP %s/%s",
-  "hud.amemaru.mp": "MP %s/%s",
+  "hud.amemaru.hp": "%s/%s",
+  "hud.amemaru.mp": "%s/%s",
 
   "screen.amemaru.status.title": "ステータス",
   "screen.amemaru.status.no_data": "データを受け取っています……",
@@ -17,6 +17,8 @@
   "screen.amemaru.status.allocated": "（+%s）",
   "screen.amemaru.status.sub_section": "補助の能力（装備とアクセサリーで上がる）",
   "screen.amemaru.status.plus_tooltip": "1ポイント振り分けます。Shiftを押しながらで10ポイント",
+  "screen.amemaru.status.close": "閉じる",
+  "screen.amemaru.status.next": "次のレベルまで %s",
 
   "stat.amemaru.hp": "HP",
   "stat.amemaru.mp": "MP",

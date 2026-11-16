@@ -53,5 +53,6 @@ public final class ClientForgeEvents {
     @SubscribeEvent
     public static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
         ClientPlayerState.get().reset();
+        AmemaruHud.resetAnimations();
     }
 }

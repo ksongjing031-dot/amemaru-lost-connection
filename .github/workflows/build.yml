@@ -117,7 +117,7 @@ jobs:
           name: amemaru-mod-${{ github.run_number }}
           path: run/mods
 
-      - name: クライアントを起動し、ワールドに入って出る
+      - name: クライアントを起動し、ワールドに入って出る（画面写真も撮る）
         uses: headlesshq/mc-runtime-test@5.0.0
         with:
           mc: 1.20.1
@@ -125,3 +125,42 @@ jobs:
           regex: .*forge.*
           mc-runtime-test: forge
           java: 17
+          # -Damemaru.ci.screenshots=true で、HUDとステータス画面の写真をログに書く（CiScreenshots.java）
+          headlessmc-command: --jvm "-Djava.awt.headless=true -Damemaru.ci.screenshots=true"
+
+      - name: 画面写真を取り出す
+        if: always()
+        run: |
+          mkdir -p screenshots
+          python3 - <<'PY'
+          import base64, collections, glob, re
+          parts = collections.defaultdict(dict)
+          totals = {}
+          pattern = re.compile(r'AMEMARU_SHOT\|([a-z_]+)\|(\d+)\|(\d+)\|([A-Za-z0-9+/=]+)')
+          for path in glob.glob('run/logs/*.log'):
+              with open(path, encoding='utf-8', errors='replace') as f:
+                  for line in f:
+                      m = pattern.search(line)
+                      if m:
+                          parts[m.group(1)][int(m.group(2))] = m.group(4)
+                          totals[m.group(1)] = int(m.group(3))
+          for name, chunks in sorted(parts.items()):
+              total = totals[name]
+              if len(chunks) != total:
+                  print(f'{name}: {len(chunks)}/{total} (足りない)')
+                  continue
+              data = ''.join(chunks[i] for i in range(total))
+              with open(f'screenshots/{name}.png', 'wb') as out:
+                  out.write(base64.b64decode(data))
+              print(f'保存しました: screenshots/{name}.png')
+          PY
+          ls -la screenshots
+
+      - name: 画面写真を保存する
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: screenshots-${{ github.run_number }}
+          path: screenshots/*.png
+          if-no-files-found: warn
+          retention-days: 30
