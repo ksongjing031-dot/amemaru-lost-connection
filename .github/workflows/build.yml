@@ -1,0 +1,39 @@
+name: ビルド
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: コードを取り出す
+        uses: actions/checkout@v4
+
+      - name: Java 17 を用意する
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Gradle を用意する（ラッパーの検証とキャッシュ）
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: ビルドする
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build --stacktrace
+
+      - name: できたModのjarを保存する
+        uses: actions/upload-artifact@v4
+        with:
+          name: amemaru-mod-${{ github.run_number }}
+          path: build/libs/*.jar
+          if-no-files-found: error
+          retention-days: 30
