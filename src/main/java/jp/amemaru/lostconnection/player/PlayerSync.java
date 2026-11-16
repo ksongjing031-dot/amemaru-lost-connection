@@ -15,7 +15,7 @@ public final class PlayerSync {
     public static void flush(ServerPlayer player, PlayerData data) {
         int sections = data.consumeDirty();
         if (sections != 0 && data.isStatsReady()) {
-            ModNetwork.sendTo(player, SyncPlayerDataS2C.of(data, GrowthRules.current(), sections));
+            ModNetwork.sendTo(player, SyncPlayerDataS2C.of(data, GrowthRules.current(), sections, player.level().getGameTime()));
         } else if (sections != 0) {
             // ステータスがまだ計算されていなければ、計算されるまで印を残す
             data.markDirty(sections);

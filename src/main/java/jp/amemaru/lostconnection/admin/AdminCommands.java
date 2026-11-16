@@ -29,9 +29,9 @@ import java.util.Optional;
 /**
  * 管理者のコマンド {@code /amemaru admin …}（権限レベル2以上。Phase 0-B 10章）。
  *
- * <p>Phase 1で作るのは {@code level}（レベル・経験値・振り分けの操作と確認）と、動作確認用の
- * {@code debug vitals}。ほかのコマンドは、それを使う仕組みと同じPhaseで足す。
- * 実行した人・対象・内容は、サーバーのログに残す。</p>
+ * <p>Phase 1で {@code level}（レベル・経験値・振り分けの操作と確認）と、動作確認用の {@code debug vitals} を作り、
+ * Phase 2で {@code job}（職業）・{@code skill}（スキル）・{@code day}（進行日）・{@code dummy}（訓練人形）を足した。
+ * ほかのコマンドは、それを使う仕組みと同じPhaseで足す。実行した人・対象・内容は、サーバーのログに残す。</p>
  */
 @Mod.EventBusSubscriber(modid = AmemaruMod.MOD_ID)
 public final class AdminCommands {
@@ -53,6 +53,10 @@ public final class AdminCommands {
                 .then(Commands.literal("admin")
                         .requires(source -> source.hasPermission(2))
                         .then(levelCommand())
+                        .then(JobCommands.jobCommand())
+                        .then(JobCommands.skillCommand())
+                        .then(JobCommands.dayCommand())
+                        .then(JobCommands.dummyCommand())
                         .then(debugCommand())));
     }
 
@@ -226,7 +230,7 @@ public final class AdminCommands {
 
     // ---------------------------------------------------------------- 共通
 
-    private static Optional<PlayerData> data(CommandSourceStack source, ServerPlayer player) {
+    static Optional<PlayerData> data(CommandSourceStack source, ServerPlayer player) {
         Optional<PlayerData> data = PlayerDataCapability.get(player);
         if (data.isEmpty()) {
             source.sendFailure(Component.translatable("commands.amemaru.no_data", player.getDisplayName()));
@@ -234,7 +238,7 @@ public final class AdminCommands {
         return data;
     }
 
-    private static void log(CommandSourceStack source, String action) {
+    static void log(CommandSourceStack source, String action) {
         AmemaruMod.LOGGER.info("[amemaru][admin] {} : {}", source.getTextName(), action);
     }
 }

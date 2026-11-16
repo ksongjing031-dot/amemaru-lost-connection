@@ -1,0 +1,54 @@
+{
+  "job": "knight",
+  "school": "greatsword",
+  "row": 1,
+  "column": 0,
+  "type": "active",
+  "name": "旋風断",
+  "description": "剣を大きく振り回し、まわりの敵をまとめて薙ぎ払う。誓気が30以上あれば、それを使って威力を上げる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "requires": [
+    {
+      "skill": "knight/charge_slash",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 16
+  },
+  "cooldown": 8,
+  "cooldown_per_rank": -0.5,
+  "link": "finisher",
+  "delivery": {
+    "type": "around",
+    "radius": 4,
+    "radius_per_rank": 0.5,
+    "affects": "enemies"
+  },
+  "effects": [
+    {
+      "type": "gauge_empower",
+      "consume": 30,
+      "multiplier": 1.5,
+      "multiplier_per_rank": 0.1
+    },
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 1.4,
+      "coefficient_per_rank": 0.2
+    },
+    {
+      "type": "knockback",
+      "strength": 0.5
+    }
+  ],
+  "animation": "knight_whirlwind",
+  "sound": "amemaru:skill.knight.whirlwind"
+}

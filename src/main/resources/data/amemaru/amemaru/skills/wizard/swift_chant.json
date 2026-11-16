@@ -1,0 +1,27 @@
+{
+  "job": "wizard",
+  "school": "starlore",
+  "row": 1,
+  "column": 1,
+  "type": "passive",
+  "name": "詠唱短縮",
+  "description": "詠唱の言葉を、糸の震えで先回りして結ぶ。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "requires": [
+    {
+      "skill": "wizard/lamp_bolt",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "swift_chant",
+    "value": 10,
+    "value_per_rank": 5
+  }
+}

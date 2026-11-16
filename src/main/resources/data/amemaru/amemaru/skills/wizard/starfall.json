@@ -1,0 +1,46 @@
+{
+  "job": "wizard",
+  "school": "starlore",
+  "row": 3,
+  "column": 0,
+  "type": "active",
+  "ultimate": true,
+  "name": "星落とし",
+  "description": "星詠みの奥義。長い詠唱で巨大な星を呼び落とす。仲間の支援を受けていると、詠唱が半分になる。",
+  "max_rank": 1,
+  "rank_costs": [
+    5
+  ],
+  "upper_rank": 1,
+  "min_level": 30,
+  "requires": [
+    {
+      "skill": "wizard/meteor_shower",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 60
+  },
+  "cooldown": 90,
+  "cast": 4.0,
+  "cast_support_multiplier": 0.5,
+  "link": "finisher",
+  "delivery": {
+    "type": "point",
+    "range": 28,
+    "radius": 7,
+    "impact_delay": 1.0
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "magic",
+      "coefficient": 6.0
+    }
+  ],
+  "cast_animation": "wizard_starfall_cast",
+  "animation": "wizard_starfall_release",
+  "cast_sound": "amemaru:skill.wizard.starfall_cast",
+  "impact_sound": "amemaru:skill.wizard.starfall_impact"
+}

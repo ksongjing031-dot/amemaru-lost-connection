@@ -1,0 +1,42 @@
+{
+  "job": "knight",
+  "school": "guardian",
+  "row": 2,
+  "column": 0,
+  "type": "active",
+  "name": "城壁の構え",
+  "description": "盾を前に構えて足を止め、正面からの攻撃を大きく減らす。構えている間は、受けた攻撃で誓気が倍たまる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 10,
+  "requires": [
+    {
+      "skill": "knight/shield_bond",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 10
+  },
+  "cooldown": 16,
+  "cooldown_per_rank": -2,
+  "delivery": {
+    "type": "self"
+  },
+  "effects": [
+    {
+      "type": "buff",
+      "buff": "rampart",
+      "duration": 6,
+      "duration_per_rank": 1,
+      "value": 50,
+      "value_per_rank": 5
+    }
+  ],
+  "animation": "knight_rampart",
+  "sound": "amemaru:skill.knight.rampart"
+}

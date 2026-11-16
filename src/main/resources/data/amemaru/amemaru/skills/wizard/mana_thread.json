@@ -1,0 +1,39 @@
+{
+  "job": "wizard",
+  "school": "starlore",
+  "row": 2,
+  "column": 0,
+  "type": "active",
+  "name": "魔力の糸",
+  "description": "自分の魔力を糸に乗せ、狙った味方に分け与える。分けたMPは自分から減る。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 10,
+  "requires": [
+    {
+      "skill": "wizard/meteor_shower",
+      "rank": 1
+    }
+  ],
+  "cooldown": 15,
+  "cooldown_per_rank": -2,
+  "link": "support",
+  "delivery": {
+    "type": "target",
+    "range": 16,
+    "affects": "allies"
+  },
+  "effects": [
+    {
+      "type": "mp_transfer",
+      "amount": 40,
+      "amount_per_rank": 15
+    }
+  ],
+  "animation": "wizard_mana_thread",
+  "sound": "amemaru:skill.wizard.mana_thread"
+}

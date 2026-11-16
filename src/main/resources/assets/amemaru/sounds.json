@@ -1,0 +1,227 @@
+{
+  "skill.knight.call": {
+    "sounds": [
+      {
+        "name": "minecraft:block.bell.use",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.knight.call"
+  },
+  "skill.knight.shield_bond": {
+    "sounds": [
+      {
+        "name": "minecraft:item.armor.equip_chain",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.knight.shield_bond"
+  },
+  "skill.knight.rampart": {
+    "sounds": [
+      {
+        "name": "minecraft:item.shield.block",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.knight.rampart"
+  },
+  "skill.knight.charge_slash": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.player.attack.sweep",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.knight.charge_slash"
+  },
+  "skill.knight.whirlwind": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.player.attack.sweep",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.knight.whirlwind"
+  },
+  "skill.knight.unyielding_vow": {
+    "sounds": [
+      {
+        "name": "minecraft:block.beacon.power_select",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.knight.unyielding_vow"
+  },
+  "skill.knight.unfallen_castle": {
+    "sounds": [
+      {
+        "name": "minecraft:block.beacon.activate",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.knight.unfallen_castle"
+  },
+  "skill.wizard.lamp_bolt": {
+    "sounds": [
+      {
+        "name": "minecraft:item.firecharge.use",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.wizard.lamp_bolt"
+  },
+  "skill.wizard.lamp_bolt_hit": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.blaze.hurt",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.wizard.lamp_bolt_hit"
+  },
+  "skill.wizard.frost_circle": {
+    "sounds": [
+      {
+        "name": "minecraft:block.glass.break",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.wizard.frost_circle"
+  },
+  "skill.wizard.meteor_cast": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.evoker.prepare_summon",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.wizard.meteor_cast"
+  },
+  "skill.wizard.meteor_impact": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.generic.explode",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.wizard.meteor_impact"
+  },
+  "skill.wizard.chain_lightning": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.lightning_bolt.impact",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.wizard.chain_lightning"
+  },
+  "skill.wizard.mana_thread": {
+    "sounds": [
+      {
+        "name": "minecraft:block.amethyst_block.resonate",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.wizard.mana_thread"
+  },
+  "skill.wizard.blink": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.enderman.teleport",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.wizard.blink"
+  },
+  "skill.wizard.starfall_cast": {
+    "sounds": [
+      {
+        "name": "minecraft:block.beacon.ambient",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.wizard.starfall_cast"
+  },
+  "skill.wizard.starfall_impact": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.generic.explode",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.wizard.starfall_impact"
+  },
+  "combat.link": {
+    "sounds": [
+      {
+        "name": "minecraft:block.note_block.bell",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.combat.link"
+  },
+  "combat.link3": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.player.levelup",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.combat.link3"
+  },
+  "combat.support": {
+    "sounds": [
+      {
+        "name": "minecraft:block.amethyst_block.chime",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.combat.support"
+  },
+  "skill.fail": {
+    "sounds": [
+      {
+        "name": "minecraft:block.note_block.bass",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.fail"
+  },
+  "skill.learn": {
+    "sounds": [
+      {
+        "name": "minecraft:block.enchantment_table.use",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.learn"
+  },
+  "job.oath": {
+    "sounds": [
+      {
+        "name": "minecraft:block.beacon.activate",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.job.oath"
+  },
+  "job.promote": {
+    "sounds": [
+      {
+        "name": "minecraft:ui.toast.challenge_complete",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.job.promote"
+  },
+  "item.reset": {
+    "sounds": [
+      {
+        "name": "minecraft:item.bottle.empty",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.item.reset"
+  }
+}

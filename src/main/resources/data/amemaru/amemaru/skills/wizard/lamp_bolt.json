@@ -1,0 +1,37 @@
+{
+  "job": "wizard",
+  "school": "starlore",
+  "row": 0,
+  "column": 0,
+  "type": "active",
+  "name": "灯火弾",
+  "description": "杖の先に小さな灯をともし、まっすぐ撃ち出す基本の魔法。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 1,
+  "cost": {
+    "mp": 6
+  },
+  "cooldown": 1.0,
+  "delivery": {
+    "type": "projectile",
+    "range": 24,
+    "speed": 1.8,
+    "radius": 0.3
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "magic",
+      "coefficient": 1.3,
+      "coefficient_per_rank": 0.2
+    }
+  ],
+  "animation": "wizard_lamp_bolt",
+  "sound": "amemaru:skill.wizard.lamp_bolt",
+  "impact_sound": "amemaru:skill.wizard.lamp_bolt_hit"
+}

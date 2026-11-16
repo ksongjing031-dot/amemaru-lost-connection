@@ -1,6 +1,7 @@
 package jp.amemaru.lostconnection.player;
 
 import jp.amemaru.lostconnection.core.config.ServerConfig;
+import jp.amemaru.lostconnection.job.SkillTreeService;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -77,6 +78,10 @@ public final class LevelService {
     private static void onLevelChanged(ServerPlayer player, PlayerData data, int oldLevel, int newLevel) {
         GrowthDef growth = GrowthRules.current();
         recompute(player, data);
+        if (newLevel < oldLevel) {
+            // レベルを下げて、使ったスキルポイントがもらえる合計を超えたら、スキルをやり直す
+            SkillTreeService.validatePoints(player, data);
+        }
         if (newLevel > oldLevel) {
             if (ServerConfig.RESTORE_ON_LEVEL_UP.get()) {
                 data.setHp(data.getStats().maxHp());
@@ -102,9 +107,9 @@ public final class LevelService {
         return Math.max(0, growth.totalStatPoints(data.getLevel()) - data.totalAllocated());
     }
 
-    /** まだ使っていないスキルポイント（Phase 2でスキルの習得に使った分を引く）。 */
+    /** まだ使っていないスキルポイント（レベルまでにもらえる合計から、スキルの習得に使った分を引く）。 */
     public static int availableSkillPoints(PlayerData data, GrowthDef growth) {
-        return growth.totalSkillPoints(data.getLevel());
+        return Math.max(0, SkillTreeService.availablePoints(data, growth));
     }
 
     /**
@@ -126,7 +131,7 @@ public final class LevelService {
     }
 
     /**
-     * 振り分けをすべて戻す（管理者用。Phase 6で「忘れ水」からも呼ぶ）。
+     * 振り分けをすべて戻す（管理者用と「忘れ水」）。
      *
      * @return 戻したポイントの数
      */

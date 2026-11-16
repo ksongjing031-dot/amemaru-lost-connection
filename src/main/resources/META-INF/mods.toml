@@ -25,3 +25,11 @@ Discordサーバー「あめまるさん」のためのRPG Mod。
     versionRange="${minecraft_version_range}"
     ordering="NONE"
     side="BOTH"
+
+# プレイヤーのモーション（playerAnimator）。クライアントにだけ要る（サーバーには入れなくてよい）
+[[dependencies.${mod_id}]]
+    modId="playeranimator"
+    mandatory=true
+    versionRange="${player_anim_range}"
+    ordering="NONE"
+    side="CLIENT"

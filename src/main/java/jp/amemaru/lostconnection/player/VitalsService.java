@@ -1,6 +1,7 @@
 package jp.amemaru.lostconnection.player;
 
 import jp.amemaru.lostconnection.core.config.ServerConfig;
+import jp.amemaru.lostconnection.job.PassiveService;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.food.FoodData;
 
@@ -78,7 +79,9 @@ public final class VitalsService {
             data.setHp(data.getHp() + maxHp * hpRate / 100.0);
         }
         if (mpRate > 0 && data.getMp() < maxMp) {
-            data.setMp(data.getMp() + maxMp * mpRate / 100.0);
+            // パッシブ「マナの泉」で増える
+            double multiplier = PassiveService.mpRegenMultiplier(data);
+            data.setMp(data.getMp() + maxMp * mpRate / 100.0 * multiplier);
         }
     }
 

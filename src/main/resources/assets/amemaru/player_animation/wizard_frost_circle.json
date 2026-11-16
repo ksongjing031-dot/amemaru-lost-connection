@@ -1,0 +1,93 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "wizard_frost_circle": {
+      "animation_length": 0.599,
+      "bones": {
+        "right_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -15,
+                0,
+                0
+              ],
+              "easing": "easeOutQuad"
+            },
+            "0.101": {
+              "vector": [
+                -140,
+                0,
+                -10
+              ],
+              "easing": "easeInQuad"
+            },
+            "0.251": {
+              "vector": [
+                -55,
+                -10,
+                0
+              ]
+            },
+            "0.451": {
+              "vector": [
+                -55,
+                -10,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.601": {
+              "vector": [
+                -20,
+                0,
+                0
+              ]
+            }
+          }
+        },
+        "left_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                0,
+                0,
+                0
+              ],
+              "easing": "easeOutQuad"
+            },
+            "0.101": {
+              "vector": [
+                -60,
+                20,
+                0
+              ]
+            },
+            "0.251": {
+              "vector": [
+                -75,
+                10,
+                0
+              ]
+            },
+            "0.451": {
+              "vector": [
+                -75,
+                10,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.601": {
+              "vector": [
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

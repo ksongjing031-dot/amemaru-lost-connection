@@ -1,0 +1,336 @@
+package jp.amemaru.lostconnection.job;
+
+import jp.amemaru.lostconnection.AmemaruMod;
+import jp.amemaru.lostconnection.core.config.ServerConfig;
+import jp.amemaru.lostconnection.core.registry.ModEffects;
+import jp.amemaru.lostconnection.core.registry.ModSounds;
+import jp.amemaru.lostconnection.job.def.JobDef;
+import jp.amemaru.lostconnection.job.def.SkillDef;
+import jp.amemaru.lostconnection.job.def.SkillRegistry;
+import jp.amemaru.lostconnection.network.s2c.CombatTextS2C;
+import jp.amemaru.lostconnection.network.s2c.SkillFxS2C;
+import jp.amemaru.lostconnection.player.BuffState;
+import jp.amemaru.lostconnection.player.CastState;
+import jp.amemaru.lostconnection.player.PlayerData;
+import jp.amemaru.lostconnection.player.SkillCooldown;
+import jp.amemaru.lostconnection.player.StatType;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.util.Mth;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.phys.Vec3;
+
+import javax.annotation.Nullable;
+import java.util.Locale;
+
+/**
+ * スキルを使う（Phase 0-B 9章「スキルを使う」）。
+ *
+ * <ol>
+ *   <li>クライアントは、スキル枠の番号と狙い（相手・地点）だけを送る（{@code UseSkillC2S}）。</li>
+ *   <li>サーバーは、職業・習得・クールダウン・MPとゲージ・武器・射程と視線・詠唱中でないかを確かめる。</li>
+ *   <li>詠唱があれば詠唱を始め、終わったときにもう一度確かめてから放つ。なければすぐに放つ。</li>
+ *   <li>MPとゲージを使い、クールダウンを始め、効果と演出を出す。</li>
+ * </ol>
+ * <p>詠唱中に同じスキルのキーをもう一度押すと、詠唱をやめる。</p>
+ */
+public final class SkillService {
+    /** 使えなかった理由（画面に出す文の名前）。 */
+    public enum Failure {
+        NO_JOB("message.amemaru.skill.no_job", true),
+        EMPTY_SLOT("message.amemaru.skill.empty_slot", true),
+        NOT_LEARNED("message.amemaru.skill.not_learned", true),
+        COOLDOWN("message.amemaru.skill.cooldown", true),
+        NO_MP("message.amemaru.skill.no_mp", true),
+        NO_GAUGE("message.amemaru.skill.no_gauge", true),
+        CASTING("message.amemaru.skill.casting", true),
+        NO_WEAPON("message.amemaru.skill.no_weapon", true),
+        NO_TARGET("message.amemaru.skill.no_target", true),
+        NO_ALLY("message.amemaru.skill.no_ally", true),
+        CANCELLED("message.amemaru.skill.cast_cancelled", true),
+        DEAD("", false),
+        SPAM("", false),
+        NOT_READY("", false);
+
+        private final String key;
+        private final boolean shown;
+
+        Failure(String key, boolean shown) {
+            this.key = key;
+            this.shown = shown;
+        }
+
+        public String key() {
+            return key;
+        }
+
+        /** 本人に理由を出すか。 */
+        public boolean shown() {
+            return shown;
+        }
+
+        public static Failure byIndex(int index) {
+            Failure[] values = values();
+            return index >= 0 && index < values.length ? values[index] : NOT_READY;
+        }
+    }
+
+    /** 結果（成功なら failure は null）。 */
+    public record Result(@Nullable Failure failure) {
+        static final Result OK = new Result(null);
+
+        public boolean ok() {
+            return failure == null;
+        }
+    }
+
+    private SkillService() {
+    }
+
+    // ---------------------------------------------------------------- 使う
+
+    /**
+     * スキル枠のスキルを使う。
+     *
+     * @param entityAim クライアントが狙った相手（ないときは -1）
+     * @param pointAim  クライアントが狙った地点（ないときは null）
+     */
+    public static Result tryUse(ServerPlayer player, PlayerData data, int slot, int entityAim, @Nullable Vec3 pointAim) {
+        long now = player.level().getGameTime();
+        if (!data.allowSkillRequest(now, ServerConfig.SKILL_REQUESTS_PER_SECOND.get())) {
+            AmemaruMod.LOGGER.warn("[amemaru] Too many skill requests from {} (dropped)", player.getGameProfile().getName());
+            return new Result(Failure.SPAM);
+        }
+        if (!player.isAlive() || player.isSpectator()) {
+            return new Result(Failure.DEAD);
+        }
+        if (!data.isStatsReady()) {
+            return new Result(Failure.NOT_READY);
+        }
+        SkillRegistry.Snapshot snapshot = SkillRegistry.get();
+        JobDef job = snapshot.job(data.getCombatJob());
+        if (job == null) {
+            return fail(player, Failure.NO_JOB);
+        }
+        ResourceLocation skillId = data.getLoadout(slot);
+        if (skillId == null) {
+            return fail(player, Failure.EMPTY_SLOT);
+        }
+        SkillDef skill = snapshot.skill(skillId);
+        int rank = data.getSkillRank(skillId);
+        if (skill == null || rank <= 0 || !skill.isActive() || !skill.job().equals(job.id())) {
+            return fail(player, Failure.NOT_LEARNED);
+        }
+        rank = Math.min(rank, skill.maxRank());
+
+        CastState casting = data.getCasting();
+        if (casting != null) {
+            if (casting.slot() == slot) {
+                cancelCast(player, data, false);
+                return fail(player, Failure.CANCELLED);
+            }
+            return fail(player, Failure.CASTING);
+        }
+        SkillCooldown cooldown = data.getCooldown(skillId);
+        if (cooldown != null && cooldown.endTick() > now) {
+            player.displayClientMessage(Component.translatable(Failure.COOLDOWN.key(), skill.name(),
+                    String.format(Locale.ROOT, "%.1f", cooldown.remaining(now) / 20.0)).withStyle(ChatFormatting.RED), true);
+            return new Result(Failure.COOLDOWN);
+        }
+        if (!hasWeapon(player, job)) {
+            player.displayClientMessage(Component.translatable(Failure.NO_WEAPON.key(), job.name(), job.weaponText())
+                    .withStyle(ChatFormatting.RED), true);
+            return new Result(Failure.NO_WEAPON);
+        }
+        if (data.getMp() + 1.0E-6 < skill.mpCost(rank)) {
+            return fail(player, Failure.NO_MP);
+        }
+        if (data.getGauge() + 1.0E-6 < skill.gaugeCost(rank)) {
+            JobDef.GaugeDef gauge = job.gauge();
+            player.displayClientMessage(Component.translatable(Failure.NO_GAUGE.key(), gauge == null ? "" : gauge.name(),
+                    skill.gaugeCost(rank)).withStyle(ChatFormatting.RED), true);
+            return new Result(Failure.NO_GAUGE);
+        }
+
+        SkillTargeting.Aim aim = SkillTargeting.resolve(player, skill, rank, entityAim, pointAim);
+        if (aim.failure() != null) {
+            return fail(player, aim.failure());
+        }
+
+        int castTicks = castTicks(data, skill, rank, now);
+        int index = snapshot.skillIndex(skillId);
+        if (castTicks > 0) {
+            startCast(player, data, skill, index, rank, slot, castTicks, aim, now);
+            return Result.OK;
+        }
+        execute(player, data, skill, index, rank, aim, now);
+        return Result.OK;
+    }
+
+    private static Result fail(ServerPlayer player, Failure failure) {
+        if (failure.shown()) {
+            player.displayClientMessage(Component.translatable(failure.key()).withStyle(ChatFormatting.RED), true);
+            if (failure != Failure.CANCELLED) {
+                player.playNotifySound(ModSounds.get("skill.fail"), SoundSource.PLAYERS, 0.6F, 1.0F);
+            }
+        }
+        return new Result(failure);
+    }
+
+    /** 職業の武器を持っているか（configで確かめないこともできる）。 */
+    public static boolean hasWeapon(ServerPlayer player, JobDef job) {
+        if (!ServerConfig.REQUIRE_JOB_WEAPON.get() || job.weapons() == null) {
+            return true;
+        }
+        return player.getMainHandItem().is(job.weapons());
+    }
+
+    // ---------------------------------------------------------------- 詠唱
+
+    /** 詠唱の長さ（tick）。詠唱短縮と、支援を受けているときの短縮をかける。 */
+    public static int castTicks(PlayerData data, SkillDef skill, int rank, long now) {
+        double seconds = skill.cast(rank);
+        if (seconds <= 0) {
+            return 0;
+        }
+        seconds *= PassiveService.castMultiplier(data);
+        if (data.getBuffs().supported(now)) {
+            seconds *= skill.castSupportMultiplier();
+        }
+        return Math.max(1, Mth.ceil(seconds * 20.0));
+    }
+
+    private static void startCast(ServerPlayer player, PlayerData data, SkillDef skill, int index, int rank, int slot, int ticks,
+                                  SkillTargeting.Aim aim, long now) {
+        data.setCasting(new CastState(skill.id(), rank, slot, now, now + ticks, aim.entityId(), aim.point()));
+        player.addEffect(new MobEffectInstance(ModEffects.CHANTING.get(), ticks + 2, 0, false, false, true));
+        Vec3 to = aim.point() != null ? aim.point() : aim.entity() != null ? aim.entity().position() : player.position();
+        new SkillFxS2C(SkillFxS2C.Phase.CAST_START, player.getId(), index, player.position(), to,
+                (float) skill.delivery().radius(rank), ticks, new int[0]).sendNear(player.level().dimension(), player.position());
+        SoundEvent sound = jp.amemaru.lostconnection.core.registry.ModSounds.byId(skill.castSound());
+        if (sound != null) {
+            player.level().playSound(null, player.getX(), player.getY(), player.getZ(), sound, SoundSource.PLAYERS, 1.0F, 1.0F);
+        }
+    }
+
+    /** 詠唱をやめる。 */
+    public static void cancelCast(ServerPlayer player, PlayerData data, boolean notify) {
+        CastState casting = data.getCasting();
+        if (casting == null) {
+            return;
+        }
+        data.setCasting(null);
+        player.removeEffect(ModEffects.CHANTING.get());
+        int index = SkillRegistry.get().skillIndex(casting.skill());
+        new SkillFxS2C(SkillFxS2C.Phase.CAST_CANCEL, player.getId(), index, player.position(), player.position(), 0, 0, new int[0])
+                .sendNear(player.level().dimension(), player.position());
+        if (notify) {
+            player.displayClientMessage(Component.translatable(Failure.CANCELLED.key()).withStyle(ChatFormatting.GRAY), true);
+        }
+    }
+
+    /** 詠唱が終わったら、もう一度確かめてから放つ。 */
+    private static void finishCast(ServerPlayer player, PlayerData data, CastState casting, long now) {
+        data.setCasting(null);
+        player.removeEffect(ModEffects.CHANTING.get());
+        SkillRegistry.Snapshot snapshot = SkillRegistry.get();
+        SkillDef skill = snapshot.skill(casting.skill());
+        JobDef job = snapshot.job(data.getCombatJob());
+        int index = snapshot.skillIndex(casting.skill());
+        Failure failure = null;
+        if (skill == null || job == null || !skill.job().equals(job.id()) || data.getSkillRank(skill.id()) <= 0) {
+            failure = Failure.NOT_LEARNED;
+        } else if (!hasWeapon(player, job)) {
+            failure = Failure.NO_WEAPON;
+        } else if (data.getMp() + 1.0E-6 < skill.mpCost(casting.rank())) {
+            failure = Failure.NO_MP;
+        } else if (data.getGauge() + 1.0E-6 < skill.gaugeCost(casting.rank())) {
+            failure = Failure.NO_GAUGE;
+        }
+        SkillTargeting.Aim aim = null;
+        if (failure == null) {
+            aim = SkillTargeting.recheck(player, skill, casting.rank(), casting.targetEntity(), casting.targetPoint());
+            failure = aim.failure();
+        }
+        if (failure != null) {
+            new SkillFxS2C(SkillFxS2C.Phase.CAST_CANCEL, player.getId(), index, player.position(), player.position(), 0, 0, new int[0])
+                    .sendNear(player.level().dimension(), player.position());
+            if (failure == Failure.NO_WEAPON && job != null) {
+                player.displayClientMessage(Component.translatable(failure.key(), job.name(), job.weaponText())
+                        .withStyle(ChatFormatting.RED), true);
+            } else if (failure == Failure.NO_GAUGE && job != null && job.gauge() != null) {
+                player.displayClientMessage(Component.translatable(failure.key(), job.gauge().name(),
+                        skill.gaugeCost(casting.rank())).withStyle(ChatFormatting.RED), true);
+            } else {
+                fail(player, failure);
+            }
+            return;
+        }
+        execute(player, data, skill, index, casting.rank(), aim, now);
+    }
+
+    // ---------------------------------------------------------------- 放つ
+
+    private static void execute(ServerPlayer player, PlayerData data, SkillDef skill, int index, int rank, SkillTargeting.Aim aim,
+                                long now) {
+        // MPとゲージを使い、クールダウンを始める
+        data.setMp(data.getMp() - skill.mpCost(rank));
+        if (skill.gaugeCost(rank) > 0) {
+            GaugeService.consume(player, data, skill.gaugeCost(rank));
+        }
+        int cooldownTicks = cooldownTicks(data, skill, rank);
+        if (cooldownTicks > 0) {
+            data.setCooldown(skill.id(), new SkillCooldown(now + cooldownTicks, cooldownTicks));
+        }
+
+        SkillContext ctx = new SkillContext(player, data.getStats(), skill, index, rank);
+        // 連携支援：ほかの人の「支援」を受けていれば、このスキルの効果が上がる
+        BuffState buffs = data.getBuffs();
+        if (buffs.supported(now) && buffs.supportFrom != null && !buffs.supportFrom.equals(player.getUUID())) {
+            ctx.multiplier *= 1.0 + buffs.supportBonus / 100.0;
+            ctx.supported = true;
+            ServerPlayer supporter = player.server.getPlayerList().getPlayer(buffs.supportFrom);
+            int[] involved = supporter == null ? new int[]{player.getId()} : new int[]{supporter.getId(), player.getId()};
+            CombatTextS2C.send(player, buffs.supportBonus, CombatTextS2C.Kind.SUPPORT, involved);
+            player.level().playSound(null, player.getX(), player.getY(), player.getZ(), ModSounds.get("combat.support"),
+                    SoundSource.PLAYERS, 1.0F, 1.0F);
+            buffs.consumeSupport();
+            player.removeEffect(ModEffects.LINK_SUPPORT.get());
+        }
+        SkillExecutor.deliver(ctx, player, aim);
+    }
+
+    /** クールダウンの長さ（tick）。クールダウン短縮をかける。 */
+    public static int cooldownTicks(PlayerData data, SkillDef skill, int rank) {
+        double seconds = skill.cooldown(rank);
+        if (seconds <= 0) {
+            return 0;
+        }
+        double reduction = Math.min(ServerConfig.COOLDOWN_REDUCTION_CAP.get(), data.getStats().get(StatType.COOLDOWN_REDUCTION));
+        return Math.max(1, Mth.ceil(seconds * (1.0 - Math.max(0.0, reduction) / 100.0) * 20.0));
+    }
+
+    // ---------------------------------------------------------------- 毎 tick
+
+    /** 毎 tick、サーバーで呼ぶ：詠唱の完了・ゲージ・パッシブの見直し・終わったクールダウンの片付け。 */
+    public static void tick(ServerPlayer player, PlayerData data) {
+        long now = player.level().getGameTime();
+        CastState casting = data.getCasting();
+        if (casting != null) {
+            if (!player.isAlive()) {
+                cancelCast(player, data, false);
+            } else if (now >= casting.endTick()) {
+                finishCast(player, data, casting, now);
+            }
+        }
+        GaugeService.tick(player, data, now);
+        PassiveService.tick(player, data);
+        if (player.tickCount % 100 == 0) {
+            data.pruneCooldowns(now);
+        }
+    }
+}

@@ -1,0 +1,147 @@
+{
+  "gui_light": "front",
+  "textures": {
+    "shield": "amemaru:item/apprentice_shield_model",
+    "particle": "amemaru:item/apprentice_shield_model"
+  },
+  "elements": [
+    {
+      "name": "plate",
+      "from": [
+        -6,
+        -11,
+        1
+      ],
+      "to": [
+        6,
+        11,
+        2
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            0,
+            0,
+            6,
+            11
+          ],
+          "texture": "#shield"
+        },
+        "north": {
+          "uv": [
+            6,
+            0,
+            12,
+            11
+          ],
+          "texture": "#shield"
+        },
+        "east": {
+          "uv": [
+            12,
+            0,
+            12.5,
+            11
+          ],
+          "texture": "#shield"
+        },
+        "west": {
+          "uv": [
+            12,
+            0,
+            12.5,
+            11
+          ],
+          "texture": "#shield"
+        },
+        "up": {
+          "uv": [
+            0,
+            11,
+            6,
+            11.5
+          ],
+          "texture": "#shield"
+        },
+        "down": {
+          "uv": [
+            0,
+            11,
+            6,
+            11.5
+          ],
+          "texture": "#shield"
+        }
+      }
+    },
+    {
+      "name": "handle",
+      "from": [
+        -1,
+        -3,
+        -5
+      ],
+      "to": [
+        1,
+        3,
+        1
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            13,
+            0,
+            16,
+            3
+          ],
+          "texture": "#shield"
+        },
+        "south": {
+          "uv": [
+            13,
+            0,
+            16,
+            3
+          ],
+          "texture": "#shield"
+        },
+        "east": {
+          "uv": [
+            13,
+            0,
+            16,
+            3
+          ],
+          "texture": "#shield"
+        },
+        "west": {
+          "uv": [
+            13,
+            0,
+            16,
+            3
+          ],
+          "texture": "#shield"
+        },
+        "up": {
+          "uv": [
+            13,
+            0,
+            16,
+            3
+          ],
+          "texture": "#shield"
+        },
+        "down": {
+          "uv": [
+            13,
+            0,
+            16,
+            3
+          ],
+          "texture": "#shield"
+        }
+      }
+    }
+  ]
+}

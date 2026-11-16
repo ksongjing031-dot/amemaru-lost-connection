@@ -1,0 +1,27 @@
+{
+  "job": "knight",
+  "school": "guardian",
+  "row": 2,
+  "column": 1,
+  "type": "passive",
+  "name": "鉄壁",
+  "description": "盾の扱いに慣れ、盾を持っている間は受けるダメージが減る。両手剣のときは効かない。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 10,
+  "requires": [
+    {
+      "skill": "knight/guardian_pride",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "iron_wall",
+    "value": 8,
+    "value_per_rank": 4
+  }
+}

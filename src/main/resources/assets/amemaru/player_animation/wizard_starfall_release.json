@@ -1,0 +1,112 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "wizard_starfall_release": {
+      "animation_length": 0.799,
+      "bones": {
+        "right_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -175,
+                0,
+                -5
+              ],
+              "easing": "easeInQuad"
+            },
+            "0.201": {
+              "vector": [
+                -40,
+                -20,
+                0
+              ]
+            },
+            "0.551": {
+              "vector": [
+                -40,
+                -20,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.801": {
+              "vector": [
+                -20,
+                0,
+                0
+              ]
+            }
+          }
+        },
+        "left_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -35,
+                0,
+                -45
+              ],
+              "easing": "easeInQuad"
+            },
+            "0.201": {
+              "vector": [
+                -45,
+                25,
+                0
+              ]
+            },
+            "0.551": {
+              "vector": [
+                -45,
+                25,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.801": {
+              "vector": [
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        },
+        "body": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -6,
+                0,
+                0
+              ],
+              "easing": "easeInQuad"
+            },
+            "0.201": {
+              "vector": [
+                14,
+                0,
+                0
+              ]
+            },
+            "0.551": {
+              "vector": [
+                14,
+                0,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.801": {
+              "vector": [
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

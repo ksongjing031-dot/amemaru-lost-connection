@@ -1,0 +1,65 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "wizard_starfall_cast": {
+      "animation_length": 1.199,
+      "bones": {
+        "right_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -170,
+                0,
+                -8
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.601": {
+              "vector": [
+                -176,
+                0,
+                -3
+              ],
+              "easing": "easeInOutSine"
+            },
+            "1.201": {
+              "vector": [
+                -170,
+                0,
+                -8
+              ]
+            }
+          }
+        },
+        "left_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -30,
+                0,
+                -50
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.601": {
+              "vector": [
+                -40,
+                0,
+                -40
+              ],
+              "easing": "easeInOutSine"
+            },
+            "1.201": {
+              "vector": [
+                -30,
+                0,
+                -50
+              ]
+            }
+          }
+        }
+      },
+      "loop": true
+    }
+  }
+}

@@ -3,6 +3,11 @@ package jp.amemaru.lostconnection.client;
 import jp.amemaru.lostconnection.network.s2c.SyncPlayerDataS2C;
 import jp.amemaru.lostconnection.player.PlayerData;
 import jp.amemaru.lostconnection.player.StatType;
+import net.minecraft.client.Minecraft;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * サーバーから受け取った、自分のデータの写し（クライアント専用）。HUDと画面はここを読む。
@@ -27,7 +32,22 @@ public final class ClientPlayerState {
     private double hp;
     private double mp;
 
+    // 職業とスキル（番号は ClientDefinitions の番号）
+    private int jobIndex = -1;
+    private boolean promoted;
+    private boolean promotedOnce;
+    private final Map<Integer, Integer> learned = new HashMap<>();
+    private final int[] loadout = new int[PlayerData.LOADOUT_SIZE];
+    private float gauge;
+    private int gaugeMax;
+    /** スキルの番号 → {使えるようになるゲーム内の時刻, クールダウンの長さ}。 */
+    private final Map<Integer, long[]> cooldowns = new HashMap<>();
+    private int castSkill = -1;
+    private long castEnd;
+    private int castTotal;
+
     private ClientPlayerState() {
+        Arrays.fill(loadout, -1);
     }
 
     public static ClientPlayerState get() {
@@ -62,6 +82,46 @@ public final class ClientPlayerState {
             mp = message.mp();
             vitalsReceived = true;
         }
+        long now = gameTime();
+        if ((sections & PlayerData.SYNC_JOB) != 0) {
+            jobIndex = message.jobIndex();
+            promoted = message.promoted();
+            promotedOnce = message.promotedOnce();
+        }
+        if ((sections & PlayerData.SYNC_SKILLS) != 0) {
+            learned.clear();
+            int[] skills = message.learnedSkills();
+            int[] ranks = message.learnedRanks();
+            for (int i = 0; i < skills.length && i < ranks.length; i++) {
+                learned.put(skills[i], ranks[i]);
+            }
+            int[] received = message.loadout();
+            for (int i = 0; i < loadout.length; i++) {
+                loadout[i] = i < received.length ? received[i] : -1;
+            }
+        }
+        if ((sections & PlayerData.SYNC_GAUGE) != 0) {
+            gauge = message.gauge();
+            gaugeMax = message.gaugeMax();
+        }
+        if ((sections & PlayerData.SYNC_COOLDOWNS) != 0) {
+            cooldowns.clear();
+            int[] skills = message.cooldownSkills();
+            for (int i = 0; i < skills.length; i++) {
+                cooldowns.put(skills[i], new long[]{now + message.cooldownRemaining()[i], message.cooldownTotal()[i]});
+            }
+        }
+        if ((sections & PlayerData.SYNC_CAST) != 0) {
+            castSkill = message.castSkill();
+            castEnd = now + message.castRemaining();
+            castTotal = message.castTotal();
+        }
+    }
+
+    /** クライアントのゲーム内の時刻（ワールドに入っていなければ0）。 */
+    public static long gameTime() {
+        Minecraft minecraft = Minecraft.getInstance();
+        return minecraft.level == null ? 0L : minecraft.level.getGameTime();
     }
 
     /** ログアウトしたときに消す。 */
@@ -79,6 +139,15 @@ public final class ClientPlayerState {
         java.util.Arrays.fill(stats, 0);
         hp = 0;
         mp = 0;
+        jobIndex = -1;
+        promoted = false;
+        promotedOnce = false;
+        learned.clear();
+        Arrays.fill(loadout, -1);
+        gauge = 0;
+        gaugeMax = 0;
+        cooldowns.clear();
+        castSkill = -1;
     }
 
     /** すべてのまとまりを一度は受け取ったか（このModのサーバーにつながっているか）。 */
@@ -145,5 +214,79 @@ public final class ClientPlayerState {
 
     public double maxMp() {
         return stat(StatType.MP);
+    }
+
+    // ---------------------------------------------------------------- 職業とスキル
+
+    /** 職業の番号（なければ -1）。 */
+    public int jobIndex() {
+        return jobIndex;
+    }
+
+    public boolean hasJob() {
+        return jobIndex >= 0;
+    }
+
+    public boolean promoted() {
+        return promoted;
+    }
+
+    public boolean promotedOnce() {
+        return promotedOnce;
+    }
+
+    /** 習得したスキルの段階（覚えていなければ0）。 */
+    public int rank(int skillIndex) {
+        Integer rank = learned.get(skillIndex);
+        return rank == null ? 0 : rank;
+    }
+
+    /** スキル枠に入っているスキルの番号（空なら -1）。 */
+    public int loadout(int slot) {
+        return slot >= 0 && slot < loadout.length ? loadout[slot] : -1;
+    }
+
+    /** そのスキルが入っている枠（なければ -1）。 */
+    public int slotOf(int skillIndex) {
+        for (int i = 0; i < loadout.length; i++) {
+            if (loadout[i] == skillIndex) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public float gauge() {
+        return gauge;
+    }
+
+    public int gaugeMax() {
+        return gaugeMax;
+    }
+
+    /** クールダウンの残り（tick。終わっていれば0）。 */
+    public int cooldownRemaining(int skillIndex) {
+        long[] entry = cooldowns.get(skillIndex);
+        return entry == null ? 0 : (int) Math.max(0L, entry[0] - gameTime());
+    }
+
+    /** クールダウンの長さ（tick）。 */
+    public int cooldownTotal(int skillIndex) {
+        long[] entry = cooldowns.get(skillIndex);
+        return entry == null ? 0 : (int) entry[1];
+    }
+
+    /** 詠唱中のスキル（なければ -1）。 */
+    public int castSkill() {
+        return castSkill >= 0 && castEnd > gameTime() - 2 ? castSkill : -1;
+    }
+
+    /** 詠唱の進み具合（0〜1）。 */
+    public float castProgress(float partialTick) {
+        if (castTotal <= 0) {
+            return 0.0F;
+        }
+        float remaining = castEnd - gameTime() - partialTick;
+        return Math.max(0.0F, Math.min(1.0F, 1.0F - remaining / castTotal));
     }
 }

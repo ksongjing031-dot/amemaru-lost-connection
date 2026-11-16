@@ -84,7 +84,13 @@ public class StatusScreen extends Screen {
             y += ROW_HEIGHT;
         }
 
-        addRenderableWidget(new CrystalButton(width / 2 - 45, top + PANEL_HEIGHT - 20, 90, 16,
+        addRenderableWidget(new CrystalButton(left + 12, top + PANEL_HEIGHT - 20, 100, 16,
+                Component.translatable("screen.amemaru.status.skill_tree"), pressed -> {
+                    if (minecraft != null) {
+                        minecraft.setScreen(new SkillTreeScreen());
+                    }
+                }));
+        addRenderableWidget(new CrystalButton(left + PANEL_WIDTH - 102, top + PANEL_HEIGHT - 20, 90, 16,
                 Component.translatable("screen.amemaru.status.close"), pressed -> onClose()));
         updateButtons();
     }
@@ -115,10 +121,13 @@ public class StatusScreen extends Screen {
         renderBackground(graphics);
         drawPanel(graphics);
 
-        graphics.drawCenteredString(font, title, width / 2, top + 7, TEXT_HEADER);
+        ClientPlayerState state = ClientPlayerState.get();
+        jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C.JobInfo job =
+                jp.amemaru.lostconnection.client.ClientDefinitions.get().job(state.jobIndex());
+        Component heading = job == null ? title : Component.translatable("screen.amemaru.status.title_job", job.name());
+        graphics.drawCenteredString(font, heading, width / 2, top + 7, TEXT_HEADER);
         drawDivider(graphics, top + 19);
 
-        ClientPlayerState state = ClientPlayerState.get();
         if (!state.hasData()) {
             graphics.drawCenteredString(font, Component.translatable("screen.amemaru.status.no_data"),
                     width / 2, top + PANEL_HEIGHT / 2, TEXT_DIM);
