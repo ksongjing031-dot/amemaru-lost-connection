@@ -11,7 +11,7 @@ Discordサーバー「あめまるさん」のための、Minecraft Java版 1.20
 | もの | 版 |
 | --- | --- |
 | Minecraft Java版 | 1.20.1 |
-| Forge | 47.4.10 以上（47.4系） |
+| Forge | 47.4系の最新（47.4.29 で確かめています） |
 | Java | 17（Minecraftのランチャーが用意するもので足ります） |
 
 ## Modのファイル（jar）の受け取り方
@@ -25,7 +25,7 @@ GitHubの自動ビルド（GitHub Actions）が、コードを上げるたびに
 
 ## 遊び方（LANでの確認）
 
-1. Minecraftのランチャーに Forge 1.20.1 を入れる（Forgeの公式サイトのインストーラーで「Install client」）
+1. Minecraftのランチャーに Forge 1.20.1 を入れる（Forgeの公式サイトで 1.20.1 の「Latest」のインストーラーを使い、「Install client」）
 2. 取り出した jar を、Minecraftのフォルダの `mods` に入れる（Windowsなら `%APPDATA%\.minecraft\mods`）
 3. 起動の構成で「forge」を選んで遊ぶ
 4. 一緒に確かめる人も、同じ版の Forge と jar を入れる。ワールドを開いた人が「LANに公開」し、ほかの人はマルチプレイの一覧から入る
