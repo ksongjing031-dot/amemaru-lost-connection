@@ -28,10 +28,10 @@ import java.util.Map;
  */
 public class StatusScreen extends Screen {
     private static final int PANEL_WIDTH = 248;
-    private static final int PANEL_HEIGHT = 238;
-    private static final int ROW_HEIGHT = 14;
-    private static final int STATS_TOP = 77;
-    private static final int SUB_TOP = 193;
+    private static final int PANEL_HEIGHT = 222;
+    private static final int ROW_HEIGHT = 13;
+    private static final int STATS_TOP = 73;
+    private static final int SUB_TOP = 181;
     private static final int VALUE_RIGHT = 160;
 
     private static final int OUTLINE = 0xFF090C14;
@@ -77,14 +77,14 @@ public class StatusScreen extends Screen {
 
         int y = top + STATS_TOP;
         for (StatType type : StatType.allocatable()) {
-            CrystalButton button = new CrystalButton(left + PANEL_WIDTH - 34, y, 20, 12,
+            CrystalButton button = new CrystalButton(left + PANEL_WIDTH - 34, y - 1, 20, 12,
                     Component.literal("+"), pressed -> allocate(type));
             button.setTooltip(Tooltip.create(Component.translatable("screen.amemaru.status.plus_tooltip")));
             plusButtons.put(type, addRenderableWidget(button));
             y += ROW_HEIGHT;
         }
 
-        addRenderableWidget(new CrystalButton(width / 2 - 45, top + PANEL_HEIGHT - 22, 90, 16,
+        addRenderableWidget(new CrystalButton(width / 2 - 45, top + PANEL_HEIGHT - 20, 90, 16,
                 Component.translatable("screen.amemaru.status.close"), pressed -> onClose()));
         updateButtons();
     }
@@ -115,8 +115,8 @@ public class StatusScreen extends Screen {
         renderBackground(graphics);
         drawPanel(graphics);
 
-        graphics.drawCenteredString(font, title, width / 2, top + 8, TEXT_HEADER);
-        drawDivider(graphics, top + 20);
+        graphics.drawCenteredString(font, title, width / 2, top + 7, TEXT_HEADER);
+        drawDivider(graphics, top + 19);
 
         ClientPlayerState state = ClientPlayerState.get();
         if (!state.hasData()) {
@@ -175,7 +175,7 @@ public class StatusScreen extends Screen {
     /** レベルの結晶・レベル・スキルポイント・経験値のバー。 */
     private void renderGrowth(GuiGraphics graphics, ClientPlayerState state) {
         int gemX = left + 14;
-        int gemY = top + 26;
+        int gemY = top + 24;
         boolean pointsLeft = state.statPoints() > 0;
         RenderSystem.enableBlend();
         if (pointsLeft) {
@@ -201,12 +201,12 @@ public class StatusScreen extends Screen {
         Component levelText = state.isMaxLevel()
                 ? Component.translatable("screen.amemaru.status.level_max", state.level())
                 : Component.translatable("screen.amemaru.status.level", state.level());
-        graphics.drawString(font, levelText, x, top + 29, TEXT, true);
+        graphics.drawString(font, levelText, x, top + 27, TEXT, true);
         Component skill = Component.translatable("screen.amemaru.status.skill_points", state.skillPoints());
-        graphics.drawString(font, skill, right - font.width(skill), top + 29, TEXT_DIM, true);
+        graphics.drawString(font, skill, right - font.width(skill), top + 27, TEXT_DIM, true);
 
         // 経験値のバー（HUDと同じ絵）
-        int barY = top + 41;
+        int barY = top + 39;
         graphics.blit(AmemaruHudArt.TEXTURE, x, barY, 0, AmemaruHudArt.V_EXP_FRAME, AmemaruHudArt.EXP_W, AmemaruHudArt.EXP_H, 256, 256);
         int filled = Math.round(state.expProgress() * AmemaruHudArt.EXP_INNER);
         if (filled > 0) {
@@ -215,10 +215,10 @@ public class StatusScreen extends Screen {
         Component exp = state.isMaxLevel()
                 ? Component.translatable("screen.amemaru.status.exp_max")
                 : Component.translatable("screen.amemaru.status.exp", state.exp(), state.expToNext());
-        graphics.drawString(font, exp, x, top + 50, TEXT_DIM, true);
+        graphics.drawString(font, exp, x, top + 47, TEXT_DIM, true);
         if (!state.isMaxLevel()) {
             Component next = Component.translatable("screen.amemaru.status.next", Math.max(0, state.expToNext() - state.exp()));
-            graphics.drawString(font, next, right - font.width(next), top + 50, TEXT_DIM, true);
+            graphics.drawString(font, next, right - font.width(next), top + 47, TEXT_DIM, true);
         }
     }
 
@@ -226,14 +226,14 @@ public class StatusScreen extends Screen {
     private void renderStats(GuiGraphics graphics, ClientPlayerState state) {
         int x = left + 12;
         int right = left + PANEL_WIDTH - 12;
-        graphics.drawString(font, Component.translatable("screen.amemaru.status.base_section"), x, top + 64, TEXT_HEADER, true);
+        graphics.drawString(font, Component.translatable("screen.amemaru.status.base_section"), x, top + 60, TEXT_HEADER, true);
         Component points = Component.translatable("screen.amemaru.status.points", state.statPoints());
         boolean pointsLeft = state.statPoints() > 0;
         int badgeRight = right - 2;
         int badgeLeft = badgeRight - font.width(points) - 8;
-        graphics.fill(badgeLeft, top + 62, badgeRight, top + 73, pointsLeft ? 0xC0403A10 : 0x80202638);
-        graphics.fill(badgeLeft, top + 62, badgeRight, top + 63, pointsLeft ? 0xFFE8C860 : 0xFF3E4A66);
-        graphics.drawString(font, points, badgeLeft + 4, top + 64, pointsLeft ? TEXT_POINTS : TEXT_DIM, true);
+        graphics.fill(badgeLeft, top + 58, badgeRight, top + 69, pointsLeft ? 0xC0403A10 : 0x80202638);
+        graphics.fill(badgeLeft, top + 58, badgeRight, top + 59, pointsLeft ? 0xFFE8C860 : 0xFF3E4A66);
+        graphics.drawString(font, points, badgeLeft + 4, top + 60, pointsLeft ? TEXT_POINTS : TEXT_DIM, true);
 
         int y = top + STATS_TOP;
         int row = 0;

@@ -325,6 +325,100 @@ def draw_diamond(ox, oy, size=9):
     put(ox + c - 1, oy + c - 1, hexc("FFFFFF"))
 
 
+# ---------------------------------------------------------------- ホットバー（182x22）・選択枠（24x24）・オフハンド（22x22）
+HB_W, HB_H = 182, 22
+WELL = hexc("10172A")
+WELL_DARK = hexc("0A0F1C")
+WELL_LIGHT = hexc("2C3A5C")
+HB_BG = hexc("161E33")
+
+
+def draw_slot_well(ox, oy):
+    """アイテムを置くくぼみ（18x18）。左上が暗く、右下が明るい。"""
+    for y in range(18):
+        for x in range(18):
+            if x == 0 or y == 0:
+                c = WELL_DARK
+            elif x == 17 or y == 17:
+                c = WELL_LIGHT
+            else:
+                c = WELL
+            put(ox + x, oy + y, c)
+
+
+def draw_hotbar(ox, oy):
+    for y in range(HB_H):
+        for x in range(HB_W):
+            corner = (x in (0, HB_W - 1)) and (y in (0, HB_H - 1))
+            if corner:
+                continue
+            if x == 0 or y == 0 or x == HB_W - 1 or y == HB_H - 1:
+                c = OUTLINE
+            elif y == 1:
+                dist = abs(x - HB_W / 2)
+                c = mix(hexc("9FDDF5"), BEVEL_LIGHT, min(1.0, dist / 70.0))
+            elif y == HB_H - 2:
+                c = BEVEL_DARK
+            elif x == 1:
+                c = BEVEL_MID
+            elif x == HB_W - 2:
+                c = BEVEL_DARK
+            else:
+                c = HB_BG
+            put(ox + x, oy + y, c)
+    for k in range(9):
+        draw_slot_well(ox + 2 + 20 * k, oy + 2)
+        if k < 8:
+            # スロットの間の、糸の結び目のような小さな点
+            put(ox + 21 + 20 * k, oy + 10, hexc("5E86B8"))
+            put(ox + 21 + 20 * k, oy + 11, hexc("3C5A86"))
+
+
+def draw_selection(ox, oy):
+    """選んでいるスロットの枠（24x24）。明るい結晶のふちと、四隅のきらめき。"""
+    S = 24
+    for y in range(S):
+        for x in range(S):
+            edge = min(x, y, S - 1 - x, S - 1 - y)
+            corner = (x in (0, S - 1)) and (y in (0, S - 1))
+            if corner:
+                continue
+            if edge == 0:
+                c = OUTLINE
+            elif edge == 1:
+                c = hexc("D8F6FF") if (x + y) < S else hexc("7CC8F2")
+            elif edge == 2:
+                c = hexc("6FC0F0", 200)
+            elif edge == 3:
+                c = hexc("8FD8FF", 70)
+            else:
+                continue
+            put(ox + x, oy + y, c)
+    for (x, y) in [(1, 1), (S - 2, 1), (1, S - 2), (S - 2, S - 2)]:
+        put(ox + x, oy + y, hexc("FFFFFF"))
+
+
+def draw_offhand(ox, oy):
+    S = 22
+    for y in range(S):
+        for x in range(S):
+            corner = (x in (0, S - 1)) and (y in (0, S - 1))
+            if corner:
+                continue
+            if x == 0 or y == 0 or x == S - 1 or y == S - 1:
+                c = OUTLINE
+            elif y == 1:
+                c = BEVEL_LIGHT
+            elif y == S - 2 or x == S - 2:
+                c = BEVEL_DARK
+            elif x == 1:
+                c = BEVEL_MID
+            else:
+                c = HB_BG
+            put(ox + x, oy + y, c)
+    draw_slot_well(ox + 2, oy + 2)
+
+
 # ---------------------------------------------------------------- 配置（AmemaruHud.java と同じ）
 LAYOUT = {
     "hp_frame": (0, 0),
@@ -344,6 +438,9 @@ LAYOUT = {
     "gem_flash": (144, 0),
     "gem_glow": (96, 28),
     "diamond": (168, 0),
+    "hotbar": (0, 112),
+    "selection": (184, 112),
+    "offhand": (208, 112),
 }
 
 draw_bar_frame(*LAYOUT["hp_frame"], tip_left=True)
@@ -363,6 +460,9 @@ draw_gem(*LAYOUT["gem_lit"], glow=True)
 draw_gem_flash(*LAYOUT["gem_flash"])
 draw_gem_glow(*LAYOUT["gem_glow"])
 draw_diamond(*LAYOUT["diamond"])
+draw_hotbar(*LAYOUT["hotbar"])
+draw_selection(*LAYOUT["selection"])
+draw_offhand(*LAYOUT["offhand"])
 
 out = sys.argv[1] if len(sys.argv) > 1 else "hud.png"
 img.save(out)

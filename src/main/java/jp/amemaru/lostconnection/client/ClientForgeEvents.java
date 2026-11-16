@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
+import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.event.TickEvent;
@@ -42,11 +43,35 @@ public final class ClientForgeEvents {
         }
     }
 
-    /** このModのサーバーにつながっている間は、バニラのハート・防御・満腹度・経験値を隠す。 */
+    /**
+     * このModのサーバーにつながっている間は、バニラのハート・防御・満腹度・経験値・ホットバーを隠す
+     * （AmemaruHud が同じ場所に描く）。観戦モードのホットバーは、バニラのものをそのまま使う。
+     */
     @SubscribeEvent
     public static void onRenderOverlayPre(RenderGuiOverlayEvent.Pre event) {
-        if (ClientPlayerState.get().hasData() && HIDDEN_VANILLA.contains(event.getOverlay().id())) {
+        if (!ClientPlayerState.get().hasData()) {
+            return;
+        }
+        ResourceLocation id = event.getOverlay().id();
+        if (HIDDEN_VANILLA.contains(id)) {
             event.setCanceled(true);
+        } else if (id.equals(VanillaGuiOverlay.HOTBAR.id())) {
+            Minecraft minecraft = Minecraft.getInstance();
+            if (minecraft.player != null && !minecraft.player.isSpectator()) {
+                event.setCanceled(true);
+            }
+        }
+    }
+
+    /** チャットを、HUD（結晶の冠）に重ならない高さまで上げる。 */
+    @SubscribeEvent
+    public static void onCustomizeChat(CustomizeGuiOverlayEvent.Chat event) {
+        if (!ClientPlayerState.get().hasData()) {
+            return;
+        }
+        int limit = event.getWindow().getGuiScaledHeight() - AmemaruHud.reservedHeight();
+        if (event.getPosY() > limit) {
+            event.setPosY(limit);
         }
     }
 

@@ -63,6 +63,12 @@ public final class CiScreenshots {
                 // 見本の状態：レベル12、経験値を半分ほど、HPと攻撃に振り分け（残りのポイントがあるので結晶が光る）
                 command(minecraft, "amemaru admin level set @a 12");
                 command(minecraft, "amemaru admin level exp @a 180");
+                // ホットバーとオフハンドの見え方を確かめるためのアイテム
+                command(minecraft, "give @a minecraft:diamond_sword");
+                command(minecraft, "give @a minecraft:iron_pickaxe");
+                command(minecraft, "give @a minecraft:bread 12");
+                command(minecraft, "give @a minecraft:torch 64");
+                command(minecraft, "item replace entity @a weapon.offhand with minecraft:shield");
                 ModNetwork.sendToServer(new AllocateStatC2S(StatType.HP, 3));
                 ModNetwork.sendToServer(new AllocateStatC2S(StatType.ATTACK, 2));
                 next(1, 20);

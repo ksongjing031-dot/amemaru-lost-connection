@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import jp.amemaru.lostconnection.core.config.ClientConfig;
 import net.minecraft.Util;
+import net.minecraft.client.AttackIndicatorStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -11,6 +12,9 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
@@ -55,6 +59,8 @@ public final class AmemaruHud {
     private static final int GEM_X = -12;
     private static final int GEM_Y = -31;
 
+    private static final ResourceLocation VANILLA_ICONS = ResourceLocation.withDefaultNamespace("textures/gui/icons.png");
+
     private static final float LOW_HP = 0.25F;
     private static final float TWO_PI = (float) (Math.PI * 2.0);
     private static final int LEVEL_COLOR = 0xFFFFFF;
@@ -86,6 +92,10 @@ public final class AmemaruHud {
         Font font = minecraft.font;
 
         gui.setupOverlayRenderState(true, false);
+        // ホットバー（バニラのものは ClientForgeEvents で隠す）。大きさの設定はかけない
+        renderHotbar(graphics, minecraft, player, partialTick, screenWidth, screenHeight);
+        gui.setupOverlayRenderState(true, false);
+
         PoseStack pose = graphics.pose();
         pose.pushPose();
         pose.translate(screenWidth / 2, screenHeight - HOTBAR_HEIGHT, 0.0D);
@@ -118,8 +128,80 @@ public final class AmemaruHud {
 
         // 空気の泡・持ち物の名前などのバニラの表示が、このHUD（結晶の冠の上まで）より上に出るようにする
         int used = HOTBAR_HEIGHT + Mth.ceil(-GEM_Y * scale) + 9;
+        if (minecraft.gameMode != null && !minecraft.gameMode.canHurtPlayer()) {
+            // クリエイティブでは、バニラが持ち物の名前を14ピクセル下げるため、その分も空ける
+            used += 14;
+        }
         gui.leftHeight = Math.max(gui.leftHeight, used);
         gui.rightHeight = Math.max(gui.rightHeight, used);
+    }
+
+    // ---------------------------------------------------------------- ホットバー
+
+    /**
+     * ホットバー：藍色の台に、くぼんだスロット。選んでいるスロットは結晶のふちで囲む。
+     * アイテムの位置・拾ったときの動き・オフハンド・攻撃のゲージ（ホットバー表示のとき）はバニラと同じ。
+     */
+    private static void renderHotbar(GuiGraphics graphics, Minecraft minecraft, Player player, float partialTick,
+                                     int screenWidth, int screenHeight) {
+        int center = screenWidth / 2;
+        int left = center - AmemaruHudArt.HOTBAR_W / 2;
+        int top = screenHeight - AmemaruHudArt.HOTBAR_H;
+        HumanoidArm offArm = player.getMainArm().getOpposite();
+        ItemStack offhand = player.getOffhandItem();
+
+        graphics.blit(TEXTURE, left, top, AmemaruHudArt.U_HOTBAR, AmemaruHudArt.V_HOTBAR,
+                AmemaruHudArt.HOTBAR_W, AmemaruHudArt.HOTBAR_H, TEX_SIZE, TEX_SIZE);
+        if (!offhand.isEmpty()) {
+            int slotX = offArm == HumanoidArm.LEFT ? left - 29 : left + AmemaruHudArt.HOTBAR_W + 7;
+            graphics.blit(TEXTURE, slotX, top, AmemaruHudArt.U_OFFHAND, AmemaruHudArt.V_OFFHAND,
+                    AmemaruHudArt.OFFHAND_SIZE, AmemaruHudArt.OFFHAND_SIZE, TEX_SIZE, TEX_SIZE);
+        }
+        int selected = player.getInventory().selected;
+        graphics.blit(TEXTURE, left - 1 + selected * 20, top - 1, AmemaruHudArt.U_SELECTION, AmemaruHudArt.V_SELECTION,
+                AmemaruHudArt.SELECTION_SIZE, AmemaruHudArt.SELECTION_SIZE, TEX_SIZE, TEX_SIZE);
+
+        int seed = 1;
+        for (int i = 0; i < 9; i++) {
+            renderSlot(graphics, minecraft, left + 3 + i * 20, top + 3, partialTick, player,
+                    player.getInventory().items.get(i), seed++);
+        }
+        if (!offhand.isEmpty()) {
+            int itemX = offArm == HumanoidArm.LEFT ? center - 91 - 26 : center + 91 + 10;
+            renderSlot(graphics, minecraft, itemX, screenHeight - 19, partialTick, player, offhand, seed);
+        }
+
+        if (minecraft.options.attackIndicator().get() == AttackIndicatorStatus.HOTBAR) {
+            float strength = player.getAttackStrengthScale(0.0F);
+            if (strength < 1.0F) {
+                int x = offArm == HumanoidArm.RIGHT ? center - 91 - 22 : center + 91 + 6;
+                int y = screenHeight - 20;
+                int filled = (int) (strength * 19.0F);
+                graphics.blit(VANILLA_ICONS, x, y, 0, 94, 18, 18);
+                graphics.blit(VANILLA_ICONS, x, y + 18 - filled, 18, 112 - filled, 18, filled);
+            }
+        }
+    }
+
+    /** スロットのアイテム（拾った直後に少し跳ねる動きもバニラと同じ）。 */
+    private static void renderSlot(GuiGraphics graphics, Minecraft minecraft, int x, int y, float partialTick,
+                                   Player player, ItemStack stack, int seed) {
+        if (stack.isEmpty()) {
+            return;
+        }
+        float pop = stack.getPopTime() - partialTick;
+        if (pop > 0.0F) {
+            float bounce = 1.0F + pop / 5.0F;
+            graphics.pose().pushPose();
+            graphics.pose().translate(x + 8, y + 12, 0.0F);
+            graphics.pose().scale(1.0F / bounce, (bounce + 1.0F) / 2.0F, 1.0F);
+            graphics.pose().translate(-(x + 8), -(y + 12), 0.0F);
+        }
+        graphics.renderItem(player, stack, x, y, seed);
+        if (pop > 0.0F) {
+            graphics.pose().popPose();
+        }
+        graphics.renderItemDecorations(minecraft.font, stack, x, y);
     }
 
     // ---------------------------------------------------------------- 描画
@@ -207,6 +289,13 @@ public final class AmemaruHud {
             return 0.0F;
         }
         return 1.0F - elapsed / 900.0F;
+    }
+
+    /**
+     * このHUDが画面の下から使う高さ（結晶の冠の上まで）。チャットなどを、これより上に出すために使う。
+     */
+    public static int reservedHeight() {
+        return HOTBAR_HEIGHT + Mth.ceil(-GEM_Y * (float) ClientConfig.hudScale()) + 2;
     }
 
     /** ログアウトしたときなどに、動きの状態を消す。 */

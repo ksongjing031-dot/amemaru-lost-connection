@@ -52,6 +52,18 @@ public final class AmemaruHudArt {
     public static final int GEM_GLOW_W = 28;
     public static final int GEM_GLOW_H = 32;
 
+    // ---- ホットバー（182×22）・選んでいるスロットの枠（24×24）・オフハンドのスロット（22×22）
+    public static final int U_HOTBAR = 0;
+    public static final int V_HOTBAR = 112;
+    public static final int HOTBAR_W = 182;
+    public static final int HOTBAR_H = 22;
+    public static final int U_SELECTION = 184;
+    public static final int V_SELECTION = 112;
+    public static final int SELECTION_SIZE = 24;
+    public static final int U_OFFHAND = 208;
+    public static final int V_OFFHAND = 112;
+    public static final int OFFHAND_SIZE = 22;
+
     // ---- パネルの角の小さな結晶（9×9）
     public static final int U_DIAMOND = 168;
     public static final int V_DIAMOND = 0;
