@@ -6,7 +6,6 @@ import jp.amemaru.lostconnection.core.config.ServerConfig;
 import jp.amemaru.lostconnection.network.ModNetwork;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
-import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -24,10 +23,10 @@ public final class AmemaruMod {
     public static final String MOD_ID = "amemaru";
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public AmemaruMod() {
-        IEventBus modBus = FMLJavaModLoadingContext.get().getModEventBus();
+    /** Forge 47.4系では、読み込みの情報（context）をコンストラクタで受け取る。 */
+    public AmemaruMod(FMLJavaModLoadingContext context) {
+        IEventBus modBus = context.getModEventBus();
 
-        ModLoadingContext context = ModLoadingContext.get();
         // サーバーの設定はワールドごと（serverconfig/amemaru-server.toml）
         context.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC, MOD_ID + "-server.toml");
         // 見た目の設定はプレイヤーごと（config/amemaru-client.toml）
@@ -42,6 +41,6 @@ public final class AmemaruMod {
 
     /** {@code amemaru:<path>} の名前を作る。 */
     public static ResourceLocation id(String path) {
-        return new ResourceLocation(MOD_ID, path);
+        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
     }
 }

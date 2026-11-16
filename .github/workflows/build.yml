@@ -14,26 +14,65 @@ jobs:
     timeout-minutes: 40
     steps:
       - name: コードを取り出す
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Java 17 を用意する
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
 
       - name: Gradle を用意する（ラッパーの検証とキャッシュ）
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v5
 
       - name: ビルドする
         run: |
           chmod +x ./gradlew
           ./gradlew build --stacktrace
 
+      - name: jarの中身を確かめる
+        run: |
+          JAR=$(ls build/libs/*.jar | head -n 1)
+          echo "できたjar: $JAR"
+          unzip -l "$JAR"
+          echo "----- META-INF/mods.toml -----"
+          unzip -p "$JAR" META-INF/mods.toml
+
       - name: できたModのjarを保存する
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: amemaru-mod-${{ github.run_number }}
           path: build/libs/*.jar
           if-no-files-found: error
           retention-days: 30
+
+      # 開発用のサーバー（runServer）を起動し、Modが読み込まれて起動しきるか（「Done」が出るか）を確かめる。
+      # このModのエラーがログに出ていれば失敗にする。確かめたらサーバーは止める。
+      - name: サーバーで起動を確かめる
+        timeout-minutes: 10
+        run: |
+          mkdir -p run
+          echo "eula=true" > run/eula.txt
+          ./gradlew runServer > server-console.log 2>&1 &
+          GRADLE_PID=$!
+          STARTED=0
+          for i in $(seq 1 240); do
+            if grep -q "Done (" run/logs/latest.log 2>/dev/null; then STARTED=1; break; fi
+            if ! kill -0 "$GRADLE_PID" 2>/dev/null; then break; fi
+            sleep 2
+          done
+          echo "----- このModのログ -----"
+          grep -n "amemaru" run/logs/latest.log || true
+          FAIL=0
+          if [ "$STARTED" != "1" ]; then
+            echo "::error::サーバーが起動しきりませんでした"
+            tail -n 200 server-console.log || true
+            FAIL=1
+          fi
+          if grep -n -E "ERROR|Exception" run/logs/latest.log | grep -i -E "amemaru|jp\.amemaru"; then
+            echo "::error::このModに関わるエラーがログにあります"
+            FAIL=1
+          fi
+          pkill -f "forgeserveruserdev" || true
+          kill "$GRADLE_PID" 2>/dev/null || true
+          exit $FAIL
