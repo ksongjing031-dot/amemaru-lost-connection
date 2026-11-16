@@ -1,0 +1,113 @@
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+}
+
+version = "${minecraft_version}-${mod_version}"
+group = mod_group_id
+
+base {
+    archivesName = mod_id
+}
+
+// Minecraft 1.20.1 は Java 17 で動く
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
+
+minecraft {
+    mappings channel: mapping_channel, version: mapping_version
+
+    // 開発用の起動（runClient など）の前に、resources をIDEの出力先へ写す
+    copyIdeResources = true
+
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.markers', 'REGISTRIES'
+            property 'forge.logging.console.level', 'info'
+
+            mods {
+                "${mod_id}" {
+                    source sourceSets.main
+                }
+            }
+        }
+
+        // gradlew runClient ： 開発用のクライアント（名前は Dev）
+        client {
+            property 'forge.enabledGameTestNamespaces', mod_id
+        }
+
+        // gradlew runClient2 ： 1台のPCで2人目を試すためのクライアント（名前は Tester2）
+        client2 {
+            parent runs.client
+            workingDirectory project.file('run-client2')
+            args '--username', 'Tester2'
+        }
+
+        // gradlew runServer ： 開発用のサーバー
+        server {
+            property 'forge.enabledGameTestNamespaces', mod_id
+            args '--nogui'
+        }
+
+        // gradlew runGameTestServer ： 自動テスト（GameTest）をすべて動かして終わるサーバー
+        gameTestServer {
+            property 'forge.enabledGameTestNamespaces', mod_id
+        }
+    }
+}
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
+
+repositories {
+    // Phase 2 以降で GeckoLib・Curios・playerAnimator の取得先をここに足す
+}
+
+dependencies {
+    minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    var replaceProperties = [
+            minecraft_version      : minecraft_version,
+            minecraft_version_range: minecraft_version_range,
+            forge_version          : forge_version,
+            forge_version_range    : forge_version_range,
+            loader_version_range   : loader_version_range,
+            mod_id                 : mod_id,
+            mod_name               : mod_name,
+            mod_license            : mod_license,
+            mod_version            : mod_version,
+            mod_authors            : mod_authors,
+    ]
+    inputs.properties replaceProperties
+
+    // mods.toml に日本語の説明があるため、文字コードを UTF-8 に固定する
+    filteringCharset = 'UTF-8'
+
+    filesMatching(['META-INF/mods.toml', 'pack.mcmeta']) {
+        expand replaceProperties + [project: project]
+    }
+}
+
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes([
+                'Specification-Title'     : mod_id,
+                'Specification-Vendor'    : mod_authors,
+                'Specification-Version'   : '1',
+                'Implementation-Title'    : project.name,
+                'Implementation-Version'  : project.jar.archiveVersion,
+                'Implementation-Vendor'   : mod_authors,
+                'Implementation-Timestamp': new Date().format("yyyy-MM-dd'T'HH:mm:ssZ")
+        ])
+    }
+    finalizedBy 'reobfJar'
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8'
+}

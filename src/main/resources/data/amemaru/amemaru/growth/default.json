@@ -1,0 +1,39 @@
+{
+  "max_level": 50,
+  "exp": {
+    "base": 120,
+    "growth": 1.09
+  },
+  "points": {
+    "stat_per_level": 3,
+    "skill_per_level": 1,
+    "skill_bonus_every": 5,
+    "skill_bonus": 1
+  },
+  "base": {
+    "hp": 200,
+    "mp": 100,
+    "attack": 10,
+    "magic": 10,
+    "defense": 5,
+    "speed": 10,
+    "crit": 5,
+    "crit_damage": 50
+  },
+  "per_level": {
+    "hp": 40,
+    "mp": 10,
+    "attack": 2,
+    "magic": 2,
+    "defense": 1
+  },
+  "per_point": {
+    "hp": 12,
+    "mp": 5,
+    "attack": 1,
+    "magic": 1,
+    "defense": 1,
+    "speed": 1,
+    "crit": 0.3
+  }
+}

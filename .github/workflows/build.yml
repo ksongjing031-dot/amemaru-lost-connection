@@ -1,0 +1,178 @@
+name: ビルド
+
+# main へのプッシュと、プルリクエスト（Phaseごとのブランチ）のたびに動く。
+# 同じコードで2回動かないよう、ブランチへのプッシュだけでは動かさない（プルリクエストの方で動く）。
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# 同じブランチ（プルリクエスト）に新しいコードが来たら、前の確認は止める
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - name: コードを取り出す
+        uses: actions/checkout@v5
+
+      - name: Java 17 を用意する
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Gradle を用意する（ラッパーの検証とキャッシュ）
+        uses: gradle/actions/setup-gradle@v5
+
+      - name: ビルドする
+        run: |
+          chmod +x ./gradlew
+          ./gradlew build --stacktrace
+
+      - name: jarの中身を確かめる
+        run: |
+          JAR=$(ls build/libs/*.jar | head -n 1)
+          echo "できたjar: $JAR"
+          unzip -l "$JAR"
+          echo "----- META-INF/mods.toml -----"
+          unzip -p "$JAR" META-INF/mods.toml
+
+      - name: できたModのjarを保存する
+        uses: actions/upload-artifact@v6
+        with:
+          name: amemaru-mod-${{ github.run_number }}
+          path: build/libs/*.jar
+          if-no-files-found: error
+          retention-days: 30
+
+      # 自動テスト（GameTest）を専用のサーバーで動かす。1つでも失敗したら、このステップを失敗にする。
+      - name: 自動テスト（GameTest）を動かす
+        timeout-minutes: 10
+        run: |
+          ./gradlew runGameTestServer > gametest.log 2>&1 || true
+          echo "----- テストの結果 -----"
+          grep -E "GAME TESTS COMPLETE|required tests (passed|failed)|failed!|::|GameTestAssertException|amemaru" gametest.log | tail -n 80 || true
+          if grep -q "required tests failed" gametest.log; then
+            echo "::error::失敗した自動テストがあります"
+            exit 1
+          fi
+          if ! grep -q "required tests passed" gametest.log; then
+            echo "::error::自動テストの結果が見つかりません"
+            tail -n 150 gametest.log
+            exit 1
+          fi
+
+      # 開発用のサーバー（runServer）を起動し、Modが読み込まれて起動しきるか（「Done」が出るか）を確かめる。
+      # このModのエラーがログに出ていれば失敗にする。確かめたらサーバーは止める。
+      - name: サーバーで起動を確かめる
+        timeout-minutes: 10
+        run: |
+          mkdir -p run
+          echo "eula=true" > run/eula.txt
+          ./gradlew runServer > server-console.log 2>&1 &
+          GRADLE_PID=$!
+          STARTED=0
+          for i in $(seq 1 240); do
+            if grep -q "Done (" run/logs/latest.log 2>/dev/null; then STARTED=1; break; fi
+            if ! kill -0 "$GRADLE_PID" 2>/dev/null; then break; fi
+            sleep 2
+          done
+          echo "----- このModのログ -----"
+          grep -n "amemaru" run/logs/latest.log || true
+          FAIL=0
+          if [ "$STARTED" != "1" ]; then
+            echo "::error::サーバーが起動しきりませんでした"
+            tail -n 200 server-console.log || true
+            FAIL=1
+          fi
+          if grep -n -E "ERROR|Exception" run/logs/latest.log | grep -i -E "amemaru|jp\.amemaru"; then
+            echo "::error::このModに関わるエラーがログにあります"
+            FAIL=1
+          fi
+          pkill -f "forgeserveruserdev" || true
+          kill "$GRADLE_PID" 2>/dev/null || true
+          exit $FAIL
+
+  # 本物の手順（Forgeを入れたMinecraftの mods に jar を置く）でクライアントを起動し、
+  # シングルプレイのワールドに入ってHUDが描かれる状態を数秒続け、落ちずに終わるかを確かめる。
+  client-test:
+    name: クライアントで起動を確かめる
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Java 17 を用意する
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: できたModのjarを受け取る
+        uses: actions/download-artifact@v7
+        with:
+          name: amemaru-mod-${{ github.run_number }}
+          path: run/mods
+
+      # Forgeの起動中の小さな画面（early window）は、CIの仮想画面では作れずに止まることがあるため、使わない
+      - name: Forgeの起動画面を止める
+        run: |
+          mkdir -p run/config
+          printf 'earlyWindowControl = false\n' > run/config/fml.toml
+
+      - name: クライアントを起動し、ワールドに入って出る（画面写真も撮る）
+        timeout-minutes: 15
+        uses: headlesshq/mc-runtime-test@5.0.0
+        with:
+          mc: 1.20.1
+          modloader: forge
+          regex: .*forge.*
+          mc-runtime-test: forge
+          java: 17
+          # -Damemaru.ci.screenshots=true で、HUDとステータス画面の写真をログに書く（CiScreenshots.java）
+          headlessmc-command: --jvm "-Djava.awt.headless=true -Damemaru.ci.screenshots=true"
+
+      - name: 画面写真を取り出す
+        if: always()
+        run: |
+          mkdir -p screenshots
+          python3 - <<'PY'
+          import base64, collections, glob, re
+          parts = collections.defaultdict(dict)
+          totals = {}
+          pattern = re.compile(r'AMEMARU_SHOT\|([a-z_]+)\|(\d+)\|(\d+)\|([A-Za-z0-9+/=]+)')
+          for path in glob.glob('run/logs/*.log'):
+              with open(path, encoding='utf-8', errors='replace') as f:
+                  for line in f:
+                      m = pattern.search(line)
+                      if m:
+                          parts[m.group(1)][int(m.group(2))] = m.group(4)
+                          totals[m.group(1)] = int(m.group(3))
+          for name, chunks in sorted(parts.items()):
+              total = totals[name]
+              if len(chunks) != total:
+                  print(f'{name}: {len(chunks)}/{total} (足りない)')
+                  continue
+              data = ''.join(chunks[i] for i in range(total))
+              with open(f'screenshots/{name}.png', 'wb') as out:
+                  out.write(base64.b64decode(data))
+              print(f'保存しました: screenshots/{name}.png')
+          PY
+          ls -la screenshots
+
+      - name: 画面写真を保存する
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: screenshots-${{ github.run_number }}
+          path: screenshots/*.png
+          if-no-files-found: warn
+          retention-days: 30

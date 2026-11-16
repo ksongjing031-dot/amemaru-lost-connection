@@ -1,0 +1,16 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        maven {
+            name = 'MinecraftForge'
+            url = 'https://maven.minecraftforge.net/'
+        }
+    }
+}
+
+plugins {
+    // JDK 17 が入っていない PC では、ビルド時に自動で取得する
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.7.0'
+}
+
+rootProject.name = 'amemaru-lost-connection'
