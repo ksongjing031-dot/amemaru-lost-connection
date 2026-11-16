@@ -1,7 +1,10 @@
 name: ビルド
 
+# main へのプッシュと、プルリクエスト（Phaseごとのブランチ）のたびに動く。
+# 同じコードで2回動かないよう、ブランチへのプッシュだけでは動かさない（プルリクエストの方で動く）。
 on:
   push:
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -45,6 +48,23 @@ jobs:
           path: build/libs/*.jar
           if-no-files-found: error
           retention-days: 30
+
+      # 自動テスト（GameTest）を専用のサーバーで動かす。1つでも失敗したら、このステップを失敗にする。
+      - name: 自動テスト（GameTest）を動かす
+        timeout-minutes: 10
+        run: |
+          ./gradlew runGameTestServer > gametest.log 2>&1 || true
+          echo "----- テストの結果 -----"
+          grep -E "GAME TESTS COMPLETE|required tests (passed|failed)|failed!|::|GameTestAssertException|amemaru" gametest.log | tail -n 80 || true
+          if grep -q "required tests failed" gametest.log; then
+            echo "::error::失敗した自動テストがあります"
+            exit 1
+          fi
+          if ! grep -q "required tests passed" gametest.log; then
+            echo "::error::自動テストの結果が見つかりません"
+            tail -n 150 gametest.log
+            exit 1
+          fi
 
       # 開発用のサーバー（runServer）を起動し、Modが読み込まれて起動しきるか（「Done」が出るか）を確かめる。
       # このModのエラーがログに出ていれば失敗にする。確かめたらサーバーは止める。

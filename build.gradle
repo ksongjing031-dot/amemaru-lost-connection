@@ -52,6 +52,11 @@ minecraft {
             property 'forge.enabledGameTestNamespaces', mod_id
             args '--nogui'
         }
+
+        // gradlew runGameTestServer ： 自動テスト（GameTest）をすべて動かして終わるサーバー
+        gameTestServer {
+            property 'forge.enabledGameTestNamespaces', mod_id
+        }
     }
 }
 

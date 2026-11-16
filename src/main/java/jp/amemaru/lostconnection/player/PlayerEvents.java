@@ -12,6 +12,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.common.Mod;
 
+import java.util.Optional;
+
 /**
  * プレイヤーデータの付与・引き継ぎ・同期と、毎 tick の処理（Forgeのイベントバス）。
  */
@@ -20,12 +22,18 @@ public final class PlayerEvents {
     private PlayerEvents() {
     }
 
+    /**
+     * プレイヤーにデータを付ける。
+     *
+     * <p>体が消えるときの「無効化」の通知（{@code event.addListener}）は、わざと登録しない。
+     * 死亡してリスポーンするとき、Forgeは古い体の入り口を閉じてから {@link PlayerEvent.Clone} を出す。
+     * {@code reviveCaps()} で開け直せるのは体の側だけで、ここで無効化したデータの入り口は戻らないため、
+     * 登録すると新しい体にレベルや振り分けを写せなくなる（Phase 1で見つかった不具合）。</p>
+     */
     @SubscribeEvent
     public static void onAttachCapabilities(AttachCapabilitiesEvent<Entity> event) {
         if (event.getObject() instanceof Player) {
-            PlayerDataProvider provider = new PlayerDataProvider();
-            event.addCapability(PlayerDataCapability.ID, provider);
-            event.addListener(provider::invalidate);
+            event.addCapability(PlayerDataCapability.ID, new PlayerDataProvider());
         }
     }
 
@@ -34,8 +42,14 @@ public final class PlayerEvents {
     public static void onClone(PlayerEvent.Clone event) {
         Player original = event.getOriginal();
         original.reviveCaps();
-        PlayerDataCapability.get(original).ifPresent(oldData ->
-                PlayerDataCapability.get(event.getEntity()).ifPresent(newData -> newData.copyFrom(oldData)));
+        Optional<PlayerData> oldData = PlayerDataCapability.get(original);
+        Optional<PlayerData> newData = PlayerDataCapability.get(event.getEntity());
+        if (oldData.isPresent() && newData.isPresent()) {
+            newData.get().copyFrom(oldData.get());
+        } else {
+            AmemaruMod.LOGGER.error("[amemaru] Could not copy player data on respawn for {} (old={}, new={})",
+                    event.getEntity().getGameProfile().getName(), oldData.isPresent(), newData.isPresent());
+        }
         original.invalidateCaps();
     }
 

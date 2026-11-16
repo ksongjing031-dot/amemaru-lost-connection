@@ -11,6 +11,8 @@ import javax.annotation.Nullable;
 
 /**
  * プレイヤー1人分の {@link PlayerData} を持ち、保存と読み込みをForgeに任せるための入れ物。
+ *
+ * <p>入り口（{@link LazyOptional}）は無効化しない。理由は {@link PlayerEvents#onAttachCapabilities} を参照。</p>
  */
 public final class PlayerDataProvider implements ICapabilitySerializable<CompoundTag> {
     private final PlayerData data = new PlayerData();
@@ -30,10 +32,5 @@ public final class PlayerDataProvider implements ICapabilitySerializable<Compoun
     @Override
     public void deserializeNBT(CompoundTag tag) {
         data.load(tag);
-    }
-
-    /** プレイヤーの体が消えたときに呼ばれる。 */
-    public void invalidate() {
-        optional.invalidate();
     }
 }
