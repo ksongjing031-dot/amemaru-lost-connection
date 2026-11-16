@@ -23,6 +23,8 @@ GitHubの自動ビルド（GitHub Actions）が、コードを上げるたびに
 3. 下の「Artifacts」にある `amemaru-mod-<番号>` をダウンロードする
 4. ダウンロードしたzipを開き、中の `amemaru-1.20.1-<版>.jar` を取り出す
 
+同じ場所の `screenshots-<番号>` には、自動の確認で撮ったHUDとステータス画面の写真が入っています。
+
 ## 遊び方（LANでの確認）
 
 1. Minecraftのランチャーに Forge 1.20.1 を入れる（Forgeの公式サイトで 1.20.1 の「Latest」のインストーラーを使い、「Install client」）

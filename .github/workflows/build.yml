@@ -11,6 +11,11 @@ on:
 permissions:
   contents: read
 
+# 同じブランチ（プルリクエスト）に新しいコードが来たら、前の確認は止める
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -117,7 +122,14 @@ jobs:
           name: amemaru-mod-${{ github.run_number }}
           path: run/mods
 
+      # Forgeの起動中の小さな画面（early window）は、CIの仮想画面では作れずに止まることがあるため、使わない
+      - name: Forgeの起動画面を止める
+        run: |
+          mkdir -p run/config
+          printf 'earlyWindowControl = false\n' > run/config/fml.toml
+
       - name: クライアントを起動し、ワールドに入って出る（画面写真も撮る）
+        timeout-minutes: 15
         uses: headlesshq/mc-runtime-test@5.0.0
         with:
           mc: 1.20.1
