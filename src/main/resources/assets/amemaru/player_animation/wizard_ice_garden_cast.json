@@ -1,0 +1,100 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "wizard_ice_garden_cast": {
+      "animation_length": 1.199,
+      "bones": {
+        "right_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -60,
+                -10,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.601": {
+              "vector": [
+                -66,
+                -12,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "1.201": {
+              "vector": [
+                -60,
+                -10,
+                0
+              ]
+            }
+          }
+        },
+        "left_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -20,
+                0,
+                -55
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.401": {
+              "vector": [
+                -30,
+                10,
+                -60
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.801": {
+              "vector": [
+                -15,
+                -10,
+                -50
+              ],
+              "easing": "easeInOutSine"
+            },
+            "1.201": {
+              "vector": [
+                -20,
+                0,
+                -55
+              ]
+            }
+          }
+        },
+        "body": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                6,
+                0,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.601": {
+              "vector": [
+                8,
+                0,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "1.201": {
+              "vector": [
+                6,
+                0,
+                0
+              ]
+            }
+          }
+        }
+      },
+      "loop": true
+    }
+  }
+}

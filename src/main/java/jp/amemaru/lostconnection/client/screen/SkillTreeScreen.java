@@ -70,6 +70,8 @@ public class SkillTreeScreen extends Screen {
     private static final int SLOT_STEP = 27;
     /** 奥義のつまみの番号（流派は0・1…）。 */
     private static final int ULTIMATE_TAB = 99;
+    /** 奥義のつまみで、節を木の上からどれだけ下げるか。 */
+    private static final int ULTIMATE_NODE_DY = 4;
 
     private int left;
     private int top;
@@ -176,6 +178,9 @@ public class SkillTreeScreen extends Screen {
         if (skill.jobIndex() != state.jobIndex()) {
             return Component.translatable("screen.amemaru.skill_tree.need.other_job");
         }
+        if (chosenUltimate(skill, state) != null) {
+            return Component.translatable("screen.amemaru.skill_tree.need.ultimate_chosen");
+        }
         int next = state.rank(skill.index()) + 1;
         if (state.level() < skill.minLevel()) {
             return Component.translatable("screen.amemaru.skill_tree.need.level", skill.minLevel());
@@ -208,6 +213,10 @@ public class SkillTreeScreen extends Screen {
         if (next > skill.maxRank()) {
             return Component.translatable("message.amemaru.skill.learn.max_rank");
         }
+        SyncDefinitionsS2C.SkillInfo chosen = chosenUltimate(skill, state);
+        if (chosen != null) {
+            return Component.translatable("message.amemaru.skill.learn.ultimate_chosen", chosen.name());
+        }
         if (state.level() < skill.minLevel()) {
             return Component.translatable("message.amemaru.skill.learn.level", skill.minLevel());
         }
@@ -223,6 +232,32 @@ public class SkillTreeScreen extends Screen {
             return Component.translatable("message.amemaru.skill.learn.points", skill.rankCosts()[next - 1]);
         }
         return null;
+    }
+
+    /** 同じ職業の、もう覚えている「ほかの」奥義（奥義は2つから1つを選ぶ。サーバーと同じ決まり）。なければ null。 */
+    @Nullable
+    private static SyncDefinitionsS2C.SkillInfo chosenUltimate(SyncDefinitionsS2C.SkillInfo skill, ClientPlayerState state) {
+        if (!skill.ultimate()) {
+            return null;
+        }
+        for (SyncDefinitionsS2C.SkillInfo other : ClientDefinitions.get().skillsOf(skill.jobIndex())) {
+            if (other.ultimate() && other.index() != skill.index() && state.rank(other.index()) > 0) {
+                return other;
+            }
+        }
+        return null;
+    }
+
+    /** 職業の奥義（流派の順）。 */
+    private static List<SyncDefinitionsS2C.SkillInfo> ultimatesOf(int jobIndex) {
+        List<SyncDefinitionsS2C.SkillInfo> list = new ArrayList<>();
+        for (SyncDefinitionsS2C.SkillInfo skill : ClientDefinitions.get().skillsOf(jobIndex)) {
+            if (skill.ultimate()) {
+                list.add(skill);
+            }
+        }
+        list.sort(java.util.Comparator.comparingInt(SyncDefinitionsS2C.SkillInfo::schoolIndex));
+        return list;
     }
 
     private static String requirementText(SyncDefinitionsS2C.SkillInfo skill) {
@@ -251,10 +286,20 @@ public class SkillTreeScreen extends Screen {
         }
     }
 
-    /** 木の中の、節の左上（奥義のつまみでは、真ん中）。 */
+    /** 木の中の、節の左上（奥義のつまみでは、奥義を横に並べる。2つなら左右）。 */
     private int[] nodePosition(SyncDefinitionsS2C.SkillInfo skill) {
         if (skill.ultimate() || skill.schoolIndex() < 0) {
-            return new int[]{left + TREE_X + (TREE_W - NODE) / 2, top + GRID_Y + 6};
+            List<SyncDefinitionsS2C.SkillInfo> ultimates = ultimatesOf(skill.jobIndex());
+            int count = Math.max(1, ultimates.size());
+            int place = 0;
+            for (int i = 0; i < ultimates.size(); i++) {
+                if (ultimates.get(i).index() == skill.index()) {
+                    place = i;
+                }
+            }
+            int spacing = TREE_W / count;
+            int center = left + TREE_X + spacing * place + spacing / 2;
+            return new int[]{center - NODE / 2, top + GRID_Y + ULTIMATE_NODE_DY};
         }
         int x = left + GRID_X + Math.min(COLUMNS - 1, Math.max(0, skill.column())) * COL_STEP;
         int y = top + GRID_Y + Math.min(ROWS - 1, Math.max(0, skill.row())) * ROW_STEP;
@@ -390,11 +435,35 @@ public class SkillTreeScreen extends Screen {
         int lineY = top + SCHOOL_TAB_Y + SCHOOL_TAB_H;
         graphics.fill(left + TREE_X, lineY, left + TREE_X + TREE_W, lineY + 1, 0x808FD3FF);
         if (tab == ULTIMATE_TAB) {
-            // 奥義：真ん中に節、下に上位職の説明
-            int textY = top + GRID_Y + NODE + 14;
+            // 奥義：流派ごとの奥義を左右に並べ（どちらか1つを選ぶ）、下に決まりと上位職の説明
+            List<SyncDefinitionsS2C.SkillInfo> ultimates = ultimatesOf(job.index());
+            int labelY = top + GRID_Y + ULTIMATE_NODE_DY + NODE + 3;
+            for (SyncDefinitionsS2C.SkillInfo ultimate : ultimates) {
+                int center = nodePosition(ultimate)[0] + NODE / 2;
+                boolean known = ultimate.schoolIndex() >= 0 && ultimate.schoolIndex() < job.schools().size();
+                String school = known ? job.schools().get(ultimate.schoolIndex()).name() : "";
+                int color = known ? job.schools().get(ultimate.schoolIndex()).color() : 0xFFC94D;
+                graphics.drawCenteredString(font, Component.translatable("screen.amemaru.skill_tree.ultimate_of", school).getString(), center,
+                        labelY, 0xFF000000 | color);
+                if (state.rank(ultimate.index()) > 0) {
+                    graphics.drawCenteredString(font, Component.translatable("screen.amemaru.skill_tree.ultimate_chosen").getString(), center,
+                            labelY + 10, UiStyle.TEXT_GOLD);
+                }
+            }
+            if (ultimates.size() == 2) {
+                int[] a = nodePosition(ultimates.get(0));
+                int[] b = nodePosition(ultimates.get(1));
+                graphics.drawCenteredString(font, Component.translatable("screen.amemaru.skill_tree.ultimate_or").getString(),
+                        (a[0] + b[0]) / 2 + NODE / 2, a[1] + (NODE - 8) / 2, UiStyle.TEXT_DIM);
+            }
+            int textY = labelY + 23;
+            int lines = UiStyle.wrapped(graphics, font, Component.translatable("screen.amemaru.skill_tree.ultimate_choice").getString(),
+                    left + TREE_X + 6, textY, TREE_W - 12, UiStyle.TEXT_DIM, 3);
+            int headY = textY + lines * 10 + 5;
             String head = job.hasUpper() ? job.upperName() : "";
-            graphics.drawCenteredString(font, head, left + TREE_X + TREE_W / 2, textY, UiStyle.TEXT_GOLD);
-            UiStyle.wrapped(graphics, font, job.upperDescription(), left + TREE_X + 6, textY + 13, TREE_W - 12, UiStyle.TEXT_DIM, 6);
+            graphics.drawCenteredString(font, head, left + TREE_X + TREE_W / 2, headY, UiStyle.TEXT_GOLD);
+            UiStyle.wrapped(graphics, font, job.upperDescription(), left + TREE_X + 6, headY + 12, TREE_W - 12, UiStyle.TEXT_DIM,
+                    Math.max(1, (top + PANEL_HEIGHT - 18 - (headY + 12)) / 10));
         } else {
             // 段の左に、覚えられるレベル
             int[] levels = new int[ROWS];
@@ -507,8 +576,12 @@ public class SkillTreeScreen extends Screen {
         int rankX = left + PANEL_WIDTH - 12 - font.width(rankText);
         graphics.drawString(font, UiStyle.clip(font, skill.name(), rankX - 4 - (x + 28)), x + 28, top + DETAIL_TOP + 1, UiStyle.TEXT, true);
         graphics.drawString(font, rankText, rankX, top + DETAIL_TOP + 1, rank > 0 ? UiStyle.TEXT_GOLD : UiStyle.TEXT_DIM, false);
-        String school = skill.ultimate() ? Component.translatable("screen.amemaru.skill_tree.ultimate").getString()
-                : skill.schoolIndex() >= 0 && skill.schoolIndex() < job.schools().size() ? job.schools().get(skill.schoolIndex()).name() : "";
+        String schoolName = skill.schoolIndex() >= 0 && skill.schoolIndex() < job.schools().size() ? job.schools().get(skill.schoolIndex()).name()
+                : "";
+        String school = skill.ultimate()
+                ? (schoolName.isEmpty() ? Component.translatable("screen.amemaru.skill_tree.ultimate").getString()
+                : Component.translatable("screen.amemaru.skill_tree.ultimate_of", schoolName).getString())
+                : schoolName;
         String kind = Component.translatable(skill.passive() ? "screen.amemaru.skill_tree.passive" : "screen.amemaru.skill_tree.active").getString();
         String link = LinkType.byIndex(skill.link()).label();
         String sub = school + "・" + kind + (link.isEmpty() ? "" : "・" + Component.translatable("screen.amemaru.skill_tree.link", link).getString());
@@ -606,7 +679,10 @@ public class SkillTreeScreen extends Screen {
             parts.add("CD " + trim(skill.cooldown()[r]) + "秒");
         }
         if (r < skill.cast().length && skill.cast()[r] > 0) {
-            parts.add("詠唱 " + trim(skill.cast()[r]) + "秒");
+            // ナイトの「詠唱」は、剣の構え
+            SyncDefinitionsS2C.JobInfo job = ClientDefinitions.get().job(skill.jobIndex());
+            boolean knight = job != null && job.id().getPath().equals("knight");
+            parts.add((knight ? "構え " : "詠唱 ") + trim(skill.cast()[r]) + "秒");
         }
         return String.join("・", parts);
     }

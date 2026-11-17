@@ -137,14 +137,16 @@ public final class SkillRegistry {
             }
         }
 
-        // 3回目：スキルツリーの同じ場所に2つ置いていないか
+        // 3回目：スキルツリーの同じ場所に2つ置いていないか（奥義は流派ごとに1つ。2つの流派の奥義から1つを選ぶ）
         Map<String, ResourceLocation> places = new HashMap<>();
         List<SkillDef> skills = new ArrayList<>();
         for (SkillDef skill : candidates.values()) {
-            String place = skill.job() + "/" + (skill.isUltimate() ? "ultimate" : skill.school() + "/" + skill.row() + "/" + skill.column());
+            String place = skill.job() + "/" + (skill.isUltimate() ? "ultimate/" + skill.school()
+                    : skill.school() + "/" + skill.row() + "/" + skill.column());
             ResourceLocation other = places.putIfAbsent(place, skill.id());
             if (other != null) {
-                problems.add("skills/" + skill.id() + "：スキルツリーの同じ場所に「" + other + "」があります（流派・row・column を変えてください）");
+                problems.add("skills/" + skill.id() + "：スキルツリーの同じ場所に「" + other + "」があります"
+                        + (skill.isUltimate() ? "（奥義は流派ごとに1つです）" : "（流派・row・column を変えてください）"));
                 continue;
             }
             skills.add(skill);

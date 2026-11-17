@@ -292,6 +292,38 @@ define("wizard_thunderbolt", 14,
              (14, ZERO)])
 
 
+# ================================================================ 奥義のもう一つ（11月17日）
+# 天断ち（構え）：両手で剣を天へ突き上げ、光の大剣を形づくる。足を開いて踏ん張る。くり返し（足は歩ける）
+define("knight_heaven_cleave_cast", 20, loop=True,
+       right_arm=[(0, [-178, 0, 8], "easeInOutSine"), (10, [-180, 0, 4], "easeInOutSine"), (20, [-178, 0, 8])],
+       left_arm=[(0, [-176, 0, -10], "easeInOutSine"), (10, [-178, 0, -6], "easeInOutSine"), (20, [-176, 0, -10])],
+       body=[(0, [-8, 0, 0], "easeInOutSine"), (10, [-10, 0, 0], "easeInOutSine"), (20, [-8, 0, 0])])
+
+# 天断ち（断つ）：天の大剣ごと、両手で前の地面へ振り下ろす
+define("knight_heaven_cleave", 18,
+       right_arm=[(0, [-180, 0, 4], "easeInQuad"), (3, [-30, 0, 10]), (12, [-30, 0, 10], "easeInOutSine"), (18, R_IDLE)],
+       left_arm=[(0, [-178, 0, -6], "easeInQuad"), (3, [-35, 0, -10]), (12, [-35, 0, -10], "easeInOutSine"), (18, L_IDLE)],
+       body=[(0, [-10, 0, 0], "easeInQuad"), (3, [28, 0, 0]), (12, [28, 0, 0], "easeInOutSine"), (18, ZERO)],
+       right_leg=[(0, ZERO), (3, [-35, 0, 6]), (12, [-35, 0, 6], "easeInOutSine"), (18, ZERO)],
+       left_leg=[(0, ZERO), (3, [28, 0, -6]), (12, [28, 0, -6], "easeInOutSine"), (18, ZERO)])
+
+# 氷華の檻（詠唱）：杖を前の地面へ向け、左手を下へ広げて冷気を集める。くり返し（足は歩ける）
+define("wizard_ice_garden_cast", 24, loop=True,
+       right_arm=[(0, [-60, -10, 0], "easeInOutSine"), (12, [-66, -12, 0], "easeInOutSine"), (24, [-60, -10, 0])],
+       left_arm=[(0, [-20, 0, -55], "easeInOutSine"), (8, [-30, 10, -60], "easeInOutSine"), (16, [-15, -10, -50], "easeInOutSine"),
+                 (24, [-20, 0, -55])],
+       body=[(0, [6, 0, 0], "easeInOutSine"), (12, [8, 0, 0], "easeInOutSine"), (24, [6, 0, 0])])
+
+# 氷華の檻（放つ）：杖を高く上げ、地面へ突き立てる
+define("wizard_ice_garden_release", 16,
+       right_arm=[(0, [-66, -12, 0], "easeOutQuad"), (4, [-175, 0, -5], "easeInQuad"), (7, [-40, -5, 0]),
+                  (12, [-40, -5, 0], "easeInOutSine"), (16, [-20, 0, 0])],
+       left_arm=[(0, [-20, 0, -55], "easeOutQuad"), (4, [-40, 0, -60], "easeInQuad"), (7, [-10, 0, -70]),
+                 (12, [-10, 0, -70], "easeInOutSine"), (16, L_IDLE)],
+       body=[(0, [8, 0, 0], "easeOutQuad"), (4, [-6, 0, 0], "easeInQuad"), (7, [16, 0, 0]), (12, [16, 0, 0], "easeInOutSine"),
+             (16, ZERO)])
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for name, data in ANIMS.items():

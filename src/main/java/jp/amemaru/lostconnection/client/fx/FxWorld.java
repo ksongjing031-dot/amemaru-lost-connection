@@ -732,6 +732,179 @@ public final class FxWorld {
         }
     }
 
+    /**
+     * 光の大剣（天断ち）。切っ先を下に向けて立ち、2枚の板を十字に重ねるので、どの向きからも剣の形に見える。
+     * はじめの appear tick で光りながら現れる。{@link #drop} を付けると、空から落ちて地面に突き立つ。
+     */
+    public static final class GiantSword extends Visual {
+        private final Anchor tip;
+        private final float length;
+        private final float width;
+        private final float yaw;
+        private final int color;
+        private final int appear;
+        private float dropHeight;
+        private int dropTicks;
+        private float sink;
+
+        /**
+         * @param tip    切っ先の場所
+         * @param length 柄頭から切っ先までの長さ
+         * @param width  鍔の幅（刃はその半分ほど）
+         * @param yaw    剣の向き（度。刃の平らな面が、この向きを向く）
+         */
+        public GiantSword(Anchor tip, float length, float width, float yaw, int color, int life, int appear) {
+            super(life);
+            this.tip = tip;
+            this.length = length;
+            this.width = width;
+            this.yaw = yaw;
+            this.color = color;
+            this.appear = appear;
+        }
+
+        /** height ブロック上から ticks で落ちてきて、切っ先が sink ブロック地面に刺さる。 */
+        public GiantSword drop(float height, int ticks, float sink) {
+            this.dropHeight = height;
+            this.dropTicks = Math.max(1, ticks);
+            this.sink = sink;
+            return this;
+        }
+
+        @Override
+        public void render(FxDraw draw, ClientLevel level) {
+            float partial = draw.partialTick();
+            float t = age + partial;
+            float shown = appear <= 0 ? 1.0F : Mth.clamp(t / appear, 0.0F, 1.0F);
+            float a = shown * fade(partial, 0, Math.min(10, life / 3 + 1));
+            if (a <= 0.003F) {
+                return;
+            }
+            Vec3 point = tip.get(level, partial);
+            if (dropTicks > 0) {
+                float p = Mth.clamp(t / dropTicks, 0.0F, 1.0F);
+                point = point.add(0.0, dropHeight * (1.0F - p * p) - sink * p * p, 0.0);
+            }
+            // 現れるときは、上から下へ光が満ちる（下の方ほど遅れて見える）
+            Vec3 top = point.add(0.0, length, 0.0);
+            float rad = yaw * Mth.DEG_TO_RAD;
+            Vec3 sideA = new Vec3(Mth.cos(rad), 0.0, Mth.sin(rad)).scale(width / 2.0);
+            Vec3 sideB = new Vec3(-Mth.sin(rad), 0.0, Mth.cos(rad)).scale(width / 2.0);
+            float v1 = 0.15F + 0.85F * shown;
+            Vec3 bottom = top.lerp(point, v1);
+            VertexConsumer vc = draw.glow(FxTextures.GREATSWORD);
+            float shimmer = 0.85F + 0.15F * Mth.sin(t * 0.6F);
+            for (Vec3 side : new Vec3[]{sideA, sideB}) {
+                draw.quad(vc, top.subtract(side), bottom.subtract(side), bottom.add(side), top.add(side), 0.0F, 0.0F, 1.0F, v1, color,
+                        a * shimmer);
+                // 芯の白い光
+                draw.quad(vc, top.subtract(side.scale(0.55)), bottom.subtract(side.scale(0.55)), bottom.add(side.scale(0.55)),
+                        top.add(side.scale(0.55)), 0.0F, 0.0F, 1.0F, v1, 0xFFFFFF, a * 0.45F);
+            }
+            // 鍔のあたりの光
+            draw.billboard(draw.glow(FxTextures.GLOW), top.subtract(0.0, length * 0.25, 0.0), width * 1.4F, 0.0F, color, a * 0.5F);
+        }
+
+        @Override
+        protected boolean alive(ClientLevel level) {
+            return tip.present(level);
+        }
+    }
+
+    /**
+     * 地面を走る切り口（天断ち）：from から to へ、extend tick で先へ伸びる光の帯。真ん中に裂け目の線。
+     */
+    public static final class GroundCut extends Visual {
+        private final Vec3 from;
+        private final Vec3 to;
+        private final float width;
+        private final int color;
+        private final int extend;
+        private final long seed;
+
+        public GroundCut(Vec3 from, Vec3 to, float width, int color, int life, int extend) {
+            super(life);
+            this.from = from;
+            this.to = to;
+            this.width = width;
+            this.color = color;
+            this.extend = Math.max(1, extend);
+            this.seed = Double.doubleToLongBits(from.x * 31.0 + to.z);
+        }
+
+        @Override
+        public void render(FxDraw draw, ClientLevel level) {
+            float partial = draw.partialTick();
+            float t = age + partial;
+            float reach = Mth.clamp(t / extend, 0.0F, 1.0F);
+            float a = fade(partial, 0, Math.max(1, life - extend));
+            Vec3 start = from.add(0.0, 0.06, 0.0);
+            Vec3 end = start.lerp(to.add(0.0, 0.06, 0.0), 1.0F - (1.0F - reach) * (1.0F - reach));
+            Vec3 dir = end.subtract(start);
+            if (dir.lengthSqr() < 1.0E-6) {
+                return;
+            }
+            Vec3 side = new Vec3(-dir.z, 0.0, dir.x).normalize().scale(width / 2.0);
+            // 帯（地面に寝かせる。中ほどが明るい）
+            draw.quad(draw.glow(FxTextures.BEAM), start.subtract(side), start.add(side), end.add(side), end.subtract(side), 0.0F, 0.0F, 1.0F,
+                    1.0F, color, a * 0.7F);
+            // 真ん中の裂け目（ギザギザの白い線）
+            int segments = Mth.clamp((int) (dir.length() * 1.5), 4, 32);
+            Vec3[] points = FxDraw.lightningPoints(start.add(0.0, 0.02, 0.0), end.add(0.0, 0.02, 0.0), segments, 0.25F, seed);
+            for (int i = 0; i < points.length; i++) {
+                points[i] = new Vec3(points[i].x, start.y + 0.02, points[i].z);
+            }
+            draw.polyline(draw.glow(FxTextures.LIGHTNING), points, 0.35F, 0xFFFFFF, a);
+            draw.polyline(draw.glow(FxTextures.LIGHTNING), points, 0.9F, color, a * 0.6F);
+        }
+    }
+
+    /**
+     * 詠唱の間の、狙う向きの印（天断ち）：エンティティの足もとから、今向いている方へ length ブロックの帯。
+     */
+    public static final class LinePreview extends Visual {
+        private final int entityId;
+        private final float length;
+        private final float width;
+        private final int color;
+
+        public LinePreview(int entityId, float length, float width, int color, int life) {
+            super(life);
+            this.entityId = entityId;
+            this.length = length;
+            this.width = width;
+            this.color = color;
+        }
+
+        @Override
+        public void render(FxDraw draw, ClientLevel level) {
+            Entity entity = level.getEntity(entityId);
+            if (entity == null) {
+                return;
+            }
+            float partial = draw.partialTick();
+            float t = age + partial;
+            float yaw = Mth.lerp(partial, entity.yRotO, entity.getYRot()) * Mth.DEG_TO_RAD;
+            Vec3 dir = new Vec3(-Mth.sin(yaw), 0.0, Mth.cos(yaw));
+            Vec3 start = entity.getPosition(partial).add(0.0, 0.07, 0.0).add(dir.scale(0.6));
+            Vec3 end = start.add(dir.scale(Math.max(0.5F, length - 0.6F)));
+            Vec3 side = new Vec3(-dir.z, 0.0, dir.x).scale(width / 2.0);
+            float a = fade(partial, 6, 3) * (0.3F + 0.15F * Mth.sin(t * 0.5F));
+            draw.quad(draw.glow(FxTextures.BEAM), start.subtract(side), start.add(side), end.add(side), end.subtract(side), 0.0F, 0.0F, 1.0F,
+                    1.0F, color, a);
+            // ふちの細い線と、先へ流れる光
+            draw.beam(draw.glow(FxTextures.BEAM), start.subtract(side), end.subtract(side), 0.08F, 0.0F, 1.0F, color, a * 1.6F);
+            draw.beam(draw.glow(FxTextures.BEAM), start.add(side), end.add(side), 0.08F, 0.0F, 1.0F, color, a * 1.6F);
+            float run = (t * 0.06F) % 1.0F;
+            draw.billboard(draw.glow(FxTextures.GLOW), start.lerp(end, run).add(0.0, 0.15, 0.0), width * 0.8F, 0.0F, color, a * 1.4F);
+        }
+
+        @Override
+        protected boolean alive(ClientLevel level) {
+            return level.getEntity(entityId) != null;
+        }
+    }
+
     /** 飛んでいく氷の槍（氷柱）。 */
     public static final class Spear extends Visual {
         private final Vec3 from;

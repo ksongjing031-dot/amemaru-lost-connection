@@ -188,6 +188,46 @@ public final class SkillFx {
                     Fx.scatter(level, ModParticles.STAR.get(), at, radius, 1, GOLD_LIGHT, 0.3F, 30, 0.2, new Vec3(0.0, 0.08, 0.0));
                 })).tag(id, TAG_MARKER);
             }
+            case "knight_heaven_cleave" -> {
+                // 頭上に、光の大剣が上から形づくられていく。足もとから誓いの糸（光）が昇り、地面には断つ向きの印
+                float yaw = caster != null ? caster.getYRot() : 0.0F;
+                float length = Math.max(4.0F, message.radius());
+                FxWorld.add(new FxWorld.GiantSword(Anchor.entity(id, new Vec3(0.0, 2.7, 0.0)), 6.5F, 2.4F, yaw, GOLD, ticks + 4,
+                        Math.max(6, ticks - 4))).tag(id, TAG_CAST);
+                FxWorld.add(new FxWorld.LinePreview(id, length, 3.0F, EMBER, ticks + 4)).tag(id, TAG_CAST);
+                FxWorld.add(new FxWorld.Sigil(Anchor.entity(id, Vec3.ZERO), 2.2F, FxTextures.SIGIL_OATH, GOLD, ticks + 6, 0.06F, 8, 0.9F))
+                        .tag(id, TAG_CAST);
+                FxWorld.add(new FxWorld.Emitter(Anchor.entity(id, Vec3.ZERO), ticks + 2, at -> {
+                    for (int i = 0; i < 2; i++) {
+                        double angle = level.random.nextDouble() * Math.PI * 2.0;
+                        Vec3 start = at.add(Math.cos(angle) * 2.0, 0.2, Math.sin(angle) * 2.0);
+                        Vec3 goal = at.add(0.0, 6.0, 0.0);
+                        Fx.add(level, Fx.glow(GOLD_LIGHT, 0.22F, 14), start, goal.subtract(start).scale(1.0 / 14.0));
+                    }
+                })).tag(id, TAG_CAST);
+            }
+            case "wizard_ice_garden" -> {
+                // 狙った地点に氷の陣。冷気が渦を巻いて集まり、詠唱の半ばで花のつぼみが顔を出す
+                float radius = Math.max(1.0F, message.radius());
+                Vec3 at = message.to();
+                FxWorld.add(new FxWorld.Sigil(Anchor.at(at), radius, FxTextures.SIGIL_FROST, ICE, ticks + 20, 0.012F, 16, 0.85F))
+                        .tag(id, TAG_MARKER);
+                FxWorld.add(new FxWorld.Rim(at, radius, 1.0F, FROST, ticks + 16, 0.4F)).tag(id, TAG_MARKER);
+                FxWorld.add(new FxWorld.Sigil(Anchor.entity(id, Vec3.ZERO), 2.0F, FxTextures.SIGIL_FROST, ICE, ticks + 6, -0.03F, 10, 0.8F))
+                        .tag(id, TAG_CAST);
+                FxWorld.add(new FxWorld.Emitter(Anchor.at(at), ticks + 10, center -> {
+                    for (int i = 0; i < 2; i++) {
+                        double angle = level.random.nextDouble() * Math.PI * 2.0;
+                        Vec3 edge = center.add(Math.cos(angle) * radius, 0.3 + level.random.nextDouble() * 1.4, Math.sin(angle) * radius);
+                        Vec3 swirl = new Vec3(-Math.sin(angle), 0.0, Math.cos(angle)).scale(0.14);
+                        Vec3 inward = center.add(0.0, 0.6, 0.0).subtract(edge).scale(1.0 / 28.0);
+                        Fx.add(level, Fx.snow(ICE, 0.16F, 28), edge, inward.add(swirl));
+                    }
+                })).tag(id, TAG_MARKER);
+                long seed = level.random.nextLong();
+                FxWorld.later(ticks / 2, () -> FxWorld.add(new FxWorld.Spikes(at, radius * 0.5F, 6, 0.55F, ICE, ticks / 2 + 14, seed))
+                        .tag(id, TAG_MARKER)).tag(id, TAG_MARKER);
+            }
             default -> {
             }
         }
@@ -489,6 +529,48 @@ public final class SkillFx {
                             null));
                 }
             }
+            case "wizard_ice_garden" -> {
+                // 杖から狙った地点へ、冷気の帯が伸びる（花が咲くのは着弾のとき）
+                int delay = Math.max(4, message.ticks());
+                FxWorld.add(new FxWorld.Beam(Anchor.center(id, new Vec3(0.0, 0.3, 0.0)), Anchor.at(to.add(0.0, 0.4, 0.0)), 0.35F, FxTextures.BEAM,
+                        ICE, delay + 4, 1.0F, 0.4F).extend(Math.max(2, delay - 2)));
+                Fx.line(level, ModParticles.SNOW.get(), from.add(0.0, 1.2, 0.0), to.add(0.0, 0.5, 0.0), 24, ICE, 0.14F, 20, 0.05);
+                FxWorld.add(new FxWorld.Flare(Anchor.at(to.add(0.0, 0.6, 0.0)), 2.4F, ICE, delay + 2, FxTextures.STAR, 0.2F, delay));
+            }
+            case "knight_heaven_cleave" -> {
+                // 頭上の大剣が、前の地面へ突き立つ。切り口が線の先まで走り、光の柱が順に噴き上がる
+                Vec3 dir = new Vec3(to.x - from.x, 0.0, to.z - from.z);
+                double length = Math.max(1.0, dir.length());
+                Vec3 flat = dir.scale(1.0 / length);
+                float bladeYaw = (float) Math.toDegrees(Math.atan2(flat.z, flat.x));
+                float width = radius > 0.0F ? radius : 3.0F;
+                Vec3 impact = from.add(flat.scale(Math.min(2.5, length)));
+                FxWorld.add(new FxWorld.GiantSword(Anchor.at(impact), 6.5F, 2.4F, bladeYaw, GOLD, 30, 0).drop(8.0F, 3, 1.6F));
+                FxWorld.add(new FxWorld.GroundCut(from.add(flat.scale(0.8)), to, width, EMBER, 34, 7));
+                FxWorld.add(new FxWorld.GroundCut(from.add(flat.scale(0.8)), to, width * 0.4F, GOLD_LIGHT, 26, 6));
+                FxWorld.later(3, () -> {
+                    FxWorld.add(new FxWorld.Flare(Anchor.at(impact.add(0.0, 1.2, 0.0)), 6.5F, WHITE, 8, FxTextures.STAR, 0.2F, 1));
+                    FxWorld.add(new FxWorld.Shockwave(impact, 0.5F, 4.5F, 14, GOLD, 1.8F, 1.0F));
+                    FxWorld.add(new FxWorld.Shockwave(impact, 0.3F, 2.6F, 10, WHITE, 0.8F, 0.8F));
+                    Fx.fountain(level, ModParticles.SPARK.get(), impact, 40, FIRE, 0.12F, 18, 0.7, 0.35);
+                    Fx.burst(level, ModParticles.GLOW.get(), impact.add(0.0, 0.6, 0.0), 14, GOLD, 0.7F, 14, 0.2);
+                    debris(level, impact, 24);
+                    FxWorld.shake(impact, 10, 1.4F);
+                });
+                int steps = Math.max(2, (int) (length / 2.0));
+                for (int i = 1; i <= steps; i++) {
+                    Vec3 point = from.add(flat.scale(Math.min(length, 3.0 + (length - 3.0) * i / steps)));
+                    FxWorld.later(3 + i, () -> {
+                        FxWorld.add(new FxWorld.Pillar(Anchor.at(point), 0.45F, 3.4F, GOLD_LIGHT, 10));
+                        FxWorld.add(new FxWorld.Shockwave(point, 0.2F, 1.7F, 8, EMBER, 0.6F, 0.8F));
+                        Fx.burst(level, ModParticles.SPARK.get(), point.add(0.0, 0.3, 0.0), 6, FIRE, 0.08F, 10, 0.4);
+                        debris(level, point, 6);
+                    });
+                }
+                FxWorld.later(4 + steps, () -> FxWorld.add(new FxWorld.Flare(Anchor.at(to.add(0.0, 1.0, 0.0)), 3.2F, GOLD, 8, FxTextures.STAR,
+                        0.3F, 1)));
+                FxWorld.later(4, () -> hitSparks(level, targets, GOLD, 18));
+            }
             case "wizard_mana_thread" -> {
                 for (int target : targets) {
                     FxWorld.add(new FxWorld.Beam(Anchor.center(id, Vec3.ZERO), Anchor.center(target, Vec3.ZERO), 0.12F, FxTextures.BEAM,
@@ -675,6 +757,34 @@ public final class SkillFx {
                 }
                 debris(level, at, 30);
                 FxWorld.shake(at, 16, 1.6F);
+            }
+            case "wizard_ice_garden" -> {
+                // 氷の花が一斉に咲く：真ん中に大輪、まわりに花びらの輪、ふちに檻の氷柱。花は凍えの続く間（8秒）残る
+                FxWorld.removeIf(v -> v.owner == id && v.tag == TAG_MARKER);
+                int life = 160;
+                FxWorld.add(new FxWorld.Flare(Anchor.at(at.add(0.0, 1.0, 0.0)), 7.0F, WHITE, 8, FxTextures.STAR, 0.15F, 1));
+                FxWorld.add(new FxWorld.Shockwave(at, 0.5F, radius * 1.25F, 18, ICE, 1.8F, 1.0F));
+                FxWorld.add(new FxWorld.Shockwave(at, 0.3F, radius * 0.7F, 12, WHITE, 0.8F, 0.8F));
+                FxWorld.add(new FxWorld.Sigil(Anchor.at(at), radius, FxTextures.SIGIL_FROST, ICE, life, 0.006F, 4, 0.75F));
+                FxWorld.add(new FxWorld.Rim(at, radius, 1.6F, FROST, life, 0.35F));
+                FxWorld.add(new FxWorld.Spikes(at, 0.45F, 7, 2.4F, ICE, life, random.nextLong()));
+                for (int i = 0; i < 6; i++) {
+                    double angle = i * Math.PI / 3.0;
+                    Vec3 petal = at.add(Math.cos(angle) * radius * 0.5, 0.0, Math.sin(angle) * radius * 0.5);
+                    FxWorld.add(new FxWorld.Spikes(petal, 0.35F, 5, 1.5F, ICE, life - i, random.nextLong()));
+                }
+                for (int i = 0; i < 10; i++) {
+                    double angle = (i + 0.5) * Math.PI / 5.0;
+                    Vec3 bud = at.add(Math.cos(angle) * radius * 0.82, 0.0, Math.sin(angle) * radius * 0.82);
+                    FxWorld.add(new FxWorld.Spikes(bud, 0.28F, 4, 0.9F, FROST, life - 10 - i, random.nextLong()));
+                }
+                FxWorld.add(new FxWorld.Spikes(at, radius * 1.02F, 30, 3.0F, ICE, life, random.nextLong()));
+                FxWorld.add(new FxWorld.Emitter(Anchor.at(at), life, center ->
+                        Fx.scatter(level, ModParticles.SNOW.get(), center.add(0.0, 2.8, 0.0), radius, 2, ICE, 0.14F, 36, 0.1,
+                                new Vec3(0.0, -0.05, 0.0))));
+                Fx.burst(level, ModParticles.SNOW.get(), at.add(0.0, 1.0, 0.0), 40, ICE, 0.2F, 30, 0.5);
+                Fx.burst(level, ModParticles.SHARD.get(), at.add(0.0, 0.8, 0.0), 24, ICE, 0.26F, 24, 0.55);
+                FxWorld.shake(at, 6, 0.7F);
             }
             case "knight_leap_slash" -> {
                 FxWorld.removeIf(v -> v.owner == id && v.tag == TAG_LEAP);

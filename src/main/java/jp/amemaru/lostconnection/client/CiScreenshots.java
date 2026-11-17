@@ -40,6 +40,7 @@ import java.util.Base64;
  *       ウィザードの詠唱（三人称・モーション）と流星の着弾</li>
  *   <li>スキルの拡張（11月17日）：ナイトの溜め（誓いの円陣の中で）と溜め斬り、敵の頭の上の状態の印、凍てつく波動（凍結の氷と棘）、
  *       氷柱で砕く、星爆、雷霆、光の帳</li>
+ *   <li>奥義のもう一つ（11月17日）：天断ちの構えと断った瞬間、奥義のつまみ（2つから1つ）、氷華の檻の詠唱と花が咲いたところ</li>
  * </ul>
  */
 @Mod.EventBusSubscriber(modid = AmemaruMod.MOD_ID, value = Dist.CLIENT)
@@ -311,6 +312,62 @@ public final class CiScreenshots {
                 next(29, 2);
             }
             case 29 -> {
+                // 奥義のもう一つ：天断ち（レベル30・上位職にして覚える）
+                command(minecraft, "amemaru admin level set @a 30");
+                command(minecraft, "amemaru admin job promote @a true");
+                command(minecraft, "amemaru admin skill learn @a amemaru:knight/heaven_cleave 1");
+                command(minecraft, "kill @e[type=amemaru:training_dummy]");
+                next(30, 20);
+            }
+            case 30 -> {
+                setLoadout(0, "knight/heaven_cleave");
+                spawnDummies(minecraft);
+                command(minecraft, "amemaru admin debug vitals @a 100 100");
+                minecraft.options.setCameraType(CameraType.THIRD_PERSON_BACK);
+                if (minecraft.player != null) {
+                    minecraft.player.setXRot(14.0F);
+                }
+                next(31, 16);
+            }
+            case 31 -> {
+                useSkill(minecraft, 0); // 天断ち（1秒の構え）
+                releaseWait = 0;
+                next(32, 13);
+            }
+            case 32 -> {
+                clean(minecraft);
+                pendingShot = "knight_heaven_cleave_cast";
+                next(33, 2);
+            }
+            case 33 -> {
+                // 構えが終わって断ったことが届くまで待ってから、切り口が走る途中を写す
+                if (ClientPlayerState.get().castSkill() >= 0 && releaseWait++ < 60) {
+                    return;
+                }
+                next(34, 4);
+            }
+            case 34 -> {
+                clean(minecraft);
+                pendingShot = "knight_heaven_cleave";
+                next(35, 2);
+            }
+            case 35 -> {
+                // 奥義のつまみ：天断ちを選んだので、不落の城は選べない（暗い）
+                SkillTreeScreen tree = new SkillTreeScreen();
+                minecraft.setScreen(tree);
+                int cleave = skillIndex("knight/heaven_cleave");
+                if (cleave >= 0) {
+                    tree.select(cleave);
+                }
+                next(36, 10);
+            }
+            case 36 -> {
+                clean(minecraft);
+                pendingShot = "knight_ultimate_tree";
+                next(37, 2);
+            }
+            case 37 -> {
+                minecraft.setScreen(new HoldScreen());
                 minecraft.options.setCameraType(CameraType.FIRST_PERSON);
                 next(40, 30);
             }
@@ -410,6 +467,42 @@ public final class CiScreenshots {
                 next(54, 2);
             }
             case 54 -> {
+                // 奥義のもう一つ：氷華の檻（職業を替えたので、上位職にし直して覚える）
+                command(minecraft, "amemaru admin job promote @a true");
+                command(minecraft, "amemaru admin skill learn @a amemaru:wizard/ice_garden 1");
+                command(minecraft, "amemaru admin debug vitals @a 100 100");
+                next(55, 16);
+            }
+            case 55 -> {
+                setLoadout(0, "wizard/ice_garden");
+                if (minecraft.player != null) {
+                    minecraft.player.setXRot(22.0F);
+                }
+                next(56, 6);
+            }
+            case 56 -> {
+                useSkill(minecraft, 0); // 氷華の檻（2秒の詠唱）
+                releaseWait = 0;
+                next(57, 28);
+            }
+            case 57 -> {
+                clean(minecraft);
+                pendingShot = "wizard_ice_garden_cast";
+                next(58, 2);
+            }
+            case 58 -> {
+                // 詠唱が終わるまで待ち、着弾（0.4秒後）で花が咲いたところを写す
+                if (ClientPlayerState.get().castSkill() >= 0 && releaseWait++ < 80) {
+                    return;
+                }
+                next(59, 14);
+            }
+            case 59 -> {
+                clean(minecraft);
+                pendingShot = "wizard_ice_garden";
+                next(60, 2);
+            }
+            case 60 -> {
                 // ウィザードのスキルツリー（星灯のつまみ。星爆を選んで、組み合わせの説明を見せる）
                 SkillTreeScreen tree = new SkillTreeScreen();
                 minecraft.setScreen(tree);
@@ -417,17 +510,17 @@ public final class CiScreenshots {
                 if (starBurst >= 0) {
                     tree.select(starBurst);
                 }
-                next(55, 10);
+                next(61, 10);
             }
-            case 55 -> {
+            case 61 -> {
                 clean(minecraft);
                 pendingShot = "wizard_skill_tree";
-                next(56, 2);
+                next(62, 2);
             }
-            case 56 -> {
+            case 62 -> {
                 minecraft.options.setCameraType(CameraType.FIRST_PERSON);
                 minecraft.setScreen(null);
-                next(57, 0);
+                next(63, 0);
             }
             default -> {
             }

@@ -677,6 +677,37 @@ def w_deep_chill(c):
     c.ellipse(12, 12, 20, 20, fill=hexc("2C6FB0"), outline=WHITE)
 
 
+# ---- 奥義のもう一つ（11月17日）
+def k_heaven_cleave(c):
+    # 空から突き立つ光の大剣と、地を走る裂け目
+    for i in range(3):
+        c.line([(16, 1 + i), (16, 2 + i)], mix(GOLD_LIGHT, CLEAR, 0.2 + i * 0.2), 1)
+    c.poly([(13, 4), (19, 4), (18, 21), (16, 25), (14, 21)], fill=mix(GOLD_LIGHT, WHITE, 0.4), outline=GOLD)
+    c.line([(16, 5), (16, 22)], WHITE, 1)
+    c.rect(9, 3, 23, 4, GOLD)
+    c.rect(15, 0, 17, 2, GOLD_DARK)
+    c.line([(3, 28), (13, 26)], EMBER, 2)
+    c.line([(19, 26), (29, 28)], EMBER, 2)
+    c.line([(13, 26), (16, 29), (19, 26)], FIRE, 2)
+    for (x, y) in ((6, 22), (26, 21), (9, 15), (24, 13)):
+        sparkle(c, x, y, GOLD_LIGHT, 1)
+
+
+def w_ice_garden(c):
+    # 氷の花と、まわりを囲む氷の格子
+    for x in (4, 9, 23, 28):
+        c.line([(x, 6), (x, 28)], mix(ICE, CLEAR, 0.25), 2)
+    c.line([(3, 28), (29, 28)], RIM, 1)
+    for a in range(0, 360, 60):
+        r = math.radians(a - 90)
+        tip = (16 + math.cos(r) * 10, 17 + math.sin(r) * 10)
+        left = (16 + math.cos(r - 0.45) * 4, 17 + math.sin(r - 0.45) * 4)
+        right = (16 + math.cos(r + 0.45) * 4, 17 + math.sin(r + 0.45) * 4)
+        c.poly([left, tip, right, (16, 17)], fill=ICE if a % 120 == 0 else hexc("8FD8FF"), outline=WHITE)
+    c.ellipse(13, 14, 19, 20, fill=WHITE)
+    sparkle(c, 16, 17, hexc("8FD8FF"), 1)
+
+
 MANA_BLUE = hexc("7CC4FF")
 
 
@@ -719,6 +750,8 @@ SKILLS = {
     "wizard/thunderbolt": (w_thunderbolt, hexc("9FE6FF")),
     "wizard/frost_wave": (w_frost_wave, hexc("9FE6FF")),
     "wizard/deep_chill": (w_deep_chill, hexc("9FE6FF")),
+    "knight/heaven_cleave": (k_heaven_cleave, GOLD),
+    "wizard/ice_garden": (w_ice_garden, GOLD),
 }
 
 

@@ -651,7 +651,8 @@ public final class JobSkillGameTests {
             // 仕様S2は4〜6個。11月17日のご指示（スキルが単調）で、流派ごとに6つ（計12）に増やした（Phase 0-A 19章）
             check(helper, actives == 12, name + " のアクティブスキルが12個ではありません：" + actives);
             check(helper, passives == 6, name + " のパッシブスキルが6個ではありません：" + passives);
-            check(helper, ultimates == 1, name + " の奥義が1つではありません：" + ultimates);
+            // 奥義は流派ごとに1つ（計2つ）から1つを選ぶ（11月17日のご指示。Phase 0-A 19章）
+            check(helper, ultimates == 2, name + " の奥義が2つではありません：" + ultimates);
             check(helper, job.startingSkills().size() == 2, name + " の最初のスキルが2つではありません");
             check(helper, job.upper() != null, name + " に上位職がありません");
             for (ResourceLocation start : job.startingSkills()) {

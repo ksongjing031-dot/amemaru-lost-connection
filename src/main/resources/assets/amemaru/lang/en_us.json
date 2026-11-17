@@ -259,5 +259,15 @@
   "combat.amemaru.frozen": "凍結！",
   "hud.amemaru.charge": "溜め",
   "hud.amemaru.charge_full": "最大！",
-  "commands.amemaru.debug.status": "状態「%s」（%s）を%s体にかけました"
+  "commands.amemaru.debug.status": "状態「%s」（%s）を%s体にかけました",
+  "subtitles.amemaru.skill.knight.heaven_cleave_cast": "光の大剣が形づくられる",
+  "subtitles.amemaru.skill.knight.heaven_cleave": "天断ち",
+  "subtitles.amemaru.skill.wizard.ice_garden_cast": "氷華の檻の詠唱",
+  "subtitles.amemaru.skill.wizard.ice_garden_impact": "氷の花が咲く",
+  "message.amemaru.skill.learn.ultimate_chosen": "奥義はどちらか1つです（もう「%s」を選んでいます）。選び直すには、白紙の誓約書でスキルをやり直してください",
+  "screen.amemaru.skill_tree.need.ultimate_chosen": "もう一方の奥義を選んでいる",
+  "screen.amemaru.skill_tree.ultimate_of": "%sの奥義",
+  "screen.amemaru.skill_tree.ultimate_or": "または",
+  "screen.amemaru.skill_tree.ultimate_choice": "奥義はどちらか1つを選んで覚えます。選び直すには、白紙の誓約書でスキルをやり直します。",
+  "screen.amemaru.skill_tree.ultimate_chosen": "選んだ奥義"
 }

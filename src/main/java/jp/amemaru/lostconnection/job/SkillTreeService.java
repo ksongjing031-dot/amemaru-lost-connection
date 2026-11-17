@@ -34,6 +34,8 @@ public final class SkillTreeService {
         LEVEL("message.amemaru.skill.learn.level"),
         REQUIREMENT("message.amemaru.skill.learn.requirement"),
         UPPER("message.amemaru.skill.learn.upper"),
+        /** 奥義は職業ごとに1つだけ。もう一方を覚えている（選び直すには、白紙の誓約書でやり直す）。 */
+        ULTIMATE_CHOSEN("message.amemaru.skill.learn.ultimate_chosen"),
         POINTS("message.amemaru.skill.learn.points");
 
         private final String key;
@@ -90,6 +92,9 @@ public final class SkillTreeService {
         if (next > skill.maxRank()) {
             return Blocker.MAX_RANK;
         }
+        if (skill.isUltimate() && chosenUltimate(data, skill) != null) {
+            return Blocker.ULTIMATE_CHOSEN;
+        }
         if (data.getLevel() < skill.minLevel()) {
             return Blocker.LEVEL;
         }
@@ -105,6 +110,24 @@ public final class SkillTreeService {
             return Blocker.POINTS;
         }
         return Blocker.NONE;
+    }
+
+    /**
+     * 同じ職業の奥義のうち、もう覚えている「ほかの」奥義（奥義は2つから1つを選ぶ。Phase 0-A 19章）。なければ null。
+     */
+    @Nullable
+    public static SkillDef chosenUltimate(PlayerData data, SkillDef ultimate) {
+        SkillRegistry.Snapshot snapshot = SkillRegistry.get();
+        for (Map.Entry<ResourceLocation, Integer> entry : data.getLearnedSkills().entrySet()) {
+            if (entry.getValue() <= 0 || entry.getKey().equals(ultimate.id())) {
+                continue;
+            }
+            SkillDef other = snapshot.skill(entry.getKey());
+            if (other != null && other.isUltimate() && other.job().equals(ultimate.job())) {
+                return other;
+            }
+        }
+        return null;
     }
 
     /**
@@ -167,6 +190,10 @@ public final class SkillTreeService {
             case LEVEL -> Component.translatable(blocker.key(), skill.minLevel());
             case POINTS -> Component.translatable(blocker.key(), skill.rankCost(data.getSkillRank(skill.id()) + 1));
             case REQUIREMENT -> Component.translatable(blocker.key(), requirementText(skill));
+            case ULTIMATE_CHOSEN -> {
+                SkillDef chosen = chosenUltimate(data, skill);
+                yield Component.translatable(blocker.key(), chosen == null ? "" : chosen.name());
+            }
             default -> Component.translatable(blocker.key());
         };
     }

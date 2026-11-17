@@ -50,6 +50,8 @@ public final class SkillExecutor {
     /** 跳躍の飛ぶ時間（tick）の下限と上限。 */
     private static final int LEAP_MIN_TICKS = 8;
     private static final int LEAP_MAX_TICKS = 22;
+    /** 地面と平行な line（flat）を、足もとからどの高さに通すか。 */
+    private static final double FLAT_LINE_HEIGHT = 1.5;
 
     private SkillExecutor() {
     }
@@ -167,13 +169,20 @@ public final class SkillExecutor {
                 fx(ctx, SkillFxS2C.Phase.RELEASE, origin, target, (float) delivery.radius(rank), flight, new int[]{caster.getId()}, power);
             }
             case LINE -> {
-                Vec3 eye = caster.getEyePosition();
-                Vec3 look = caster.getLookAngle();
-                Vec3 far = eye.add(look.scale(delivery.range(rank)));
-                BlockHitResult block = level.clip(new ClipContext(eye, far, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, caster));
+                // flat：胸の高さから地面と平行に（1段の段差では止まらず、2段の壁で止まる）
+                Vec3 start = delivery.flat() ? caster.position().add(0.0, FLAT_LINE_HEIGHT, 0.0) : caster.getEyePosition();
+                Vec3 look = delivery.flat() ? horizontalLook(caster) : caster.getLookAngle();
+                Vec3 far = start.add(look.scale(delivery.range(rank)));
+                BlockHitResult block = level.clip(new ClipContext(start, far, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, caster));
                 Vec3 end = block.getType() == HitResult.Type.MISS ? far : block.getLocation();
-                List<LivingEntity> targets = SkillTargeting.alongLine(level, eye, end, delivery.width(rank));
-                fx(ctx, SkillFxS2C.Phase.RELEASE, eye.add(0.0, -0.25, 0.0), end, (float) delivery.width(rank), 0, ids(targets), power);
+                List<LivingEntity> targets = SkillTargeting.alongLine(level, start, end, delivery.width(rank));
+                if (delivery.flat()) {
+                    // 演出は足もとの高さで（地面を走る斬撃）
+                    fx(ctx, SkillFxS2C.Phase.RELEASE, caster.position(), end.subtract(0.0, FLAT_LINE_HEIGHT, 0.0), (float) delivery.width(rank), 0,
+                            ids(targets), power);
+                } else {
+                    fx(ctx, SkillFxS2C.Phase.RELEASE, start.add(0.0, -0.25, 0.0), end, (float) delivery.width(rank), 0, ids(targets), power);
+                }
                 apply(ctx, targets, null, end, null);
             }
             case CONE -> {

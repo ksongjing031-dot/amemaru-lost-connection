@@ -5,6 +5,7 @@ import jp.amemaru.lostconnection.combat.StatusService;
 import jp.amemaru.lostconnection.core.config.ServerConfig;
 import jp.amemaru.lostconnection.core.registry.ModEffects;
 import jp.amemaru.lostconnection.core.registry.ModSounds;
+import jp.amemaru.lostconnection.job.def.DeliveryDef;
 import jp.amemaru.lostconnection.job.def.JobDef;
 import jp.amemaru.lostconnection.job.def.SkillDef;
 import jp.amemaru.lostconnection.job.def.SkillRegistry;
@@ -294,8 +295,10 @@ public final class SkillService {
         data.setCasting(new CastState(skill.id(), rank, slot, now, now + ticks, aim.entityId(), aim.point(), false));
         player.addEffect(new MobEffectInstance(ModEffects.CHANTING.get(), ticks + 2, 0, false, false, true));
         Vec3 to = aim.point() != null ? aim.point() : aim.entity() != null ? aim.entity().position() : player.position();
-        new SkillFxS2C(SkillFxS2C.Phase.CAST_START, player.getId(), index, player.position(), to,
-                (float) skill.delivery().radius(rank), ticks, new int[0]).sendNear(player.level().dimension(), player.position());
+        // 線の技は、詠唱の間に向く先の印を出すため、半径の代わりに長さを送る
+        float shape = (float) (skill.delivery().type() == DeliveryDef.Type.LINE ? skill.delivery().range(rank) : skill.delivery().radius(rank));
+        new SkillFxS2C(SkillFxS2C.Phase.CAST_START, player.getId(), index, player.position(), to, shape, ticks, new int[0])
+                .sendNear(player.level().dimension(), player.position());
         SoundEvent sound = jp.amemaru.lostconnection.core.registry.ModSounds.byId(skill.castSound());
         if (sound != null) {
             player.level().playSound(null, player.getX(), player.getY(), player.getZ(), sound, SoundSource.PLAYERS, 1.0F, 1.0F);

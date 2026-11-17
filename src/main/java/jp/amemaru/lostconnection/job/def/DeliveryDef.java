@@ -19,7 +19,8 @@ import jp.amemaru.lostconnection.core.data.Json;
  *       shocked_jumps, shocked_multiplier</td></tr>
  *   <tr><td>blink</td><td>前へ瞬間移動する</td><td>distance</td></tr>
  *   <tr><td>leap</td><td>狙った地点へ跳び、着地したところのまわり</td><td>range, radius</td></tr>
- *   <tr><td>line</td><td>前へまっすぐ貫き、線の上の敵すべて</td><td>range, width</td></tr>
+ *   <tr><td>line</td><td>前へまっすぐ貫き、線の上の敵すべて。{@code flat} なら、目の向きでなく地面と平行に（大きな斬撃）</td>
+ *       <td>range, width, flat</td></tr>
  *   <tr><td>cone</td><td>前の扇の中の敵すべて</td><td>radius, angle（片側の角度）</td></tr>
  *   <tr><td>branded</td><td>まわりの、星痕のある敵すべて</td><td>range</td></tr>
  * </table>
@@ -71,6 +72,7 @@ public final class DeliveryDef {
     private final Affects affects;
     private final boolean includeSelf;
     private final boolean fallbackSelf;
+    private final boolean flat;
     private final Ranked range;
     private final Ranked radius;
     private final Ranked speed;
@@ -92,6 +94,7 @@ public final class DeliveryDef {
         this.affects = b.affects;
         this.includeSelf = b.includeSelf;
         this.fallbackSelf = b.fallbackSelf;
+        this.flat = b.flat;
         this.range = b.range;
         this.radius = b.radius;
         this.speed = b.speed;
@@ -123,6 +126,10 @@ public final class DeliveryDef {
         b.fallbackSelf = Json.optionalBoolean(json, "fallback_self", false);
         if (b.fallbackSelf && (type != Type.TARGET || affects != Affects.ALLIES)) {
             throw new DefinitionException("「fallback_self」は、味方を狙う target のときだけ使えます");
+        }
+        b.flat = Json.optionalBoolean(json, "flat", false);
+        if (b.flat && type != Type.LINE) {
+            throw new DefinitionException("「flat」は line のときだけ使えます");
         }
         switch (type) {
             case SELF -> {
@@ -196,6 +203,11 @@ public final class DeliveryDef {
     /** 味方を狙う技で、狙える味方がいなければ自分にかけるか。 */
     public boolean fallbackSelf() {
         return fallbackSelf;
+    }
+
+    /** line：目の向き（上下）でなく、地面と平行に前へのばすか（下を向いて使っても、すぐ地面で止まらない）。 */
+    public boolean flat() {
+        return flat;
     }
 
     public double range(int rank) {
@@ -290,6 +302,7 @@ public final class DeliveryDef {
         final Affects affects;
         final boolean includeSelf;
         boolean fallbackSelf;
+        boolean flat;
         Ranked range = Ranked.ZERO;
         Ranked radius = Ranked.ZERO;
         Ranked speed = Ranked.ZERO;

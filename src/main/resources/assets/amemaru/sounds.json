@@ -384,5 +384,45 @@
       }
     ],
     "subtitle": "subtitles.amemaru.skill.charge_full"
+  },
+  "skill.knight.heaven_cleave_cast": {
+    "sounds": [
+      {
+        "name": "minecraft:block.beacon.power_select",
+        "type": "event",
+        "pitch": 0.7
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.knight.heaven_cleave_cast"
+  },
+  "skill.knight.heaven_cleave": {
+    "sounds": [
+      {
+        "name": "minecraft:item.trident.thunder",
+        "type": "event",
+        "pitch": 0.8
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.knight.heaven_cleave"
+  },
+  "skill.wizard.ice_garden_cast": {
+    "sounds": [
+      {
+        "name": "minecraft:block.amethyst_block.resonate",
+        "type": "event",
+        "pitch": 0.8
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.wizard.ice_garden_cast"
+  },
+  "skill.wizard.ice_garden_impact": {
+    "sounds": [
+      {
+        "name": "minecraft:block.glass.break",
+        "type": "event",
+        "pitch": 0.6
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.wizard.ice_garden_impact"
   }
 }

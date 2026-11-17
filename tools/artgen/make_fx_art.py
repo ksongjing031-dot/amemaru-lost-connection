@@ -9,6 +9,7 @@
   textures/fx/beam.png           光の帯（64x16。v の真ん中が明るい）。糸・軌跡
   textures/fx/lightning.png      芯の細い光の帯（64x16）。稲妻
   textures/fx/chain.png          鎖の輪（64x16。横にくり返す）。縛鎖
+  textures/fx/greatsword.png     光の大剣（64x256。上が柄頭、下が切っ先）。天断ち
   textures/fx/slash.png          斬撃の弧（128x32。v=0 が外側の刃先、u=1 が振り終わり）
   textures/fx/sigil_*.png        魔法陣（256x256）：arcane（詠唱）・frost（氷）・star（星）・oath（誓い）・thunder（雷）
   textures/fx/dome.png           六角の網目（128x64。横にくり返す）。障壁・ドーム
@@ -362,6 +363,38 @@ def make_sigil_thunder():
     return finish_sigil(big, "sigil_thunder")
 
 
+def make_greatsword():
+    """光の大剣（天断ち）：64x256。上が柄頭、下が切っ先。白い光で、ふちがにじむ。2枚を十字に重ねて描く。"""
+    from PIL import ImageFilter
+    w, h = 64 * SS, 256 * SS
+    core = Image.new("L", (w, h), 0)
+    d = ImageDraw.Draw(core)
+    cx = w / 2
+    s = SS
+    # 柄頭
+    d.ellipse([cx - 7 * s, 3 * s, cx + 7 * s, 17 * s], fill=200)
+    d.ellipse([cx - 3 * s, 7 * s, cx + 3 * s, 13 * s], fill=255)
+    # 柄（巻き紐の段）
+    d.rectangle([cx - 4 * s, 16 * s, cx + 4 * s, 58 * s], fill=170)
+    for y in range(20, 56, 6):
+        d.line([(cx - 4 * s, y * s), (cx + 4 * s, (y + 3) * s)], fill=230, width=s)
+    # 鍔：両端が反り上がる翼の形
+    d.polygon([(cx - 29 * s, 56 * s), (cx - 22 * s, 60 * s), (cx + 22 * s, 60 * s), (cx + 29 * s, 56 * s),
+               (cx + 27 * s, 66 * s), (cx + 10 * s, 70 * s), (cx - 10 * s, 70 * s), (cx - 27 * s, 66 * s)], fill=210)
+    d.ellipse([cx - 5 * s, 58 * s, cx + 5 * s, 68 * s], fill=255)
+    # 刃：根もとは幅26、切っ先へ細くなる
+    blade = [(cx - 13 * s, 70 * s), (cx + 13 * s, 70 * s), (cx + 11 * s, 200 * s), (cx, 252 * s), (cx - 11 * s, 200 * s)]
+    d.polygon(blade, fill=150)
+    # 刃のふち（明るい線）と、真ん中の樋
+    d.line(blade + [blade[0]], fill=255, width=2 * s)
+    d.line([(cx, 74 * s), (cx, 236 * s)], fill=255, width=3 * s)
+    small = core.resize((64, 256), Image.LANCZOS)
+    a = np.asarray(small, dtype=np.float32) / 255.0
+    glow = np.asarray(small.filter(ImageFilter.GaussianBlur(3.0)), dtype=np.float32) / 255.0
+    a = np.clip(np.maximum(a, glow * 1.3), 0, 1)
+    return save(from_alpha(a), "textures/fx/greatsword.png")
+
+
 # ---------------------------------------------------------------- パーティクル
 def particle_glow():
     # 64x64：芯は明るく、まわりはなめらかに消える（ふちで必ず0になる）
@@ -439,7 +472,7 @@ def particle_defs():
 if __name__ == "__main__":
     files = [make_glow(), make_ring(), make_wall(), make_beam(), make_lightning(), make_chain(), make_slash(), make_star(),
              make_snowflake(), make_crack(), make_shield(), make_ice(), make_dome(), make_sigil_arcane(), make_sigil_frost(),
-             make_sigil_star(), make_sigil_oath(), make_sigil_thunder(), particle_glow(), particle_spark(), particle_shard(),
+             make_sigil_star(), make_sigil_oath(), make_sigil_thunder(), make_greatsword(), particle_glow(), particle_spark(), particle_shard(),
              particle_star(), particle_snow()]
     files += particle_runes()
     files += particle_defs()

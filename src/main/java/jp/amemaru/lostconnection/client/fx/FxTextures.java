@@ -20,6 +20,8 @@ public final class FxTextures {
     public static final ResourceLocation LIGHTNING = tex("lightning");
     /** 鎖の輪（64x16。横にくり返す）。縛鎖。 */
     public static final ResourceLocation CHAIN = tex("chain");
+    /** 光の大剣（64x256。上が柄頭、下が切っ先）。天断ち。 */
+    public static final ResourceLocation GREATSWORD = tex("greatsword");
     /** 斬撃の弧（128x32。v=0 が外側の刃先、u=1 が振り終わり）。 */
     public static final ResourceLocation SLASH = tex("slash");
     /** 魔法陣（128x128）。 */

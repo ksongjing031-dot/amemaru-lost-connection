@@ -89,7 +89,9 @@ public final class SkillMechanicsGameTests {
             long ultimates = skills.stream().filter(SkillDef::isUltimate).count();
             check(helper, actives == 12, name + " のアクティブスキルが12個ではありません：" + actives);
             check(helper, passives == 6, name + " のパッシブスキルが6個ではありません：" + passives);
-            check(helper, ultimates == 1, name + " の奥義が1つではありません：" + ultimates);
+            check(helper, ultimates == 2, name + " の奥義が2つではありません：" + ultimates);
+            long ultimateSchools = skills.stream().filter(SkillDef::isUltimate).map(SkillDef::school).distinct().count();
+            check(helper, ultimateSchools == 2, name + " の奥義が、2つの流派に1つずつになっていません");
             Map<String, int[]> perSchool = new HashMap<>();
             for (SkillDef skill : skills) {
                 for (int rank = 1; rank <= skill.maxRank(); rank++) {
@@ -268,6 +270,99 @@ public final class SkillMechanicsGameTests {
                         "溜めていないのに放てました");
             } finally {
                 dummy.discard();
+            }
+            helper.succeed();
+        });
+    }
+
+    /**
+     * 奥義は2つのうち1つだけ（11月17日のご指示）。1つを覚えると、もう一方は覚えられない。上位職を外して奥義が消えたり、
+     * 白紙の誓約書でやり直したりすると、もう一方を選べる。
+     */
+    @GameTest(template = EMPTY)
+    public static void ultimateIsAChoice(GameTestHelper helper) {
+        FakePlayer player = fake(helper, "ultimate");
+        PlayerData data = knight(helper, player);
+        LevelService.setLevel(player, data, 30);
+        check(helper, JobService.promote(player, data, true), "上位職に昇格できません");
+        SkillDef castle = skill("knight/unfallen_castle");
+        SkillDef cleave = skill("knight/heaven_cleave");
+        for (String path : new String[]{"knight/rampart", "knight/whirlwind", "knight/heavy_slash"}) {
+            SkillTreeService.forceRank(player, data, skill(path), 1);
+        }
+        check(helper, SkillTreeService.canLearn(data, castle) == SkillTreeService.Blocker.NONE,
+                "不落の城を覚えられません：" + SkillTreeService.canLearn(data, castle));
+        check(helper, SkillTreeService.canLearn(data, cleave) == SkillTreeService.Blocker.NONE,
+                "天断ちを覚えられません：" + SkillTreeService.canLearn(data, cleave));
+        check(helper, SkillTreeService.learn(player, data, cleave.id()), "天断ちを覚えられません");
+        check(helper, SkillTreeService.canLearn(data, castle) == SkillTreeService.Blocker.ULTIMATE_CHOSEN,
+                "天断ちを覚えたのに、不落の城も覚えられます：" + SkillTreeService.canLearn(data, castle));
+        check(helper, !SkillTreeService.learn(player, data, castle.id()), "奥義を2つ覚えられました");
+        check(helper, data.getSkillRank(castle.id()) == 0, "不落の城が覚えられています");
+        // 上位職を外すと奥義は消え、昇格し直すと、もう一方を選べる
+        JobService.demote(player, data);
+        check(helper, data.getSkillRank(cleave.id()) == 0, "上位職を外しても、天断ちが残っています");
+        check(helper, JobService.promote(player, data, true), "上位職に昇格し直せません");
+        check(helper, SkillTreeService.canLearn(data, castle) == SkillTreeService.Blocker.NONE,
+                "奥義が消えた後に、不落の城を選べません：" + SkillTreeService.canLearn(data, castle));
+        check(helper, SkillTreeService.learn(player, data, castle.id()), "不落の城を覚えられません");
+        check(helper, SkillTreeService.canLearn(data, cleave) == SkillTreeService.Blocker.ULTIMATE_CHOSEN,
+                "不落の城を覚えたのに、天断ちも覚えられます");
+        // 白紙の誓約書と同じやり直し：どちらも選べる状態に戻る
+        SkillTreeService.resetSkills(player, data);
+        for (String path : new String[]{"knight/rampart", "knight/whirlwind", "knight/heavy_slash"}) {
+            SkillTreeService.forceRank(player, data, skill(path), 1);
+        }
+        check(helper, SkillTreeService.canLearn(data, cleave) == SkillTreeService.Blocker.NONE,
+                "やり直した後に、天断ちを選べません：" + SkillTreeService.canLearn(data, cleave));
+        helper.succeed();
+    }
+
+    /**
+     * 天断ち：地面と平行に前へ14ブロック、幅3の線の上の敵すべてに、攻撃×7倍のダメージ・防御崩し・よろめき（1秒の構えの後）。
+     * 線が長く、同時に動くほかのテストの的に届くことがあるため、このテストだけ別の組（batch）で1つだけ動かす。
+     */
+    @GameTest(template = EMPTY, timeoutTicks = 100, batch = "ultimate_line")
+    public static void heavenCleaveCutsTheLine(GameTestHelper helper) {
+        FakePlayer player = fake(helper, "cleave");
+        PlayerData data = knight(helper, player);
+        LevelService.setLevel(player, data, 30);
+        JobService.promote(player, data, true);
+        SkillDef cleave = skill("knight/heaven_cleave");
+        SkillTreeService.forceRank(player, data, cleave, 1);
+        data.setMp(data.getStats().maxMp());
+        int slot = data.loadoutSlotOf(cleave.id());
+        // 下を向いていても、地面と平行に前へのびる
+        player.setXRot(60.0F);
+        Zombie near = toughZombieInFront(helper, player, 2.5);
+        Zombie far = toughZombieInFront(helper, player, 11.0);
+        Zombie behind = toughZombieInFront(helper, player, -4.0);
+        double nearBefore = TargetVitals.hp(near);
+        double farBefore = TargetVitals.hp(far);
+        double behindBefore = TargetVitals.hp(behind);
+        SkillService.Result result = SkillService.tryUse(player, data, slot, -1, null);
+        check(helper, result.ok(), "天断ちを使えません：" + result.failure());
+        check(helper, data.getCasting() != null && !data.getCasting().charging(), "構え（詠唱）になっていません");
+        helper.runAfterDelay(24, () -> {
+            try {
+                // 偽のプレイヤーは毎tickの処理が動かないため、構えの終わりを直接進める
+                placeInFront(near, player, 2.5);
+                placeInFront(far, player, 11.0);
+                placeInFront(behind, player, -4.0);
+                SkillService.tick(player, data);
+                check(helper, data.getCasting() == null, "構えが終わっていません");
+                double expected = data.getStats().get(StatType.ATTACK) * 7.0 * DamageCalculator.mitigation(TargetVitals.defense(near));
+                double nearDealt = nearBefore - TargetVitals.hp(near);
+                double farDealt = farBefore - TargetVitals.hp(far);
+                check(helper, nearDealt >= expected * 0.9 && nearDealt <= expected * 3.2,
+                        "天断ち（近く）のダメージが、攻撃×7倍になっていません：" + nearDealt + "（" + expected + "）");
+                check(helper, farDealt >= expected * 0.9, "天断ちが11ブロック先の敵に届いていません：" + farDealt);
+                check(helper, Math.abs(behindBefore - TargetVitals.hp(behind)) < EPSILON, "後ろの敵に当たりました");
+                check(helper, StatusService.armorBroken(near) && StatusService.staggered(near), "防御崩し・よろめきになっていません");
+            } finally {
+                near.discard();
+                far.discard();
+                behind.discard();
             }
             helper.succeed();
         });

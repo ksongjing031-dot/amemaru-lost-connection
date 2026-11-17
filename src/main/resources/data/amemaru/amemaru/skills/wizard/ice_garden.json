@@ -1,0 +1,66 @@
+{
+  "job": "wizard",
+  "school": "frost",
+  "row": 4,
+  "column": 0,
+  "type": "active",
+  "ultimate": true,
+  "name": "氷華の檻",
+  "description": "星詠みのもう一つの奥義。狙った地に氷の花を咲かせ、まわりの敵をまとめて凍らせる。花が咲いている間、敵は凍えつづける。凍った敵は、氷柱などで砕くと大きなダメージになる。仲間の支援を受けていると、詠唱が半分になる。",
+  "max_rank": 1,
+  "rank_costs": [
+    5
+  ],
+  "upper_rank": 1,
+  "min_level": 30,
+  "requires": [
+    {
+      "skill": "wizard/icicle",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 50
+  },
+  "cooldown": 90,
+  "cast": 2.0,
+  "cast_support_multiplier": 0.5,
+  "link": "starter",
+  "delivery": {
+    "type": "point",
+    "range": 24,
+    "radius": 7,
+    "impact_delay": 0.4
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "magic",
+      "coefficient": 2.5
+    },
+    {
+      "type": "chill",
+      "stacks": 5,
+      "duration": 6,
+      "freeze": 4
+    },
+    {
+      "type": "zone",
+      "radius": 7,
+      "duration": 8,
+      "interval": 1.0,
+      "effects": [
+        {
+          "type": "chill",
+          "stacks": 1,
+          "duration": 2,
+          "max": 4
+        }
+      ]
+    }
+  ],
+  "cast_animation": "wizard_ice_garden_cast",
+  "animation": "wizard_ice_garden_release",
+  "cast_sound": "amemaru:skill.wizard.ice_garden_cast",
+  "impact_sound": "amemaru:skill.wizard.ice_garden_impact"
+}
