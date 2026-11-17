@@ -1,0 +1,27 @@
+{
+  "job": "wizard",
+  "school": "frost",
+  "row": 1,
+  "column": 2,
+  "type": "passive",
+  "name": "マナの泉",
+  "description": "体の中に小さな泉をつくり、魔力が湧き出るようにする。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "requires": [
+    {
+      "skill": "wizard/frost_circle",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "mana_spring",
+    "value": 20,
+    "value_per_rank": 10
+  }
+}

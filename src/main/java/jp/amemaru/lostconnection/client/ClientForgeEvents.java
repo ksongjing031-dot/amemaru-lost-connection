@@ -69,7 +69,8 @@ public final class ClientForgeEvents {
         if (!ClientPlayerState.get().hasData()) {
             return;
         }
-        int limit = event.getWindow().getGuiScaledHeight() - AmemaruHud.reservedHeight();
+        int reserved = Math.max(AmemaruHud.reservedHeight(), SkillHud.reservedHeight());
+        int limit = event.getWindow().getGuiScaledHeight() - reserved;
         if (event.getPosY() > limit) {
             event.setPosY(limit);
         }
@@ -78,6 +79,11 @@ public final class ClientForgeEvents {
     @SubscribeEvent
     public static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
         ClientPlayerState.get().reset();
+        ClientDefinitions.get().reset();
         AmemaruHud.resetAnimations();
+        SkillHud.resetAnimations();
+        SkillFx.reset();
+        SkillInput.reset();
+        CombatTextRenderer.reset();
     }
 }

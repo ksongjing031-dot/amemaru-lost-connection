@@ -1,0 +1,62 @@
+{
+  "job": "knight",
+  "school": "guardian",
+  "row": 1,
+  "column": 1,
+  "type": "active",
+  "name": "縛鎖",
+  "description": "盾の縁から結びの鎖を投げ、狙った敵を自分の手前まで引き寄せて挑発する。後ろの仲間を狙う敵を引きはがす。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "requires": [
+    {
+      "skill": "knight/call",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 14
+  },
+  "cooldown": 14,
+  "cooldown_per_rank": -1.5,
+  "link": "starter",
+  "delivery": {
+    "type": "target",
+    "range": 12,
+    "range_per_rank": 2,
+    "affects": "enemies"
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 0.6,
+      "coefficient_per_rank": 0.1
+    },
+    {
+      "type": "pull",
+      "stop": 2.0
+    },
+    {
+      "type": "taunt",
+      "duration": 4,
+      "duration_per_rank": 0.5
+    },
+    {
+      "type": "status",
+      "effect": "amemaru:stagger",
+      "duration": 0.5
+    },
+    {
+      "type": "gauge",
+      "per_target": 5
+    }
+  ],
+  "animation": "knight_binding_chain",
+  "sound": "amemaru:skill.knight.binding_chain"
+}

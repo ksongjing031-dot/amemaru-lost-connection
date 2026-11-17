@@ -1,0 +1,53 @@
+{
+  "job": "wizard",
+  "school": "frost",
+  "row": 2,
+  "column": 1,
+  "type": "active",
+  "name": "氷柱",
+  "description": "鋭い氷の槍を撃ち出し、一直線に貫く。凍えを2つ重ね、凍結した敵は大きな威力で砕く。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 10,
+  "requires": [
+    {
+      "skill": "wizard/chain_lightning",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 16
+  },
+  "cooldown": 5,
+  "cooldown_per_rank": -0.5,
+  "link": "finisher",
+  "delivery": {
+    "type": "line",
+    "range": 18,
+    "width": 1.2
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "magic",
+      "coefficient": 1.6,
+      "coefficient_per_rank": 0.25,
+      "bonus_status": "amemaru:frozen",
+      "bonus": 1.8,
+      "bonus_per_rank": 0.1,
+      "consume_status": true
+    },
+    {
+      "type": "chill",
+      "stacks": 2,
+      "duration": 4,
+      "freeze": 2
+    }
+  ],
+  "animation": "wizard_icicle",
+  "sound": "amemaru:skill.wizard.icicle"
+}

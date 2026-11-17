@@ -1,0 +1,27 @@
+{
+  "job": "knight",
+  "school": "greatsword",
+  "row": 3,
+  "column": 2,
+  "type": "passive",
+  "name": "闘志",
+  "description": "追い詰められるほど、誓いは強く燃える。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "knight/breaker",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "fighting_spirit",
+    "value": 10,
+    "value_per_rank": 5
+  }
+}

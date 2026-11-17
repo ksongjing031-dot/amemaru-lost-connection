@@ -1,0 +1,68 @@
+{
+  "kind": "combat",
+  "order": 10,
+  "name": "ナイト",
+  "role": "タンク",
+  "description": "盾と剣で仲間の前に立つ者。敵の狙いを引きつけ、仲間の傷を糸ごと肩代わりする。受けた痛みは「誓気」となり、倒れない誓いを支える。",
+  "color": "#6EA8FF",
+  "icon": "amemaru:textures/gui/job/knight.png",
+  "weapons": "amemaru:weapons/knight",
+  "weapon_text": "片手剣と盾・両手剣",
+  "tags": [
+    "melee",
+    "tank"
+  ],
+  "stats": {
+    "percent": {
+      "hp": 20,
+      "defense": 30,
+      "mp": -10,
+      "magic": -20
+    }
+  },
+  "gauge": {
+    "type": "oath",
+    "name": "誓気",
+    "description": "攻撃を受けたり、仲間をかばったり、受け流したりするとたまる。旋風断・不屈の誓い・誓気解放・奥義で使う。戦闘が終わると0に戻る。",
+    "max": 100,
+    "color": "#FFC94D",
+    "damage_gain": 1.0,
+    "bond_gain": 1.0,
+    "rampart_multiplier": 2.0
+  },
+  "schools": [
+    {
+      "id": "guardian",
+      "name": "守護",
+      "description": "仲間を守り、敵の狙いを引き受ける流派。鎖で敵を引き寄せ、盾で攻撃を受け流し、円陣で仲間を守る。",
+      "color": "#8FD3FF"
+    },
+    {
+      "id": "greatsword",
+      "name": "剛剣",
+      "description": "踏み込みと薙ぎ払いで道を切り開く流派。溜めた一撃で守りを砕き、誓気を燃やして倒れずに立ち続ける。",
+      "color": "#FFB46E"
+    }
+  ],
+  "starting_skills": [
+    "knight/call",
+    "knight/charge_slash"
+  ],
+  "starter_kit": [
+    {
+      "item": "amemaru:apprentice_sword"
+    },
+    {
+      "item": "amemaru:apprentice_shield"
+    },
+    {
+      "item": "amemaru:apprentice_greatsword"
+    }
+  ],
+  "upper": {
+    "name": "誓盾の騎士",
+    "description": "誓いの盾で城を築き、誓いの剣で天ごと敵を断つ騎士。奥義（守りの「不落の城」か、攻めの「天断ち」）と、各スキルの第3段が開く。",
+    "min_level": 30,
+    "min_day": 11
+  }
+}

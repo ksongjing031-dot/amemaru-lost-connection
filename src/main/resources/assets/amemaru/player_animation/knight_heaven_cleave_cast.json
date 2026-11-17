@@ -1,0 +1,92 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "knight_heaven_cleave_cast": {
+      "animation_length": 0.999,
+      "bones": {
+        "right_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -178,
+                0,
+                8
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.501": {
+              "vector": [
+                -180,
+                0,
+                4
+              ],
+              "easing": "easeInOutSine"
+            },
+            "1.001": {
+              "vector": [
+                -178,
+                0,
+                8
+              ]
+            }
+          }
+        },
+        "left_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -176,
+                0,
+                -10
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.501": {
+              "vector": [
+                -178,
+                0,
+                -6
+              ],
+              "easing": "easeInOutSine"
+            },
+            "1.001": {
+              "vector": [
+                -176,
+                0,
+                -10
+              ]
+            }
+          }
+        },
+        "body": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -8,
+                0,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.501": {
+              "vector": [
+                -10,
+                0,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "1.001": {
+              "vector": [
+                -8,
+                0,
+                0
+              ]
+            }
+          }
+        }
+      },
+      "loop": true
+    }
+  }
+}

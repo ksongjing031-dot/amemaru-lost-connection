@@ -8,7 +8,9 @@ import org.lwjgl.glfw.GLFW;
 /**
  * キーの割り当て。設定の「操作設定」→「AMEMARU」から変えられる。
  *
- * <p>スキルのキー（R・G・V・Z・X・C）はPhase 2で足す。</p>
+ * <p>スキル枠6つの初期値は Phase 0-A のとおり R・G・V・Z・X・C（11月17日にご確認）。X と C はバニラの
+ * 「ツールバーの保存・読み込み」を外して使う（{@link ToolbarKeys}）。ボイスチャットModの初期のキー（V・G）と重なるときは、
+ * ボイスチャットの方のキーを変えて使う。</p>
  */
 public final class KeyBindings {
     public static final String CATEGORY = "key.categories.amemaru";
@@ -20,6 +22,39 @@ public final class KeyBindings {
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_K,
             CATEGORY);
+
+    /** スキルツリーを開く（初期値：J）。 */
+    public static final KeyMapping OPEN_SKILL_TREE = new KeyMapping(
+            "key.amemaru.skill_tree",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_J,
+            CATEGORY);
+
+    private static final int[] SKILL_DEFAULTS = {
+            GLFW.GLFW_KEY_R, GLFW.GLFW_KEY_G, GLFW.GLFW_KEY_V, GLFW.GLFW_KEY_Z, GLFW.GLFW_KEY_X, GLFW.GLFW_KEY_C};
+
+    /** 試作版（11月17日まで）の初期値。これのままの人は、新しい初期値に移す（{@link ToolbarKeys}）。 */
+    static final int[] OLD_SKILL_DEFAULTS = {
+            GLFW.GLFW_KEY_R, GLFW.GLFW_KEY_Z, GLFW.GLFW_KEY_X, GLFW.GLFW_KEY_C, GLFW.GLFW_KEY_B, GLFW.GLFW_KEY_Y};
+
+    static int defaultKey(int slot) {
+        return SKILL_DEFAULTS[slot];
+    }
+
+    /** スキル枠1〜6。 */
+    public static final KeyMapping[] SKILLS = new KeyMapping[SKILL_DEFAULTS.length];
+
+    static {
+        for (int i = 0; i < SKILLS.length; i++) {
+            SKILLS[i] = new KeyMapping(
+                    "key.amemaru.skill_" + (i + 1),
+                    KeyConflictContext.IN_GAME,
+                    InputConstants.Type.KEYSYM,
+                    SKILL_DEFAULTS[i],
+                    CATEGORY);
+        }
+    }
 
     private KeyBindings() {
     }

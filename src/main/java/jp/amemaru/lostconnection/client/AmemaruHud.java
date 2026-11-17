@@ -114,11 +114,16 @@ public final class AmemaruHud {
             graphics.blit(TEXTURE, HP_X, BAR_Y, AmemaruHudArt.U_HP_GLOW, AmemaruHudArt.V_GLOW, BAR_W, BAR_H, TEX_SIZE, TEX_SIZE);
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         }
+        drawBarrier(graphics, state, now);
         drawBar(graphics, MP_X, AmemaruHudArt.V_MP_FRAME, AmemaruHudArt.V_MP_FILL, AmemaruHudArt.V_MP_GHOST, MP_ANIM);
         drawGem(graphics, state.statPoints() > 0, now);
 
         if (numbers) {
-            drawBarText(graphics, font, I18n.get("hud.amemaru.hp", ceil(state.hp()), ceil(state.maxHp())), HP_X + 42);
+            String hpText = I18n.get("hud.amemaru.hp", ceil(state.hp()), ceil(state.maxHp()));
+            if (state.barrier() > 0) {
+                hpText += " +" + ceil(state.barrier());
+            }
+            drawBarText(graphics, font, hpText, HP_X + 42);
             drawBarText(graphics, font, I18n.get("hud.amemaru.mp", ceil(state.mp()), ceil(state.maxMp())), MP_X + 38);
         }
         drawLevel(graphics, font, state);
@@ -217,6 +222,23 @@ public final class AmemaruHud {
         if (fillWidth > 0) {
             graphics.blit(TEXTURE, x, BAR_Y, 0, vFill, 2 + fillWidth, BAR_H, TEX_SIZE, TEX_SIZE);
         }
+    }
+
+    /** 光の帳の障壁：HPのバーの上に、金色の帯を重ねる（障壁の量 ÷ 最大HP の長さ）。 */
+    private static void drawBarrier(GuiGraphics graphics, ClientPlayerState state, long now) {
+        double barrier = state.barrier();
+        if (barrier <= 0 || state.maxHp() <= 0) {
+            return;
+        }
+        int width = fillWidth((float) Math.min(1.0, barrier / state.maxHp()), BAR_INNER);
+        if (width <= 0) {
+            return;
+        }
+        float pulse = 0.7F + 0.2F * Mth.sin(now / 1000.0F * TWO_PI * 0.8F);
+        RenderSystem.enableBlend();
+        RenderSystem.setShaderColor(1.0F, 0.88F, 0.45F, pulse);
+        graphics.blit(TEXTURE, HP_X, BAR_Y, 0, AmemaruHudArt.V_HP_GHOST, 2 + width, BAR_H, TEX_SIZE, TEX_SIZE);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
     private static void drawExpBar(GuiGraphics graphics, ClientPlayerState state, long now) {

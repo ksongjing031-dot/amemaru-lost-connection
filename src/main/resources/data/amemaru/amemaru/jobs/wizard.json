@@ -1,0 +1,53 @@
+{
+  "kind": "combat",
+  "order": 20,
+  "name": "ウィザード",
+  "role": "範囲魔法",
+  "description": "仲間の糸を伝う魔力を束ね、星と氷で敵の群れを打ち払う魔法使い。MPが多く、陣で敵を止め、空から星を落とす。",
+  "color": "#B57CFF",
+  "icon": "amemaru:textures/gui/job/wizard.png",
+  "weapons": "amemaru:weapons/wizard",
+  "weapon_text": "杖",
+  "tags": [
+    "magic",
+    "ranged"
+  ],
+  "stats": {
+    "percent": {
+      "mp": 50,
+      "magic": 20,
+      "hp": -10,
+      "defense": -10,
+      "attack": -20
+    }
+  },
+  "schools": [
+    {
+      "id": "starlight",
+      "name": "星灯",
+      "description": "灯火と流星で、遠くの敵を焼き払う流派。星の印を重ねて一度に弾けさせ、仲間に魔力と光の守りを分けることもできる。",
+      "color": "#FFD27A"
+    },
+    {
+      "id": "frost",
+      "name": "氷結",
+      "description": "凍えを重ねて敵の足を止め、凍結させて氷柱で砕く流派。雷で感電させ、雷の鎖を次々に跳ばす。",
+      "color": "#9FE6FF"
+    }
+  ],
+  "starting_skills": [
+    "wizard/lamp_bolt",
+    "wizard/frost_circle"
+  ],
+  "starter_kit": [
+    {
+      "item": "amemaru:apprentice_staff"
+    }
+  ],
+  "upper": {
+    "name": "星詠み",
+    "description": "星の軌道と氷の理を詠む魔法使い。奥義（巨大な星の「星落とし」か、凍てつく「氷華の檻」）と、各スキルの第3段が開く。",
+    "min_level": 30,
+    "min_day": 11
+  }
+}

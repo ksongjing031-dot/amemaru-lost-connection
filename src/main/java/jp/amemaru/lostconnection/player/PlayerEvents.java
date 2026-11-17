@@ -1,6 +1,8 @@
 package jp.amemaru.lostconnection.player;
 
 import jp.amemaru.lostconnection.AmemaruMod;
+import jp.amemaru.lostconnection.job.PassiveService;
+import jp.amemaru.lostconnection.job.SkillService;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
@@ -94,16 +96,33 @@ public final class PlayerEvents {
         if (event.player instanceof ServerPlayer player) {
             PlayerDataCapability.get(player).ifPresent(data -> {
                 VitalsService.tick(player, data);
+                SkillService.tick(player, data);
                 PlayerSync.flush(player, data);
             });
         }
     }
 
-    /** 攻撃したら「戦闘中」にする（自然回復の量が変わる）。 */
+    /**
+     * 攻撃したら「戦闘中」にする（自然回復の量が変わる）。攻撃のたまり具合も覚えておく
+     * （近接攻撃のダメージに使う。バニラは攻撃した後でたまり具合を0に戻すため、ここで読む）。
+     */
     @SubscribeEvent
     public static void onAttack(AttackEntityEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            PlayerDataCapability.get(player).ifPresent(data -> data.markCombat(player.level().getGameTime()));
+            PlayerDataCapability.get(player).ifPresent(data -> {
+                data.markCombat(player.level().getGameTime());
+                data.setLastAttackStrength(player.getAttackStrengthScale(0.5F));
+            });
+        }
+    }
+
+    /** ログアウトしたら、詠唱をやめ、パッシブの記録を消す。 */
+    @SubscribeEvent
+    public static void onLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player) {
+            PlayerDataCapability.get(player).ifPresent(data -> SkillService.cancelCast(player, data, false));
+            PassiveService.forget(player.getUUID());
+            jp.amemaru.lostconnection.job.ReactiveSkills.forget(player.getUUID());
         }
     }
 }

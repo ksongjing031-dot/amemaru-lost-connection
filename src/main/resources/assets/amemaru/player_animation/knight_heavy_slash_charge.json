@@ -1,0 +1,92 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "knight_heavy_slash_charge": {
+      "animation_length": 0.999,
+      "bones": {
+        "right_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -150,
+                40,
+                40
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.501": {
+              "vector": [
+                -156,
+                40,
+                44
+              ],
+              "easing": "easeInOutSine"
+            },
+            "1.001": {
+              "vector": [
+                -150,
+                40,
+                40
+              ]
+            }
+          }
+        },
+        "left_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -60,
+                -30,
+                -20
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.501": {
+              "vector": [
+                -64,
+                -30,
+                -22
+              ],
+              "easing": "easeInOutSine"
+            },
+            "1.001": {
+              "vector": [
+                -60,
+                -30,
+                -20
+              ]
+            }
+          }
+        },
+        "body": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                6,
+                30,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.501": {
+              "vector": [
+                8,
+                32,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "1.001": {
+              "vector": [
+                6,
+                30,
+                0
+              ]
+            }
+          }
+        }
+      },
+      "loop": true
+    }
+  }
+}

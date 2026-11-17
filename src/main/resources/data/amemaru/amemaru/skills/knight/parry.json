@@ -1,0 +1,59 @@
+{
+  "job": "knight",
+  "school": "guardian",
+  "row": 2,
+  "column": 1,
+  "type": "active",
+  "name": "受け流し",
+  "description": "盾を斜めに構え、一瞬だけ攻撃を待つ。正面からの攻撃を受け流して、相手を崩す反撃を返す。うまく決まると、すぐにまた構えられる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 10,
+  "requires": [
+    {
+      "skill": "knight/binding_chain",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 8
+  },
+  "cooldown": 10,
+  "cooldown_per_rank": -1,
+  "link": "starter",
+  "delivery": {
+    "type": "self"
+  },
+  "effects": [
+    {
+      "type": "buff",
+      "buff": "parry",
+      "duration": 0.5,
+      "duration_per_rank": 0.1,
+      "refund": 0.5,
+      "on_success": [
+        {
+          "type": "damage",
+          "stat": "attack",
+          "coefficient": 1.2,
+          "coefficient_per_rank": 0.3
+        },
+        {
+          "type": "status",
+          "effect": "amemaru:stagger",
+          "duration": 1.5
+        },
+        {
+          "type": "gauge",
+          "amount": 15
+        }
+      ]
+    }
+  ],
+  "animation": "knight_parry",
+  "sound": "amemaru:skill.knight.parry"
+}

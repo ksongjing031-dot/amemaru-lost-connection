@@ -1,0 +1,43 @@
+{
+  "job": "knight",
+  "school": "guardian",
+  "row": 4,
+  "column": 0,
+  "type": "active",
+  "ultimate": true,
+  "name": "不落の城",
+  "description": "誓盾の騎士の奥義。誓いの盾を地に突き立て、まわりの仲間全員の前に、見えない城壁を築く。",
+  "max_rank": 1,
+  "rank_costs": [
+    5
+  ],
+  "upper_rank": 1,
+  "min_level": 30,
+  "requires": [
+    {
+      "skill": "knight/rampart",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 30,
+    "gauge": 60
+  },
+  "cooldown": 120,
+  "delivery": {
+    "type": "around",
+    "radius": 10,
+    "affects": "allies",
+    "include_self": true
+  },
+  "effects": [
+    {
+      "type": "buff",
+      "buff": "fortress",
+      "duration": 8,
+      "value": 40
+    }
+  ],
+  "animation": "knight_unfallen_castle",
+  "sound": "amemaru:skill.knight.unfallen_castle"
+}

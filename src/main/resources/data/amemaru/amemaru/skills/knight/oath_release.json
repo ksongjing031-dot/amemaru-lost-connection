@@ -1,0 +1,53 @@
+{
+  "job": "knight",
+  "school": "greatsword",
+  "row": 3,
+  "column": 0,
+  "type": "active",
+  "name": "誓気解放",
+  "description": "胸に溜めた誓気をすべて剣に込め、渾身の突きを放つ。誓気が多いほど強く、斬った手応えが体を癒やす。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "knight/unyielding_vow",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 10,
+    "gauge": 30
+  },
+  "cooldown": 18,
+  "cooldown_per_rank": -2,
+  "link": "finisher",
+  "delivery": {
+    "type": "target",
+    "range": 4.5,
+    "affects": "enemies"
+  },
+  "effects": [
+    {
+      "type": "gauge_burst",
+      "per_gauge": 0.04,
+      "per_gauge_per_rank": 0.005
+    },
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 1.0,
+      "lifesteal": 15
+    },
+    {
+      "type": "knockback",
+      "strength": 0.8
+    }
+  ],
+  "animation": "knight_oath_release",
+  "sound": "amemaru:skill.knight.oath_release"
+}

@@ -1,0 +1,64 @@
+{
+  "job": "knight",
+  "school": "greatsword",
+  "row": 4,
+  "column": 0,
+  "type": "active",
+  "ultimate": true,
+  "name": "天断ち",
+  "description": "誓盾の騎士のもう一つの奥義。誓いの糸を空に束ねて光の大剣を形づくり、前方の敵をまとめて断ち切る。断った敵の数だけ、誓気が燃え上がる。",
+  "max_rank": 1,
+  "rank_costs": [
+    5
+  ],
+  "upper_rank": 1,
+  "min_level": 30,
+  "requires": [
+    {
+      "skill": "knight/heavy_slash",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 35
+  },
+  "cooldown": 90,
+  "cast": 1.0,
+  "link": "finisher",
+  "delivery": {
+    "type": "line",
+    "flat": true,
+    "range": 14,
+    "width": 3.0
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 7.0
+    },
+    {
+      "type": "status",
+      "effect": "amemaru:armor_break",
+      "duration": 8
+    },
+    {
+      "type": "status",
+      "effect": "amemaru:stagger",
+      "duration": 1.5
+    },
+    {
+      "type": "knockback",
+      "strength": 0.6
+    },
+    {
+      "type": "gauge",
+      "per_target": 10,
+      "max": 50
+    }
+  ],
+  "cast_animation": "knight_heaven_cleave_cast",
+  "animation": "knight_heaven_cleave",
+  "cast_sound": "amemaru:skill.knight.heaven_cleave_cast",
+  "sound": "amemaru:skill.knight.heaven_cleave"
+}

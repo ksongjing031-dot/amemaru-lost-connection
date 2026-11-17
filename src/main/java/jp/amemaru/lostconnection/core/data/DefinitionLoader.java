@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -33,15 +34,25 @@ public class DefinitionLoader<T> extends SimpleJsonResourceReloadListener {
     private static final Gson GSON = new GsonBuilder().setLenient().create();
 
     private final String kind;
-    private final Function<JsonObject, T> parser;
+    private final BiFunction<ResourceLocation, JsonObject, T> parser;
     private volatile Map<ResourceLocation, T> entries = Map.of();
     private volatile List<String> errors = List.of();
+    /** 読み込むたびに1つ増える番号。ほかの定義と組み合わせた結果を作り直すかどうかの判断に使う。 */
+    private volatile int generation;
 
     /**
      * @param kind   種類（フォルダの名前。例：{@code growth}）
      * @param parser JSONを定義に変える処理。問題があれば {@link DefinitionException} を投げる
      */
     public DefinitionLoader(String kind, Function<JsonObject, T> parser) {
+        this(kind, (BiFunction<ResourceLocation, JsonObject, T>) (id, json) -> parser.apply(json));
+    }
+
+    /**
+     * @param kind   種類（フォルダの名前。例：{@code skills}）
+     * @param parser IDとJSONから定義を作る処理。問題があれば {@link DefinitionException} を投げる
+     */
+    public DefinitionLoader(String kind, BiFunction<ResourceLocation, JsonObject, T> parser) {
         super(GSON, AmemaruMod.MOD_ID + "/" + kind);
         this.kind = kind;
         this.parser = parser;
@@ -62,7 +73,7 @@ public class DefinitionLoader<T> extends SimpleJsonResourceReloadListener {
                 if (element == null || !element.isJsonObject()) {
                     throw new DefinitionException("ファイル全体を { } で囲んだ形にしてください");
                 }
-                loaded.put(id, parser.apply(element.getAsJsonObject()));
+                loaded.put(id, parser.apply(id, element.getAsJsonObject()));
             } catch (DefinitionException e) {
                 problems.add(where + "：" + e.getMessage());
             } catch (RuntimeException e) {
@@ -72,6 +83,7 @@ public class DefinitionLoader<T> extends SimpleJsonResourceReloadListener {
 
         this.entries = Collections.unmodifiableMap(loaded);
         this.errors = List.copyOf(problems);
+        this.generation++;
 
         AmemaruMod.LOGGER.info("[amemaru] Loaded {} definition(s) of kind '{}' ({} problem(s))", loaded.size(), kind, problems.size());
         for (String problem : problems) {
@@ -92,6 +104,11 @@ public class DefinitionLoader<T> extends SimpleJsonResourceReloadListener {
     /** 読み込んだすべての定義（読み込んだ順）。 */
     public Map<ResourceLocation, T> all() {
         return entries;
+    }
+
+    /** 読み込んだ回数（読み直すたびに増える）。 */
+    public int generation() {
+        return generation;
     }
 
     /** 直前の読み込みで見つかった問題。 */

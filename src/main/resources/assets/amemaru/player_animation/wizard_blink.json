@@ -1,0 +1,78 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "wizard_blink": {
+      "animation_length": 0.399,
+      "bones": {
+        "right_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -15,
+                0,
+                0
+              ],
+              "easing": "easeOutQuad"
+            },
+            "0.101": {
+              "vector": [
+                -70,
+                -45,
+                0
+              ],
+              "easing": "easeOutQuad"
+            },
+            "0.201": {
+              "vector": [
+                -20,
+                0,
+                60
+              ]
+            },
+            "0.401": {
+              "vector": [
+                -15,
+                0,
+                0
+              ]
+            }
+          }
+        },
+        "left_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                0,
+                0,
+                0
+              ],
+              "easing": "easeOutQuad"
+            },
+            "0.101": {
+              "vector": [
+                -70,
+                45,
+                0
+              ],
+              "easing": "easeOutQuad"
+            },
+            "0.201": {
+              "vector": [
+                -20,
+                0,
+                -60
+              ]
+            },
+            "0.401": {
+              "vector": [
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

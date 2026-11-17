@@ -2,6 +2,13 @@ package jp.amemaru.lostconnection;
 
 import com.mojang.logging.LogUtils;
 import jp.amemaru.lostconnection.core.config.ClientConfig;
+import jp.amemaru.lostconnection.core.registry.ModBlocks;
+import jp.amemaru.lostconnection.core.registry.ModCreativeTabs;
+import jp.amemaru.lostconnection.core.registry.ModEffects;
+import jp.amemaru.lostconnection.core.registry.ModEntities;
+import jp.amemaru.lostconnection.core.registry.ModItems;
+import jp.amemaru.lostconnection.core.registry.ModParticles;
+import jp.amemaru.lostconnection.core.registry.ModSounds;
 import jp.amemaru.lostconnection.core.config.ServerConfig;
 import jp.amemaru.lostconnection.network.ModNetwork;
 import net.minecraft.resources.ResourceLocation;
@@ -33,6 +40,15 @@ public final class AmemaruMod {
         context.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC, MOD_ID + "-client.toml");
 
         modBus.addListener(this::onCommonSetup);
+
+        // 登録（ブロック・アイテム・エンティティ・状態・音・パーティクル・クリエイティブのタブ）
+        ModBlocks.BLOCKS.register(modBus);
+        ModItems.ITEMS.register(modBus);
+        ModEntities.ENTITIES.register(modBus);
+        ModEffects.EFFECTS.register(modBus);
+        ModSounds.SOUNDS.register(modBus);
+        ModParticles.PARTICLES.register(modBus);
+        ModCreativeTabs.TABS.register(modBus);
     }
 
     private void onCommonSetup(FMLCommonSetupEvent event) {

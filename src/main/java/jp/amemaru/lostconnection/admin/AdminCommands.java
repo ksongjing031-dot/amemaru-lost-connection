@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import jp.amemaru.lostconnection.AmemaruMod;
+import jp.amemaru.lostconnection.combat.StatusService;
 import jp.amemaru.lostconnection.player.GrowthDef;
 import jp.amemaru.lostconnection.player.GrowthRules;
 import jp.amemaru.lostconnection.player.LevelService;
@@ -18,6 +19,8 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -29,9 +32,10 @@ import java.util.Optional;
 /**
  * 管理者のコマンド {@code /amemaru admin …}（権限レベル2以上。Phase 0-B 10章）。
  *
- * <p>Phase 1で作るのは {@code level}（レベル・経験値・振り分けの操作と確認）と、動作確認用の
- * {@code debug vitals}。ほかのコマンドは、それを使う仕組みと同じPhaseで足す。
- * 実行した人・対象・内容は、サーバーのログに残す。</p>
+ * <p>Phase 1で {@code level}（レベル・経験値・振り分けの操作と確認）と、動作確認用の {@code debug vitals} を作り、
+ * Phase 2で {@code job}（職業）・{@code skill}（スキル）・{@code day}（進行日）・{@code dummy}（訓練人形）と、
+ * 状態の見た目の確かめ用の {@code debug status}（凍え・凍結・感電・星痕・防御崩しをかける）を足した。
+ * ほかのコマンドは、それを使う仕組みと同じPhaseで足す。実行した人・対象・内容は、サーバーのログに残す。</p>
  */
 @Mod.EventBusSubscriber(modid = AmemaruMod.MOD_ID)
 public final class AdminCommands {
@@ -53,6 +57,10 @@ public final class AdminCommands {
                 .then(Commands.literal("admin")
                         .requires(source -> source.hasPermission(2))
                         .then(levelCommand())
+                        .then(JobCommands.jobCommand())
+                        .then(JobCommands.skillCommand())
+                        .then(JobCommands.dayCommand())
+                        .then(JobCommands.dummyCommand())
                         .then(debugCommand())));
     }
 
@@ -192,6 +200,13 @@ public final class AdminCommands {
 
     private static LiteralArgumentBuilder<CommandSourceStack> debugCommand() {
         return Commands.literal("debug")
+                .then(Commands.literal("status")
+                        .then(Commands.argument("targets", EntityArgument.entities())
+                                .then(statusKind("chill", 1, 5))
+                                .then(statusKind("freeze", 1, 30))
+                                .then(statusKind("shock", 1, 60))
+                                .then(statusKind("brand", 1, 5))
+                                .then(statusKind("armor_break", 1, 60))))
                 .then(Commands.literal("vitals")
                         .then(Commands.argument("targets", EntityArgument.players())
                                 .then(Commands.argument("hp", IntegerArgumentType.integer(1, 100))
@@ -200,6 +215,39 @@ public final class AdminCommands {
                                                         EntityArgument.getPlayers(ctx, "targets"),
                                                         IntegerArgumentType.getInteger(ctx, "hp"),
                                                         IntegerArgumentType.getInteger(ctx, "mp")))))));
+    }
+
+    /** {@code debug status <相手> <種類> <数>}：凍え・星痕は重ねる数、ほかは秒。 */
+    private static LiteralArgumentBuilder<CommandSourceStack> statusKind(String kind, int min, int max) {
+        return Commands.literal(kind)
+                .then(Commands.argument("amount", IntegerArgumentType.integer(min, max))
+                        .executes(ctx -> applyStatus(ctx.getSource(), EntityArgument.getEntities(ctx, "targets"), kind,
+                                IntegerArgumentType.getInteger(ctx, "amount"))));
+    }
+
+    /** 状態をかける（演出・凍結の決まりの確かめ用。ダメージは与えない）。 */
+    private static int applyStatus(CommandSourceStack source, Collection<? extends Entity> targets, String kind, int amount) {
+        int count = 0;
+        for (Entity entity : targets) {
+            if (!(entity instanceof LivingEntity living)) {
+                continue;
+            }
+            switch (kind) {
+                case "chill" -> StatusService.addChill(living, amount, 200, StatusService.MAX_CHILL, 40, 0, source.getEntity());
+                case "freeze" -> StatusService.freeze(living, amount * 20, source.getEntity());
+                case "shock" -> StatusService.shock(living, amount * 20, source.getEntity());
+                case "brand" -> StatusService.addBrand(living, amount, 200, source.getEntity());
+                case "armor_break" -> StatusService.armorBreak(living, amount * 20, source.getEntity());
+                default -> {
+                    continue;
+                }
+            }
+            count++;
+        }
+        int done = count;
+        log(source, "debug status " + kind + " " + amount + " on " + done + " entities");
+        source.sendSuccess(() -> Component.translatable("commands.amemaru.debug.status", kind, amount, done), true);
+        return done;
     }
 
     /** HPとMPを最大値の割合で入れる（自然回復やHUDの確かめ用）。 */
@@ -226,7 +274,7 @@ public final class AdminCommands {
 
     // ---------------------------------------------------------------- 共通
 
-    private static Optional<PlayerData> data(CommandSourceStack source, ServerPlayer player) {
+    static Optional<PlayerData> data(CommandSourceStack source, ServerPlayer player) {
         Optional<PlayerData> data = PlayerDataCapability.get(player);
         if (data.isEmpty()) {
             source.sendFailure(Component.translatable("commands.amemaru.no_data", player.getDisplayName()));
@@ -234,7 +282,7 @@ public final class AdminCommands {
         return data;
     }
 
-    private static void log(CommandSourceStack source, String action) {
+    static void log(CommandSourceStack source, String action) {
         AmemaruMod.LOGGER.info("[amemaru][admin] {} : {}", source.getTextName(), action);
     }
 }

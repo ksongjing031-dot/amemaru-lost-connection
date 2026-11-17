@@ -28,6 +28,10 @@ minecraft {
             property 'forge.logging.markers', 'REGISTRIES'
             property 'forge.logging.console.level', 'info'
 
+            // playerAnimator（プレイヤーのモーション）のミックスインを開発用の起動で正しく読むための設定
+            property 'mixin.env.remapRefMap', 'true'
+            property 'mixin.env.refMapRemappingFile', "${projectDir}/build/createSrgToMcp/output.srg"
+
             mods {
                 "${mod_id}" {
                     source sourceSets.main
@@ -63,11 +67,42 @@ minecraft {
 sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
-    // Phase 2 以降で GeckoLib・Curios・playerAnimator の取得先をここに足す
+    // playerAnimator（プレイヤーのモーション。Phase 0-B 1章）。作者の配布元を使う
+    // （ForgeGradle が名前を読み替えた版は別の置き場から来るため、exclusiveContent にはしない）
+    maven {
+        name = "KosmX's maven"
+        url = 'https://maven.kosmx.dev/'
+        content {
+            includeGroup 'dev.kosmx.player-anim'
+        }
+    }
+    // GeckoLib・Curios は Phase 3 で足す
+}
+
+configurations {
+    // 遊ぶときに mods に一緒に置く、配布されている形の依存Mod（gradlew dist で build/dist に写す）
+    ciMods {
+        canBeConsumed = false
+        canBeResolved = true
+        transitive = false
+    }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${minecraft_version}-${forge_version}"
+
+    // プレイヤーのモーション（クライアントでだけ使う。サーバーには要らない）
+    implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${player_anim_version}")
+    ciMods "dev.kosmx.player-anim:player-animation-lib-forge:${player_anim_version}"
+}
+
+// gradlew dist ： 遊ぶときに mods に置く jar（このMod ＋ クライアントに要る playerAnimator）を build/dist にそろえる。
+// GitHub Actions は、この中身をそのまま「できたMod」として保存し、クライアントの確認の mods に置く。
+tasks.register('dist', Copy) {
+    dependsOn 'reobfJar'
+    from(tasks.named('jar').flatMap { it.archiveFile })
+    from configurations.ciMods
+    into layout.buildDirectory.dir('dist')
 }
 
 tasks.named('processResources', ProcessResources).configure {
@@ -82,6 +117,7 @@ tasks.named('processResources', ProcessResources).configure {
             mod_license            : mod_license,
             mod_version            : mod_version,
             mod_authors            : mod_authors,
+            player_anim_range      : player_anim_range,
     ]
     inputs.properties replaceProperties
 

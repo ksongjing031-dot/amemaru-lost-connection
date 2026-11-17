@@ -1,0 +1,78 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "wizard_mana_thread": {
+      "animation_length": 0.699,
+      "bones": {
+        "right_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -15,
+                0,
+                0
+              ],
+              "easing": "easeOutSine"
+            },
+            "0.201": {
+              "vector": [
+                -80,
+                -15,
+                0
+              ]
+            },
+            "0.501": {
+              "vector": [
+                -75,
+                -10,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.701": {
+              "vector": [
+                -20,
+                0,
+                0
+              ]
+            }
+          }
+        },
+        "left_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                0,
+                0,
+                0
+              ],
+              "easing": "easeOutSine"
+            },
+            "0.201": {
+              "vector": [
+                -80,
+                15,
+                0
+              ]
+            },
+            "0.501": {
+              "vector": [
+                -75,
+                10,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.701": {
+              "vector": [
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}
