@@ -577,6 +577,8 @@ public final class CiScreenshots {
             }
             case 62 -> {
                 minecraft.options.setCameraType(CameraType.FIRST_PERSON);
+                // スキルツリーを閉じ、透明な画面に替える（画面を開いたままにして、自動の確認の終了を待たせる）
+                minecraft.setScreen(new HoldScreen());
                 next(MAP_STAGE, 0);
             }
             // ---- 建物の見本：空の高い所に草の広場を敷き、構造物を置いて、まわりから撮る
