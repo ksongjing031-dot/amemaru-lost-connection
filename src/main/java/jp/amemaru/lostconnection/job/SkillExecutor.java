@@ -63,7 +63,7 @@ public final class SkillExecutor {
         int rank = ctx.rank;
         ServerLevel level = ctx.level;
         Vec3 origin = caster.position();
-        prepare(ctx);
+        prepare(ctx, caster);
         playSound(level, origin, skill.sound(), 1.0F);
         float power = fxPower(ctx);
 
@@ -262,13 +262,19 @@ public final class SkillExecutor {
 
     // ---------------------------------------------------------------- 効果
 
-    /** ゲージを使って強める（旋風断・誓気解放）。1回のスキルで1回だけ。 */
-    private static void prepare(SkillContext ctx) {
+    /**
+     * ゲージを使って強める（旋風断・誓気解放）。1回のスキルで1回だけ。
+     *
+     * @param caster 使った人（放つときに渡す。遅れて効く処理では null で、そのときは一覧から探す）
+     */
+    private static void prepare(SkillContext ctx, @Nullable ServerPlayer caster) {
         if (ctx.prepared) {
             return;
         }
         ctx.prepared = true;
-        ServerPlayer caster = ctx.caster();
+        if (caster == null) {
+            caster = ctx.caster();
+        }
         PlayerData data = caster == null ? null : PlayerDataCapability.get(caster).orElse(null);
         if (caster == null || data == null) {
             return;
@@ -308,7 +314,7 @@ public final class SkillExecutor {
     static void apply(SkillContext ctx, List<LivingEntity> targets, @Nullable double[] falloff, Vec3 center, @Nullable Entity direct) {
         SkillDef skill = ctx.skill;
         int rank = ctx.rank;
-        prepare(ctx);
+        prepare(ctx, null);
         ServerPlayer caster = ctx.caster();
         PlayerData casterData = caster == null ? null : PlayerDataCapability.get(caster).orElse(null);
         long now = ctx.level.getGameTime();

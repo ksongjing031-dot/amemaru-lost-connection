@@ -57,16 +57,17 @@ src/main/java/jp/amemaru/lostconnection/
 ├─ AmemaruMod.java   Modの入り口
 ├─ core/             設定・データパックの読み込み・登録（ブロック・アイテム・効果音など）
 ├─ player/           プレイヤーデータ・ステータス・レベル・HPとMP
-├─ job/              職業・スキル・スキルツリー・専用ゲージ・パッシブ（job/def は定義の読み込み）
-├─ combat/           ダメージの計算と受け渡し・連携・挑発
+├─ job/              職業・スキル・スキルツリー・専用ゲージ・パッシブ・受け流し（job/def は定義の読み込み）
+├─ combat/           ダメージの計算と受け渡し・連携・挑発・敵に重なる状態（凍え・凍結・感電・星痕・防御崩し）
+├─ particle/         演出用パーティクルの値
 ├─ progression/      進行日
 ├─ block/ item/ entity/ effect/   誓約の結晶・見習い装備・訓練人形・状態
 ├─ admin/            管理者のコマンド
 ├─ network/          通信（c2s：クライアント→サーバー、s2c：サーバー→クライアント）
 ├─ gametest/         自動テスト
-└─ client/           HUD・画面・キー・演出・モーション（クライアント専用）
+└─ client/           HUD・画面・キー・演出・モーション（クライアント専用。client/fx は演出の形・パーティクル・状態の見た目）
 src/main/resources/
-├─ assets/amemaru/                 画面の文字（日本語）・絵・モデル・効果音・モーション
+├─ assets/amemaru/                 画面の文字（日本語）・絵・モデル・効果音・モーション・演出のテクスチャ
 └─ data/amemaru/amemaru/           成長・職業・スキルの定義（データパックで上書きできる）
-tools/                             仮の絵とモーションを作るスクリプト（Modには入らない）
+tools/                             仮の絵・演出のテクスチャ・モーションを作るスクリプト（Modには入らない）
 ```

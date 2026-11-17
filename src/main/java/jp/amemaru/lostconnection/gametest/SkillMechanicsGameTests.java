@@ -40,6 +40,8 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.AttributeInstance;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.monster.Zombie;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.Vec3;
@@ -208,24 +210,26 @@ public final class SkillMechanicsGameTests {
         SkillDef release = skill("knight/oath_release");
         SkillTreeService.forceRank(player, data, release, 1);
         int slot = data.loadoutSlotOf(release.id());
-        TrainingDummy dummy = dummyInFront(helper, player, 1.6);
+        // 偽のプレイヤーのダメージは「持ち主なし」になり、訓練人形は傷つかないため、体力を増やしたゾンビで確かめる
+        Zombie target = toughZombieInFront(helper, player, 1.6);
         try {
             data.setGauge(100);
             data.markCombat(helper.getLevel().getGameTime());
-            float before = dummy.getDummyHp();
-            SkillService.Result result = SkillService.tryUse(player, data, slot, dummy.getId(), null);
+            double before = TargetVitals.hp(target);
+            SkillService.Result result = SkillService.tryUse(player, data, slot, target.getId(), null);
             check(helper, result.ok(), "誓気解放を使えません：" + result.failure());
             check(helper, data.getGauge() < EPSILON, "誓気が残っています：" + data.getGauge());
-            double expected = data.getStats().get(StatType.ATTACK) * 1.0 * 5.0;
-            double dealt = before - dummy.getDummyHp();
-            check(helper, dealt >= expected * 0.94 && dealt <= expected * 3.2,
+            double expected = data.getStats().get(StatType.ATTACK) * 1.0 * 5.0
+                    * DamageCalculator.mitigation(TargetVitals.defense(target));
+            double dealt = before - TargetVitals.hp(target);
+            check(helper, dealt >= expected * 0.9 && dealt <= expected * 3.2,
                     "誓気解放のダメージが、攻撃×5倍になっていません：" + dealt + "（" + expected + "）");
             data.setGauge(10);
             data.clearCooldowns();
-            SkillService.Result empty = SkillService.tryUse(player, data, slot, dummy.getId(), null);
+            SkillService.Result empty = SkillService.tryUse(player, data, slot, target.getId(), null);
             check(helper, empty.failure() == SkillService.Failure.NO_GAUGE, "誓気が30ないのに使えました：" + empty.failure());
         } finally {
-            dummy.discard();
+            target.discard();
         }
         helper.succeed();
     }
@@ -338,28 +342,29 @@ public final class SkillMechanicsGameTests {
         SkillDef burst = skill("wizard/star_burst");
         SkillTreeService.forceRank(player, data, burst, 1);
         int slot = data.loadoutSlotOf(burst.id());
-        TrainingDummy dummy = dummyInFront(helper, player, 2.0);
+        Zombie target = toughZombieInFront(helper, player, 2.0);
         try {
             double mp = data.getMp();
             check(helper, SkillService.tryUse(player, data, slot, -1, null).failure() == SkillService.Failure.NO_BRANDED,
                     "星痕がないのに星爆を使えました");
             check(helper, Math.abs(data.getMp() - mp) < EPSILON, "使えなかったのにMPが減りました");
 
-            StatusService.addBrand(dummy, 2, 160, null);
-            StatusService.addBrand(dummy, 1, 160, null);
-            check(helper, StatusService.brands(dummy) == 3, "星痕が3つになっていません：" + StatusService.brands(dummy));
-            StatusService.addBrand(dummy, 9, 160, null);
-            check(helper, StatusService.brands(dummy) == 5, "星痕が5つで止まっていません：" + StatusService.brands(dummy));
-            float before = dummy.getDummyHp();
+            StatusService.addBrand(target, 2, 160, null);
+            StatusService.addBrand(target, 1, 160, null);
+            check(helper, StatusService.brands(target) == 3, "星痕が3つになっていません：" + StatusService.brands(target));
+            StatusService.addBrand(target, 9, 160, null);
+            check(helper, StatusService.brands(target) == 5, "星痕が5つで止まっていません：" + StatusService.brands(target));
+            double before = TargetVitals.hp(target);
             SkillService.Result result = SkillService.tryUse(player, data, slot, -1, null);
             check(helper, result.ok(), "星爆を使えません：" + result.failure());
-            check(helper, StatusService.brands(dummy) == 0, "星痕が消えていません");
-            double expected = data.getStats().get(StatType.MAGIC) * (0.8 + 0.6 * 5);
-            double dealt = before - dummy.getDummyHp();
-            check(helper, dealt >= expected * 0.94 && dealt <= expected * 3.2,
+            check(helper, StatusService.brands(target) == 0, "星痕が消えていません");
+            double expected = data.getStats().get(StatType.MAGIC) * (0.8 + 0.6 * 5)
+                    * DamageCalculator.mitigation(TargetVitals.defense(target));
+            double dealt = before - TargetVitals.hp(target);
+            check(helper, dealt >= expected * 0.9 && dealt <= expected * 3.2,
                     "星爆（星痕5つ）のダメージが、魔力×3.8倍になっていません：" + dealt + "（" + expected + "）");
         } finally {
-            dummy.discard();
+            target.discard();
         }
         helper.succeed();
     }
@@ -458,6 +463,19 @@ public final class SkillMechanicsGameTests {
         dummy.moveTo(player.getX() + flat.x * distance, player.getY(), player.getZ() + flat.z * distance, 180.0F, 0.0F);
         dummy.setDummyDefense(0);
         return dummy;
+    }
+
+    /** 目の前（distance ブロック）に、体力を10倍にしたゾンビ（動かない）を置く。 */
+    private static Zombie toughZombieInFront(GameTestHelper helper, ServerPlayer player, double distance) {
+        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(1, 1, 1));
+        Vec3 flat = flatLook(player);
+        zombie.moveTo(player.getX() + flat.x * distance, player.getY(), player.getZ() + flat.z * distance, 180.0F, 0.0F);
+        AttributeInstance health = zombie.getAttribute(Attributes.MAX_HEALTH);
+        if (health != null) {
+            health.setBaseValue(200.0);
+        }
+        zombie.setHealth(200.0F);
+        return zombie;
     }
 
     private static ResourceLocation id(String path) {
