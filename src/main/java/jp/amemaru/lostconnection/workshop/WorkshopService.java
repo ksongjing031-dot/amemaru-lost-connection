@@ -6,8 +6,6 @@ import jp.amemaru.lostconnection.accessory.AccessoryItem;
 import jp.amemaru.lostconnection.accessory.AccessoryRoller;
 import jp.amemaru.lostconnection.accessory.AccessoryRules;
 import jp.amemaru.lostconnection.accessory.AccessoryService;
-import jp.amemaru.lostconnection.core.config.ServerConfig;
-import jp.amemaru.lostconnection.core.registry.ModItems;
 import jp.amemaru.lostconnection.equipment.EquipmentDef;
 import jp.amemaru.lostconnection.equipment.EquipmentDefs;
 import jp.amemaru.lostconnection.equipment.GearData;
@@ -73,8 +71,8 @@ public final class WorkshopService {
     }
 
     /**
-     * その工房の生産職になる（変える）。お試し期間（戦闘職と同じ config の日まで）は無料、その後は「転職の証」を使う【補完】。
-     * 熟練度は職業ごとに残るので、戻せば続きから。
+     * その工房の生産職になる（変える）。生産職はいつでも無料で変えられる（Phase 0-A 19章「生産職の変更：いつでもできる」）。
+     * 熟練度は職業ごとに別で、引き継がない（それぞれの職業の熟練度が残り、戻せば続きから）。
      */
     public static boolean chooseJob(ServerPlayer player, WorkshopType type) {
         PlayerData data = PlayerDataCapability.get(player).orElse(null);
@@ -89,16 +87,6 @@ public final class WorkshopService {
             return false;
         }
         if (adventure.productionJob() != null) {
-            int day = ProgressionData.currentDay(player.server);
-            int tokens = ServerConfig.JOB_CHANGE_TOKENS.get();
-            if (day > ServerConfig.JOB_CHANGE_FREE_UNTIL_DAY.get() && tokens > 0 && !player.getAbilities().instabuild) {
-                if (count(player, ModItems.JOB_CHANGE_TOKEN.get()) < tokens) {
-                    player.displayClientMessage(Component.translatable("message.amemaru.workshop.need_token", tokens)
-                            .withStyle(ChatFormatting.RED), true);
-                    return false;
-                }
-                consume(player, ModItems.JOB_CHANGE_TOKEN.get(), tokens);
-            }
             adventure.addProductionChange();
         }
         adventure.setProductionJob(job.id());

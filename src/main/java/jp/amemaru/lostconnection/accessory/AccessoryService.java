@@ -2,6 +2,7 @@ package jp.amemaru.lostconnection.accessory;
 
 import jp.amemaru.lostconnection.AmemaruMod;
 import jp.amemaru.lostconnection.core.config.ServerConfig;
+import jp.amemaru.lostconnection.loot.LootItemEntity;
 import jp.amemaru.lostconnection.network.ModNetwork;
 import jp.amemaru.lostconnection.network.s2c.AccessoryVisibilityS2C;
 import jp.amemaru.lostconnection.network.s2c.SpecialMomentS2C;
@@ -227,6 +228,17 @@ public final class AccessoryService {
     public static void onObtained(Player player, ItemStack stack) {
         if (player instanceof ServerPlayer serverPlayer && stack.getItem() instanceof AccessoryItem) {
             checkPerfect(serverPlayer, stack);
+        }
+    }
+
+    /**
+     * 敵のドロップ（その人だけのドロップ）を拾ったとき。一度拾った物を落として拾い直しても、もう一度は知らせない
+     * （ふつうのアイテムとして落ちるため）。
+     */
+    @SubscribeEvent
+    public static void onPickup(PlayerEvent.ItemPickupEvent event) {
+        if (event.getOriginalEntity() instanceof LootItemEntity) {
+            onObtained(event.getEntity(), event.getStack());
         }
     }
 }

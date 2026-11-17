@@ -320,10 +320,10 @@ public final class EquipmentGameTests {
         ItemStack cuirass = rolled("ancient_stone_cuirass", Rarity.COMMON, 1.0, 0);
         player.setItemSlot(EquipmentSlot.CHEST, cuirass);
         LevelService.recompute(player, data);
-        check(helper, data.getStats().get(StatType.DEFENSE) > defense, "古代石の胸当てで防御が上がっていません");
+        check(helper, data.getStats().get(StatType.DEFENSE) > defense, "古代石の胴鎧で防御が上がっていません");
         GearData.setDurability(cuirass, cuirassDef, 0);
         LevelService.recompute(player, data);
-        expectStat(helper, data, StatType.DEFENSE, defense, "壊れた胸当て");
+        expectStat(helper, data, StatType.DEFENSE, defense, "壊れた胴鎧");
         player.setItemSlot(EquipmentSlot.CHEST, ItemStack.EMPTY);
         LevelService.recompute(player, data);
         helper.succeed();
@@ -427,21 +427,19 @@ public final class EquipmentGameTests {
         check(helper, count(smith, "moss_iron") == 0, "修理の素材が使われていません");
         check(helper, !WorkshopService.repair(smith, WorkshopType.WEAPON, made), "耐久が満タンなのに修理できました");
 
-        // 生産職を変える：お試しの日を過ぎたら「転職の証」が要る。熟練度は職業ごとに残る
+        // 生産職を変える：いつでも無料（戦闘職のお試し期間の後でも、転職の証は要らない）。熟練度は職業ごとに別
         ProgressionData progression = ProgressionData.get(helper.getLevel().getServer());
         int originalDay = progression.day();
         try {
-            progression.setDay(ServerConfig.JOB_CHANGE_FREE_UNTIL_DAY.get() + 1);
-            int tokens = ServerConfig.JOB_CHANGE_TOKENS.get();
-            if (tokens > 0) {
-                check(helper, !WorkshopService.chooseJob(smith, WorkshopType.ARMOR), "転職の証がないのに生産職を変えられました");
-                smith.getInventory().add(new ItemStack(ModItems.JOB_CHANGE_TOKEN.get(), tokens));
-            }
+            progression.setDay(ServerConfig.JOB_CHANGE_FREE_UNTIL_DAY.get() + 5);
             check(helper, WorkshopService.chooseJob(smith, WorkshopType.ARMOR), "防具職人に変えられません");
-            check(helper, count(smith, ModItems.JOB_CHANGE_TOKEN.get()) == 0, "転職の証が使われていません");
             check(helper, id("armorsmith").equals(adventure.productionJob()) && adventure.productionChanges() == 1,
                     "防具職人に変わっていない、または変えた回数が1ではありません");
-            check(helper, adventure.masteryExp(weaponsmith) == 10, "武器職人の熟練度の経験が消えました");
+            check(helper, WorkshopService.mastery(smith, data, WorkshopType.ARMOR) == 1 && adventure.masteryExp(id("armorsmith")) == 0,
+                    "防具職人の熟練度が1から始まっていません（引き継いでいます）");
+            check(helper, WorkshopService.mastery(smith, data, WorkshopType.WEAPON) == 0, "武器職人でなくなったのに武器の熟練度があります");
+            check(helper, WorkshopService.chooseJob(smith, WorkshopType.WEAPON) && adventure.masteryExp(weaponsmith) == 10,
+                    "武器職人に戻したとき、武器職人の熟練度の経験（10）が残っていません");
         } finally {
             progression.setDay(originalDay);
         }

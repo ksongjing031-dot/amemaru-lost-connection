@@ -80,6 +80,46 @@
           "chance": 0.02
         }
       ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "amemaru:ishikure_bracelet",
+          "functions": [
+            {
+              "function": "amemaru:roll_accessory"
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.015
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "amemaru:waystone_charm",
+          "functions": [
+            {
+              "function": "amemaru:roll_accessory"
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.008
+        }
+      ]
     }
   ]
 }

@@ -1,6 +1,7 @@
 package jp.amemaru.lostconnection.equipment;
 
 import jp.amemaru.lostconnection.AmemaruMod;
+import jp.amemaru.lostconnection.item.GeoWeaponItem;
 import jp.amemaru.lostconnection.player.CollectStatsEvent;
 import jp.amemaru.lostconnection.player.GrowthDef;
 import jp.amemaru.lostconnection.player.GrowthRules;
@@ -111,8 +112,9 @@ public final class GearService {
 
     // ---------------------------------------------------------------- 耐久
 
-    /** 武器の耐久を減らす（攻撃が当たったとき・スキルを使ったとき）。 */
+    /** 武器の耐久を減らす（攻撃が当たったとき・スキルを使ったとき）。動く武器は「使った」のアニメーションも流す。 */
     public static void wearWeapon(ServerPlayer player, boolean skill) {
+        GeoWeaponItem.playUse(player);
         if (player.getAbilities().instabuild) {
             return;
         }

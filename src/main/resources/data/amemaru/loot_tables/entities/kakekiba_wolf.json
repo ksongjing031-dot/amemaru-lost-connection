@@ -60,6 +60,46 @@
           "chance": 0.05
         }
       ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "amemaru:moss_iron_battle_ring",
+          "functions": [
+            {
+              "function": "amemaru:roll_accessory"
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.012
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "amemaru:waystone_charm",
+          "functions": [
+            {
+              "function": "amemaru:roll_accessory"
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.01
+        }
+      ]
     }
   ]
 }

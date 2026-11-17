@@ -45,6 +45,26 @@
           "chance": 0.03
         }
       ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "amemaru:moss_iron_wisdom_ring",
+          "functions": [
+            {
+              "function": "amemaru:roll_accessory"
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.012
+        }
+      ]
     }
   ]
 }
