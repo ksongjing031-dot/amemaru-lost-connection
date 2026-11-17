@@ -501,7 +501,9 @@ Phase 0-Aのとおり **R・G・V・Z・X・C** です（一時は、ボイス�
 | `fx/star.png` | 64×64 | 4つのとがりの星の光 |
 | `fx/snowflake.png`・`fx/crack.png` | 32×32 | 頭の上の印：雪の結晶（凍え）・ひびの入った盾（防御崩し） |
 | `fx/shield.png` | 64×64 | 盾の紋（受け流し・盾結び） |
-| `particle/glow.png`・`spark.png`・`shard.png`・`star.png`・`snow.png`・`rune_0〜3.png` | 16×16 | パーティクル（光・火花（右が先）・氷のかけら・星・雪・紋字4つ）。どれを使うかは `particles/<名前>.json` |
+| `particle/glow.png` | 64×64 | パーティクルの光の玉（ふちで透明になる、なめらかな丸。近くで大きく見えても段々にならない大きさ） |
+| `particle/star.png` | 32×32 | パーティクルの星 |
+| `particle/spark.png`・`shard.png`・`snow.png`・`rune_0〜3.png` | 16×16 | パーティクル（火花（右が先）・氷のかけら・雪・紋字4つ）。どれを使うかは `particles/<名前>.json` |
 
 `gui/skill_hud.png` の位置（コードでは `SkillHudArt.java`）：
 
