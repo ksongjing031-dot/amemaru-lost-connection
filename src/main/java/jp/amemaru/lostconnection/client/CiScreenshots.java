@@ -18,16 +18,19 @@ import net.minecraft.client.Screenshot;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.server.IntegratedServer;
+import net.minecraft.core.BlockPos;
 import net.minecraft.client.tutorial.TutorialSteps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
 import java.util.Base64;
+import java.util.Locale;
 
 /**
  * GitHub Actions の自動の確認でだけ動く、画面写真の撮影（遊ぶときは動かない）。
@@ -41,6 +44,8 @@ import java.util.Base64;
  *   <li>スキルの拡張（11月17日）：ナイトの溜め（誓いの円陣の中で）と溜め斬り、敵の頭の上の状態の印、凍てつく波動（凍結の氷と棘）、
  *       氷柱で砕く、星爆、雷霆、光の帳</li>
  *   <li>奥義のもう一つ（11月17日）：天断ちの構えと断った瞬間、奥義のつまみ（2つから1つ）、氷華の檻の詠唱と花が咲いたところ</li>
+ *   <li>建物の見本（11月17日）：コネリアの冒険者ギルド本館（{@code amemaru:map/conelia/guild_hall}）を空に置き、
+ *       まわりの6か所から撮る（HUDは隠す）</li>
  * </ul>
  */
 @Mod.EventBusSubscriber(modid = AmemaruMod.MOD_ID, value = Dist.CLIENT)
@@ -62,6 +67,29 @@ public final class CiScreenshots {
     private static boolean castSeen;
     @Nullable
     private static String pendingShot;
+    /** 建物の見本を置いた所（構造物の角）。 */
+    @Nullable
+    private static BlockPos mapOrigin;
+    /** 建物の写真の間は、HUD（ホットバー・チャットなど）を描かない。 */
+    private static boolean hideHud;
+    /** 建物の写真の前にいた所とゲームモード（撮った後で戻す。後で動く自動テストの場所を変えないため）。 */
+    @Nullable
+    private static BlockPos returnPos;
+    private static String returnMode = "creative";
+
+    /** 建物の見本の写真の名前と、撮る所：目の位置と見る所（構造物の中の座標。y=0 が地面の草）。 */
+    private static final String[] MAP_SHOTS = {
+            "map_guild_front", "map_guild_left", "map_guild_right", "map_guild_close", "map_guild_aerial", "map_guild_back"};
+    private static final double[][] MAP_VIEWS = {
+            {24, 21, 68, 24, 24, 20},
+            {-8, 21, 54, 20, 19, 20},
+            {58, 21, 54, 27, 18, 20},
+            {12, 8, 46, 20, 9, 28},
+            {58, 44, 64, 24, 14, 20},
+            {52, 24, -18, 24, 18, 16},
+    };
+    /** 建物の見本の写真の段階の始まり。 */
+    private static final int MAP_STAGE = 70;
 
     private CiScreenshots() {
     }
@@ -549,11 +577,82 @@ public final class CiScreenshots {
             }
             case 62 -> {
                 minecraft.options.setCameraType(CameraType.FIRST_PERSON);
-                minecraft.setScreen(null);
-                next(63, 0);
+                // スキルツリーを閉じ、透明な画面に替える（画面を開いたままにして、自動の確認の終了を待たせる）
+                minecraft.setScreen(new HoldScreen());
+                next(MAP_STAGE, 0);
+            }
+            // ---- 建物の見本：空の高い所に草の広場を敷き、構造物を置いて、まわりから撮る
+            case MAP_STAGE -> {
+                clean(minecraft);
+                if (minecraft.gameMode != null) {
+                    returnMode = minecraft.gameMode.getPlayerMode().getName();
+                }
+                command(minecraft, "gamemode spectator @a");
+                command(minecraft, "time set noon");
+                BlockPos at = minecraft.player.blockPosition();
+                returnPos = at;
+                mapOrigin = new BlockPos(at.getX() - 24, 200, at.getZ() - 20);
+                next(MAP_STAGE + 1, 60);
+            }
+            case MAP_STAGE + 1 -> {
+                BlockPos o = mapOrigin;
+                command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:grass_block",
+                        o.getX() - 24, o.getY(), o.getZ() - 24, o.getX() + 71, o.getY(), o.getZ() + 63));
+                command(minecraft, String.format(Locale.ROOT, "place template amemaru:map/conelia/guild_hall %d %d %d",
+                        o.getX(), o.getY(), o.getZ()));
+                hideHud = true;
+                mapView(0);
+                // 大きな構造物の形を作り直して描くまで、長めに待つ
+                next(MAP_STAGE + 2, 300);
             }
             default -> {
+                int k = stage - (MAP_STAGE + 2);
+                if (k < 0 || k >= MAP_SHOTS.length * 2) {
+                    return;
+                }
+                int view = k / 2;
+                if (k % 2 == 0) {
+                    clean(minecraft);
+                    pendingShot = MAP_SHOTS[view];
+                    next(stage + 1, 2);
+                } else if (view + 1 < MAP_SHOTS.length) {
+                    mapView(view + 1);
+                    next(stage + 1, 80);
+                } else {
+                    hideHud = false;
+                    if (returnPos != null) {
+                        command(minecraft, String.format(Locale.ROOT, "tp @p %d %d %d",
+                                returnPos.getX(), returnPos.getY(), returnPos.getZ()));
+                    }
+                    command(minecraft, "gamemode " + returnMode + " @a");
+                    minecraft.setScreen(null);
+                    next(MAP_STAGE + 2 + MAP_SHOTS.length * 2, 0);
+                }
             }
+        }
+    }
+
+    /** 建物の見本の撮る所へ、観戦モードのまま移る（目の高さは足もとの 1.62 上）。 */
+    private static void mapView(int index) {
+        double[] v = MAP_VIEWS[index];
+        BlockPos o = mapOrigin;
+        if (o == null) {
+            return;
+        }
+        double dx = v[3] - v[0];
+        double dy = v[4] - v[1];
+        double dz = v[5] - v[2];
+        float yaw = (float) -Math.toDegrees(Math.atan2(dx, dz));
+        float pitch = (float) -Math.toDegrees(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)));
+        command(Minecraft.getInstance(), String.format(Locale.ROOT, "tp @p %.2f %.2f %.2f %.1f %.1f",
+                o.getX() + v[0], o.getY() + v[1] - 1.62, o.getZ() + v[2], yaw, pitch));
+    }
+
+    /** 建物の写真の間は、HUDを描かない（開いたままの透明な画面があるので、F1 と同じ設定では消えない）。 */
+    @SubscribeEvent
+    public static void onRenderOverlay(RenderGuiOverlayEvent.Pre event) {
+        if (ENABLED && hideHud) {
+            event.setCanceled(true);
         }
     }
 
