@@ -47,7 +47,7 @@ public class SkillTreeScreen extends Screen {
     private static final int TAB_H = 11;
     private static final int TAB_STEP = 29;
     private static final int NUMBERS_Y = 104;
-    private static final int LINES_BOTTOM = 154;
+    private static final int LINES_BOTTOM = 156;
     private static final int BUTTON_Y = 157;
     private static final int SLOT_Y = 186;
     private static final int SLOT_STEP = 27;

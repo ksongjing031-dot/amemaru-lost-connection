@@ -80,9 +80,15 @@ public final class CiScreenshots {
                 command(minecraft, "item replace entity @a weapon.offhand with minecraft:shield");
                 ModNetwork.sendToServer(new AllocateStatC2S(StatType.HP, 3));
                 ModNetwork.sendToServer(new AllocateStatC2S(StatType.ATTACK, 2));
+                // どんな地形に出ても同じ写真になるよう、30ブロック上の空に15×15の床を作る（立つのは次の段階。
+                // 床が届く前に移ると、落ちることがあるため）
+                command(minecraft, "time set noon");
+                command(minecraft, "weather clear");
+                command(minecraft, "execute as @p at @p run fill ~-7 ~29 ~-7 ~7 ~29 ~7 minecraft:deepslate_tiles");
                 next(1, 20);
             }
             case 1 -> {
+                command(minecraft, "execute as @p at @p run tp @s ~ ~30 ~");
                 command(minecraft, "amemaru admin debug vitals @a 82 46");
                 next(2, 40);
             }
@@ -118,11 +124,6 @@ public final class CiScreenshots {
                 command(minecraft, "gamerule sendCommandFeedback false");
                 command(minecraft, "gamerule logAdminCommands false");
                 command(minecraft, "amemaru admin debug vitals @a 82 46");
-                command(minecraft, "time set noon");
-                command(minecraft, "weather clear");
-                // どんな地形に出ても同じ写真になるよう、30ブロック上の空に15×15の床を作って、その上に立つ
-                command(minecraft, "execute as @p at @p run fill ~-7 ~29 ~-7 ~7 ~29 ~7 minecraft:deepslate_tiles");
-                command(minecraft, "execute as @p at @p run tp @s ~ ~30 ~");
                 if (minecraft.player != null) {
                     minecraft.player.setXRot(15.0F);
                 }

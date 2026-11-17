@@ -4,7 +4,7 @@ Discordサーバー「あめまるさん」のための、Minecraft Java版 1.20
 
 - 設計：Phase 0-A（世界観とゲームデザイン）、Phase 0-B（技術設計）
 - 作り方：Phaseごとにブランチ（`phase-1` など）で作り、プルリクエストで確認していただいてから `main` に入れます。
-- 各Phaseの内容と確認の手順は [`docs/`](docs/) にあります（Phase 1は [`docs/phase1.md`](docs/phase1.md)）。
+- 各Phaseの内容と確認の手順は [`docs/`](docs/) にあります（[Phase 1](docs/phase1.md)・[Phase 2](docs/phase2.md)）。
 
 ## 動かすのに必要なもの
 
@@ -13,6 +13,7 @@ Discordサーバー「あめまるさん」のための、Minecraft Java版 1.20
 | Minecraft Java版 | 1.20.1 |
 | Forge | 47.4系の最新（47.4.29 で確かめています） |
 | Java | 17（Minecraftのランチャーが用意するもので足ります） |
+| playerAnimator（Forge 1.20.1 版） | 1.0.2-rc1+1.20 以上。**クライアント（遊ぶ人のPC）にだけ必要**。サーバーには入れなくてよい |
 
 ## Modのファイル（jar）の受け取り方
 
@@ -21,16 +22,19 @@ GitHubの自動ビルド（GitHub Actions）が、コードを上げるたびに
 1. このリポジトリの「Actions」タブを開く
 2. 一覧から、緑のチェックが付いた実行を開く（プルリクエストの確認なら、そのブランチ名のもの）
 3. 下の「Artifacts」にある `amemaru-mod-<番号>` をダウンロードする
-4. ダウンロードしたzipを開き、中の `amemaru-1.20.1-<版>.jar` を取り出す
+4. ダウンロードしたzipを開き、中の2つの jar を取り出す
+   - `amemaru-1.20.1-<版>.jar` … このMod（クライアントとサーバーの両方に入れる）
+   - `player-animation-lib-forge-<版>.jar` … playerAnimator（クライアントにだけ入れる）
 
-同じ場所の `screenshots-<番号>` には、自動の確認で撮ったHUDとステータス画面の写真が入っています。
+同じ場所の `screenshots-<番号>` には、自動の確認で撮ったHUD・ステータス画面・スキルの写真が入っています。
 
 ## 遊び方（LANでの確認）
 
 1. Minecraftのランチャーに Forge 1.20.1 を入れる（Forgeの公式サイトで 1.20.1 の「Latest」のインストーラーを使い、「Install client」）
-2. 取り出した jar を、Minecraftのフォルダの `mods` に入れる（Windowsなら `%APPDATA%\.minecraft\mods`）
+2. 取り出した2つの jar を、Minecraftのフォルダの `mods` に入れる（Windowsなら `%APPDATA%\.minecraft\mods`）
 3. 起動の構成で「forge」を選んで遊ぶ
-4. 一緒に確かめる人も、同じ版の Forge と jar を入れる。ワールドを開いた人が「LANに公開」し、ほかの人はマルチプレイの一覧から入る
+4. 一緒に確かめる人も、同じ版の Forge と2つの jar を入れる。ワールドを開いた人が「LANに公開」し、ほかの人はマルチプレイの一覧から入る
+5. 専用サーバー（AGAMES など）には、このModの jar だけを入れる（playerAnimator は要らない）
 
 ## 開発用の起動（任意）
 
@@ -38,6 +42,7 @@ GitHubの自動ビルド（GitHub Actions）が、コードを上げるたびに
 
 ```
 gradlew build          … Modの jar を build/libs に作る
+gradlew dist           … mods に置く jar（このMod ＋ playerAnimator）を build/dist にそろえる
 gradlew runClient      … 開発用のクライアント（名前は Dev）
 gradlew runServer      … 開発用のサーバー（初回は run/eula.txt の eula を true にする）
 gradlew runClient2     … 1台のPCで2人目を試すクライアント（名前は Tester2）
@@ -50,12 +55,18 @@ gradlew runClient2     … 1台のPCで2人目を試すクライアント（名�
 ```
 src/main/java/jp/amemaru/lostconnection/
 ├─ AmemaruMod.java   Modの入り口
-├─ core/             設定・データパックの読み込み・ワールドの設定
+├─ core/             設定・データパックの読み込み・登録（ブロック・アイテム・効果音など）
 ├─ player/           プレイヤーデータ・ステータス・レベル・HPとMP
+├─ job/              職業・スキル・スキルツリー・専用ゲージ・パッシブ（job/def は定義の読み込み）
+├─ combat/           ダメージの計算と受け渡し・連携・挑発
+├─ progression/      進行日
+├─ block/ item/ entity/ effect/   誓約の結晶・見習い装備・訓練人形・状態
 ├─ admin/            管理者のコマンド
 ├─ network/          通信（c2s：クライアント→サーバー、s2c：サーバー→クライアント）
-└─ client/           HUD・画面・キー（クライアント専用）
+├─ gametest/         自動テスト
+└─ client/           HUD・画面・キー・演出・モーション（クライアント専用）
 src/main/resources/
-├─ assets/amemaru/lang/            画面の文字（日本語）
-└─ data/amemaru/amemaru/growth/    成長の定義（データパックで上書きできる）
+├─ assets/amemaru/                 画面の文字（日本語）・絵・モデル・効果音・モーション
+└─ data/amemaru/amemaru/           成長・職業・スキルの定義（データパックで上書きできる）
+tools/                             仮の絵とモーションを作るスクリプト（Modには入らない）
 ```
