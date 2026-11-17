@@ -18,7 +18,6 @@ import jp.amemaru.lostconnection.job.SkillContext;
 import jp.amemaru.lostconnection.job.SkillDescriber;
 import jp.amemaru.lostconnection.job.SkillExecutor;
 import jp.amemaru.lostconnection.job.SkillService;
-import jp.amemaru.lostconnection.job.SkillTargeting;
 import jp.amemaru.lostconnection.job.SkillTreeService;
 import jp.amemaru.lostconnection.job.def.BuffKind;
 import jp.amemaru.lostconnection.job.def.JobDef;
@@ -320,14 +319,13 @@ public final class SkillMechanicsGameTests {
     }
 
     /**
-     * 天断ち：地面と平行に前へ14ブロック、幅3の線の上の敵すべてに、攻撃×7倍のダメージ・防御崩し・よろめき（1秒の構えの後）。
-     * 線が長く、同時に動くほかのテストの的に届くことがあるため、このテストだけ別の組（batch）で1つだけ動かす。
+     * 天断ち：1秒の構えの後、地面と平行に前へのびる線の上の敵すべてに、攻撃×7倍のダメージ・防御崩し・よろめき。
+     * 下を向いていても地面で止まらない（目の向きの線なら、1ブロック先で地面に当たり、奥の的に届かない）。
+     * テストの場所は見えない壁（バリア）で囲まれていて、線はその壁（前へ4.5ブロック）で止まるため、的はその内側に置く。
      */
-    @GameTest(template = EMPTY, timeoutTicks = 100, batch = "ultimate_line")
+    @GameTest(template = EMPTY, timeoutTicks = 100)
     public static void heavenCleaveCutsTheLine(GameTestHelper helper) {
         FakePlayer player = fake(helper, "cleave");
-        // 線は地面と平行に14ブロックのび、ブロックに当たると止まる。まわりのテストの印（ビーコンなど）や地形に当たらないよう、空中で確かめる
-        player.moveTo(player.getX(), player.getY() + 12.0, player.getZ(), 0.0F, 0.0F);
         PlayerData data = knight(helper, player);
         LevelService.setLevel(player, data, 30);
         JobService.promote(player, data, true);
@@ -335,11 +333,10 @@ public final class SkillMechanicsGameTests {
         SkillTreeService.forceRank(player, data, cleave, 1);
         data.setMp(data.getStats().maxMp());
         int slot = data.loadoutSlotOf(cleave.id());
-        // 下を向いていても、地面と平行に前へのびる
         player.setXRot(60.0F);
-        Zombie near = toughZombieInFront(helper, player, 2.5);
-        Zombie far = toughZombieInFront(helper, player, 11.0);
-        Zombie behind = toughZombieInFront(helper, player, -4.0);
+        Zombie near = toughZombieInFront(helper, player, 1.6);
+        Zombie far = toughZombieInFront(helper, player, 3.8);
+        Zombie behind = toughZombieInFront(helper, player, -2.0);
         double nearBefore = TargetVitals.hp(near);
         double farBefore = TargetVitals.hp(far);
         double behindBefore = TargetVitals.hp(behind);
@@ -349,9 +346,9 @@ public final class SkillMechanicsGameTests {
         helper.runAfterDelay(24, () -> {
             try {
                 // 偽のプレイヤーは毎tickの処理が動かないため、構えの終わりを直接進める
-                placeInFront(near, player, 2.5);
-                placeInFront(far, player, 11.0);
-                placeInFront(behind, player, -4.0);
+                placeInFront(near, player, 1.6);
+                placeInFront(far, player, 3.8);
+                placeInFront(behind, player, -2.0);
                 SkillService.tick(player, data);
                 check(helper, data.getCasting() == null, "構えが終わっていません");
                 double expected = data.getStats().get(StatType.ATTACK) * 7.0 * DamageCalculator.mitigation(TargetVitals.defense(near));
@@ -359,20 +356,10 @@ public final class SkillMechanicsGameTests {
                 double farDealt = farBefore - TargetVitals.hp(far);
                 check(helper, nearDealt >= expected * 0.9 && nearDealt <= expected * 3.2,
                         "天断ち（近く）のダメージが、攻撃×7倍になっていません：" + nearDealt + "（" + expected + "）");
-                if (farDealt < expected * 0.9) {
-                    // 調べるための情報：線の上にいると判定される敵と、それぞれの場所
-                    Vec3 start = player.position().add(0.0, 1.5, 0.0);
-                    Vec3 end = start.add(flatLook(player).scale(14.0));
-                    List<LivingEntity> found = SkillTargeting.alongLine(helper.getLevel(), start, end, 3.0);
-                    net.minecraft.world.phys.BlockHitResult block = helper.getLevel().clip(new net.minecraft.world.level.ClipContext(start, end,
-                            net.minecraft.world.level.ClipContext.Block.COLLIDER, net.minecraft.world.level.ClipContext.Fluid.NONE, player));
-                    throw new GameTestAssertException("天断ちが11ブロック先の敵に届いていません：" + farDealt + "（線 " + start + " → " + end
-                            + "、ブロック " + block.getType() + " " + block.getLocation() + "、遠い的 " + far.position() + " 生きている "
-                            + far.isAlive() + "、見つかる敵 " + found.size() + "、プレイヤーの向き " + player.getYRot() + "/" + player.getXRot()
-                            + "、近い的 " + near.position() + "）");
-                }
+                check(helper, farDealt >= expected * 0.9 && farDealt <= expected * 3.2,
+                        "天断ちが、下を向いていても奥の敵（3.8ブロック先）に届いていません：" + farDealt + "（" + expected + "）");
                 check(helper, Math.abs(behindBefore - TargetVitals.hp(behind)) < EPSILON, "後ろの敵に当たりました");
-                check(helper, StatusService.armorBroken(near) && StatusService.staggered(near), "防御崩し・よろめきになっていません");
+                check(helper, StatusService.armorBroken(far) && StatusService.staggered(far), "防御崩し・よろめきになっていません");
             } finally {
                 near.discard();
                 far.discard();
