@@ -56,9 +56,10 @@ public final class PlayerAnimations {
         }
         KeyframeAnimationPlayer playing = new KeyframeAnimationPlayer(animation);
         if (player == Minecraft.getInstance().player) {
-            // 一人称でも、腕の動きが見えるようにする
+            // 一人称でも、利き手（右）の腕と武器の動きが見えるようにする。左手（盾など）は目の前をふさぐため一人称では出さない
+            // （三人称・ほかの人からは、両腕とも動いて見える）
             playing.setFirstPersonMode(FirstPersonMode.THIRD_PERSON_MODEL);
-            playing.setFirstPersonConfiguration(new FirstPersonConfiguration(true, true, true, true));
+            playing.setFirstPersonConfiguration(new FirstPersonConfiguration(true, false, true, false));
         }
         layer.replaceAnimationWithFade(AbstractFadeModifier.standardFadeIn(3, Ease.INOUTSINE), playing);
         return true;

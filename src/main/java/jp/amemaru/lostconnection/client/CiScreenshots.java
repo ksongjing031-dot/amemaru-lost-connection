@@ -147,9 +147,9 @@ public final class CiScreenshots {
                 next(10, 6);
             }
             case 10 -> {
-                useSkill(minecraft, 4); // 旋風断（訓練人形にダメージの数字）
-                useSkill(minecraft, 0); // 呼び声
                 useSkill(minecraft, 3); // 城壁の構え
+                useSkill(minecraft, 0); // 呼び声
+                useSkill(minecraft, 4); // 旋風断（訓練人形にダメージの数字）
                 next(11, 8);
             }
             case 11 -> {
@@ -202,13 +202,16 @@ public final class CiScreenshots {
                 next(17, 20);
             }
             case 17 -> {
-                // 三人称（正面）にして、モーションが見えるようにする
-                minecraft.options.setCameraType(CameraType.THIRD_PERSON_FRONT);
                 useSkill(minecraft, 1); // 氷結陣
                 next(18, 10);
             }
             case 18 -> {
-                useSkill(minecraft, 2); // 流星群（2秒の詠唱）
+                useSkill(minecraft, 2); // 流星群（2秒の詠唱。狙いは使った瞬間に決まる）
+                // 三人称（正面）にして、詠唱のモーションが見えるようにする。少し上を向くと、カメラが前の少し上から見下ろす
+                minecraft.options.setCameraType(CameraType.THIRD_PERSON_FRONT);
+                if (minecraft.player != null) {
+                    minecraft.player.setXRot(-10.0F);
+                }
                 next(19, 16);
             }
             case 19 -> {
@@ -218,6 +221,9 @@ public final class CiScreenshots {
             }
             case 20 -> {
                 minecraft.options.setCameraType(CameraType.FIRST_PERSON);
+                if (minecraft.player != null) {
+                    minecraft.player.setXRot(28.0F);
+                }
                 // 詠唱の残り（約22tick）＋着弾まで（12tick）
                 next(21, 36);
             }
