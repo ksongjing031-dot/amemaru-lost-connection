@@ -325,6 +325,8 @@ public final class SkillMechanicsGameTests {
     @GameTest(template = EMPTY, timeoutTicks = 100, batch = "ultimate_line")
     public static void heavenCleaveCutsTheLine(GameTestHelper helper) {
         FakePlayer player = fake(helper, "cleave");
+        // 線は地面と平行に14ブロックのび、ブロックに当たると止まる。まわりのテストの印（ビーコンなど）や地形に当たらないよう、空中で確かめる
+        player.moveTo(player.getX(), player.getY() + 12.0, player.getZ(), 0.0F, 0.0F);
         PlayerData data = knight(helper, player);
         LevelService.setLevel(player, data, 30);
         JobService.promote(player, data, true);
@@ -572,9 +574,9 @@ public final class SkillMechanicsGameTests {
         entity.moveTo(player.getX() + flat.x * distance, player.getY(), player.getZ() + flat.z * distance, 180.0F, 0.0F);
     }
 
-    /** 目の前（distance ブロック）に、体力を10倍にしたゾンビ（動かない）を置く。 */
+    /** 目の前（distance ブロック）に、体力を10倍にしたハスク（日に当たっても燃えないゾンビ。動かない）を置く。 */
     private static Zombie toughZombieInFront(GameTestHelper helper, ServerPlayer player, double distance) {
-        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(1, 1, 1));
+        Zombie zombie = helper.spawnWithNoFreeWill(EntityType.HUSK, new BlockPos(1, 1, 1));
         placeInFront(zombie, player, distance);
         AttributeInstance health = zombie.getAttribute(Attributes.MAX_HEALTH);
         if (health != null) {
