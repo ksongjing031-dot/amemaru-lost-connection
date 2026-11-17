@@ -6,7 +6,14 @@ import jp.amemaru.lostconnection.core.data.DataReport;
 import jp.amemaru.lostconnection.core.world.GameRuleSetup;
 import jp.amemaru.lostconnection.job.def.SkillRegistry;
 import jp.amemaru.lostconnection.network.ModNetwork;
+import jp.amemaru.lostconnection.network.s2c.SyncContentS2C;
 import jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C;
+import jp.amemaru.lostconnection.accessory.AccessoryDefs;
+import jp.amemaru.lostconnection.accessory.AccessoryRules;
+import jp.amemaru.lostconnection.enemy.EnemyDefs;
+import jp.amemaru.lostconnection.equipment.EquipmentDefs;
+import jp.amemaru.lostconnection.equipment.GearRules;
+import jp.amemaru.lostconnection.workshop.ProductionRules;
 import jp.amemaru.lostconnection.player.GrowthRules;
 import jp.amemaru.lostconnection.player.LevelService;
 import jp.amemaru.lostconnection.player.PlayerDataCapability;
@@ -34,6 +41,13 @@ public final class ServerEvents {
         event.addListener(GrowthRules.loader());
         event.addListener(SkillRegistry.jobLoader());
         event.addListener(SkillRegistry.skillLoader());
+        // Phase 3：装備・アクセサリー・敵・生産
+        event.addListener(GearRules.loader());
+        event.addListener(EquipmentDefs.loader());
+        event.addListener(AccessoryRules.loader());
+        event.addListener(AccessoryDefs.loader());
+        event.addListener(EnemyDefs.loader());
+        event.addListener(ProductionRules.loader());
     }
 
     @SubscribeEvent
@@ -52,15 +66,18 @@ public final class ServerEvents {
     @SubscribeEvent
     public static void onDatapackSync(OnDatapackSyncEvent event) {
         SyncDefinitionsS2C definitions = SyncDefinitionsS2C.of(SkillRegistry.get());
+        SyncContentS2C content = SyncContentS2C.current();
         ServerPlayer joining = event.getPlayer();
         if (joining != null) {
             ModNetwork.sendTo(joining, definitions);
+            ModNetwork.sendTo(joining, content);
             DataReport.notifyAdmins(List.of(joining));
             return;
         }
         List<ServerPlayer> players = event.getPlayerList().getPlayers();
         for (ServerPlayer player : players) {
             ModNetwork.sendTo(player, definitions);
+            ModNetwork.sendTo(player, content);
             PlayerDataCapability.get(player).ifPresent(data -> {
                 LevelService.recompute(player, data);
                 // 定義の番号が変わっているかもしれないので、すべて送り直す

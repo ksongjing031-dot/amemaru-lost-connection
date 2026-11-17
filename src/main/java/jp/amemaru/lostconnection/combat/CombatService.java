@@ -3,7 +3,11 @@ package jp.amemaru.lostconnection.combat;
 import jp.amemaru.lostconnection.AmemaruMod;
 import jp.amemaru.lostconnection.core.config.ServerConfig;
 import jp.amemaru.lostconnection.core.registry.ModDamageTypes;
+import jp.amemaru.lostconnection.enemy.AmemaruMob;
+import jp.amemaru.lostconnection.enemy.EnemyCombat;
 import jp.amemaru.lostconnection.entity.TrainingDummy;
+import jp.amemaru.lostconnection.equipment.GearEffects;
+import jp.amemaru.lostconnection.equipment.GearService;
 import jp.amemaru.lostconnection.job.GaugeService;
 import jp.amemaru.lostconnection.job.PassiveService;
 import jp.amemaru.lostconnection.job.ReactiveSkills;
@@ -84,11 +88,19 @@ public final class CombatService {
      * @return 与えたダメージ（与えられなかったときは -1）
      */
     public static double dealSkillDamage(SkillContext ctx, LivingEntity target, double power, @Nullable Entity direct) {
+        Entity owner = ctx.owner();
+        // 装備の特殊効果（HPの少ない敵に強い など）
+        if (owner instanceof ServerPlayer player) {
+            power *= GearEffects.outgoingMultiplier(player, target, true);
+        }
         DamageCalculator.Result result = DamageCalculator.compute(power, ctx.stat(StatType.CRIT), ctx.stat(StatType.CRIT_DAMAGE),
                 TargetVitals.defense(target), ServerConfig.DAMAGE_VARIANCE.get(), ctx.random());
-        Entity owner = ctx.owner();
         DamageSource source = ModDamageTypes.skill(ctx.level, direct != null ? direct : owner, owner);
-        return applyDamage(target, result.amount(), result.crit(), source);
+        double dealt = applyDamage(target, result.amount(), result.crit(), source);
+        if (dealt > 0 && owner instanceof ServerPlayer player) {
+            GearEffects.afterHit(player, target, dealt, true, source);
+        }
+        return dealt;
     }
 
     /**
@@ -157,6 +169,9 @@ public final class CombatService {
         if (hit != null && hit.target == target) {
             resolveOnTarget(event, target, hit.amount);
             hit.applied = true;
+            if (target instanceof AmemaruMob mob) {
+                mob.onDamagedBy(event.getSource().getEntity(), hit.amount);
+            }
             return;
         }
         DamageSource source = event.getSource();
@@ -171,6 +186,13 @@ public final class CombatService {
         if (target instanceof TrainingDummy && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             // 訓練人形は、プレイヤーの攻撃とスキルでだけ傷つく（/kill では消える）
             event.setAmount(0.0F);
+            return;
+        }
+        if (target instanceof AmemaruMob mob) {
+            // このModの敵が、落下・溶岩・バニラの攻撃などで傷ついた：最大の体力に対する割合を、独自のHPから引く
+            double amount = event.getAmount() / Math.max(1.0F, mob.getMaxHealth()) * mob.getEnemyMaxHp();
+            resolveOnTarget(event, target, amount);
+            mob.onDamagedBy(source.getEntity(), amount);
         }
     }
 
@@ -179,6 +201,13 @@ public final class CombatService {
         if (target instanceof TrainingDummy dummy) {
             dummy.applyCustomDamage(amount);
             event.setAmount(0.0F);
+        } else if (target instanceof AmemaruMob mob) {
+            // このModの敵：独自のHPを減らし、バニラの体力をその割合まで下げる（0になればバニラのとおりに倒れる）
+            double remaining = mob.getEnemyHp() - amount;
+            mob.setEnemyHp(Math.max(0.0, remaining));
+            float wanted = remaining <= 0 ? 0.0F
+                    : (float) Math.max(0.01, remaining / mob.getEnemyMaxHp() * mob.getMaxHealth());
+            event.setAmount(Math.max(0.0F, mob.getHealth() - wanted));
         } else {
             event.setAmount((float) (amount / TargetVitals.vanillaMultiplier()));
         }
@@ -195,12 +224,19 @@ public final class CombatService {
         double power = data.getStats().get(StatType.ATTACK) * ServerConfig.BASIC_ATTACK_COEFFICIENT.get()
                 * (0.2 + 0.8 * strength * strength);
         power *= PassiveService.meleeMultiplier(data, target);
+        power *= GearEffects.outgoingMultiplier(attacker, target, false);
         DamageCalculator.Result result = DamageCalculator.compute(power, data.getStats().get(StatType.CRIT),
                 data.getStats().get(StatType.CRIT_DAMAGE), TargetVitals.defense(target), ServerConfig.DAMAGE_VARIANCE.get(),
                 attacker.getRandom());
         resolveOnTarget(event, target, result.amount());
         data.markCombat(attacker.level().getGameTime());
         CombatTextS2C.send(target, result.amount(), result.crit() ? CombatTextS2C.Kind.CRIT : CombatTextS2C.Kind.DAMAGE);
+        if (target instanceof AmemaruMob mob) {
+            mob.onDamagedBy(attacker, result.amount());
+        }
+        // 武器の耐久と、当たった後の特殊効果（追加ダメージは tick の終わりに与える）
+        GearService.wearWeapon(attacker, false);
+        GearEffects.afterHit(attacker, target, result.amount(), false, event.getSource());
     }
 
     /** プレイヤーがダメージを受けたとき。 */
@@ -224,8 +260,13 @@ public final class CombatService {
         boolean fromEnemy = attacker instanceof LivingEntity && !(attacker instanceof Player);
         double damage;
         if (fromEnemy) {
-            damage = event.getAmount() * ServerConfig.VANILLA_MOB_DAMAGE_MULTIPLIER.get()
-                    * DamageCalculator.mitigation(data.getStats().get(StatType.DEFENSE));
+            // このModの敵の技は「敵の攻撃 × 技の倍率」、バニラの魔物は「バニラの値 × config の倍率」
+            double raw = EnemyCombat.takePending(player);
+            if (raw < 0) {
+                raw = event.getAmount() * ServerConfig.VANILLA_MOB_DAMAGE_MULTIPLIER.get();
+            }
+            damage = raw * DamageCalculator.mitigation(data.getStats().get(StatType.DEFENSE))
+                    * GearEffects.incomingMultiplier(player, data);
             damage = tauntMastery(player, damage, attacker, now);
             damage = reduce(player, data, damage, attacker, now, true);
             damage = shareWithBond(player, data, damage, attacker, now);
@@ -243,6 +284,7 @@ public final class CombatService {
             data.markCombat(now);
             if (fromEnemy) {
                 GaugeService.onDamageTaken(player, data, damage, now);
+                GearService.wearArmor(player);
             }
             CombatTextS2C.send(player, damage, CombatTextS2C.Kind.TAKEN);
         }

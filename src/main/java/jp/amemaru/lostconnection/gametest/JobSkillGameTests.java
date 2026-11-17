@@ -15,7 +15,7 @@ import jp.amemaru.lostconnection.core.registry.ModEffects;
 import jp.amemaru.lostconnection.core.registry.ModEntities;
 import jp.amemaru.lostconnection.core.registry.ModItems;
 import jp.amemaru.lostconnection.entity.TrainingDummy;
-import jp.amemaru.lostconnection.item.GearStats;
+import jp.amemaru.lostconnection.equipment.GearData;
 import jp.amemaru.lostconnection.job.GaugeService;
 import jp.amemaru.lostconnection.job.JobService;
 import jp.amemaru.lostconnection.job.PassiveService;
@@ -107,7 +107,7 @@ public final class JobSkillGameTests {
         expectCount(helper, player, ModItems.BLANK_OATH.get(), 1);
         for (ItemStack stack : player.getInventory().items) {
             if (!stack.isEmpty()) {
-                check(helper, GearStats.isBound(stack), "受け取った物が「取引できない」になっていません：" + stack);
+                check(helper, GearData.isBound(stack), "受け取った物が「取引できない」になっていません：" + stack);
             }
         }
         expectRank(helper, data, "knight/call", 1);

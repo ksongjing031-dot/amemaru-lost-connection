@@ -1,0 +1,103 @@
+{
+  "_comment": "アクセサリーの抽選の決まり（Phase 0-A 21章）。数値は第3章の品が基準で、章の倍率をかける",
+  "chapter_factor": [
+    {
+      "flat": 0.4,
+      "percent": 0.6
+    },
+    {
+      "flat": 0.7,
+      "percent": 0.8
+    },
+    {
+      "flat": 1.0,
+      "percent": 1.0
+    },
+    {
+      "flat": 1.3,
+      "percent": 1.2
+    }
+  ],
+  "main": {
+    "min_ratio": 70,
+    "caps": {
+      "attack": 12,
+      "magic": 12,
+      "hp": 150,
+      "defense": 12,
+      "mp": 60,
+      "speed": 6,
+      "crit": 5,
+      "heal_power": 8,
+      "lost_resist": 12,
+      "crit_damage": 12,
+      "cooldown_reduction": 4
+    }
+  },
+  "subs": {
+    "count_weights": [
+      30,
+      40,
+      25,
+      5
+    ],
+    "min_ratio": 50,
+    "table": {
+      "hp": {
+        "weight": 15,
+        "max": 80
+      },
+      "defense": {
+        "weight": 12,
+        "max": 8
+      },
+      "mp": {
+        "weight": 10,
+        "max": 30
+      },
+      "attack": {
+        "weight": 10,
+        "max": 8
+      },
+      "magic": {
+        "weight": 10,
+        "max": 8
+      },
+      "lost_resist": {
+        "weight": 10,
+        "max": 6
+      },
+      "speed": {
+        "weight": 8,
+        "max": 4
+      },
+      "crit": {
+        "weight": 8,
+        "max": 3
+      },
+      "crit_damage": {
+        "weight": 6,
+        "max": 6
+      },
+      "heal_power": {
+        "weight": 6,
+        "max": 4
+      },
+      "cooldown_reduction": {
+        "weight": 5,
+        "max": 2
+      }
+    }
+  },
+  "quality": [
+    60,
+    70,
+    80,
+    90
+  ],
+  "perfect": {
+    "subs": 4,
+    "min_ratio": 95
+  },
+  "max_enhance": 12
+}

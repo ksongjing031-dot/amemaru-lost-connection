@@ -25,6 +25,8 @@ public final class ClientConfig {
     public static final ForgeConfigSpec.BooleanValue SCREEN_SHAKE;
     public static final ForgeConfigSpec.BooleanValue TOOLBAR_KEYS_RELEASED;
     public static final ForgeConfigSpec.IntValue SKILL_KEYS_VERSION;
+    public static final ForgeConfigSpec.BooleanValue CURIOS_KEY_RELEASED;
+    public static final ForgeConfigSpec.BooleanValue GEAR_SPARKLES;
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
@@ -56,6 +58,13 @@ public final class ClientConfig {
                 .comment("（自動で書きかわる値）スキルのキーの初期値の版。試作版の初期値（R・Z・X・C・B・Y）のままの人を、",
                         "R・G・V・Z・X・C に移したら 2 になる")
                 .defineInRange("skillKeysVersion", 0, 0, 100);
+        CURIOS_KEY_RELEASED = b
+                .comment("（自動で書きかわる値）Curios（アクセサリーの枠）の画面を開くキー（G）を、スキルのキーと重ならないように外したか。",
+                        "アクセサリーの枠は、ステータス画面（K）の「アクセサリー」か、持ち物の画面のボタンから開く")
+                .define("curiosKeyReleased", false);
+        GEAR_SPARKLES = b
+                .comment("エピック以上の装備と、+7以上に強化した装備を持っている人の手元に、光の粒を出すか")
+                .define("gearSparkles", true);
         b.pop();
 
         SPEC = b.build();

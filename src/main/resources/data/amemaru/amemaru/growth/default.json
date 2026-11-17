@@ -35,5 +35,37 @@
     "defense": 1,
     "speed": 1,
     "crit": 0.3
-  }
+  },
+  "chapters": [
+    {
+      "from_day": 1,
+      "level_cap": 15
+    },
+    {
+      "from_day": 6,
+      "level_cap": 28
+    },
+    {
+      "from_day": 11,
+      "level_cap": 40
+    },
+    {
+      "from_day": 16,
+      "level_cap": 50
+    }
+  ],
+  "overflow": {
+    "exp_per_item": 200,
+    "item": "amemaru:crystal_shard"
+  },
+  "catch_up": [
+    {
+      "below_median": 5,
+      "bonus": 50
+    },
+    {
+      "below_median": 10,
+      "bonus": 100
+    }
+  ]
 }

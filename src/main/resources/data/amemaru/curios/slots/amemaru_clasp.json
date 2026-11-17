@@ -1,0 +1,12 @@
+{
+  "size": 0,
+  "order": 904,
+  "icon": "curios:slot/empty_back_slot",
+  "use_native_gui": false,
+  "render_toggle": false,
+  "add_cosmetic": false,
+  "drop_rule": "ALWAYS_KEEP",
+  "validators": [
+    "curios:tag"
+  ]
+}

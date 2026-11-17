@@ -188,7 +188,16 @@ public final class SkillRegistry {
         }
         AmemaruMod.LOGGER.info("[amemaru] Job/skill registry v{}: {} job(s), {} skill(s), {} problem(s)",
                 version, jobs.size(), skills.size(), problems.size());
-        return new Snapshot(jobs, skills, version, problems);
+        // 生産職（Phase 3）は、戦闘職の一覧（番号・職業選択の画面）には入れず、別の一覧に置く
+        List<JobDef> combat = new ArrayList<>();
+        List<JobDef> production = new ArrayList<>();
+        for (JobDef job : jobs) {
+            (job.kind() == JobDef.Kind.COMBAT ? combat : production).add(job);
+            if (job.kind() == JobDef.Kind.PRODUCTION && job.workshop().isEmpty()) {
+                problems.add("jobs/" + job.id() + "：生産職には「workshop」（weapon・armor・accessory）が要ります");
+            }
+        }
+        return new Snapshot(combat, production, skills, version, problems);
     }
 
     private static boolean checkEffects(List<EffectDef> effects, String where, List<String> problems) {
@@ -219,9 +228,10 @@ public final class SkillRegistry {
 
     /** 組み合わせ済みの一覧。作った後は変わらない。 */
     public static final class Snapshot {
-        public static final Snapshot EMPTY = new Snapshot(List.of(), List.of(), 0, List.of());
+        public static final Snapshot EMPTY = new Snapshot(List.of(), List.of(), List.of(), 0, List.of());
 
         private final List<JobDef> jobs;
+        private final List<JobDef> productionJobs;
         private final List<SkillDef> skills;
         private final Map<ResourceLocation, Integer> jobIndex = new HashMap<>();
         private final Map<ResourceLocation, Integer> skillIndex = new HashMap<>();
@@ -229,8 +239,9 @@ public final class SkillRegistry {
         private final int version;
         private final List<String> problems;
 
-        Snapshot(List<JobDef> jobs, List<SkillDef> skills, int version, List<String> problems) {
+        Snapshot(List<JobDef> jobs, List<JobDef> productionJobs, List<SkillDef> skills, int version, List<String> problems) {
             this.jobs = List.copyOf(jobs);
+            this.productionJobs = List.copyOf(productionJobs);
             this.skills = List.copyOf(skills);
             this.version = version;
             this.problems = List.copyOf(problems);
@@ -254,8 +265,39 @@ public final class SkillRegistry {
             return version;
         }
 
+        /** 戦闘職（職業選択の順）。 */
         public List<JobDef> jobs() {
             return jobs;
+        }
+
+        /** 生産職（Phase 3。武器職人・防具職人・装飾師）。 */
+        public List<JobDef> productionJobs() {
+            return productionJobs;
+        }
+
+        /** 生産職を探す（なければ null）。 */
+        @Nullable
+        public JobDef productionJob(@Nullable ResourceLocation id) {
+            if (id == null) {
+                return null;
+            }
+            for (JobDef job : productionJobs) {
+                if (job.id().equals(id)) {
+                    return job;
+                }
+            }
+            return null;
+        }
+
+        /** その工房（weapon・armor・accessory）の生産職（なければ null）。 */
+        @Nullable
+        public JobDef productionJobFor(String workshop) {
+            for (JobDef job : productionJobs) {
+                if (job.workshop().equals(workshop)) {
+                    return job;
+                }
+            }
+            return null;
         }
 
         public List<SkillDef> skills() {

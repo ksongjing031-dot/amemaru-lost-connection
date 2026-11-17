@@ -1,0 +1,19 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "accessory",
+  "mastery": 1,
+  "mastery_exp": 10,
+  "ingredients": [
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 3
+    },
+    {
+      "item": "amemaru:crystal_shard",
+      "count": 2
+    }
+  ],
+  "result": {
+    "item": "amemaru:grassland_necklace"
+  }
+}

@@ -61,6 +61,12 @@ public final class AdminCommands {
                         .then(JobCommands.skillCommand())
                         .then(JobCommands.dayCommand())
                         .then(JobCommands.dummyCommand())
+                        .then(GearCommands.gearCommand())
+                        .then(GearCommands.accessoryCommand())
+                        .then(GearCommands.enemyCommand())
+                        .then(GearCommands.productionCommand())
+                        .then(GearCommands.fruitCommand())
+                        .then(GearCommands.adventureCommand())
                         .then(debugCommand())));
     }
 

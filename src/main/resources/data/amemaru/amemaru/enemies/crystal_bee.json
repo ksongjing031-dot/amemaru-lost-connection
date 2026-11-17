@@ -1,0 +1,46 @@
+{
+  "name": "結晶蜂",
+  "floor": 1,
+  "level": 3,
+  "description": "結晶の体を持つ、小さな古代の機械。相手から少し離れた高さに浮き、体の結晶が強く光ったら、結晶の針を撃ってくる。",
+  "stats": {
+    "hp": 110,
+    "attack": 20,
+    "defense": 2,
+    "move_speed": 0.3,
+    "follow_range": 20,
+    "aggro_range": 14
+  },
+  "exp": 4,
+  "skills": {
+    "needle": {
+      "power": 1.0,
+      "windup": 0.7,
+      "cooldown": 2.6,
+      "range": 14,
+      "speed": 0.9
+    }
+  },
+  "behavior": {
+    "keep_distance": 7,
+    "hover_height": 2.5
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/crystal_bee",
+    "rare": [
+      {
+        "item": "amemaru:bee_crystal_staff",
+        "chance": 1.0,
+        "rarity": "rare"
+      },
+      {
+        "item": "amemaru:crystal_fruit_azure",
+        "chance": 0.5
+      },
+      {
+        "item": "amemaru:crystal_fruit_violet",
+        "chance": 0.5
+      }
+    ]
+  }
+}

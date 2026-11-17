@@ -49,6 +49,19 @@ public final class ServerConfig {
     public static final ForgeConfigSpec.IntValue JOB_CHANGE_TOKENS;
     public static final ForgeConfigSpec.DoubleValue OATH_CRYSTAL_REACH;
 
+    // ---- 難易度・ドロップ・装備（Phase 3。Phase 0-B 7章）
+    public static final ForgeConfigSpec.DoubleValue ENEMY_HP_MULTIPLIER;
+    public static final ForgeConfigSpec.DoubleValue ENEMY_ATTACK_MULTIPLIER;
+    public static final ForgeConfigSpec.DoubleValue DROP_RATE_MULTIPLIER;
+    public static final ForgeConfigSpec.DoubleValue RARE_DROP_MULTIPLIER;
+    public static final ForgeConfigSpec.DoubleValue RARE_ANNOUNCE_THRESHOLD;
+    public static final ForgeConfigSpec.DoubleValue PITY_STEP;
+    public static final ForgeConfigSpec.DoubleValue LOOT_RANGE;
+    public static final ForgeConfigSpec.IntValue FRUIT_CAP;
+    public static final ForgeConfigSpec.IntValue CLASP_UNLOCK_DAY;
+    public static final ForgeConfigSpec.DoubleValue WORKSHOP_REACH;
+    public static final ForgeConfigSpec.DoubleValue ENEMY_LEASH_RANGE;
+
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
 
@@ -149,6 +162,48 @@ public final class ServerConfig {
         OATH_CRYSTAL_REACH = b
                 .comment("職業を選ぶとき、誓約の結晶から何ブロック以内にいる必要があるか")
                 .defineInRange("oathCrystalReach", 8.0, 2.0, 64.0);
+        b.pop();
+
+        b.comment("難易度（Phase 3：このModの敵）").push("difficulty");
+        ENEMY_HP_MULTIPLIER = b
+                .comment("このModの敵のHPにかける倍率")
+                .defineInRange("enemyHpMultiplier", 1.0, 0.01, 1000.0);
+        ENEMY_ATTACK_MULTIPLIER = b
+                .comment("このModの敵の攻撃にかける倍率")
+                .defineInRange("enemyAttackMultiplier", 1.0, 0.0, 1000.0);
+        ENEMY_LEASH_RANGE = b
+                .comment("このModの敵が、生まれた場所から何ブロック離れると追うのをやめて戻るか（戻るとHPが満タンになる）")
+                .defineInRange("enemyLeashRange", 28.0, 8.0, 256.0);
+        b.pop();
+
+        b.comment("ドロップ（Phase 3。ドロップは、敵に攻撃を当てた人が一人ずつ個別に抽選する）").push("drops");
+        DROP_RATE_MULTIPLIER = b
+                .comment("ふつうのドロップ（ドロップ表）の倍率。1.5なら、ドロップ表を1回引いたうえで、50%の確率でもう1回引く")
+                .defineInRange("dropRateMultiplier", 1.0, 0.0, 100.0);
+        RARE_DROP_MULTIPLIER = b
+                .comment("レアドロップの確率にかける倍率（敵ごとの確率は、データパックの敵の定義で決める）")
+                .defineInRange("rareDropMultiplier", 1.0, 0.0, 1000.0);
+        RARE_ANNOUNCE_THRESHOLD = b
+                .comment("この確率（%）以下のレアドロップが出たら、サーバー全体に知らせる")
+                .defineInRange("rareAnnounceThreshold", 3.0, 0.0, 100.0);
+        PITY_STEP = b
+                .comment("天井：レアが出なかったたびに、もとの確率に足す割合（%。10なら4%→4.4%→4.8%…）。天井のある敵（ボス）だけ")
+                .defineInRange("pityStep", 10.0, 0.0, 1000.0);
+        LOOT_RANGE = b
+                .comment("敵が倒れたとき、この距離（ブロック）より遠くにいる人は、ドロップと経験値を受け取れない")
+                .defineInRange("lootRange", 48.0, 4.0, 512.0);
+        b.pop();
+
+        b.comment("装備とアクセサリー（Phase 3）").push("equipment");
+        FRUIT_CAP = b
+                .comment("結晶果を、ステータスごとに何個まで食べられるか（Phase 0-A 20章：上限+15）")
+                .defineInRange("fruitCap", 15, 0, 1000);
+        CLASP_UNLOCK_DAY = b
+                .comment("アクセサリーの6つ目の枠「留め具」が開く進行日（Phase 0-A 21章：11日目）")
+                .defineInRange("claspUnlockDay", 11, 1, 365);
+        WORKSHOP_REACH = b
+                .comment("工房の作業台から何ブロック以内で、制作・強化・修理ができるか")
+                .defineInRange("workshopReach", 8.0, 2.0, 64.0);
         b.pop();
 
         SPEC = b.build();

@@ -1,0 +1,47 @@
+{
+  "name": "石くれ兵",
+  "floor": 1,
+  "level": 4,
+  "description": "決まった道を巡回する、古代の見張り。目の前にあるものを見つけると、鐘のような音で仲間を呼び、石の腕を振り上げて地面ごと叩きつける。",
+  "stats": {
+    "hp": 320,
+    "attack": 28,
+    "defense": 12,
+    "move_speed": 0.2,
+    "follow_range": 20,
+    "aggro_range": 12
+  },
+  "exp": 6,
+  "skills": {
+    "slam": {
+      "power": 1.3,
+      "windup": 0.9,
+      "cooldown": 2.4,
+      "range": 2.6,
+      "angle": 360
+    }
+  },
+  "behavior": {
+    "vision_angle": 120,
+    "call_radius": 16,
+    "patrol_size": 8
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/ishikure_soldier",
+    "rare": [
+      {
+        "item": "amemaru:sentinel_blade",
+        "chance": 1.0,
+        "rarity": "rare"
+      },
+      {
+        "item": "amemaru:ishikure_core",
+        "chance": 1.5
+      },
+      {
+        "item": "amemaru:crystal_fruit_amber",
+        "chance": 0.5
+      }
+    ]
+  }
+}

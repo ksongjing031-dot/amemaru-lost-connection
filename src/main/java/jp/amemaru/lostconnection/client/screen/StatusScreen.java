@@ -84,13 +84,25 @@ public class StatusScreen extends Screen {
             y += ROW_HEIGHT;
         }
 
-        addRenderableWidget(new CrystalButton(left + 12, top + PANEL_HEIGHT - 20, 100, 16,
+        int buttonY = top + PANEL_HEIGHT - 20;
+        addRenderableWidget(new CrystalButton(left + 12, buttonY, 64, 16,
                 Component.translatable("screen.amemaru.status.skill_tree"), pressed -> {
                     if (minecraft != null) {
                         minecraft.setScreen(new SkillTreeScreen());
                     }
                 }));
-        addRenderableWidget(new CrystalButton(left + PANEL_WIDTH - 102, top + PANEL_HEIGHT - 20, 90, 16,
+        // Phase 3：アクセサリーの枠（サーバーに頼んで開く）と図鑑
+        addRenderableWidget(new CrystalButton(left + 80, buttonY, 64, 16,
+                Component.translatable("screen.amemaru.status.accessory"),
+                pressed -> ModNetwork.sendToServer(new jp.amemaru.lostconnection.network.c2s.AccessoryActionC2S(
+                        jp.amemaru.lostconnection.network.c2s.AccessoryActionC2S.Action.OPEN, 0, false))));
+        addRenderableWidget(new CrystalButton(left + 148, buttonY, 42, 16,
+                Component.translatable("screen.amemaru.status.bestiary"), pressed -> {
+                    if (minecraft != null) {
+                        minecraft.setScreen(new BestiaryScreen());
+                    }
+                }));
+        addRenderableWidget(new CrystalButton(left + PANEL_WIDTH - 54, buttonY, 42, 16,
                 Component.translatable("screen.amemaru.status.close"), pressed -> onClose()));
         updateButtons();
     }

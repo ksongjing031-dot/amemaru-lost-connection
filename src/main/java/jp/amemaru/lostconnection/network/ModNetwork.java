@@ -1,7 +1,13 @@
 package jp.amemaru.lostconnection.network;
 
 import jp.amemaru.lostconnection.AmemaruMod;
+import jp.amemaru.lostconnection.network.c2s.AccessoryActionC2S;
 import jp.amemaru.lostconnection.network.c2s.AllocateStatC2S;
+import jp.amemaru.lostconnection.network.c2s.WorkshopActionC2S;
+import jp.amemaru.lostconnection.network.s2c.AccessoryVisibilityS2C;
+import jp.amemaru.lostconnection.network.s2c.SpecialMomentS2C;
+import jp.amemaru.lostconnection.network.s2c.SyncAdventureS2C;
+import jp.amemaru.lostconnection.network.s2c.SyncContentS2C;
 import jp.amemaru.lostconnection.network.c2s.JobActionC2S;
 import jp.amemaru.lostconnection.network.c2s.LearnSkillC2S;
 import jp.amemaru.lostconnection.network.c2s.SetLoadoutC2S;
@@ -26,7 +32,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
  * {@link #PROTOCOL_VERSION} を上げる。クライアントが送るのは「何をしたいか」だけで、数値の計算はサーバーで行う。</p>
  */
 public final class ModNetwork {
-    public static final String PROTOCOL_VERSION = "3";
+    public static final String PROTOCOL_VERSION = "4";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             AmemaruMod.id("main"),
@@ -113,11 +119,48 @@ public final class ModNetwork {
                 .decoder(StatusFxS2C::decode)
                 .consumerMainThread(StatusFxS2C::handle)
                 .add();
+
+        // ---- Phase 3：敵・ドロップ・装備・工房・アクセサリー
+        CHANNEL.messageBuilder(SyncAdventureS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(SyncAdventureS2C::encode)
+                .decoder(SyncAdventureS2C::decode)
+                .consumerMainThread(SyncAdventureS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(SyncContentS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(SyncContentS2C::encode)
+                .decoder(SyncContentS2C::decode)
+                .consumerMainThread(SyncContentS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(AccessoryVisibilityS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(AccessoryVisibilityS2C::encode)
+                .decoder(AccessoryVisibilityS2C::decode)
+                .consumerMainThread(AccessoryVisibilityS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(SpecialMomentS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(SpecialMomentS2C::encode)
+                .decoder(SpecialMomentS2C::decode)
+                .consumerMainThread(SpecialMomentS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(WorkshopActionC2S.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(WorkshopActionC2S::encode)
+                .decoder(WorkshopActionC2S::decode)
+                .consumerMainThread(WorkshopActionC2S::handle)
+                .add();
+        CHANNEL.messageBuilder(AccessoryActionC2S.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(AccessoryActionC2S::encode)
+                .decoder(AccessoryActionC2S::decode)
+                .consumerMainThread(AccessoryActionC2S::handle)
+                .add();
     }
 
     /** 1人のプレイヤーに送る。 */
     public static void sendTo(ServerPlayer player, Object message) {
         CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), message);
+    }
+
+    /** 本人と、その人が見えているまわりの人に送る。 */
+    public static void sendToTrackingAndSelf(ServerPlayer player, Object message) {
+        CHANNEL.send(PacketDistributor.TRACKING_ENTITY_AND_SELF.with(() -> player), message);
     }
 
     /** つながっている全員に送る。 */

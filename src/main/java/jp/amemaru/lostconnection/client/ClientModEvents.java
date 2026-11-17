@@ -2,7 +2,23 @@ package jp.amemaru.lostconnection.client;
 
 import jp.amemaru.lostconnection.AmemaruMod;
 import jp.amemaru.lostconnection.client.fx.FxParticle;
+import jp.amemaru.lostconnection.accessory.AccessoryItem;
+import jp.amemaru.lostconnection.client.render.AccessoryCurioRenderer;
+import jp.amemaru.lostconnection.client.render.AmemaruMobRenderer;
+import jp.amemaru.lostconnection.client.render.CrystalNeedleRenderer;
 import jp.amemaru.lostconnection.client.render.LampBoltRenderer;
+import jp.amemaru.lostconnection.client.render.LootItemRenderer;
+import jp.amemaru.lostconnection.client.screen.AccessoryScreen;
+import jp.amemaru.lostconnection.client.screen.WorkshopScreen;
+import jp.amemaru.lostconnection.equipment.GearItems;
+import jp.amemaru.lostconnection.equipment.Rarity;
+import jp.amemaru.lostconnection.item.ItemManifest;
+import jp.amemaru.lostconnection.workshop.ModMenus;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.world.item.Item;
+import net.minecraftforge.client.event.RegisterItemDecorationsEvent;
+import net.minecraftforge.registries.RegistryObject;
+import top.theillusivec4.curios.api.client.CuriosRendererRegistry;
 import jp.amemaru.lostconnection.client.render.TrainingDummyRenderer;
 import jp.amemaru.lostconnection.core.registry.ModEntities;
 import jp.amemaru.lostconnection.core.registry.ModItems;
@@ -32,9 +48,30 @@ public final class ClientModEvents {
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             PlayerAnimations.init();
-            // 見習いの盾を構えたときの見た目（バニラの盾と同じ「blocking」の切りかえ）
-            ItemProperties.register(ModItems.APPRENTICE_SHIELD.get(), ResourceLocation.withDefaultNamespace("blocking"),
-                    (stack, level, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
+            // このModの盾を構えたときの見た目（バニラの盾と同じ「blocking」の切りかえ）
+            for (RegistryObject<Item> shield : ModItems.MANIFEST.category(ItemManifest.Category.SHIELD)) {
+                ItemProperties.register(shield.get(), ResourceLocation.withDefaultNamespace("blocking"),
+                        (stack, level, entity, seed) -> entity != null && entity.isUsingItem() && entity.getUseItem() == stack ? 1.0F : 0.0F);
+            }
+            // 装備のレアリティ（モデルの作り手が、レアリティごとに見た目を変えたいときに使う：0〜1の6段）
+            for (ItemManifest.Category category : new ItemManifest.Category[]{ItemManifest.Category.WEAPON,
+                    ItemManifest.Category.SHIELD, ItemManifest.Category.ARMOR}) {
+                for (RegistryObject<Item> item : ModItems.MANIFEST.category(category)) {
+                    ItemProperties.register(item.get(), AmemaruMod.id("rarity"), (stack, level, entity, seed) -> {
+                        Rarity rarity = GearItems.rarity(stack);
+                        return rarity == null ? 0.0F : rarity.ordinal() / 5.0F;
+                    });
+                }
+            }
+            // 画面
+            MenuScreens.register(ModMenus.WORKSHOP.get(), WorkshopScreen::new);
+            MenuScreens.register(ModMenus.ACCESSORY.get(), AccessoryScreen::new);
+            // 体に表示するアクセサリー（Curios の描画）
+            for (RegistryObject<Item> item : ModItems.MANIFEST.category(ItemManifest.Category.ACCESSORY)) {
+                if (item.get() instanceof AccessoryItem accessory && accessory.visibleOnBody()) {
+                    CuriosRendererRegistry.register(accessory, () -> new AccessoryCurioRenderer(accessory));
+                }
+            }
         });
     }
 
@@ -52,6 +89,8 @@ public final class ClientModEvents {
         // ホットバーのすぐ後に描く（ハートや空気の泡より先に描き、高さの計算を渡すため）
         event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "status", AmemaruHud.STATUS);
         event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "skills", SkillHud.OVERLAY);
+        // Phase 3：レアドロップ・工房などの特別な演出の帯
+        event.registerAboveAll("special_moment", SpecialMomentFx.OVERLAY);
     }
 
     @SubscribeEvent
@@ -68,5 +107,27 @@ public final class ClientModEvents {
     public static void onRegisterRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerEntityRenderer(ModEntities.TRAINING_DUMMY.get(), TrainingDummyRenderer::new);
         event.registerEntityRenderer(ModEntities.LAMP_BOLT.get(), LampBoltRenderer::new);
+        // Phase 3：1階の敵・結晶蜂の針・ドロップ
+        event.registerEntityRenderer(ModEntities.TSUNOMOFU.get(), context -> new AmemaruMobRenderer<>(context, "tsunomofu", 0.5F));
+        event.registerEntityRenderer(ModEntities.ISHIKURE_SOLDIER.get(),
+                context -> new AmemaruMobRenderer<>(context, "ishikure_soldier", 0.6F));
+        event.registerEntityRenderer(ModEntities.CRYSTAL_BEE.get(), context -> new AmemaruMobRenderer<>(context, "crystal_bee", 0.3F));
+        event.registerEntityRenderer(ModEntities.KAKEKIBA_WOLF.get(), context -> new AmemaruMobRenderer<>(context, "kakekiba_wolf", 0.5F));
+        event.registerEntityRenderer(ModEntities.CRYSTAL_NEEDLE.get(), CrystalNeedleRenderer::new);
+        event.registerEntityRenderer(ModEntities.LOOT_ITEM.get(), LootItemRenderer::new);
+    }
+
+    /** 持ち物のアイコンの飾り（★5のアクセサリーのきらめき・強化+7と+10の星）。 */
+    @SubscribeEvent
+    public static void onRegisterDecorations(RegisterItemDecorationsEvent event) {
+        for (RegistryObject<Item> item : ModItems.MANIFEST.category(ItemManifest.Category.ACCESSORY)) {
+            event.register(item.get(), GearDecorators.ACCESSORY);
+        }
+        for (ItemManifest.Category category : new ItemManifest.Category[]{ItemManifest.Category.WEAPON,
+                ItemManifest.Category.SHIELD, ItemManifest.Category.ARMOR}) {
+            for (RegistryObject<Item> item : ModItems.MANIFEST.category(category)) {
+                event.register(item.get(), GearDecorators.GEAR);
+            }
+        }
     }
 }
