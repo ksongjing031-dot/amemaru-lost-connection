@@ -93,7 +93,8 @@ public final class SpecialMomentFx {
         int x = (screenWidth - width) / 2;
         int y = 18 + Math.round((1.0F - fadeIn) * -12.0F);
         int accent = accent();
-        int a = Math.round(alpha * 230.0F) << 24;
+        // 帯は文字より先に薄くする（消えかけで、文字のない帯だけが残らないように）
+        int a = Math.round(alpha * alpha * 230.0F) << 24;
         graphics.fill(x - 1, y - 1, x + width + 1, y + height + 1, a | (UiStyle.OUTLINE & 0xFFFFFF));
         graphics.fillGradient(x, y, x + width, y + height, a | 0x131B33, a | 0x0B1022);
         graphics.fill(x, y, x + width, y + 1, a | (accent & 0xFFFFFF));

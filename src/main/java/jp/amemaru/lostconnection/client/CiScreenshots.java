@@ -600,8 +600,9 @@ public final class CiScreenshots {
                 command(minecraft, "gamemode creative @a");
                 command(minecraft, "amemaru admin job set @a amemaru:knight");
                 command(minecraft, "amemaru admin production set @a weapon 3");
-                // 前の写真の演出（氷華の檻の花など）が残っていない所へ移り、新しい床を敷く（敵が動いても落ちない広さ）。南（+Z）を向く
-                command(minecraft, "execute as @p at @p run tp @s ~48 ~ ~ 0 12");
+                // 前の写真の演出（氷華の檻の花など）が残っていない、木の上に出ない高さへ移り、新しい床を敷く（敵が動いても落ちない広さ）。
+                // 南（+Z）を向く
+                command(minecraft, "execute as @p at @p run tp @s ~48 ~20 ~ 0 12");
                 command(minecraft, "execute as @p at @p run fill ~-10 ~-1 ~-10 ~10 ~-1 ~10 minecraft:deepslate_tiles replace minecraft:air");
                 // 1階の4種類の敵を、こちらを向かせて並べる（動かない）
                 command(minecraft, "execute as @p at @p run summon amemaru:tsunomofu ~-3.2 ~ ~5 {NoAI:1b,Rotation:[200f,0f]}");
@@ -654,7 +655,8 @@ public final class CiScreenshots {
                 command(minecraft, "kill @e[type=amemaru:loot_item]");
                 command(minecraft, "execute as @p at @p run tp @s ~ ~ ~ 0 8");
                 CiPhase3.onServer(minecraft, CiPhase3::equipPlate);
-                next(P3 + 8, 30);
+                // レアドロップの知らせが消えるまで待つ
+                next(P3 + 8, 60);
             }
             case P3 + 8 -> {
                 clean(minecraft);
