@@ -207,10 +207,11 @@ public final class CiScreenshots {
             }
             case 18 -> {
                 useSkill(minecraft, 2); // 流星群（2秒の詠唱。狙いは使った瞬間に決まる）
-                // 三人称（正面）にして、詠唱のモーションが見えるようにする。少し上を向くと、カメラが前の少し上から見下ろす
-                minecraft.options.setCameraType(CameraType.THIRD_PERSON_FRONT);
+                // 三人称（後ろから）にして、詠唱のモーション・足もとの陣・狙った地点の印が見えるようにする
+                // （正面からだと、目の前の訓練人形がカメラと自分の間に入る）
+                minecraft.options.setCameraType(CameraType.THIRD_PERSON_BACK);
                 if (minecraft.player != null) {
-                    minecraft.player.setXRot(-10.0F);
+                    minecraft.player.setXRot(18.0F);
                 }
                 next(19, 16);
             }
