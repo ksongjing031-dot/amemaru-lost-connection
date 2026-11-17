@@ -18,6 +18,7 @@ import jp.amemaru.lostconnection.job.SkillContext;
 import jp.amemaru.lostconnection.job.SkillDescriber;
 import jp.amemaru.lostconnection.job.SkillExecutor;
 import jp.amemaru.lostconnection.job.SkillService;
+import jp.amemaru.lostconnection.job.SkillTargeting;
 import jp.amemaru.lostconnection.job.SkillTreeService;
 import jp.amemaru.lostconnection.job.def.BuffKind;
 import jp.amemaru.lostconnection.job.def.JobDef;
@@ -358,7 +359,18 @@ public final class SkillMechanicsGameTests {
                 double farDealt = farBefore - TargetVitals.hp(far);
                 check(helper, nearDealt >= expected * 0.9 && nearDealt <= expected * 3.2,
                         "天断ち（近く）のダメージが、攻撃×7倍になっていません：" + nearDealt + "（" + expected + "）");
-                check(helper, farDealt >= expected * 0.9, "天断ちが11ブロック先の敵に届いていません：" + farDealt);
+                if (farDealt < expected * 0.9) {
+                    // 調べるための情報：線の上にいると判定される敵と、それぞれの場所
+                    Vec3 start = player.position().add(0.0, 1.5, 0.0);
+                    Vec3 end = start.add(flatLook(player).scale(14.0));
+                    List<LivingEntity> found = SkillTargeting.alongLine(helper.getLevel(), start, end, 3.0);
+                    net.minecraft.world.phys.BlockHitResult block = helper.getLevel().clip(new net.minecraft.world.level.ClipContext(start, end,
+                            net.minecraft.world.level.ClipContext.Block.COLLIDER, net.minecraft.world.level.ClipContext.Fluid.NONE, player));
+                    throw new GameTestAssertException("天断ちが11ブロック先の敵に届いていません：" + farDealt + "（線 " + start + " → " + end
+                            + "、ブロック " + block.getType() + " " + block.getLocation() + "、遠い的 " + far.position() + " 生きている "
+                            + far.isAlive() + "、見つかる敵 " + found.size() + "、プレイヤーの向き " + player.getYRot() + "/" + player.getXRot()
+                            + "、近い的 " + near.position() + "）");
+                }
                 check(helper, Math.abs(behindBefore - TargetVitals.hp(behind)) < EPSILON, "後ろの敵に当たりました");
                 check(helper, StatusService.armorBroken(near) && StatusService.staggered(near), "防御崩し・よろめきになっていません");
             } finally {
