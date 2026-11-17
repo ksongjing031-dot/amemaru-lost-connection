@@ -2,9 +2,12 @@ package jp.amemaru.lostconnection.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import jp.amemaru.lostconnection.AmemaruMod;
+import jp.amemaru.lostconnection.client.fx.StatusVisuals;
+import jp.amemaru.lostconnection.combat.StatusService;
 import jp.amemaru.lostconnection.core.config.ClientConfig;
 import jp.amemaru.lostconnection.entity.TrainingDummy;
 import jp.amemaru.lostconnection.network.s2c.CombatTextS2C;
+import jp.amemaru.lostconnection.network.s2c.StatusFxS2C;
 import net.minecraft.Util;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
@@ -185,6 +188,10 @@ public final class CombatTextRenderer {
                 String label = (long) Math.ceil(dummy.getDummyHp()) + " / " + (long) dummy.getDummyMaxHp();
                 if (dummy.getDummyDefense() > 0) {
                     label += "  " + Component.translatable("stat.amemaru.defense").getString() + " " + dummy.getDummyDefense();
+                    // 防御崩しの間は、下がった後の防御も並べる（サーバーの計算と同じ −25%）
+                    if (StatusVisuals.has(dummy.getId(), StatusFxS2C.Kind.ARMOR_BREAK)) {
+                        label += "→" + Math.round(dummy.getDummyDefense() * (1.0 - StatusService.ARMOR_BREAK_DEFENSE));
+                    }
                 }
                 Vec3 at = new Vec3(dummy.getX(), dummy.getY() + dummy.getBbHeight() + 0.25, dummy.getZ());
                 drawBillboard(pose, camera, cameraPos, at, font, buffers, label, 0xFFE8F4FF, 0xFF0A0F1C, 0.02F);

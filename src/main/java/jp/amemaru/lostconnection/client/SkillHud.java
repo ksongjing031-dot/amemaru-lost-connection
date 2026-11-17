@@ -150,8 +150,8 @@ public final class SkillHud {
         drawKey(graphics, font, slot, x, y, altMode);
     }
 
-    /** 枠の右下に、キーの名前を小さく出す。 */
-    private static void drawKey(GuiGraphics graphics, Font font, int slot, int x, int y, boolean altMode) {
+    /** 枠の右下に、キーの名前を小さく出す（スキルツリーの画面のスキル枠でも使う）。 */
+    public static void drawKey(GuiGraphics graphics, Font font, int slot, int x, int y, boolean altMode) {
         String key = altMode ? Integer.toString(slot + 1) : KeyBindings.SKILLS[slot].getTranslatedKeyMessage().getString();
         if (key.length() > 3) {
             key = key.substring(0, 3);

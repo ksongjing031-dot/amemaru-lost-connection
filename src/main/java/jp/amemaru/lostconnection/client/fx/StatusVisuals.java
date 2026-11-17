@@ -41,8 +41,18 @@ public final class StatusVisuals {
     private static final int SPARK = 0xFFF2A0;
     private static final int EMBER = 0xFF8C40;
     private static final int KNIGHT = 0x8FD3FF;
+    /** 頭の上の印の影（明るい空の前でも形が見えるように、光の下に敷く濃い色）。 */
+    private static final int MARK_SHADE_FROST = 0x1F5F9A;
+    private static final int MARK_SHADE_GOLD = 0x8A5200;
+    private static final int MARK_SHADE_EMBER = 0x7A2400;
 
     private StatusVisuals() {
+    }
+
+    /** その相手に、今その状態が付いているか（訓練人形の防御の表示などに使う）。 */
+    public static boolean has(int entityId, StatusFxS2C.Kind kind) {
+        State state = STATES.get(entityId);
+        return state != null && state.kinds.containsKey(kind);
     }
 
     /** サーバーから、ある相手の状態が届いた。 */
@@ -180,6 +190,12 @@ public final class StatusVisuals {
             float row = 0.0F;
             if ((value = state.kinds.get(StatusFxS2C.Kind.CHILL)) != null && !firstPersonSelf) {
                 int count = (int) value[0];
+                // 明るい空の前でも見えるよう、先に濃い色の影を重ねてから光らせる
+                VertexConsumer shade = draw.translucent(FxTextures.SNOWFLAKE);
+                for (int i = 0; i < count; i++) {
+                    Vec3 at = sideways(draw, head.add(0.0, row, 0.0), (i - (count - 1) / 2.0F) * 0.26F);
+                    draw.billboard(shade, at, 0.3F, time * 0.05F + i, MARK_SHADE_FROST, 0.7F);
+                }
                 VertexConsumer vc = draw.glow(FxTextures.SNOWFLAKE);
                 for (int i = 0; i < count; i++) {
                     Vec3 at = sideways(draw, head.add(0.0, row, 0.0), (i - (count - 1) / 2.0F) * 0.26F);
@@ -191,17 +207,25 @@ public final class StatusVisuals {
             }
             if ((value = state.kinds.get(StatusFxS2C.Kind.BRAND)) != null && !firstPersonSelf) {
                 int count = (int) value[0];
-                VertexConsumer vc = draw.glow(FxTextures.STAR);
+                Vec3[] at = new Vec3[count];
                 for (int i = 0; i < count; i++) {
                     float angle = time * 0.12F + i * Mth.TWO_PI / count;
                     float r = width * 0.5F + 0.35F;
-                    Vec3 at = head.add(Mth.cos(angle) * r, row + 0.05 + Mth.sin(time * 0.2F + i) * 0.05, Mth.sin(angle) * r);
-                    draw.billboard(vc, at, 0.34F + 0.04F * count, time * 0.1F, count >= 5 ? 0xFFFFFF : GOLD, 0.95F);
+                    at[i] = head.add(Mth.cos(angle) * r, row + 0.05 + Mth.sin(time * 0.2F + i) * 0.05, Mth.sin(angle) * r);
+                }
+                VertexConsumer shade = draw.translucent(FxTextures.STAR);
+                for (int i = 0; i < count; i++) {
+                    draw.billboard(shade, at[i], 0.4F + 0.04F * count, time * 0.1F, MARK_SHADE_GOLD, 0.75F);
+                }
+                VertexConsumer vc = draw.glow(FxTextures.STAR);
+                for (int i = 0; i < count; i++) {
+                    draw.billboard(vc, at[i], 0.34F + 0.04F * count, time * 0.1F, count >= 5 ? 0xFFFFFF : GOLD, 0.95F);
                 }
                 row += 0.3F;
             }
             if ((value = state.kinds.get(StatusFxS2C.Kind.ARMOR_BREAK)) != null && !firstPersonSelf) {
                 float pulse = 0.75F + 0.25F * Mth.sin(time * 0.3F);
+                draw.billboard(draw.translucent(FxTextures.CRACK), head.add(0.0, row + 0.05, 0.0), 0.46F, 0.0F, MARK_SHADE_EMBER, 0.7F);
                 draw.billboard(draw.glow(FxTextures.CRACK), head.add(0.0, row + 0.05, 0.0), 0.42F, 0.0F, EMBER, pulse);
                 row += 0.3F;
             }

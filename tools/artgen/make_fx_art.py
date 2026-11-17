@@ -17,7 +17,8 @@
   textures/fx/snowflake.png      雪の結晶の印（32x32）
   textures/fx/crack.png          ひびの入った盾の印（32x32）
   textures/fx/shield.png         盾の紋（64x64）
-  textures/particle/*.png        パーティクル（16x16）：glow・spark・shard・star・rune_0〜3・snow
+  textures/particle/*.png        パーティクル：glow（64x64）・star（32x32）・spark・shard・rune_0〜3・snow（16x16）
+                                 光の玉と星は、近くで大きく見えても段々にならないよう細かくしてある
   particles/*.json               パーティクルの定義（テクスチャの一覧）
 
 同じ名前・同じ大きさで描き直したファイルを置けば、コードを変えずに差し替えられる（docs/phase2.md の8章）。
@@ -361,11 +362,14 @@ def make_sigil_thunder():
     return finish_sigil(big, "sigil_thunder")
 
 
-# ---------------------------------------------------------------- パーティクル（16x16）
+# ---------------------------------------------------------------- パーティクル
 def particle_glow():
-    u, v = grid(16, 16)
+    # 64x64：芯は明るく、まわりはなめらかに消える（ふちで必ず0になる）
+    u, v = grid(64, 64)
     r = np.sqrt((u - 0.5) ** 2 + (v - 0.5) ** 2) / 0.5
-    return save(from_alpha(np.clip(1 - r, 0, 1) ** 1.8), "textures/particle/glow.png")
+    edge = np.clip(1 - r, 0, 1)
+    a = edge ** 2.4 * 0.8 + np.exp(-(r / 0.2) ** 2) * 0.2 * edge
+    return save(from_alpha(np.clip(a / a.max(), 0, 1)), "textures/particle/glow.png")
 
 
 def particle_spark():
@@ -386,7 +390,7 @@ def particle_shard():
 
 
 def particle_star():
-    u, v = grid(16, 16)
+    u, v = grid(32, 32)
     x, y = u - 0.5, v - 0.5
     r = np.sqrt(x ** 2 + y ** 2)
     a = np.maximum(np.exp(-(y / 0.06) ** 2) * np.clip(1 - np.abs(x) / 0.5, 0, 1) ** 1.2,

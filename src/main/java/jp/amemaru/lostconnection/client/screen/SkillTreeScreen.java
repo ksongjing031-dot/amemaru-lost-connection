@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import jp.amemaru.lostconnection.client.ClientDefinitions;
 import jp.amemaru.lostconnection.client.ClientPlayerState;
 import jp.amemaru.lostconnection.client.KeyBindings;
+import jp.amemaru.lostconnection.client.SkillHud;
 import jp.amemaru.lostconnection.client.SkillHudArt;
 import jp.amemaru.lostconnection.job.def.LinkType;
 import jp.amemaru.lostconnection.network.ModNetwork;
@@ -32,10 +33,15 @@ import java.util.Locale;
  */
 public class SkillTreeScreen extends Screen {
     private static final int PANEL_WIDTH = 404;
-    private static final int PANEL_HEIGHT = 252;
+    /** 画面の高さが240（854×480の窓・1280×720の窓でGUIの大きさ3）でも、はみ出さない高さ。 */
+    private static final int PANEL_HEIGHT = 236;
     private static final int NODE = SkillHudArt.NODE;
     /** 流派のつまみ。 */
-    private static final int SCHOOL_TAB_Y = 38;
+    private static final int HEADER_ICON_Y = 3;
+    private static final int HEADER_TITLE_Y = 7;
+    private static final int HEADER_UPPER_Y = 20;
+    private static final int HEADER_DIVIDER_Y = 30;
+    private static final int SCHOOL_TAB_Y = 33;
     private static final int SCHOOL_TAB_H = 14;
     private static final int SCHOOL_TAB_W = 60;
     private static final int SCHOOL_TAB_STEP = 63;
@@ -43,23 +49,24 @@ public class SkillTreeScreen extends Screen {
     private static final int TREE_X = 12;
     private static final int TREE_W = 190;
     private static final int GRID_X = 42;
-    private static final int GRID_Y = 58;
+    private static final int GRID_Y = 51;
     private static final int COL_STEP = 54;
-    private static final int ROW_STEP = 42;
+    private static final int ROW_STEP = 40;
     private static final int ROWS = 4;
     private static final int COLUMNS = 3;
     private static final int DETAIL_X = 214;
     private static final int DETAIL_W = PANEL_WIDTH - DETAIL_X - 12;
-    private static final int DESC_Y = 66;
+    private static final int DETAIL_TOP = 34;
+    private static final int DESC_Y = 60;
     private static final int DESC_LINES = 2;
-    private static final int TABS_Y = 89;
+    private static final int TABS_Y = 83;
     private static final int TAB_W = 26;
     private static final int TAB_H = 11;
     private static final int TAB_STEP = 29;
-    private static final int NUMBERS_Y = 104;
-    private static final int LINES_BOTTOM = 182;
-    private static final int BUTTON_Y = 183;
-    private static final int SLOT_Y = 212;
+    private static final int NUMBERS_Y = 98;
+    private static final int LINES_BOTTOM = 171;
+    private static final int BUTTON_Y = 174;
+    private static final int SLOT_Y = 204;
     private static final int SLOT_STEP = 27;
     /** 奥義のつまみの番号（流派は0・1…）。 */
     private static final int ULTIMATE_TAB = 99;
@@ -89,7 +96,7 @@ public class SkillTreeScreen extends Screen {
         top = (height - PANEL_HEIGHT) / 2;
         learnButton = addRenderableWidget(new CrystalButton(left + DETAIL_X, top + BUTTON_Y, DETAIL_W, 16,
                 Component.translatable("screen.amemaru.skill_tree.learn", 1), b -> learn()));
-        addRenderableWidget(new CrystalButton(left + 12, top + PANEL_HEIGHT - 16, 60, 12,
+        addRenderableWidget(new CrystalButton(left + 12, top + PANEL_HEIGHT - 15, 60, 12,
                 Component.translatable("screen.amemaru.status.close"), b -> onClose()));
         if (selected < 0) {
             List<SyncDefinitionsS2C.SkillInfo> skills = ClientDefinitions.get().skillsOf(ClientPlayerState.get().jobIndex());
@@ -272,8 +279,8 @@ public class SkillTreeScreen extends Screen {
         ClientPlayerState state = ClientPlayerState.get();
         SyncDefinitionsS2C.JobInfo job = ClientDefinitions.get().job(state.jobIndex());
         if (job == null) {
-            graphics.drawCenteredString(font, title, width / 2, top + 7, UiStyle.TEXT_HEADER);
-            UiStyle.divider(graphics, left + 12, left + PANEL_WIDTH - 12, top + 19);
+            graphics.drawCenteredString(font, title, width / 2, top + HEADER_TITLE_Y, UiStyle.TEXT_HEADER);
+            UiStyle.divider(graphics, left + 12, left + PANEL_WIDTH - 12, top + HEADER_TITLE_Y + 12);
             UiStyle.wrapped(graphics, font, Component.translatable("screen.amemaru.skill_tree.no_job").getString(), left + 40,
                     top + PANEL_HEIGHT / 2 - 10, PANEL_WIDTH - 80, UiStyle.TEXT_DIM, 4);
             super.render(graphics, mouseX, mouseY, partialTick);
@@ -300,7 +307,8 @@ public class SkillTreeScreen extends Screen {
         int hoveredSlot = renderLoadout(graphics, state, mouseX, mouseY);
         super.render(graphics, mouseX, mouseY, partialTick);
         SyncDefinitionsS2C.SkillInfo current = ClientDefinitions.get().skill(selected);
-        if (upperHover && mouseX >= left + 12 && mouseX < left + PANEL_WIDTH - 12 && mouseY >= top + 21 && mouseY < top + 31) {
+        if (upperHover && mouseX >= left + 12 && mouseX < left + PANEL_WIDTH - 12 && mouseY >= top + HEADER_UPPER_Y - 1
+                && mouseY < top + HEADER_DIVIDER_Y) {
             setTooltipForNextRenderPass(UiStyle.tooltipLines(font, Component.translatable("screen.amemaru.skill_tree.upper_help",
                     job.upperName(), job.upperMinDay(), job.upperMinLevel()).getString(), 220));
         } else if (current != null && mouseX >= left + DETAIL_X && mouseX < left + DETAIL_X + DETAIL_W
@@ -333,11 +341,11 @@ public class SkillTreeScreen extends Screen {
 
     private void renderHeader(GuiGraphics graphics, ClientPlayerState state, SyncDefinitionsS2C.JobInfo job) {
         RenderSystem.enableBlend();
-        graphics.blit(job.icon(), left + 10, top + 5, 16, 16, 0, 0, 64, 64, 64, 64);
-        graphics.drawString(font, Component.translatable("screen.amemaru.skill_tree.header", job.name()), left + 30, top + 9,
+        graphics.blit(job.icon(), left + 10, top + HEADER_ICON_Y, 16, 16, 0, 0, 64, 64, 64, 64);
+        graphics.drawString(font, Component.translatable("screen.amemaru.skill_tree.header", job.name()), left + 30, top + HEADER_TITLE_Y,
                 0xFF000000 | job.color(), true);
         Component points = Component.translatable("screen.amemaru.status.skill_points", state.skillPoints());
-        graphics.drawString(font, points, left + PANEL_WIDTH - 12 - font.width(points), top + 9,
+        graphics.drawString(font, points, left + PANEL_WIDTH - 12 - font.width(points), top + HEADER_TITLE_Y,
                 state.skillPoints() > 0 ? UiStyle.TEXT_GOLD : UiStyle.TEXT_DIM, true);
         Component upper;
         if (!job.hasUpper()) {
@@ -351,13 +359,14 @@ public class SkillTreeScreen extends Screen {
         if (job.hasGauge()) {
             Component gauge = Component.translatable("screen.amemaru.skill_tree.gauge", job.gaugeName());
             int gaugeX = left + PANEL_WIDTH - 12 - font.width(gauge);
-            graphics.drawString(font, gauge, gaugeX, top + 22, 0xFF000000 | job.gaugeColor(), false);
+            graphics.drawString(font, gauge, gaugeX, top + HEADER_UPPER_Y, 0xFF000000 | job.gaugeColor(), false);
             upperRight = gaugeX - 8;
         }
         String upperText = UiStyle.clip(font, upper.getString(), upperRight - (left + 12));
-        graphics.drawString(font, upperText, left + 12, top + 22, state.promoted() ? UiStyle.TEXT_GOLD : UiStyle.TEXT_DIM, false);
+        graphics.drawString(font, upperText, left + 12, top + HEADER_UPPER_Y, state.promoted() ? UiStyle.TEXT_GOLD : UiStyle.TEXT_DIM,
+                false);
         upperHover = job.hasUpper() && !state.promoted();
-        UiStyle.divider(graphics, left + 12, left + PANEL_WIDTH - 12, top + 33);
+        UiStyle.divider(graphics, left + 12, left + PANEL_WIDTH - 12, top + HEADER_DIVIDER_Y);
     }
 
     /** 流派のつまみ・段のレベル・列の見出し（奥義のつまみでは、上位職の説明）。 */
@@ -412,7 +421,7 @@ public class SkillTreeScreen extends Screen {
             graphics.drawCenteredString(font, passive, left + GRID_X + 2 * COL_STEP + NODE / 2, labelY, UiStyle.TEXT_DIM);
         }
         // 木と説明の間の縦の線
-        graphics.fill(left + DETAIL_X - 8, top + 40, left + DETAIL_X - 7, top + PANEL_HEIGHT - 20, 0x408FD3FF);
+        graphics.fill(left + DETAIL_X - 8, top + DETAIL_TOP, left + DETAIL_X - 7, top + PANEL_HEIGHT - 8, 0x408FD3FF);
     }
 
     /** 前提のスキルとのつながり（糸）。覚えていれば明るく光る。同じつまみに見えているスキルどうしだけ。 */
@@ -486,23 +495,24 @@ public class SkillTreeScreen extends Screen {
         int x = left + DETAIL_X;
         detailOverflow = false;
         if (skill == null || skill.jobIndex() != job.index()) {
-            graphics.drawString(font, Component.translatable("screen.amemaru.skill_tree.select"), x, top + 44, UiStyle.TEXT_DIM, false);
+            graphics.drawString(font, Component.translatable("screen.amemaru.skill_tree.select"), x, top + DETAIL_TOP + 4, UiStyle.TEXT_DIM,
+                    false);
             return;
         }
         int rank = state.rank(skill.index());
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        graphics.blit(skill.icon(), x, top + 40, 24, 24, 0, 0, 32, 32, 32, 32);
+        graphics.blit(skill.icon(), x, top + DETAIL_TOP, 24, 24, 0, 0, 32, 32, 32, 32);
         Component rankText = Component.translatable("screen.amemaru.skill_tree.rank", rank, skill.maxRank());
         int rankX = left + PANEL_WIDTH - 12 - font.width(rankText);
-        graphics.drawString(font, UiStyle.clip(font, skill.name(), rankX - 4 - (x + 28)), x + 28, top + 41, UiStyle.TEXT, true);
-        graphics.drawString(font, rankText, rankX, top + 41, rank > 0 ? UiStyle.TEXT_GOLD : UiStyle.TEXT_DIM, false);
+        graphics.drawString(font, UiStyle.clip(font, skill.name(), rankX - 4 - (x + 28)), x + 28, top + DETAIL_TOP + 1, UiStyle.TEXT, true);
+        graphics.drawString(font, rankText, rankX, top + DETAIL_TOP + 1, rank > 0 ? UiStyle.TEXT_GOLD : UiStyle.TEXT_DIM, false);
         String school = skill.ultimate() ? Component.translatable("screen.amemaru.skill_tree.ultimate").getString()
                 : skill.schoolIndex() >= 0 && skill.schoolIndex() < job.schools().size() ? job.schools().get(skill.schoolIndex()).name() : "";
         String kind = Component.translatable(skill.passive() ? "screen.amemaru.skill_tree.passive" : "screen.amemaru.skill_tree.active").getString();
         String link = LinkType.byIndex(skill.link()).label();
         String sub = school + "・" + kind + (link.isEmpty() ? "" : "・" + Component.translatable("screen.amemaru.skill_tree.link", link).getString());
-        graphics.drawString(font, UiStyle.clip(font, sub, DETAIL_W - 28), x + 28, top + 52, UiStyle.TEXT_DIM, false);
+        graphics.drawString(font, UiStyle.clip(font, sub, DETAIL_W - 28), x + 28, top + DETAIL_TOP + 12, UiStyle.TEXT_DIM, false);
 
         UiStyle.wrapped(graphics, font, skill.description(), x, top + DESC_Y, DETAIL_W, UiStyle.TEXT, DESC_LINES);
         renderRankTabs(graphics, state, skill, x, top + TABS_Y);
@@ -623,9 +633,8 @@ public class SkillTreeScreen extends Screen {
                 // アイコンのふち（2ピクセル）を除いた中だけを、六角の中に描く
                 graphics.blit(skill.icon(), x + 4, y + 5, 16, 16, 2, 2, 28, 28, 32, 32);
             }
-            String key = KeyBindings.SKILLS[slot].getTranslatedKeyMessage().getString();
-            graphics.drawCenteredString(font, key.length() > 3 ? key.substring(0, 3) : key, x + SkillHudArt.HEX_W / 2, y + SkillHudArt.HEX_H + 1,
-                    0xFFE8F4FF);
+            // キーの名前は、HUDと同じく枠の右下に小さく
+            SkillHud.drawKey(graphics, font, slot, x, y, false);
             if (mouseX >= x && mouseX < x + SkillHudArt.HEX_W && mouseY >= y && mouseY < y + SkillHudArt.HEX_H) {
                 hovered = slot;
             }

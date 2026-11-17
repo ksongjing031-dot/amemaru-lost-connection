@@ -1,5 +1,8 @@
 package jp.amemaru.lostconnection.gametest;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import jp.amemaru.lostconnection.AmemaruMod;
 import jp.amemaru.lostconnection.combat.CombatService;
@@ -57,8 +60,13 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -588,6 +596,46 @@ public final class JobSkillGameTests {
     }
 
     // ================================================================ 定義
+
+    /**
+     * 画面の文字：英語の設定の人にも日本語が出るよう、en_us.json は ja_jp.json と同じ中身にしている。
+     * 片方にだけ足すと、英語の設定の人には「combat.amemaru.frozen」のような名前がそのまま出てしまうため、ずれを見つける。
+     */
+    @GameTest(template = EMPTY)
+    public static void languageFilesMatch(GameTestHelper helper) {
+        JsonObject japanese = readLanguage(helper, "ja_jp");
+        JsonObject english = readLanguage(helper, "en_us");
+        List<String> missing = new ArrayList<>();
+        List<String> different = new ArrayList<>();
+        for (Map.Entry<String, JsonElement> entry : japanese.entrySet()) {
+            JsonElement other = english.get(entry.getKey());
+            if (other == null) {
+                missing.add(entry.getKey());
+            } else if (!other.equals(entry.getValue())) {
+                different.add(entry.getKey());
+            }
+        }
+        List<String> extra = new ArrayList<>();
+        for (String key : english.keySet()) {
+            if (!japanese.has(key)) {
+                extra.add(key);
+            }
+        }
+        check(helper, missing.isEmpty(), "en_us.json にない文字があります：" + missing);
+        check(helper, different.isEmpty(), "en_us.json と ja_jp.json で中身が違う文字があります：" + different);
+        check(helper, extra.isEmpty(), "en_us.json にだけある文字があります：" + extra);
+        helper.succeed();
+    }
+
+    private static JsonObject readLanguage(GameTestHelper helper, String code) {
+        String path = "/assets/" + AmemaruMod.MOD_ID + "/lang/" + code + ".json";
+        try (InputStream stream = JobSkillGameTests.class.getResourceAsStream(path)) {
+            check(helper, stream != null, path + " が見つかりません");
+            return JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject();
+        } catch (IOException | RuntimeException e) {
+            throw new GameTestAssertException(path + " を読めません：" + e.getMessage());
+        }
+    }
 
     /** 同梱の職業とスキルの定義に問題がなく、決めた数がそろっている。 */
     @GameTest(template = EMPTY)

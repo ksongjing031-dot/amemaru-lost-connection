@@ -254,6 +254,8 @@ public final class SkillMechanicsGameTests {
                 "溜めの間の押し直しが、何もしないになっていません");
         helper.runAfterDelay(32, () -> {
             try {
+                // 自動の確認の場所によっては床が狭いため、放つ前に目の前へ置き直す
+                placeInFront(dummy, player, 1.6);
                 SkillService.Result released = SkillService.tryRelease(player, data, slot, -1, null);
                 check(helper, released.ok(), "溜め斬りを放てません：" + released.failure());
                 check(helper, data.getCasting() == null, "放った後も溜めが残っています");
@@ -459,17 +461,26 @@ public final class SkillMechanicsGameTests {
     /** 目の前（distance ブロック）に、防御0の訓練人形を置く。 */
     private static TrainingDummy dummyInFront(GameTestHelper helper, ServerPlayer player, double distance) {
         TrainingDummy dummy = helper.spawn(ModEntities.TRAINING_DUMMY.get(), new BlockPos(1, 1, 1));
-        Vec3 flat = flatLook(player);
-        dummy.moveTo(player.getX() + flat.x * distance, player.getY(), player.getZ() + flat.z * distance, 180.0F, 0.0F);
+        placeInFront(dummy, player, distance);
         dummy.setDummyDefense(0);
         return dummy;
+    }
+
+    /**
+     * 目の前（distance ブロック）に置き、落ちないようにする。
+     * テストの床は3×3しかなく、目の前はその外になることがある（クライアントの世界で確かめるときは、下が空のこともある）。
+     */
+    private static void placeInFront(LivingEntity entity, ServerPlayer player, double distance) {
+        Vec3 flat = flatLook(player);
+        entity.setNoGravity(true);
+        entity.setDeltaMovement(Vec3.ZERO);
+        entity.moveTo(player.getX() + flat.x * distance, player.getY(), player.getZ() + flat.z * distance, 180.0F, 0.0F);
     }
 
     /** 目の前（distance ブロック）に、体力を10倍にしたゾンビ（動かない）を置く。 */
     private static Zombie toughZombieInFront(GameTestHelper helper, ServerPlayer player, double distance) {
         Zombie zombie = helper.spawnWithNoFreeWill(EntityType.ZOMBIE, new BlockPos(1, 1, 1));
-        Vec3 flat = flatLook(player);
-        zombie.moveTo(player.getX() + flat.x * distance, player.getY(), player.getZ() + flat.z * distance, 180.0F, 0.0F);
+        placeInFront(zombie, player, distance);
         AttributeInstance health = zombie.getAttribute(Attributes.MAX_HEALTH);
         if (health != null) {
             health.setBaseValue(200.0);

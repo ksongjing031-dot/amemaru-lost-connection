@@ -12,6 +12,7 @@ import jp.amemaru.lostconnection.network.c2s.UseSkillC2S;
 import jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C;
 import jp.amemaru.lostconnection.player.StatType;
 import net.minecraft.client.CameraType;
+import net.minecraft.client.CloudStatus;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.Screenshot;
 import net.minecraft.client.gui.GuiGraphics;
@@ -89,6 +90,8 @@ public final class CiScreenshots {
                 // 床が届く前に移ると、落ちることがあるため）
                 command(minecraft, "time set noon");
                 command(minecraft, "weather clear");
+                // 床は雲の高さに近いことがあり、雲が演出に重なって見分けにくくなるため、雲を消す
+                minecraft.options.cloudStatus().set(CloudStatus.OFF);
                 command(minecraft, "execute as @p at @p run fill ~-7 ~29 ~-7 ~7 ~29 ~7 minecraft:deepslate_tiles");
                 next(1, 20);
             }
@@ -391,9 +394,24 @@ public final class CiScreenshots {
                 next(54, 2);
             }
             case 54 -> {
+                // ウィザードのスキルツリー（星灯のつまみ。星爆を選んで、組み合わせの説明を見せる）
+                SkillTreeScreen tree = new SkillTreeScreen();
+                minecraft.setScreen(tree);
+                int starBurst = skillIndex("wizard/star_burst");
+                if (starBurst >= 0) {
+                    tree.select(starBurst);
+                }
+                next(55, 10);
+            }
+            case 55 -> {
+                clean(minecraft);
+                pendingShot = "wizard_skill_tree";
+                next(56, 2);
+            }
+            case 56 -> {
                 minecraft.options.setCameraType(CameraType.FIRST_PERSON);
                 minecraft.setScreen(null);
-                next(55, 0);
+                next(57, 0);
             }
             default -> {
             }
@@ -407,6 +425,16 @@ public final class CiScreenshots {
     }
 
     /** スキル枠に、職業のスキル（{@code knight/heavy_slash} の形）を入れる。 */
+    /** 職業のスキル（{@code wizard/star_burst} の形）の番号。なければ -1。 */
+    private static int skillIndex(String path) {
+        for (SyncDefinitionsS2C.SkillInfo skill : ClientDefinitions.get().skillsOf(ClientPlayerState.get().jobIndex())) {
+            if (skill.id().getPath().equals(path)) {
+                return skill.index();
+            }
+        }
+        return -1;
+    }
+
     private static void setLoadout(int slot, String path) {
         ClientPlayerState state = ClientPlayerState.get();
         for (SyncDefinitionsS2C.SkillInfo skill : ClientDefinitions.get().skillsOf(state.jobIndex())) {
