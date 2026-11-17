@@ -45,6 +45,10 @@ public class FxParticle extends TextureSheetParticle {
         SNOW
     }
 
+    /** カメラからこの距離（＋粒の大きさ）より近いと薄くなりはじめ、{@link #NEAR_FADE_END} で見えなくなる。 */
+    private static final double NEAR_FADE_START = 1.0;
+    private static final double NEAR_FADE_END = 0.2;
+
     /** 光を足し合わせて描く（明るい所ほど白く光る）。両面を描く。 */
     public static final ParticleRenderType ADDITIVE = new ParticleRenderType() {
         @Override
@@ -187,11 +191,27 @@ public class FxParticle extends TextureSheetParticle {
 
     @Override
     public void render(VertexConsumer buffer, Camera camera, float partialTicks) {
+        // カメラのすぐ前を通る粒は、画面をふさぐ大きな四角に見えるため、近いほど薄くする
+        Vec3 cam = camera.getPosition();
+        double dx = Mth.lerp(partialTicks, xo, x) - cam.x;
+        double dy = Mth.lerp(partialTicks, yo, y) - cam.y;
+        double dz = Mth.lerp(partialTicks, zo, z) - cam.z;
+        double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+        double fadeStart = NEAR_FADE_START + quadSize;
+        float kept = alpha;
+        if (distance < fadeStart) {
+            alpha *= (float) Mth.clamp((distance - NEAR_FADE_END) / (fadeStart - NEAR_FADE_END), 0.0, 1.0);
+            if (alpha < 0.004F) {
+                alpha = kept;
+                return;
+            }
+        }
         if (style == Style.SPARK) {
             renderStreak(buffer, camera, partialTicks);
-            return;
+        } else {
+            super.render(buffer, camera, partialTicks);
         }
-        super.render(buffer, camera, partialTicks);
+        alpha = kept;
     }
 
     /** 火花：速さの向きに伸びた四角（いつもカメラの方を向く）。 */

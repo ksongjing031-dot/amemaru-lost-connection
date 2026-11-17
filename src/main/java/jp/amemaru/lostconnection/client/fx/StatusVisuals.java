@@ -45,8 +45,26 @@ public final class StatusVisuals {
     private static final int MARK_SHADE_FROST = 0x1F5F9A;
     private static final int MARK_SHADE_GOLD = 0x8A5200;
     private static final int MARK_SHADE_EMBER = 0x7A2400;
+    /** 頭の上の印の1段の高さ。 */
+    private static final float MARK_ROW = 0.3F;
 
     private StatusVisuals() {
+    }
+
+    /** 頭の上の印が占める高さ（浮かぶ数字は、この上から出す。印と数字が重ならないように）。 */
+    public static float markHeight(int entityId) {
+        State state = STATES.get(entityId);
+        if (state == null) {
+            return 0.0F;
+        }
+        int rows = 0;
+        for (StatusFxS2C.Kind kind : new StatusFxS2C.Kind[]{StatusFxS2C.Kind.CHILL, StatusFxS2C.Kind.BRAND,
+                StatusFxS2C.Kind.ARMOR_BREAK, StatusFxS2C.Kind.SHIELD_BOND}) {
+            if (state.kinds.containsKey(kind)) {
+                rows++;
+            }
+        }
+        return rows * MARK_ROW;
     }
 
     /** その相手に、今その状態が付いているか（訓練人形の防御の表示などに使う）。 */
@@ -199,11 +217,11 @@ public final class StatusVisuals {
                 VertexConsumer vc = draw.glow(FxTextures.SNOWFLAKE);
                 for (int i = 0; i < count; i++) {
                     Vec3 at = sideways(draw, head.add(0.0, row, 0.0), (i - (count - 1) / 2.0F) * 0.26F);
-                    draw.billboard(vc, at, 0.26F, time * 0.05F + i, count >= 4 ? 0xFFFFFF : ICE, 0.95F);
+                    draw.billboard(vc, at, 0.26F, time * 0.05F + i, count >= 4 ? 0xFFFFFF : ICE, 0.65F);
                 }
                 draw.ground(draw.glow(FxTextures.RING), feet.add(0.0, 0.04, 0.0), width * 0.9F + 0.2F, 0.0F, FROST,
                         0.12F + 0.08F * count);
-                row += 0.3F;
+                row += MARK_ROW;
             }
             if ((value = state.kinds.get(StatusFxS2C.Kind.BRAND)) != null && !firstPersonSelf) {
                 int count = (int) value[0];
@@ -219,15 +237,15 @@ public final class StatusVisuals {
                 }
                 VertexConsumer vc = draw.glow(FxTextures.STAR);
                 for (int i = 0; i < count; i++) {
-                    draw.billboard(vc, at[i], 0.34F + 0.04F * count, time * 0.1F, count >= 5 ? 0xFFFFFF : GOLD, 0.95F);
+                    draw.billboard(vc, at[i], 0.34F + 0.04F * count, time * 0.1F, count >= 5 ? 0xFFFFFF : GOLD, 0.6F);
                 }
-                row += 0.3F;
+                row += MARK_ROW;
             }
             if ((value = state.kinds.get(StatusFxS2C.Kind.ARMOR_BREAK)) != null && !firstPersonSelf) {
-                float pulse = 0.75F + 0.25F * Mth.sin(time * 0.3F);
+                float pulse = 0.5F + 0.15F * Mth.sin(time * 0.3F);
                 draw.billboard(draw.translucent(FxTextures.CRACK), head.add(0.0, row + 0.05, 0.0), 0.46F, 0.0F, MARK_SHADE_EMBER, 0.7F);
                 draw.billboard(draw.glow(FxTextures.CRACK), head.add(0.0, row + 0.05, 0.0), 0.42F, 0.0F, EMBER, pulse);
-                row += 0.3F;
+                row += MARK_ROW;
             }
             if ((value = state.kinds.get(StatusFxS2C.Kind.STAGGER)) != null && !firstPersonSelf) {
                 VertexConsumer vc = draw.glow(FxTextures.STAR);

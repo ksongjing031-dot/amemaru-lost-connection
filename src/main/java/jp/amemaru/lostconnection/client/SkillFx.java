@@ -650,7 +650,7 @@ public final class SkillFx {
                     double r = Math.sqrt(random.nextDouble()) * radius * 0.8;
                     Vec3 spot = at.add(Math.cos(angle) * r, 0.5, Math.sin(angle) * r);
                     FxWorld.add(new FxWorld.Flare(Anchor.at(spot), 2.6F, FIRE, 8, FxTextures.GLOW, 0.0F, 2));
-                    if (i % 2 == 0) {
+                    if (i % 2 == 0 && farFromCamera(spot, 4.0)) {
                         level.addParticle(ParticleTypes.EXPLOSION, spot.x, spot.y, spot.z, 0.0, 0.0, 0.0);
                     }
                 }
@@ -668,7 +668,11 @@ public final class SkillFx {
                 FxWorld.add(new FxWorld.Sigil(Anchor.at(at), radius, FxTextures.SIGIL_STAR, GOLD, 24, 0.04F, 2, 0.8F).noInner());
                 Fx.burst(level, ModParticles.STAR.get(), at.add(0.0, 1.0, 0.0), 60, GOLD_LIGHT, 0.45F, 30, 0.6);
                 Fx.fountain(level, ModParticles.SPARK.get(), at, 60, GOLD, 0.12F, 20, 0.9, 0.5);
-                level.addParticle(ParticleTypes.EXPLOSION_EMITTER, at.x, at.y + 0.5, at.z, 0.0, 0.0, 0.0);
+                if (farFromCamera(at, 7.0)) {
+                    level.addParticle(ParticleTypes.EXPLOSION_EMITTER, at.x, at.y + 0.5, at.z, 0.0, 0.0, 0.0);
+                } else {
+                    Fx.burst(level, ModParticles.GLOW.get(), at.add(0.0, 0.8, 0.0), 24, GOLD, 0.8F, 18, 0.35);
+                }
                 debris(level, at, 30);
                 FxWorld.shake(at, 16, 1.6F);
             }
@@ -758,6 +762,15 @@ public final class SkillFx {
     /** 向き（ベクトル）から、プレイヤーと同じ決まりの角度（度。0で南）。 */
     private static float yawOf(Vec3 direction) {
         return (float) (Mth.atan2(-direction.x, direction.z) * Mth.RAD_TO_DEG);
+    }
+
+    /**
+     * カメラから distance より遠いか。バニラの爆発の煙は、カメラの近くに出ると画面をふさぐ灰色の大きな塊に見えるため、
+     * 近いときは出さない（光の演出だけにする）。
+     */
+    private static boolean farFromCamera(Vec3 at, double distance) {
+        Vec3 camera = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
+        return camera.distanceToSqr(at) > distance * distance;
     }
 
     /** エンティティの前（見ている向き）へのずれ。 */

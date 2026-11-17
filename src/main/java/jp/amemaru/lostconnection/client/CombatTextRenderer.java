@@ -40,8 +40,15 @@ public final class CombatTextRenderer {
     private static final long LIFE_MS = 1100;
     private static final long BANNER_MS = 1400;
     private static final int MAX_TEXTS = 64;
+    /** この時間より前に出た文字とは、重ならないように段をずらす。 */
+    private static final long STACK_MS = 450;
+    /** 言葉（凍結！・砕けた！・連携！など）は、数字の段より上の段に出す。 */
+    private static final double WORD_LANE = 0.42;
+    private static final double WORD_STEP = 0.36;
+    private static final double NUMBER_STEP = 0.26;
 
-    private record Floating(Vec3 position, String text, int color, int outline, float scale, long start) {
+    /** 浮かぶ文字。{@code word} は言葉（数字ではない）。 */
+    private record Floating(int entityId, boolean word, Vec3 position, String text, int color, int outline, float scale, long start) {
     }
 
     private record Banner(String text, int color, float scale, long start) {
@@ -78,36 +85,36 @@ public final class CombatTextRenderer {
                 if (involved) {
                     banner = new Banner(Component.translatable("combat.amemaru.link").getString(), 0xFFC94D, 2.6F, now);
                 }
-                addAbove(entity, Component.translatable("combat.amemaru.link").getString(), 0xFFC94D, 0x5A2A00, 1.5F, now);
+                addWord(entity, Component.translatable("combat.amemaru.link").getString(), 0xFFC94D, 0x5A2A00, 1.5F, now);
                 return;
             }
             case LINK3 -> {
                 if (involved) {
                     banner = new Banner(Component.translatable("combat.amemaru.link3").getString(), 0xFF8A3D, 3.0F, now);
                 }
-                addAbove(entity, Component.translatable("combat.amemaru.link3").getString(), 0xFF8A3D, 0x4A1600, 1.8F, now);
+                addWord(entity, Component.translatable("combat.amemaru.link3").getString(), 0xFF8A3D, 0x4A1600, 1.8F, now);
                 return;
             }
             case SUPPORT -> {
                 if (involved) {
                     banner = new Banner(Component.translatable("combat.amemaru.support").getString(), 0xFFE066, 2.0F, now);
                 }
-                addAbove(entity, Component.translatable("combat.amemaru.support").getString(), 0xFFE066, 0x403000, 1.1F, now);
+                addWord(entity, Component.translatable("combat.amemaru.support").getString(), 0xFFE066, 0x403000, 1.1F, now);
                 return;
             }
             case PARRY -> {
                 if (entity == minecraft.player) {
                     banner = new Banner(Component.translatable("combat.amemaru.parry").getString(), 0xD6F6FF, 2.2F, now);
                 }
-                addAbove(entity, Component.translatable("combat.amemaru.parry").getString(), 0xD6F6FF, 0x0A2A3A, 1.4F, now);
+                addWord(entity, Component.translatable("combat.amemaru.parry").getString(), 0xD6F6FF, 0x0A2A3A, 1.4F, now);
                 return;
             }
             case SHATTER -> {
-                addAbove(entity, Component.translatable("combat.amemaru.shatter").getString(), 0xBFF2FF, 0x06304A, 1.5F, now);
+                addWord(entity, Component.translatable("combat.amemaru.shatter").getString(), 0xBFF2FF, 0x06304A, 1.5F, now);
                 return;
             }
             case FROZEN -> {
-                addAbove(entity, Component.translatable("combat.amemaru.frozen").getString(), 0x9FE6FF, 0x06304A, 1.2F, now);
+                addWord(entity, Component.translatable("combat.amemaru.frozen").getString(), 0x9FE6FF, 0x06304A, 1.2F, now);
                 return;
             }
             default -> {
@@ -131,18 +138,39 @@ public final class CombatTextRenderer {
         }
     }
 
+    /** 数字（ダメージ・回復など）。少し横にばらけ、同時に出た数字とは段をずらす。 */
     private static void addAbove(@Nullable Entity entity, String text, int color, int outline, float scale, long now) {
+        add(entity, false, text, color, outline, scale, now);
+    }
+
+    /** 言葉（凍結！・砕けた！・連携！など）。数字の上の段に、まっすぐ出す。 */
+    private static void addWord(@Nullable Entity entity, String text, int color, int outline, float scale, long now) {
+        add(entity, true, text, color, outline, scale, now);
+    }
+
+    private static void add(@Nullable Entity entity, boolean word, String text, int color, int outline, float scale, long now) {
         if (entity == null) {
             return;
         }
         Minecraft minecraft = Minecraft.getInstance();
-        double jitterX = (minecraft.level.random.nextDouble() - 0.5) * 0.6;
-        double jitterZ = (minecraft.level.random.nextDouble() - 0.5) * 0.6;
-        Vec3 at = new Vec3(entity.getX() + jitterX, entity.getY() + entity.getBbHeight() + 0.45, entity.getZ() + jitterZ);
+        // 同じ相手の上に少し前に出た文字（同じ種類）があれば、重ならないよう上の段にずらす
+        int recent = 0;
+        for (Floating other : TEXTS) {
+            if (other.entityId() == entity.getId() && other.word() == word && now - other.start() < STACK_MS) {
+                recent++;
+            }
+        }
+        double lift = word ? WORD_LANE + Math.min(recent, 3) * WORD_STEP : (recent % 3) * NUMBER_STEP;
+        double spread = word ? 0.0 : 0.6;
+        double jitterX = (minecraft.level.random.nextDouble() - 0.5) * spread;
+        double jitterZ = (minecraft.level.random.nextDouble() - 0.5) * spread;
+        // 頭の上に状態の印（凍え・星痕など）があれば、その上から出す
+        double base = entity.getBbHeight() + 0.45 + StatusVisuals.markHeight(entity.getId());
+        Vec3 at = new Vec3(entity.getX() + jitterX, entity.getY() + base + lift, entity.getZ() + jitterZ);
         if (TEXTS.size() >= MAX_TEXTS) {
             TEXTS.remove(0);
         }
-        TEXTS.add(new Floating(at, text, color, outline, scale, now));
+        TEXTS.add(new Floating(entity.getId(), word, at, text, color, outline, scale, now));
     }
 
     public static void reset() {
