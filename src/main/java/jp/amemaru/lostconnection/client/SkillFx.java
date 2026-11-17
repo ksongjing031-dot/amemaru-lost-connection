@@ -198,12 +198,11 @@ public final class SkillFx {
                 FxWorld.add(new FxWorld.Sigil(Anchor.entity(id, Vec3.ZERO), 2.2F, FxTextures.SIGIL_OATH, GOLD, ticks + 6, 0.06F, 8, 0.9F))
                         .tag(id, TAG_CAST);
                 FxWorld.add(new FxWorld.Emitter(Anchor.entity(id, Vec3.ZERO), ticks + 2, at -> {
-                    for (int i = 0; i < 2; i++) {
-                        double angle = level.random.nextDouble() * Math.PI * 2.0;
-                        Vec3 start = at.add(Math.cos(angle) * 2.0, 0.2, Math.sin(angle) * 2.0);
-                        Vec3 goal = at.add(0.0, 6.0, 0.0);
-                        Fx.add(level, Fx.glow(GOLD_LIGHT, 0.22F, 14), start, goal.subtract(start).scale(1.0 / 14.0));
-                    }
+                    double angle = level.random.nextDouble() * Math.PI * 2.0;
+                    Vec3 start = at.add(Math.cos(angle) * 2.0, 0.2, Math.sin(angle) * 2.0);
+                    Vec3 goal = at.add(0.0, 6.0, 0.0);
+                    Fx.add(level, Fx.glow(GOLD, 0.15F, 14), start, goal.subtract(start).scale(1.0 / 14.0));
+                    Fx.add(level, Fx.spark(GOLD_LIGHT, 0.06F, 12), start, goal.subtract(start).scale(1.0 / 12.0));
                 })).tag(id, TAG_CAST);
             }
             case "wizard_ice_garden" -> {

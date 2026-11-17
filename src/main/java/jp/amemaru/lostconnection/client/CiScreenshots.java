@@ -327,7 +327,8 @@ public final class CiScreenshots {
                 command(minecraft, "amemaru admin debug vitals @a 100 100");
                 minecraft.options.setCameraType(CameraType.THIRD_PERSON_BACK);
                 if (minecraft.player != null) {
-                    minecraft.player.setXRot(14.0F);
+                    // 少し上を向いて、頭上に形づくられる光の大剣が写るようにする（断つ線は向きの上下に関係なく地面と平行）
+                    minecraft.player.setXRot(-8.0F);
                 }
                 next(31, 16);
             }
@@ -363,6 +364,15 @@ public final class CiScreenshots {
                 castSeen |= casting;
                 if ((casting || !castSeen) && releaseWait++ < 80) {
                     return;
+                }
+                // 断った線をななめから見るため、体の向きを右へ回し、地面を見下ろす（演出は地面に残ったまま）
+                if (minecraft.player != null) {
+                    float yaw = minecraft.player.getYRot() + 50.0F;
+                    minecraft.player.setYRot(yaw);
+                    minecraft.player.yRotO = yaw;
+                    minecraft.player.setYHeadRot(yaw);
+                    minecraft.player.setXRot(28.0F);
+                    minecraft.player.xRotO = 28.0F;
                 }
                 next(34, 3);
             }
