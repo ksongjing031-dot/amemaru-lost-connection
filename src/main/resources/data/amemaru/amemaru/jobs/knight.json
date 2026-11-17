@@ -3,7 +3,7 @@
   "order": 10,
   "name": "ナイト",
   "role": "タンク",
-  "description": "盾と剣で、仲間の前に立つ者。敵の狙いを引きつけ、仲間の傷を糸ごと肩代わりする。受けた痛みは「誓気」となり、決して倒れない誓いを支える。",
+  "description": "盾と剣で仲間の前に立つ者。敵の狙いを引きつけ、仲間の傷を糸ごと肩代わりする。受けた痛みは「誓気」となり、倒れない誓いを支える。",
   "color": "#6EA8FF",
   "icon": "amemaru:textures/gui/job/knight.png",
   "weapons": "amemaru:weapons/knight",

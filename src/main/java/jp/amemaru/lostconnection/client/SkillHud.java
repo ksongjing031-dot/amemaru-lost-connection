@@ -84,6 +84,8 @@ public final class SkillHud {
 
     private static void drawSlot(GuiGraphics graphics, Font font, ClientPlayerState state, int slot, int x, int y, long now,
                                  boolean altMode, boolean altHeld, float partialTick) {
+        // 文字（キーの名前・秒）を描くと、半透明の混ぜ合わせが切れる。枠ごとに、絵を描く前につけ直す
+        blend();
         int skillIndex = state.loadout(slot);
         SyncDefinitionsS2C.SkillInfo skill = ClientDefinitions.get().skill(skillIndex);
         if (altHeld) {
@@ -108,11 +110,11 @@ public final class SkillHud {
         int total = state.cooldownTotal(skillIndex);
         boolean casting = state.castSkill() == skillIndex;
 
-        // アイコン（32×32 の絵を 16×16 で描く）
+        // アイコン（32×32 の絵の、ふち2ピクセルを除いた中を 16×16 で描く）
         if (!affordable) {
             RenderSystem.setShaderColor(0.55F, 0.62F, 0.85F, 1.0F);
         }
-        graphics.blit(skill.icon(), x + 4, y + 5, 16, 16, 0, 0, 32, 32, 32, 32);
+        graphics.blit(skill.icon(), x + 4, y + 5, 16, 16, 2, 2, 28, 28, 32, 32);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         if (!affordable) {
             graphics.blit(TEXTURE, x, y, SkillHudArt.U_HEX_DIM, SkillHudArt.V_HEX, SkillHudArt.HEX_W, SkillHudArt.HEX_H, TEX, TEX);
@@ -170,6 +172,7 @@ public final class SkillHud {
         }
         int x = baseX;
         int y = baseY - 9;
+        blend();
         graphics.blit(TEXTURE, x, y, 0, SkillHudArt.V_GAUGE_FRAME, SkillHudArt.GAUGE_W, SkillHudArt.GAUGE_H, TEX, TEX);
         float ratio = Mth.clamp(state.gauge() / state.gaugeMax(), 0.0F, 1.0F);
         int fill = Math.round(ratio * SkillHudArt.GAUGE_INNER);
@@ -193,6 +196,7 @@ public final class SkillHud {
         }
         int x = (screenWidth - SkillHudArt.CAST_W) / 2;
         int y = screenHeight / 2 + 26;
+        blend();
         graphics.blit(TEXTURE, x, y, 0, SkillHudArt.V_CAST_FRAME, SkillHudArt.CAST_W, SkillHudArt.CAST_H, TEX, TEX);
         int fill = Math.round(state.castProgress(partialTick) * SkillHudArt.CAST_INNER);
         if (fill > 0) {
@@ -200,6 +204,11 @@ public final class SkillHud {
         }
         String name = skill.name();
         graphics.drawString(font, name, (screenWidth - font.width(name)) / 2, y - 10, 0xFFF2D7FF, true);
+    }
+
+    private static void blend() {
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
     }
 
     /** このHUDが画面の下から使う高さ（チャットなどを、これより上に出すため）。 */

@@ -30,7 +30,7 @@ public class JobSelectScreen extends Screen {
     private static final int PANEL_WIDTH = 344;
     private static final int PANEL_HEIGHT = 226;
     private static final int CARD_WIDTH = 160;
-    private static final int CARD_HEIGHT = 150;
+    private static final int CARD_HEIGHT = 160;
     private static final int PER_PAGE = 2;
 
     private final OpenJobScreenS2C info;
@@ -172,6 +172,7 @@ public class JobSelectScreen extends Screen {
 
         // 職業の紋章（64×64 の絵を 28×28 で）
         RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
         graphics.blit(job.icon(), x + 6, y + 6, 28, 28, 0, 0, 64, 64, 64, 64);
         graphics.drawString(font, job.name(), x + 40, y + 8, 0xFF000000 | job.color(), true);
         graphics.drawString(font, job.role(), x + 40 + font.width(job.name()) + 6, y + 8, UiStyle.TEXT_DIM, false);
@@ -188,15 +189,23 @@ public class JobSelectScreen extends Screen {
             lineY += 10 * UiStyle.wrapped(graphics, font, stats, x + 6, lineY, CARD_WIDTH - 12, UiStyle.TEXT_GOOD, 2);
         }
         lineY += 2;
-        lineY += 10 * UiStyle.wrapped(graphics, font, job.description(), x + 6, lineY, CARD_WIDTH - 12, UiStyle.TEXT_DIM, 4);
+        // 説明：「最初の技」の行の上までに入る行数だけ描き、入りきらなければ「…」にして、マウスを乗せると全文を出す
+        int iconY = y + CARD_HEIGHT - 44;
+        int descLines = Math.max(1, (iconY - 2 - lineY) / 10);
+        UiStyle.wrapped(graphics, font, job.description(), x + 6, lineY, CARD_WIDTH - 12, UiStyle.TEXT_DIM, descLines);
+        if (mouseX >= x + 6 && mouseX < x + CARD_WIDTH - 6 && mouseY >= lineY && mouseY < lineY + descLines * 10
+                && UiStyle.overflows(font, job.description(), CARD_WIDTH - 12, descLines)) {
+            setTooltipForNextRenderPass(UiStyle.tooltipLines(font, job.description(), 200));
+        }
 
         // 最初から使えるスキル
-        int iconY = y + CARD_HEIGHT - 44;
         graphics.drawString(font, Component.translatable("screen.amemaru.job.starting"), x + 6, iconY + 4, UiStyle.TEXT_HEADER, false);
         int iconX = x + 6 + font.width(Component.translatable("screen.amemaru.job.starting")) + 4;
         for (int skillIndex : job.startingSkills()) {
             SyncDefinitionsS2C.SkillInfo skill = ClientDefinitions.get().skill(skillIndex);
             if (skill != null) {
+                RenderSystem.enableBlend();
+                RenderSystem.defaultBlendFunc();
                 graphics.blit(skill.icon(), iconX, iconY, 16, 16, 0, 0, 32, 32, 32, 32);
                 if (mouseX >= iconX && mouseX < iconX + 16 && mouseY >= iconY && mouseY < iconY + 16) {
                     setTooltipForNextRenderPass(tooltip(skill.name(), skill.description()));
@@ -224,7 +233,7 @@ public class JobSelectScreen extends Screen {
     private List<net.minecraft.util.FormattedCharSequence> tooltip(String name, String description) {
         List<net.minecraft.util.FormattedCharSequence> lines = new ArrayList<>();
         lines.add(Component.literal(name).withStyle(net.minecraft.ChatFormatting.AQUA).getVisualOrderText());
-        lines.addAll(font.split(net.minecraft.network.chat.FormattedText.of(description), 200));
+        lines.addAll(UiStyle.tooltipLines(font, description, 200));
         return lines;
     }
 
@@ -248,6 +257,7 @@ public class JobSelectScreen extends Screen {
         int y = top + PANEL_HEIGHT / 2 - 30;
         UiStyle.card(graphics, left + 40, y - 8, left + PANEL_WIDTH - 40, y + 70, job.color(), true);
         RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
         graphics.blit(job.icon(), width / 2 - 14, y - 2, 28, 28, 0, 0, 64, 64, 64, 64);
         graphics.drawCenteredString(font, Component.translatable("screen.amemaru.job.confirm", job.name()), width / 2, y + 30, UiStyle.TEXT);
         Component note = info.currentJob() < 0

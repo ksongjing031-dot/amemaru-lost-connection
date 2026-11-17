@@ -14,6 +14,7 @@ import net.minecraft.client.Screenshot;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.server.IntegratedServer;
+import net.minecraft.client.tutorial.TutorialSteps;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraftforge.api.distmarker.Dist;
@@ -118,9 +119,15 @@ public final class CiScreenshots {
                 command(minecraft, "gamerule logAdminCommands false");
                 command(minecraft, "amemaru admin debug vitals @a 82 46");
                 command(minecraft, "time set noon");
+                command(minecraft, "weather clear");
+                // どんな地形に出ても同じ写真になるよう、30ブロック上の空に15×15の床を作って、その上に立つ
+                command(minecraft, "execute as @p at @p run fill ~-7 ~29 ~-7 ~7 ~29 ~7 minecraft:deepslate_tiles");
+                command(minecraft, "execute as @p at @p run tp @s ~ ~30 ~");
                 if (minecraft.player != null) {
                     minecraft.player.setXRot(15.0F);
                 }
+                // 操作の説明（チュートリアル）の小窓を出さない
+                minecraft.getTutorial().setStep(TutorialSteps.NONE);
                 command(minecraft, "amemaru admin job set @a amemaru:knight");
                 command(minecraft, "item replace entity @a weapon.mainhand with amemaru:apprentice_sword");
                 command(minecraft, "item replace entity @a weapon.offhand with amemaru:apprentice_shield");
@@ -145,6 +152,7 @@ public final class CiScreenshots {
                 next(11, 8);
             }
             case 11 -> {
+                clean(minecraft);
                 pendingShot = "knight_skills";
                 next(12, 2);
             }
@@ -153,6 +161,7 @@ public final class CiScreenshots {
                 next(13, 10);
             }
             case 13 -> {
+                clean(minecraft);
                 pendingShot = "skill_tree";
                 next(14, 2);
             }
@@ -171,6 +180,7 @@ public final class CiScreenshots {
                 next(15, 15);
             }
             case 15 -> {
+                clean(minecraft);
                 pendingShot = "job_select";
                 next(16, 2);
             }
@@ -201,6 +211,7 @@ public final class CiScreenshots {
                 next(19, 16);
             }
             case 19 -> {
+                clean(minecraft);
                 pendingShot = "wizard_cast";
                 next(20, 2);
             }
@@ -210,6 +221,7 @@ public final class CiScreenshots {
                 next(21, 36);
             }
             case 21 -> {
+                clean(minecraft);
                 pendingShot = "wizard_impact";
                 next(22, 2);
             }
@@ -220,6 +232,12 @@ public final class CiScreenshots {
             default -> {
             }
         }
+    }
+
+    /** 写真のじゃまになる、チャットの文と右上の小窓（実績・レシピ）を消す。 */
+    private static void clean(Minecraft minecraft) {
+        minecraft.gui.getChat().clearMessages(false);
+        minecraft.getToasts().clear();
     }
 
     /** スキル枠のスキルを、キーを押したときと同じように使う。 */

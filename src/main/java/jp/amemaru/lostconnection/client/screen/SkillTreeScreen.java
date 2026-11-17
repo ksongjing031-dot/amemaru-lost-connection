@@ -12,9 +12,9 @@ import jp.amemaru.lostconnection.network.c2s.SetLoadoutC2S;
 import jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C;
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.FormattedText;
 import net.minecraft.util.FormattedCharSequence;
 
 import javax.annotation.Nullable;
@@ -25,8 +25,8 @@ import java.util.Locale;
 /**
  * スキルツリーの画面（初期値：Jキー。Phase 0-A 19章・S3「職業ごとのスキルツリー（GUI）」）。
  *
- * <p>左に、流派ごとの木（1列目がアクティブ、2列目がパッシブ、下が奥義）。右に、選んだスキルの説明・今の段階と次の段階の効果・
- * 習得のボタン・スキル枠（6つ）。スキル枠は、アクティブスキルを選んでから枠をクリックすると入る（右クリックで空にする）。
+ * <p>左に、流派ごとの木（1列目がアクティブ、2列目がパッシブ、下が奥義）。右に、選んだスキルの説明・段階のつまみ（1段〜3段。
+ * 押すとその段階の数値と効果を見せる）・習得のボタン・スキル枠（6つ）。スキル枠は、アクティブスキルを選んでから枠をクリックすると入る（右クリックで空にする）。
  * 習得と枠の入れかえはサーバーが確かめてから反映し、結果は同期で返ってくる。</p>
  */
 public class SkillTreeScreen extends Screen {
@@ -39,13 +39,31 @@ public class SkillTreeScreen extends Screen {
     private static final int TREE_X = 12;
     private static final int TREE_Y = 50;
     private static final int DETAIL_X = 214;
-    private static final int SLOT_Y = 184;
+    private static final int DETAIL_W = PANEL_WIDTH - DETAIL_X - 12;
+    private static final int DESC_Y = 66;
+    private static final int DESC_LINES = 2;
+    private static final int TABS_Y = 89;
+    private static final int TAB_W = 26;
+    private static final int TAB_H = 11;
+    private static final int TAB_STEP = 29;
+    private static final int NUMBERS_Y = 104;
+    private static final int LINES_BOTTOM = 154;
+    private static final int BUTTON_Y = 157;
+    private static final int SLOT_Y = 186;
     private static final int SLOT_STEP = 27;
 
     private int left;
     private int top;
     private int selected = -1;
+    /** 右の説明で見せている段階（段階のつまみで切りかえる）。 */
+    private int shownRank = 1;
+    /** 選んでいるスキルの、前に見たときの段階（覚えたら、見せる段階を進めるため）。 */
+    private int lastRank = -1;
     private CrystalButton learnButton;
+    /** 上位職の行にマウスが乗ったら、詳しい条件を出すか。 */
+    private boolean upperHover;
+    /** 効果の行が入りきらなかったか（入りきらなければ、ツールチップで全部を見せる）。 */
+    private boolean detailOverflow;
 
     public SkillTreeScreen() {
         super(Component.translatable("screen.amemaru.skill_tree.title"));
@@ -55,7 +73,7 @@ public class SkillTreeScreen extends Screen {
     protected void init() {
         left = (width - PANEL_WIDTH) / 2;
         top = (height - PANEL_HEIGHT) / 2;
-        learnButton = addRenderableWidget(new CrystalButton(left + DETAIL_X, top + 160, PANEL_WIDTH - DETAIL_X - 12, 16,
+        learnButton = addRenderableWidget(new CrystalButton(left + DETAIL_X, top + BUTTON_Y, DETAIL_W, 16,
                 Component.translatable("screen.amemaru.skill_tree.learn", 1), b -> learn()));
         addRenderableWidget(new CrystalButton(left + 12, top + PANEL_HEIGHT - 16, 60, 12,
                 Component.translatable("screen.amemaru.status.close"), b -> onClose()));
@@ -65,13 +83,38 @@ public class SkillTreeScreen extends Screen {
                 selected = skills.get(0).index();
             }
         }
+        resetShownRank();
         updateButton();
     }
 
     @Override
     public void tick() {
         super.tick();
+        SyncDefinitionsS2C.SkillInfo skill = ClientDefinitions.get().skill(selected);
+        if (skill != null && ClientPlayerState.get().rank(skill.index()) != lastRank) {
+            resetShownRank();
+        }
         updateButton();
+    }
+
+    /** 見せる段階を決め直す：次の段階を覚えられるならそれ、覚えていなければ1段、ほかは今の段階。 */
+    private void resetShownRank() {
+        SyncDefinitionsS2C.SkillInfo skill = ClientDefinitions.get().skill(selected);
+        if (skill == null) {
+            shownRank = 1;
+            lastRank = -1;
+            return;
+        }
+        ClientPlayerState state = ClientPlayerState.get();
+        int rank = state.rank(skill.index());
+        lastRank = rank;
+        if (rank <= 0) {
+            shownRank = 1;
+        } else if (rank < skill.maxRank() && blocker(skill, state) == null) {
+            shownRank = rank + 1;
+        } else {
+            shownRank = Math.min(rank, skill.maxRank());
+        }
     }
 
     private void updateButton() {
@@ -90,11 +133,41 @@ public class SkillTreeScreen extends Screen {
         if (next > skill.maxRank()) {
             learnButton.active = false;
             learnButton.setMessage(Component.translatable("screen.amemaru.skill_tree.max"));
+            learnButton.setTooltip(null);
             return;
         }
         int cost = skill.rankCosts()[next - 1];
-        learnButton.setMessage(Component.translatable(rank == 0 ? "screen.amemaru.skill_tree.learn" : "screen.amemaru.skill_tree.rank_up", cost));
-        learnButton.active = blocker(skill, state) == null;
+        Component reason = blocker(skill, state);
+        learnButton.active = reason == null;
+        if (reason == null) {
+            learnButton.setMessage(Component.translatable(rank == 0 ? "screen.amemaru.skill_tree.learn" : "screen.amemaru.skill_tree.rank_up", cost));
+            learnButton.setTooltip(null);
+        } else {
+            // 押せないときは、ボタンに短い理由、ツールチップに詳しい理由を出す
+            learnButton.setMessage(shortBlocker(skill, state));
+            learnButton.setTooltip(Tooltip.create(reason));
+        }
+    }
+
+    /** ボタンに入る長さの、覚えられない理由。 */
+    private static Component shortBlocker(SyncDefinitionsS2C.SkillInfo skill, ClientPlayerState state) {
+        if (skill.jobIndex() != state.jobIndex()) {
+            return Component.translatable("screen.amemaru.skill_tree.need.other_job");
+        }
+        int next = state.rank(skill.index()) + 1;
+        if (state.level() < skill.minLevel()) {
+            return Component.translatable("screen.amemaru.skill_tree.need.level", skill.minLevel());
+        }
+        for (int i = 0; i < skill.requiredSkills().length; i++) {
+            if (state.rank(skill.requiredSkills()[i]) < skill.requiredRanks()[i]) {
+                SyncDefinitionsS2C.SkillInfo required = ClientDefinitions.get().skill(skill.requiredSkills()[i]);
+                return Component.translatable("screen.amemaru.skill_tree.need.requirement", required == null ? "?" : required.name());
+            }
+        }
+        if ((skill.ultimate() || next >= skill.upperRank()) && !state.promoted()) {
+            return Component.translatable("screen.amemaru.skill_tree.need.upper");
+        }
+        return Component.translatable("screen.amemaru.skill_tree.need.points", skill.rankCosts()[Math.min(next, skill.maxRank()) - 1]);
     }
 
     private void learn() {
@@ -186,7 +259,22 @@ public class SkillTreeScreen extends Screen {
         renderDetails(graphics, state, job);
         int hoveredSlot = renderLoadout(graphics, state, mouseX, mouseY);
         super.render(graphics, mouseX, mouseY, partialTick);
-        if (hovered != null) {
+        SyncDefinitionsS2C.SkillInfo current = ClientDefinitions.get().skill(selected);
+        if (upperHover && mouseX >= left + 12 && mouseX < left + PANEL_WIDTH - 12 && mouseY >= top + 21 && mouseY < top + 31) {
+            setTooltipForNextRenderPass(UiStyle.tooltipLines(font, Component.translatable("screen.amemaru.skill_tree.upper_help",
+                    job.upperName(), job.upperMinDay(), job.upperMinLevel()).getString(), 220));
+        } else if (current != null && mouseX >= left + DETAIL_X && mouseX < left + DETAIL_X + DETAIL_W
+                && mouseY >= top + DESC_Y && mouseY < top + DESC_Y + DESC_LINES * 10
+                && UiStyle.overflows(font, current.description(), DETAIL_W, DESC_LINES)) {
+            setTooltipForNextRenderPass(UiStyle.tooltipLines(font, current.description(), 220));
+        } else if (current != null && detailOverflow && mouseX >= left + DETAIL_X && mouseX < left + DETAIL_X + DETAIL_W
+                && mouseY >= top + NUMBERS_Y && mouseY < top + LINES_BOTTOM) {
+            List<FormattedCharSequence> lines = new ArrayList<>();
+            for (String line : detailLines(current, shownRank)) {
+                lines.addAll(UiStyle.tooltipLines(font, "・" + line, 220));
+            }
+            setTooltipForNextRenderPass(lines);
+        } else if (hovered != null) {
             List<FormattedCharSequence> lines = new ArrayList<>();
             lines.add(Component.literal(hovered.name()).withStyle(ChatFormatting.AQUA).getVisualOrderText());
             lines.add(Component.translatable("screen.amemaru.skill_tree.rank", state.rank(hovered.index()), hovered.maxRank())
@@ -219,11 +307,16 @@ public class SkillTreeScreen extends Screen {
         } else {
             upper = Component.translatable("screen.amemaru.skill_tree.upper_todo", job.upperName(), job.upperMinDay(), job.upperMinLevel());
         }
-        graphics.drawString(font, upper, left + 12, top + 22, state.promoted() ? UiStyle.TEXT_GOLD : UiStyle.TEXT_DIM, false);
+        int upperRight = left + PANEL_WIDTH - 12;
         if (job.hasGauge()) {
             Component gauge = Component.translatable("screen.amemaru.skill_tree.gauge", job.gaugeName());
-            graphics.drawString(font, gauge, left + PANEL_WIDTH - 12 - font.width(gauge), top + 22, 0xFF000000 | job.gaugeColor(), false);
+            int gaugeX = left + PANEL_WIDTH - 12 - font.width(gauge);
+            graphics.drawString(font, gauge, gaugeX, top + 22, 0xFF000000 | job.gaugeColor(), false);
+            upperRight = gaugeX - 8;
         }
+        String upperText = UiStyle.clip(font, upper.getString(), upperRight - (left + 12));
+        graphics.drawString(font, upperText, left + 12, top + 22, state.promoted() ? UiStyle.TEXT_GOLD : UiStyle.TEXT_DIM, false);
+        upperHover = job.hasUpper() && !state.promoted();
         UiStyle.divider(graphics, left + 12, left + PANEL_WIDTH - 12, top + 33);
     }
 
@@ -276,6 +369,7 @@ public class SkillTreeScreen extends Screen {
             u = SkillHudArt.U_NODE_LOCKED;
         }
         RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
         if (skill.index() == selected) {
             graphics.blit(SkillHudArt.TEXTURE, x - 2, y - 2, SkillHudArt.U_NODE_SELECT, SkillHudArt.V_NODE,
                     SkillHudArt.NODE_SELECT, SkillHudArt.NODE_SELECT, 256, 256);
@@ -305,69 +399,99 @@ public class SkillTreeScreen extends Screen {
     private void renderDetails(GuiGraphics graphics, ClientPlayerState state, SyncDefinitionsS2C.JobInfo job) {
         SyncDefinitionsS2C.SkillInfo skill = ClientDefinitions.get().skill(selected);
         int x = left + DETAIL_X;
-        int width = PANEL_WIDTH - DETAIL_X - 12;
+        detailOverflow = false;
         if (skill == null || skill.jobIndex() != job.index()) {
             graphics.drawString(font, Component.translatable("screen.amemaru.skill_tree.select"), x, top + 44, UiStyle.TEXT_DIM, false);
             return;
         }
         int rank = state.rank(skill.index());
         RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
         graphics.blit(skill.icon(), x, top + 40, 24, 24, 0, 0, 32, 32, 32, 32);
-        graphics.drawString(font, skill.name(), x + 28, top + 41, UiStyle.TEXT, true);
+        Component rankText = Component.translatable("screen.amemaru.skill_tree.rank", rank, skill.maxRank());
+        int rankX = left + PANEL_WIDTH - 12 - font.width(rankText);
+        graphics.drawString(font, UiStyle.clip(font, skill.name(), rankX - 4 - (x + 28)), x + 28, top + 41, UiStyle.TEXT, true);
+        graphics.drawString(font, rankText, rankX, top + 41, rank > 0 ? UiStyle.TEXT_GOLD : UiStyle.TEXT_DIM, false);
         String school = skill.ultimate() ? Component.translatable("screen.amemaru.skill_tree.ultimate").getString()
                 : skill.schoolIndex() >= 0 && skill.schoolIndex() < job.schools().size() ? job.schools().get(skill.schoolIndex()).name() : "";
         String kind = Component.translatable(skill.passive() ? "screen.amemaru.skill_tree.passive" : "screen.amemaru.skill_tree.active").getString();
         String link = LinkType.byIndex(skill.link()).label();
         String sub = school + "・" + kind + (link.isEmpty() ? "" : "・" + Component.translatable("screen.amemaru.skill_tree.link", link).getString());
-        graphics.drawString(font, sub, x + 28, top + 52, UiStyle.TEXT_DIM, false);
-        Component rankText = Component.translatable("screen.amemaru.skill_tree.rank", rank, skill.maxRank());
-        graphics.drawString(font, rankText, left + PANEL_WIDTH - 12 - font.width(rankText), top + 41,
-                rank > 0 ? UiStyle.TEXT_GOLD : UiStyle.TEXT_DIM, false);
+        graphics.drawString(font, UiStyle.clip(font, sub, DETAIL_W - 28), x + 28, top + 52, UiStyle.TEXT_DIM, false);
 
-        int y = top + 66;
-        y += 10 * UiStyle.wrapped(graphics, font, skill.description(), x, y, width, UiStyle.TEXT, 2);
-        y += 2;
-        int shownRank = Math.max(1, Math.min(rank, skill.maxRank()));
-        if (rank > 0) {
-            y = renderRankBlock(graphics, skill, shownRank, x, y, width, "screen.amemaru.skill_tree.now", UiStyle.TEXT_HEADER, 3);
+        UiStyle.wrapped(graphics, font, skill.description(), x, top + DESC_Y, DETAIL_W, UiStyle.TEXT, DESC_LINES);
+        renderRankTabs(graphics, state, skill, x, top + TABS_Y);
+
+        // 見せている段階の数値と効果
+        int shown = Math.max(1, Math.min(shownRank, skill.maxRank()));
+        int y = top + NUMBERS_Y;
+        String numbers = numbers(skill, shown);
+        if (!numbers.isEmpty()) {
+            graphics.drawString(font, UiStyle.clip(font, numbers, DETAIL_W), x, y, UiStyle.TEXT_HEADER, false);
+            y += 11;
         }
-        if (rank < skill.maxRank()) {
-            y = renderRankBlock(graphics, skill, rank + 1, x, y, width,
-                    rank == 0 ? "screen.amemaru.skill_tree.first" : "screen.amemaru.skill_tree.next", UiStyle.TEXT_GOLD, rank == 0 ? 4 : 3);
-        }
-        Component reason = blocker(skill, state);
-        if (reason != null && rank < skill.maxRank()) {
-            graphics.drawString(font, reason, x, top + 150, UiStyle.TEXT_BAD, false);
+        int bullet = font.width("・");
+        int maxLines = Math.max(1, (top + LINES_BOTTOM - y) / 10);
+        List<String> lines = detailLines(skill, shown);
+        int drawn = 0;
+        for (int index = 0; index < lines.size() && drawn < maxLines; index++) {
+            List<String> parts = UiStyle.wrap(font, lines.get(index), DETAIL_W - bullet);
+            for (int i = 0; i < parts.size() && drawn < maxLines; i++) {
+                boolean moreAfter = i < parts.size() - 1 || index < lines.size() - 1;
+                String text = parts.get(i);
+                if (drawn == maxLines - 1 && moreAfter) {
+                    // 入りきらない：最後の行を「…」にし、ツールチップで全部を見せる
+                    text = UiStyle.clip(font, text + "…", DETAIL_W - bullet);
+                    detailOverflow = true;
+                }
+                if (i == 0) {
+                    graphics.drawString(font, "・", x, y, UiStyle.TEXT_DIM, false);
+                }
+                graphics.drawString(font, text, x + bullet, y, UiStyle.TEXT_DIM, false);
+                y += 10;
+                drawn++;
+            }
         }
     }
 
-    /** 段階の見出し・数値・効果の行。 */
-    private int renderRankBlock(GuiGraphics graphics, SyncDefinitionsS2C.SkillInfo skill, int rank, int x, int y, int width,
-                                String headerKey, int headerColor, int maxLines) {
-        if (y > top + 140) {
-            return y;
+    /** 段階のつまみ（1段・2段・3段）と、見せている段階の状態（習得済み・次の段階・上位職から）。 */
+    private void renderRankTabs(GuiGraphics graphics, ClientPlayerState state, SyncDefinitionsS2C.SkillInfo skill, int x, int y) {
+        int rank = state.rank(skill.index());
+        for (int r = 1; r <= skill.maxRank(); r++) {
+            int tx = x + (r - 1) * TAB_STEP;
+            boolean shown = r == shownRank;
+            boolean learned = r <= rank;
+            boolean upperOnly = (skill.ultimate() || r >= skill.upperRank()) && !state.promoted();
+            graphics.fill(tx, y, tx + TAB_W, y + TAB_H, shown ? 0xFFFFF2A8 : 0xFF3E5274);
+            graphics.fill(tx + 1, y + 1, tx + TAB_W - 1, y + TAB_H - 1, learned ? 0xFF24506E : 0xFF141C30);
+            String label = Component.translatable("screen.amemaru.skill_tree.tab", r).getString();
+            int color = learned ? 0xFFFFFF : upperOnly ? 0xC9A860 : 0x9AA6BF;
+            graphics.drawString(font, label, tx + (TAB_W - font.width(label)) / 2, y + 2, color, false);
         }
-        String numbers = numbers(skill, rank);
-        graphics.drawString(font, Component.translatable(headerKey, rank).getString() + (numbers.isEmpty() ? "" : "  " + numbers),
-                x, y, headerColor, false);
-        y += 10;
-        List<String> lines = rank - 1 < skill.details().size() ? skill.details().get(rank - 1) : List.of();
-        int shown = 0;
-        for (String line : lines) {
-            if (shown >= maxLines || y > top + 140) {
-                break;
-            }
-            List<FormattedCharSequence> wrapped = font.split(FormattedText.of("・" + line), width);
-            for (FormattedCharSequence part : wrapped) {
-                if (shown >= maxLines || y > top + 140) {
-                    break;
-                }
-                graphics.drawString(font, part, x, y, UiStyle.TEXT_DIM, false);
-                y += 10;
-                shown++;
-            }
+        int shown = Math.max(1, Math.min(shownRank, skill.maxRank()));
+        String status;
+        int color;
+        if (shown <= rank) {
+            status = Component.translatable("screen.amemaru.skill_tree.status.learned").getString();
+            color = UiStyle.TEXT_HEADER;
+        } else if ((skill.ultimate() || shown >= skill.upperRank()) && !state.promoted()) {
+            status = Component.translatable("screen.amemaru.skill_tree.status.upper").getString();
+            color = 0xC9A860;
+        } else if (shown == rank + 1) {
+            status = Component.translatable(rank == 0 ? "screen.amemaru.skill_tree.status.first" : "screen.amemaru.skill_tree.status.next")
+                    .getString();
+            color = UiStyle.TEXT_GOLD;
+        } else {
+            status = Component.translatable("screen.amemaru.skill_tree.status.later").getString();
+            color = UiStyle.TEXT_DIM;
         }
-        return y + 1;
+        int statusX = x + skill.maxRank() * TAB_STEP + 2;
+        graphics.drawString(font, UiStyle.clip(font, status, x + DETAIL_W - statusX), statusX, y + 2, color, false);
+    }
+
+    /** その段階の効果の行（サーバーが作った説明）。 */
+    private static List<String> detailLines(SyncDefinitionsS2C.SkillInfo skill, int rank) {
+        return rank - 1 >= 0 && rank - 1 < skill.details().size() ? skill.details().get(rank - 1) : List.of();
     }
 
     /** 「MP 12・CD 12秒・詠唱 2秒」の形。 */
@@ -398,18 +522,21 @@ public class SkillTreeScreen extends Screen {
 
     /** スキル枠6つ。マウスが乗っている枠の番号を返す（なければ -1）。 */
     private int renderLoadout(GuiGraphics graphics, ClientPlayerState state, int mouseX, int mouseY) {
-        graphics.drawString(font, Component.translatable("screen.amemaru.skill_tree.loadout"), left + DETAIL_X, top + SLOT_Y - 11,
+        graphics.drawString(font, Component.translatable("screen.amemaru.skill_tree.loadout"), left + DETAIL_X, top + SLOT_Y - 10,
                 UiStyle.TEXT_HEADER, false);
         int hovered = -1;
-        RenderSystem.enableBlend();
         for (int slot = 0; slot < 6; slot++) {
             int x = slotX(slot);
             int y = top + SLOT_Y;
             SyncDefinitionsS2C.SkillInfo skill = ClientDefinitions.get().skill(state.loadout(slot));
+            // 文字を描くと混ぜ合わせ（半透明）が切れるため、絵を描く前に毎回つけ直す
+            RenderSystem.enableBlend();
+            RenderSystem.defaultBlendFunc();
             graphics.blit(SkillHudArt.TEXTURE, x, y, skill == null ? SkillHudArt.U_HEX_EMPTY : SkillHudArt.U_HEX, SkillHudArt.V_HEX,
                     SkillHudArt.HEX_W, SkillHudArt.HEX_H, 256, 256);
             if (skill != null) {
-                graphics.blit(skill.icon(), x + 4, y + 5, 16, 16, 0, 0, 32, 32, 32, 32);
+                // アイコンのふち（2ピクセル）を除いた中だけを、六角の中に描く
+                graphics.blit(skill.icon(), x + 4, y + 5, 16, 16, 2, 2, 28, 28, 32, 32);
             }
             String key = KeyBindings.SKILLS[slot].getTranslatedKeyMessage().getString();
             graphics.drawCenteredString(font, key.length() > 3 ? key.substring(0, 3) : key, x + SkillHudArt.HEX_W / 2, y + SkillHudArt.HEX_H + 1,
@@ -431,8 +558,20 @@ public class SkillTreeScreen extends Screen {
             int[] at = nodePosition(skill);
             if (mouseX >= at[0] && mouseX < at[0] + NODE && mouseY >= at[1] && mouseY < at[1] + NODE) {
                 selected = skill.index();
+                resetShownRank();
                 updateButton();
                 return true;
+            }
+        }
+        // 段階のつまみ
+        SyncDefinitionsS2C.SkillInfo current = ClientDefinitions.get().skill(selected);
+        if (current != null && mouseY >= top + TABS_Y && mouseY < top + TABS_Y + TAB_H) {
+            for (int r = 1; r <= current.maxRank(); r++) {
+                int tx = left + DETAIL_X + (r - 1) * TAB_STEP;
+                if (mouseX >= tx && mouseX < tx + TAB_W) {
+                    shownRank = r;
+                    return true;
+                }
             }
         }
         // スキル枠
@@ -471,6 +610,7 @@ public class SkillTreeScreen extends Screen {
     /** 選んでいるスキルを変える（自動の確認で使う）。 */
     public void select(int skillIndex) {
         selected = skillIndex;
+        resetShownRank();
         updateButton();
     }
 }

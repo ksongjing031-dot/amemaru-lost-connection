@@ -4,9 +4,9 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import jp.amemaru.lostconnection.client.AmemaruHudArt;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.network.chat.FormattedText;
 import net.minecraft.util.FormattedCharSequence;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -74,18 +74,104 @@ public final class UiStyle {
         graphics.fill(center - 1, y - 1, center + 1, y + 2, 0xFFBFEFFF);
     }
 
-    /** 文を幅で折り返して描く。描いた行の数を返す。 */
-    public static int wrapped(GuiGraphics graphics, Font font, String text, int x, int y, int width, int color, int maxLines) {
-        List<FormattedCharSequence> lines = font.split(FormattedText.of(text), width);
-        int count = 0;
-        for (FormattedCharSequence line : lines) {
-            if (count >= maxLines) {
-                break;
+    /** 行の頭に来てはいけない文字（閉じかっこ・句読点・小さい仮名など）。前の行の終わりにぶら下げる。 */
+    private static final String NO_LINE_START = "、。，．,.・：；:;？！?!ー－～…‥）」』】〕〉》｝)]}ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ％%";
+    /** 行の終わりに来てはいけない文字（開きかっこ）。次の行へ送る。 */
+    private static final String NO_LINE_END = "（「『【〔〈《｛([{";
+    private static final String ELLIPSIS = "…";
+
+    /**
+     * 文を幅で折り返す（日本語の禁則つき）。英数字の続き（例：{@code Lv30}・{@code MP}）は途中で切らない。
+     * {@code \n} で改行する。
+     */
+    public static List<String> wrap(Font font, String text, int width) {
+        List<String> lines = new ArrayList<>();
+        for (String paragraph : text.split("\n", -1)) {
+            StringBuilder line = new StringBuilder();
+            int i = 0;
+            int n = paragraph.length();
+            while (i < n) {
+                int j = i + 1;
+                if (isWordChar(paragraph.charAt(i))) {
+                    while (j < n && isWordChar(paragraph.charAt(j))) {
+                        j++;
+                    }
+                }
+                String token = paragraph.substring(i, j);
+                if (line.length() > 0 && font.width(line + token) > width) {
+                    if (token.length() == 1 && NO_LINE_START.indexOf(token.charAt(0)) >= 0) {
+                        // 行頭禁則：はみ出しても、前の行の終わりにぶら下げる
+                        line.append(token);
+                        i = j;
+                        continue;
+                    }
+                    String carry = "";
+                    if (line.length() > 1 && NO_LINE_END.indexOf(line.charAt(line.length() - 1)) >= 0) {
+                        // 行末禁則：開きかっこは次の行へ
+                        carry = line.substring(line.length() - 1);
+                        line.setLength(line.length() - 1);
+                    }
+                    lines.add(line.toString());
+                    line = new StringBuilder(carry);
+                    if (token.equals(" ")) {
+                        i = j;
+                        continue;
+                    }
+                }
+                line.append(token);
+                i = j;
             }
-            graphics.drawString(font, line, x, y + count * 10, color, false);
-            count++;
+            lines.add(line.toString());
+        }
+        return lines;
+    }
+
+    private static boolean isWordChar(char c) {
+        return c < 0x80 && (Character.isLetterOrDigit(c) || c == '+' || c == '-' || c == '.' || c == '%' || c == '/');
+    }
+
+    /** 幅に入らなければ、後ろを「…」にして縮める。 */
+    public static String clip(Font font, String text, int width) {
+        if (font.width(text) <= width) {
+            return text;
+        }
+        String base = text.endsWith(ELLIPSIS) ? text.substring(0, text.length() - 1) : text;
+        int limit = Math.max(0, width - font.width(ELLIPSIS));
+        while (!base.isEmpty() && font.width(base) > limit) {
+            base = base.substring(0, base.length() - 1);
+        }
+        return base + ELLIPSIS;
+    }
+
+    /** 折り返すと {@code maxLines} 行に入りきらないか（入りきらないときは、ツールチップで全文を見せる）。 */
+    public static boolean overflows(Font font, String text, int width, int maxLines) {
+        return wrap(font, text, width).size() > maxLines;
+    }
+
+    /** 文を幅で折り返して描く（日本語の禁則つき。入りきらない分は、最後の行を「…」にする）。描いた行の数を返す。 */
+    public static int wrapped(GuiGraphics graphics, Font font, String text, int x, int y, int width, int color, int maxLines) {
+        if (text == null || text.isEmpty() || maxLines <= 0) {
+            return 0;
+        }
+        List<String> lines = wrap(font, text, width);
+        int count = Math.min(maxLines, lines.size());
+        for (int k = 0; k < count; k++) {
+            String line = lines.get(k);
+            if (k == count - 1 && lines.size() > count) {
+                line = clip(font, line + ELLIPSIS, width);
+            }
+            graphics.drawString(font, line, x, y + k * 10, color, false);
         }
         return count;
+    }
+
+    /** 全文を、ツールチップ用に折り返す。 */
+    public static List<FormattedCharSequence> tooltipLines(Font font, String text, int width) {
+        List<FormattedCharSequence> result = new ArrayList<>();
+        for (String line : wrap(font, text, width)) {
+            result.add(FormattedCharSequence.forward(line, net.minecraft.network.chat.Style.EMPTY));
+        }
+        return result;
     }
 
     /** 色（0xRRGGBB）を少し暗くする。 */
