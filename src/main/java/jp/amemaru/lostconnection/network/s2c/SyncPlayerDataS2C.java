@@ -44,6 +44,8 @@ public final class SyncPlayerDataS2C {
     // HPとMP
     private final double hp;
     private final double mp;
+    private double barrier;
+    private double barrierMax;
     // 職業
     private int defsVersion;
     private int jobIndex = -1;
@@ -64,6 +66,7 @@ public final class SyncPlayerDataS2C {
     private int castSkill = -1;
     private int castRemaining;
     private int castTotal;
+    private boolean castCharging;
 
     private SyncPlayerDataS2C(int sections, int level, int maxLevel, int exp, int expToNext, int statPoints,
                               int skillPoints, int[] allocated, double[] stats, double hp, double mp) {
@@ -98,6 +101,10 @@ public final class SyncPlayerDataS2C {
                 data.getStats().toArray(),
                 data.getHp(),
                 data.getMp());
+        if (data.getBuffs().barrier(now)) {
+            message.barrier = data.getBuffs().barrierAmount;
+            message.barrierMax = data.getBuffs().barrierMax;
+        }
         SkillRegistry.Snapshot snapshot = SkillRegistry.get();
         message.defsVersion = snapshot.version();
         message.jobIndex = snapshot.jobIndex(data.getCombatJob());
@@ -150,6 +157,7 @@ public final class SyncPlayerDataS2C {
             message.castSkill = snapshot.skillIndex(casting.skill());
             message.castRemaining = casting.remaining(now);
             message.castTotal = casting.totalTicks();
+            message.castCharging = casting.charging();
         }
         return message;
     }
@@ -177,6 +185,8 @@ public final class SyncPlayerDataS2C {
         if ((sections & PlayerData.SYNC_VITALS) != 0) {
             buf.writeDouble(hp);
             buf.writeDouble(mp);
+            buf.writeDouble(barrier);
+            buf.writeDouble(barrierMax);
         }
         if ((sections & PlayerData.SYNC_JOB) != 0) {
             buf.writeVarInt(defsVersion);
@@ -211,6 +221,7 @@ public final class SyncPlayerDataS2C {
             buf.writeVarInt(castSkill + 1);
             buf.writeVarInt(castRemaining);
             buf.writeVarInt(castTotal);
+            buf.writeBoolean(castCharging);
         }
     }
 
@@ -226,6 +237,8 @@ public final class SyncPlayerDataS2C {
         double[] stats = new double[0];
         double hp = 0;
         double mp = 0;
+        double barrier = 0;
+        double barrierMax = 0;
         if ((sections & PlayerData.SYNC_GROWTH) != 0) {
             level = buf.readVarInt();
             maxLevel = buf.readVarInt();
@@ -247,9 +260,13 @@ public final class SyncPlayerDataS2C {
         if ((sections & PlayerData.SYNC_VITALS) != 0) {
             hp = buf.readDouble();
             mp = buf.readDouble();
+            barrier = buf.readDouble();
+            barrierMax = buf.readDouble();
         }
         SyncPlayerDataS2C message = new SyncPlayerDataS2C(sections, level, maxLevel, exp, expToNext, statPoints, skillPoints,
                 allocated, stats, hp, mp);
+        message.barrier = barrier;
+        message.barrierMax = barrierMax;
         if ((sections & PlayerData.SYNC_JOB) != 0) {
             message.defsVersion = buf.readVarInt();
             message.jobIndex = buf.readVarInt() - 1;
@@ -289,6 +306,7 @@ public final class SyncPlayerDataS2C {
             message.castSkill = buf.readVarInt() - 1;
             message.castRemaining = buf.readVarInt();
             message.castTotal = buf.readVarInt();
+            message.castCharging = buf.readBoolean();
         }
         return message;
     }
@@ -352,6 +370,15 @@ public final class SyncPlayerDataS2C {
         return mp;
     }
 
+    /** 光の帳の障壁の残り（なければ0）。 */
+    public double barrier() {
+        return barrier;
+    }
+
+    public double barrierMax() {
+        return barrierMax;
+    }
+
     public int defsVersion() {
         return defsVersion;
     }
@@ -410,5 +437,10 @@ public final class SyncPlayerDataS2C {
 
     public int castTotal() {
         return castTotal;
+    }
+
+    /** 溜め（詠唱ではなく）か。 */
+    public boolean castCharging() {
+        return castCharging;
     }
 }

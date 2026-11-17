@@ -45,6 +45,9 @@ public final class ClientPlayerState {
     private int castSkill = -1;
     private long castEnd;
     private int castTotal;
+    private boolean castCharging;
+    private double barrier;
+    private double barrierMax;
 
     private ClientPlayerState() {
         Arrays.fill(loadout, -1);
@@ -81,6 +84,8 @@ public final class ClientPlayerState {
             hp = message.hp();
             mp = message.mp();
             vitalsReceived = true;
+            barrier = message.barrier();
+            barrierMax = message.barrierMax();
         }
         long now = gameTime();
         if ((sections & PlayerData.SYNC_JOB) != 0) {
@@ -115,6 +120,7 @@ public final class ClientPlayerState {
             castSkill = message.castSkill();
             castEnd = now + message.castRemaining();
             castTotal = message.castTotal();
+            castCharging = castSkill >= 0 && message.castCharging();
         }
     }
 
@@ -148,6 +154,9 @@ public final class ClientPlayerState {
         gaugeMax = 0;
         cooldowns.clear();
         castSkill = -1;
+        castCharging = false;
+        barrier = 0;
+        barrierMax = 0;
     }
 
     /** すべてのまとまりを一度は受け取ったか（このModのサーバーにつながっているか）。 */
@@ -276,9 +285,26 @@ public final class ClientPlayerState {
         return entry == null ? 0 : (int) entry[1];
     }
 
-    /** 詠唱中のスキル（なければ -1）。 */
+    /** 詠唱中・溜め中のスキル（なければ -1）。溜めは、離して放つまで続く。 */
     public int castSkill() {
+        if (castSkill >= 0 && castCharging) {
+            return castSkill;
+        }
         return castSkill >= 0 && castEnd > gameTime() - 2 ? castSkill : -1;
+    }
+
+    /** 溜めているところか。 */
+    public boolean charging() {
+        return castSkill >= 0 && castCharging;
+    }
+
+    /** 光の帳の障壁の残り。 */
+    public double barrier() {
+        return barrier;
+    }
+
+    public double barrierMax() {
+        return barrierMax;
     }
 
     /** 詠唱の進み具合（0〜1）。 */

@@ -44,7 +44,12 @@ public final class SyncDefinitionsS2C {
                             boolean ultimate, String name, String description, ResourceLocation icon, int maxRank, int[] rankCosts,
                             int upperRank, int minLevel, int[] requiredSkills, int[] requiredRanks, int link, int delivery,
                             boolean alliesOnly, int[] mpCost, int[] gaugeCost, float[] cooldown, float[] cast, float[] aimRange,
-                            float[] radius, String animation, String castAnimation, String fx, List<List<String>> details) {
+                            float[] radius, String animation, String castAnimation, String fx, List<List<String>> details,
+                            float chargeTime, String chargeAnimation, float[] angle, int[] count, int[] countCharged) {
+        /** 溜めるスキルか。 */
+        public boolean charged() {
+            return chargeTime > 0;
+        }
     }
 
     private final int version;
@@ -95,6 +100,9 @@ public final class SyncDefinitionsS2C {
             float[] cast = new float[max];
             float[] aim = new float[max];
             float[] radius = new float[max];
+            float[] angle = new float[max];
+            int[] count = new int[max];
+            int[] countCharged = new int[max];
             List<List<String>> details = new ArrayList<>();
             for (int r = 1; r <= max; r++) {
                 costs[r - 1] = skill.rankCost(r);
@@ -104,6 +112,9 @@ public final class SyncDefinitionsS2C {
                 cast[r - 1] = (float) skill.cast(r);
                 aim[r - 1] = (float) skill.delivery().aimRange(r);
                 radius[r - 1] = (float) skill.delivery().radius(r);
+                angle[r - 1] = (float) skill.delivery().angle(r);
+                count[r - 1] = skill.delivery().count(r);
+                countCharged[r - 1] = skill.delivery().countCharged(r);
                 details.add(SkillDescriber.describe(skill, job, r));
             }
             int[] reqSkills = new int[skill.requirements().size()];
@@ -117,7 +128,8 @@ public final class SyncDefinitionsS2C {
                     !skill.isActive(), skill.isUltimate(), skill.name(), skill.description(), skill.icon(), max, costs,
                     skill.upperRank(), skill.minLevel(), reqSkills, reqRanks, skill.link().ordinal(),
                     skill.delivery().type().ordinal(), skill.delivery().affects() == Affects.ALLIES, mp, gauge, cooldown, cast,
-                    aim, radius, skill.animation(), skill.castAnimation(), skill.fx(), details));
+                    aim, radius, skill.animation(), skill.castAnimation(), skill.fx(), details, (float) skill.chargeTime(),
+                    skill.chargeAnimation(), angle, count, countCharged));
         }
         return new SyncDefinitionsS2C(snapshot.version(), jobs, skills);
     }
@@ -204,6 +216,11 @@ public final class SyncDefinitionsS2C {
                     buf.writeUtf(line);
                 }
             }
+            buf.writeFloat(skill.chargeTime());
+            buf.writeUtf(skill.chargeAnimation());
+            writeFloats(buf, skill.angle());
+            buf.writeVarIntArray(skill.count());
+            buf.writeVarIntArray(skill.countCharged());
         }
     }
 
@@ -297,9 +314,14 @@ public final class SyncDefinitionsS2C {
                 }
                 details.add(lines);
             }
+            float chargeTime = buf.readFloat();
+            String chargeAnimation = buf.readUtf();
+            float[] angle = readFloats(buf);
+            int[] count = buf.readVarIntArray(16);
+            int[] countCharged = buf.readVarIntArray(16);
             skills.add(new SkillInfo(index, id, jobIndex, schoolIndex, row, column, passive, ultimate, name, description, icon,
                     maxRank, costs, upperRank, minLevel, reqSkills, reqRanks, link, delivery, alliesOnly, mp, gauge, cooldown, cast,
-                    aim, radius, animation, castAnimation, fx, details));
+                    aim, radius, animation, castAnimation, fx, details, chargeTime, chargeAnimation, angle, count, countCharged));
         }
         return new SyncDefinitionsS2C(version, jobs, skills);
     }

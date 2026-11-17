@@ -1,0 +1,27 @@
+{
+  "job": "wizard",
+  "school": "frost",
+  "row": 3,
+  "column": 2,
+  "type": "passive",
+  "name": "深冷",
+  "description": "冷気を糸の奥まで染み込ませ、溶けにくい氷をつくる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "wizard/frost_heart",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "deep_chill",
+    "value": 0.5,
+    "value_per_rank": 0.25
+  }
+}

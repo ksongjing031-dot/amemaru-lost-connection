@@ -21,6 +21,13 @@ public final class BuffState {
     public UUID bondGiver;
     public long bondUntil;
     public double bondShare;
+    /** 誓いの円陣：陣の中で受けるダメージを減らす割合（%）。 */
+    public long wardUntil;
+    public double wardReduction;
+    /** 光の帳：残っている障壁の量（独自のHPと同じ単位）と、張ったときの量。 */
+    public long barrierUntil;
+    public double barrierAmount;
+    public double barrierMax;
     /** 連携支援：支援してくれた人と、次のスキルの効果の上がり幅（%）。 */
     @Nullable
     public UUID supportFrom;
@@ -37,6 +44,22 @@ public final class BuffState {
 
     public boolean fortress(long now) {
         return now < fortressUntil;
+    }
+
+    public boolean warded(long now) {
+        return now < wardUntil;
+    }
+
+    /** 障壁が残っているか。 */
+    public boolean barrier(long now) {
+        return now < barrierUntil && barrierAmount > 0;
+    }
+
+    /** 障壁を消す。 */
+    public void clearBarrier() {
+        barrierUntil = 0;
+        barrierAmount = 0;
+        barrierMax = 0;
     }
 
     public boolean bonded(long now) {
@@ -63,6 +86,9 @@ public final class BuffState {
         bondGiver = null;
         bondUntil = 0;
         bondShare = 0;
+        wardUntil = 0;
+        wardReduction = 0;
+        clearBarrier();
         consumeSupport();
     }
 }

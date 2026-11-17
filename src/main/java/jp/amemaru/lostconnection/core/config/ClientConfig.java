@@ -24,6 +24,7 @@ public final class ClientConfig {
     public static final ForgeConfigSpec.BooleanValue SHOW_DAMAGE_NUMBERS;
     public static final ForgeConfigSpec.BooleanValue SCREEN_SHAKE;
     public static final ForgeConfigSpec.BooleanValue TOOLBAR_KEYS_RELEASED;
+    public static final ForgeConfigSpec.IntValue SKILL_KEYS_VERSION;
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
@@ -39,7 +40,7 @@ public final class ClientConfig {
 
         b.comment("スキルの操作と表示").push("skills");
         SKILL_CONTROL = b
-                .comment("スキルの操作。KEYS：キーに直接（初期値 R・Z・X・C・B・Y）／HOTBAR_ALT：左Altを押している間だけホットバーの1〜6がスキルになる")
+                .comment("スキルの操作。KEYS：キーに直接（初期値 R・G・V・Z・X・C）／HOTBAR_ALT：左Altを押している間だけホットバーの1〜6がスキルになる")
                 .defineEnum("control", SkillControl.KEYS);
         SHOW_DAMAGE_NUMBERS = b
                 .comment("敵や味方の頭の上に、ダメージや回復の数字を出す")
@@ -51,6 +52,10 @@ public final class ClientConfig {
                 .comment("（自動で書きかわる値）バニラの「ツールバーの保存・読み込み」のキー（X・C）を、スキル用に外したか。",
                         "false に戻すと、次の起動でもう一度外す")
                 .define("toolbarKeysReleased", false);
+        SKILL_KEYS_VERSION = b
+                .comment("（自動で書きかわる値）スキルのキーの初期値の版。試作版の初期値（R・Z・X・C・B・Y）のままの人を、",
+                        "R・G・V・Z・X・C に移したら 2 になる")
+                .defineInRange("skillKeysVersion", 0, 0, 100);
         b.pop();
 
         SPEC = b.build();

@@ -44,14 +44,20 @@ public final class TargetVitals {
         return entity.getHealth() * vanillaMultiplier();
     }
 
+    /** 防御（防御崩しの間は {@link StatusService#ARMOR_BREAK_DEFENSE} だけ下がる）。 */
     public static double defense(LivingEntity entity) {
+        double base;
         if (entity instanceof ServerPlayer player) {
-            return data(player).map(data -> data.getStats().get(StatType.DEFENSE)).orElse(0.0);
+            base = data(player).map(data -> data.getStats().get(StatType.DEFENSE)).orElse(0.0);
+        } else if (entity instanceof TrainingDummy dummy) {
+            base = dummy.getDummyDefense();
+        } else {
+            base = entity.getArmorValue() * ServerConfig.VANILLA_ARMOR_TO_DEFENSE.get();
         }
-        if (entity instanceof TrainingDummy dummy) {
-            return dummy.getDummyDefense();
+        if (StatusService.armorBroken(entity)) {
+            base *= 1.0 - StatusService.ARMOR_BREAK_DEFENSE;
         }
-        return entity.getArmorValue() * ServerConfig.VANILLA_ARMOR_TO_DEFENSE.get();
+        return base;
     }
 
     /** バニラの魔物のHPの倍率。 */

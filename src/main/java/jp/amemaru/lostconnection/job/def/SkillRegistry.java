@@ -101,7 +101,7 @@ public final class SkillRegistry {
                 problems.add(where + "奥義ですが、職業「" + job.id() + "」に上位職（upper）がありません");
                 continue;
             }
-            if (!checkEffects(skill.effects(), where, problems)) {
+            if (!checkEffects(skill.effects(), where, problems) || !checkEffects(skill.fullChargeEffects(), where, problems)) {
                 continue;
             }
             checkSound(skill.sound(), where, problems);
@@ -197,6 +197,10 @@ public final class SkillRegistry {
                     problems.add(where + "状態「" + id + "」がありません");
                     return false;
                 }
+            }
+            if (effect.bonusStatus() != null && !ForgeRegistries.MOB_EFFECTS.containsKey(effect.bonusStatus())) {
+                problems.add(where + "状態「" + effect.bonusStatus() + "」がありません（bonus_status）");
+                return false;
             }
             if (!checkEffects(effect.nested(), where, problems)) {
                 return false;

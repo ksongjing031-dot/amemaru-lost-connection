@@ -20,13 +20,14 @@ import java.util.Locale;
  *
  * <pre>
  *   誓気 ━━━━━━━━ 45
- *   ⬡R ⬡Z ⬡X
- *     ⬡C ⬡B ⬡Y        [ HP ]⬡[ MP ]
+ *   ⬡R ⬡G ⬡V
+ *     ⬡Z ⬡X ⬡C        [ HP ]⬡[ MP ]
  *                     [ ホットバー ]
  * </pre>
  *
  * <p>枠には、アイコン・キー・クールダウン（影と残りの秒）を出す。MPやゲージが足りないと青く沈み、使えるようになった瞬間に光る。
- * 詠唱中の枠は金のふちになり、画面の中央の少し下に詠唱のバーが出る。</p>
+ * 詠唱中・溜め中の枠は金のふちになり、画面の中央の少し下に詠唱のバー（溜めのときは溜めのバー）が出る。
+ * 溜めきると、バーが白く脈を打ち「最大！」と出る。</p>
  */
 public final class SkillHud {
     public static final IGuiOverlay OVERLAY = SkillHud::render;
@@ -198,12 +199,26 @@ public final class SkillHud {
         int y = screenHeight / 2 + 26;
         blend();
         graphics.blit(TEXTURE, x, y, 0, SkillHudArt.V_CAST_FRAME, SkillHudArt.CAST_W, SkillHudArt.CAST_H, TEX, TEX);
-        int fill = Math.round(state.castProgress(partialTick) * SkillHudArt.CAST_INNER);
+        float progress = state.castProgress(partialTick);
+        int fill = Math.round(progress * SkillHudArt.CAST_INNER);
+        boolean charging = state.charging();
+        boolean full = charging && progress >= 0.999F;
         if (fill > 0) {
+            if (charging) {
+                // 溜め：橙から白へ。溜めきったら脈を打つ
+                float pulse = full ? 0.75F + 0.25F * Mth.sin(Util.getMillis() / 90.0F) : 1.0F;
+                float g = Mth.lerp(progress, 0.62F, 1.0F) * pulse;
+                float b = Mth.lerp(progress, 0.3F, 1.0F) * pulse;
+                RenderSystem.setShaderColor(pulse, g, b, 1.0F);
+            }
             graphics.blit(TEXTURE, x, y, 0, SkillHudArt.V_CAST_FILL, 1 + fill, SkillHudArt.CAST_H, TEX, TEX);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         }
         String name = skill.name();
-        graphics.drawString(font, name, (screenWidth - font.width(name)) / 2, y - 10, 0xFFF2D7FF, true);
+        if (charging) {
+            name += "  " + net.minecraft.network.chat.Component.translatable(full ? "hud.amemaru.charge_full" : "hud.amemaru.charge").getString();
+        }
+        graphics.drawString(font, name, (screenWidth - font.width(name)) / 2, y - 10, full ? 0xFFFFFFFF : 0xFFF2D7FF, true);
     }
 
     private static void blend() {

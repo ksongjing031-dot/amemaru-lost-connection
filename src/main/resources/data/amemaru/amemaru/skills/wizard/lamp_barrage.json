@@ -1,0 +1,59 @@
+{
+  "job": "wizard",
+  "school": "starlight",
+  "row": 2,
+  "column": 1,
+  "type": "active",
+  "name": "灯火の連弾",
+  "description": "杖の先に灯火をいくつも灯し、扇のように一度に放つ。溜めるほど灯火が増え、当たるたびに星痕を刻む。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 10,
+  "requires": [
+    {
+      "skill": "wizard/meteor_shower",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 16
+  },
+  "cooldown": 6,
+  "cooldown_per_rank": -0.5,
+  "link": "starter",
+  "charge": {
+    "time": 1.2,
+    "min_multiplier": 1.0,
+    "max_multiplier": 1.0
+  },
+  "delivery": {
+    "type": "projectile",
+    "range": 22,
+    "speed": 1.6,
+    "radius": 0.3,
+    "count": 1,
+    "count_charged": 5,
+    "spread": 25
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "magic",
+      "coefficient": 0.7,
+      "coefficient_per_rank": 0.1
+    },
+    {
+      "type": "brand",
+      "stacks": 1,
+      "duration": 8
+    }
+  ],
+  "charge_animation": "wizard_lamp_barrage_charge",
+  "animation": "wizard_lamp_barrage",
+  "sound": "amemaru:skill.wizard.lamp_barrage",
+  "impact_sound": "amemaru:skill.wizard.lamp_bolt_hit"
+}

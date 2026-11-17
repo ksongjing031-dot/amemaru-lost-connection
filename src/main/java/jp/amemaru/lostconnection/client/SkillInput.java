@@ -41,17 +41,24 @@ import java.util.function.Predicate;
  * スキルのキーの入力（クライアント専用。Phase 0-B 9章）。
  *
  * <ul>
- *   <li>キーに直接（初期値）：スキル枠1〜6を R・Z・X・C・B・Y で使う。</li>
+ *   <li>キーに直接（初期値）：スキル枠1〜6を R・G・V・Z・X・C で使う。</li>
  *   <li>ホットバー式（設定で選ぶ）：左Altを押している間だけ、ホットバーの1〜6がスキルになる。</li>
  * </ul>
  * <p>押すと、手元で使えるかを軽く確かめ（クールダウン・MP）、狙い（相手・地点）を決めてサーバーに送る。
  * 待ち時間を感じないよう、モーションは先に始め、サーバーに断られたら止める。</p>
+ * <p>溜めるスキルは、押したときに「溜めはじめ」を送り、キーを離したときに狙いを決めて「放つ」を送る。
+ * 画面を開いたときも離したことにする。サーバーが溜めきって自動で放ったときは、何も送らない。</p>
  */
 @Mod.EventBusSubscriber(modid = AmemaruMod.MOD_ID, value = Dist.CLIENT)
 public final class SkillInput {
     private static int sequence;
     /** 送った要求の番号 → スキルの番号（断られたときにモーションを止めるため）。 */
     private static final Map<Integer, Integer> PENDING = new HashMap<>();
+    /** 溜めている枠とスキル（溜めていなければ -1）。 */
+    private static int chargingSlot = -1;
+    private static int chargingSkill = -1;
+    /** サーバーが「溜め中」と知らせてきたか（その後で溜め中でなくなったら、サーバーが自動で放った）。 */
+    private static boolean serverCharging;
 
     private SkillInput() {
     }
@@ -64,7 +71,15 @@ public final class SkillInput {
         Minecraft minecraft = Minecraft.getInstance();
         ToolbarKeys.releaseOnce();
         LocalPlayer player = minecraft.player;
-        if (player == null || minecraft.screen != null) {
+        if (player == null) {
+            clearCharge();
+            drain();
+            return;
+        }
+        if (minecraft.screen != null) {
+            if (chargingSlot >= 0) {
+                release(minecraft, player);
+            }
             drain();
             return;
         }
@@ -89,6 +104,54 @@ public final class SkillInput {
                 }
             }
         }
+        tickCharge(minecraft, player, altMode);
+    }
+
+    /** 溜めている間：キーを離したら放つ。サーバーが自動で放っていたら、何もせず終える。 */
+    private static void tickCharge(Minecraft minecraft, LocalPlayer player, boolean altMode) {
+        if (chargingSlot < 0) {
+            return;
+        }
+        ClientPlayerState state = ClientPlayerState.get();
+        if (state.charging() && state.castSkill() == chargingSkill) {
+            serverCharging = true;
+        } else if (serverCharging) {
+            clearCharge();
+            return;
+        }
+        boolean held;
+        if (altMode) {
+            KeyMapping[] hotbar = minecraft.options.keyHotbarSlots;
+            held = altDown(minecraft) && chargingSlot < hotbar.length && hotbar[chargingSlot].isDown();
+        } else {
+            held = KeyBindings.SKILLS[chargingSlot].isDown();
+        }
+        if (!held) {
+            release(minecraft, player);
+        }
+    }
+
+    /** 溜めを離して放つ：狙いを決めて送り、放つモーションを先に始める。 */
+    private static void release(Minecraft minecraft, LocalPlayer player) {
+        int slot = chargingSlot;
+        int skillIndex = chargingSkill;
+        clearCharge();
+        SyncDefinitionsS2C.SkillInfo skill = ClientDefinitions.get().skill(skillIndex);
+        if (skill == null || slot < 0) {
+            return;
+        }
+        Aim aim = aim(player, skill, ClientPlayerState.get().rank(skillIndex));
+        sequence++;
+        ModNetwork.sendToServer(new UseSkillC2S(sequence, UseSkillC2S.RELEASE, slot, aim.entityId, aim.point));
+        if (PlayerAnimations.play(player, skill.animation())) {
+            SkillFx.markPredicted(skillIndex);
+        }
+    }
+
+    private static void clearCharge() {
+        chargingSlot = -1;
+        chargingSkill = -1;
+        serverCharging = false;
     }
 
     /** 左Altを押しているか（ホットバー式のとき）。 */
@@ -121,6 +184,13 @@ public final class SkillInput {
             fail(minecraft, Component.translatable("message.amemaru.skill.empty_slot"));
             return;
         }
+        if (chargingSlot >= 0) {
+            // 溜めている間は、ほかのキーを受けつけない（同じキーの押し直しも無視する）
+            if (chargingSlot != slot) {
+                fail(minecraft, Component.translatable("message.amemaru.skill.casting"));
+            }
+            return;
+        }
         int casting = state.castSkill();
         if (casting >= 0 && casting != skillIndex) {
             fail(minecraft, Component.translatable("message.amemaru.skill.casting"));
@@ -140,25 +210,24 @@ public final class SkillInput {
             }
         }
 
-        // 狙い
-        int r = Math.max(0, Math.min(rank, skill.maxRank()) - 1);
-        double range = r < skill.aimRange().length ? skill.aimRange()[r] : 16.0;
-        DeliveryDef.Type delivery = DeliveryDef.Type.byIndex(skill.delivery());
-        int entityId = -1;
-        Vec3 point = null;
-        if (delivery == DeliveryDef.Type.TARGET || delivery == DeliveryDef.Type.CHAIN) {
-            Entity target = pickEntity(player, range, skill.alliesOnly());
-            entityId = target == null ? -1 : target.getId();
-        } else if (delivery == DeliveryDef.Type.POINT) {
-            point = pickPoint(player, range);
+        if (skill.charged() && casting < 0) {
+            // 溜め：押したことだけを送り、溜めのモーションを先に始める（狙いは離したときに決める）
+            sequence++;
+            remember(sequence, skillIndex);
+            ModNetwork.sendToServer(new UseSkillC2S(sequence, UseSkillC2S.PRESS, slot, -1, null));
+            chargingSlot = slot;
+            chargingSkill = skillIndex;
+            serverCharging = false;
+            if (PlayerAnimations.play(player, skill.chargeAnimation())) {
+                SkillFx.markPredicted(skillIndex);
+            }
+            return;
         }
 
+        Aim aim = aim(player, skill, rank);
         sequence++;
-        PENDING.put(sequence, skillIndex);
-        if (PENDING.size() > 32) {
-            PENDING.keySet().removeIf(key -> key < sequence - 32);
-        }
-        ModNetwork.sendToServer(new UseSkillC2S(sequence, slot, entityId, point));
+        remember(sequence, skillIndex);
+        ModNetwork.sendToServer(new UseSkillC2S(sequence, slot, aim.entityId, aim.point));
 
         // モーションを先に始める（詠唱を止めるための押下のときは始めない）
         if (casting < 0) {
@@ -169,11 +238,39 @@ public final class SkillInput {
         }
     }
 
-    /** サーバーの答え。断られたら、先に始めたモーションを止める。 */
+    private record Aim(int entityId, @Nullable Vec3 point) {
+    }
+
+    /** 届け方に合わせて、狙い（相手・地点）を決める。 */
+    private static Aim aim(LocalPlayer player, SyncDefinitionsS2C.SkillInfo skill, int rank) {
+        int r = Math.max(0, Math.min(rank, skill.maxRank()) - 1);
+        double range = r < skill.aimRange().length ? skill.aimRange()[r] : 16.0;
+        DeliveryDef.Type delivery = DeliveryDef.Type.byIndex(skill.delivery());
+        if (delivery == DeliveryDef.Type.TARGET || delivery == DeliveryDef.Type.CHAIN) {
+            Entity target = pickEntity(player, range, skill.alliesOnly());
+            return new Aim(target == null ? -1 : target.getId(), null);
+        }
+        if (delivery == DeliveryDef.Type.POINT || delivery == DeliveryDef.Type.LEAP) {
+            return new Aim(-1, pickPoint(player, range));
+        }
+        return new Aim(-1, null);
+    }
+
+    private static void remember(int sequence, int skillIndex) {
+        PENDING.put(sequence, skillIndex);
+        if (PENDING.size() > 32) {
+            PENDING.keySet().removeIf(key -> key < sequence - 32);
+        }
+    }
+
+    /** サーバーの答え。断られたら、先に始めたモーションを止める（溜めも終える）。 */
     public static void handleResult(SkillResultS2C message) {
         Integer skillIndex = PENDING.remove(message.sequence());
         if (message.ok() || skillIndex == null) {
             return;
+        }
+        if (skillIndex == chargingSkill) {
+            clearCharge();
         }
         Minecraft minecraft = Minecraft.getInstance();
         PlayerAnimations.stop(minecraft.player);
@@ -244,5 +341,6 @@ public final class SkillInput {
     /** ログアウトしたときに消す。 */
     public static void reset() {
         PENDING.clear();
+        clearCharge();
     }
 }

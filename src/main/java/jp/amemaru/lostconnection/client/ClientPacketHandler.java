@@ -1,10 +1,12 @@
 package jp.amemaru.lostconnection.client;
 
+import jp.amemaru.lostconnection.client.fx.StatusVisuals;
 import jp.amemaru.lostconnection.client.screen.JobSelectScreen;
 import jp.amemaru.lostconnection.network.s2c.CombatTextS2C;
 import jp.amemaru.lostconnection.network.s2c.OpenJobScreenS2C;
 import jp.amemaru.lostconnection.network.s2c.SkillFxS2C;
 import jp.amemaru.lostconnection.network.s2c.SkillResultS2C;
+import jp.amemaru.lostconnection.network.s2c.StatusFxS2C;
 import jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C;
 import jp.amemaru.lostconnection.network.s2c.SyncPlayerDataS2C;
 import net.minecraft.client.Minecraft;
@@ -32,6 +34,11 @@ public final class ClientPacketHandler {
 
     public static void handleCombatText(CombatTextS2C message) {
         CombatTextRenderer.handle(message);
+        SkillFx.onCombatText(message);
+    }
+
+    public static void handleStatusFx(StatusFxS2C message) {
+        StatusVisuals.handle(message);
     }
 
     public static void handleSkillResult(SkillResultS2C message) {

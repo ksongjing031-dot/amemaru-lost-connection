@@ -36,7 +36,15 @@ public final class CombatTextS2C {
         /** 連携支援。 */
         SUPPORT,
         /** 肩代わり（盾結び）。 */
-        SHARED;
+        SHARED,
+        /** 障壁が吸ったダメージ。 */
+        ABSORBED,
+        /** 受け流し！ */
+        PARRY,
+        /** 砕けた！（凍結を砕いた） */
+        SHATTER,
+        /** 凍結！ */
+        FROZEN;
 
         private static final Kind[] VALUES = values();
 

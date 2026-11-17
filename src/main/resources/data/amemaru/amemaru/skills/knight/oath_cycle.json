@@ -2,7 +2,7 @@
   "job": "knight",
   "school": "greatsword",
   "row": 1,
-  "column": 1,
+  "column": 2,
   "type": "passive",
   "name": "誓気の循環",
   "description": "燃やした誓気が糸を巡り、MPとなって戻ってくる。",

@@ -2,7 +2,9 @@ package jp.amemaru.lostconnection.job;
 
 import jp.amemaru.lostconnection.AmemaruMod;
 import jp.amemaru.lostconnection.combat.LinkComboTracker;
+import jp.amemaru.lostconnection.combat.StatusService;
 import jp.amemaru.lostconnection.combat.TauntService;
+import jp.amemaru.lostconnection.job.def.Affects;
 import jp.amemaru.lostconnection.job.def.EffectDef;
 import jp.amemaru.lostconnection.job.def.LinkType;
 import net.minecraft.server.MinecraftServer;
@@ -11,17 +13,21 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.living.LivingFallEvent;
 import net.minecraftforge.event.server.ServerStoppedEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 /**
- * 時間をおいて起きるスキルの処理：遅れて落ちる攻撃（流星群など）と、地面に残る陣（氷結陣など）。
- * 敵視の固定と連携の記録の後片付けも、ここでまとめて行う（毎 tick 行う処理を減らすため。Phase 0-B 11章）。
+ * 時間をおいて起きるスキルの処理：遅れて落ちる攻撃（流星群など）、地面に残る陣（氷結陣・誓いの円陣）、跳躍の着地（跳躍斬）。
+ * 敵視の固定・連携の記録・状態の記録の後片付けも、ここでまとめて行う（毎 tick 行う処理を減らすため。Phase 0-B 11章）。
  */
 @Mod.EventBusSubscriber(modid = AmemaruMod.MOD_ID)
 public final class SkillScheduler {
@@ -51,8 +57,31 @@ public final class SkillScheduler {
         }
     }
 
+    /** 跳躍中のプレイヤー（着地したら効果を出す）。 */
+    private static final class Leap {
+        final SkillContext ctx;
+        final long startTick;
+        final long deadline;
+        final double radius;
+
+        Leap(SkillContext ctx, long startTick, long deadline, double radius) {
+            this.ctx = ctx;
+            this.startTick = startTick;
+            this.deadline = deadline;
+            this.radius = radius;
+        }
+    }
+
+    /** 跳んでから着地の判定を始めるまで（tick）。 */
+    private static final int LEAP_GRACE = 4;
+    /** 着地してから、落下のダメージを受けない時間（tick）。 */
+    private static final int LANDING_GRACE = 10;
+
     private static final List<Delayed> DELAYED = new ArrayList<>();
     private static final List<Zone> ZONES = new ArrayList<>();
+    private static final Map<UUID, Leap> LEAPS = new HashMap<>();
+    /** 着地した時刻（落下のダメージを消すため）。 */
+    private static final Map<UUID, Long> LANDED = new HashMap<>();
 
     private SkillScheduler() {
     }
@@ -72,6 +101,22 @@ public final class SkillScheduler {
         ZONES.add(new Zone(ctx, center, radius, ctx.level.getGameTime() + durationTicks, Math.max(1, intervalTicks), effects));
     }
 
+    /** 跳躍を始めた（{@code flightTicks} は飛ぶ時間の見積もり）。 */
+    public static void addLeap(SkillContext ctx, ServerPlayer player, int flightTicks, double radius) {
+        long now = ctx.level.getGameTime();
+        LEAPS.put(player.getUUID(), new Leap(ctx, now, now + flightTicks + 30L, radius));
+        LANDED.remove(player.getUUID());
+    }
+
+    /** 跳躍中、または着地したすぐ後か（落下のダメージを受けない）。 */
+    public static boolean isLeaping(UUID player, long now) {
+        if (LEAPS.containsKey(player)) {
+            return true;
+        }
+        Long landed = LANDED.get(player);
+        return landed != null && now - landed <= LANDING_GRACE;
+    }
+
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase != TickEvent.Phase.END) {
@@ -80,12 +125,66 @@ public final class SkillScheduler {
         MinecraftServer server = event.getServer();
         runDelayed();
         tickZones();
+        tickLeaps(server);
         long ticks = server.getTickCount();
         if (ticks % 10 == 0) {
             TauntService.tick(server);
         }
         if (ticks % 20 == 0) {
-            LinkComboTracker.cleanup(server.overworld().getGameTime());
+            long now = server.overworld().getGameTime();
+            LinkComboTracker.cleanup(now);
+            ReactiveSkills.cleanup(now);
+            LANDED.values().removeIf(at -> now - at > LANDING_GRACE * 4L);
+        }
+        if (ticks % 400 == 0) {
+            StatusService.cleanup(server.overworld().getGameTime());
+        }
+    }
+
+    /** 跳躍の着地を見る：跳んで少したってから、地面（か水）に着いたら効果を出す。遅すぎるときも出す。 */
+    private static void tickLeaps(MinecraftServer server) {
+        if (LEAPS.isEmpty()) {
+            return;
+        }
+        List<Map.Entry<UUID, Leap>> landed = new ArrayList<>();
+        Iterator<Map.Entry<UUID, Leap>> it = LEAPS.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<UUID, Leap> entry = it.next();
+            Leap leap = entry.getValue();
+            ServerPlayer player = leap.ctx.caster();
+            if (player == null) {
+                it.remove();
+                continue;
+            }
+            long now = leap.ctx.level.getGameTime();
+            player.fallDistance = 0.0F;
+            boolean touched = now - leap.startTick >= LEAP_GRACE && (player.onGround() || player.isInWater() || player.isInLava());
+            if (touched || now >= leap.deadline) {
+                it.remove();
+                landed.add(entry);
+                LANDED.put(entry.getKey(), now);
+            }
+        }
+        for (Map.Entry<UUID, Leap> entry : landed) {
+            Leap leap = entry.getValue();
+            ServerPlayer player = leap.ctx.caster();
+            if (player == null) {
+                continue;
+            }
+            try {
+                SkillExecutor.leapLanded(leap.ctx, player, leap.radius);
+            } catch (RuntimeException e) {
+                AmemaruMod.LOGGER.error("[amemaru] A leap landing failed", e);
+            }
+        }
+    }
+
+    /** 跳躍の間と着地のすぐ後は、落下のダメージを受けない。 */
+    @SubscribeEvent
+    public static void onFall(LivingFallEvent event) {
+        if (event.getEntity() instanceof ServerPlayer player && isLeaping(player.getUUID(), player.level().getGameTime())) {
+            event.setDistance(0.0F);
+            event.setCanceled(true);
         }
     }
 
@@ -124,14 +223,26 @@ public final class SkillScheduler {
                 continue;
             }
             zone.nextTick = now + zone.interval;
-            List<LivingEntity> targets = SkillTargeting.enemiesNear(zone.ctx.level, zone.center, zone.radius);
+            List<LivingEntity> enemies = SkillTargeting.enemiesNear(zone.ctx.level, zone.center, zone.radius);
+            List<LivingEntity> allies = null;
             ServerPlayer caster = zone.ctx.caster();
-            for (LivingEntity target : targets) {
-                if (caster != null && zone.ctx.skill.link() == LinkType.STARTER) {
-                    // 陣の中にいる敵には、起点の印をつけ続ける（ほかの人の追撃がつながる）
+            if (caster != null && zone.ctx.skill.link() == LinkType.STARTER) {
+                // 陣の中にいる敵には、起点の印をつけ続ける（ほかの人の追撃がつながる）
+                for (LivingEntity target : enemies) {
                     LinkComboTracker.onSkillHit(target, caster, LinkType.STARTER, now);
                 }
-                for (EffectDef effect : zone.effects) {
+            }
+            for (EffectDef effect : zone.effects) {
+                List<LivingEntity> targets;
+                if (effect.to() == Affects.ALLIES) {
+                    if (allies == null) {
+                        allies = SkillTargeting.alliesNear(zone.ctx.level, zone.center, zone.radius);
+                    }
+                    targets = allies;
+                } else {
+                    targets = enemies;
+                }
+                for (LivingEntity target : targets) {
                     SkillExecutor.applyZoneEffect(zone.ctx, effect, target, zone.center);
                 }
             }
@@ -147,7 +258,11 @@ public final class SkillScheduler {
     public static void clear() {
         DELAYED.clear();
         ZONES.clear();
+        LEAPS.clear();
+        LANDED.clear();
         TauntService.clear();
         LinkComboTracker.clear();
+        StatusService.clear();
+        ReactiveSkills.clear();
     }
 }

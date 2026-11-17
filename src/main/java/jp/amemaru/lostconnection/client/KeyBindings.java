@@ -8,9 +8,9 @@ import org.lwjgl.glfw.GLFW;
 /**
  * キーの割り当て。設定の「操作設定」→「AMEMARU」から変えられる。
  *
- * <p>スキル枠6つの初期値は R・Z・X・C・B・Y。Phase 0-A の案（R・G・V・Z・X・C）のうち、G と V はボイスチャットMod
- * （Simple Voice Chat）の初期のキー（グループの画面・ボイスチャットの画面）と重なるため、B と Y に変えた【提案】。
- * X と C はバニラの「ツールバーの保存・読み込み」を外して使う（{@link ToolbarKeys}）。</p>
+ * <p>スキル枠6つの初期値は Phase 0-A のとおり R・G・V・Z・X・C（11月17日にご確認）。X と C はバニラの
+ * 「ツールバーの保存・読み込み」を外して使う（{@link ToolbarKeys}）。ボイスチャットModの初期のキー（V・G）と重なるときは、
+ * ボイスチャットの方のキーを変えて使う。</p>
  */
 public final class KeyBindings {
     public static final String CATEGORY = "key.categories.amemaru";
@@ -32,7 +32,15 @@ public final class KeyBindings {
             CATEGORY);
 
     private static final int[] SKILL_DEFAULTS = {
+            GLFW.GLFW_KEY_R, GLFW.GLFW_KEY_G, GLFW.GLFW_KEY_V, GLFW.GLFW_KEY_Z, GLFW.GLFW_KEY_X, GLFW.GLFW_KEY_C};
+
+    /** 試作版（11月17日まで）の初期値。これのままの人は、新しい初期値に移す（{@link ToolbarKeys}）。 */
+    static final int[] OLD_SKILL_DEFAULTS = {
             GLFW.GLFW_KEY_R, GLFW.GLFW_KEY_Z, GLFW.GLFW_KEY_X, GLFW.GLFW_KEY_C, GLFW.GLFW_KEY_B, GLFW.GLFW_KEY_Y};
+
+    static int defaultKey(int slot) {
+        return SKILL_DEFAULTS[slot];
+    }
 
     /** スキル枠1〜6。 */
     public static final KeyMapping[] SKILLS = new KeyMapping[SKILL_DEFAULTS.length];

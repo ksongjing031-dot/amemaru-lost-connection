@@ -6,8 +6,11 @@ import jp.amemaru.lostconnection.core.registry.ModDamageTypes;
 import jp.amemaru.lostconnection.entity.TrainingDummy;
 import jp.amemaru.lostconnection.job.GaugeService;
 import jp.amemaru.lostconnection.job.PassiveService;
+import jp.amemaru.lostconnection.job.ReactiveSkills;
 import jp.amemaru.lostconnection.job.SkillContext;
+import jp.amemaru.lostconnection.core.registry.ModEffects;
 import jp.amemaru.lostconnection.network.s2c.CombatTextS2C;
+import jp.amemaru.lostconnection.network.s2c.StatusFxS2C;
 import jp.amemaru.lostconnection.player.BuffState;
 import jp.amemaru.lostconnection.player.PlayerData;
 import jp.amemaru.lostconnection.player.PlayerDataCapability;
@@ -31,6 +34,7 @@ import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * ダメージの受け渡し（Phase 0-B 3章 combat）。すべてサーバーで計算する。
@@ -38,8 +42,10 @@ import java.util.Optional;
  * <ul>
  *   <li>スキル：{@link DamageCalculator} で計算した独自のダメージを、相手の独自のHPから引く（バニラの「傷ついた」演出・ノックバックはそのまま使う）。</li>
  *   <li>近接攻撃（左クリック）：攻撃のステータス × 係数 × 攻撃のたまり具合で、独自のダメージにする。</li>
- *   <li>魔物の攻撃を受けたとき：バニラのダメージ × 倍率を、防御・強化（城壁の構え・不落の城・鉄壁）で減らし、盾結びで肩代わりし、
- *       不屈の誓いでHPが1より下がらないようにする。落下などの環境のダメージは、最大HPに対する割合のまま。</li>
+ *   <li>魔物の攻撃を受けたとき：バニラのダメージ × 倍率を、防御・挑発の極意・強化（城壁の構え・不落の城・誓いの円陣・鉄壁）で減らし、
+ *       盾結びで肩代わりし、光の帳の障壁で吸い、不屈の誓いでHPが1より下がらないようにする。落下などの環境のダメージは、
+ *       最大HPに対する割合のまま（障壁は吸う）。</li>
+ *   <li>受け流しの構えの間の、正面からの魔物の攻撃と、凍結した魔物の攻撃は、攻撃ごと取り消す。</li>
  *   <li>プレイヤーどうしの攻撃は、configで許さない限り無効（協力のゲームのため）。</li>
  * </ul>
  */
@@ -115,13 +121,27 @@ public final class CombatService {
 
     // ---------------------------------------------------------------- イベント
 
-    /** プレイヤーどうしの攻撃を止める（configで許していなければ）。 */
+    /** 攻撃そのものを止める：プレイヤーどうし（configで許していなければ）・凍結した魔物・受け流された攻撃。 */
     @SubscribeEvent
     public static void onLivingAttack(LivingAttackEvent event) {
-        if (event.getEntity().level().isClientSide() || ServerConfig.ALLOW_PVP.get()) {
+        LivingEntity victim = event.getEntity();
+        if (victim.level().isClientSide()) {
             return;
         }
-        if (event.getEntity() instanceof Player victim && event.getSource().getEntity() instanceof Player attacker && attacker != victim) {
+        DamageSource source = event.getSource();
+        Entity attackerEntity = source.getEntity();
+        // 凍結した魔物は、近くで殴れない
+        if (attackerEntity instanceof LivingEntity attacker && source.getDirectEntity() == attacker && StatusService.frozen(attacker)) {
+            event.setCanceled(true);
+            return;
+        }
+        if (!ServerConfig.ALLOW_PVP.get() && victim instanceof Player && attackerEntity instanceof Player attacker && attacker != victim) {
+            event.setCanceled(true);
+            return;
+        }
+        // 受け流し：正面からの魔物の攻撃を無効にして反撃する
+        if (victim instanceof ServerPlayer player && attackerEntity instanceof LivingEntity attacker && !(attacker instanceof Player)
+                && ReactiveSkills.tryParry(player, attacker, player.level().getGameTime())) {
             event.setCanceled(true);
         }
     }
@@ -174,6 +194,7 @@ public final class CombatService {
         float strength = data.getLastAttackStrength();
         double power = data.getStats().get(StatType.ATTACK) * ServerConfig.BASIC_ATTACK_COEFFICIENT.get()
                 * (0.2 + 0.8 * strength * strength);
+        power *= PassiveService.meleeMultiplier(data, target);
         DamageCalculator.Result result = DamageCalculator.compute(power, data.getStats().get(StatType.CRIT),
                 data.getStats().get(StatType.CRIT_DAMAGE), TargetVitals.defense(target), ServerConfig.DAMAGE_VARIANCE.get(),
                 attacker.getRandom());
@@ -205,12 +226,14 @@ public final class CombatService {
         if (fromEnemy) {
             damage = event.getAmount() * ServerConfig.VANILLA_MOB_DAMAGE_MULTIPLIER.get()
                     * DamageCalculator.mitigation(data.getStats().get(StatType.DEFENSE));
+            damage = tauntMastery(player, damage, attacker, now);
             damage = reduce(player, data, damage, attacker, now, true);
             damage = shareWithBond(player, data, damage, attacker, now);
         } else {
             // 落下・溺れ・溶岩などは、最大HPに対する割合のまま（Phase 1）
             damage = event.getAmount() / vanillaMax * maxHp;
         }
+        damage = absorbBarrier(player, data, damage, now);
         if (data.getBuffs().unyielding(now)) {
             damage = Math.min(damage, Math.max(0.0, data.getHp() - 1.0));
         }
@@ -225,13 +248,54 @@ public final class CombatService {
         }
     }
 
-    /** 不落の城・城壁の構え（正面だけ）・鉄壁で、受けるダメージを減らす。 */
+    /** 挑発の極意：ナイトが挑発している魔物の攻撃は弱まる（誰が受けても）。 */
+    private static double tauntMastery(ServerPlayer player, double damage, @Nullable Entity attacker, long now) {
+        if (attacker == null) {
+            return damage;
+        }
+        UUID taunter = TauntService.taunterOf(attacker, now);
+        if (taunter == null) {
+            return damage;
+        }
+        ServerPlayer knight = player.server.getPlayerList().getPlayer(taunter);
+        PlayerData knightData = knight == null ? null : PlayerDataCapability.get(knight).orElse(null);
+        double reduction = knightData == null ? 0.0 : PassiveService.tauntMasteryReduction(knightData);
+        return reduction > 0 ? damage * (1.0 - reduction / 100.0) : damage;
+    }
+
+    /** 光の帳：障壁が残っていれば、先に障壁で吸う。 */
+    private static double absorbBarrier(ServerPlayer player, PlayerData data, double damage, long now) {
+        BuffState buffs = data.getBuffs();
+        if (damage <= 0 || !buffs.barrier(now)) {
+            return damage;
+        }
+        double absorbed = Math.min(buffs.barrierAmount, damage);
+        buffs.barrierAmount -= absorbed;
+        data.markDirty(PlayerData.SYNC_VITALS);
+        CombatTextS2C.send(player, absorbed, CombatTextS2C.Kind.ABSORBED);
+        if (buffs.barrierAmount <= 1.0E-6) {
+            buffs.clearBarrier();
+            player.removeEffect(ModEffects.BARRIER.get());
+            player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.AMETHYST_BLOCK_BREAK,
+                    SoundSource.PLAYERS, 1.0F, 1.2F);
+            StatusService.sync(player, StatusFxS2C.Event.BARRIER_BROKEN);
+        } else {
+            player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.AMETHYST_BLOCK_HIT,
+                    SoundSource.PLAYERS, 0.8F, 1.4F);
+        }
+        return damage - absorbed;
+    }
+
+    /** 不落の城・誓いの円陣・城壁の構え（正面だけ）・鉄壁で、受けるダメージを減らす。 */
     private static double reduce(ServerPlayer player, PlayerData data, double damage, @Nullable Entity attacker, long now,
                                  boolean useDirection) {
         BuffState buffs = data.getBuffs();
         double result = damage;
         if (buffs.fortress(now)) {
             result *= 1.0 - Math.min(95.0, buffs.fortressReduction) / 100.0;
+        }
+        if (buffs.warded(now)) {
+            result *= 1.0 - Math.min(95.0, buffs.wardReduction) / 100.0;
         }
         if (useDirection && buffs.rampart(now) && attacker != null && isInFront(player, attacker)) {
             result *= 1.0 - Math.min(95.0, buffs.rampartReduction) / 100.0;
@@ -280,6 +344,7 @@ public final class CombatService {
         }
         PlayerData data = found.get();
         double damage = reduce(knight, data, amount, attacker, now, false);
+        damage = absorbBarrier(knight, data, damage, now);
         if (data.getBuffs().unyielding(now)) {
             damage = Math.min(damage, Math.max(0.0, data.getHp() - 1.0));
         }

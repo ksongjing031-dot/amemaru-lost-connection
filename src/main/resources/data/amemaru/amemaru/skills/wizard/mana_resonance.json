@@ -1,8 +1,8 @@
 {
   "job": "wizard",
-  "school": "starlore",
+  "school": "starlight",
   "row": 2,
-  "column": 1,
+  "column": 2,
   "type": "passive",
   "name": "魔力の共鳴",
   "description": "近くで魔法を使う仲間の糸と響き合い、魔力が高まる。",

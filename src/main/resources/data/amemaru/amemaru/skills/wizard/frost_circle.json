@@ -5,7 +5,7 @@
   "column": 0,
   "type": "active",
   "name": "氷結陣",
-  "description": "狙った地点に氷の陣を張る。中にいる敵は凍えて遅くなり、仲間の追撃をつなぐ起点になる。",
+  "description": "狙った地点に氷の陣を張る。中にいる敵には凍えが重なっていき（陣だけでは4つまで）、仲間の追撃をつなぐ起点になる。",
   "max_rank": 3,
   "rank_costs": [
     1,
@@ -33,10 +33,10 @@
       "coefficient_per_rank": 0.1
     },
     {
-      "type": "status",
-      "effect": "amemaru:frost",
-      "duration": 2,
-      "level": 4
+      "type": "chill",
+      "stacks": 1,
+      "duration": 4,
+      "freeze": 2
     },
     {
       "type": "zone",
@@ -44,14 +44,13 @@
       "radius_per_rank": 0.5,
       "duration": 6,
       "duration_per_rank": 1,
-      "interval": 0.5,
+      "interval": 1.0,
       "effects": [
         {
-          "type": "status",
-          "effect": "amemaru:frost",
-          "duration": 1.0,
-          "level": 4,
-          "level_per_rank": 1
+          "type": "chill",
+          "stacks": 1,
+          "duration": 2,
+          "max": 4
         }
       ]
     }

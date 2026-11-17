@@ -1,0 +1,27 @@
+{
+  "job": "wizard",
+  "school": "starlight",
+  "row": 3,
+  "column": 2,
+  "type": "passive",
+  "name": "星の残光",
+  "description": "弾けた星の光を、糸でたぐり寄せて魔力に戻す。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "wizard/mana_resonance",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "star_afterglow",
+    "value": 2,
+    "value_per_rank": 1
+  }
+}

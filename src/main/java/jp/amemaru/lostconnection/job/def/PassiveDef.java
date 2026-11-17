@@ -15,6 +15,12 @@ import jp.amemaru.lostconnection.core.data.Json;
  *   <tr><td>swift_chant</td><td>詠唱が短くなる</td><td>短くなる割合（%）</td></tr>
  *   <tr><td>mana_resonance</td><td>近くに魔法を使う味方がいると魔力が上がる</td><td>魔力の上がり幅（%）</td></tr>
  *   <tr><td>mana_spring</td><td>MPの自然回復が増える</td><td>増える割合（%）</td></tr>
+ *   <tr><td>taunt_mastery</td><td>自分が挑発した敵の攻撃が弱まる</td><td>弱まる割合（%）</td></tr>
+ *   <tr><td>breaker</td><td>よろめき・防御崩しの敵へのダメージが上がる</td><td>上がる割合（%）</td></tr>
+ *   <tr><td>fighting_spirit</td><td>HPが半分を切ると攻撃が上がる</td><td>攻撃の上がり幅（%）</td></tr>
+ *   <tr><td>star_afterglow</td><td>星痕を弾けさせると、星痕1つにつきMPが戻る</td><td>戻るMP</td></tr>
+ *   <tr><td>frost_heart</td><td>凍え・凍結の敵へのダメージが上がる</td><td>上がる割合（%）</td></tr>
+ *   <tr><td>deep_chill</td><td>凍えが長く続き、凍結も長くなる</td><td>凍結が長くなる秒数（凍えは1.5倍）</td></tr>
  * </table>
  */
 public final class PassiveDef {
@@ -24,7 +30,13 @@ public final class PassiveDef {
         OATH_CYCLE("oath_cycle", false),
         SWIFT_CHANT("swift_chant", false),
         MANA_RESONANCE("mana_resonance", true),
-        MANA_SPRING("mana_spring", false);
+        MANA_SPRING("mana_spring", false),
+        TAUNT_MASTERY("taunt_mastery", false),
+        BREAKER("breaker", false),
+        FIGHTING_SPIRIT("fighting_spirit", false),
+        STAR_AFTERGLOW("star_afterglow", false),
+        FROST_HEART("frost_heart", false),
+        DEEP_CHILL("deep_chill", false);
 
         private final String id;
         private final boolean usesRadius;

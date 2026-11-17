@@ -10,6 +10,7 @@ import jp.amemaru.lostconnection.network.s2c.CombatTextS2C;
 import jp.amemaru.lostconnection.network.s2c.OpenJobScreenS2C;
 import jp.amemaru.lostconnection.network.s2c.SkillFxS2C;
 import jp.amemaru.lostconnection.network.s2c.SkillResultS2C;
+import jp.amemaru.lostconnection.network.s2c.StatusFxS2C;
 import jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C;
 import jp.amemaru.lostconnection.network.s2c.SyncPlayerDataS2C;
 import net.minecraft.server.level.ServerPlayer;
@@ -25,7 +26,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
  * {@link #PROTOCOL_VERSION} を上げる。クライアントが送るのは「何をしたいか」だけで、数値の計算はサーバーで行う。</p>
  */
 public final class ModNetwork {
-    public static final String PROTOCOL_VERSION = "2";
+    public static final String PROTOCOL_VERSION = "3";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             AmemaruMod.id("main"),
@@ -105,6 +106,12 @@ public final class ModNetwork {
                 .encoder(JobActionC2S::encode)
                 .decoder(JobActionC2S::decode)
                 .consumerMainThread(JobActionC2S::handle)
+                .add();
+        // Phase 2（スキルの拡張）：状態の見た目
+        CHANNEL.messageBuilder(StatusFxS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(StatusFxS2C::encode)
+                .decoder(StatusFxS2C::decode)
+                .consumerMainThread(StatusFxS2C::handle)
                 .add();
     }
 

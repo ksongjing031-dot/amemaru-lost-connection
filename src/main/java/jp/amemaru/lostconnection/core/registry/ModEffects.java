@@ -52,6 +52,42 @@ public final class ModEffects {
     public static final RegistryObject<MobEffect> LINK_SUPPORT = EFFECTS.register("link_support", () ->
             new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0xFFE066, false));
 
+    /** 凍結：凍えが5つ重なると、しばらく動けず、攻撃もできない。 */
+    public static final RegistryObject<MobEffect> FROZEN = EFFECTS.register("frozen", () ->
+            new AmemaruEffect(MobEffectCategory.HARMFUL, 0xBFF2FF, true).freezing()
+                    .addAttributeModifier(Attributes.MOVEMENT_SPEED, "6f1d9c2a-4b3e-4d7f-9a1c-2e5b8d0f3a47", -1.0,
+                            AttributeModifier.Operation.MULTIPLY_TOTAL));
+
+    /** 感電：次の雷鎖が、跳ぶ回数を増やして強く流れる。 */
+    public static final RegistryObject<MobEffect> SHOCK = EFFECTS.register("shock", () ->
+            new AmemaruEffect(MobEffectCategory.HARMFUL, 0xFFE27A, false));
+
+    /** 星痕：星の印（最大5つ）。星爆で一度に弾ける。 */
+    public static final RegistryObject<MobEffect> STAR_BRAND = EFFECTS.register("star_brand", () ->
+            new AmemaruEffect(MobEffectCategory.HARMFUL, 0xFFD27A, false));
+
+    /** 防御崩し：防御が下がる（{@code StatusService#ARMOR_BREAK_DEFENSE}）。 */
+    public static final RegistryObject<MobEffect> ARMOR_BREAK = EFFECTS.register("armor_break", () ->
+            new AmemaruEffect(MobEffectCategory.HARMFUL, 0xFF8C40, false));
+
+    /** 光の帳：ダメージを吸う障壁（量はサーバーのプレイヤーデータ）。 */
+    public static final RegistryObject<MobEffect> BARRIER = EFFECTS.register("barrier", () ->
+            new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0xFFF2A8, false));
+
+    /** 誓いの円陣：陣の中にいる間、受けるダメージが減る。 */
+    public static final RegistryObject<MobEffect> WARD = EFFECTS.register("ward", () ->
+            new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0x8FD3FF, false));
+
+    /** 受け流しの構え：正面からの攻撃を無効にして反撃する。 */
+    public static final RegistryObject<MobEffect> PARRY = EFFECTS.register("parry", () ->
+            new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0xD6F6FF, false));
+
+    /** 溜め：足が少し遅くなる。 */
+    public static final RegistryObject<MobEffect> CHARGING = EFFECTS.register("charging", () ->
+            new AmemaruEffect(MobEffectCategory.NEUTRAL, 0xFFB46E, false)
+                    .addAttributeModifier(Attributes.MOVEMENT_SPEED, "b2e4c6a8-1d3f-4a5b-8c7d-9e0f1a2b3c4d", -0.35,
+                            AttributeModifier.Operation.MULTIPLY_TOTAL));
+
     /** 詠唱中：足が遅くなる。 */
     public static final RegistryObject<MobEffect> CHANTING = EFFECTS.register("chanting", () ->
             new AmemaruEffect(MobEffectCategory.NEUTRAL, 0xB57CFF, false)

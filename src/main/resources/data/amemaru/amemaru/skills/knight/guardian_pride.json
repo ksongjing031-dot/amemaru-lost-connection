@@ -2,7 +2,7 @@
   "job": "knight",
   "school": "guardian",
   "row": 1,
-  "column": 1,
+  "column": 2,
   "type": "passive",
   "name": "守る者の誇り",
   "description": "守るべき仲間がそばにいると、体が自然と固くなる。",

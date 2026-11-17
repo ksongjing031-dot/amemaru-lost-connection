@@ -9,7 +9,11 @@ public enum BuffKind {
     /** 不屈の誓い：HPが1より下がらない。 */
     UNYIELDING("unyielding"),
     /** 不落の城：受けるダメージを減らす（値は%）。 */
-    FORTRESS("fortress");
+    FORTRESS("fortress"),
+    /** 受け流し：構えている間の、正面からの攻撃を1回だけ無効にして反撃する（値は反撃の、攻撃の何倍か）。 */
+    PARRY("parry"),
+    /** 誓いの円陣：陣の中にいる間、受けるダメージを減らす（値は%）。 */
+    WARD("ward");
 
     private final String id;
 
@@ -27,6 +31,6 @@ public enum BuffKind {
                 return kind;
             }
         }
-        throw new DefinitionException("「buff」は rampart・unyielding・fortress のどれかにしてください（今は " + id + "）");
+        throw new DefinitionException("「buff」は rampart・unyielding・fortress・parry・ward のどれかにしてください（今は " + id + "）");
     }
 }

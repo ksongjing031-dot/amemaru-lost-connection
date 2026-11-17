@@ -25,19 +25,29 @@ import java.util.Locale;
 /**
  * スキルツリーの画面（初期値：Jキー。Phase 0-A 19章・S3「職業ごとのスキルツリー（GUI）」）。
  *
- * <p>左に、流派ごとの木（1列目がアクティブ、2列目がパッシブ、下が奥義）。右に、選んだスキルの説明・段階のつまみ（1段〜3段。
- * 押すとその段階の数値と効果を見せる）・習得のボタン・スキル枠（6つ）。スキル枠は、アクティブスキルを選んでから枠をクリックすると入る（右クリックで空にする）。
+ * <p>左に、流派のつまみ（流派2つと奥義）と、選んだ流派の木（4段×3列。左の2列がアクティブ、右の列がパッシブ。段の左に覚えられるレベル）。
+ * 右に、選んだスキルの説明・段階のつまみ（1段〜3段。押すとその段階の数値と効果を見せる）・習得のボタン・スキル枠（6つ）。
+ * スキル枠は、アクティブスキルを選んでから枠をクリックすると入る（右クリックで空にする）。
  * 習得と枠の入れかえはサーバーが確かめてから反映し、結果は同期で返ってくる。</p>
  */
 public class SkillTreeScreen extends Screen {
     private static final int PANEL_WIDTH = 404;
-    private static final int PANEL_HEIGHT = 228;
+    private static final int PANEL_HEIGHT = 252;
     private static final int NODE = SkillHudArt.NODE;
-    private static final int COL_STEP = 44;
-    private static final int ROW_STEP = 40;
-    private static final int BLOCK_STEP = 98;
+    /** 流派のつまみ。 */
+    private static final int SCHOOL_TAB_Y = 38;
+    private static final int SCHOOL_TAB_H = 14;
+    private static final int SCHOOL_TAB_W = 60;
+    private static final int SCHOOL_TAB_STEP = 63;
+    /** 木（4段×3列）。 */
     private static final int TREE_X = 12;
-    private static final int TREE_Y = 50;
+    private static final int TREE_W = 190;
+    private static final int GRID_X = 42;
+    private static final int GRID_Y = 58;
+    private static final int COL_STEP = 54;
+    private static final int ROW_STEP = 42;
+    private static final int ROWS = 4;
+    private static final int COLUMNS = 3;
     private static final int DETAIL_X = 214;
     private static final int DETAIL_W = PANEL_WIDTH - DETAIL_X - 12;
     private static final int DESC_Y = 66;
@@ -47,14 +57,18 @@ public class SkillTreeScreen extends Screen {
     private static final int TAB_H = 11;
     private static final int TAB_STEP = 29;
     private static final int NUMBERS_Y = 104;
-    private static final int LINES_BOTTOM = 156;
-    private static final int BUTTON_Y = 157;
-    private static final int SLOT_Y = 186;
+    private static final int LINES_BOTTOM = 182;
+    private static final int BUTTON_Y = 183;
+    private static final int SLOT_Y = 212;
     private static final int SLOT_STEP = 27;
+    /** 奥義のつまみの番号（流派は0・1…）。 */
+    private static final int ULTIMATE_TAB = 99;
 
     private int left;
     private int top;
     private int selected = -1;
+    /** 見せている流派（{@link #ULTIMATE_TAB} なら奥義）。 */
+    private int tab = 0;
     /** 右の説明で見せている段階（段階のつまみで切りかえる）。 */
     private int shownRank = 1;
     /** 選んでいるスキルの、前に見たときの段階（覚えたら、見せる段階を進めるため）。 */
@@ -83,6 +97,7 @@ public class SkillTreeScreen extends Screen {
                 selected = skills.get(0).index();
             }
         }
+        showTabOf(ClientDefinitions.get().skill(selected));
         resetShownRank();
         updateButton();
     }
@@ -214,14 +229,34 @@ public class SkillTreeScreen extends Screen {
 
     // ---------------------------------------------------------------- 位置
 
-    /** 木の中の、節の左上（奥義は下の中央）。 */
+    /** そのスキルが、今のつまみで見えているか。 */
+    private boolean visible(SyncDefinitionsS2C.SkillInfo skill) {
+        if (skill.ultimate() || skill.schoolIndex() < 0) {
+            return tab == ULTIMATE_TAB;
+        }
+        return tab == skill.schoolIndex();
+    }
+
+    /** スキルのある流派のつまみを開く。 */
+    private void showTabOf(@Nullable SyncDefinitionsS2C.SkillInfo skill) {
+        if (skill != null) {
+            tab = skill.ultimate() || skill.schoolIndex() < 0 ? ULTIMATE_TAB : skill.schoolIndex();
+        }
+    }
+
+    /** 木の中の、節の左上（奥義のつまみでは、真ん中）。 */
     private int[] nodePosition(SyncDefinitionsS2C.SkillInfo skill) {
         if (skill.ultimate() || skill.schoolIndex() < 0) {
-            return new int[]{left + TREE_X + BLOCK_STEP - NODE / 2 + 2, top + TREE_Y + 3 * ROW_STEP + 2};
+            return new int[]{left + TREE_X + (TREE_W - NODE) / 2, top + GRID_Y + 6};
         }
-        int x = left + TREE_X + skill.schoolIndex() * BLOCK_STEP + Math.min(1, skill.column()) * COL_STEP;
-        int y = top + TREE_Y + Math.min(2, skill.row()) * ROW_STEP;
+        int x = left + GRID_X + Math.min(COLUMNS - 1, Math.max(0, skill.column())) * COL_STEP;
+        int y = top + GRID_Y + Math.min(ROWS - 1, Math.max(0, skill.row())) * ROW_STEP;
         return new int[]{x, y};
+    }
+
+    /** つまみの左端（i 番目。奥義は流派の後ろ）。 */
+    private int schoolTabX(int i) {
+        return left + TREE_X + i * SCHOOL_TAB_STEP;
     }
 
     private int slotX(int slot) {
@@ -245,8 +280,13 @@ public class SkillTreeScreen extends Screen {
             return;
         }
         renderHeader(graphics, state, job);
-        List<SyncDefinitionsS2C.SkillInfo> skills = ClientDefinitions.get().skillsOf(job.index());
-        renderSchools(graphics, job);
+        List<SyncDefinitionsS2C.SkillInfo> skills = new ArrayList<>();
+        for (SyncDefinitionsS2C.SkillInfo skill : ClientDefinitions.get().skillsOf(job.index())) {
+            if (visible(skill)) {
+                skills.add(skill);
+            }
+        }
+        renderSchools(graphics, state, job, mouseX, mouseY);
         renderConnectors(graphics, state, skills);
         SyncDefinitionsS2C.SkillInfo hovered = null;
         for (SyncDefinitionsS2C.SkillInfo skill : skills) {
@@ -320,23 +360,68 @@ public class SkillTreeScreen extends Screen {
         UiStyle.divider(graphics, left + 12, left + PANEL_WIDTH - 12, top + 33);
     }
 
-    private void renderSchools(GuiGraphics graphics, SyncDefinitionsS2C.JobInfo job) {
-        for (int i = 0; i < job.schools().size() && i < 2; i++) {
-            SyncDefinitionsS2C.SchoolInfo school = job.schools().get(i);
-            int center = left + TREE_X + i * BLOCK_STEP + (COL_STEP + NODE) / 2;
-            graphics.drawCenteredString(font, school.name(), center, top + TREE_Y - 11, 0xFF000000 | school.color());
+    /** 流派のつまみ・段のレベル・列の見出し（奥義のつまみでは、上位職の説明）。 */
+    private void renderSchools(GuiGraphics graphics, ClientPlayerState state, SyncDefinitionsS2C.JobInfo job, int mouseX, int mouseY) {
+        int count = Math.min(2, job.schools().size());
+        for (int i = 0; i <= count; i++) {
+            boolean ultimate = i == count;
+            int id = ultimate ? ULTIMATE_TAB : i;
+            String name = ultimate ? Component.translatable("screen.amemaru.skill_tree.ultimate").getString() : job.schools().get(i).name();
+            int color = ultimate ? 0xFFC94D : job.schools().get(i).color();
+            int x = schoolTabX(i);
+            int y = top + SCHOOL_TAB_Y;
+            boolean active = tab == id;
+            boolean hover = mouseX >= x && mouseX < x + SCHOOL_TAB_W && mouseY >= y && mouseY < y + SCHOOL_TAB_H;
+            graphics.fill(x, y, x + SCHOOL_TAB_W, y + SCHOOL_TAB_H, active ? 0xFF000000 | color : hover ? 0xFF5A6F96 : 0xFF2C3A58);
+            graphics.fill(x + 1, y + 1, x + SCHOOL_TAB_W - 1, y + SCHOOL_TAB_H - (active ? 0 : 1), active ? 0xFF1E2B4F : 0xFF141C30);
+            String label = UiStyle.clip(font, name, SCHOOL_TAB_W - 6);
+            graphics.drawString(font, label, x + (SCHOOL_TAB_W - font.width(label)) / 2, y + 3, active ? 0xFF000000 | color : 0xFF9AA6BF,
+                    false);
+        }
+        int lineY = top + SCHOOL_TAB_Y + SCHOOL_TAB_H;
+        graphics.fill(left + TREE_X, lineY, left + TREE_X + TREE_W, lineY + 1, 0x808FD3FF);
+        if (tab == ULTIMATE_TAB) {
+            // 奥義：真ん中に節、下に上位職の説明
+            int textY = top + GRID_Y + NODE + 14;
+            String head = job.hasUpper() ? job.upperName() : "";
+            graphics.drawCenteredString(font, head, left + TREE_X + TREE_W / 2, textY, UiStyle.TEXT_GOLD);
+            UiStyle.wrapped(graphics, font, job.upperDescription(), left + TREE_X + 6, textY + 13, TREE_W - 12, UiStyle.TEXT_DIM, 6);
+        } else {
+            // 段の左に、覚えられるレベル
+            int[] levels = new int[ROWS];
+            for (SyncDefinitionsS2C.SkillInfo skill : ClientDefinitions.get().skillsOf(job.index())) {
+                if (visible(skill) && skill.row() >= 0 && skill.row() < ROWS) {
+                    int row = skill.row();
+                    levels[row] = levels[row] == 0 ? skill.minLevel() : Math.min(levels[row], skill.minLevel());
+                }
+            }
+            for (int row = 0; row < ROWS; row++) {
+                if (levels[row] <= 0) {
+                    continue;
+                }
+                String text = "Lv" + levels[row];
+                int y = top + GRID_Y + row * ROW_STEP + (NODE - 8) / 2;
+                graphics.drawString(font, text, left + TREE_X, y, state.level() >= levels[row] ? UiStyle.TEXT_HEADER : UiStyle.TEXT_DIM,
+                        false);
+            }
+            // 列の見出し（下）
+            int labelY = top + GRID_Y + (ROWS - 1) * ROW_STEP + NODE + 3;
+            String active = Component.translatable("screen.amemaru.skill_tree.active").getString();
+            String passive = Component.translatable("screen.amemaru.skill_tree.passive").getString();
+            graphics.drawCenteredString(font, active, left + GRID_X + (COL_STEP + NODE) / 2, labelY, UiStyle.TEXT_DIM);
+            graphics.drawCenteredString(font, passive, left + GRID_X + 2 * COL_STEP + NODE / 2, labelY, UiStyle.TEXT_DIM);
         }
         // 木と説明の間の縦の線
         graphics.fill(left + DETAIL_X - 8, top + 40, left + DETAIL_X - 7, top + PANEL_HEIGHT - 20, 0x408FD3FF);
     }
 
-    /** 前提のスキルとのつながり（糸）。覚えていれば明るく光る。 */
+    /** 前提のスキルとのつながり（糸）。覚えていれば明るく光る。同じつまみに見えているスキルどうしだけ。 */
     private void renderConnectors(GuiGraphics graphics, ClientPlayerState state, List<SyncDefinitionsS2C.SkillInfo> skills) {
         for (SyncDefinitionsS2C.SkillInfo skill : skills) {
             int[] to = nodePosition(skill);
             for (int i = 0; i < skill.requiredSkills().length; i++) {
                 SyncDefinitionsS2C.SkillInfo required = ClientDefinitions.get().skill(skill.requiredSkills()[i]);
-                if (required == null) {
+                if (required == null || !visible(required)) {
                     continue;
                 }
                 int[] from = nodePosition(required);
@@ -553,8 +638,23 @@ public class SkillTreeScreen extends Screen {
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         ClientPlayerState state = ClientPlayerState.get();
+        // 流派のつまみ
+        SyncDefinitionsS2C.JobInfo job = ClientDefinitions.get().job(state.jobIndex());
+        if (job != null && mouseY >= top + SCHOOL_TAB_Y && mouseY < top + SCHOOL_TAB_Y + SCHOOL_TAB_H) {
+            int count = Math.min(2, job.schools().size());
+            for (int i = 0; i <= count; i++) {
+                int x = schoolTabX(i);
+                if (mouseX >= x && mouseX < x + SCHOOL_TAB_W) {
+                    tab = i == count ? ULTIMATE_TAB : i;
+                    return true;
+                }
+            }
+        }
         // 木の節
         for (SyncDefinitionsS2C.SkillInfo skill : ClientDefinitions.get().skillsOf(state.jobIndex())) {
+            if (!visible(skill)) {
+                continue;
+            }
             int[] at = nodePosition(skill);
             if (mouseX >= at[0] && mouseX < at[0] + NODE && mouseY >= at[1] && mouseY < at[1] + NODE) {
                 selected = skill.index();
@@ -607,9 +707,10 @@ public class SkillTreeScreen extends Screen {
         return false;
     }
 
-    /** 選んでいるスキルを変える（自動の確認で使う）。 */
+    /** 選んでいるスキルを変える（自動の確認で使う）。そのスキルの流派のつまみも開く。 */
     public void select(int skillIndex) {
         selected = skillIndex;
+        showTabOf(ClientDefinitions.get().skill(skillIndex));
         resetShownRank();
         updateButton();
     }

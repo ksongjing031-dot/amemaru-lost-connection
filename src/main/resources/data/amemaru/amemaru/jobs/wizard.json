@@ -8,17 +8,41 @@
   "icon": "amemaru:textures/gui/job/wizard.png",
   "weapons": "amemaru:weapons/wizard",
   "weapon_text": "杖",
-  "tags": ["magic", "ranged"],
+  "tags": [
+    "magic",
+    "ranged"
+  ],
   "stats": {
-    "percent": { "mp": 50, "magic": 20, "hp": -10, "defense": -10, "attack": -20 }
+    "percent": {
+      "mp": 50,
+      "magic": 20,
+      "hp": -10,
+      "defense": -10,
+      "attack": -20
+    }
   },
   "schools": [
-    { "id": "starlore", "name": "星詠み", "description": "灯火と流星で、遠くの敵を焼き払う流派。仲間に魔力を分けることもできる。", "color": "#FFD27A" },
-    { "id": "frost", "name": "氷結", "description": "氷の陣と雷の鎖で敵を止め、瞬く間に位置を変える流派。", "color": "#9FE6FF" }
+    {
+      "id": "starlight",
+      "name": "星灯",
+      "description": "灯火と流星で、遠くの敵を焼き払う流派。星の印を重ねて一度に弾けさせ、仲間に魔力と光の守りを分けることもできる。",
+      "color": "#FFD27A"
+    },
+    {
+      "id": "frost",
+      "name": "氷結",
+      "description": "凍えを重ねて敵の足を止め、凍結させて氷柱で砕く流派。雷で感電させ、雷の鎖を次々に跳ばす。",
+      "color": "#9FE6FF"
+    }
   ],
-  "starting_skills": ["wizard/lamp_bolt", "wizard/frost_circle"],
+  "starting_skills": [
+    "wizard/lamp_bolt",
+    "wizard/frost_circle"
+  ],
   "starter_kit": [
-    { "item": "amemaru:apprentice_staff" }
+    {
+      "item": "amemaru:apprentice_staff"
+    }
   ],
   "upper": {
     "name": "星詠み",

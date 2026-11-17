@@ -1,8 +1,8 @@
 {
   "job": "wizard",
-  "school": "starlore",
+  "school": "starlight",
   "row": 1,
-  "column": 1,
+  "column": 2,
   "type": "passive",
   "name": "詠唱短縮",
   "description": "詠唱の言葉を、糸の震えで先回りして結ぶ。",

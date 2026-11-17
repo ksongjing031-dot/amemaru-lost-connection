@@ -1,0 +1,45 @@
+{
+  "job": "wizard",
+  "school": "starlight",
+  "row": 3,
+  "column": 0,
+  "type": "active",
+  "name": "光の帳",
+  "description": "星の光を薄い帳にして、狙った味方を包む。帳は受けるダメージを吸い、吸いきると砕ける。狙える味方がいなければ自分を包む。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "wizard/mana_thread",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 26
+  },
+  "cooldown": 18,
+  "cooldown_per_rank": -2,
+  "link": "support",
+  "delivery": {
+    "type": "target",
+    "range": 16,
+    "affects": "allies",
+    "fallback_self": true
+  },
+  "effects": [
+    {
+      "type": "barrier",
+      "stat": "magic",
+      "coefficient": 3.0,
+      "coefficient_per_rank": 0.6,
+      "duration": 8
+    }
+  ],
+  "animation": "wizard_light_veil",
+  "sound": "amemaru:skill.wizard.light_veil"
+}

@@ -122,6 +122,7 @@ public final class PlayerEvents {
         if (event.getEntity() instanceof ServerPlayer player) {
             PlayerDataCapability.get(player).ifPresent(data -> SkillService.cancelCast(player, data, false));
             PassiveService.forget(player.getUUID());
+            jp.amemaru.lostconnection.job.ReactiveSkills.forget(player.getUUID());
         }
     }
 }

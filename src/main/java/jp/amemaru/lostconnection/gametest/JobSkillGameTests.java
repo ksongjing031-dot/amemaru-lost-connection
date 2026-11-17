@@ -600,8 +600,9 @@ public final class JobSkillGameTests {
             long actives = skills.stream().filter(skill -> skill.isActive() && !skill.isUltimate()).count();
             long passives = skills.stream().filter(skill -> skill.kind() == SkillKind.PASSIVE).count();
             long ultimates = skills.stream().filter(SkillDef::isUltimate).count();
-            check(helper, actives >= 4 && actives <= 6, name + " のアクティブスキルが4〜6個ではありません：" + actives);
-            check(helper, passives >= 1, name + " にパッシブスキルがありません");
+            // 仕様S2は4〜6個。11月17日のご指示（スキルが単調）で、流派ごとに6つ（計12）に増やした（Phase 0-A 19章）
+            check(helper, actives == 12, name + " のアクティブスキルが12個ではありません：" + actives);
+            check(helper, passives == 6, name + " のパッシブスキルが6個ではありません：" + passives);
             check(helper, ultimates == 1, name + " の奥義が1つではありません：" + ultimates);
             check(helper, job.startingSkills().size() == 2, name + " の最初のスキルが2つではありません");
             check(helper, job.upper() != null, name + " に上位職がありません");

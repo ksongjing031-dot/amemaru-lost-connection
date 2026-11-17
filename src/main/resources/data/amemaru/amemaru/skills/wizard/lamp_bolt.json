@@ -1,11 +1,11 @@
 {
   "job": "wizard",
-  "school": "starlore",
+  "school": "starlight",
   "row": 0,
   "column": 0,
   "type": "active",
   "name": "灯火弾",
-  "description": "杖の先に小さな灯をともし、まっすぐ撃ち出す基本の魔法。",
+  "description": "杖の先に小さな灯をともし、まっすぐ撃ち出す基本の魔法。当てた敵に星痕を1つ刻む。",
   "max_rank": 3,
   "rank_costs": [
     1,
@@ -29,6 +29,11 @@
       "stat": "magic",
       "coefficient": 1.3,
       "coefficient_per_rank": 0.2
+    },
+    {
+      "type": "brand",
+      "stacks": 1,
+      "duration": 8
     }
   ],
   "animation": "wizard_lamp_bolt",

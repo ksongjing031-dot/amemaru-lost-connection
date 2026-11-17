@@ -26,8 +26,12 @@ public final class SkillFxS2C {
         CAST_CANCEL,
         /** スキルを放った（{@code ticks} は陣が残る時間や、着弾までの遅れ）。 */
         RELEASE,
-        /** 遅れて落ちる攻撃が着弾した。 */
-        IMPACT;
+        /** 遅れて落ちる攻撃が着弾した・跳躍で着地した・弾が当たった。 */
+        IMPACT,
+        /** 溜めを始めた（{@code ticks} は溜めきるまでの時間）。 */
+        CHARGE_START,
+        /** 構えていたスキルが発動した（受け流しの反撃。{@code to} は攻撃してきた相手）。 */
+        TRIGGER;
 
         private static final Phase[] VALUES = values();
 
@@ -48,8 +52,16 @@ public final class SkillFxS2C {
     private final float radius;
     private final int ticks;
     private final int[] targets;
+    /** 強さの目安：溜めるスキルは溜めの割合（0〜1）、ほかは強化の倍率（1 ＝ ふつう）。演出の大きさに使う。 */
+    private final float power;
 
     public SkillFxS2C(Phase phase, int casterId, int skillIndex, Vec3 from, Vec3 to, float radius, int ticks, int[] targets) {
+        this(phase, casterId, skillIndex, from, to, radius, ticks, targets, 1.0F);
+    }
+
+    public SkillFxS2C(Phase phase, int casterId, int skillIndex, Vec3 from, Vec3 to, float radius, int ticks, int[] targets,
+                      float power) {
+        this.power = power;
         this.phase = phase;
         this.casterId = casterId;
         this.skillIndex = skillIndex;
@@ -79,6 +91,7 @@ public final class SkillFxS2C {
         for (int i = 0; i < count; i++) {
             buf.writeVarInt(targets[i]);
         }
+        buf.writeFloat(power);
     }
 
     public static SkillFxS2C decode(FriendlyByteBuf buf) {
@@ -94,7 +107,8 @@ public final class SkillFxS2C {
         for (int i = 0; i < count; i++) {
             targets[i] = buf.readVarInt();
         }
-        return new SkillFxS2C(phase, casterId, skillIndex, from, to, radius, ticks, targets);
+        float power = buf.readFloat();
+        return new SkillFxS2C(phase, casterId, skillIndex, from, to, radius, ticks, targets, power);
     }
 
     private static void writeVec(FriendlyByteBuf buf, Vec3 vec) {
@@ -141,5 +155,9 @@ public final class SkillFxS2C {
 
     public int[] targets() {
         return targets;
+    }
+
+    public float power() {
+        return power;
     }
 }

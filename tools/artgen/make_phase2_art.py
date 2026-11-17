@@ -13,6 +13,8 @@
   textures/entity/lamp_bolt.png      灯火弾（16x16）
   textures/mob_effect/*.png          状態のアイコン（18x18）
 
+演出（陣・光・パーティクル）のテクスチャは tools/artgen/make_fx_art.py で作る。
+
 同じ名前・同じ大きさで描き直したファイルを置けば、コードを変えずに差し替えられる（docs/phase2.md の8章）。
 """
 import math
@@ -514,6 +516,170 @@ def w_starfall(c):
     sparkle(c, 27, 6, WHITE, 1)
 
 
+# ---- スキルの拡張（11月17日）：ナイト
+def k_binding_chain(c):
+    # 盾の縁から伸びる鎖と、引き寄せる鉤
+    shield_shape(c, 8, 6, 10, 13, KNIGHT, WHITE)
+    for i in range(4):
+        x, y = 13 + i * 4, 15 + i * 3
+        c.ellipse(x - 2, y - 1, x + 2, y + 1, outline=STEEL, width=1)
+    c.line([(27, 25), (27, 29), (23, 29)], STEEL_DARK, 2)
+    c.line([(27, 25), (24, 22)], WHITE, 1)
+
+
+def k_parry(c):
+    # 斜めの盾と、はじかれる火花
+    c.poly([(6, 10), (16, 5), (22, 14), (12, 26)], fill=STEEL, outline=WHITE)
+    c.line([(9, 12), (18, 18)], STEEL_DARK, 1)
+    for (x, y, r) in ((24, 7, 2), (27, 12, 1), (21, 4, 1)):
+        sparkle(c, x, y, GOLD_LIGHT, r)
+    c.arc((14, 2, 30, 18), 280, 20, RIM_LIGHT, 2)
+
+
+def k_oath_circle(c):
+    # 地に立てた盾と、光の円陣
+    c.ellipse(3, 18, 29, 29, outline=RIM, width=2)
+    c.ellipse(7, 20, 25, 27, outline=mix(RIM, CLEAR, 0.4), width=1)
+    shield_shape(c, 16, 4, 12, 17, KNIGHT, WHITE, emblem=GOLD_LIGHT)
+    sparkle(c, 5, 8, WHITE, 1)
+    sparkle(c, 27, 9, WHITE, 1)
+
+
+def k_taunt_mastery(c):
+    # にらむ目と、鈍った刃
+    c.ellipse(5, 9, 27, 23, fill=mix(INDIGO_2, KNIGHT, 0.3), outline=WHITE)
+    c.ellipse(12, 11, 20, 21, fill=hexc("FF5A40"))
+    c.ellipse(14, 13, 18, 19, fill=OUTLINE)
+    c.line([(20, 26), (29, 29)], STEEL_DARK, 2)
+    c.line([(3, 4), (8, 7)], hexc("FF5A40"), 2)
+    c.line([(29, 4), (24, 7)], hexc("FF5A40"), 2)
+
+
+def k_heavy_slash(c):
+    # 振りかぶった大剣と、溜まった力
+    c.arc((2, 4, 30, 32), 200, 330, mix(EMBER, CLEAR, 0.2), 3)
+    sword(c, 8, 26, 24, 6, STEEL, WHITE, 4)
+    c.line([(9, 21), (14, 26)], GOLD, 2)
+    for (x, y) in ((25, 4), (28, 9), (21, 2)):
+        sparkle(c, x, y, FIRE, 1)
+
+
+def k_breaker(c):
+    # ひびの入った鎧と、拳
+    c.poly([(6, 6), (26, 6), (24, 20), (16, 27), (8, 20)], fill=STEEL_DARK, outline=WHITE)
+    c.line([(16, 6), (13, 12), (18, 15), (14, 22)], EMBER, 2)
+    c.line([(18, 15), (23, 13)], EMBER, 1)
+
+
+def k_oath_release(c):
+    # 突き出した剣と、燃える誓気
+    for i, r in enumerate((13, 10, 7)):
+        c.ellipse(16 - r, 16 - r, 16 + r, 16 + r, outline=mix(GOLD, CLEAR, 0.2 + i * 0.25), width=1)
+    sword(c, 4, 28, 27, 5, STEEL, WHITE, 3)
+    c.line([(7, 21), (11, 25)], GOLD, 2)
+    star(c, 26, 6, 4, 1.6, GOLD_LIGHT)
+
+
+def k_leap_slash(c):
+    # 弧を描いて跳ぶ剣と、着地の衝撃
+    c.arc((3, 3, 29, 29), 180, 300, mix(RIM_LIGHT, CLEAR, 0.3), 2)
+    sword(c, 12, 4, 20, 22, STEEL, WHITE, 3)
+    c.line([(13, 9), (19, 7)], GOLD, 2)
+    c.line([(4, 27), (28, 27)], EMBER, 2)
+    for x in (8, 16, 24):
+        c.line([(x, 26), (x - 2, 22)], FIRE, 1)
+
+
+def k_fighting_spirit(c):
+    # 燃える心臓
+    c.poly([(16, 28), (5, 16), (5, 9), (10, 5), (16, 9), (22, 5), (27, 9), (27, 16)], fill=hexc("D8443A"), outline=WHITE)
+    c.poly([(16, 22), (12, 15), (16, 9), (20, 15)], fill=FIRE)
+    c.poly([(16, 19), (14, 15), (16, 12), (18, 15)], fill=GOLD_LIGHT)
+
+
+# ---- スキルの拡張（11月17日）：ウィザード
+def w_lamp_barrage(c):
+    # 扇に広がる灯火
+    for (x, y) in ((8, 22), (12, 13), (19, 9), (25, 14), (26, 23)):
+        c.line([(16, 28), (x, y)], mix(EMBER, CLEAR, 0.5), 1)
+        c.ellipse(x - 3, y - 3, x + 3, y + 3, fill=EMBER)
+        c.ellipse(x - 2, y - 2, x + 1, y + 1, fill=FIRE)
+    c.ellipse(13, 25, 19, 31, fill=VIOLET)
+
+
+def w_light_veil(c):
+    # 人を包む光の帳
+    c.ellipse(3, 3, 29, 29, outline=GOLD_LIGHT, width=2)
+    c.ellipse(6, 6, 26, 26, outline=mix(GOLD, CLEAR, 0.5), width=1)
+    c.ellipse(13, 8, 19, 14, fill=WHITE)
+    c.poly([(10, 24), (13, 15), (19, 15), (22, 24)], fill=WHITE)
+    sparkle(c, 25, 7, GOLD_LIGHT, 2)
+
+
+def w_star_burst(c):
+    # 弾ける星
+    for a in range(0, 360, 45):
+        r = math.radians(a)
+        c.line([(16 + math.cos(r) * 6, 16 + math.sin(r) * 6), (16 + math.cos(r) * 14, 16 + math.sin(r) * 14)],
+               mix(GOLD_LIGHT, GOLD, (a % 90) / 90), 2)
+    star(c, 16, 16, 7, 3, GOLD)
+    star(c, 16, 16, 3.5, 1.5, WHITE)
+
+
+def w_star_afterglow(c):
+    # 星と、戻ってくる光の雫
+    star(c, 11, 11, 8, 3.5, GOLD)
+    c.arc((8, 8, 28, 28), 20, 110, MANA_BLUE, 2)
+    c.poly([(23, 20), (26, 26), (20, 26)], fill=MANA_BLUE)
+    c.ellipse(19, 23, 27, 30, fill=MANA_BLUE)
+
+
+def w_icicle(c):
+    # 氷の槍
+    c.poly([(4, 28), (26, 4), (29, 7), (8, 30)], fill=ICE, outline=WHITE)
+    c.line([(7, 27), (26, 6)], WHITE, 1)
+    for (x, y) in ((3, 22), (10, 30), (2, 26)):
+        c.px(x, y, RIM_LIGHT)
+
+
+def w_frost_heart(c):
+    # 氷の心臓
+    c.poly([(16, 28), (4, 15), (4, 9), (10, 4), (16, 9), (22, 4), (28, 9), (28, 15)], fill=hexc("6FCBFF"), outline=WHITE)
+    c.line([(10, 9), (14, 14), (12, 19)], WHITE, 1)
+    c.line([(22, 9), (18, 15)], RIM_LIGHT, 1)
+
+
+def w_thunderbolt(c):
+    # 雲から落ちる雷
+    c.ellipse(4, 3, 18, 12, fill=STEEL_DARK)
+    c.ellipse(12, 2, 28, 13, fill=STEEL_DARK)
+    pts = [(17, 12), (12, 19), (17, 19), (11, 29)]
+    c.line(pts, FIRE, 3)
+    c.line(pts, WHITE, 1)
+    sparkle(c, 9, 28, FIRE, 2)
+
+
+def w_frost_wave(c):
+    # 足もとから広がる冷気の波
+    for i, r in enumerate((13, 9, 5)):
+        c.arc((16 - r, 22 - r * 0.6, 16 + r, 22 + r * 0.6), 180, 360, mix(WHITE, ICE, i / 2), 2)
+    for x in (6, 12, 20, 26):
+        c.poly([(x - 2, 26), (x, 18 + (x % 3) * 2), (x + 2, 26)], fill=ICE)
+    c.line([(3, 27), (29, 27)], RIM, 1)
+
+
+def w_deep_chill(c):
+    # 深く沈む雪の結晶
+    for a in range(0, 180, 30):
+        r = math.radians(a)
+        dx, dy = math.cos(r) * 11, math.sin(r) * 11
+        c.line([(16 - dx, 16 - dy), (16 + dx, 16 + dy)], ICE if a % 60 == 0 else RIM, 2 if a % 60 == 0 else 1)
+    c.ellipse(12, 12, 20, 20, fill=hexc("2C6FB0"), outline=WHITE)
+
+
+MANA_BLUE = hexc("7CC4FF")
+
+
 SKILLS = {
     "knight/call": (k_call, KNIGHT),
     "knight/shield_bond": (k_shield_bond, KNIGHT),
@@ -535,6 +701,24 @@ SKILLS = {
     "wizard/blink": (w_blink, hexc("9FE6FF")),
     "wizard/mana_spring": (w_mana_spring, hexc("9FE6FF")),
     "wizard/starfall": (w_starfall, GOLD),
+    "knight/binding_chain": (k_binding_chain, KNIGHT),
+    "knight/parry": (k_parry, KNIGHT),
+    "knight/oath_circle": (k_oath_circle, KNIGHT),
+    "knight/taunt_mastery": (k_taunt_mastery, hexc("8FD3FF")),
+    "knight/heavy_slash": (k_heavy_slash, hexc("FFB46E")),
+    "knight/breaker": (k_breaker, hexc("FFB46E")),
+    "knight/oath_release": (k_oath_release, hexc("FFB46E")),
+    "knight/leap_slash": (k_leap_slash, hexc("FFB46E")),
+    "knight/fighting_spirit": (k_fighting_spirit, hexc("FFB46E")),
+    "wizard/lamp_barrage": (w_lamp_barrage, hexc("FFD27A")),
+    "wizard/light_veil": (w_light_veil, hexc("FFD27A")),
+    "wizard/star_burst": (w_star_burst, hexc("FFD27A")),
+    "wizard/star_afterglow": (w_star_afterglow, hexc("FFD27A")),
+    "wizard/icicle": (w_icicle, hexc("9FE6FF")),
+    "wizard/frost_heart": (w_frost_heart, hexc("9FE6FF")),
+    "wizard/thunderbolt": (w_thunderbolt, hexc("9FE6FF")),
+    "wizard/frost_wave": (w_frost_wave, hexc("9FE6FF")),
+    "wizard/deep_chill": (w_deep_chill, hexc("9FE6FF")),
 }
 
 
@@ -886,11 +1070,57 @@ def e_chanting(c):
     star(c, 9, 9, 4, 1.8, hexc("E2C8FF"))
 
 
+def e_frozen(c):
+    c.rect(3, 3, 15, 15, hexc("BFF2FF", 190), outline=WHITE)
+    c.line([(5, 12), (8, 7), (11, 10)], WHITE, 1)
+    c.px(12, 5, WHITE)
+
+
+def e_shock(c):
+    pts = [(11, 1), (5, 9), (10, 9), (6, 17)]
+    c.line(pts, FIRE, 3)
+    c.line(pts, WHITE, 1)
+
+
+def e_star_brand(c):
+    star(c, 9, 9, 8, 3.3, GOLD)
+    star(c, 9, 9, 3.5, 1.5, WHITE)
+
+
+def e_armor_break(c):
+    shield_shape(c, 9, 2, 13, 15, STEEL_DARK, WHITE)
+    c.line([(9, 3), (7, 8), (11, 10), (8, 15)], EMBER, 2)
+
+
+def e_barrier(c):
+    c.ellipse(1, 1, 17, 17, outline=GOLD_LIGHT, width=2)
+    c.ellipse(5, 5, 13, 13, fill=hexc("FFE9A0", 170))
+    sparkle(c, 13, 4, WHITE, 1)
+
+
+def e_ward(c):
+    c.ellipse(1, 9, 17, 17, outline=RIM, width=1)
+    shield_shape(c, 9, 1, 10, 12, KNIGHT, WHITE)
+
+
+def e_parry(c):
+    c.poly([(3, 6), (10, 2), (15, 9), (8, 16)], fill=STEEL, outline=WHITE)
+    sparkle(c, 15, 3, GOLD_LIGHT, 1)
+
+
+def e_charging(c):
+    c.arc((1, 1, 17, 17), 200, 520, FIRE, 2)
+    c.ellipse(6, 6, 12, 12, fill=EMBER)
+    c.px(9, 9, WHITE)
+
+
 def make_effects():
     out = []
     for name, fn in (("stagger", e_stagger), ("frost", e_frost), ("rampart", e_rampart), ("unyielding", e_unyielding),
                      ("shield_bond", e_shield_bond), ("fortress", e_fortress), ("link_support", e_link_support),
-                     ("chanting", e_chanting)):
+                     ("chanting", e_chanting), ("frozen", e_frozen), ("shock", e_shock), ("star_brand", e_star_brand),
+                     ("armor_break", e_armor_break), ("barrier", e_barrier), ("ward", e_ward), ("parry", e_parry),
+                     ("charging", e_charging)):
         out.append(save(effect_icon(fn), "textures/mob_effect/%s.png" % name))
     return out
 

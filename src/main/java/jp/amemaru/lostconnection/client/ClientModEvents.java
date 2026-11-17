@@ -1,10 +1,12 @@
 package jp.amemaru.lostconnection.client;
 
 import jp.amemaru.lostconnection.AmemaruMod;
+import jp.amemaru.lostconnection.client.fx.FxParticle;
 import jp.amemaru.lostconnection.client.render.LampBoltRenderer;
 import jp.amemaru.lostconnection.client.render.TrainingDummyRenderer;
 import jp.amemaru.lostconnection.core.registry.ModEntities;
 import jp.amemaru.lostconnection.core.registry.ModItems;
+import jp.amemaru.lostconnection.core.registry.ModParticles;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.resources.ResourceLocation;
@@ -12,13 +14,14 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
 import net.minecraftforge.client.event.RegisterGuiOverlaysEvent;
 import net.minecraftforge.client.event.RegisterKeyMappingsEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 
 /**
- * クライアントの登録（Modのイベントバス）：キー・HUD・エンティティの見た目・盾の構え・プレイヤーのモーション。
+ * クライアントの登録（Modのイベントバス）：キー・HUD・エンティティの見た目・盾の構え・プレイヤーのモーション・演出用パーティクル。
  */
 @Mod.EventBusSubscriber(modid = AmemaruMod.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.MOD)
 public final class ClientModEvents {
@@ -49,6 +52,16 @@ public final class ClientModEvents {
         // ホットバーのすぐ後に描く（ハートや空気の泡より先に描き、高さの計算を渡すため）
         event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "status", AmemaruHud.STATUS);
         event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "skills", SkillHud.OVERLAY);
+    }
+
+    @SubscribeEvent
+    public static void onRegisterParticles(RegisterParticleProvidersEvent event) {
+        event.registerSpriteSet(ModParticles.GLOW.get(), sprites -> new FxParticle.Provider(sprites, FxParticle.Style.GLOW));
+        event.registerSpriteSet(ModParticles.SPARK.get(), sprites -> new FxParticle.Provider(sprites, FxParticle.Style.SPARK));
+        event.registerSpriteSet(ModParticles.SHARD.get(), sprites -> new FxParticle.Provider(sprites, FxParticle.Style.SHARD));
+        event.registerSpriteSet(ModParticles.STAR.get(), sprites -> new FxParticle.Provider(sprites, FxParticle.Style.STAR));
+        event.registerSpriteSet(ModParticles.RUNE.get(), sprites -> new FxParticle.Provider(sprites, FxParticle.Style.RUNE));
+        event.registerSpriteSet(ModParticles.SNOW.get(), sprites -> new FxParticle.Provider(sprites, FxParticle.Style.SNOW));
     }
 
     @SubscribeEvent

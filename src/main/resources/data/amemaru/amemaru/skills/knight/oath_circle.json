@@ -1,0 +1,59 @@
+{
+  "job": "knight",
+  "school": "guardian",
+  "row": 3,
+  "column": 0,
+  "type": "active",
+  "name": "誓いの円陣",
+  "description": "誓いの盾を地に立て、光の円陣を張る。円陣の中の仲間は守られ、中にいる敵は自分から目を離せなくなる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "knight/rampart",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 24
+  },
+  "cooldown": 30,
+  "cooldown_per_rank": -3,
+  "link": "support",
+  "delivery": {
+    "type": "around",
+    "radius": 5,
+    "affects": "allies",
+    "include_self": true
+  },
+  "effects": [
+    {
+      "type": "zone",
+      "radius": 5,
+      "duration": 6,
+      "duration_per_rank": 1,
+      "interval": 0.5,
+      "effects": [
+        {
+          "type": "taunt",
+          "duration": 1.5
+        },
+        {
+          "type": "buff",
+          "to": "allies",
+          "buff": "ward",
+          "duration": 1.0,
+          "value": 15,
+          "value_per_rank": 5
+        }
+      ]
+    }
+  ],
+  "animation": "knight_oath_circle",
+  "sound": "amemaru:skill.knight.oath_circle"
+}

@@ -1,6 +1,7 @@
 package jp.amemaru.lostconnection.job;
 
 import jp.amemaru.lostconnection.AmemaruMod;
+import jp.amemaru.lostconnection.combat.StatusService;
 import jp.amemaru.lostconnection.core.config.ServerConfig;
 import jp.amemaru.lostconnection.core.registry.ModEffects;
 import jp.amemaru.lostconnection.core.registry.ModSounds;
@@ -9,8 +10,10 @@ import jp.amemaru.lostconnection.job.def.SkillDef;
 import jp.amemaru.lostconnection.job.def.SkillRegistry;
 import jp.amemaru.lostconnection.network.s2c.CombatTextS2C;
 import jp.amemaru.lostconnection.network.s2c.SkillFxS2C;
+import jp.amemaru.lostconnection.network.s2c.StatusFxS2C;
 import jp.amemaru.lostconnection.player.BuffState;
 import jp.amemaru.lostconnection.player.CastState;
+import jp.amemaru.lostconnection.player.LevelService;
 import jp.amemaru.lostconnection.player.PlayerData;
 import jp.amemaru.lostconnection.player.SkillCooldown;
 import jp.amemaru.lostconnection.player.StatType;
@@ -37,6 +40,8 @@ import java.util.Locale;
  *   <li>MPとゲージを使い、クールダウンを始め、効果と演出を出す。</li>
  * </ol>
  * <p>詠唱中に同じスキルのキーをもう一度押すと、詠唱をやめる。</p>
+ * <p>溜めるスキル（{@code charge}）は、キーを押すと溜めを始め（確かめるのはここまでと同じ）、離したときに
+ * {@link #tryRelease} で放つ。MPとクールダウンは放ったときに使う。溜めきってから1秒たつと、自動で放つ。</p>
  */
 public final class SkillService {
     /** 使えなかった理由（画面に出す文の名前）。 */
@@ -54,7 +59,9 @@ public final class SkillService {
         CANCELLED("message.amemaru.skill.cast_cancelled", true),
         DEAD("", false),
         SPAM("", false),
-        NOT_READY("", false);
+        NOT_READY("", false),
+        NO_BRANDED("message.amemaru.skill.no_branded", true),
+        NOT_CHARGING("", false);
 
         private final String key;
         private final boolean shown;
@@ -78,6 +85,9 @@ public final class SkillService {
             return index >= 0 && index < values.length ? values[index] : NOT_READY;
         }
     }
+
+    /** 溜めきってから、自動で放つまで（tick）。 */
+    private static final int CHARGE_HOLD_TICKS = 20;
 
     /** 結果（成功なら failure は null）。 */
     public record Result(@Nullable Failure failure) {
@@ -109,7 +119,11 @@ public final class SkillService {
             return new Result(Failure.DEAD);
         }
         if (!data.isStatsReady()) {
-            return new Result(Failure.NOT_READY);
+            // 持ちかえなどで計算し直す印がついているだけなら、ここで計算する
+            LevelService.recompute(player, data);
+            if (!data.isStatsReady()) {
+                return new Result(Failure.NOT_READY);
+            }
         }
         SkillRegistry.Snapshot snapshot = SkillRegistry.get();
         JobDef job = snapshot.job(data.getCombatJob());
@@ -129,6 +143,10 @@ public final class SkillService {
 
         CastState casting = data.getCasting();
         if (casting != null) {
+            if (casting.charging()) {
+                // 溜めている間の押下（離したことが届く前の押し直しなど）は、何もしない
+                return new Result(casting.slot() == slot ? Failure.NOT_CHARGING : Failure.CASTING);
+            }
             if (casting.slot() == slot) {
                 cancelCast(player, data, false);
                 return fail(player, Failure.CANCELLED);
@@ -156,18 +174,85 @@ public final class SkillService {
             return new Result(Failure.NO_GAUGE);
         }
 
+        int index = snapshot.skillIndex(skillId);
+        if (skill.isCharged()) {
+            // 溜め：狙いは離したときに決める
+            startCharge(player, data, skill, index, rank, slot, now);
+            return Result.OK;
+        }
+
         SkillTargeting.Aim aim = SkillTargeting.resolve(player, skill, rank, entityAim, pointAim);
         if (aim.failure() != null) {
             return fail(player, aim.failure());
         }
 
         int castTicks = castTicks(data, skill, rank, now);
-        int index = snapshot.skillIndex(skillId);
         if (castTicks > 0) {
             startCast(player, data, skill, index, rank, slot, castTicks, aim, now);
             return Result.OK;
         }
-        execute(player, data, skill, index, rank, aim, now);
+        execute(player, data, skill, index, rank, aim, now, 1.0);
+        return Result.OK;
+    }
+
+    // ---------------------------------------------------------------- 溜め
+
+    private static void startCharge(ServerPlayer player, PlayerData data, SkillDef skill, int index, int rank, int slot, long now) {
+        int ticks = Math.max(1, Mth.ceil(skill.chargeTime() * 20.0));
+        data.setCasting(new CastState(skill.id(), rank, slot, now, now + ticks, -1, null, true));
+        player.addEffect(new MobEffectInstance(ModEffects.CHARGING.get(), ticks + CHARGE_HOLD_TICKS + 4, 0, false, false, true));
+        new SkillFxS2C(SkillFxS2C.Phase.CHARGE_START, player.getId(), index, player.position(), player.position(),
+                (float) skill.delivery().radius(rank), ticks, new int[0], 0.0F).sendNear(player.level().dimension(), player.position());
+        SoundEvent sound = ModSounds.byId(skill.castSound());
+        player.level().playSound(null, player.getX(), player.getY(), player.getZ(), sound != null ? sound : ModSounds.get("skill.charge"),
+                SoundSource.PLAYERS, 0.8F, 1.0F);
+    }
+
+    /**
+     * 溜めを離して放つ（キーを離したとき。溜めきって1秒たったときは自動で）。
+     *
+     * @param entityAim クライアントが狙った相手（ないときは -1）
+     * @param pointAim  クライアントが狙った地点（ないときは null）
+     */
+    public static Result tryRelease(ServerPlayer player, PlayerData data, int slot, int entityAim, @Nullable Vec3 pointAim) {
+        CastState casting = data.getCasting();
+        if (casting == null || !casting.charging() || casting.slot() != slot) {
+            return new Result(Failure.NOT_CHARGING);
+        }
+        return releaseCharge(player, data, casting, player.level().getGameTime(), entityAim, pointAim);
+    }
+
+    private static Result releaseCharge(ServerPlayer player, PlayerData data, CastState casting, long now, int entityAim,
+                                        @Nullable Vec3 pointAim) {
+        data.setCasting(null);
+        player.removeEffect(ModEffects.CHARGING.get());
+        SkillRegistry.Snapshot snapshot = SkillRegistry.get();
+        SkillDef skill = snapshot.skill(casting.skill());
+        JobDef job = snapshot.job(data.getCombatJob());
+        int index = snapshot.skillIndex(casting.skill());
+        Failure failure = null;
+        if (!player.isAlive()) {
+            failure = Failure.DEAD;
+        } else if (skill == null || job == null || !skill.job().equals(job.id()) || data.getSkillRank(skill.id()) <= 0) {
+            failure = Failure.NOT_LEARNED;
+        } else if (!hasWeapon(player, job)) {
+            failure = Failure.NO_WEAPON;
+        } else if (data.getMp() + 1.0E-6 < skill.mpCost(casting.rank())) {
+            failure = Failure.NO_MP;
+        } else if (data.getGauge() + 1.0E-6 < skill.gaugeCost(casting.rank())) {
+            failure = Failure.NO_GAUGE;
+        }
+        SkillTargeting.Aim aim = null;
+        if (failure == null) {
+            aim = SkillTargeting.resolve(player, skill, casting.rank(), entityAim, pointAim);
+            failure = aim.failure();
+        }
+        if (failure != null) {
+            new SkillFxS2C(SkillFxS2C.Phase.CAST_CANCEL, player.getId(), index, player.position(), player.position(), 0, 0, new int[0])
+                    .sendNear(player.level().dimension(), player.position());
+            return fail(player, failure);
+        }
+        execute(player, data, skill, index, casting.rank(), aim, now, casting.chargeRatio(now));
         return Result.OK;
     }
 
@@ -206,7 +291,7 @@ public final class SkillService {
 
     private static void startCast(ServerPlayer player, PlayerData data, SkillDef skill, int index, int rank, int slot, int ticks,
                                   SkillTargeting.Aim aim, long now) {
-        data.setCasting(new CastState(skill.id(), rank, slot, now, now + ticks, aim.entityId(), aim.point()));
+        data.setCasting(new CastState(skill.id(), rank, slot, now, now + ticks, aim.entityId(), aim.point(), false));
         player.addEffect(new MobEffectInstance(ModEffects.CHANTING.get(), ticks + 2, 0, false, false, true));
         Vec3 to = aim.point() != null ? aim.point() : aim.entity() != null ? aim.entity().position() : player.position();
         new SkillFxS2C(SkillFxS2C.Phase.CAST_START, player.getId(), index, player.position(), to,
@@ -217,14 +302,14 @@ public final class SkillService {
         }
     }
 
-    /** 詠唱をやめる。 */
+    /** 詠唱（溜め）をやめる。 */
     public static void cancelCast(ServerPlayer player, PlayerData data, boolean notify) {
         CastState casting = data.getCasting();
         if (casting == null) {
             return;
         }
         data.setCasting(null);
-        player.removeEffect(ModEffects.CHANTING.get());
+        player.removeEffect(casting.charging() ? ModEffects.CHARGING.get() : ModEffects.CHANTING.get());
         int index = SkillRegistry.get().skillIndex(casting.skill());
         new SkillFxS2C(SkillFxS2C.Phase.CAST_CANCEL, player.getId(), index, player.position(), player.position(), 0, 0, new int[0])
                 .sendNear(player.level().dimension(), player.position());
@@ -270,24 +355,31 @@ public final class SkillService {
             }
             return;
         }
-        execute(player, data, skill, index, casting.rank(), aim, now);
+        execute(player, data, skill, index, casting.rank(), aim, now, 1.0);
     }
 
     // ---------------------------------------------------------------- 放つ
 
     private static void execute(ServerPlayer player, PlayerData data, SkillDef skill, int index, int rank, SkillTargeting.Aim aim,
-                                long now) {
+                                long now, double chargeRatio) {
         // MPとゲージを使い、クールダウンを始める
         data.setMp(data.getMp() - skill.mpCost(rank));
-        if (skill.gaugeCost(rank) > 0) {
-            GaugeService.consume(player, data, skill.gaugeCost(rank));
+        double gaugeSpent = 0.0;
+        if (skill.gaugeCost(rank) > 0 && GaugeService.consume(player, data, skill.gaugeCost(rank))) {
+            gaugeSpent = skill.gaugeCost(rank);
         }
         int cooldownTicks = cooldownTicks(data, skill, rank);
         if (cooldownTicks > 0) {
             data.setCooldown(skill.id(), new SkillCooldown(now + cooldownTicks, cooldownTicks));
         }
 
-        SkillContext ctx = new SkillContext(player, data.getStats(), skill, index, rank);
+        SkillContext ctx = new SkillContext(player, data.getStats(), skill, index, rank).loadPassives(data);
+        ctx.gaugeSpent = gaugeSpent;
+        if (skill.isCharged()) {
+            ctx.chargeRatio = Math.max(0.0, Math.min(1.0, chargeRatio));
+            ctx.fullCharge = ctx.chargeRatio >= 0.999;
+            ctx.multiplier *= skill.chargeMultiplier(ctx.chargeRatio);
+        }
         // 連携支援：ほかの人の「支援」を受けていれば、このスキルの効果が上がる
         BuffState buffs = data.getBuffs();
         if (buffs.supported(now) && buffs.supportFrom != null && !buffs.supportFrom.equals(player.getUUID())) {
@@ -323,9 +415,20 @@ public final class SkillService {
         if (casting != null) {
             if (!player.isAlive()) {
                 cancelCast(player, data, false);
+            } else if (casting.charging()) {
+                if (now >= casting.endTick() + CHARGE_HOLD_TICKS) {
+                    releaseCharge(player, data, casting, now, -1, null);
+                }
             } else if (now >= casting.endTick()) {
                 finishCast(player, data, casting, now);
             }
+        }
+        // 障壁の時間切れ（HUDの表示を消すため）
+        BuffState buffs = data.getBuffs();
+        if (buffs.barrierAmount > 0 && now >= buffs.barrierUntil) {
+            buffs.clearBarrier();
+            data.markDirty(PlayerData.SYNC_VITALS);
+            StatusService.sync(player, StatusFxS2C.Event.NONE);
         }
         GaugeService.tick(player, data, now);
         PassiveService.tick(player, data);

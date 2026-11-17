@@ -172,6 +172,126 @@ define("wizard_starfall_release", 16,
        body=[(0, [-6, 0, 0], "easeInQuad"), (4, [14, 0, 0]), (11, [14, 0, 0], "easeInOutSine"), (16, ZERO)])
 
 
+# ================================================================ スキルの拡張（11月17日）：ナイト
+# 縛鎖：盾を前へ突き出して鎖を放ち、ぐっと引き寄せる
+define("knight_binding_chain", 14,
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (3, [-95, 20, 0], "easeInOutSine"), (6, [-90, 15, 0], "easeInQuad"), (9, [-40, 30, -10]),
+                 (11, [-40, 30, -10], "easeInOutSine"), (14, L_IDLE)],
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (3, [-20, 0, 25]), (9, [-30, 0, 15], "easeInOutSine"), (14, R_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (3, [6, 15, 0], "easeInQuad"), (9, [-6, -12, 0], "easeInOutSine"), (14, ZERO)])
+
+# 受け流し：盾を斜めに、さっと前へ（短く鋭い構え）
+define("knight_parry", 12,
+       left_arm=[(0, L_IDLE, "easeOutBack"), (2, [-80, 45, -10]), (8, [-80, 45, -10], "easeInOutSine"), (12, L_IDLE)],
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, [-35, -20, 20]), (8, [-35, -20, 20], "easeInOutSine"), (12, R_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (2, [4, 20, 0]), (8, [4, 20, 0], "easeInOutSine"), (12, ZERO)],
+       right_leg=[(0, ZERO, "easeOutQuad"), (2, [12, 0, 4]), (8, [12, 0, 4], "easeInOutSine"), (12, ZERO)],
+       left_leg=[(0, ZERO, "easeOutQuad"), (2, [-14, 0, -4]), (8, [-14, 0, -4], "easeInOutSine"), (12, ZERO)])
+
+# 誓いの円陣：盾を高く掲げ、地面に突き立てる
+define("knight_oath_circle", 18,
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (5, [-170, 0, 10], "easeInQuad"), (8, [-60, 10, 0]), (14, [-60, 10, 0], "easeInOutSine"),
+                 (18, L_IDLE)],
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (5, [-150, 0, -15], "easeInQuad"), (8, [-55, -10, 0]),
+                  (14, [-55, -10, 0], "easeInOutSine"), (18, R_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (5, [-6, 0, 0], "easeInQuad"), (8, [16, 0, 0]), (14, [16, 0, 0], "easeInOutSine"), (18, ZERO)],
+       right_leg=[(0, ZERO), (5, ZERO, "easeInQuad"), (8, [-18, 0, 5]), (14, [-18, 0, 5], "easeInOutSine"), (18, ZERO)],
+       left_leg=[(0, ZERO), (5, ZERO, "easeInQuad"), (8, [18, 0, -5]), (14, [18, 0, -5], "easeInOutSine"), (18, ZERO)])
+
+# 溜め斬り（溜め）：剣を肩の後ろへ大きく引き、体をひねって力を溜める。くり返し（足は歩ける）
+define("knight_heavy_slash_charge", 20, loop=True,
+       right_arm=[(0, [-150, 40, 40], "easeInOutSine"), (10, [-156, 40, 44], "easeInOutSine"), (20, [-150, 40, 40])],
+       left_arm=[(0, [-60, -30, -20], "easeInOutSine"), (10, [-64, -30, -22], "easeInOutSine"), (20, [-60, -30, -20])],
+       body=[(0, [6, 30, 0], "easeInOutSine"), (10, [8, 32, 0], "easeInOutSine"), (20, [6, 30, 0])])
+
+# 溜め斬り（放つ）：引いた剣を、前を薙ぐように大きく振り抜く
+define("knight_heavy_slash", 14,
+       right_arm=[(0, [-150, 40, 40], "easeInQuad"), (3, [-85, -60, 0]), (6, [-70, -80, -10]), (10, [-70, -80, -10], "easeInOutSine"),
+                  (14, R_IDLE)],
+       left_arm=[(0, [-60, -30, -20], "easeInQuad"), (3, [-20, 20, -30]), (10, [-20, 20, -30], "easeInOutSine"), (14, L_IDLE)],
+       body=[(0, [6, 30, 0], "easeInQuad"), (3, [14, -30, 0]), (6, [14, -40, 0]), (10, [14, -40, 0], "easeInOutSine"), (14, ZERO)],
+       right_leg=[(0, ZERO), (3, [-25, 0, 0]), (10, [-25, 0, 0], "easeInOutSine"), (14, ZERO)],
+       left_leg=[(0, ZERO), (3, [22, 0, 0]), (10, [22, 0, 0], "easeInOutSine"), (14, ZERO)])
+
+# 跳躍斬（跳ぶ）：しゃがんで跳び、剣を頭上に振りかぶったまま飛ぶ（着地で knight_leap_land に替わる）
+define("knight_leap_slash", 30,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (3, [-170, 0, -15]), (26, [-175, 0, -10], "easeInOutSine"), (30, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (3, [-150, 0, 20]), (26, [-155, 0, 15], "easeInOutSine"), (30, L_IDLE)],
+       body=[(0, [14, 0, 0], "easeOutQuad"), (3, [-10, 0, 0]), (26, [-8, 0, 0], "easeInOutSine"), (30, ZERO)],
+       right_leg=[(0, [-30, 0, 0], "easeOutQuad"), (4, [-40, 0, 0]), (26, [-35, 0, 0], "easeInOutSine"), (30, ZERO)],
+       left_leg=[(0, [20, 0, 0], "easeOutQuad"), (4, [10, 0, 0]), (26, [12, 0, 0], "easeInOutSine"), (30, ZERO)])
+
+# 跳躍斬（着地）：剣を地面へ叩きつける
+define("knight_leap_land", 12,
+       right_arm=[(0, [-175, 0, -10], "easeInQuad"), (2, [-40, 0, 0]), (8, [-40, 0, 0], "easeInOutSine"), (12, R_IDLE)],
+       left_arm=[(0, [-155, 0, 15], "easeInQuad"), (2, [-45, 0, 10]), (8, [-45, 0, 10], "easeInOutSine"), (12, L_IDLE)],
+       body=[(0, [-8, 0, 0], "easeInQuad"), (2, [24, 0, 0]), (8, [24, 0, 0], "easeInOutSine"), (12, ZERO)],
+       right_leg=[(0, ZERO), (2, [-30, 0, 6]), (8, [-30, 0, 6], "easeInOutSine"), (12, ZERO)],
+       left_leg=[(0, ZERO), (2, [25, 0, -6]), (8, [25, 0, -6], "easeInOutSine"), (12, ZERO)])
+
+# 誓気解放：剣を引いてから、まっすぐ突き出す
+define("knight_oath_release", 14,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (4, [-70, 30, 30], "easeInQuad"), (6, [-95, -5, 0]), (10, [-95, -5, 0], "easeInOutSine"),
+                  (14, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (4, [-50, 0, -20], "easeInQuad"), (6, [15, 0, -20]), (10, [15, 0, -20], "easeInOutSine"),
+                 (14, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (4, [-4, 20, 0], "easeInQuad"), (6, [16, -10, 0]), (10, [16, -10, 0], "easeInOutSine"), (14, ZERO)],
+       right_leg=[(0, ZERO), (4, ZERO, "easeInQuad"), (6, [-30, 0, 0]), (10, [-30, 0, 0], "easeInOutSine"), (14, ZERO)],
+       left_leg=[(0, ZERO), (4, ZERO, "easeInQuad"), (6, [24, 0, 0]), (10, [24, 0, 0], "easeInOutSine"), (14, ZERO)])
+
+# ================================================================ スキルの拡張（11月17日）：ウィザード
+# 灯火の連弾（溜め）：杖を前に構え、左手で灯火を集める。くり返し（足は歩ける）
+define("wizard_lamp_barrage_charge", 20, loop=True,
+       right_arm=[(0, [-85, -10, 0], "easeInOutSine"), (10, [-90, -12, 0], "easeInOutSine"), (20, [-85, -10, 0])],
+       left_arm=[(0, [-70, 30, -10], "easeInOutSine"), (5, [-80, 10, -20], "easeInOutSine"), (10, [-70, -5, -10], "easeInOutSine"),
+                 (15, [-60, 15, 0], "easeInOutSine"), (20, [-70, 30, -10])])
+
+# 灯火の連弾（放つ）：杖を横へ払い、灯火を扇に放つ
+define("wizard_lamp_barrage", 10,
+       right_arm=[(0, [-85, -10, 0], "easeOutQuad"), (2, [-90, 40, 0]), (5, [-90, -45, 0]), (7, [-85, -45, 0], "easeInOutSine"),
+                  (10, [-20, 0, 0])],
+       left_arm=[(0, [-70, 30, -10], "easeOutQuad"), (3, [-20, 0, -40]), (7, [-20, 0, -40], "easeInOutSine"), (10, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (2, [0, 15, 0]), (5, [0, -15, 0]), (7, [0, -15, 0], "easeInOutSine"), (10, ZERO)])
+
+# 光の帳：杖を掲げ、左の手のひらを味方へ向ける
+define("wizard_light_veil", 14,
+       right_arm=[(0, R_IDLE, "easeOutSine"), (4, [-150, 0, -10]), (10, [-150, 0, -10], "easeInOutSine"), (14, [-20, 0, 0])],
+       left_arm=[(0, L_IDLE, "easeOutSine"), (4, [-95, 15, 0]), (10, [-95, 15, 0], "easeInOutSine"), (14, L_IDLE)])
+
+# 星爆：両手を握って胸の前へ集め、ぱっと上へ開く
+define("wizard_star_burst", 12,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (3, [-70, -40, 0], "easeInQuad"), (5, [-160, 0, -40]), (9, [-160, 0, -40], "easeInOutSine"),
+                  (12, [-20, 0, 0])],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (3, [-70, 40, 0], "easeInQuad"), (5, [-160, 0, 40]), (9, [-160, 0, 40], "easeInOutSine"),
+                 (12, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (3, [8, 0, 0], "easeInQuad"), (5, [-8, 0, 0]), (9, [-8, 0, 0], "easeInOutSine"), (12, ZERO)])
+
+# 氷柱：杖を引いて、前へ鋭く突く
+define("wizard_icicle", 9,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, [-60, 20, 20], "easeInQuad"), (4, [-100, -5, 0]), (6, [-100, -5, 0], "easeInOutSine"),
+                  (9, [-20, 0, 0])],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (2, [-40, 0, -20]), (6, [-10, 0, -30], "easeInOutSine"), (9, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (2, [-4, 15, 0], "easeInQuad"), (4, [10, -10, 0]), (6, [10, -10, 0], "easeInOutSine"), (9, ZERO)])
+
+# 凍てつく波動：杖を両手で高く掲げ、足もとへ突き下ろす
+define("wizard_frost_wave", 14,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (4, [-170, 0, 5], "easeInQuad"), (7, [-45, 0, 0]), (11, [-45, 0, 0], "easeInOutSine"),
+                  (14, [-20, 0, 0])],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (4, [-165, 0, -5], "easeInQuad"), (7, [-50, 0, 0]), (11, [-50, 0, 0], "easeInOutSine"),
+                 (14, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (4, [-8, 0, 0], "easeInQuad"), (7, [22, 0, 0]), (11, [22, 0, 0], "easeInOutSine"), (14, ZERO)],
+       right_leg=[(0, ZERO), (4, ZERO, "easeInQuad"), (7, [-15, 0, 5]), (11, [-15, 0, 5], "easeInOutSine"), (14, ZERO)],
+       left_leg=[(0, ZERO), (4, ZERO, "easeInQuad"), (7, [15, 0, -5]), (11, [15, 0, -5], "easeInOutSine"), (14, ZERO)])
+
+# 雷霆：杖を天に掲げ、狙った地点へ振り下ろす
+define("wizard_thunderbolt", 14,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (4, [-178, 0, -5]), (7, [-178, 0, -5], "easeInQuad"), (9, [-70, -10, 0]),
+                  (12, [-70, -10, 0], "easeInOutSine"), (14, [-20, 0, 0])],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (4, [-30, 0, -45]), (12, [-30, 0, -45], "easeInOutSine"), (14, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (4, [-6, 0, 0]), (7, [-6, 0, 0], "easeInQuad"), (9, [10, 0, 0]), (12, [10, 0, 0], "easeInOutSine"),
+             (14, ZERO)])
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for name, data in ANIMS.items():

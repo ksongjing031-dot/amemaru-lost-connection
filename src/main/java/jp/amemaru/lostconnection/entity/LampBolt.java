@@ -4,7 +4,8 @@ import jp.amemaru.lostconnection.combat.CombatTargets;
 import jp.amemaru.lostconnection.core.registry.ModEntities;
 import jp.amemaru.lostconnection.job.SkillContext;
 import jp.amemaru.lostconnection.job.SkillExecutor;
-import net.minecraft.core.particles.DustParticleOptions;
+import jp.amemaru.lostconnection.core.registry.ModParticles;
+import jp.amemaru.lostconnection.particle.FxParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -18,7 +19,6 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Vector3f;
 
 import javax.annotation.Nullable;
 
@@ -29,7 +29,15 @@ import javax.annotation.Nullable;
  * （{@code textures/entity/lamp_bolt.png}）と、通った後の光の粒。</p>
  */
 public class LampBolt extends Projectile {
-    private static final DustParticleOptions TRAIL = new DustParticleOptions(new Vector3f(1.0F, 0.78F, 0.35F), 1.0F);
+    /** 尾の光の粒（使うときに初めて作る：登録が済む前に作らないため）。 */
+    private static final class Trail {
+        static final FxParticleOptions GLOW = new FxParticleOptions(ModParticles.GLOW.get(), 1.0F, 0.62F, 0.25F, 0.55F, 9);
+        static final FxParticleOptions CORE = new FxParticleOptions(ModParticles.GLOW.get(), 1.0F, 0.95F, 0.8F, 0.3F, 4);
+        static final FxParticleOptions SPARK = new FxParticleOptions(ModParticles.SPARK.get(), 1.0F, 0.8F, 0.4F, 0.07F, 8);
+
+        private Trail() {
+        }
+    }
     private static final int MAX_LIFE = 200;
 
     @Nullable
@@ -44,14 +52,14 @@ public class LampBolt extends Projectile {
         super(type, level);
     }
 
-    /** 使った人の目の前から、見ている方向へ撃つ。 */
-    public static void launch(SkillContext context, ServerPlayer caster, double speed, double range, double hitRadius) {
+    /** 使った人の目の前から、{@code direction} の方向へ撃つ（灯火の連弾は、扇に広げて何発も撃つ）。 */
+    public static void launch(SkillContext context, ServerPlayer caster, Vec3 direction, double speed, double range, double hitRadius) {
         LampBolt bolt = new LampBolt(ModEntities.LAMP_BOLT.get(), caster.level());
         bolt.setOwner(caster);
         bolt.context = context;
         bolt.maxDistance = range;
         bolt.hitRadius = hitRadius;
-        Vec3 look = caster.getLookAngle();
+        Vec3 look = direction.normalize();
         Vec3 eye = caster.getEyePosition();
         bolt.setPos(eye.x + look.x * 0.7, eye.y - 0.15 + look.y * 0.7, eye.z + look.z * 0.7);
         bolt.start = bolt.position();
@@ -84,12 +92,15 @@ public class LampBolt extends Projectile {
                 return;
             }
         } else {
-            for (int i = 0; i < 2; i++) {
-                double t = i / 2.0;
-                level().addParticle(TRAIL, getX() - motion.x * t, getY() - motion.y * t, getZ() - motion.z * t, 0.0, 0.0, 0.0);
+            // 尾を引く灯火（このModの光の粒。2つの大きさを重ねて、芯を白く見せる）
+            for (int i = 0; i < 3; i++) {
+                double t = i / 3.0;
+                level().addParticle(Trail.GLOW, getX() - motion.x * t, getY() - motion.y * t, getZ() - motion.z * t, 0.0, 0.0, 0.0);
             }
+            level().addParticle(Trail.CORE, getX(), getY(), getZ(), 0.0, 0.0, 0.0);
             if (random.nextInt(3) == 0) {
-                level().addParticle(ParticleTypes.END_ROD, getX(), getY(), getZ(), 0.0, 0.0, 0.0);
+                level().addParticle(Trail.SPARK, getX(), getY(), getZ(), (random.nextDouble() - 0.5) * 0.1, -0.05,
+                        (random.nextDouble() - 0.5) * 0.1);
             }
         }
         setPos(getX() + motion.x, getY() + motion.y, getZ() + motion.z);

@@ -16,17 +16,27 @@ import java.util.function.Supplier;
 /**
  * スキルを使う（Phase 0-B 5章 {@code UseSkill}：スキル枠の番号、向きと狙った相手）。
  *
- * <p>送るのは「どの枠を・何を狙って」だけ。射程・視線・クールダウン・MPはサーバーで確かめる。
- * 番号（{@code sequence}）は、結果（{@link SkillResultS2C}）と手元のモーションを結びつけるために使う。</p>
+ * <p>送るのは「どの枠を・何を狙って・押したか離したか」だけ。射程・視線・クールダウン・MPはサーバーで確かめる。
+ * 番号（{@code sequence}）は、結果（{@link SkillResultS2C}）と手元のモーションを結びつけるために使う。
+ * 溜めるスキルは、押したとき（{@link #PRESS}）に溜めを始め、離したとき（{@link #RELEASE}）に放つ。</p>
  */
 public final class UseSkillC2S {
+    public static final int PRESS = 0;
+    public static final int RELEASE = 1;
+
     private final int sequence;
+    private final int action;
     private final int slot;
     private final int targetEntity;
     @Nullable
     private final Vec3 targetPoint;
 
     public UseSkillC2S(int sequence, int slot, int targetEntity, @Nullable Vec3 targetPoint) {
+        this(sequence, PRESS, slot, targetEntity, targetPoint);
+    }
+
+    public UseSkillC2S(int sequence, int action, int slot, int targetEntity, @Nullable Vec3 targetPoint) {
+        this.action = action == RELEASE ? RELEASE : PRESS;
         this.sequence = sequence;
         this.slot = slot;
         this.targetEntity = targetEntity;
@@ -35,6 +45,7 @@ public final class UseSkillC2S {
 
     public void encode(FriendlyByteBuf buf) {
         buf.writeVarInt(sequence);
+        buf.writeByte(action);
         buf.writeByte(slot);
         buf.writeVarInt(targetEntity + 1);
         buf.writeBoolean(targetPoint != null);
@@ -47,13 +58,14 @@ public final class UseSkillC2S {
 
     public static UseSkillC2S decode(FriendlyByteBuf buf) {
         int sequence = buf.readVarInt();
+        int action = buf.readByte();
         int slot = buf.readByte();
         int entity = buf.readVarInt() - 1;
         Vec3 point = null;
         if (buf.readBoolean()) {
             point = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
         }
-        return new UseSkillC2S(sequence, slot, entity, point);
+        return new UseSkillC2S(sequence, action, slot, entity, point);
     }
 
     public void handle(Supplier<NetworkEvent.Context> context) {
@@ -65,7 +77,9 @@ public final class UseSkillC2S {
             return;
         }
         PlayerDataCapability.get(player).ifPresent(data -> {
-            SkillService.Result result = SkillService.tryUse(player, data, slot, targetEntity, targetPoint);
+            SkillService.Result result = action == RELEASE
+                    ? SkillService.tryRelease(player, data, slot, targetEntity, targetPoint)
+                    : SkillService.tryUse(player, data, slot, targetEntity, targetPoint);
             ModNetwork.sendTo(player, new SkillResultS2C(sequence, result.ok(),
                     result.failure() == null ? -1 : result.failure().ordinal()));
         });

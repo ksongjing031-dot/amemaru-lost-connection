@@ -1,0 +1,50 @@
+{
+  "job": "wizard",
+  "school": "frost",
+  "row": 3,
+  "column": 0,
+  "type": "active",
+  "name": "雷霆",
+  "description": "空を裂く雷を、狙った地点に落とす。打たれた敵は感電し、次の雷鎖を大きく呼び込む。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "wizard/blink",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 22
+  },
+  "cooldown": 9,
+  "cooldown_per_rank": -0.5,
+  "link": "starter",
+  "delivery": {
+    "type": "point",
+    "range": 20,
+    "radius": 2.5,
+    "radius_per_rank": 0.3,
+    "impact_delay": 0.4
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "magic",
+      "coefficient": 2.0,
+      "coefficient_per_rank": 0.3
+    },
+    {
+      "type": "shock",
+      "duration": 6
+    }
+  ],
+  "animation": "wizard_thunderbolt",
+  "sound": "amemaru:skill.wizard.thunder_call",
+  "impact_sound": "amemaru:skill.wizard.thunderbolt"
+}

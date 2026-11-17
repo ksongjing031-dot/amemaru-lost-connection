@@ -1,0 +1,43 @@
+{
+  "job": "wizard",
+  "school": "starlight",
+  "row": 3,
+  "column": 1,
+  "type": "active",
+  "name": "星爆",
+  "description": "刻んだ星痕に呼びかけ、一斉に弾けさせる。星痕を多く刻んだ敵ほど、大きく弾ける。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "wizard/lamp_barrage",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 20
+  },
+  "cooldown": 10,
+  "cooldown_per_rank": -1,
+  "link": "finisher",
+  "delivery": {
+    "type": "branded",
+    "range": 20
+  },
+  "effects": [
+    {
+      "type": "detonate",
+      "stat": "magic",
+      "base": 0.8,
+      "per_stack": 0.6,
+      "per_stack_per_rank": 0.15
+    }
+  ],
+  "animation": "wizard_star_burst",
+  "sound": "amemaru:skill.wizard.star_burst"
+}

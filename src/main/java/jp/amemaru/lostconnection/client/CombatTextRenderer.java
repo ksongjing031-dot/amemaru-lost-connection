@@ -92,6 +92,21 @@ public final class CombatTextRenderer {
                 addAbove(entity, Component.translatable("combat.amemaru.support").getString(), 0xFFE066, 0x403000, 1.1F, now);
                 return;
             }
+            case PARRY -> {
+                if (entity == minecraft.player) {
+                    banner = new Banner(Component.translatable("combat.amemaru.parry").getString(), 0xD6F6FF, 2.2F, now);
+                }
+                addAbove(entity, Component.translatable("combat.amemaru.parry").getString(), 0xD6F6FF, 0x0A2A3A, 1.4F, now);
+                return;
+            }
+            case SHATTER -> {
+                addAbove(entity, Component.translatable("combat.amemaru.shatter").getString(), 0xBFF2FF, 0x06304A, 1.5F, now);
+                return;
+            }
+            case FROZEN -> {
+                addAbove(entity, Component.translatable("combat.amemaru.frozen").getString(), 0x9FE6FF, 0x06304A, 1.2F, now);
+                return;
+            }
             default -> {
             }
         }
@@ -106,6 +121,8 @@ public final class CombatTextRenderer {
             case MP -> addAbove(entity, "+" + amount + " MP", 0x7CC4FF, 0x00203A, 1.0F, now);
             case SHARED -> addAbove(entity, "-" + amount + " " + Component.translatable("combat.amemaru.shared").getString(),
                     0x9FE6FF, 0x0A2A3A, 0.9F, now);
+            case ABSORBED -> addAbove(entity, amount + " " + Component.translatable("combat.amemaru.absorbed").getString(),
+                    0xFFF2A8, 0x3A2A00, 0.9F, now);
             default -> {
             }
         }

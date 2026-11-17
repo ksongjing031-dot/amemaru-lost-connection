@@ -49,12 +49,18 @@ public final class SkillDef {
     private final LinkType link;
     private final DeliveryDef delivery;
     private final List<EffectDef> effects;
+    /** 溜めの時間（秒。0なら溜めないスキル）。 */
+    private final double chargeTime;
+    private final double chargeMinMultiplier;
+    private final double chargeMaxMultiplier;
+    private final List<EffectDef> fullChargeEffects;
     // パッシブだけ
     @Nullable
     private final PassiveDef passive;
     // 演出
     private final String animation;
     private final String castAnimation;
+    private final String chargeAnimation;
     private final String fx;
     @Nullable
     private final ResourceLocation sound;
@@ -87,9 +93,14 @@ public final class SkillDef {
         this.link = b.link;
         this.delivery = b.delivery;
         this.effects = b.effects;
+        this.chargeTime = b.chargeTime;
+        this.chargeMinMultiplier = b.chargeMinMultiplier;
+        this.chargeMaxMultiplier = b.chargeMaxMultiplier;
+        this.fullChargeEffects = b.fullChargeEffects;
         this.passive = b.passive;
         this.animation = b.animation;
         this.castAnimation = b.castAnimation;
+        this.chargeAnimation = b.chargeAnimation;
         this.fx = b.fx;
         this.sound = b.sound;
         this.castSound = b.castSound;
@@ -138,6 +149,25 @@ public final class SkillDef {
             if (b.effects.isEmpty() && b.delivery.type() != DeliveryDef.Type.BLINK && b.delivery.type() != DeliveryDef.Type.DASH) {
                 throw new DefinitionException("「effects」が空です（瞬間移動・踏み込みのスキル以外は、効果が1つ以上要ります）");
             }
+            JsonObject charge = Json.optionalObject(json, "charge");
+            if (charge != null) {
+                b.chargeTime = Json.optionalDouble(charge, "time", 1.0, 0.2, 5.0);
+                b.chargeMinMultiplier = Json.optionalDouble(charge, "min_multiplier", 1.0, 0.1, 10.0);
+                b.chargeMaxMultiplier = Json.optionalDouble(charge, "max_multiplier", 2.0, 0.1, 20.0);
+                if (b.chargeMaxMultiplier < b.chargeMinMultiplier) {
+                    throw new DefinitionException("「charge.max_multiplier」は「min_multiplier」以上にしてください");
+                }
+                if (b.cast.at(1) > 0) {
+                    throw new DefinitionException("溜め（charge）と詠唱（cast）は、同じスキルに書けません");
+                }
+            } else {
+                b.chargeMinMultiplier = 1.0;
+                b.chargeMaxMultiplier = 1.0;
+            }
+            b.fullChargeEffects = EffectDef.parseList(Json.optionalArray(json, "full_charge_effects"), b.maxRank, false);
+            if (!b.fullChargeEffects.isEmpty() && charge == null) {
+                throw new DefinitionException("「full_charge_effects」は、溜め（charge）のあるスキルにだけ書けます");
+            }
             if (json.has("passive")) {
                 throw new DefinitionException("アクティブのスキルに「passive」は書けません");
             }
@@ -154,12 +184,16 @@ public final class SkillDef {
             b.link = LinkType.NONE;
             b.delivery = DeliveryDef.NONE;
             b.effects = List.of();
+            b.chargeMinMultiplier = 1.0;
+            b.chargeMaxMultiplier = 1.0;
+            b.fullChargeEffects = List.of();
             b.passive = PassiveDef.parse(Json.object(json, "passive"), b.maxRank);
         }
 
         String defaultFx = id.getPath().replace('/', '_');
         b.animation = Json.optionalString(json, "animation", b.kind == SkillKind.ACTIVE ? defaultFx : "");
         b.castAnimation = Json.optionalString(json, "cast_animation", "");
+        b.chargeAnimation = Json.optionalString(json, "charge_animation", "");
         b.fx = Json.optionalString(json, "fx", defaultFx);
         b.sound = Json.optionalId(json, "sound");
         b.castSound = Json.optionalId(json, "cast_sound");
@@ -219,7 +253,7 @@ public final class SkillDef {
         return row;
     }
 
-    /** スキルツリーの流派の中の列（0：アクティブの列、1：パッシブの列）。 */
+    /** スキルツリーの流派の中の列（0・1：アクティブの列、2：パッシブの列）。 */
     public int column() {
         return column;
     }
@@ -319,6 +353,35 @@ public final class SkillDef {
         return effects;
     }
 
+    /** 溜めるスキルか（キーを押して溜め、離して放つ）。 */
+    public boolean isCharged() {
+        return chargeTime > 0;
+    }
+
+    /** 溜めきるまでの時間（秒）。 */
+    public double chargeTime() {
+        return chargeTime;
+    }
+
+    /** 溜めの割合（0〜1）での、威力の倍率。 */
+    public double chargeMultiplier(double ratio) {
+        double clamped = Math.max(0.0, Math.min(1.0, ratio));
+        return chargeMinMultiplier + (chargeMaxMultiplier - chargeMinMultiplier) * clamped;
+    }
+
+    public double chargeMinMultiplier() {
+        return chargeMinMultiplier;
+    }
+
+    public double chargeMaxMultiplier() {
+        return chargeMaxMultiplier;
+    }
+
+    /** 溜めきって放ったときだけ、相手に足す効果。 */
+    public List<EffectDef> fullChargeEffects() {
+        return fullChargeEffects;
+    }
+
     @Nullable
     public PassiveDef passive() {
         return passive;
@@ -332,6 +395,11 @@ public final class SkillDef {
     /** 詠唱中のモーションの名前。空ならなし。 */
     public String castAnimation() {
         return castAnimation;
+    }
+
+    /** 溜めている間のモーションの名前。空ならなし。 */
+    public String chargeAnimation() {
+        return chargeAnimation;
     }
 
     /** 演出（パーティクルの出し方）の名前。 */
@@ -378,9 +446,14 @@ public final class SkillDef {
         LinkType link;
         DeliveryDef delivery;
         List<EffectDef> effects;
+        double chargeTime;
+        double chargeMinMultiplier;
+        double chargeMaxMultiplier;
+        List<EffectDef> fullChargeEffects;
         PassiveDef passive;
         String animation;
         String castAnimation;
+        String chargeAnimation;
         String fx;
         ResourceLocation sound;
         ResourceLocation castSound;

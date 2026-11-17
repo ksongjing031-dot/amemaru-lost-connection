@@ -1,6 +1,7 @@
 package jp.amemaru.lostconnection.job;
 
 import jp.amemaru.lostconnection.combat.CombatTargets;
+import jp.amemaru.lostconnection.combat.StatusService;
 import jp.amemaru.lostconnection.job.def.Affects;
 import jp.amemaru.lostconnection.job.def.DeliveryDef;
 import jp.amemaru.lostconnection.job.def.SkillDef;
@@ -56,8 +57,13 @@ public final class SkillTargeting {
     public static Aim resolve(ServerPlayer player, SkillDef skill, int rank, int entityId, @Nullable Vec3 point) {
         DeliveryDef delivery = skill.delivery();
         return switch (delivery.type()) {
-            case TARGET, CHAIN -> resolveEntity(player, delivery.range(rank), delivery.affects(), delivery.includeSelf(), entityId);
-            case POINT -> new Aim(null, resolvePoint(player, delivery.range(rank), point), null);
+            case TARGET, CHAIN -> {
+                Aim aim = resolveEntity(player, delivery.range(rank), delivery.affects(), delivery.includeSelf(), entityId);
+                // 味方を狙う技で、狙える味方がいなければ自分にかける（光の帳）
+                yield aim.failure() != null && delivery.fallbackSelf() ? new Aim(player, null, null) : aim;
+            }
+            case POINT, LEAP -> new Aim(null, resolvePoint(player, delivery.range(rank), point), null);
+            case BRANDED -> branded(player, delivery.range(rank)).isEmpty() ? Aim.fail(SkillService.Failure.NO_BRANDED) : Aim.NONE;
             default -> Aim.NONE;
         };
     }
@@ -72,9 +78,13 @@ public final class SkillTargeting {
                         delivery.includeSelf(), -1.0)) {
                     yield new Aim(living, null, null);
                 }
+                if (delivery.fallbackSelf()) {
+                    yield new Aim(player, null, null);
+                }
                 yield Aim.fail(delivery.affects() == Affects.ALLIES ? SkillService.Failure.NO_ALLY : SkillService.Failure.NO_TARGET);
             }
-            case POINT -> {
+            case BRANDED -> branded(player, delivery.range(rank)).isEmpty() ? Aim.fail(SkillService.Failure.NO_BRANDED) : Aim.NONE;
+            case POINT, LEAP -> {
                 if (point == null || point.distanceTo(player.getEyePosition()) > delivery.range(rank) + 4.0) {
                     yield Aim.fail(SkillService.Failure.NO_TARGET);
                 }
@@ -179,6 +189,58 @@ public final class SkillTargeting {
             return dx * dx + dz * dz <= reach * reach;
         }));
         list.sort(Comparator.comparingDouble(entity -> entity.distanceToSqr(center)));
+        return list;
+    }
+
+    /** 線（from → to、太さ width）に触れる敵。近い順。 */
+    public static List<LivingEntity> alongLine(ServerLevel level, Vec3 from, Vec3 to, double width) {
+        double half = width / 2.0;
+        AABB box = new AABB(from, to).inflate(half + 1.0);
+        List<LivingEntity> list = new ArrayList<>(level.getEntitiesOfClass(LivingEntity.class, box, entity ->
+                CombatTargets.isEnemy(entity) && (entity.getBoundingBox().inflate(half).contains(from)
+                        || entity.getBoundingBox().inflate(half).clip(from, to).isPresent())));
+        list.sort(Comparator.comparingDouble(entity -> entity.distanceToSqr(from)));
+        return list;
+    }
+
+    /** 自分の前の扇（半径 radius、左右 angle 度）の中の敵。すぐそば（1.5ブロック）の敵は向きを問わない。 */
+    public static List<LivingEntity> inCone(ServerPlayer player, double radius, double angle) {
+        Vec3 look = SkillExecutor.horizontalLook(player);
+        double minDot = Math.cos(Math.toRadians(angle));
+        List<LivingEntity> list = new ArrayList<>();
+        for (LivingEntity entity : around(player, radius, Affects.ENEMIES, false)) {
+            Vec3 to = new Vec3(entity.getX() - player.getX(), 0.0, entity.getZ() - player.getZ());
+            double distance = to.length();
+            if (distance < 1.5 || to.scale(1.0 / distance).dot(look) >= minDot) {
+                list.add(entity);
+            }
+        }
+        return list;
+    }
+
+    /** まわり（range ブロック以内）の、星痕のある敵。 */
+    public static List<LivingEntity> branded(ServerPlayer player, double range) {
+        AABB box = player.getBoundingBox().inflate(range, Math.min(range, 8.0), range);
+        List<LivingEntity> list = new ArrayList<>(player.level().getEntitiesOfClass(LivingEntity.class, box, entity ->
+                CombatTargets.isEnemy(entity) && StatusService.brands(entity) > 0 && entity.distanceToSqr(player) <= range * range));
+        list.sort(Comparator.comparingDouble(entity -> entity.distanceToSqr(player)));
+        return list;
+    }
+
+    /** 地点のまわりの味方（プレイヤー。高さは上下3ブロックまで）。 */
+    public static List<LivingEntity> alliesNear(ServerLevel level, Vec3 center, double radius) {
+        List<LivingEntity> list = new ArrayList<>();
+        for (ServerPlayer player : level.players()) {
+            if (!player.isAlive() || player.isSpectator() || Math.abs(player.getY() - center.y) > 3.0) {
+                continue;
+            }
+            double dx = player.getX() - center.x;
+            double dz = player.getZ() - center.z;
+            double reach = radius + player.getBbWidth() / 2.0;
+            if (dx * dx + dz * dz <= reach * reach) {
+                list.add(player);
+            }
+        }
         return list;
     }
 

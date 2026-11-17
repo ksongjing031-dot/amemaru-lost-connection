@@ -7,6 +7,9 @@ import jp.amemaru.lostconnection.client.screen.StatusScreen;
 import jp.amemaru.lostconnection.job.JobService;
 import jp.amemaru.lostconnection.network.ModNetwork;
 import jp.amemaru.lostconnection.network.c2s.AllocateStatC2S;
+import jp.amemaru.lostconnection.network.c2s.SetLoadoutC2S;
+import jp.amemaru.lostconnection.network.c2s.UseSkillC2S;
+import jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C;
 import jp.amemaru.lostconnection.player.StatType;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.Minecraft;
@@ -34,6 +37,8 @@ import java.util.Base64;
  *   <li>Phase 1：HUD（ふつう・HPが減った直後・HPが少ないとき）、ステータス画面</li>
  *   <li>Phase 2：ナイトのスキル枠と誓気・訓練人形のダメージの数字、スキルツリー、職業の登録の画面、
  *       ウィザードの詠唱（三人称・モーション）と流星の着弾</li>
+ *   <li>スキルの拡張（11月17日）：ナイトの溜め（誓いの円陣の中で）と溜め斬り、敵の頭の上の状態の印、凍てつく波動（凍結の氷と棘）、
+ *       氷柱で砕く、星爆、雷霆、光の帳</li>
  * </ul>
  */
 @Mod.EventBusSubscriber(modid = AmemaruMod.MOD_ID, value = Dist.CLIENT)
@@ -233,9 +238,162 @@ public final class CiScreenshots {
                 pendingShot = "wizard_impact";
                 next(22, 2);
             }
+            // ---------------------------------------------------------------- スキルの拡張：ナイト
             case 22 -> {
+                minecraft.options.setCameraType(CameraType.FIRST_PERSON);
+                command(minecraft, "kill @e[type=amemaru:training_dummy]");
+                command(minecraft, "amemaru admin job set @a amemaru:knight");
+                command(minecraft, "item replace entity @a weapon.mainhand with amemaru:apprentice_sword");
+                command(minecraft, "item replace entity @a weapon.offhand with amemaru:apprentice_shield");
+                for (String skill : new String[]{"heavy_slash", "oath_circle", "binding_chain", "parry", "oath_release", "leap_slash"}) {
+                    command(minecraft, "amemaru admin skill learn @a amemaru:knight/" + skill + " 1");
+                }
+                next(23, 10);
+            }
+            case 23 -> {
+                setLoadout(0, "knight/heavy_slash");
+                setLoadout(1, "knight/oath_circle");
+                setLoadout(2, "knight/binding_chain");
+                setLoadout(3, "knight/parry");
+                setLoadout(4, "knight/oath_release");
+                setLoadout(5, "knight/leap_slash");
+                spawnDummies(minecraft);
+                command(minecraft, "amemaru admin debug vitals @a 100 100");
+                if (minecraft.player != null) {
+                    minecraft.player.setXRot(12.0F);
+                }
+                next(24, 20);
+            }
+            case 24 -> {
+                useSkill(minecraft, 1); // 誓いの円陣
+                next(25, 10);
+            }
+            case 25 -> {
+                // 溜め斬り：キーを押したまま（押した・離したを直接送る）
+                minecraft.options.setCameraType(CameraType.THIRD_PERSON_BACK);
+                if (minecraft.player != null) {
+                    minecraft.player.setXRot(22.0F);
+                }
+                ModNetwork.sendToServer(new UseSkillC2S(9001, UseSkillC2S.PRESS, 0, -1, null));
+                next(26, 34);
+            }
+            case 26 -> {
+                clean(minecraft);
+                pendingShot = "knight_charge";
+                next(27, 2);
+            }
+            case 27 -> {
+                ModNetwork.sendToServer(new UseSkillC2S(9002, UseSkillC2S.RELEASE, 0, -1, null));
+                next(28, 3);
+            }
+            case 28 -> {
+                clean(minecraft);
+                pendingShot = "knight_heavy_slash";
+                next(29, 2);
+            }
+            case 29 -> {
+                minecraft.options.setCameraType(CameraType.FIRST_PERSON);
+                next(40, 30);
+            }
+            // ---------------------------------------------------------------- スキルの拡張：ウィザード
+            case 40 -> {
+                command(minecraft, "kill @e[type=amemaru:training_dummy]");
+                command(minecraft, "amemaru admin job set @a amemaru:wizard");
+                command(minecraft, "item replace entity @a weapon.mainhand with amemaru:apprentice_staff");
+                command(minecraft, "item replace entity @a weapon.offhand with minecraft:air");
+                for (String skill : new String[]{"icicle", "frost_wave", "thunderbolt", "star_burst", "light_veil", "lamp_barrage"}) {
+                    command(minecraft, "amemaru admin skill learn @a amemaru:wizard/" + skill + " 1");
+                }
+                next(41, 10);
+            }
+            case 41 -> {
+                setLoadout(0, "wizard/frost_wave");
+                setLoadout(1, "wizard/frost_circle");
+                setLoadout(2, "wizard/icicle");
+                setLoadout(3, "wizard/thunderbolt");
+                setLoadout(4, "wizard/star_burst");
+                setLoadout(5, "wizard/light_veil");
+                spawnDummies(minecraft);
+                command(minecraft, "amemaru admin debug vitals @a 100 100");
+                next(42, 20);
+            }
+            case 42 -> {
+                // 敵の頭の上の印：凍え4つ・星痕3つ・感電
+                command(minecraft, "amemaru admin debug status @e[type=amemaru:training_dummy] chill 4");
+                command(minecraft, "amemaru admin debug status @e[type=amemaru:training_dummy] brand 3");
+                command(minecraft, "amemaru admin debug status @e[type=amemaru:training_dummy] shock 8");
+                minecraft.options.setCameraType(CameraType.THIRD_PERSON_BACK);
+                if (minecraft.player != null) {
+                    minecraft.player.setXRot(16.0F);
+                }
+                next(43, 8);
+            }
+            case 43 -> {
+                clean(minecraft);
+                pendingShot = "status_marks";
+                next(44, 2);
+            }
+            case 44 -> {
+                useSkill(minecraft, 0); // 凍てつく波動（凍えが3つ以上なので凍結）
+                next(45, 5);
+            }
+            case 45 -> {
+                clean(minecraft);
+                pendingShot = "wizard_frost_wave";
+                next(46, 2);
+            }
+            case 46 -> {
+                minecraft.options.setCameraType(CameraType.FIRST_PERSON);
+                if (minecraft.player != null) {
+                    minecraft.player.setXRot(10.0F);
+                }
+                useSkill(minecraft, 2); // 氷柱（凍結を砕く）
+                next(47, 3);
+            }
+            case 47 -> {
+                clean(minecraft);
+                pendingShot = "wizard_icicle";
+                next(48, 2);
+            }
+            case 48 -> {
+                minecraft.options.setCameraType(CameraType.THIRD_PERSON_BACK);
+                if (minecraft.player != null) {
+                    minecraft.player.setXRot(16.0F);
+                }
+                useSkill(minecraft, 4); // 星爆
+                next(49, 5);
+            }
+            case 49 -> {
+                clean(minecraft);
+                pendingShot = "wizard_star_burst";
+                next(50, 2);
+            }
+            case 50 -> {
+                command(minecraft, "amemaru admin debug vitals @a 100 100");
+                if (minecraft.player != null) {
+                    minecraft.player.setXRot(24.0F);
+                }
+                useSkill(minecraft, 3); // 雷霆（0.4秒後に落ちる）
+                next(51, 9);
+            }
+            case 51 -> {
+                clean(minecraft);
+                pendingShot = "wizard_thunderbolt";
+                next(52, 2);
+            }
+            case 52 -> {
+                useSkill(minecraft, 5); // 光の帳（味方がいないので自分に）
+                next(53, 8);
+            }
+            case 53 -> {
+                clean(minecraft);
+                pendingShot = "wizard_light_veil";
+                next(54, 2);
+            }
+            case 54 -> {
+                minecraft.options.setCameraType(CameraType.FIRST_PERSON);
                 minecraft.setScreen(null);
-                next(23, 0);
+                next(55, 0);
             }
             default -> {
             }
@@ -246,6 +404,25 @@ public final class CiScreenshots {
     private static void clean(Minecraft minecraft) {
         minecraft.gui.getChat().clearMessages(false);
         minecraft.getToasts().clear();
+    }
+
+    /** スキル枠に、職業のスキル（{@code knight/heavy_slash} の形）を入れる。 */
+    private static void setLoadout(int slot, String path) {
+        ClientPlayerState state = ClientPlayerState.get();
+        for (SyncDefinitionsS2C.SkillInfo skill : ClientDefinitions.get().skillsOf(state.jobIndex())) {
+            if (skill.id().getPath().equals(path)) {
+                ModNetwork.sendToServer(new SetLoadoutC2S(slot, skill.index()));
+                return;
+            }
+        }
+        AmemaruMod.LOGGER.warn("[amemaru] CI: skill {} not found for the loadout", path);
+    }
+
+    /** 目の前に、訓練人形を3体（真ん中と左右）置く。 */
+    private static void spawnDummies(Minecraft minecraft) {
+        command(minecraft, "execute as @p at @p run amemaru admin dummy 20");
+        command(minecraft, "execute as @p at @p positioned ^2 ^ ^1 run amemaru admin dummy 20");
+        command(minecraft, "execute as @p at @p positioned ^-2 ^ ^1 run amemaru admin dummy 20");
     }
 
     /** スキル枠のスキルを、キーを押したときと同じように使う。 */
