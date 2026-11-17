@@ -34,6 +34,7 @@ import jp.amemaru.lostconnection.player.GrowthRules;
 import jp.amemaru.lostconnection.player.LevelService;
 import jp.amemaru.lostconnection.player.PlayerData;
 import jp.amemaru.lostconnection.player.PlayerDataCapability;
+import jp.amemaru.lostconnection.player.SpeedService;
 import jp.amemaru.lostconnection.player.StatType;
 import jp.amemaru.lostconnection.progression.ProgressionData;
 import jp.amemaru.lostconnection.workshop.ModRecipes;
@@ -55,6 +56,7 @@ import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
@@ -608,6 +610,39 @@ public final class EquipmentGameTests {
             data.getAdventure().setFruits(StatType.ATTACK, 0);
             equip(player, data, ItemStack.EMPTY, ItemStack.EMPTY);
         }
+        helper.succeed();
+    }
+
+    /** 素早さ：基礎値を超えた1あたり、移動と攻撃の速さ+0.5%（最大25%）・回避0.2%（最大10%）。 */
+    @GameTest(template = EMPTY)
+    public static void speedRaisesMovementAndDodge(GameTestHelper helper) {
+        FakePlayer player = fake(helper, "speed");
+        PlayerData data = knight(player, 10);
+        LevelService.resetAllocation(player, data);
+        data.getAdventure().setFruits(StatType.SPEED, 0);
+        LevelService.recompute(player, data);
+        GrowthDef growth = GrowthRules.current();
+        double baseMove = player.getAttributeBaseValue(Attributes.MOVEMENT_SPEED);
+        try {
+            check(helper, SpeedService.movePercent(data, growth) == 0 && SpeedService.dodgeChance(data, growth) == 0,
+                    "振り分けていないのに素早さの効果があります");
+            check(helper, Math.abs(player.getAttributeValue(Attributes.MOVEMENT_SPEED) - baseMove) < EPSILON, "移動の速さが変わっています");
+            LevelService.allocate(player, data, StatType.SPEED, 20);
+            check(helper, Math.abs(SpeedService.movePercent(data, growth) - 10.0) < EPSILON
+                    && Math.abs(SpeedService.attackSpeedPercent(data, growth) - 10.0) < EPSILON
+                    && Math.abs(SpeedService.dodgeChance(data, growth) - 4.0) < EPSILON, "素早さ+20で、移動・攻撃+10%・回避4%になっていません");
+            check(helper, Math.abs(player.getAttributeValue(Attributes.MOVEMENT_SPEED) - baseMove * 1.10) < 1.0E-4,
+                    "移動の速さの属性が+10%になっていません：" + player.getAttributeValue(Attributes.MOVEMENT_SPEED));
+            data.getAdventure().setFruits(StatType.SPEED, 100);
+            LevelService.recompute(player, data);
+            check(helper, Math.abs(SpeedService.movePercent(data, growth) - 25.0) < EPSILON
+                    && Math.abs(SpeedService.dodgeChance(data, growth) - 10.0) < EPSILON, "素早さの効果の上限（25%・10%）が効いていません");
+        } finally {
+            data.getAdventure().setFruits(StatType.SPEED, 0);
+            LevelService.resetAllocation(player, data);
+            LevelService.recompute(player, data);
+        }
+        check(helper, Math.abs(player.getAttributeValue(Attributes.MOVEMENT_SPEED) - baseMove) < EPSILON, "振り分けを戻しても移動の速さが戻りません");
         helper.succeed();
     }
 

@@ -47,6 +47,7 @@ public final class GrowthDef {
     @Nullable
     private final ResourceLocation overflowItem;
     private final List<CatchUp> catchUp;
+    private final SpeedEffects speedEffects;
 
     /** 章（{@code fromDay} の進行日から始まり、その間のレベルの上限は {@code levelCap}）。 */
     public record Chapter(int fromDay, int levelCap) {
@@ -56,10 +57,19 @@ public final class GrowthDef {
     public record CatchUp(int below, double bonus) {
     }
 
+    /**
+     * 素早さの効き方（Phase 0-A 19章「移動・攻撃の速さ、回避」）【補完】。基礎値（{@code base} の {@code speed}）を超えた
+     * 1あたりの%と、その上限（%）。
+     */
+    public record SpeedEffects(double movePerPoint, double moveCap, double attackSpeedPerPoint, double attackSpeedCap,
+                               double dodgePerPoint, double dodgeCap) {
+        public static final SpeedEffects DEFAULT = new SpeedEffects(0.5, 25.0, 0.5, 25.0, 0.2, 10.0);
+    }
+
     private GrowthDef(int maxLevel, double expBase, double expGrowth,
                       int statPointsPerLevel, int skillPointsPerLevel, int skillBonusEvery, int skillBonus,
                       double[] base, double[] perLevel, double[] perPoint, List<Chapter> chapters, int expPerShard,
-                      @Nullable ResourceLocation overflowItem, List<CatchUp> catchUp) {
+                      @Nullable ResourceLocation overflowItem, List<CatchUp> catchUp, SpeedEffects speedEffects) {
         this.maxLevel = maxLevel;
         this.expBase = expBase;
         this.expGrowth = expGrowth;
@@ -74,6 +84,7 @@ public final class GrowthDef {
         this.expPerShard = expPerShard;
         this.overflowItem = overflowItem;
         this.catchUp = catchUp;
+        this.speedEffects = speedEffects;
     }
 
     public int maxLevel() {
@@ -125,6 +136,11 @@ public final class GrowthDef {
             }
         }
         return bonus;
+    }
+
+    /** 素早さの効き方。 */
+    public SpeedEffects speedEffects() {
+        return speedEffects;
     }
 
     /** 今のレベルから次のレベルまでに要る経験値。最大レベルでは 0。 */
@@ -226,8 +242,20 @@ public final class GrowthDef {
             catchUp.add(new CatchUp(Json.intInRange(entry, "below_median", 1, 1000),
                     Json.doubleInRange(entry, "bonus", 0.0, 1000.0)));
         }
+        SpeedEffects speed = SpeedEffects.DEFAULT;
+        JsonObject speedJson = Json.optionalObject(json, "speed_effects");
+        if (speedJson != null) {
+            SpeedEffects d = SpeedEffects.DEFAULT;
+            speed = new SpeedEffects(
+                    Json.optionalDouble(speedJson, "move_per_point", d.movePerPoint(), 0.0, 100.0),
+                    Json.optionalDouble(speedJson, "move_cap", d.moveCap(), 0.0, 1000.0),
+                    Json.optionalDouble(speedJson, "attack_speed_per_point", d.attackSpeedPerPoint(), 0.0, 100.0),
+                    Json.optionalDouble(speedJson, "attack_speed_cap", d.attackSpeedCap(), 0.0, 1000.0),
+                    Json.optionalDouble(speedJson, "dodge_per_point", d.dodgePerPoint(), 0.0, 100.0),
+                    Json.optionalDouble(speedJson, "dodge_cap", d.dodgeCap(), 0.0, 100.0));
+        }
         return new GrowthDef(maxLevel, expBase, expGrowth, statPerLevel, skillPerLevel, bonusEvery, bonus,
-                base, perLevel, perPoint, List.copyOf(chapters), expPerShard, overflowItem, List.copyOf(catchUp));
+                base, perLevel, perPoint, List.copyOf(chapters), expPerShard, overflowItem, List.copyOf(catchUp), speed);
     }
 
     private static double[] readStats(@Nullable JsonObject object, String where, boolean allocatableOnly) {
@@ -281,6 +309,6 @@ public final class GrowthDef {
         List<Chapter> chapters = List.of(new Chapter(1, 15), new Chapter(6, 28), new Chapter(11, 40), new Chapter(16, 50));
         List<CatchUp> catchUp = List.of(new CatchUp(5, 50.0), new CatchUp(10, 100.0));
         return new GrowthDef(50, 120, 1.09, 3, 1, 5, 1, base, perLevel, perPoint, chapters, 200,
-                AmemaruMod.id("crystal_shard"), catchUp);
+                AmemaruMod.id("crystal_shard"), catchUp, SpeedEffects.DEFAULT);
     }
 }

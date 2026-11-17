@@ -18,6 +18,7 @@ import jp.amemaru.lostconnection.network.s2c.StatusFxS2C;
 import jp.amemaru.lostconnection.player.BuffState;
 import jp.amemaru.lostconnection.player.PlayerData;
 import jp.amemaru.lostconnection.player.PlayerDataCapability;
+import jp.amemaru.lostconnection.player.SpeedService;
 import jp.amemaru.lostconnection.player.StatType;
 import jp.amemaru.lostconnection.player.VitalsService;
 import net.minecraft.server.level.ServerPlayer;
@@ -264,6 +265,15 @@ public final class CombatService {
             double raw = EnemyCombat.takePending(player);
             if (raw < 0) {
                 raw = event.getAmount() * ServerConfig.VANILLA_MOB_DAMAGE_MULTIPLIER.get();
+            }
+            // 素早さの回避：かわせば、受けるダメージは0（防具の耐久も減らない）
+            if (SpeedService.dodges(player, data)) {
+                event.setAmount(0.0F);
+                data.markCombat(now);
+                CombatTextS2C.send(player, 0, CombatTextS2C.Kind.DODGE);
+                player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_ATTACK_NODAMAGE,
+                        SoundSource.PLAYERS, 0.8F, 1.4F);
+                return;
             }
             damage = raw * DamageCalculator.mitigation(data.getStats().get(StatType.DEFENSE))
                     * GearEffects.incomingMultiplier(player, data);

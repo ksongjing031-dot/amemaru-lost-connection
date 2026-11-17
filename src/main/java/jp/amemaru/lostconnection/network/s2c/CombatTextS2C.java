@@ -44,7 +44,9 @@ public final class CombatTextS2C {
         /** 砕けた！（凍結を砕いた） */
         SHATTER,
         /** 凍結！ */
-        FROZEN;
+        FROZEN,
+        /** 回避！（素早さで敵の攻撃をかわした） */
+        DODGE;
 
         private static final Kind[] VALUES = values();
 

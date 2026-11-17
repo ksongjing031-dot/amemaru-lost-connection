@@ -46,7 +46,8 @@ import java.util.UUID;
  *   <li>経験値：敵の経験値を、受け取る人の数で均等に分ける（人数のボーナスはPhase 4のパーティで足す）</li>
  *   <li>ふつうのドロップ：一人ずつドロップ表を引く（config の {@code dropRateMultiplier} の回数）</li>
  *   <li>レアドロップ：一人ずつ、敵の定義の確率 × config の {@code rareDropMultiplier}（天井のある敵は、外れるたびに
- *       +10%）で抽選する。出たら、その人の画面にだけ光と音、確率が {@code rareAnnounceThreshold}%以下ならサーバー全体に告知</li>
+ *       +10%）で抽選する。出たら、その人の画面にだけ光と音、その品の確率（定義の確率）が {@code rareAnnounceThreshold}%
+ *       以下ならサーバー全体に告知</li>
  *   <li>ドロップは、その人だけが拾える（ほかの人には見えない）。図鑑に、倒した数と手に入れた品を記録する</li>
  * </ul>
  */
@@ -156,7 +157,8 @@ public final class DropService {
             record(data, def, stack);
             Rarity shown = rarityOf(stack);
             LootItemEntity.spawn(level, mob.getX(), mob.getY() + 0.5, mob.getZ(), stack, player.getUUID(), shown.ordinal());
-            announce(player, mob, def, stack, chance, shown);
+            // 告知と表示は、その品の確率（定義の確率。config の倍率と天井をかける前）で決める【補完】
+            announce(player, mob, def, stack, rare.chance(), shown);
         }
         if (def.pity()) {
             data.getAdventure().setPity(def.id(), nextPity(misses, any));

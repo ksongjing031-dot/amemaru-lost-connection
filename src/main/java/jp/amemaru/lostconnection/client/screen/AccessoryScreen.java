@@ -26,7 +26,7 @@ import java.util.Map;
  * アクセサリーの枠の画面（Phase 0-A 21章。枠の入れ物は Curios、画面はこのMod）。
  *
  * <p>左に指輪2つと留め具（11日目に解放）、右に首飾り・腕輪・お守り。真ん中に自分の姿（体に表示するアクセサリーが見える）。
- * 下の切りかえで、首飾り・腕輪・お守り・留め具を体に表示するかを選ぶ（まわりの人の画面にも効く）。
+ * 姿の下の切りかえ（2つずつ2段）で、首飾り・腕輪・お守り・留め具を体に表示するかを選ぶ（まわりの人の画面にも効く）。
  * 付けているアクセサリーのステータスの合計も出す。</p>
  */
 public class AccessoryScreen extends AbstractContainerScreen<AccessoryMenu> {
@@ -36,7 +36,7 @@ public class AccessoryScreen extends AbstractContainerScreen<AccessoryMenu> {
     public AccessoryScreen(AccessoryMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
         imageWidth = 196;
-        imageHeight = 206;
+        imageHeight = 222;
         inventoryLabelX = AccessoryMenu.INVENTORY_X;
         inventoryLabelY = AccessoryMenu.INVENTORY_Y - 11;
     }
@@ -47,7 +47,9 @@ public class AccessoryScreen extends AbstractContainerScreen<AccessoryMenu> {
         toggles.clear();
         for (int i = 0; i < SHOWN.length; i++) {
             AccessorySlot slot = SHOWN[i];
-            CrystalButton button = new CrystalButton(leftPos + 6 + i * 46, topPos + 98, 44, 12, toggleLabel(slot), pressed -> {
+            // 2つずつ2段に並べる（自分の姿の下）
+            CrystalButton button = new CrystalButton(leftPos + 8 + (i % 2) * 92, topPos + 98 + (i / 2) * 15, 88, 13, toggleLabel(slot),
+                    pressed -> {
                 boolean visible = !ClientAdventure.ownVisible(slot.ordinal());
                 ModNetwork.sendToServer(new AccessoryActionC2S(AccessoryActionC2S.Action.SET_VISIBLE, slot.ordinal(), visible));
             });
@@ -111,10 +113,16 @@ public class AccessoryScreen extends AbstractContainerScreen<AccessoryMenu> {
             Slot slot = menu.slots.get(i);
             boolean left = x < imageWidth / 2;
             boolean locked = slot instanceof AccessoryMenu.AccessorySlotView view && view.locked();
-            Component name = locked ? Component.translatable("screen.amemaru.accessory.locked_label", Component.translatable(type.translationKey()))
-                    : Component.translatable(type.translationKey());
+            Component name = Component.translatable(type.translationKey());
             int labelX = left ? x + 20 : x - 3 - font.width(name);
-            graphics.drawString(font, name, labelX, y + 5, locked ? 0x806E7891 : UiStyle.TEXT_DIM, false);
+            if (locked && type == AccessorySlot.CLASP) {
+                // 閉じている留め具：名前の下に、開く日（自分の姿に重ならないよう2行にする）
+                Component day = Component.translatable("screen.amemaru.accessory.locked_day", menu.claspUnlockDay());
+                graphics.drawString(font, name, labelX, y, 0x806E7891, false);
+                graphics.drawString(font, day, left ? x + 20 : x - 3 - font.width(day), y + 10, 0x80B08A6A, false);
+            } else {
+                graphics.drawString(font, name, labelX, y + 5, locked ? 0x806E7891 : UiStyle.TEXT_DIM, false);
+            }
             if (!slot.hasItem()) {
                 String full = Component.translatable(type.translationKey()).getString();
                 String mark = locked ? "×" : full.isEmpty() ? "" : full.substring(0, 1);

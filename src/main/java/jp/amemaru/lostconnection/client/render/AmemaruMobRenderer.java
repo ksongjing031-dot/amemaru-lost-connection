@@ -20,7 +20,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
-import software.bernie.geckolib.renderer.layer.AutoGlowingGeoLayer;
+
 
 /**
  * このModの敵の見た目（GeckoLib）と、攻撃の予兆・名前とHPの帯。
@@ -38,7 +38,7 @@ public class AmemaruMobRenderer<T extends AmemaruMob> extends GeoEntityRenderer<
 
     public AmemaruMobRenderer(EntityRendererProvider.Context context, String name, float shadow) {
         super(context, new AssetGeoModel<>("entity", name));
-        addRenderLayer(new AutoGlowingGeoLayer<>(this));
+        addRenderLayer(new OptionalGlowLayer<>(this));
         shadowRadius = shadow;
     }
 

@@ -298,7 +298,10 @@ public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
         ItemStack next = stack.copy();
         GearData.setEnhance(next, enhance + 1);
         int y = RIGHT_Y + 20;
-        graphics.drawString(font, Component.translatable("screen.amemaru.workshop.enhance_step", enhance, enhance + 1),
+        // 数値は整数に丸めるため、1段では変わらないこともある。倍率（+4%ずつ）も出して、上がっていることが分かるようにする
+        graphics.drawString(font, Component.translatable("screen.amemaru.workshop.enhance_step", enhance, enhance + 1,
+                        String.format(Locale.ROOT, "%.0f", enhance * rules.enhancePercent()),
+                        String.format(Locale.ROOT, "%.0f", (enhance + 1) * rules.enhancePercent())),
                 RIGHT_X, y, UiStyle.TEXT_GOLD, true);
         y += 11;
         for (StatType type : def.stats().keySet()) {

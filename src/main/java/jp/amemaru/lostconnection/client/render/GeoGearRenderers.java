@@ -9,7 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
 import software.bernie.geckolib.renderer.GeoItemRenderer;
-import software.bernie.geckolib.renderer.layer.AutoGlowingGeoLayer;
+
 
 /**
  * GeckoLibで描く装備の見た目を作る（クライアント専用。アイテムの {@code initializeClient} から呼ぶ）。
@@ -21,14 +21,14 @@ public final class GeoGearRenderers {
     /** 動く・光る武器（{@code geo/item/<名前>.geo.json}）。光る部分は {@code textures/item/<名前>_glowmask.png}。 */
     public static BlockEntityWithoutLevelRenderer weapon(GeoWeaponItem item) {
         GeoItemRenderer<GeoWeaponItem> renderer = new GeoItemRenderer<>(new AssetGeoModel<>("item", item.name()));
-        renderer.addRenderLayer(new AutoGlowingGeoLayer<>(renderer));
+        renderer.addRenderLayer(new OptionalGlowLayer<>(renderer));
         return renderer;
     }
 
     /** 防具（{@code geo/armor/<シリーズ>.geo.json}）。 */
     public static HumanoidModel<?> armor(AmemaruArmorItem item) {
         GeoArmorRenderer<AmemaruArmorItem> renderer = new GeoArmorRenderer<>(new AssetGeoModel<>("armor", item.series()));
-        renderer.addRenderLayer(new AutoGlowingGeoLayer<>(renderer));
+        renderer.addRenderLayer(new OptionalGlowLayer<>(renderer));
         return renderer;
     }
 

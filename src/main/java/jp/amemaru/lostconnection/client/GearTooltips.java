@@ -51,19 +51,49 @@ public final class GearTooltips {
     private GearTooltips() {
     }
 
+    /** 説明文の1行の幅の上限（画面の座標。これより長い行は折り返す）。 */
+    private static final int MAX_LINE_WIDTH = 200;
+
     @SubscribeEvent(priority = EventPriority.HIGH)
     public static void onTooltip(ItemTooltipEvent event) {
         ItemStack stack = event.getItemStack();
+        ResourceLocation id = net.minecraftforge.registries.ForgeRegistries.ITEMS.getKey(stack.getItem());
+        if (id == null || !AmemaruMod.MOD_ID.equals(id.getNamespace())) {
+            return;
+        }
+        List<Component> tooltip = event.getToolTip();
         List<Component> lines = new ArrayList<>();
         if (stack.getItem() instanceof GearItem gear) {
             gearLines(stack, gear, lines);
         } else if (stack.getItem() instanceof AccessoryItem accessory) {
             accessoryLines(stack, accessory, lines);
-        } else {
-            return;
         }
-        List<Component> tooltip = event.getToolTip();
         tooltip.addAll(Math.min(1, tooltip.size()), lines);
+        wrapLongLines(tooltip);
+    }
+
+    /** このModの品の説明文で、長すぎる行を折り返す（説明・特殊効果の文が画面の端まで伸びないように）。色と書式は保つ。 */
+    private static void wrapLongLines(List<Component> tooltip) {
+        net.minecraft.client.gui.Font font = Minecraft.getInstance().font;
+        for (int i = tooltip.size() - 1; i >= 1; i--) {
+            Component line = tooltip.get(i);
+            if (font.width(line) <= MAX_LINE_WIDTH) {
+                continue;
+            }
+            List<net.minecraft.network.chat.FormattedText> parts = font.getSplitter().splitLines(line, MAX_LINE_WIDTH,
+                    net.minecraft.network.chat.Style.EMPTY);
+            List<Component> wrapped = new ArrayList<>(parts.size());
+            for (net.minecraft.network.chat.FormattedText part : parts) {
+                MutableComponent out = Component.empty();
+                part.visit((style, text) -> {
+                    out.append(Component.literal(text).setStyle(style));
+                    return java.util.Optional.empty();
+                }, net.minecraft.network.chat.Style.EMPTY);
+                wrapped.add(out);
+            }
+            tooltip.remove(i);
+            tooltip.addAll(i, wrapped);
+        }
     }
 
     // ---------------------------------------------------------------- 装備

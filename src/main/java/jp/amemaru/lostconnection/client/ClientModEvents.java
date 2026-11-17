@@ -8,6 +8,7 @@ import jp.amemaru.lostconnection.client.render.AmemaruMobRenderer;
 import jp.amemaru.lostconnection.client.render.CrystalNeedleRenderer;
 import jp.amemaru.lostconnection.client.render.LampBoltRenderer;
 import jp.amemaru.lostconnection.client.render.LootItemRenderer;
+import jp.amemaru.lostconnection.client.render.OptionalGlowLayer;
 import jp.amemaru.lostconnection.client.screen.AccessoryScreen;
 import jp.amemaru.lostconnection.client.screen.WorkshopScreen;
 import jp.amemaru.lostconnection.equipment.GearItems;
@@ -16,7 +17,9 @@ import jp.amemaru.lostconnection.item.ItemManifest;
 import jp.amemaru.lostconnection.workshop.ModMenus;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.world.item.Item;
+import net.minecraftforge.client.event.RegisterClientReloadListenersEvent;
 import net.minecraftforge.client.event.RegisterItemDecorationsEvent;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraftforge.registries.RegistryObject;
 import top.theillusivec4.curios.api.client.CuriosRendererRegistry;
 import jp.amemaru.lostconnection.client.render.TrainingDummyRenderer;
@@ -118,6 +121,12 @@ public final class ClientModEvents {
     }
 
     /** 持ち物のアイコンの飾り（★5のアクセサリーのきらめき・強化+7と+10の星）。 */
+    /** リソースパックを読み直したら、光る部分の絵があるかを確かめ直す。 */
+    @SubscribeEvent
+    public static void onRegisterReloadListeners(RegisterClientReloadListenersEvent event) {
+        event.registerReloadListener((ResourceManagerReloadListener) manager -> OptionalGlowLayer.clearCache());
+    }
+
     @SubscribeEvent
     public static void onRegisterDecorations(RegisterItemDecorationsEvent event) {
         for (RegistryObject<Item> item : ModItems.MANIFEST.category(ItemManifest.Category.ACCESSORY)) {

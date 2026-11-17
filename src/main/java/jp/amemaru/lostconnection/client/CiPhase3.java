@@ -286,14 +286,15 @@ final class CiPhase3 {
         @Override
         public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
             Minecraft minecraft = Minecraft.getInstance();
-            int x = 4;
-            for (ItemStack stack : stacks) {
-                graphics.renderTooltip(font, stack, x, 22);
+            // 1つ目は左の端、2つ目は右の端にそろえて描く（説明文は12ずらして描かれるため、その分を引く）
+            for (int i = 0; i < stacks.size() && i < 2; i++) {
+                ItemStack stack = stacks.get(i);
                 int width = 0;
                 for (Component line : Screen.getTooltipFromItem(minecraft, stack)) {
                     width = Math.max(width, font.width(line));
                 }
-                x += width + 22;
+                int x = i == 0 ? -8 : this.width - width - 20;
+                graphics.renderTooltip(font, stack, x, 16);
             }
         }
 

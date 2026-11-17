@@ -27,15 +27,21 @@ public class AccessoryMenu extends AbstractContainerMenu {
     /** 枠の場所（画面の座標）。 */
     public static final int[][] POSITIONS = {{18, 30}, {18, 52}, {150, 30}, {150, 52}, {150, 74}, {18, 74}};
     public static final int INVENTORY_X = 12;
-    public static final int INVENTORY_Y = 124;
+    public static final int INVENTORY_Y = 140;
 
     private final Player player;
     private final boolean claspOpen;
+    private final int claspUnlockDay;
 
-    public AccessoryMenu(int id, Inventory inventory, boolean claspOpen) {
+    /**
+     * @param claspOpen      留め具の枠が開いているか
+     * @param claspUnlockDay 留め具の枠が開く日（画面の「〇日目〜」に出す。config の {@code claspUnlockDay}）
+     */
+    public AccessoryMenu(int id, Inventory inventory, boolean claspOpen, int claspUnlockDay) {
         super(ModMenus.ACCESSORY.get(), id);
         this.player = inventory.player;
         this.claspOpen = claspOpen;
+        this.claspUnlockDay = claspUnlockDay;
         ICuriosItemHandler handler = CuriosApi.getCuriosInventory(player).resolve().orElse(null);
         int[] used = new int[AccessorySlot.all().length];
         for (int i = 0; i < LAYOUT.length; i++) {
@@ -64,12 +70,18 @@ public class AccessoryMenu extends AbstractContainerMenu {
 
     /** クライアント側（サーバーから開く知らせを受けたとき）。 */
     public static AccessoryMenu fromNetwork(int id, Inventory inventory, FriendlyByteBuf buf) {
-        return new AccessoryMenu(id, inventory, buf.readBoolean());
+        boolean clasp = buf.readBoolean();
+        return new AccessoryMenu(id, inventory, clasp, buf.readVarInt());
     }
 
     /** 留め具の枠が開いているか。 */
     public boolean claspOpen() {
         return claspOpen;
+    }
+
+    /** 留め具の枠が開く日。 */
+    public int claspUnlockDay() {
+        return claspUnlockDay;
     }
 
     /** 枠（画面の番号）の種類。 */

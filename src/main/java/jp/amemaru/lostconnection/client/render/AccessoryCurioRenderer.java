@@ -12,7 +12,7 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.ItemStack;
 import software.bernie.geckolib.renderer.GeoArmorRenderer;
-import software.bernie.geckolib.renderer.layer.AutoGlowingGeoLayer;
+
 import top.theillusivec4.curios.api.SlotContext;
 import top.theillusivec4.curios.api.client.ICurioRenderer;
 
@@ -28,7 +28,7 @@ public class AccessoryCurioRenderer implements ICurioRenderer {
 
     public AccessoryCurioRenderer(AccessoryItem item) {
         renderer = new GeoArmorRenderer<>(new AssetGeoModel<>("accessory", item.assetName()));
-        renderer.addRenderLayer(new AutoGlowingGeoLayer<>(renderer));
+        renderer.addRenderLayer(new OptionalGlowLayer<>(renderer));
     }
 
     @Override

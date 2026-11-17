@@ -221,6 +221,8 @@ public final class LevelService {
             data.setExp(0);
         }
         data.applyStats(StatCalculator.compute(player, data, growth));
+        // 素早さ：移動と攻撃の速さ（回避は受けたときに抽選する）
+        SpeedService.apply(player, data);
         if (!data.vitalsInitialized()) {
             data.setHp(data.getStats().maxHp());
             data.setMp(data.getStats().maxMp());

@@ -67,5 +67,14 @@
       "below_median": 10,
       "bonus": 100
     }
-  ]
+  ],
+  "speed_effects": {
+    "_comment": "素早さの効き方（Phase 3【補完】）。基礎値（base の speed）を超えた1あたりの%と、その上限の%",
+    "move_per_point": 0.5,
+    "move_cap": 25,
+    "attack_speed_per_point": 0.5,
+    "attack_speed_cap": 25,
+    "dodge_per_point": 0.2,
+    "dodge_cap": 10
+  }
 }

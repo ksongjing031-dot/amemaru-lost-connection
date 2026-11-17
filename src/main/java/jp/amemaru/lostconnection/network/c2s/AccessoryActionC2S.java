@@ -2,6 +2,7 @@ package jp.amemaru.lostconnection.network.c2s;
 
 import jp.amemaru.lostconnection.accessory.AccessoryMenu;
 import jp.amemaru.lostconnection.accessory.AccessoryService;
+import jp.amemaru.lostconnection.core.config.ServerConfig;
 import jp.amemaru.lostconnection.accessory.AccessorySlot;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.network.chat.Component;
@@ -42,10 +43,14 @@ public record AccessoryActionC2S(Action action, int slot, boolean value) {
         switch (action) {
             case OPEN -> {
                 boolean clasp = AccessoryService.claspOpen(player);
+                int unlockDay = ServerConfig.CLASP_UNLOCK_DAY.get();
                 AccessoryService.updateClaspSlot(player);
                 NetworkHooks.openScreen(player, new SimpleMenuProvider(
-                        (id, inventory, opener) -> new AccessoryMenu(id, inventory, clasp),
-                        Component.translatable("screen.amemaru.accessory.title")), buf -> buf.writeBoolean(clasp));
+                        (id, inventory, opener) -> new AccessoryMenu(id, inventory, clasp, unlockDay),
+                        Component.translatable("screen.amemaru.accessory.title")), buf -> {
+                    buf.writeBoolean(clasp);
+                    buf.writeVarInt(unlockDay);
+                });
             }
             case SET_VISIBLE -> {
                 if (slot >= 0 && slot < AccessorySlot.all().length) {

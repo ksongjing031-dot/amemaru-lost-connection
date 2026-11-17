@@ -64,10 +64,11 @@ public final class SpecialMomentFx {
             ParticleOptions particle = newKind == SpecialMomentS2C.Kind.PERFECT_ACCESSORY ? ParticleTypes.TOTEM_OF_UNDYING
                     : newKind == SpecialMomentS2C.Kind.RARE_DROP ? ParticleTypes.END_ROD : ParticleTypes.HAPPY_VILLAGER;
             int count = newKind == SpecialMomentS2C.Kind.PERFECT_ACCESSORY ? 60 : 16;
+            // 足もとの輪から立ちのぼらせる（目の高さの近くに出すと、一人称で画面いっぱいの大きな粒に見えるため）
             for (int i = 0; i < count; i++) {
                 double angle = i * Math.PI * 2.0 / count;
-                player.level().addParticle(particle, player.getX() + Math.cos(angle) * 0.8, player.getY() + 0.2 + (i % 5) * 0.35,
-                        player.getZ() + Math.sin(angle) * 0.8, 0.0, 0.05, 0.0);
+                player.level().addParticle(particle, player.getX() + Math.cos(angle) * 1.6, player.getY() + 0.1 + (i % 4) * 0.15,
+                        player.getZ() + Math.sin(angle) * 1.6, 0.0, 0.06, 0.0);
             }
         }
     }
