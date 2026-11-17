@@ -123,7 +123,8 @@ public final class SyncDefinitionsS2C {
                 reqSkills[j] = snapshot.skillIndex(skill.requirements().get(j).skill());
                 reqRanks[j] = skill.requirements().get(j).rank();
             }
-            int school = skill.isUltimate() || job == null ? -1 : job.schoolIndex(skill.school());
+            // 奥義も流派ごと（2つから1つを選ぶ）なので、流派の番号を送る（奥義のつまみに出すかは ultimate で決める）
+            int school = job == null ? -1 : job.schoolIndex(skill.school());
             skills.add(new SkillInfo(i, skill.id(), snapshot.jobIndex(skill.job()), school, skill.row(), skill.column(),
                     !skill.isActive(), skill.isUltimate(), skill.name(), skill.description(), skill.icon(), max, costs,
                     skill.upperRank(), skill.minLevel(), reqSkills, reqRanks, skill.link().ordinal(),

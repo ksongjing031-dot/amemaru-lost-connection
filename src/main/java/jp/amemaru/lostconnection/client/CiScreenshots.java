@@ -58,6 +58,8 @@ public final class CiScreenshots {
     private static int frames;
     /** 溜め斬りを放った後、放ったことが届くまで待ったtick。 */
     private static int releaseWait;
+    /** 2回目の天断ちの構えが始まったのを見たか。 */
+    private static boolean castSeen;
     @Nullable
     private static String pendingShot;
 
@@ -340,11 +342,29 @@ public final class CiScreenshots {
                 next(33, 2);
             }
             case 33 -> {
-                // 構えが終わって断ったことが届くまで待ってから、切り口が走る途中を写す
+                // 構えの写真を撮る間（画面を写して書き出す間）に断ってしまうため、演出が終わるのを待ち、
+                // クールダウンを戻して、もう一度使う（今度は断った直後を写す）
                 if (ClientPlayerState.get().castSkill() >= 0 && releaseWait++ < 60) {
                     return;
                 }
-                next(34, 4);
+                command(minecraft, "amemaru admin skill cooldown @a");
+                command(minecraft, "amemaru admin debug vitals @a 100 100");
+                next(330, 40);
+            }
+            case 330 -> {
+                useSkill(minecraft, 0);
+                releaseWait = 0;
+                castSeen = false;
+                next(331, 1);
+            }
+            case 331 -> {
+                // 構えが始まったのを見てから、終わる（断つ）のを待つ
+                boolean casting = ClientPlayerState.get().castSkill() >= 0;
+                castSeen |= casting;
+                if ((casting || !castSeen) && releaseWait++ < 80) {
+                    return;
+                }
+                next(34, 3);
             }
             case 34 -> {
                 clean(minecraft);

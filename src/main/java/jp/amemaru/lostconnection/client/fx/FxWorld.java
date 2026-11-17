@@ -737,6 +737,7 @@ public final class FxWorld {
      * はじめの appear tick で光りながら現れる。{@link #drop} を付けると、空から落ちて地面に突き立つ。
      */
     public static final class GiantSword extends Visual {
+        private static final int SHADE_GOLD = 0xA8701C;
         private final Anchor tip;
         private final float length;
         private final float width;
@@ -792,6 +793,12 @@ public final class FxWorld {
             Vec3 sideB = new Vec3(-Mth.sin(rad), 0.0, Mth.cos(rad)).scale(width / 2.0);
             float v1 = 0.15F + 0.85F * shown;
             Vec3 bottom = top.lerp(point, v1);
+            // 明るい空の前でも金色に見えるよう、先に濃い金の影を敷いてから光らせる
+            VertexConsumer shade = draw.translucent(FxTextures.GREATSWORD);
+            for (Vec3 side : new Vec3[]{sideA, sideB}) {
+                draw.quad(shade, top.subtract(side), bottom.subtract(side), bottom.add(side), top.add(side), 0.0F, 0.0F, 1.0F, v1, SHADE_GOLD,
+                        a * 0.5F);
+            }
             VertexConsumer vc = draw.glow(FxTextures.GREATSWORD);
             float shimmer = 0.85F + 0.15F * Mth.sin(t * 0.6F);
             for (Vec3 side : new Vec3[]{sideA, sideB}) {
