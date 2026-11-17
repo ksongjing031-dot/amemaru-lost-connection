@@ -46,9 +46,17 @@ import java.util.Base64;
 public final class CiScreenshots {
     private static final boolean ENABLED = Boolean.getBoolean("amemaru.ci.screenshots");
     private static final int CHUNK = 4000;
+    /**
+     * 次の段階に進むまでに、少なくとも描くフレームの数。写真を撮った直後はゲームが遅れを取り戻すために1フレームで何tickも進むため、
+     * tickだけで待つと、送ったスキルの結果がサーバーから届く前に次の写真を撮ってしまうことがある。
+     */
+    private static final int MIN_FRAMES = 4;
 
     private static int stage;
     private static int wait;
+    private static int frames;
+    /** 溜め斬りを放った後、放ったことが届くまで待ったtick。 */
+    private static int releaseWait;
     @Nullable
     private static String pendingShot;
 
@@ -66,6 +74,9 @@ public final class CiScreenshots {
         }
         if (wait > 0) {
             wait--;
+            return;
+        }
+        if (frames < MIN_FRAMES) {
             return;
         }
         switch (stage) {
@@ -287,9 +298,14 @@ public final class CiScreenshots {
             }
             case 27 -> {
                 ModNetwork.sendToServer(new UseSkillC2S(9002, UseSkillC2S.RELEASE, 0, -1, null));
+                releaseWait = 0;
                 next(28, 3);
             }
             case 28 -> {
+                // 放ったこと（溜めが終わったこと）がサーバーから届くまで待つ（2秒まで）
+                if (ClientPlayerState.get().charging() && releaseWait++ < 40) {
+                    return;
+                }
                 clean(minecraft);
                 pendingShot = "knight_heavy_slash";
                 next(29, 2);
@@ -463,7 +479,14 @@ public final class CiScreenshots {
     /** 描き終わったフレームを写す。 */
     @SubscribeEvent
     public static void onRenderTick(TickEvent.RenderTickEvent event) {
-        if (!ENABLED || event.phase != TickEvent.Phase.END || pendingShot == null) {
+        if (!ENABLED) {
+            return;
+        }
+        if (event.phase == TickEvent.Phase.START) {
+            frames++;
+            return;
+        }
+        if (pendingShot == null) {
             return;
         }
         String name = pendingShot;
@@ -485,6 +508,7 @@ public final class CiScreenshots {
     private static void next(int nextStage, int ticks) {
         stage = nextStage;
         wait = ticks;
+        frames = 0;
     }
 
     /** 何も描かない、ゲームを止めない画面。開いている間も、後ろのHUDは描かれる。 */
