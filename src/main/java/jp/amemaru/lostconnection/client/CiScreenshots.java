@@ -941,6 +941,26 @@ public final class CiScreenshots {
             case GEAR + 23 -> {
                 clean(minecraft);
                 pendingShot = "gear_fp_ancient_staff";
+                next(GEAR + 24, 2);
+            }
+            case GEAR + 24 -> {
+                // 作り直した防具：防具立てに着せる（重鎧の前・後ろ、法衣の前・後ろ）
+                armorStands(minecraft, 180.0F, 0.0F);
+                next(GEAR + 25, 40);
+            }
+            case GEAR + 25 -> {
+                clean(minecraft);
+                pendingShot = "gear_armor_redesign";
+                next(GEAR + 26, 2);
+            }
+            case GEAR + 26 -> {
+                // 斜めから（前は右斜め前、後ろは左斜め後ろ）
+                armorStands(minecraft, 145.0F, -35.0F);
+                next(GEAR + 27, 30);
+            }
+            case GEAR + 27 -> {
+                clean(minecraft);
+                pendingShot = "gear_armor_redesign_34";
                 next(GEAR + 40, 2);
             }
             case GEAR + 40 -> {
@@ -1026,6 +1046,23 @@ public final class CiScreenshots {
     }
 
     /** 作り直した装備を、表示用のエンティティで横一列に並べる（南を向いて撮る。画面の左は東）。観戦モード・HUDなし。 */
+    /** 防具立て4つ（重鎧の前・後ろ・法衣の前・後ろ）。前向きは front、後ろ向きは back の向き。 */
+    private static void armorStands(Minecraft minecraft, float front, float back) {
+        hideHud = true;
+        command(minecraft, "gamemode spectator @a");
+        command(minecraft, "kill @e[tag=amemaru_ci_gear]");
+        if (gearReturn == null) {
+            return;
+        }
+        double x = gearReturn.getX() + 0.5;
+        double z = gearReturn.getZ() + 4.0;
+        command(minecraft, CiGear.armoredStand("ancient_stone_sword", "ancient_stone_shield", CiGear.PLATE, x + 3.3, P3_FLOOR + 1, z, front));
+        command(minecraft, CiGear.armoredStand("ancient_stone_sword", "ancient_stone_shield", CiGear.PLATE, x + 1.1, P3_FLOOR + 1, z, back));
+        command(minecraft, CiGear.armoredStand("ancient_stone_staff", null, CiGear.ROBE, x - 1.1, P3_FLOOR + 1, z, front));
+        command(minecraft, CiGear.armoredStand("ancient_stone_staff", null, CiGear.ROBE, x - 3.3, P3_FLOOR + 1, z, back));
+        command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %.1f %.1f 0 8", x, P3_FLOOR + 1.0, gearReturn.getZ() + 0.8));
+    }
+
     private static void lineup(Minecraft minecraft, float yaw) {
         hideHud = true;
         command(minecraft, "gamemode spectator @a");

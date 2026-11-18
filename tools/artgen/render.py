@@ -73,6 +73,14 @@ def collect_faces(model, texture):
 
 def render(model, texture, yaw=0.0, pitch=0.0, roll=0.0, scale=16.0, size=(512, 512), center=(0.0, 0.0, 0.0),
            ss=3, perspective=None, transform=None, light="world", silhouette=None, glow_boost=1.0, darkness=None):
+    """1つのモデルを描く（render_many の短縮）。"""
+    return render_many([(model, texture)], yaw=yaw, pitch=pitch, roll=roll, scale=scale, size=size, center=center, ss=ss,
+                       perspective=perspective, transform=transform, light=light, silhouette=silhouette,
+                       glow_boost=glow_boost, darkness=darkness)
+
+
+def render_many(pairs, yaw=0.0, pitch=0.0, roll=0.0, scale=16.0, size=(512, 512), center=(0.0, 0.0, 0.0),
+                ss=3, perspective=None, transform=None, light="world", silhouette=None, glow_boost=1.0, darkness=None):
     """モデルを描いて RGBA の Image を返す。
 
     texture   : numpy の (H, W, 4)。1コマ目を渡す。
@@ -87,19 +95,24 @@ def render(model, texture, yaw=0.0, pitch=0.0, roll=0.0, scale=16.0, size=(512, 
     w, h = size
     W, H = w * ss, h * ss
     color = np.zeros((H, W, 3), dtype=float)
+    pairs = list(pairs)
     alpha = np.zeros((H, W), dtype=float)
     zbuf = np.full((H, W), -np.inf)
     Rv = view_rotation(yaw, pitch, roll)
     cx, cy = W / 2.0, H / 2.0
     s = scale * ss
-    tex = texture.astype(float)
     if light == "gui":
         l0, l1 = gui_flat_lights()
     else:
         l0, l1 = MC_LIGHT_0, MC_LIGHT_1
     center = np.asarray(center, dtype=float)
 
-    for el, f, corners, normal in collect_faces(model, texture):
+    jobs = []
+    for model, texture in pairs:
+        tex = texture.astype(float)
+        for item in collect_faces(model, texture):
+            jobs.append((tex, item))
+    for tex, (el, f, corners, normal) in jobs:
         if transform:
             pf, df = transform
             corners = [pf(c) for c in corners]

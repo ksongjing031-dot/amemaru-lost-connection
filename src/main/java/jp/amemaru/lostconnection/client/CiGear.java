@@ -78,6 +78,18 @@ final class CiGear {
                 x, y, z, yaw, hand(main), hand(off));
     }
 
+    /** 防具立てに、防具（頭・胴・脚・足の順の4つ。空なら null）と手の持ち物を着せて置くコマンド。 */
+    static String armoredStand(String main, String off, String[] armor, double x, double y, double z, float yaw) {
+        return String.format(Locale.ROOT,
+                "summon minecraft:armor_stand %.2f %.2f %.2f {ShowArms:1b,NoBasePlate:1b,NoGravity:1b,Rotation:[%.1ff,0f],"
+                        + "Tags:[\"amemaru_ci_gear\"],HandItems:[%s,%s],ArmorItems:[%s,%s,%s,%s]}",
+                x, y, z, yaw, hand(main), hand(off), hand(armor[3]), hand(armor[2]), hand(armor[1]), hand(armor[0]));
+    }
+
+    /** 作り直した防具（③重鎧・④法衣）。頭・胴・脚・足の順。 */
+    static final String[] PLATE = {"ancient_stone_helm", "ancient_stone_cuirass", "ancient_stone_greaves", "ancient_stone_sabatons"};
+    static final String[] ROBE = {"ancient_stone_hood", "ancient_stone_robe", "ancient_stone_legwear", "ancient_stone_boots"};
+
     private static String hand(String id) {
         return id == null ? "{}" : "{id:\"amemaru:" + id + "\",Count:1b}";
     }

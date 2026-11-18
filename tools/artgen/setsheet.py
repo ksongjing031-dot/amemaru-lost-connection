@@ -3,13 +3,16 @@
   make_set_sheet(path, title, subtitle, items, details=[], palette=[], dark=False)
 
 items の1つ：{"label": 名前, "note": 一言, "model": JavaModel, "tex": 絵, "icon": Icon か None, "gui": 盾の gui の display か None,
-            "views": [(見出し, yaw, pitch), ...]（省略時は 正面・側面・背面・斜め）, "transform": 描く前の変換（任意）}
+            "views": [(見出し, yaw, pitch), ...]（省略時は 正面・側面・背面・斜め）, "transform": 描く前の変換（任意）,
+            "pairs": [(モデル, 絵), ...]（何個かのモデルを重ねて描く。防具を人の体に着せるとき）,
+            "icons": [(見出し, Icon), ...]（持ち物の枠を何個か並べる。防具の4か所など）}
+  views の1つに4つめ（pairs）を書くと、その向きだけ別のモデルを描く（部位ごとの絵など）。
 details の1つ：{"label", "model", "tex", "center", "yaw", "pitch", "scale", "note"}
 """
 import numpy as np
 from PIL import Image, ImageDraw
 
-from render import render, display_transform
+from render import render, render_many, display_transform
 from sheet import font, panel, fit, BG, TEXT, SUB, PANEL, PANEL_DARK
 
 DEFAULT_VIEWS = [("正面", 0, 0), ("側面", -90, 0), ("背面", 180, 0), ("斜め", -35, 16)]
@@ -17,7 +20,9 @@ DEFAULT_VIEWS = [("正面", 0, 0), ("側面", -90, 0), ("背面", 180, 0), ("斜
 
 def model_extent(model, transform=None):
     pts = []
-    for el in model.elements:
+    models = [m for m, _ in model] if isinstance(model, list) else [model]
+    elements = [el for m in models for el in m.elements]
+    for el in elements:
         for f in el.faces.values():
             for c in f.corners_world():
                 pts.append(transform[0](c) if transform else c)
@@ -42,7 +47,8 @@ def make_set_sheet(path, title, subtitle, items, details=(), palette=(), row_h=3
     for it in items:
         views = it.get("views", DEFAULT_VIEWS)
         transform = it.get("transform")
-        lo, hi = model_extent(it["model"], transform)
+        pairs = it.get("pairs") or [(it["model"], it["tex"])]
+        lo, hi = model_extent(pairs, transform)
         center = tuple((lo + hi) / 2)
         size = hi - lo
         name_w = 250
@@ -61,18 +67,36 @@ def make_set_sheet(path, title, subtitle, items, details=(), palette=(), row_h=3
         for line in it.get("note", "").split("\n"):
             d.text((60, yy), line, font=font(17), fill=SUB)
             yy += 26
-        for k, (label, yaw, pitch) in enumerate(views):
+        for k, view in enumerate(views):
+            label, yaw, pitch = view[:3]
+            vpairs = view[3] if len(view) > 3 else pairs
             x0 = 40 + name_w + k * vw
             d.text((x0 + 10, y + 12), label, font=font(18, True), fill=SUB)
-            img = render(it["model"], it["tex"], yaw=yaw, pitch=pitch, scale=scale, size=(vw * 2, row_h * 2),
-                         center=center, transform=transform)
+            img = render_many(vpairs, yaw=yaw, pitch=pitch, scale=scale, size=(vw * 2, row_h * 2),
+                              center=center, transform=transform)
             img = fit(img, vw - 16, row_h - 50)
             sheet.alpha_composite(img, (x0 + (vw - img.width) // 2, y + 40 + (row_h - 50 - img.height) // 2))
         # 持ち物の枠
         ix = W - 40 - icon_w
         d.text((ix + 10, y + 12), "持ち物の枠", font=font(18, True), fill=SUB)
         slot_img = None
-        if it.get("icon") is not None:
+        if it.get("icons"):
+            n = len(it["icons"])
+            cols = 2 if n > 1 else 1
+            cell = it.get("icon_cell", 104)  # 40 なら実際の大きさ（GUIの大きさ2で32ピクセル）
+            for k, (lab, ic) in enumerate(it["icons"]):
+                cx = ix + 14 + (k % cols) * (max(cell, 90) + 12)
+                cy = y + 44 + (k // cols) * (cell + 34)
+                big = Image.new("RGBA", (cell, cell), (139, 139, 139, 255))
+                ImageDraw.Draw(big).rectangle((0, 0, cell - 1, cell - 1), outline=(55, 55, 55, 255), width=3 if cell > 60 else 2)
+                inner = cell - 8
+                big.alpha_composite(ic.image().resize((inner, inner), Image.NEAREST), (4, 4))
+                sheet.alpha_composite(big, (cx, cy))
+                d.text((cx + 4, cy + cell + 4), lab, font=font(15), fill=SUB)
+            if it.get("icon_cell", 104) <= 60:
+                d.text((ix + 14, y + 44 + ((n + cols - 1) // cols) * (cell + 34) + 4), "実際の大きさ（GUIの大きさ2）",
+                       font=font(15), fill=SUB)
+        elif it.get("icon") is not None:
             slot_img = it["icon"].image()
         elif it.get("gui") is not None:
             slot_img = render(it["model"], it["tex"], scale=1, size=(16, 16), ss=1,
@@ -95,9 +119,10 @@ def make_set_sheet(path, title, subtitle, items, details=(), palette=(), row_h=3
         for k, det in enumerate(details):
             x0 = 40 + k * (dw + 16)
             panel(sheet, (x0, y, x0 + dw, y + det_h), det["label"], dark=det.get("dark", False))
-            img = render(det["model"], det["tex"], yaw=det.get("yaw", 0), pitch=det.get("pitch", 0),
-                         scale=det.get("scale", 30), size=(dw - 20, det_h - 90), center=det["center"],
-                         transform=det.get("transform"), darkness=det.get("darkness"))
+            dpairs = det.get("pairs") or [(det["model"], det["tex"])]
+            img = render_many(dpairs, yaw=det.get("yaw", 0), pitch=det.get("pitch", 0),
+                              scale=det.get("scale", 30), size=(dw - 20, det_h - 90), center=det["center"],
+                              transform=det.get("transform"), darkness=det.get("darkness"))
             sheet.alpha_composite(img, (x0 + 10, y + 44))
             if det.get("note"):
                 d.text((x0 + 14, y + det_h - 34), det["note"], font=font(16), fill=SUB)
