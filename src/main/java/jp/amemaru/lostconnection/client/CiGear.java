@@ -54,6 +54,11 @@ final class CiGear {
             new Piece("ancient_stone_sword", 8, 9.3, 8.2), new Piece("ancient_stone_greatsword", 8.4, 13.1, 8),
             new Piece("ancient_stone_staff", 8, 7, 8), new Piece("ancient_stone_shield", 0, 0, -0.3));
 
+    /** 作り直した1階のレア装備（⑤）。蜂晶の杖は GeckoLib なので、中心は (8, 8.16, 8) からの位置。 */
+    static final List<Piece> REDESIGN_RARE = List.of(
+            new Piece("sentinel_blade", 8.5, 10.9, 8), new Piece("chipped_fang_greatsword", 8, 10.7, 8),
+            new Piece("bee_crystal_staff", 8, 9.5, 5.6));
+
     /**
      * 表示用のエンティティで、装備を1つ置くコマンド（置き方は none。モデルの中心がエンティティの位置に来るように動かす）。
      * 描くときの変換は「位置 → 拡大 → 180度回す → −0.5」なので、中心 c が原点に来る移動は (s(cx/16−0.5), −s(cy/16−0.5), s(cz/16−0.5))。

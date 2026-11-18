@@ -1,145 +1,27 @@
 {
-  "parent": "builtin/entity",
+  "loader": "forge:separate_transforms",
   "gui_light": "front",
-  "textures": {
-    "particle": "amemaru:item/bee_crystal_staff"
+  "base": {
+    "parent": "amemaru:item/bee_crystal_staff_3d"
   },
-  "display": {
-    "thirdperson_righthand": {
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "translation": [
-        0,
-        2,
-        1
-      ],
-      "scale": [
-        0.7,
-        0.7,
-        0.7
-      ]
-    },
-    "thirdperson_lefthand": {
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "translation": [
-        0,
-        2,
-        1
-      ],
-      "scale": [
-        0.7,
-        0.7,
-        0.7
-      ]
-    },
-    "firstperson_righthand": {
-      "rotation": [
-        -10,
-        0,
-        -15
-      ],
-      "translation": [
-        2,
-        1,
-        -1
-      ],
-      "scale": [
-        0.55,
-        0.55,
-        0.55
-      ]
-    },
-    "firstperson_lefthand": {
-      "rotation": [
-        -10,
-        0,
-        15
-      ],
-      "translation": [
-        2,
-        1,
-        -1
-      ],
-      "scale": [
-        0.55,
-        0.55,
-        0.55
-      ]
-    },
+  "perspectives": {
     "gui": {
-      "rotation": [
-        20,
-        -30,
-        -40
-      ],
-      "translation": [
-        0,
-        -1,
-        0
-      ],
-      "scale": [
-        0.45,
-        0.45,
-        0.45
-      ]
-    },
-    "ground": {
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "translation": [
-        0,
-        2,
-        0
-      ],
-      "scale": [
-        0.4,
-        0.4,
-        0.4
-      ]
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "amemaru:item/bee_crystal_staff_icon"
+      }
     },
     "fixed": {
-      "rotation": [
-        0,
-        0,
-        -40
-      ],
-      "translation": [
-        0,
-        0,
-        0
-      ],
-      "scale": [
-        0.6,
-        0.6,
-        0.6
-      ]
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "amemaru:item/bee_crystal_staff_icon"
+      }
     },
-    "head": {
-      "rotation": [
-        0,
-        0,
-        0
-      ],
-      "translation": [
-        0,
-        10,
-        0
-      ],
-      "scale": [
-        1,
-        1,
-        1
-      ]
+    "ground": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "amemaru:item/bee_crystal_staff_icon"
+      }
     }
   }
 }

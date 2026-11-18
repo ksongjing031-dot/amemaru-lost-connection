@@ -961,6 +961,72 @@ public final class CiScreenshots {
             case GEAR + 27 -> {
                 clean(minecraft);
                 pendingShot = "gear_armor_redesign_34";
+                next(GEAR + 28, 2);
+            }
+            case GEAR + 28 -> {
+                // ⑤1階のレア装備：表示用のエンティティで並べる（昼と夜。光る所を見る）
+                command(minecraft, "kill @e[tag=amemaru_ci_gear]");
+                lineup(minecraft, 0.0F, CiGear.REDESIGN_RARE, 2.2);
+                next(GEAR + 29, 30);
+            }
+            case GEAR + 29 -> {
+                clean(minecraft);
+                pendingShot = "gear_lineup_rare";
+                next(GEAR + 30, 2);
+            }
+            case GEAR + 30 -> {
+                command(minecraft, "time set midnight");
+                next(GEAR + 31, 30);
+            }
+            case GEAR + 31 -> {
+                clean(minecraft);
+                pendingShot = "gear_lineup_rare_night";
+                next(GEAR + 32, 2);
+            }
+            case GEAR + 32 -> {
+                // 一人称：見張りの石刃
+                command(minecraft, "kill @e[tag=amemaru_ci_gear]");
+                command(minecraft, "time set noon");
+                command(minecraft, "gamemode creative @a");
+                hideHud = false;
+                if (gearReturn != null) {
+                    command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %d %.1f 0 8", gearReturn.getX() + 0.5, P3_FLOOR + 1,
+                            gearReturn.getZ() + 0.5));
+                }
+                CiPhase3.onServer(minecraft, player -> CiGear.hold(player, "sentinel_blade", null));
+                next(GEAR + 33, 30);
+            }
+            case GEAR + 33 -> {
+                clean(minecraft);
+                pendingShot = "gear_fp_sentinel";
+                next(GEAR + 34, 2);
+            }
+            case GEAR + 34 -> {
+                CiPhase3.onServer(minecraft, player -> CiGear.hold(player, "chipped_fang_greatsword", null));
+                next(GEAR + 35, 20);
+            }
+            case GEAR + 35 -> {
+                clean(minecraft);
+                pendingShot = "gear_fp_fang";
+                next(GEAR + 36, 2);
+            }
+            case GEAR + 36 -> {
+                CiPhase3.onServer(minecraft, player -> CiGear.hold(player, "bee_crystal_staff", null));
+                next(GEAR + 37, 20);
+            }
+            case GEAR + 37 -> {
+                clean(minecraft);
+                pendingShot = "gear_fp_bee";
+                next(GEAR + 38, 2);
+            }
+            case GEAR + 38 -> {
+                // 蜂晶の杖の「使った」のアニメーション（羽が開き、核がふくらむ）
+                CiPhase3.onServer(minecraft, jp.amemaru.lostconnection.item.GeoWeaponItem::playUse);
+                next(GEAR + 39, 5);
+            }
+            case GEAR + 39 -> {
+                clean(minecraft);
+                pendingShot = "gear_fp_bee_use";
                 next(GEAR + 40, 2);
             }
             case GEAR + 40 -> {
@@ -1056,14 +1122,18 @@ public final class CiScreenshots {
         }
         double x = gearReturn.getX() + 0.5;
         double z = gearReturn.getZ() + 4.0;
-        command(minecraft, CiGear.armoredStand("ancient_stone_sword", "ancient_stone_shield", CiGear.PLATE, x + 3.3, P3_FLOOR + 1, z, front));
-        command(minecraft, CiGear.armoredStand("ancient_stone_sword", "ancient_stone_shield", CiGear.PLATE, x + 1.1, P3_FLOOR + 1, z, back));
-        command(minecraft, CiGear.armoredStand("ancient_stone_staff", null, CiGear.ROBE, x - 1.1, P3_FLOOR + 1, z, front));
+        command(minecraft, CiGear.armoredStand("sentinel_blade", "ancient_stone_shield", CiGear.PLATE, x + 3.3, P3_FLOOR + 1, z, front));
+        command(minecraft, CiGear.armoredStand("chipped_fang_greatsword", null, CiGear.PLATE, x + 1.1, P3_FLOOR + 1, z, back));
+        command(minecraft, CiGear.armoredStand("bee_crystal_staff", null, CiGear.ROBE, x - 1.1, P3_FLOOR + 1, z, front));
         command(minecraft, CiGear.armoredStand("ancient_stone_staff", null, CiGear.ROBE, x - 3.3, P3_FLOOR + 1, z, back));
         command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %.1f %.1f 0 8", x, P3_FLOOR + 1.0, gearReturn.getZ() + 0.8));
     }
 
     private static void lineup(Minecraft minecraft, float yaw) {
+        lineup(minecraft, yaw, CiGear.REDESIGN_1, 1.6);
+    }
+
+    private static void lineup(Minecraft minecraft, float yaw, java.util.List<CiGear.Piece> pieces, double step) {
         hideHud = true;
         command(minecraft, "gamemode spectator @a");
         if (gearReturn == null) {
@@ -1072,10 +1142,10 @@ public final class CiScreenshots {
         double x = gearReturn.getX() + 0.5;
         double z = gearReturn.getZ() + 0.5;
         command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %d %.1f 0 0", x, P3_FLOOR + 1, z));
-        int n = CiGear.REDESIGN_1.size();
+        int n = pieces.size();
         for (int k = 0; k < n; k++) {
-            double px = x + 1.6 * (n - 1) / 2.0 - 1.6 * k;
-            command(minecraft, CiGear.display(CiGear.REDESIGN_1.get(k), px, P3_FLOOR + 2.4, z + 7.5, yaw, 1.0F));
+            double px = x + step * (n - 1) / 2.0 - step * k;
+            command(minecraft, CiGear.display(pieces.get(k), px, P3_FLOOR + 2.4, z + 7.5, yaw, 1.0F));
         }
     }
 
