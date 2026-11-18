@@ -104,6 +104,8 @@ public final class CiScreenshots {
     /** Phase 3の写真の前にいた場所（撮り終えたら戻る）。 */
     @Nullable
     private static BlockPos p3Return;
+    /** Phase 3の写真の床の高さ（その場所の真上の空）。 */
+    private static final int P3_FLOOR = 229;
 
     private CiScreenshots() {
     }
@@ -603,11 +605,16 @@ public final class CiScreenshots {
                 command(minecraft, "gamemode creative @a");
                 command(minecraft, "amemaru admin job set @a amemaru:knight");
                 command(minecraft, "amemaru admin production set @a weapon 3");
-                // 前の写真の演出（氷華の檻の花など）が残っていない、山や木より高い所（y=230）へ移り、新しい床を敷く（敵が動いても
-                // 落ちない広さ）。後の建物の写真の場所と重ならないよう北へずらし、撮り終えたら元の場所へ戻る。南（+Z）を向く
+                // 前の写真の演出（氷華の檻の花など）が届かない、山や木より高い所（同じ場所の真上の y=230）に床を敷いて移る
+                // （敵が動いても落ちない広さ。真上なら、その場所はもう読み込まれている）。撮り終えたら床を消して元の場所へ戻る。南（+Z）を向く
                 p3Return = minecraft.player == null ? null : minecraft.player.blockPosition();
-                command(minecraft, "execute as @p at @p run tp @s ~ 230 ~-64 0 12");
-                command(minecraft, "execute as @p at @p run fill ~-10 ~-1 ~-10 ~10 ~-1 ~10 minecraft:deepslate_tiles replace minecraft:air");
+                if (p3Return != null) {
+                    command(minecraft, String.format(Locale.ROOT,
+                            "fill %d %d %d %d %d %d minecraft:deepslate_tiles replace minecraft:air",
+                            p3Return.getX() - 10, P3_FLOOR, p3Return.getZ() - 10, p3Return.getX() + 10, P3_FLOOR, p3Return.getZ() + 10));
+                    command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %d %.1f 0 12",
+                            p3Return.getX() + 0.5, P3_FLOOR + 1, p3Return.getZ() + 0.5));
+                }
                 // 1階の4種類の敵を、こちらを向かせて並べる（動かない）
                 command(minecraft, "execute as @p at @p run summon amemaru:tsunomofu ~-3.2 ~ ~5 {NoAI:1b,Rotation:[200f,0f]}");
                 command(minecraft, "execute as @p at @p run summon amemaru:ishikure_soldier ~-1 ~ ~6.5 {NoAI:1b,Rotation:[180f,0f]}");
@@ -761,7 +768,11 @@ public final class CiScreenshots {
                 command(minecraft, "amemaru admin production clear @a");
                 CiPhase3.onServer(minecraft, CiPhase3::cleanup);
                 if (p3Return != null) {
-                    command(minecraft, String.format(Locale.ROOT, "tp @p %d %d %d", p3Return.getX(), p3Return.getY(), p3Return.getZ()));
+                    // 床を消してから戻る（後の建物の見本が、同じ場所の上に建つため）
+                    command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %d %.1f", p3Return.getX() + 0.5, p3Return.getY(),
+                            p3Return.getZ() + 0.5));
+                    command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:air",
+                            p3Return.getX() - 10, P3_FLOOR, p3Return.getZ() - 10, p3Return.getX() + 10, P3_FLOOR, p3Return.getZ() + 10));
                 }
                 next(MAP_STAGE, 40);
             }
