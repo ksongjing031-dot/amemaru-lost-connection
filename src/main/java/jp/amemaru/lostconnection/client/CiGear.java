@@ -1,5 +1,6 @@
 package jp.amemaru.lostconnection.client;
 
+import jp.amemaru.lostconnection.AmemaruMod;
 import jp.amemaru.lostconnection.equipment.Rarity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.level.ServerPlayer;
@@ -7,6 +8,9 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ItemStack;
 
+import net.minecraft.core.registries.BuiltInRegistries;
+
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -37,6 +41,53 @@ final class CiGear {
         } else if (minecraft.player.isUsingItem()) {
             minecraft.gameMode.releaseUsingItem(minecraft.player);
         }
+    }
+
+    /** ゲームの中で並べる装備（ID・モデルの中心のピクセル座標）。武器は (8, y, 8) のまわり、盾は (0, 0, 0) のまわりに作ってある。 */
+    record Piece(String id, double cx, double cy, double cz) {
+    }
+
+    /** 作り直した装備（見習い・古代石）。左から並べる順。 */
+    static final List<Piece> REDESIGN_1 = List.of(
+            new Piece("apprentice_sword", 8, 6.9, 8), new Piece("apprentice_greatsword", 8.7, 13.6, 8),
+            new Piece("apprentice_staff", 8.8, 7.3, 8), new Piece("apprentice_shield", 0, -1.5, -0.3),
+            new Piece("ancient_stone_sword", 8, 9.3, 8.2), new Piece("ancient_stone_greatsword", 8.4, 13.1, 8),
+            new Piece("ancient_stone_staff", 8, 7, 8), new Piece("ancient_stone_shield", 0, 0, -0.3));
+
+    /**
+     * 表示用のエンティティで、装備を1つ置くコマンド（置き方は none。モデルの中心がエンティティの位置に来るように動かす）。
+     * 描くときの変換は「位置 → 拡大 → 180度回す → −0.5」なので、中心 c が原点に来る移動は (s(cx/16−0.5), −s(cy/16−0.5), s(cz/16−0.5))。
+     */
+    static String display(Piece piece, double x, double y, double z, float yaw, float s) {
+        double tx = s * (piece.cx() / 16.0 - 0.5);
+        double ty = -s * (piece.cy() / 16.0 - 0.5);
+        double tz = s * (piece.cz() / 16.0 - 0.5);
+        return String.format(Locale.ROOT,
+                "summon minecraft:item_display %.2f %.2f %.2f {item:{id:\"amemaru:%s\",Count:1b},"
+                        + "item_display:\"none\",Rotation:[%.1ff,0f],Tags:[\"amemaru_ci_gear\"],"
+                        + "transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],"
+                        + "translation:[%.3ff,%.3ff,%.3ff],scale:[%.2ff,%.2ff,%.2ff]}}",
+                x, y, z, piece.id(), yaw, tx, ty, tz, s, s, s);
+    }
+
+    /** 防具立て（腕あり・台なし）に、右手と左手の装備を持たせるコマンド。空なら null。 */
+    static String stand(String main, String off, double x, double y, double z, float yaw) {
+        return String.format(Locale.ROOT,
+                "summon minecraft:armor_stand %.2f %.2f %.2f {ShowArms:1b,NoBasePlate:1b,NoGravity:1b,Rotation:[%.1ff,0f],"
+                        + "Tags:[\"amemaru_ci_gear\"],HandItems:[%s,%s]}",
+                x, y, z, yaw, hand(main), hand(off));
+    }
+
+    private static String hand(String id) {
+        return id == null ? "{}" : "{id:\"amemaru:" + id + "\",Count:1b}";
+    }
+
+    /** 手に持たせる（右手・左手。空なら null）。 */
+    static void hold(ServerPlayer player, String main, String off) {
+        player.setItemSlot(EquipmentSlot.MAINHAND, main == null ? ItemStack.EMPTY
+                : new ItemStack(BuiltInRegistries.ITEM.get(AmemaruMod.id(main))));
+        player.setItemSlot(EquipmentSlot.OFFHAND, off == null ? ItemStack.EMPTY
+                : new ItemStack(BuiltInRegistries.ITEM.get(AmemaruMod.id(off))));
     }
 
     /**
