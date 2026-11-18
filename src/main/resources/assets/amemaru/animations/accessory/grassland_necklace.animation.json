@@ -3,28 +3,8 @@
  "animations": {
   "animation.grassland_necklace.idle": {
    "loop": true,
-   "animation_length": 3.0,
-   "bones": {
-    "pendant": {
-     "rotation": {
-      "0": [
-       0,
-       0,
-       -4
-      ],
-      "1.5": [
-       0,
-       0,
-       4
-      ],
-      "3": [
-       0,
-       0,
-       -4
-      ]
-     }
-    }
-   }
+   "animation_length": 1.0,
+   "bones": {}
   }
  }
 }
