@@ -21,7 +21,9 @@ import jp.amemaru.lostconnection.equipment.GearData;
 import jp.amemaru.lostconnection.equipment.GearEffects;
 import jp.amemaru.lostconnection.equipment.GearRules;
 import jp.amemaru.lostconnection.equipment.GearService;
+import jp.amemaru.lostconnection.equipment.GearSlot;
 import jp.amemaru.lostconnection.equipment.Rarity;
+import jp.amemaru.lostconnection.item.AmemaruShieldItem;
 import jp.amemaru.lostconnection.item.ItemManifest;
 import jp.amemaru.lostconnection.job.JobService;
 import jp.amemaru.lostconnection.job.def.JobDef;
@@ -101,7 +103,7 @@ public final class EquipmentGameTests {
 
     // ================================================================ 定義
 
-    /** 装備19・アクセサリー5・敵4・生産職3・工房のレシピ17が読め、アイテムと定義がそろっている。 */
+    /** 装備20・アクセサリー5・敵4・生産職3・工房のレシピ17が読め、アイテムと定義がそろっている。 */
     @GameTest(template = EMPTY)
     public static void phase3DefinitionsLoad(GameTestHelper helper) {
         check(helper, EquipmentDefs.loader().errors().isEmpty(), "装備の定義に問題があります：" + EquipmentDefs.loader().errors());
@@ -113,7 +115,7 @@ public final class EquipmentGameTests {
         check(helper, SkillRegistry.get().problems().isEmpty(), "職業の定義に問題があります：" + SkillRegistry.get().problems());
 
         EquipmentDefs.Snapshot gear = EquipmentDefs.server();
-        check(helper, gear.equipment().size() == 19, "装備の定義が19ではありません：" + gear.equipment().size());
+        check(helper, gear.equipment().size() == 20, "装備の定義が20ではありません：" + gear.equipment().size());
         for (ItemManifest.Category category : new ItemManifest.Category[]{
                 ItemManifest.Category.WEAPON, ItemManifest.Category.SHIELD, ItemManifest.Category.ARMOR}) {
             for (RegistryObject<Item> item : ModItems.MANIFEST.category(category)) {
@@ -353,6 +355,40 @@ public final class EquipmentGameTests {
         } finally {
             mob.discard();
         }
+        helper.succeed();
+    }
+
+    /**
+     * 水門の鍵盾（3階のボスのレア装備・エピック）：ナイトの左手の盾。持つと防御とHPが上がり、
+     * 固有効果「水の膜」で敵から受けるダメージ −6%。必要レベル（7）に届かない・壊れていると効かない。
+     */
+    @GameTest(template = EMPTY)
+    public static void floodgateKeyShieldWaterVeil(GameTestHelper helper) {
+        EquipmentDef def = gearDef("floodgate_key_shield");
+        check(helper, def.rarity() == Rarity.EPIC, "水門の鍵盾がエピックではありません：" + def.rarity());
+        check(helper, def.rare() && def.slot() == GearSlot.OFFHAND, "水門の鍵盾が「左手のレア装備」になっていません");
+        check(helper, item("floodgate_key_shield") instanceof AmemaruShieldItem,
+                "水門の鍵盾が盾のアイテムではありません");
+
+        FakePlayer player = fake(helper, "floodgate");
+        PlayerData data = knight(player, 10);
+        double bareDefense = data.getStats().get(StatType.DEFENSE);
+        check(helper, Math.abs(GearEffects.incomingMultiplier(player, data) - 1.0) < EPSILON, "盾を持つ前から、受けるダメージが減っています");
+        ItemStack shield = rolled("floodgate_key_shield", Rarity.EPIC, 1.0, 0);
+        equip(player, data, ItemStack.EMPTY, shield);
+        check(helper, data.getStats().get(StatType.DEFENSE) > bareDefense, "水門の鍵盾で防御が上がっていません");
+        double veil = GearEffects.incomingMultiplier(player, data);
+        check(helper, Math.abs(veil - 0.94) < EPSILON, "水の膜で、受けるダメージが −6% になっていません：" + veil);
+
+        // 必要レベルに届かないと効かない
+        LevelService.setLevel(player, data, 6);
+        LevelService.recompute(player, data);
+        check(helper, Math.abs(GearEffects.incomingMultiplier(player, data) - 1.0) < EPSILON, "Lv6で水の膜が効いています");
+        LevelService.setLevel(player, data, 10);
+        // 壊れると効かない
+        GearData.setDurability(player.getOffhandItem(), def, 0);
+        LevelService.recompute(player, data);
+        check(helper, Math.abs(GearEffects.incomingMultiplier(player, data) - 1.0) < EPSILON, "壊れた盾の水の膜が効いています");
         helper.succeed();
     }
 

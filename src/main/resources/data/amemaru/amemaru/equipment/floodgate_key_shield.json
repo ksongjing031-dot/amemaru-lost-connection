@@ -1,0 +1,34 @@
+{
+  "slot": "offhand",
+  "generation": 1,
+  "series": "3階のレア装備",
+  "rarity": "epic",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "defense": 11,
+    "hp": 50
+  },
+  "durability": 600,
+  "binding": "on_equip",
+  "effects": [
+    {
+      "type": "damage_reduction",
+      "percent": 6
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:moss_iron",
+      "count": 3
+    },
+    {
+      "item": "amemaru:crystal_shard",
+      "count": 2
+    }
+  ],
+  "description": "大水門の番人ハイドラムが、水路の門を開け閉めしていた「鍵」の機械。中を魔力の水が巡り続け、受けた衝撃の一部を水の膜が受け止める。裏の革の握りは、手に入れた騎士が後から付けたもの。"
+}
