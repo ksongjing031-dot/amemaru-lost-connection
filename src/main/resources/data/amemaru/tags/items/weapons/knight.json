@@ -2,6 +2,10 @@
   "replace": false,
   "values": [
     "amemaru:apprentice_sword",
-    "amemaru:apprentice_greatsword"
+    "amemaru:apprentice_greatsword",
+    "amemaru:ancient_stone_sword",
+    "amemaru:ancient_stone_greatsword",
+    "amemaru:sentinel_blade",
+    "amemaru:chipped_fang_greatsword"
   ]
 }

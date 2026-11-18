@@ -83,8 +83,12 @@ public final class SyncPlayerDataS2C {
         this.mp = mp;
     }
 
-    /** サーバーで、今のデータから作る。 */
-    public static SyncPlayerDataS2C of(PlayerData data, GrowthDef growth, int sections, long now) {
+    /**
+     * サーバーで、今のデータから作る。
+     *
+     * @param levelCap 今の章のレベルの上限（Phase 3。上限では経験値の代わりに結晶の欠片がたまるため、画面では「上限」と出す）
+     */
+    public static SyncPlayerDataS2C of(PlayerData data, GrowthDef growth, int levelCap, int sections, long now) {
         int[] allocated = new int[StatType.ALLOCATABLE_COUNT];
         for (StatType type : StatType.allocatable()) {
             allocated[type.allocIndex()] = data.getAllocated(type);
@@ -92,9 +96,9 @@ public final class SyncPlayerDataS2C {
         SyncPlayerDataS2C message = new SyncPlayerDataS2C(
                 sections,
                 data.getLevel(),
-                growth.maxLevel(),
+                Math.min(growth.maxLevel(), levelCap),
                 data.getExp(),
-                growth.expToNext(data.getLevel()),
+                data.getLevel() >= levelCap ? 0 : growth.expToNext(data.getLevel()),
                 LevelService.availableStatPoints(data, growth),
                 LevelService.availableSkillPoints(data, growth),
                 allocated,

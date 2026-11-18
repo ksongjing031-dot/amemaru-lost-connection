@@ -9,6 +9,9 @@ import jp.amemaru.lostconnection.core.registry.ModEntities;
 import jp.amemaru.lostconnection.core.registry.ModItems;
 import jp.amemaru.lostconnection.core.registry.ModParticles;
 import jp.amemaru.lostconnection.core.registry.ModSounds;
+import jp.amemaru.lostconnection.loot.ModLootFunctions;
+import jp.amemaru.lostconnection.workshop.ModMenus;
+import jp.amemaru.lostconnection.workshop.ModRecipes;
 import jp.amemaru.lostconnection.core.config.ServerConfig;
 import jp.amemaru.lostconnection.network.ModNetwork;
 import net.minecraft.resources.ResourceLocation;
@@ -49,6 +52,11 @@ public final class AmemaruMod {
         ModSounds.SOUNDS.register(modBus);
         ModParticles.PARTICLES.register(modBus);
         ModCreativeTabs.TABS.register(modBus);
+        // Phase 3：ドロップ表の関数・工房のレシピ・画面の中身
+        ModLootFunctions.FUNCTIONS.register(modBus);
+        ModRecipes.TYPES.register(modBus);
+        ModRecipes.SERIALIZERS.register(modBus);
+        ModMenus.MENUS.register(modBus);
     }
 
     private void onCommonSetup(FMLCommonSetupEvent event) {

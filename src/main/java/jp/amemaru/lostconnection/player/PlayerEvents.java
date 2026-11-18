@@ -60,6 +60,8 @@ public final class PlayerEvents {
         if (event.getEntity() instanceof ServerPlayer player) {
             PlayerDataCapability.get(player).ifPresent(data -> {
                 LevelService.recompute(player, data);
+                // 追いつき補正の中央値に入れる（Phase 3）
+                LevelService.recordLevel(player, data);
                 PlayerSync.syncAll(player, data);
             });
         }
@@ -97,6 +99,7 @@ public final class PlayerEvents {
             PlayerDataCapability.get(player).ifPresent(data -> {
                 VitalsService.tick(player, data);
                 SkillService.tick(player, data);
+                jp.amemaru.lostconnection.equipment.GearEffects.tick(player, data);
                 PlayerSync.flush(player, data);
             });
         }

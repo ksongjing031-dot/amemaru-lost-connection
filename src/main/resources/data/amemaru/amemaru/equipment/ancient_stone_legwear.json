@@ -1,0 +1,26 @@
+{
+  "slot": "legs",
+  "generation": 1,
+  "series": "古代石シリーズ（法衣）",
+  "rarity": "common",
+  "required_level": 5,
+  "jobs": [
+    "amemaru:wizard"
+  ],
+  "stats": {
+    "defense": 3,
+    "mp": 20
+  },
+  "durability": 270,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 2
+    },
+    {
+      "item": "amemaru:crystal_shard",
+      "count": 1
+    }
+  ]
+}

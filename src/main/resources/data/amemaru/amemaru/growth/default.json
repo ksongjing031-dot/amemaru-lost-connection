@@ -35,5 +35,46 @@
     "defense": 1,
     "speed": 1,
     "crit": 0.3
+  },
+  "chapters": [
+    {
+      "from_day": 1,
+      "level_cap": 15
+    },
+    {
+      "from_day": 6,
+      "level_cap": 28
+    },
+    {
+      "from_day": 11,
+      "level_cap": 40
+    },
+    {
+      "from_day": 16,
+      "level_cap": 50
+    }
+  ],
+  "overflow": {
+    "exp_per_item": 200,
+    "item": "amemaru:crystal_shard"
+  },
+  "catch_up": [
+    {
+      "below_median": 5,
+      "bonus": 50
+    },
+    {
+      "below_median": 10,
+      "bonus": 100
+    }
+  ],
+  "speed_effects": {
+    "_comment": "素早さの効き方（Phase 3【補完】）。基礎値（base の speed）を超えた1あたりの%と、その上限の%",
+    "move_per_point": 0.5,
+    "move_cap": 25,
+    "attack_speed_per_point": 0.5,
+    "attack_speed_cap": 25,
+    "dodge_per_point": 0.2,
+    "dodge_cap": 10
   }
 }

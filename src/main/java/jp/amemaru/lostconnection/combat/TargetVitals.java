@@ -1,6 +1,7 @@
 package jp.amemaru.lostconnection.combat;
 
 import jp.amemaru.lostconnection.core.config.ServerConfig;
+import jp.amemaru.lostconnection.enemy.AmemaruMob;
 import jp.amemaru.lostconnection.entity.TrainingDummy;
 import jp.amemaru.lostconnection.player.PlayerData;
 import jp.amemaru.lostconnection.player.PlayerDataCapability;
@@ -16,6 +17,7 @@ import java.util.Optional;
  * <ul>
  *   <li>プレイヤー：プレイヤーデータのHPと防御。</li>
  *   <li>訓練人形：人形が持つHPと防御。</li>
+ *   <li>このModの敵（Phase 3）：敵が持つ独自のHPと、敵の定義の防御。</li>
  *   <li>そのほかの魔物（バニラ）：バニラの体力 × config の倍率をHPとし、防具の値 × 倍率を防御とする。
  *       独自のHPとバニラの体力はいつも同じ割合なので、ダメージは「独自のダメージ ÷ 倍率」をバニラの体力から引けばよい。</li>
  * </ul>
@@ -31,6 +33,9 @@ public final class TargetVitals {
         if (entity instanceof TrainingDummy dummy) {
             return dummy.getDummyMaxHp();
         }
+        if (entity instanceof AmemaruMob mob) {
+            return mob.getEnemyMaxHp();
+        }
         return entity.getMaxHealth() * vanillaMultiplier();
     }
 
@@ -40,6 +45,9 @@ public final class TargetVitals {
         }
         if (entity instanceof TrainingDummy dummy) {
             return dummy.getDummyHp();
+        }
+        if (entity instanceof AmemaruMob mob) {
+            return mob.getEnemyHp();
         }
         return entity.getHealth() * vanillaMultiplier();
     }
@@ -51,6 +59,8 @@ public final class TargetVitals {
             base = data(player).map(data -> data.getStats().get(StatType.DEFENSE)).orElse(0.0);
         } else if (entity instanceof TrainingDummy dummy) {
             base = dummy.getDummyDefense();
+        } else if (entity instanceof AmemaruMob mob) {
+            base = mob.defense();
         } else {
             base = entity.getArmorValue() * ServerConfig.VANILLA_ARMOR_TO_DEFENSE.get();
         }

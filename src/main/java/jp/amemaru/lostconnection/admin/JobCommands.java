@@ -325,7 +325,10 @@ final class JobCommands {
                 .then(Commands.literal("info")
                         .executes(ctx -> {
                             int day = ProgressionData.currentDay(ctx.getSource().getServer());
-                            ctx.getSource().sendSuccess(() -> Component.translatable("commands.amemaru.day.info", day), false);
+                            int chapter = ProgressionData.currentChapter(ctx.getSource().getServer());
+                            int cap = ProgressionData.currentLevelCap(ctx.getSource().getServer());
+                            ctx.getSource().sendSuccess(() -> Component.translatable("commands.amemaru.day.info_chapter", day,
+                                    chapter, cap), false);
                             return day;
                         }));
     }
@@ -335,6 +338,13 @@ final class JobCommands {
         data.setDay(day);
         int result = data.day();
         AdminCommands.log(source, "day set " + result);
+        // 章（レベルと熟練度の上限）と、アクセサリーの留め具の枠（11日目）を、全員に合わせ直す（Phase 3）
+        for (net.minecraft.server.level.ServerPlayer player : source.getServer().getPlayerList().getPlayers()) {
+            jp.amemaru.lostconnection.accessory.AccessoryService.updateClaspSlot(player);
+            jp.amemaru.lostconnection.player.PlayerDataCapability.get(player).ifPresent(playerData ->
+                    playerData.markDirty(jp.amemaru.lostconnection.player.PlayerData.SYNC_ADVENTURE
+                            | jp.amemaru.lostconnection.player.PlayerData.SYNC_GROWTH));
+        }
         source.getServer().getPlayerList().broadcastSystemMessage(
                 Component.translatable("message.amemaru.day.changed", result).withStyle(ChatFormatting.GOLD), false);
         source.sendSuccess(() -> Component.translatable("commands.amemaru.day.set", result), true);

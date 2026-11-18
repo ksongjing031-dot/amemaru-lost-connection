@@ -1,0 +1,27 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "古代石シリーズ",
+  "rarity": "common",
+  "required_level": 5,
+  "jobs": [
+    "amemaru:wizard"
+  ],
+  "stats": {
+    "magic": 17,
+    "mp": 40
+  },
+  "durability": 400,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:moss_iron",
+      "count": 1
+    },
+    {
+      "item": "amemaru:crystal_shard",
+      "count": 1
+    }
+  ],
+  "description": "先に結晶の欠片をはめた、古代石の杖。"
+}

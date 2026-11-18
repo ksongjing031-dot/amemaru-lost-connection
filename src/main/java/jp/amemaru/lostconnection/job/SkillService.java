@@ -397,6 +397,8 @@ public final class SkillService {
             player.removeEffect(ModEffects.LINK_SUPPORT.get());
         }
         SkillExecutor.deliver(ctx, player, aim);
+        // スキルを使うたびに、武器の耐久が減る（Phase 3）
+        jp.amemaru.lostconnection.equipment.GearService.wearWeapon(player, true);
     }
 
     /** クールダウンの長さ（tick）。クールダウン短縮をかける。 */

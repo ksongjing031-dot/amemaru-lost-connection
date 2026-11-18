@@ -30,6 +30,7 @@ public final class ToolbarKeys {
         checked = true;
         try {
             migrateSkillKeys();
+            releaseCuriosKey();
             if (ClientConfig.TOOLBAR_KEYS_RELEASED.get()) {
                 return;
             }
@@ -69,6 +70,31 @@ public final class ToolbarKeys {
         }
         ClientConfig.SKILL_KEYS_VERSION.set(2);
         ClientConfig.SKILL_KEYS_VERSION.save();
+    }
+
+    /**
+     * Curios の「アクセサリーの枠を開く」キー（初期値G）は、スキルの2つ目のキー（G）と重なるため、最初の1回だけ外す（Phase 3）。
+     * このModの枠の画面は、ステータス画面と持ち物の画面のボタンから開く。
+     */
+    private static void releaseCuriosKey() {
+        if (ClientConfig.CURIOS_KEY_RELEASED.get()) {
+            return;
+        }
+        Options options = Minecraft.getInstance().options;
+        boolean changed = false;
+        for (KeyMapping mapping : options.keyMappings) {
+            if ("key.curios.open.desc".equals(mapping.getName()) && mapping.isDefault()) {
+                mapping.setKey(InputConstants.UNKNOWN);
+                changed = true;
+            }
+        }
+        if (changed) {
+            KeyMapping.resetMapping();
+            options.save();
+            AmemaruMod.LOGGER.info("[amemaru] Released the Curios open key (G) for the skill slots");
+        }
+        ClientConfig.CURIOS_KEY_RELEASED.set(true);
+        ClientConfig.CURIOS_KEY_RELEASED.save();
     }
 
     private static boolean release(KeyMapping mapping) {

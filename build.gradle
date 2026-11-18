@@ -76,7 +76,23 @@ repositories {
             includeGroup 'dev.kosmx.player-anim'
         }
     }
-    // GeckoLib・Curios は Phase 3 で足す
+    // GeckoLib（敵・武器・防具・アクセサリーの3Dモデルとアニメーション。Phase 0-B 1章）。作者の配布元
+    maven {
+        name = 'GeckoLib'
+        url = 'https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/'
+        content {
+            includeGroupByRegex('software\\.bernie.*')
+            includeGroup('com.eliotlash.mclib')
+        }
+    }
+    // Curios API（アクセサリーの枠の入れ物。Phase 0-B 1章）。作者の配布元
+    maven {
+        name = 'Illusive Soulworks maven'
+        url = 'https://maven.theillusivec4.top/'
+        content {
+            includeGroup('top.theillusivec4.curios')
+        }
+    }
 }
 
 configurations {
@@ -94,9 +110,18 @@ dependencies {
     // プレイヤーのモーション（クライアントでだけ使う。サーバーには要らない）
     implementation fg.deobf("dev.kosmx.player-anim:player-animation-lib-forge:${player_anim_version}")
     ciMods "dev.kosmx.player-anim:player-animation-lib-forge:${player_anim_version}"
+
+    // 3Dモデルとアニメーション（サーバーとクライアントの両方に要る）
+    implementation fg.deobf("software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}")
+    ciMods "software.bernie.geckolib:geckolib-forge-${minecraft_version}:${geckolib_version}"
+
+    // アクセサリーの枠（サーバーとクライアントの両方に要る）。書くときは API だけを見て、動かすときは本体を入れる
+    compileOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}:api")
+    runtimeOnly fg.deobf("top.theillusivec4.curios:curios-forge:${curios_version}")
+    ciMods "top.theillusivec4.curios:curios-forge:${curios_version}"
 }
 
-// gradlew dist ： 遊ぶときに mods に置く jar（このMod ＋ クライアントに要る playerAnimator）を build/dist にそろえる。
+// gradlew dist ： 遊ぶときに mods に置く jar（このMod ＋ playerAnimator・GeckoLib・Curios）を build/dist にそろえる。
 // GitHub Actions は、この中身をそのまま「できたMod」として保存し、クライアントの確認の mods に置く。
 tasks.register('dist', Copy) {
     dependsOn 'reobfJar'
@@ -118,6 +143,8 @@ tasks.named('processResources', ProcessResources).configure {
             mod_version            : mod_version,
             mod_authors            : mod_authors,
             player_anim_range      : player_anim_range,
+            geckolib_range         : geckolib_range,
+            curios_range           : curios_range,
     ]
     inputs.properties replaceProperties
 

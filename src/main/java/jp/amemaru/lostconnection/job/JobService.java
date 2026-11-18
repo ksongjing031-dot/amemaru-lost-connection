@@ -5,7 +5,7 @@ import jp.amemaru.lostconnection.block.OathCrystalBlock;
 import jp.amemaru.lostconnection.core.config.ServerConfig;
 import jp.amemaru.lostconnection.core.registry.ModItems;
 import jp.amemaru.lostconnection.core.registry.ModSounds;
-import jp.amemaru.lostconnection.item.GearStats;
+import jp.amemaru.lostconnection.equipment.GearData;
 import jp.amemaru.lostconnection.job.def.JobDef;
 import jp.amemaru.lostconnection.job.def.SkillRegistry;
 import jp.amemaru.lostconnection.network.ModNetwork;
@@ -188,14 +188,14 @@ public final class JobService {
             for (JobDef.KitEntry entry : job.starterKit()) {
                 Item item = ForgeRegistries.ITEMS.getValue(entry.item());
                 if (item != null) {
-                    give(player, GearStats.bind(new ItemStack(item, entry.count())));
+                    give(player, GearData.bind(new ItemStack(item, entry.count())));
                 }
             }
             data.markKitReceived(job.id());
         }
         if (!data.hasFreeResetItems()) {
-            give(player, GearStats.bind(new ItemStack(ModItems.FORGET_WATER.get())));
-            give(player, GearStats.bind(new ItemStack(ModItems.BLANK_OATH.get())));
+            give(player, GearData.bind(new ItemStack(ModItems.FORGET_WATER.get())));
+            give(player, GearData.bind(new ItemStack(ModItems.BLANK_OATH.get())));
             data.markFreeResetItemsGiven();
         }
 
@@ -275,7 +275,7 @@ public final class JobService {
         for (JobDef.KitEntry entry : job.starterKit()) {
             Item item = ForgeRegistries.ITEMS.getValue(entry.item());
             if (item != null) {
-                give(player, GearStats.bind(new ItemStack(item, entry.count())));
+                give(player, GearData.bind(new ItemStack(item, entry.count())));
             }
         }
     }

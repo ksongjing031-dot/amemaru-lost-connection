@@ -1,0 +1,165 @@
+{
+  "_comment": [
+    "アイテムの種類（IDと見た目の作り）。ゲームの起動時に登録するため、データパックでは変えられない（Phase 0-B 4.3）。",
+    "数値は data/amemaru/amemaru/equipment/・accessories/ に書く。足すときは、言語ファイル・モデル・絵と一緒に足す。",
+    "weapons.kind：sword（片手剣）・greatsword（両手剣）・staff（杖）。model が geckolib なら GeckoLib で描く（動く・光る武器）",
+    "armor：series（見た目のシリーズ。geo/armor/<series>.geo.json）と、場所ごとのアイテムのID",
+    "accessories.slot：ring・necklace・bracelet・charm・clasp。model が geckolib なら体に表示する（geo/accessory/<ID>.geo.json）",
+    "materials.rarity：名前の色。fruits.stat：結晶果が上げるステータス"
+  ],
+  "weapons": [
+    {
+      "id": "apprentice_sword",
+      "kind": "sword"
+    },
+    {
+      "id": "apprentice_greatsword",
+      "kind": "greatsword"
+    },
+    {
+      "id": "apprentice_staff",
+      "kind": "staff"
+    },
+    {
+      "id": "ancient_stone_sword",
+      "kind": "sword"
+    },
+    {
+      "id": "ancient_stone_greatsword",
+      "kind": "greatsword"
+    },
+    {
+      "id": "ancient_stone_staff",
+      "kind": "staff"
+    },
+    {
+      "id": "sentinel_blade",
+      "kind": "sword"
+    },
+    {
+      "id": "chipped_fang_greatsword",
+      "kind": "greatsword"
+    },
+    {
+      "id": "bee_crystal_staff",
+      "kind": "staff",
+      "model": "geckolib"
+    }
+  ],
+  "shields": [
+    {
+      "id": "apprentice_shield"
+    },
+    {
+      "id": "ancient_stone_shield"
+    }
+  ],
+  "armor": [
+    {
+      "series": "ancient_stone_plate",
+      "pieces": {
+        "head": "ancient_stone_helm",
+        "chest": "ancient_stone_cuirass",
+        "legs": "ancient_stone_greaves",
+        "feet": "ancient_stone_sabatons"
+      }
+    },
+    {
+      "series": "ancient_stone_robe",
+      "pieces": {
+        "head": "ancient_stone_hood",
+        "chest": "ancient_stone_robe",
+        "legs": "ancient_stone_legwear",
+        "feet": "ancient_stone_boots"
+      }
+    }
+  ],
+  "accessories": [
+    {
+      "id": "moss_iron_battle_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "moss_iron_wisdom_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "grassland_necklace",
+      "slot": "necklace",
+      "model": "geckolib"
+    },
+    {
+      "id": "ishikure_bracelet",
+      "slot": "bracelet",
+      "model": "geckolib"
+    },
+    {
+      "id": "waystone_charm",
+      "slot": "charm",
+      "model": "geckolib"
+    }
+  ],
+  "materials": [
+    {
+      "id": "ancient_stone"
+    },
+    {
+      "id": "moss_iron"
+    },
+    {
+      "id": "crystal_shard"
+    },
+    {
+      "id": "tsunomofu_fluff"
+    },
+    {
+      "id": "bee_stinger"
+    },
+    {
+      "id": "chipped_fang",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "echo_fragment",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "soft_horn",
+      "rarity": "rare"
+    },
+    {
+      "id": "ishikure_core",
+      "rarity": "rare"
+    }
+  ],
+  "fruits": [
+    {
+      "id": "crystal_fruit_crimson",
+      "stat": "attack"
+    },
+    {
+      "id": "crystal_fruit_azure",
+      "stat": "magic"
+    },
+    {
+      "id": "crystal_fruit_jade",
+      "stat": "hp"
+    },
+    {
+      "id": "crystal_fruit_amber",
+      "stat": "defense"
+    },
+    {
+      "id": "crystal_fruit_white",
+      "stat": "speed"
+    },
+    {
+      "id": "crystal_fruit_gold",
+      "stat": "crit"
+    },
+    {
+      "id": "crystal_fruit_violet",
+      "stat": "mp"
+    }
+  ]
+}

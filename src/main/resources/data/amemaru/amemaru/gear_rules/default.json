@@ -1,0 +1,53 @@
+{
+  "_comment": "装備の共通の決まり（Phase 3）。【補完】の数値は docs/phase3.md の表を参照",
+  "rarity_multiplier": {
+    "common": 1.0,
+    "uncommon": 1.08,
+    "rare": 1.16,
+    "epic": 1.25,
+    "legendary": 1.35,
+    "unique": 1.4
+  },
+  "roll": {
+    "min": 70,
+    "max": 100,
+    "great_success_bonus": 10
+  },
+  "quality": [
+    60,
+    70,
+    80,
+    90
+  ],
+  "enhance": {
+    "max": 10,
+    "percent_per_level": 4,
+    "glow": [
+      4,
+      7,
+      10
+    ]
+  },
+  "enhance_cost": {
+    "1": [
+      {
+        "item": "amemaru:moss_iron",
+        "per_level": 1,
+        "from": 1
+      },
+      {
+        "item": "amemaru:crystal_shard",
+        "per_level": 1,
+        "from": 4
+      }
+    ]
+  },
+  "repair": {
+    "non_crafter_multiplier": 2.0
+  },
+  "durability_loss": {
+    "weapon_hit": 1,
+    "skill_use": 1,
+    "armor_hit": 1
+  }
+}

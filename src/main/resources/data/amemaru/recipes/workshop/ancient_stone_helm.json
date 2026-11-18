@@ -1,0 +1,19 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "armor",
+  "mastery": 1,
+  "mastery_exp": 9,
+  "ingredients": [
+    {
+      "item": "amemaru:moss_iron",
+      "count": 4
+    },
+    {
+      "item": "amemaru:ancient_stone",
+      "count": 3
+    }
+  ],
+  "result": {
+    "item": "amemaru:ancient_stone_helm"
+  }
+}

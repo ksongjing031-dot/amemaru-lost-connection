@@ -1,0 +1,34 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "1階のレア装備",
+  "rarity": "rare",
+  "required_level": 5,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "attack": 25
+  },
+  "durability": 500,
+  "binding": "on_equip",
+  "effects": [
+    {
+      "type": "execute",
+      "threshold": 50,
+      "percent": 12
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:moss_iron",
+      "count": 3
+    },
+    {
+      "item": "amemaru:chipped_fang",
+      "count": 2
+    }
+  ],
+  "description": "欠け牙の狼の、白く欠けた牙を刃に埋めた両手剣。弱った相手ほど深く届く。"
+}

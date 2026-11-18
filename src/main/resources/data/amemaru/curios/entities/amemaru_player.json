@@ -1,0 +1,12 @@
+{
+  "entities": [
+    "minecraft:player"
+  ],
+  "slots": [
+    "amemaru_ring",
+    "amemaru_necklace",
+    "amemaru_bracelet",
+    "amemaru_charm",
+    "amemaru_clasp"
+  ]
+}

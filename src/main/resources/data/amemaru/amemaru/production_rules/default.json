@@ -1,0 +1,26 @@
+{
+  "_comment": "生産の熟練度（Phase 0-A 19章）。mastery_exp は熟練度1〜10になるのに要る経験の合計。chapter_caps は章ごとの上限",
+  "mastery_exp": [
+    0,
+    20,
+    50,
+    100,
+    170,
+    260,
+    380,
+    530,
+    720,
+    950
+  ],
+  "chapter_caps": [
+    3,
+    5,
+    8,
+    10
+  ],
+  "great_success": {
+    "base": 5,
+    "per_level": 4,
+    "max": 40
+  }
+}

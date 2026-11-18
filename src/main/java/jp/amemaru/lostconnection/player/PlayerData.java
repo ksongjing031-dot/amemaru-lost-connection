@@ -32,7 +32,7 @@ import java.util.Set;
  */
 public final class PlayerData {
     /** 保存データの版。項目を増やしたら上げ、{@link #load} で古い版を読み替える。 */
-    public static final int DATA_VERSION = 2;
+    public static final int DATA_VERSION = 3;
     /** スキル枠の数。 */
     public static final int LOADOUT_SIZE = 6;
 
@@ -52,9 +52,11 @@ public final class PlayerData {
     public static final int SYNC_COOLDOWNS = 1 << 6;
     /** 同期するまとまり：詠唱。 */
     public static final int SYNC_CAST = 1 << 7;
+    /** 同期するまとまり：冒険の記録（結晶果・生産職と熟練度・図鑑・アクセサリーの表示。Phase 3）。別のパケットで送る。 */
+    public static final int SYNC_ADVENTURE = 1 << 8;
     /** すべてのまとまり。 */
     public static final int SYNC_ALL = SYNC_GROWTH | SYNC_STATS | SYNC_VITALS | SYNC_JOB | SYNC_SKILLS | SYNC_GAUGE
-            | SYNC_COOLDOWNS | SYNC_CAST;
+            | SYNC_COOLDOWNS | SYNC_CAST | SYNC_ADVENTURE;
 
     // ---- 保存する項目
     private int level = 1;
@@ -94,6 +96,9 @@ public final class PlayerData {
     @Nullable
     private ResourceKey<Level> oathCrystalLevel;
     private long oathCrystalUntil;
+
+    // ---- 冒険の記録（保存する。Phase 3）
+    private final AdventureData adventure = new AdventureData(() -> markDirty(SYNC_ADVENTURE));
 
     // ---- 保存しない項目
     private final StatBlock stats = new StatBlock();
@@ -513,6 +518,13 @@ public final class PlayerData {
         return oathCrystalLevel;
     }
 
+    // ---------------------------------------------------------------- 冒険の記録
+
+    /** 結晶果・生産職・図鑑など（Phase 3）。 */
+    public AdventureData getAdventure() {
+        return adventure;
+    }
+
     // ---------------------------------------------------------------- 同期の印
 
     public void markDirty(int sections) {
@@ -597,6 +609,8 @@ public final class PlayerData {
         }
         skills.put("cooldowns", cooldownTag);
         tag.put("skills", skills);
+
+        tag.put("adventure", adventure.save());
         return tag;
     }
 
@@ -607,6 +621,7 @@ public final class PlayerData {
                     version, DATA_VERSION);
         }
         // 版1 → 版2：職業とスキルのまとまりが増えた。版1のデータには無いので、職業なし・スキルなしで始まる
+        // 版2 → 版3：冒険の記録（結晶果・生産職・図鑑など）が増えた。版2のデータには無いので、空で始まる
 
         CompoundTag growth = tag.getCompound("growth");
         level = growth.contains("level") ? Math.max(1, growth.getInt("level")) : 1;
@@ -661,6 +676,7 @@ public final class PlayerData {
                 cooldowns.put(id, new SkillCooldown(one.getLong("end"), total));
             }
         }
+        adventure.load(tag.getCompound("adventure"));
         resetTransient();
     }
 
@@ -685,6 +701,7 @@ public final class PlayerData {
         // クールダウンは、死んでも消えない（死んで使い直す、を防ぐ）。ゲージ・詠唱・強化は消える
         cooldowns.clear();
         cooldowns.putAll(other.cooldowns);
+        adventure.copyFrom(other.adventure);
         resetTransient();
     }
 }

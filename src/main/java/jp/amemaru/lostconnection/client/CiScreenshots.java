@@ -2,10 +2,13 @@ package jp.amemaru.lostconnection.client;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import jp.amemaru.lostconnection.AmemaruMod;
+import jp.amemaru.lostconnection.client.screen.BestiaryScreen;
 import jp.amemaru.lostconnection.client.screen.SkillTreeScreen;
 import jp.amemaru.lostconnection.client.screen.StatusScreen;
+import jp.amemaru.lostconnection.client.screen.WorkshopScreen;
 import jp.amemaru.lostconnection.job.JobService;
 import jp.amemaru.lostconnection.network.ModNetwork;
+import jp.amemaru.lostconnection.network.c2s.AccessoryActionC2S;
 import jp.amemaru.lostconnection.network.c2s.AllocateStatC2S;
 import jp.amemaru.lostconnection.network.c2s.SetLoadoutC2S;
 import jp.amemaru.lostconnection.network.c2s.UseSkillC2S;
@@ -44,6 +47,9 @@ import java.util.Locale;
  *   <li>スキルの拡張（11月17日）：ナイトの溜め（誓いの円陣の中で）と溜め斬り、敵の頭の上の状態の印、凍てつく波動（凍結の氷と棘）、
  *       氷柱で砕く、星爆、雷霆、光の帳</li>
  *   <li>奥義のもう一つ（11月17日）：天断ちの構えと断った瞬間、奥義のつまみ（2つから1つ）、氷華の檻の詠唱と花が咲いたところ</li>
+ *   <li>Phase 3：1階の4種類の敵、敵の予兆（突進の帯・叩きつけの円）、レアドロップの光の柱と知らせ、手に持った3Dの武器
+ *       （一人称）、重鎧と法衣を着た姿（三人称。首飾り・腕輪・お守りを体に表示）、装備とアクセサリーの説明文、
+ *       アクセサリーの画面、武器の工房（作る・強化）、図鑑</li>
  *   <li>建物の見本（11月17日）：コネリアの冒険者ギルド本館（{@code amemaru:map/conelia/guild_hall}）を空に置き、
  *       まわりの6か所から撮る（HUDは隠す）</li>
  * </ul>
@@ -90,6 +96,16 @@ public final class CiScreenshots {
     };
     /** 建物の見本の写真の段階の始まり。 */
     private static final int MAP_STAGE = 70;
+    /** Phase 3（敵・ドロップ・装備・工房・図鑑）の写真の段階の始まり（建物の見本の前に撮る）。 */
+    private static final int P3 = 100;
+    /** Phase 3の工房の写真で置いた台の場所。 */
+    @Nullable
+    private static BlockPos workbench;
+    /** Phase 3の写真の前にいた場所（撮り終えたら戻る）。 */
+    @Nullable
+    private static BlockPos p3Return;
+    /** Phase 3の写真の床の高さ（その場所の真上の空）。 */
+    private static final int P3_FLOOR = 229;
 
     private CiScreenshots() {
     }
@@ -579,7 +595,186 @@ public final class CiScreenshots {
                 minecraft.options.setCameraType(CameraType.FIRST_PERSON);
                 // スキルツリーを閉じ、透明な画面に替える（画面を開いたままにして、自動の確認の終了を待たせる）
                 minecraft.setScreen(new HoldScreen());
-                next(MAP_STAGE, 0);
+                next(P3, 0);
+            }
+            // ---------------------------------------------------------------- Phase 3：敵・ドロップ・装備・工房・図鑑
+            case P3 -> {
+                clean(minecraft);
+                command(minecraft, "kill @e[type=amemaru:training_dummy]");
+                command(minecraft, "execute as @p at @p run amemaru admin enemy clear");
+                command(minecraft, "gamemode creative @a");
+                command(minecraft, "amemaru admin job set @a amemaru:knight");
+                command(minecraft, "amemaru admin production set @a weapon 3");
+                // 前の写真の演出（氷華の檻の花など）が届かない、山や木より高い所（同じ場所の真上の y=230）に床を敷いて移る
+                // （敵が動いても落ちない広さ。真上なら、その場所はもう読み込まれている）。撮り終えたら床を消して元の場所へ戻る。南（+Z）を向く
+                p3Return = minecraft.player == null ? null : minecraft.player.blockPosition();
+                if (p3Return != null) {
+                    command(minecraft, String.format(Locale.ROOT,
+                            "fill %d %d %d %d %d %d minecraft:deepslate_tiles replace minecraft:air",
+                            p3Return.getX() - 10, P3_FLOOR, p3Return.getZ() - 10, p3Return.getX() + 10, P3_FLOOR, p3Return.getZ() + 10));
+                    command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %d %.1f 0 12",
+                            p3Return.getX() + 0.5, P3_FLOOR + 1, p3Return.getZ() + 0.5));
+                }
+                // 1階の4種類の敵を、こちらを向かせて並べる（動かない）
+                command(minecraft, "execute as @p at @p run summon amemaru:tsunomofu ~-3.2 ~ ~5 {NoAI:1b,Rotation:[200f,0f]}");
+                command(minecraft, "execute as @p at @p run summon amemaru:ishikure_soldier ~-1 ~ ~6.5 {NoAI:1b,Rotation:[180f,0f]}");
+                command(minecraft, "execute as @p at @p run summon amemaru:kakekiba_wolf ~1.6 ~ ~5 {NoAI:1b,Rotation:[150f,0f]}");
+                command(minecraft, "execute as @p at @p run summon amemaru:crystal_bee ~3.6 ~1.3 ~5.6 {NoAI:1b,Rotation:[205f,0f]}");
+                CiPhase3.onServer(minecraft, CiPhase3::fillBestiary);
+                next(P3 + 1, 60);
+            }
+            case P3 + 1 -> {
+                clean(minecraft);
+                pendingShot = "enemies";
+                next(P3 + 2, 2);
+            }
+            case P3 + 2 -> {
+                // 石くれ兵と欠け牙の狼を動かし、こちらに気づかせる（クリエイティブでは狙われないため、アドベンチャーにする）
+                command(minecraft, "data merge entity @e[type=amemaru:ishikure_soldier,limit=1,sort=nearest] {NoAI:0b}");
+                command(minecraft, "data merge entity @e[type=amemaru:kakekiba_wolf,limit=1,sort=nearest] {NoAI:0b}");
+                command(minecraft, "gamemode adventure @a");
+                releaseWait = 0;
+                next(P3 + 3, 5);
+            }
+            case P3 + 3 -> {
+                // 予兆（突進の帯・叩きつけの円）が出るまで待つ（出なくても、15秒で次へ）
+                if (!CiPhase3.anyTelegraph(minecraft) && releaseWait++ < 300) {
+                    return;
+                }
+                next(P3 + 4, 7);
+            }
+            case P3 + 4 -> {
+                clean(minecraft);
+                pendingShot = "enemy_telegraph";
+                next(P3 + 5, 2);
+            }
+            case P3 + 5 -> {
+                command(minecraft, "gamemode creative @a");
+                command(minecraft, "execute as @p at @p run amemaru admin enemy clear");
+                command(minecraft, "kill @e[type=amemaru:loot_item]");
+                command(minecraft, "amemaru admin debug vitals @a 100 100");
+                command(minecraft, "execute as @p at @p run tp @s ~ ~ ~ 0 25");
+                CiPhase3.onServer(minecraft, CiPhase3::rareDrop);
+                next(P3 + 6, 24);
+            }
+            case P3 + 6 -> {
+                clean(minecraft);
+                pendingShot = "rare_drop";
+                next(P3 + 7, 2);
+            }
+            case P3 + 7 -> {
+                command(minecraft, "kill @e[type=amemaru:loot_item]");
+                command(minecraft, "execute as @p at @p run tp @s ~ ~ ~ 0 8");
+                CiPhase3.onServer(minecraft, CiPhase3::equipPlate);
+                // レアドロップの知らせが消えるまで待つ
+                next(P3 + 8, 60);
+            }
+            case P3 + 8 -> {
+                clean(minecraft);
+                pendingShot = "weapon_first_person";
+                next(P3 + 9, 2);
+            }
+            case P3 + 9 -> {
+                minecraft.options.setCameraType(CameraType.THIRD_PERSON_FRONT);
+                next(P3 + 10, 12);
+            }
+            case P3 + 10 -> {
+                clean(minecraft);
+                pendingShot = "gear_plate";
+                next(P3 + 11, 2);
+            }
+            case P3 + 11 -> {
+                command(minecraft, "amemaru admin job set @a amemaru:wizard");
+                CiPhase3.onServer(minecraft, CiPhase3::equipRobe);
+                next(P3 + 12, 30);
+            }
+            case P3 + 12 -> {
+                clean(minecraft);
+                pendingShot = "gear_robe";
+                next(P3 + 13, 2);
+            }
+            case P3 + 13 -> {
+                minecraft.options.setCameraType(CameraType.FIRST_PERSON);
+                minecraft.setScreen(new CiPhase3.TooltipScreen(CiPhase3.tooltipSamples(minecraft)));
+                next(P3 + 14, 10);
+            }
+            case P3 + 14 -> {
+                clean(minecraft);
+                pendingShot = "gear_tooltips";
+                next(P3 + 15, 2);
+            }
+            case P3 + 15 -> {
+                ModNetwork.sendToServer(new AccessoryActionC2S(AccessoryActionC2S.Action.OPEN, 0, false));
+                next(P3 + 16, 15);
+            }
+            case P3 + 16 -> {
+                clean(minecraft);
+                pendingShot = "accessory_screen";
+                next(P3 + 17, 2);
+            }
+            case P3 + 17 -> {
+                if (minecraft.player != null) {
+                    minecraft.player.closeContainer();
+                }
+                minecraft.setScreen(new HoldScreen());
+                command(minecraft, "amemaru admin job set @a amemaru:knight");
+                CiPhase3.onServer(minecraft, CiPhase3::prepareWorkshop);
+                // 目の前（南へ2ブロック）に武器の工房の台。こちら（北）を向かせる
+                workbench = minecraft.player == null ? null : minecraft.player.blockPosition().south(2);
+                command(minecraft, "execute as @p at @p run setblock ~ ~ ~2 amemaru:weapon_workbench[facing=north]");
+                next(P3 + 18, 15);
+            }
+            case P3 + 18 -> {
+                if (workbench != null) {
+                    CiPhase3.useWorkbench(minecraft, workbench);
+                }
+                next(P3 + 19, 15);
+            }
+            case P3 + 19 -> {
+                clean(minecraft);
+                pendingShot = "workshop";
+                next(P3 + 20, 2);
+            }
+            case P3 + 20 -> {
+                CiPhase3.placeOnWorkbench(minecraft);
+                if (minecraft.screen instanceof WorkshopScreen workshop) {
+                    workshop.selectTab(1);
+                }
+                next(P3 + 21, 10);
+            }
+            case P3 + 21 -> {
+                clean(minecraft);
+                pendingShot = "workshop_enhance";
+                next(P3 + 22, 2);
+            }
+            case P3 + 22 -> {
+                if (minecraft.player != null) {
+                    minecraft.player.closeContainer();
+                }
+                BestiaryScreen bestiary = new BestiaryScreen();
+                minecraft.setScreen(bestiary);
+                bestiary.select(AmemaruMod.id("kakekiba_wolf"));
+                next(P3 + 23, 12);
+            }
+            case P3 + 23 -> {
+                clean(minecraft);
+                pendingShot = "bestiary";
+                next(P3 + 24, 2);
+            }
+            case P3 + 24 -> {
+                // 後片づけ（台・装備・アクセサリー・持ち物）。元の場所へ戻って、建物の写真へ
+                minecraft.setScreen(new HoldScreen());
+                command(minecraft, "execute as @p at @p run setblock ~ ~ ~2 minecraft:air");
+                command(minecraft, "amemaru admin production clear @a");
+                CiPhase3.onServer(minecraft, CiPhase3::cleanup);
+                if (p3Return != null) {
+                    // 床を消してから戻る（後の建物の見本が、同じ場所の上に建つため）
+                    command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %d %.1f", p3Return.getX() + 0.5, p3Return.getY(),
+                            p3Return.getZ() + 0.5));
+                    command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:air",
+                            p3Return.getX() - 10, P3_FLOOR, p3Return.getZ() - 10, p3Return.getX() + 10, P3_FLOOR, p3Return.getZ() + 10));
+                }
+                next(MAP_STAGE, 40);
             }
             // ---- 建物の見本：空の高い所に草の広場を敷き、構造物を置いて、まわりから撮る
             case MAP_STAGE -> {

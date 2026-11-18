@@ -60,7 +60,7 @@ public class ResetItem extends Item {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> lines, TooltipFlag flag) {
         lines.add(Component.translatable(kind.tooltip).withStyle(ChatFormatting.GRAY));
         lines.add(Component.translatable("tooltip.amemaru.reset.how").withStyle(ChatFormatting.DARK_GRAY));
-        if (GearStats.isBound(stack)) {
+        if (jp.amemaru.lostconnection.equipment.GearData.isBound(stack)) {
             lines.add(Component.translatable("tooltip.amemaru.bound").withStyle(ChatFormatting.DARK_RED));
         }
     }

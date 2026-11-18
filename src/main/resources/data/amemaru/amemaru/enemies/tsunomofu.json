@@ -1,0 +1,40 @@
+{
+  "name": "ツノモフ",
+  "floor": 1,
+  "level": 2,
+  "description": "小さな角のある毛玉。草原をのんびり歩き、草を食む。ふだんはおとなしいが、一匹を叩くと、まわりの仲間が一斉に頭突きで向かってくる。",
+  "stats": {
+    "hp": 140,
+    "attack": 16,
+    "defense": 4,
+    "move_speed": 0.23,
+    "follow_range": 16,
+    "aggro_range": 0
+  },
+  "exp": 3,
+  "skills": {
+    "headbutt": {
+      "power": 1.0,
+      "windup": 0.5,
+      "cooldown": 1.6,
+      "range": 2.0,
+      "angle": 100
+    }
+  },
+  "behavior": {
+    "herd_radius": 12
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/tsunomofu",
+    "rare": [
+      {
+        "item": "amemaru:soft_horn",
+        "chance": 2.0
+      },
+      {
+        "item": "amemaru:crystal_fruit_jade",
+        "chance": 0.5
+      }
+    ]
+  }
+}

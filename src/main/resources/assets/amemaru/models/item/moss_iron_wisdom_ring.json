@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "amemaru:item/moss_iron_wisdom_ring"
+  }
+}

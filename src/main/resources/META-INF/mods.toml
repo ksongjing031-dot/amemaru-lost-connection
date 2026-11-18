@@ -33,3 +33,19 @@ Discordサーバー「あめまるさん」のためのRPG Mod。
     versionRange="${player_anim_range}"
     ordering="NONE"
     side="CLIENT"
+
+# 3Dモデルとアニメーション（GeckoLib）。敵・武器・防具・アクセサリーで使う。サーバーとクライアントの両方に要る
+[[dependencies.${mod_id}]]
+    modId="geckolib"
+    mandatory=true
+    versionRange="${geckolib_range}"
+    ordering="NONE"
+    side="BOTH"
+
+# アクセサリーの枠（Curios API）。サーバーとクライアントの両方に要る
+[[dependencies.${mod_id}]]
+    modId="curios"
+    mandatory=true
+    versionRange="${curios_range}"
+    ordering="NONE"
+    side="BOTH"

@@ -1,0 +1,178 @@
+{
+ "format_version": "1.12.0",
+ "minecraft:geometry": [
+  {
+   "description": {
+    "identifier": "geometry.grassland_necklace",
+    "texture_width": 32,
+    "texture_height": 32,
+    "visible_bounds_width": 1.0,
+    "visible_bounds_height": 2.0,
+    "visible_bounds_offset": [
+     0,
+     1.0,
+     0
+    ]
+   },
+   "bones": [
+    {
+     "name": "armorHead",
+     "pivot": [
+      0,
+      24,
+      0
+     ]
+    },
+    {
+     "name": "armorBody",
+     "pivot": [
+      0,
+      24,
+      0
+     ],
+     "cubes": [
+      {
+       "origin": [
+        -3,
+        23,
+        -2.7
+       ],
+       "size": [
+        6,
+        1,
+        1
+       ],
+       "uv": [
+        16,
+        0
+       ]
+      },
+      {
+       "origin": [
+        -3,
+        21,
+        -2.7
+       ],
+       "size": [
+        1,
+        2,
+        1
+       ],
+       "uv": [
+        8,
+        0
+       ]
+      },
+      {
+       "origin": [
+        2,
+        21,
+        -2.7
+       ],
+       "size": [
+        1,
+        2,
+        1
+       ],
+       "uv": [
+        12,
+        0
+       ]
+      }
+     ]
+    },
+    {
+     "name": "armorRightArm",
+     "pivot": [
+      -5,
+      22,
+      0
+     ]
+    },
+    {
+     "name": "armorLeftArm",
+     "pivot": [
+      5,
+      22,
+      0
+     ]
+    },
+    {
+     "name": "armorRightLeg",
+     "pivot": [
+      -1.9,
+      12,
+      0
+     ]
+    },
+    {
+     "name": "armorLeftLeg",
+     "pivot": [
+      1.9,
+      12,
+      0
+     ]
+    },
+    {
+     "name": "armorRightBoot",
+     "pivot": [
+      -1.9,
+      12,
+      0
+     ]
+    },
+    {
+     "name": "armorLeftBoot",
+     "pivot": [
+      1.9,
+      12,
+      0
+     ]
+    },
+    {
+     "name": "pendant",
+     "pivot": [
+      0,
+      22,
+      -2.6
+     ],
+     "parent": "armorBody",
+     "cubes": [
+      {
+       "origin": [
+        -1.5,
+        18,
+        -3.1
+       ],
+       "size": [
+        3,
+        3,
+        1
+       ],
+       "uv": [
+        0,
+        0
+       ]
+      },
+      {
+       "origin": [
+        -0.5,
+        21,
+        -3.0
+       ],
+       "size": [
+        1,
+        1,
+        1
+       ],
+       "uv": [
+        0,
+        4
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
