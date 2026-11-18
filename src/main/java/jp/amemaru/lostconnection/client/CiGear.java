@@ -49,8 +49,8 @@ final class CiGear {
 
     /** 作り直した装備（見習い・古代石）。左から並べる順。 */
     static final List<Piece> REDESIGN_1 = List.of(
-            new Piece("apprentice_sword", 8, 6.9, 8), new Piece("apprentice_greatsword", 8.7, 13.6, 8),
-            new Piece("apprentice_staff", 8.8, 7.3, 8), new Piece("apprentice_shield", 0, -1.5, -0.3),
+            new Piece("apprentice_sword", 8, 6.5, 8), new Piece("apprentice_greatsword", 8.7, 13.6, 8),
+            new Piece("apprentice_staff", 8.8, 7.3, 8), new Piece("apprentice_shield", 0, -2.0, -0.3),
             new Piece("ancient_stone_sword", 8, 9.3, 8.2), new Piece("ancient_stone_greatsword", 8.4, 13.1, 8),
             new Piece("ancient_stone_staff", 8, 7, 8), new Piece("ancient_stone_shield", 0, 0, -0.3));
 

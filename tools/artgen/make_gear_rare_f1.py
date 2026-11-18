@@ -97,10 +97,11 @@ def build_chipped_fang():
     m.box("frame_cap", (5.0, 24.25, 7.45), (7.0, 25.25, 8.55), "bone")
     # 欠けた所：刃が大きく欠けた跡（割れた面）と、まわりのひび。白く光る
     m.box("chip", (9.25, 18.0, 7.6), (9.6, 21.0, 8.4), "glow_lost", glow=True)
-    m.box("crack_1", (8.25, 19.75, 7.47), (9.25, 20.1, 8.53), "glow_lost", glow=True)
-    m.box("crack_2", (8.0, 18.5, 7.45), (8.35, 20.1, 8.55), "glow_lost", glow=True)
-    m.box("crack_3", (7.4, 18.5, 7.45), (8.0, 18.85, 8.55), "glow_lost", glow=True)
-    m.box("crack_4", (9.0, 21.0, 7.47), (9.35, 22.0, 8.53), "glow_lost", glow=True)
+    # ひび：欠けた所から、刃の根元の方へ稲妻のように走る（表と裏。牙の面より少し浮かせる）
+    for k, (x0, y0, x1, y1) in enumerate(((8.25, 19.75, 9.25, 20.1), (8.0, 18.5, 8.35, 20.1), (7.4, 18.5, 8.0, 18.85),
+                                          (9.0, 21.0, 9.35, 22.0), (7.4, 16.75, 7.75, 18.5), (7.75, 16.75, 8.6, 17.1),
+                                          (8.6, 15.5, 8.95, 17.1))):
+        m.box(f"crack_{k}", (x0, y0, 7.2), (x1, y1, 8.8), "glow_lost", glow=True)
     return m
 
 
@@ -292,7 +293,7 @@ class RarePainter(Painter):
                 tone += 1.0
         if c.el.tags.get("chip_side") and c.n[0] > 0.6:
             tone -= 1.6  # 欠けた所の奥（影）
-        if self.facing(c) and abs(c.p[1] - 19.8) < 2.2 and abs(c.p[0] - 8.6) < 1.4:
+        if self.facing(c) and 15.0 < c.p[1] < 22.0 and abs(c.p[0] - 8.4) < 1.6:
             tone -= 0.9  # 欠けのまわりのくすんだエナメル（光るひびが見えるように）
         if c.el.tags.get("core") and self.facing(c) and c.p[0] - c.el.frm[0] < 0.6:
             tone -= 0.4  # 背の側の根元の影
@@ -619,11 +620,19 @@ def main():
     os.makedirs(out, exist_ok=True)
     items = build_all()
     for it in items:
+        display = weapon_display(it["kind"])
+        # 一人称の大きさ：石刃は刃が太く、杖は先の六角が大きいので、古代石の武器より少し小さくする（CIの写真で決めた）
+        fp = {"sentinel_blade": (0.5, 0.0), "bee_crystal_staff": (0.42, -0.75)}.get(it["name"])
+        if fp:
+            for hand in ("firstperson_righthand", "firstperson_lefthand"):
+                t = list(display[hand]["translation"])
+                t[1] = round(t[1] + fp[1], 2)
+                display[hand] = dict(display[hand], scale=[fp[0]] * 3, translation=t)
         if it["name"] == "bee_crystal_staff":
-            export_bee_staff(repo, it["model"], it["frames"], it["icon"], weapon_display("staff"))
+            export_bee_staff(repo, it["model"], it["frames"], it["icon"], display)
         else:
             weapons.export_weapon(repo, it["name"], it["model"], it["frames"], it["icon"], it["kind"], CREDIT,
-                                  display=weapon_display(it["kind"]))
+                                  display=display)
         c, lo, hi = extent_center(it["model"])
         if it["name"] == "bee_crystal_staff":
             c = c + np.array([8.0, 8.16, 8.0])

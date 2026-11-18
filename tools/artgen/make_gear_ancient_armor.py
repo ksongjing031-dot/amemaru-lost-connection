@@ -107,22 +107,24 @@ def build_robe():
     g.cube(H, "hood_peak", (-2, 33, -1), (4, 1, 6), "wool_moss")
     g.cube(H, "hood_peak_top", (-1, 34, 1.5), (2, 1, 3), "wool_moss")
     pair(g, H, H, "hood_bead", (-5.25, 22, -4.75), (1, 1, 1), "stone")
-    # 法衣：胴・前の合わせ（生成りの裏地）・石のトグル2つ・肩のケープ（前のすそに金の糸の星）と石の留め具
+    # 法衣：胴・前の合わせ（生成りの裏地）・石のトグル2つ・2段の肩のケープ（前のすそに金の糸の星）と石の留め具
     #       ・帯・腰の横に下げた「星灯のランタン」・背中に流派の印（金の糸のランタン）
     g.cube(B, "robe_body", (-4, 12, -2), (8, 12, 4), "wool_moss", inflate=0.75, tags={"emblem_back": True})
     g.cube(B, "opening", (-0.5, 12, -3), (1, 7, 1), "wool")
     for k, y in enumerate((17, 15)):
         g.cube(B, f"toggle_{k}", (-1.5, y, -3.25), (3, 1, 1), "stone")
-    g.cube(B, "capelet", (-6, 19, -3.5), (12, 6, 7), "wool_moss", tags={"trim_bottom": True, "stars": True})
-    g.cube(B, "clasp", (-1, 22, -4), (2, 2, 1), "stone")
+    g.cube(B, "capelet", (-6, 19, -3.5), (12, 4, 7), "wool_moss", tags={"trim_bottom": True, "stars": True})
+    g.cube(B, "capelet_top", (-5.5, 22, -4), (11, 2, 8), "wool_moss", tags={"trim_bottom": True})
+    g.cube(B, "clasp", (-3.5, 22, -4.5), (2, 2, 1), "stone")  # 留め具は右の肩寄り（首飾りの玉とぶつからない）
     g.cube(B, "belt", (-5, 11.75, -3.5), (10, 2, 7), "leather_dark")
-    g.cube(B, "lantern_hook", (-6.25, 10.75, -0.5), (1, 1, 1), "iron")
-    g.cube(B, "lantern_cap", (-6.75, 9.75, -1), (2, 1, 2), "iron")
-    g.cube(B, "lantern_glass", (-6.75, 7.75, -1), (2, 2, 2), "crystal_dim", tags={"lantern": True})
-    g.cube(B, "lantern_base", (-6.75, 6.75, -1), (2, 1, 2), "iron")
-    # 袖：広がった袖口（すそは生成りの裏地）
+    g.cube(B, "lantern_hook", (-6.25, 9.75, -0.5), (1, 2, 1), "iron", inflate=-0.2)
+    g.cube(B, "lantern_cap", (-6.75, 8.75, -1), (2, 1, 2), "iron")
+    g.cube(B, "lantern_glass", (-6.75, 6.75, -1), (2, 2, 2), "crystal_dim", tags={"lantern": True})
+    g.cube(B, "lantern_base", (-6.75, 5.75, -1), (2, 1, 2), "iron")
+    # 袖：段になって広がる釣り鐘の袖口（すそは生成りの裏地）
     pair(g, RA, LA, "sleeve", (-8, 12, -2), (4, 12, 4), "wool_moss", inflate=0.5)
-    pair(g, RA, LA, "cuff", (-9, 11, -3), (6, 3, 6), "wool_moss", tags={"trim_bottom": True})
+    pair(g, RA, LA, "cuff", (-9, 11, -3), (6, 3, 6), "wool_moss")
+    pair(g, RA, LA, "cuff_bell", (-9.5, 10.25, -3.5), (7, 1, 7), "wool_moss", tags={"trim_bottom": True})
     # 下衣：前の割れた長い裾（脚ごとに動く）。割れ目は生成りの裏地。すそは広がり、前のふちに石の重り
     pair(g, RL, LL, "skirt", (-3.9, 3, -2), (4, 9, 4), "wool_moss", inflate=0.75, tags={"split_lining": True})
     pair(g, RL, LL, "hem", (-4.4, 2, -3), (5, 2, 6), "wool_moss", inflate=0.5,

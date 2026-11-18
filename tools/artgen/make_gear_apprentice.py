@@ -24,6 +24,14 @@ def cord_tail(m, name, top, length, angle):
           tags={"twist": True})
 
 
+def rental_tag(m, name, top, z=8.0, w=2.0, h=2.5):
+    """ギルドの貸出札：結び紐の先に下げた、真鍮の小さな札（穴と、打ち抜いた番号）。
+    見習い装備は「ギルドが貸す練習用」なので、どれにも札が下がっている（返すときに番号で確かめる）。"""
+    x, y = top
+    m.box(name + "_string", (x - 0.15, y - 0.6, z - 0.15), (x + 0.15, y, z + 0.15), "cord")
+    m.box(name, (x - w / 2, y - 0.6 - h, z - 0.15), (x + w / 2, y - 0.6, z + 0.15), "tag")
+
+
 # ---------------------------------------------------------------- 剣
 
 def build_sword():
@@ -38,6 +46,7 @@ def build_sword():
     m.box("cord_knot", (7.4, -5.6, 7.4), (8.6, -4.4, 8.6), "cord", tags={"twist": True})
     cord_tail(m, "cord_tail_l", (7.75, -5.5, 8.0), 2.6, -22.5)
     cord_tail(m, "cord_tail_r", (8.25, -5.5, 8.0), 2.6, 22.5)
+    rental_tag(m, "tag", (8.0, -5.6))
     # 握り：革巻きと、上下の金具
     m.box("grip", (7.25, 0.75, 7.25), (8.75, 4.25, 8.75), "leather", tags={"wrap": True})
     m.box("collar_low", (7, 0, 7), (9, 0.75, 9), "darksteel")
@@ -87,8 +96,8 @@ def build_greatsword():
     m.box("tip_2", (7.5, 30.25, 7.6), (8.5, 31.25, 8.4), "steel", tags={"edge": "both"})
     # 赤い結び紐：鍔の右の端に結び、握りの横へ垂らす
     m.box("cord_knot", (12.6, 7.9, 7.4), (13.8, 9.1, 8.6), "cord", tags={"twist": True})
-    cord_tail(m, "cord_tail_a", (13.0, 8.0, 8.0), 3.4, 0.0)
     cord_tail(m, "cord_tail_b", (13.5, 8.0, 8.0), 2.8, 22.5)
+    rental_tag(m, "tag", (13.0, 7.9))
     return m
 
 
@@ -112,6 +121,7 @@ def build_staff():
     m.box("cord_band", (5.6, 20, 7.3), (10.4, 20.75, 8.7), "cord", tags={"twist": True})
     m.box("cord_knot", (10.25, 19.7, 7.4), (11.25, 20.9, 8.6), "cord", tags={"twist": True})
     cord_tail(m, "cord_tail", (10.75, 19.8, 8.0), 2.6, 22.5)
+    rental_tag(m, "tag", (10.6, 19.7), w=1.5, h=2.0)
     return m
 
 
@@ -142,6 +152,7 @@ def build_shield():
     m.box("cord_knot", (-0.6, -7.6, 1.1), (0.6, -6.4, 2.3), "cord", tags={"twist": True})
     cord_tail(m, "cord_tail_l", (-0.25, -7.4, 1.7), 2.4, -22.5)
     cord_tail(m, "cord_tail_r", (0.25, -7.4, 1.7), 2.4, 22.5)
+    rental_tag(m, "tag", (0.0, -7.6), z=1.7)
     # 裏：横の当て木2本と、握り
     m.box("batten_top", (-5, 2.5, 0), (5, 4, 1), "walnut", tags={"grain": "x"})
     m.box("batten_low", (-5, -4, 0), (5, -2.5, 1), "walnut", tags={"grain": "x"})
@@ -154,6 +165,13 @@ def build_shield():
 # ---------------------------------------------------------------- 色と模様
 
 class ApprenticePainter(Painter):
+    def paint_tag(self, c):
+        """真鍮の札：上のまん中に紐の穴、表と裏に打ち抜いた番号（点2つ）。"""
+        tone = self.std(c, "bronze", base=4.6, noise=0.15, blob=0.1, up=1.0, down=0.8)
+        if self.facing(c) and c.H >= 3 and c.j == c.H - 2 and c.i == 0:
+            tone -= 1.8  # 打ち抜いた番号（小さな点）
+        return pick(RAMPS["bronze"], tone)
+
     def crest(self, c):
         """すり減った騎士団の紋：暗い鉄に、明るい引っかき傷のようなひし形の線。"""
         return -super().crest(c) * 1.1

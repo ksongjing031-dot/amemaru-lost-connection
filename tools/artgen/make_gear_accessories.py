@@ -48,20 +48,21 @@ def build_necklace():
     g = new_accessory("grassland_necklace")
     B = "armorBody"
     # ツノモフの毛を編んだ紐：首の後ろを回り、胸の前でV字に下りる
-    gcube(g, B, "cord_back", (-3, 23.4, 1.9), (6, 1, 1), "cord", inflate=-0.25)
+    gcube(g, B, "cord_back", (-3, 23.4, 1.9), (6, 1, 1), "cord", inflate=-0.2)
     for side, sx in (("r", 1), ("l", -1)):
-        gcube(g, B, f"cord_side_{side}", (sx * 3.25 - 0.5, 23.4, -2.2), (1, 1, 4), "cord", inflate=-0.25)
-        # 肩から胸のまん中へ斜めに下りる紐
+        gcube(g, B, f"cord_side_{side}", (sx * 3.25 - 0.5, 23.4, -2.2), (1, 1, 4), "cord", inflate=-0.2)
+        # 肩から胸のまん中へ斜めに下りる紐。とちゅうに小さな緑の玉
         cx, cy = sx * 1.6, 23.0
-        gcube(g, B, f"cord_v_{side}", (cx - 1.75, cy - 0.5, -2.45), (4, 1, 1), "cord", inflate=-0.25,
+        gcube(g, B, f"cord_v_{side}", (cx - 1.75, cy - 0.5, -2.45), (4, 1, 1), "cord", inflate=-0.2,
               rot=(0, 0, sx * 30), pivot=(cx, cy, -2.0))
-    # 緑の玉（草原の石）と、柔角の飾り（ツノモフの角。先が少し曲がる）
-    gcube(g, B, "bead", (-0.5, 21.9, -2.75), (1, 1, 1), "bead", inflate=0.05)
-    gcube(g, B, "horn_base", (-1, 20.9, -2.9), (2, 1, 1), "horn", inflate=0.05)
-    gcube(g, B, "horn_mid", (-0.75, 20.0, -2.85), (1, 1, 1), "horn", inflate=0.12, rot=(0, 0, -22.5),
-          pivot=(0, 20.9, -2.4))
-    gcube(g, B, "horn_tip", (0.0, 19.3, -2.8), (1, 1, 1), "horn", inflate=-0.15, rot=(0, 0, -45),
-          pivot=(0.3, 20.2, -2.3), tags={"tip": True})
+        gcube(g, B, f"bead_small_{side}", (sx * 2.1 - 0.5, 23.05, -2.75), (1, 1, 1), "bead", inflate=-0.15)
+    # 緑の玉（草原の石）と、柔角の飾り（ツノモフの角。根元が太く、先が丸く曲がる）
+    gcube(g, B, "bead", (-0.5, 21.9, -2.8), (1, 1, 1), "bead", inflate=0.15)
+    gcube(g, B, "horn_base", (-1, 20.6, -3.0), (2, 1, 1), "horn", inflate=0.2)
+    gcube(g, B, "horn_mid", (-0.75, 19.6, -2.9), (1, 1, 1), "horn", inflate=0.2, rot=(0, 0, -22.5),
+          pivot=(0, 20.6, -2.4))
+    gcube(g, B, "horn_tip", (0.1, 18.9, -2.85), (1, 1, 1), "horn", inflate=-0.05, rot=(0, 0, -45),
+          pivot=(0.4, 19.8, -2.3), tags={"tip": True})
     return g
 
 
@@ -72,13 +73,15 @@ def build_bracelet():
     A = "armorRightArm"
     # ゲームの中では右腕は x 4..8（Bedrock の −8..−4）。手首の少し上（手袋や袖口より上）
     y0 = 14.5
-    gcube(g, A, "seg_front", (4.5, y0, -2.75), (3, 2, 1), "stone", tags={"grooves": [y0 + 1.0]})
-    gcube(g, A, "seg_back", (4.5, y0, 1.75), (3, 2, 1), "stone", tags={"grooves": [y0 + 1.0]})
-    gcube(g, A, "seg_out", (7.75, y0, -1.5), (1, 2, 3), "stone")
-    gcube(g, A, "seg_in", (3.25, y0, -1.5), (1, 2, 3), "stone")
+    gcube(g, A, "seg_front", (4.5, y0, -2.75), (3, 2, 1), "stone", inflate=0.15, tags={"grooves": [y0 + 1.0]})
+    gcube(g, A, "seg_back", (4.5, y0, 1.75), (3, 2, 1), "stone", inflate=0.15, tags={"grooves": [y0 + 1.0]})
+    gcube(g, A, "seg_out", (7.75, y0, -1.5), (1, 2, 3), "stone", inflate=0.15)
+    gcube(g, A, "seg_in", (3.25, y0, -1.5), (1, 2, 3), "stone", inflate=0.15)
+    # 外の石に、石くれ兵の「目」の溝と、光らない結晶の欠片
+    gcube(g, A, "eye", (8.6, y0 + 0.5, -0.5), (1, 1, 1), "crystal_dim", inflate=-0.1)
     # 苔鉄の輪：石と石をつなぐ角の小さな輪
     for k, (x, z) in enumerate(((7.75, -2.5), (7.75, 1.5), (3.25, -2.5), (3.25, 1.5))):
-        gcube(g, A, f"link_{k}", (x, y0 + 0.5, z), (1, 1, 1), "iron", inflate=0.08)
+        gcube(g, A, f"link_{k}", (x, y0 + 0.5, z), (1, 1, 1), "iron", inflate=0.12)
     return g
 
 
@@ -88,11 +91,15 @@ def build_charm():
     g = new_accessory("waystone_charm")
     B = "armorBody"
     x = -5.0  # ゲームの中の左の腰（−x）。体の横 x=−4 に付く
-    gcube(g, B, "cord", (x + 0.5, 10.5, -0.5), (1, 2, 1), "cord", inflate=-0.3)
-    gcube(g, B, "ring", (x + 0.5, 10.0, -0.5), (1, 1, 1), "iron", inflate=-0.1)
-    gcube(g, B, "cap", (x + 0.5, 9.0, -0.5), (1, 1, 1), "stone")
-    gcube(g, B, "body", (x, 6.5, -1), (2, 3, 2), "stone", tags={"grooves": [8.5, 7.25], "charm": True})
-    gcube(g, B, "base", (x, 5.5, -1), (2, 1, 2), "stone", inflate=0.2)
+    gcube(g, B, "cord", (x + 0.5, 10.6, -0.5), (1, 2, 1), "cord", inflate=-0.25)
+    gcube(g, B, "ring", (x + 0.5, 10.0, -0.5), (1, 1, 1), "iron", inflate=-0.05)
+    gcube(g, B, "cap_2", (x + 0.5, 9.4, -0.5), (1, 1, 1), "stone", inflate=-0.1)
+    gcube(g, B, "cap", (x, 8.6, -1), (2, 1, 2), "stone", inflate=-0.25)
+    gcube(g, B, "body", (x, 5.0, -1), (2, 4, 2), "stone", inflate=0.1, tags={"grooves": [7.75, 6.25], "charm": True})
+    gcube(g, B, "base", (x, 4.2, -1), (2, 1, 2), "stone", inflate=0.3)
+    # ツノモフの毛の房（生成り）。お守りの下に下がる
+    gcube(g, B, "tassel_knot", (x + 0.5, 3.4, -0.5), (1, 1, 1), "cord", inflate=-0.1)
+    gcube(g, B, "tassel", (x + 0.5, 1.6, -0.5), (1, 2, 1), "wool", inflate=0.1, tags={"tassel": True})
     return g
 
 
@@ -126,6 +133,17 @@ class AccessoryPainter(Painter):
     def paint_bead(self, c):
         tone = 3.0 + self.bevel(c, up=1.6, down=0.8)
         return pick([(34, 70, 44), (46, 96, 58), (66, 130, 78), (96, 166, 104), (140, 204, 140), (190, 232, 180)], tone)
+
+    def paint_wool(self, c):
+        tone = 4.2 + (self.tex(c, 71) - 0.5) * 0.5 + self.bevel(c, up=0.6, down=0.8)
+        if c.el.tags.get("tassel") and c.j == c.H - 1 and c.i % 2 == 1:
+            return None  # 房の先はぎざぎざ
+        if c.el.tags.get("tassel") and c.face.d not in ("up", "down") and c.i % 2 == 0:
+            tone -= 0.5  # 毛の筋
+        return pick(RAMPS["wool"], tone)
+
+    def paint_crystal_dim(self, c):
+        return pick(RAMPS["crystal_dim"], 4.0 + self.bevel(c, up=1.4, down=0.8))
 
     def paint_horn(self, c):
         tone = self.std(c, "bone", base=4.2, noise=0.15, blob=0.2, up=1.0, down=1.0)
@@ -193,8 +211,8 @@ ART = {
 ......bccd......
 .....aAabcd.....
 .....cddddd.....
-................
-................
+.......Ww.......
+.......wW.......
 """,
 }
 
@@ -289,8 +307,8 @@ def draft(out_dir):
 
 NOTES = {
     "grassland_necklace": ("草原の首飾り", "ツノモフの毛を編んだ紐（生成りと草色）\nに、緑の玉と、ツノモフの柔角の飾り\n角は重鎧の円盤と法衣の留め具の間"),
-    "ishikure_bracelet": ("石くれの腕輪", "石くれ兵の石を4つ、苔鉄の輪でつないだ\nごつい腕輪（右の手首の少し上）\n表と裏の石に、道標の文字の溝"),
-    "waystone_charm": ("道標のお守り", "小さな道標の柱（段のある石）を、\n毛の紐と苔鉄の輪で左の腰に下げる\n文字の溝が2本"),
+    "ishikure_bracelet": ("石くれの腕輪", "石くれ兵の石を4つ、苔鉄の輪でつないだ\nごつい腕輪（右の手首の少し上）\n外の石に石くれ兵の目（光らない結晶）"),
+    "waystone_charm": ("道標のお守り", "段のある小さな道標の柱を、毛の紐と\n苔鉄の輪で左の腰に下げる。文字の溝2本\n下にツノモフの毛の房"),
 }
 
 
