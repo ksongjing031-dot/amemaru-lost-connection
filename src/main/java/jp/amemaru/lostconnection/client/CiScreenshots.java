@@ -1027,6 +1027,41 @@ public final class CiScreenshots {
             case GEAR + 39 -> {
                 clean(minecraft);
                 pendingShot = "gear_fp_bee_use";
+                next(GEAR + 41, 2);
+            }
+            case GEAR + 41 -> {
+                // ⑥アクセサリー：防具なしで付ける（三人称の前から。HUDなし）
+                hideHud = true;
+                minecraft.options.setCameraType(CameraType.THIRD_PERSON_FRONT);
+                CiPhase3.onServer(minecraft, player -> CiGear.wearAccessories(player, null));
+                next(GEAR + 42, 30);
+            }
+            case GEAR + 42 -> {
+                clean(minecraft);
+                pendingShot = "gear_accessories";
+                next(GEAR + 43, 2);
+            }
+            case GEAR + 43 -> {
+                // 重鎧の上に付けたとき（防具の上に見えるように広げて描く）
+                CiPhase3.onServer(minecraft, player -> CiGear.wearAccessories(player, CiGear.PLATE));
+                next(GEAR + 44, 30);
+            }
+            case GEAR + 44 -> {
+                clean(minecraft);
+                pendingShot = "gear_accessories_plate";
+                next(GEAR + 45, 2);
+            }
+            case GEAR + 45 -> {
+                CiPhase3.onServer(minecraft, player -> CiGear.wearAccessories(player, CiGear.ROBE));
+                next(GEAR + 46, 30);
+            }
+            case GEAR + 46 -> {
+                clean(minecraft);
+                pendingShot = "gear_accessories_robe";
+                next(GEAR + 47, 2);
+            }
+            case GEAR + 47 -> {
+                minecraft.options.setCameraType(CameraType.FIRST_PERSON);
                 next(GEAR + 40, 2);
             }
             case GEAR + 40 -> {

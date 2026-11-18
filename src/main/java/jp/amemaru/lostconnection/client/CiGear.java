@@ -95,6 +95,23 @@ final class CiGear {
     static final String[] PLATE = {"ancient_stone_helm", "ancient_stone_cuirass", "ancient_stone_greaves", "ancient_stone_sabatons"};
     static final String[] ROBE = {"ancient_stone_hood", "ancient_stone_robe", "ancient_stone_legwear", "ancient_stone_boots"};
 
+    /** 体に表示するアクセサリー（⑥）を付ける。armor が null でなければ、その防具（頭・胴・脚・足）も着る。 */
+    static void wearAccessories(ServerPlayer player, String[] armor) {
+        EquipmentSlot[] slots = {EquipmentSlot.HEAD, EquipmentSlot.CHEST, EquipmentSlot.LEGS, EquipmentSlot.FEET};
+        for (int k = 0; k < slots.length; k++) {
+            player.setItemSlot(slots[k], armor == null ? ItemStack.EMPTY
+                    : new ItemStack(BuiltInRegistries.ITEM.get(AmemaruMod.id(armor[k]))));
+        }
+        player.setItemSlot(EquipmentSlot.MAINHAND, ItemStack.EMPTY);
+        player.setItemSlot(EquipmentSlot.OFFHAND, ItemStack.EMPTY);
+        CiPhase3.setCurio(player, jp.amemaru.lostconnection.accessory.AccessorySlot.NECKLACE,
+                CiPhase3.accessory("grassland_necklace", 3, 0.9));
+        CiPhase3.setCurio(player, jp.amemaru.lostconnection.accessory.AccessorySlot.BRACELET,
+                CiPhase3.accessory("ishikure_bracelet", 2, 0.85));
+        CiPhase3.setCurio(player, jp.amemaru.lostconnection.accessory.AccessorySlot.CHARM,
+                CiPhase3.accessory("waystone_charm", 2, 0.8));
+    }
+
     private static String hand(String id) {
         return id == null ? "{}" : "{id:\"amemaru:" + id + "\",Count:1b}";
     }
