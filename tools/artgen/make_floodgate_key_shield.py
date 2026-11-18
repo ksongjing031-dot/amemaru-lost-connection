@@ -480,13 +480,29 @@ def main():
 
 # ---------------------------------------------------------------- 持ったときの向き（display）
 
+def right_from_left(left):
+    """左手の置き方を、左右に写した右手の置き方にする（Minecraftは左手のとき y・z の回転と x の移動を反転する。
+    盾の中心はモデルの原点なので、その分を足す）。"""
+    from javamodel import rot_matrix
+    rx, ry, rz = left["rotation"]
+    sx, sy, sz = left["scale"]
+    R = rot_matrix("x", rx) @ rot_matrix("y", ry) @ rot_matrix("z", rz)
+    shift = R @ np.array([sx, 0.0, 0.0]) * 16.0
+    t = [round(float(left["translation"][i] + shift[i]), 2) for i in range(3)]
+    return {"rotation": list(left["rotation"]), "translation": t, "scale": list(left["scale"])}
+
+
 def display_normal():
-    """ふだん（構えていない）。バニラの盾と同じ置き方で、少し大きい分だけ縮める。"""
+    """ふだん（構えていない）。三人称はバニラの盾と同じ置き方で、少し大きい分だけ縮める。
+    一人称は、アーチだけが目の前をふさがないよう、少し下げて斜めにし、裏の腕帯と管の小窓が見えるようにした
+    （ゲームの手の描き方を再現して調整。docs/gear/floodgate_key_shield.md）。"""
+    third_l = {"rotation": [0, 90, 0], "translation": [10, 6, 12], "scale": [0.9, 0.9, 0.9]}
+    first_l = {"rotation": [-8, 165, 6], "translation": [13, -2, -12], "scale": [0.9, 0.9, 0.9]}
     return {
-        "thirdperson_righthand": {"rotation": [0, 90, 0], "translation": [10, 6, -4], "scale": [0.9, 0.9, 0.9]},
-        "thirdperson_lefthand": {"rotation": [0, 90, 0], "translation": [10, 6, 12], "scale": [0.9, 0.9, 0.9]},
-        "firstperson_righthand": {"rotation": [0, 180, 5], "translation": [-10, 2, -10], "scale": [1.1, 1.1, 1.1]},
-        "firstperson_lefthand": {"rotation": [0, 180, 5], "translation": [10, 0, -10], "scale": [1.1, 1.1, 1.1]},
+        "thirdperson_righthand": right_from_left(third_l),
+        "thirdperson_lefthand": third_l,
+        "firstperson_righthand": right_from_left(first_l),
+        "firstperson_lefthand": first_l,
         "gui": {"rotation": [15, -25, -5], "translation": [3, 2.5, 0], "scale": [0.6, 0.6, 0.6]},
         "fixed": {"rotation": [0, 180, 0], "translation": [-4.5, 4.5, -5], "scale": [0.5, 0.5, 0.5]},
         "ground": {"rotation": [0, 0, 0], "translation": [2, 4, 2], "scale": [0.25, 0.25, 0.25]},
@@ -494,13 +510,15 @@ def display_normal():
 
 
 def display_blocking():
-    """構えたとき（バニラの盾の構えと同じ動き）。"""
+    """構えたとき。三人称はバニラの盾の構えと同じ動き。一人称は、照準をふさがないよう少し左に置く。"""
     d = display_normal()
+    third_l = {"rotation": [45, 135, 0], "translation": [13.51, 3, 5], "scale": [0.9, 0.9, 0.9]}
+    first_l = {"rotation": [0, 180, -5], "translation": [7, 4, -12], "scale": [1.0, 1.0, 1.0]}
     d.update({
-        "thirdperson_righthand": {"rotation": [45, 135, 0], "translation": [3.51, 11, -2], "scale": [0.9, 0.9, 0.9]},
-        "thirdperson_lefthand": {"rotation": [45, 135, 0], "translation": [13.51, 3, 5], "scale": [0.9, 0.9, 0.9]},
-        "firstperson_righthand": {"rotation": [0, 180, -5], "translation": [-15, 5, -11], "scale": [1.1, 1.1, 1.1]},
-        "firstperson_lefthand": {"rotation": [0, 180, -5], "translation": [5, 5, -11], "scale": [1.1, 1.1, 1.1]},
+        "thirdperson_righthand": right_from_left(third_l),
+        "thirdperson_lefthand": third_l,
+        "firstperson_righthand": right_from_left(first_l),
+        "firstperson_lefthand": first_l,
     })
     return d
 

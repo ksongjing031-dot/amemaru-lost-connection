@@ -833,15 +833,17 @@ public final class CiScreenshots {
                 next(GEAR + 8, 2);
             }
             case GEAR + 8 -> {
-                // 盾を下ろし、ゲームの中の4方向（表示用のエンティティ）を、少し離れて正面から撮る
+                // 盾を下ろし、ゲームの中の4方向（表示用のエンティティ）を、少し離れて正面から撮る。
+                // 左から正面・側面・背面・反対の側面（90度ずつ回す）。手が写らないよう、観戦モードにする
                 CiGear.block(minecraft, false);
                 minecraft.options.setCameraType(CameraType.FIRST_PERSON);
                 hideHud = true;
+                command(minecraft, "gamemode spectator @a");
                 if (gearReturn != null) {
                     double x = gearReturn.getX() + 0.5;
                     double z = gearReturn.getZ() + 0.5;
                     command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %d %.1f 0 0", x, P3_FLOOR + 1, z));
-                    float[] yaws = {0.0F, 90.0F, 180.0F, 270.0F};
+                    float[] yaws = {270.0F, 0.0F, 90.0F, 180.0F};
                     for (int k = 0; k < yaws.length; k++) {
                         command(minecraft, CiGear.turnaround(x - 4.5 + 3.0 * k, P3_FLOOR + 2.62, z + 7.0, yaws[k]));
                     }
@@ -867,6 +869,7 @@ public final class CiScreenshots {
                 hideHud = false;
                 command(minecraft, "kill @e[type=minecraft:item_display,tag=amemaru_ci_gear]");
                 command(minecraft, "time set noon");
+                command(minecraft, "gamemode creative @a");
                 CiPhase3.onServer(minecraft, CiPhase3::cleanup);
                 if (gearReturn != null) {
                     command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %d %.1f", gearReturn.getX() + 0.5, gearReturn.getY(),
