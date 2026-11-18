@@ -101,6 +101,9 @@ public final class CiScreenshots {
     /** Phase 3の工房の写真で置いた台の場所。 */
     @Nullable
     private static BlockPos workbench;
+    /** Phase 3の写真の前にいた場所（撮り終えたら戻る）。 */
+    @Nullable
+    private static BlockPos p3Return;
 
     private CiScreenshots() {
     }
@@ -600,9 +603,10 @@ public final class CiScreenshots {
                 command(minecraft, "gamemode creative @a");
                 command(minecraft, "amemaru admin job set @a amemaru:knight");
                 command(minecraft, "amemaru admin production set @a weapon 3");
-                // 前の写真の演出（氷華の檻の花など）が残っていない、木の上に出ない高さへ移り、新しい床を敷く（敵が動いても落ちない広さ）。
-                // 南（+Z）を向く
-                command(minecraft, "execute as @p at @p run tp @s ~48 ~20 ~ 0 12");
+                // 前の写真の演出（氷華の檻の花など）が残っていない、山や木より高い所（y=230）へ移り、新しい床を敷く（敵が動いても
+                // 落ちない広さ）。後の建物の写真の場所と重ならないよう北へずらし、撮り終えたら元の場所へ戻る。南（+Z）を向く
+                p3Return = minecraft.player == null ? null : minecraft.player.blockPosition();
+                command(minecraft, "execute as @p at @p run tp @s ~ 230 ~-64 0 12");
                 command(minecraft, "execute as @p at @p run fill ~-10 ~-1 ~-10 ~10 ~-1 ~10 minecraft:deepslate_tiles replace minecraft:air");
                 // 1階の4種類の敵を、こちらを向かせて並べる（動かない）
                 command(minecraft, "execute as @p at @p run summon amemaru:tsunomofu ~-3.2 ~ ~5 {NoAI:1b,Rotation:[200f,0f]}");
@@ -751,12 +755,15 @@ public final class CiScreenshots {
                 next(P3 + 24, 2);
             }
             case P3 + 24 -> {
-                // 後片づけ（台・装備・アクセサリー・持ち物）。建物の写真へ
+                // 後片づけ（台・装備・アクセサリー・持ち物）。元の場所へ戻って、建物の写真へ
                 minecraft.setScreen(new HoldScreen());
                 command(minecraft, "execute as @p at @p run setblock ~ ~ ~2 minecraft:air");
                 command(minecraft, "amemaru admin production clear @a");
                 CiPhase3.onServer(minecraft, CiPhase3::cleanup);
-                next(MAP_STAGE, 10);
+                if (p3Return != null) {
+                    command(minecraft, String.format(Locale.ROOT, "tp @p %d %d %d", p3Return.getX(), p3Return.getY(), p3Return.getZ()));
+                }
+                next(MAP_STAGE, 40);
             }
             // ---- 建物の見本：空の高い所に草の広場を敷き、構造物を置いて、まわりから撮る
             case MAP_STAGE -> {
