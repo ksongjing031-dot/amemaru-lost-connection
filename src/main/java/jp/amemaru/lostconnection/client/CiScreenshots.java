@@ -843,9 +843,10 @@ public final class CiScreenshots {
                     double x = gearReturn.getX() + 0.5;
                     double z = gearReturn.getZ() + 0.5;
                     command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %d %.1f 0 0", x, P3_FLOOR + 1, z));
-                    float[] yaws = {270.0F, 0.0F, 90.0F, 180.0F};
+                    // 南を向くと、画面の左は東（+X）。向き0で表が北（こちら）を向く
+                    float[] yaws = {0.0F, 90.0F, 180.0F, 270.0F};
                     for (int k = 0; k < yaws.length; k++) {
-                        command(minecraft, CiGear.turnaround(x - 4.5 + 3.0 * k, P3_FLOOR + 2.62, z + 7.0, yaws[k]));
+                        command(minecraft, CiGear.turnaround(x + 4.5 - 3.0 * k, P3_FLOOR + 2.62, z + 7.0, yaws[k]));
                     }
                 }
                 next(GEAR + 9, 30);
