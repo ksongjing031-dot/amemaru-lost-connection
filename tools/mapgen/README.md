@@ -67,6 +67,9 @@ python3 tools/mapgen/build_armor.py /tmp/out --render /tmp/out --only front,in_s
   `("shield", {"base": "gray", "patterns": [("cs", "red")]})`（盾の地と模様。記号は旗と同じ）の組でも渡せる。
   構造物ファイルの `entities` に書き出され、`/place template` で一緒に置かれる。どちらも固定（`Fixed`・壊れない・重力なし）で、
   額縁は向きの反対側のブロックに掛かる（`"up"` は台の上に寝かせる、`"down"` は梁の下に吊るす）。置く所のマスはあけておく。
+  プレイヤー（サバイバル・アドベンチャー）は中身を取る・回す・入れる・壊すができない（額縁は `Fixed`・`Invulnerable`、
+  防具立ては `DisabledSlots`・`Invulnerable`）。この守りは `gametest/MapDisplayGameTests.java` で毎回確かめる。
+  額縁か防具立てのある建物を足したら、そのファイルにテストを1つ足す（額縁と防具立ての数を書く）。
 - 上にふさぐブロックがある土の道（`dirt_path`）は、置いたときにゲームが土に変えるので、`finalize()` で先に土にする。
 - 物語で形が変わる所（育つ施設）は、変わる範囲だけの小さな構造物を別に書き出して、後から重ねて置く
   （`build_weapon.py` の `forge_lit_world()`。範囲の中は空気も書き出すので、外したブロックは消える）。
