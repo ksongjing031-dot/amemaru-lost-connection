@@ -63,6 +63,9 @@ public final class MapDisplayGameTests {
     private static final String WEAPON = "map/conelia/weapon_workshop";
     private static final String ARMOR = "map/conelia/armor_workshop";
     private static final String ACCESSORY = "map/conelia/accessory_workshop";
+    private static final String MARKET_NORTH = "map/conelia/market_north";
+    private static final String MARKET_SOUTH = "map/conelia/market_south";
+    private static final String MARKET_OPEN = "map/conelia/market_restaurant_open";
 
     /** 防具立てを右クリックする高さ（足・脚・胴・手・頭のあたり）。 */
     private static final double[] CLICK_HEIGHTS = {0.2, 0.6, 1.0, 1.3, 1.8};
@@ -95,6 +98,24 @@ public final class MapDisplayGameTests {
     @GameTest(template = EMPTY)
     public static void accessoryWorkshopDisplaysCannotBeTaken(GameTestHelper helper) {
         checkBuilding(helper, ACCESSORY, "accessory", 32, 0);
+    }
+
+    /** 商店街の北（料理屋が開く前）：額縁62（8軒の店の品・看板の下の品・素材の見本など）。防具立てはない。 */
+    @GameTest(template = EMPTY)
+    public static void marketNorthDisplaysCannotBeTaken(GameTestHelper helper) {
+        checkBuilding(helper, MARKET_NORTH, "market_north", 62, 0);
+    }
+
+    /** 商店街の南：額縁59（6軒の店の品）。防具立てはない。 */
+    @GameTest(template = EMPTY)
+    public static void marketSouthDisplaysCannotBeTaken(GameTestHelper helper) {
+        checkBuilding(helper, MARKET_SOUTH, "market_south", 59, 0);
+    }
+
+    /** 寄付で開いたあとの料理屋（北の上に重ねる）：額縁8（品書き・その日の魚・看板の下の品・店先の器）。 */
+    @GameTest(template = EMPTY)
+    public static void marketRestaurantOpenDisplaysCannotBeTaken(GameTestHelper helper) {
+        checkBuilding(helper, MARKET_OPEN, "market_open", 8, 0);
     }
 
     /**

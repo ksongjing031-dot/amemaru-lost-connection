@@ -206,6 +206,11 @@ def face_textures(name, props):
                                    texture("cauldron_bottom")] + [texture("cauldron_side")] * 2,
         "magma_block": lambda: all6(texture("magma")),
         "raw_iron_block": lambda: all6(texture("raw_iron_block")),
+        "pumpkin": lambda: [texture("pumpkin_side")] * 2 + [texture("pumpkin_top")] * 2 + [texture("pumpkin_side")] * 2,
+        "melon": lambda: [texture("melon_side")] * 2 + [texture("melon_top")] * 2 + [texture("melon_side")] * 2,
+        "composter": lambda: [texture("composter_side")] * 2 + [texture("composter_top"),
+                              texture("composter_bottom")] + [texture("composter_side")] * 2,
+        "cake": lambda: [texture("cake_side")] * 2 + [texture("cake_top"), texture("cake_bottom")] + [texture("cake_side")] * 2,
     }
     if name == "loom":
         return _oriented(texture("loom_front"), texture("loom_side"), texture("loom_top"), texture("loom_bottom"),

@@ -1,4 +1,4 @@
-"""街の灯り（都市のルール⑦）：壁のランタン・再建のランタン灯・鎖で吊るす灯り・ろうそく。
+"""街の灯り（都市のルール⑦）：古代の結晶灯・壁のランタン・再建のランタン灯・鎖で吊るす灯り・ろうそく。
 
 どの建物でも同じ形になるように、ここでまとめて作る。座標は World の (x, y, z)（x が東、y が上、z が南）。
 out・arms の向きは "north"・"south"・"east"・"west"。
@@ -66,3 +66,16 @@ def hang_lantern(w, x, y, z, chain=1):
 def candles(w, x, y, z, n=3, lit=True):
     """台の上のろうそく（1〜4本）。"""
     w.put(x, y, z, block("candle", candles=n, lit=lit, waterlogged=False))
+
+
+def crystal_lamp(w, x, y, z, lit=True):
+    """古代の結晶灯（大通り・中央広場・塔前広場・教会前広場。12ごとに左右互い違い）。(x, y, z) は台の位置（地面の上）。
+
+    形：磨いた閃緑岩の台1段、石英の柱3段、灯の頭（点いている＝シーランタン、消えている＝遮光ガラス）、石英の半ブロックの笠。高さ6。
+    襲撃の夜に消えた灯を、プレイヤーがともし直すときは、頭のブロックだけを入れ替える。
+    """
+    w.put(x, y, z, block("polished_diorite"))
+    for k in range(1, 4):
+        w.put(x, y + k, z, block("quartz_pillar", axis="y"))
+    w.put(x, y + 4, z, block("sea_lantern") if lit else block("tinted_glass"))
+    w.put(x, y + 5, z, slab("quartz", "bottom"))

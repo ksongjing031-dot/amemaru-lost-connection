@@ -96,7 +96,12 @@ public final class CiScreenshots {
      *  {@link #ARMOR_FIRST} からの6枚は防具工房（tools/mapgen/build_armor.py の VIEWS と同じ：
      *  正面・交差点の角・環状路（西）・入口の近く・上から・裏）。
      *  {@link #ACCESSORY_FIRST} からの6枚は装飾工房（tools/mapgen/build_accessory.py の VIEWS と同じ：
-     *  正面・広場の角・中央広場（西）・入口の近く・上から・裏）。 */
+     *  正面・広場の角・中央広場（西）・入口の近く・上から・裏）。
+     *  {@link #MARKET_NORTH_FIRST} からの6枚は商店街の北（tools/mapgen/build_market.py の VIEWS_NORTH と同じ：
+     *  環状路から北へ・西の店の並び・東の店の並び・中央広場から・上から・西の裏通り）、
+     *  {@link #MARKET_OPEN_SHOT} の1枚は、寄付で開いた料理屋を重ねて置いたあと（中央広場の側の席）、
+     *  {@link #MARKET_SOUTH_FIRST} からの6枚は商店街の南（VIEWS_SOUTH と同じ：環状路から南へ・渡り廊下・
+     *  フリーマーケットへの通り抜け・南門の前の小広場・上から・環状路の交差点）。 */
     private static final String[] MAP_SHOTS = {
             "map_guild_front", "map_guild_left", "map_guild_right", "map_guild_close", "map_guild_aerial", "map_guild_back",
             "map_weapon_front", "map_weapon_gate", "map_weapon_west", "map_weapon_close", "map_weapon_aerial",
@@ -104,7 +109,12 @@ public final class CiScreenshots {
             "map_armor_front", "map_armor_corner", "map_armor_west", "map_armor_close", "map_armor_aerial",
             "map_armor_back",
             "map_accessory_front", "map_accessory_corner", "map_accessory_west", "map_accessory_close",
-            "map_accessory_aerial", "map_accessory_back"};
+            "map_accessory_aerial", "map_accessory_back",
+            "map_market_north_street", "map_market_north_west", "map_market_north_east", "map_market_north_plaza",
+            "map_market_north_aerial", "map_market_north_back",
+            "map_market_restaurant_open",
+            "map_market_south_street", "map_market_south_west", "map_market_south_arch", "map_market_south_gate",
+            "map_market_south_aerial", "map_market_south_corner"};
     private static final double[][] MAP_VIEWS = {
             {-30, 16, 21, 18, 13, 21},
             {-22, 22, -18, 16, 12, 16},
@@ -130,6 +140,19 @@ public final class CiScreenshots {
             {3, 2.8, 28, 4, 3.2, 19},
             {-8, 27, 34, 9, 9, 12},
             {26, 14, -12, 9, 8, 10},
+            {18.5, 9, 38, 18.5, 4, 0},
+            {22.5, 3, 22, 10, 6, 9},
+            {17.5, 4, 26, 27, 6, 8},
+            {18.5, 5, -14, 18.5, 5, 10},
+            {38, 36, 48, 16, 2, 14},
+            {-6, 12, 38, 6, 7, 16},
+            {15, 3.8, -6, 6.5, 5.5, 5},
+            {18.5, 9, -8, 18.5, 3, 30},
+            {23, 4, 16.5, 10, 6.5, 16.5},
+            {19, 2.6, 17, 8, 3.5, 17},
+            {17, 6, 48, 7, 3, 38},
+            {36, 34, -6, 8, 2, 24},
+            {27, 5, -10, 16, 4, 4},
     };
     /** 武器工房の写真の始まり。ここで、ギルドを片づけて武器工房を置く。 */
     private static final int WEAPON_FIRST = 6;
@@ -137,8 +160,16 @@ public final class CiScreenshots {
     private static final int ARMOR_FIRST = 12;
     /** 装飾工房の写真の始まり。ここで、防具工房を片づけて装飾工房を置く。 */
     private static final int ACCESSORY_FIRST = 18;
-    /** ギルドの構造物の大きさ（東西・高さ・南北）。片づける範囲。 */
-    private static final int[] GUILD_SIZE = {36, 38, 41};
+    /** 商店街の北の写真の始まり。ここで、装飾工房を片づけて商店街の北（中央広場の縁から環状路まで）を置く。 */
+    private static final int MARKET_NORTH_FIRST = 24;
+    /** 寄付で開いた料理屋の写真。ここで、商店街の北の上に、開いたあとの料理屋を重ねて置く（片づけない）。 */
+    private static final int MARKET_OPEN_SHOT = 30;
+    /** 商店街の南の写真の始まり。ここで、北を片づけて商店街の南（環状路から南門の前まで）を置く。 */
+    private static final int MARKET_SOUTH_FIRST = 31;
+    /** 重ねて置く構造物（前の建物を片づけない）。 */
+    private static final String MARKET_OPEN = "market_restaurant_open";
+    /** 片づける範囲（東西・高さ・南北）：いちばん大きい構造物（東西は商店街の37、南北は商店街の南の44）を包む大きさ。 */
+    private static final int[] CLEAR_SIZE = {37, 38, 44};
     /**
      * 建物の見本の写真の段階の始まり（Phase 3 の写真の後に撮る）。写真1枚に2段階を使い、建物が増えると段階も増えるので、
      * ほかの段階（0〜62・100〜124・330〜331）と重ならない所から始める。
@@ -862,7 +893,12 @@ public final class CiScreenshots {
                     pendingShot = MAP_SHOTS[view];
                     next(stage + 1, 2);
                 } else if (buildingFrom(view + 1) != null) {
-                    replaceBuilding(minecraft, buildingFrom(view + 1));
+                    String name = buildingFrom(view + 1);
+                    if (MARKET_OPEN.equals(name)) {
+                        overlay(minecraft, name);
+                    } else {
+                        replaceBuilding(minecraft, name);
+                    }
                     mapView(view + 1);
                     // 置き替えた構造物の形を作り直して描くまで、長めに待つ
                     next(stage + 1, 300);
@@ -895,12 +931,33 @@ public final class CiScreenshots {
         if (view == ACCESSORY_FIRST) {
             return "accessory_workshop";
         }
+        if (view == MARKET_NORTH_FIRST) {
+            return "market_north";
+        }
+        if (view == MARKET_OPEN_SHOT) {
+            return MARKET_OPEN;
+        }
+        if (view == MARKET_SOUTH_FIRST) {
+            return "market_south";
+        }
         return null;
+    }
+
+    /** 今の建物の上に、構造物 {@code name} を同じ所から重ねて置く（寄付で開いた料理屋など。片づけない）。 */
+    private static void overlay(Minecraft minecraft, String name) {
+        BlockPos o = mapOrigin;
+        if (o == null) {
+            return;
+        }
+        command(minecraft, "gamerule doTileDrops false");
+        command(minecraft, String.format(Locale.ROOT, "place template amemaru:map/conelia/%s %d %d %d",
+                name, o.getX(), o.getY(), o.getZ()));
+        command(minecraft, "gamerule doTileDrops true");
     }
 
     /**
      * 前の建物を片づけて（額縁などのもの・ブロック・足もとの石畳を草に戻す）、同じ所に次の建物（{@code name}）を置く。
-     * 次の建物の写真に前の建物が映らないようにするため。片づける範囲は、いちばん大きいギルドの大きさ。
+     * 次の建物の写真に前の建物が映らないようにするため。片づける範囲は {@link #CLEAR_SIZE}（いちばん大きい構造物を包む）。
      * 1回の fill は 32768 ブロックまでなので、南北に2つに分けて片づける。
      */
     private static void replaceBuilding(Minecraft minecraft, String name) {
@@ -911,15 +968,15 @@ public final class CiScreenshots {
         int x0 = o.getX();
         int y0 = o.getY();
         int z0 = o.getZ();
-        int x1 = x0 + GUILD_SIZE[0] - 1;
-        int y1 = y0 + GUILD_SIZE[1] - 1;
-        int z1 = z0 + GUILD_SIZE[2] - 1;
-        int zm = z0 + GUILD_SIZE[2] / 2;
+        int x1 = x0 + CLEAR_SIZE[0] - 1;
+        int y1 = y0 + CLEAR_SIZE[1] - 1;
+        int z1 = z0 + CLEAR_SIZE[2] - 1;
+        int zm = z0 + CLEAR_SIZE[2] / 2;
         // 2つに分けて片づけると、境目をまたいで掛かった灯りなどが支えを失って落ち、アイテムになって草の上に散らばる。
         // 片づけて置き直す間だけ、壊れたブロックがアイテムを落とさないようにする（終わったら元に戻す）
         command(minecraft, "gamerule doTileDrops false");
         command(minecraft, String.format(Locale.ROOT, "kill @e[type=!minecraft:player,x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d]",
-                x0, y0, z0, GUILD_SIZE[0], GUILD_SIZE[1], GUILD_SIZE[2]));
+                x0, y0, z0, CLEAR_SIZE[0], CLEAR_SIZE[1], CLEAR_SIZE[2]));
         command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:air", x0, y0 + 1, z0, x1, y1, zm - 1));
         command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:air", x0, y0 + 1, zm, x1, y1, z1));
         command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:grass_block", x0, y0, z0, x1, y0, z1));

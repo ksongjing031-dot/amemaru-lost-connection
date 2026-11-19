@@ -472,10 +472,34 @@ def candle_flames(props, cell):
 
 # ---------------------------------------------------------------- もの（額縁・防具立て）
 def _item_texture(item):
+    """額縁の中に平たく描くアイテムの絵。アイテムの模型の layer0（たいまつ・花は block/ の絵）を使い、
+    ブロックのアイテム（羊毛など）は、そのブロックの模型の絵を使う。"""
     item = (item or "").replace("minecraft:", "")
     names = {"crossbow": "crossbow_standby", "filled_map": "filled_map", "map": "map", "trident": "trident",
              "shield": "shield", "clock": "clock_00", "compass": "compass_16"}
-    return "item/" + names.get(item, item)
+    if item in names:
+        return "item/" + names[item]
+    model = load_json("models/item/" + item + ".json")
+    for _ in range(4):
+        if model is None:
+            break
+        textures = model.get("textures", {})
+        if "layer0" in textures:
+            layers = [textures[k] for k in ("layer0", "layer1") if k in textures]
+            plain = [t for t in layers if not t.endswith("_overlay")]    # 薬の瓶などは、色の重ね絵でない方
+            return (plain or layers)[0].replace("minecraft:", "")
+        parent = model.get("parent", "").replace("minecraft:", "")
+        if parent.startswith("block/"):
+            block_model = load_json("models/" + parent + ".json") or {}
+            bt = block_model.get("textures", {})
+            for key in ("all", "side", "texture", "front", "particle"):
+                if key in bt and not bt[key].startswith("#"):
+                    return bt[key].replace("minecraft:", "")
+            break
+        if not parent or parent.startswith("builtin/") or parent == "item/generated":
+            break
+        model = load_json("models/" + parent + ".json")
+    return "item/" + item
 
 
 def item_frame_pieces(entity):

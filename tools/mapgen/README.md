@@ -16,6 +16,8 @@ python3 tools/mapgen/build_armor.py /tmp/out --render /tmp/out   # 見本の絵�
 python3 tools/mapgen/build_armor.py /tmp/out --render /tmp/out --only front,in_shop   # 一部の絵だけ描く
 python3 tools/mapgen/build_accessory.py                   # accessory_workshop.nbt（装飾工房）を書き直す
 python3 tools/mapgen/build_accessory.py /tmp/out --render /tmp/out   # 見本の絵も描く（6つの向き＋まとめた1枚、切った絵2枚、中の絵9枚＋留め具の枠のいまと第3章）
+python3 tools/mapgen/build_market.py                      # market_north.nbt・market_south.nbt・market_restaurant_open.nbt（商店街）を書き直す
+python3 tools/mapgen/build_market.py /tmp/out --render /tmp/out   # 見本の絵も描く（北6・南6、切った絵2枚、中の絵6枚、料理屋の開く前と後と中）
 ```
 
 見本の絵のテクスチャと模型（ランタン・看板・旗などの形）は、初めて使うときに GitHub の Minecraft の素材の写し（1.20.1）から
@@ -28,12 +30,19 @@ python3 tools/mapgen/build_accessory.py /tmp/out --render /tmp/out   # 見本の
 /place template amemaru:map/conelia/weapon_workshop ~ ~-1 ~
 /place template amemaru:map/conelia/armor_workshop ~ ~-1 ~
 /place template amemaru:map/conelia/accessory_workshop ~ ~-1 ~
+/place template amemaru:map/conelia/market_north ~ ~-1 ~
+/place template amemaru:map/conelia/market_south ~ ~-1 ~38
 ```
 
 武器工房は正面が南です（立った所から東へ25、南へ22ブロック広がります）。古代炉に火が入った形（12日目）は、
 工房を置いた角から (13, 1, 3) ずらした所に `amemaru:map/conelia/weapon_forge_lit` を重ねて置きます（古代炉のまわりの 5×20×4 だけが入れ替わります）。
 防具工房は正面が北です（立った所から東へ22、南へ23ブロック広がります）。
 装飾工房は正面が南です（立った所から東へ19、南へ22ブロック広がります）。
+商店街は南北に通る市場通り（幅9）の両側の店で、環状路（幅7）をはさんで北と南の2つの構造物に分かれています
+（北は東へ37・南へ32、南は東へ37・南へ44。上のように南を38ずらして置くと、間の6列＋北の最後の1列が環状路の幅になります）。
+北の最後の1列（環状路の1列目）と、南の東側（カジノの場所）は structure_void で、置いても元のブロックを消しません。
+寄付で料理屋が開いたあとの形は、北と同じ所に `amemaru:map/conelia/market_restaurant_open` を重ねて置きます
+（料理屋のまわりの 15×26×13 だけが入れ替わります）。
 
 ## 中身
 
@@ -44,11 +53,12 @@ python3 tools/mapgen/build_accessory.py /tmp/out --render /tmp/out   # 見本の
 | `mapgen/facade.py` | 壁の立面を、奥行きの層ごとの文字の絵で描いて置く（`stamp`・`compose`）、窓（`window`） |
 | `mapgen/render.py` | 見本の絵。1ブロックを 4×4×4 の小さな箱に分けて、階段・ハーフ・柵・トラップドアなどの形と、日の光の影を描く。小さな部品は `models.py` の模型で描いて重ねる |
 | `mapgen/models.py` | 小さな部品の模型。ランタン・鎖・焚き火・ろうそく・花・植木鉢・金床・砥石・書見台・大釜などはゲームの模型（blockstates・models）を読み、看板・旗（模様つき）・チェスト・寝台・鐘・額縁（中のアイテム）・防具立ては箱を組む。防具立てに着せた鎧（革は染めた色も）と、額縁の模様入りの盾も描く |
-| `mapgen/fixtures.py` | 街の灯り（都市のルール⑦）：壁のランタン（`wall_lantern`）、再建のランタン灯（`lamp_post`）、鎖で吊る灯り（`hang_lantern`）、ろうそく（`candles`） |
+| `mapgen/fixtures.py` | 街の灯り（都市のルール⑦）：古代の結晶灯（`crystal_lamp`。大通りと広場）、壁のランタン（`wall_lantern`）、再建のランタン灯（`lamp_post`）、鎖で吊る灯り（`hang_lantern`）、ろうそく（`candles`） |
 | `build_guild.py` | コネリアの冒険者ギルド（PHASE 1 の設計。36×38×41、正面は西。外観・内装・まわりまで） |
 | `build_weapon.py` | コネリアの武器工房（PHASE 2 の設計。25×24×22、正面は南）と、古代炉に火が入った形（5×20×4） |
 | `build_armor.py` | コネリアの防具工房（PHASE 3 の設計。22×24×23、正面は北）。型紙の壁が章ごとに増える形は `patterns_world(枚数)` |
 | `build_accessory.py` | コネリアの装飾工房（PHASE 4 の設計。19×24×22、正面は南）。第3章で留め具の枠が埋まる形は `clasp_world()` |
+| `build_market.py` | コネリアの商店街（PHASE 5 の設計。北 37×26×32・南 37×26×44）。14軒の店は4つの型（A 平入り2階・B 妻入り2階・C 妻入り3階・D 角の平入り）の `Shop` を組み替え、店ごとの品と色は `TRADES`。寄付で開いた料理屋の形は `restaurant_overlay()` |
 
 ## 決まり
 
