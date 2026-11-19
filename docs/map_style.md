@@ -203,7 +203,7 @@
 | `map_market_south_street` | 商店街の南を、環状路から南へ。西の店の並びと、門の前の小広場 |
 | `map_market_south_west` | 通りの東の端から、本屋・渡り廊下・革屋 |
 | `map_market_south_arch` | フリーマーケットへの通り抜け（渡り廊下の下） |
-| `map_market_south_gate` | 南門の側から小広場。露店2つと花壇 |
+| `map_market_south_gate` | 南門の側から小広場。露店2つと両腕のランタン灯 |
 | `map_market_south_aerial` | 上から（北東） |
 | `map_market_south_corner` | 環状路の交差点（北東）から。角の店2軒と案内板 |
 
