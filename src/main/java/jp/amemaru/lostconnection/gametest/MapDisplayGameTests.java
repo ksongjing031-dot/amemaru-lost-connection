@@ -11,7 +11,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.DoubleTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
@@ -188,7 +187,7 @@ public final class MapDisplayGameTests {
     private static List<Entity> spawnDisplays(GameTestHelper helper, String template) {
         ServerLevel level = helper.getLevel();
         StructureTemplate structure = level.getStructureManager()
-                .get(new ResourceLocation(AmemaruMod.MOD_ID, template))
+                .get(AmemaruMod.id(template))
                 .orElseThrow(() -> new GameTestAssertException("構造物が見つかりません：" + template));
         ListTag entities = structure.save(new CompoundTag()).getList("entities", Tag.TAG_COMPOUND);
         Vec3 at = helper.absoluteVec(new Vec3(1.5, 1.5, 1.5));
