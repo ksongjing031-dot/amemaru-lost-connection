@@ -446,6 +446,10 @@ class World:
             for y in range(self.h):
                 for z in range(self.d):
                     state = self.blocks.get((x, y, z))
+                    if state is not None and state[0] == "structure_void":
+                        # 置いても元のブロックを消さない所は、ファイルに書かない（ゲームの構造物ブロックが保存するときと同じ。
+                        # structure_void を書くと、置いたときに見えないブロックとして置かれ、元のブロックが消える）
+                        continue
                     if state is None:
                         if not with_air:
                             continue
