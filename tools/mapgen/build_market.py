@@ -189,10 +189,13 @@ class Shop:
     店の中の座標 (a, b)：a は通りから店を見て左→右（0..F-1）、b は正面の壁→裏の壁（0..10。2階の張り出しは b=-1）。
     kind："A" 平入り2階（張り出し）、"B" 妻入り2階、"C" 妻入り3階（張り出し）、"D" 角の平入り2階（張り出し。妻を横の道に向ける）。
     free：横の壁のうち、外に出ている側（世界の向き "north"・"south"。路地・角・広場）。
+    mirror：左右を入れ替える（入口を、通りから見て左の端に寄せる）。chamfer：1階の正面の左の角を、2ブロック斜めに切る
+    （大通りと環状路の交差点の角切り。都市のルール⑤）。切った所の上は、2階が持ち送りで張り出す（下の空きは5）。
     """
     D = 11
 
-    def __init__(self, seg, key, side, z0, z1, kind, trade, free=(), door_wood="spruce", chimney=False):
+    def __init__(self, seg, key, side, z0, z1, kind, trade, free=(), door_wood="spruce", chimney=False, mirror=False,
+                 chamfer=False):
         self.seg, self.key, self.side, self.z0, self.z1 = seg, key, side, z0, z1
         self.F = z1 - z0 + 1
         self.kind, self.t = kind, TRADES[trade]
@@ -204,7 +207,10 @@ class Shop:
         self.bf = -1 if self.jetty else 0                  # 2階の正面の壁の b
         self.front = "east" if side == "W" else "west"
         self.back = OPP[self.front]
+        self.mirror, self.chamfer = mirror, chamfer
         self.left = "south" if side == "W" else "north"
+        if mirror:
+            self.left = OPP[self.left]
         self.right = OPP[self.left]
         self.floors = [Y1, Y2, Y3] if kind == "C" else [Y1, Y2]
         # 壁の上の梁（屋根の軒先の高さ）。2階建ては2階の壁を1段高くして軒 +11、棟 +18（都市のルール④の店の棟 18〜22。
@@ -221,9 +227,15 @@ class Shop:
 
     # -- 座標と向き
     def xz(self, a, b):
+        if self.mirror:
+            a = self.F - 1 - a
         if self.side == "W":
             return -5 - b, self.z1 - a
         return 5 + b, self.z0 + a
+
+    def cut(self, a, b):
+        """角切りで、1階から取り除くマスか（正面の左の角から2ブロック斜め）。"""
+        return self.chamfer and 0 <= a and 0 <= b and a + b < 2
 
     def d(self, rel):
         return {"front": self.front, "back": self.back, "left": self.left, "right": self.right}.get(rel, rel)
@@ -269,23 +281,37 @@ class Shop:
         self.roof()
         if self.chimney:
             self.build_chimney()
+        self.chamfer_corbels()
         self.interior()
 
     def foundation(self):
         for a in range(self.F):
             for b in range(0, 11):
-                self.put(a, b, 0, block("cobblestone"))
+                # 角切りの所は道（端の帯の石）
+                self.put(a, b, 0, band_paving() if self.cut(a, b) else block("cobblestone"))
 
     def lower_walls(self):
         F = self.F
-        for (a, b) in self.walls_at(Y1):
+        cells = {c for c in self.walls_at(Y1) if not self.cut(*c)}
+        corners = {(0, 0), (F - 1, 0), (0, 10), (F - 1, 10)}
+        if self.chamfer:
+            cells |= {(1, 1)}                         # 斜めの壁の真ん中の角の柱
+            corners = (corners - {(0, 0)}) | {(1, 1), (0, 2)}   # (2, 0) は店の窓のまま
+        for (a, b) in cells:
             self.put(a, b, Y1, block("polished_andesite"))
             for y in range(Y1 + 1, Y2):
-                corner = a in (0, F - 1) and b in (0, 10)
-                if corner:
+                if (a, b) in corners:
                     self.put(a, b, y, block("polished_andesite") if y % 2 else block("stone_bricks"))
                 else:
                     self.put(a, b, y, gray_stone())
+
+    def chamfer_corbels(self):
+        """角切りの上：2階の床の下に持ち送り（斜めの壁から）と、角の下に吊るす灯り。"""
+        if not self.chamfer:
+            return
+        self.put(1, 0, Y2 - 1, stairs(pal.frame, self.back, "top"))
+        self.put(0, 1, Y2 - 1, stairs(pal.frame, self.d("right"), "top"))
+        self.put(0, 0, Y2 - 1, lantern(True))
 
     def ceiling(self, fy):
         """階 fy の天井のブロックの高さ（上の階の床か、屋根裏の床）。"""
@@ -330,9 +356,12 @@ class Shop:
                 self.put(a, b, self.attic, block("spruce_planks"))
 
     # -- 正面の1階：店の窓と店先のカウンター、入口と踏み段、吊り看板と品の額縁
-    def front_ground_floor(self):
+    def window_cols(self):
         a0, a1 = self.win
-        for a in range(a0, a1 + 1):
+        return [a for a in range(a0, a1 + 1) if not self.cut(a, 0) and not self.cut(a, 1)]
+
+    def front_ground_floor(self):
+        for a in self.window_cols():
             for y in range(Y1 + 1, Y1 + 4):
                 self.put(a, 0, y, pane())
             self.put(a, -1, Y1, slab("spruce", "top"))              # 店先のカウンター
@@ -351,9 +380,8 @@ class Shop:
         self.frame(pier, -1, Y1 + 1, "front", self.t["ware"])
 
     def ledge_goods(self):
-        a0, a1 = self.win
         goods = self.t["ledge"]
-        for i, a in enumerate(range(a0, a1 + 1)):
+        for i, a in enumerate(self.window_cols()):
             g = goods[i % len(goods)]
             if g.startswith("frame:"):
                 self.frame(a, -1, Y1 + 1, "up", g[6:], rotation=i)
@@ -441,6 +469,8 @@ class Shop:
             b, a = -5 - x, self.z1 - z
         else:
             b, a = x - 5, z - self.z0
+        if self.mirror:
+            a = self.F - 1 - a
         if 0 <= a < self.F and self.bf <= b <= 10:
             return a, b
         return None
@@ -559,6 +589,8 @@ class Shop:
         side = "left" if a == 1 else "right"
         if self.side_free(side):
             rows = tuple(b for b in rows if b != self.SIDE_OPEN)
+        if self.chamfer and a == 1:
+            rows = tuple(b for b in rows if b > 1)          # 角切りの柱 (1, 1) をよける
         return rows
 
     def cabinet(self, a, items, wall_items):
@@ -937,11 +969,11 @@ def build_north(restaurant_open=False):
                    is_open=restaurant_open),
         Shop(seg, "W2", "W", 35, 40, "C", "bakery", free=("north",), chimney=True),
         Shop(seg, "W3", "W", 41, 46, "A", "greengrocer"),
-        Shop(seg, "W4", "W", 47, 52, "D", "apothecary", free=("south",)),
+        Shop(seg, "W4", "W", 47, 52, "D", "apothecary", free=("south",), chamfer=True),
         GeneralStore(seg, "E1", "E", 25, 31, "D", "general", free=("north",), door_wood="dark_oak"),
         Shop(seg, "E2", "E", 32, 37, "B", "tools", free=("south",)),
         Shop(seg, "E3", "E", 41, 46, "A", "lights", free=("north",)),
-        Shop(seg, "E4", "E", 47, 52, "D", "cloth", free=("south",)),
+        Shop(seg, "E4", "E", 47, 52, "D", "cloth", free=("south",), mirror=True, chamfer=True),
     ]
     for sh in shops:
         sh.build()
@@ -1081,6 +1113,8 @@ VIEWS_SOUTH = {
 
 def shop_point(shop, A, B, y):
     """店の中の座標（a・b を小数にしたもの。マス (a, b) の真ん中は (a+0.5, b+0.5)）を、構造物の中の座標にする。"""
+    if shop.mirror:
+        A = shop.F - A
     if shop.side == "W":
         x, z = -4 - B, shop.z1 + 1 - A
     else:

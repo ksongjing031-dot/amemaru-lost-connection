@@ -100,10 +100,10 @@ public final class MapDisplayGameTests {
         checkBuilding(helper, ACCESSORY, "accessory", 32, 0);
     }
 
-    /** 商店街の北（料理屋が開く前）：額縁62（8軒の店の品・看板の下の品・素材の見本など）。防具立てはない。 */
+    /** 商店街の北（料理屋が開く前）：額縁55（8軒の店の品・看板の下の品・素材の見本など）。防具立てはない。 */
     @GameTest(template = EMPTY)
     public static void marketNorthDisplaysCannotBeTaken(GameTestHelper helper) {
-        checkBuilding(helper, MARKET_NORTH, "market_north", 62, 0);
+        checkBuilding(helper, MARKET_NORTH, "market_north", 55, 0);
     }
 
     /** 商店街の南：額縁59（6軒の店の品）。防具立てはない。 */
