@@ -18,6 +18,9 @@ python3 tools/mapgen/build_accessory.py                   # accessory_workshop.n
 python3 tools/mapgen/build_accessory.py /tmp/out --render /tmp/out   # 見本の絵も描く（6つの向き＋まとめた1枚、切った絵2枚、中の絵9枚＋留め具の枠のいまと第3章）
 python3 tools/mapgen/build_market.py                      # market_north.nbt・market_south.nbt・market_restaurant_open.nbt（商店街）を書き直す
 python3 tools/mapgen/build_market.py /tmp/out --render /tmp/out   # 見本の絵も描く（北6・南6、切った絵2枚、中の絵6枚、料理屋の開く前と後と中）
+python3 tools/mapgen/build_storage.py                     # personal_storage.nbt（個人倉庫：受付棟・渡り廊下・地下2層）を書き直す
+python3 tools/mapgen/build_storage.py /tmp/out --render /tmp/out  # 見本の絵も描く（ギルドと重ねた外7枚、中の絵11枚、各階を切った絵4枚）
+python3 tools/mapgen/build_storage.py /tmp/out --ci       # 自動の確認の写真の座標（CiScreenshots.java の MAP_VIEWS の行）を出す
 ```
 
 見本の絵のテクスチャと模型（ランタン・看板・旗などの形）は、初めて使うときに GitHub の Minecraft の素材の写し（1.20.1）から
@@ -32,6 +35,7 @@ python3 tools/mapgen/build_market.py /tmp/out --render /tmp/out   # 見本の絵
 /place template amemaru:map/conelia/accessory_workshop ~ ~-1 ~
 /place template amemaru:map/conelia/market_north ~ ~-1 ~
 /place template amemaru:map/conelia/market_south ~ ~-1 ~38
+/place template amemaru:map/conelia/personal_storage ~16 ~-8 ~18
 ```
 
 武器工房は正面が南です（立った所から東へ25、南へ22ブロック広がります）。古代炉に火が入った形（12日目）は、
@@ -43,6 +47,9 @@ python3 tools/mapgen/build_market.py /tmp/out --render /tmp/out   # 見本の絵
 北の最後の1列（環状路の1列目）と、南の東側（カジノの場所）は structure_void で、置いても元のブロックを消しません。
 寄付で料理屋が開いたあとの形は、北と同じ所に `amemaru:map/conelia/market_restaurant_open` を重ねて置きます
 （料理屋のまわりの 15×26×13 だけが入れ替わります）。
+個人倉庫は、ギルドを置いた後に、ギルドの角から東へ16・下へ7・南へ18ずらして重ねます（上の最後の行。ギルドを `~ ~-1 ~` で
+置いたとき）。地上の受付棟とギルドの東の渡り廊下に加えて、ギルドの1階の床の下（保管庫）と、受付棟の下の地下2層まで入っています。
+ギルドの建物の中・軒・地面の下の土は書かないので、置いてもギルドは消えません（下の決まりの `owned`）。
 
 ## 中身
 
@@ -59,6 +66,7 @@ python3 tools/mapgen/build_market.py /tmp/out --render /tmp/out   # 見本の絵
 | `build_armor.py` | コネリアの防具工房（PHASE 3 の設計。22×24×23、正面は北）。型紙の壁が章ごとに増える形は `patterns_world(枚数)` |
 | `build_accessory.py` | コネリアの装飾工房（PHASE 4 の設計。19×24×22、正面は南）。第3章で留め具の枠が埋まる形は `clasp_world()` |
 | `build_market.py` | コネリアの商店街（PHASE 5 の設計。北 37×26×32・南 37×26×44）。14軒の店は4つの型（A 平入り2階・B 妻入り2階・C 妻入り3階・D 角の平入り）の `Shop` を組み替え、店ごとの品と色は `TRADES`。寄付で開いた料理屋の形は `restaurant_overlay()` |
+| `build_storage.py` | コネリアの個人倉庫（PHASE 6 の設計。40×30×23、正面は南）。平面図の (u, v) と高さ y（道のブロックが 0、地下は負）で組み立てる。地下の部屋は「中のマス」を決めて `shell()` でまわりを壁・床・天井で囲む。ギルドと重ねた写しは `combined_world()`（見本の絵と確かめで使う） |
 
 ## 決まり
 
@@ -79,6 +87,11 @@ python3 tools/mapgen/build_market.py /tmp/out --render /tmp/out   # 見本の絵
   板ガラスは、両脇がガラスかブロックになるようにする（つながらないと細い柱に見える）。
 - 置いても元のブロックを消さない所（ほかの区画にかかる所）には `structure_void` を置く。書き出すときは、その所をファイルに
   書かない（ゲームの構造物ブロックが保存するときと同じ。`structure_void` のまま書くと、見えないブロックとして置かれ、元のブロックが消える）。
+- ほかの建物と大きく重なる構造物（個人倉庫の地下がギルドの下に入るなど）は、`save_structure(path, owned=関数)` で書き出す。
+  何も置いていないマスのうち `owned(x, y, z)` が False の所は書かない（structure_void と同じ）。地下の部屋の空気のように、
+  はっきり空けたいマスは `owned` で True にする（`build_storage.py` は、空けたマスを `AIR_CELLS` に覚えておく）。
+- 階段は、いちばん上の段を上の床と同じ高さに置く（段のブロックの上の面が、上の床の上の面とそろう）。高さ h の階を上る階段は
+  h 段になる。段が床より1低いところで終わると、最後に1ブロックの段差が残って、跳ばないと上れない。
 - 額縁と防具立ては「もの（エンティティ）」として、`World.item_frame(x, y, z, 向き, アイテム)`・`World.armor_stand(...)` で置く。
   アイテムは名前のほか、`("leather_chestplate", {"color": 0x8E3A2E})`（革の色）や
   `("shield", {"base": "gray", "patterns": [("cs", "red")]})`（盾の地と模様。記号は旗と同じ）の組でも渡せる。

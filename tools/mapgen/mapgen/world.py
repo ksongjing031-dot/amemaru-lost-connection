@@ -429,8 +429,12 @@ class World:
         zs = [p[2] for p in self.blocks]
         return (min(xs), min(ys), min(zs), max(xs), max(ys), max(zs))
 
-    def save_structure(self, path, with_air=True):
-        """構造物ファイル（.nbt）に書き出す。with_air なら、置いたときに範囲の中を片づける。"""
+    def save_structure(self, path, with_air=True, owned=None):
+        """構造物ファイル（.nbt）に書き出す。with_air なら、置いたときに範囲の中を片づける。
+
+        owned(x, y, z) を渡すと、何も置いていないマスのうち owned が False の所は書かない（置いても元のブロックを
+        消さない。structure_void と同じ）。ほかの建物と重なる構造物（個人倉庫の地下がギルドの下に入るなど）で使う。
+        """
         palette, index = [], {}
 
         def pidx(state):
@@ -451,7 +455,7 @@ class World:
                         # structure_void を書くと、置いたときに見えないブロックとして置かれ、元のブロックが消える）
                         continue
                     if state is None:
-                        if not with_air:
+                        if not with_air or (owned is not None and not owned(x, y, z)):
                             continue
                         state = AIR
                     entry = {"state": Int(pidx(state)), "pos": List[Int]([Int(x), Int(y), Int(z)])}

@@ -3,7 +3,7 @@
 4×4×4 の小さな箱では形が出ないもの（ランタン・鎖・焚き火・花・看板・旗・額縁・防具立てなど）は、
 ゲームと同じ模型（箱の並びと、面ごとのテクスチャの位置）で描く。
 
-- ランタン・鎖・焚き火・ろうそく・植木鉢・花・金床・砥石・書見台・大釜・鐘の台・エンドロッド・避雷針は、
+- ランタン・鎖・焚き火・ろうそく・植木鉢・花・金床・砥石・書見台・大釜・鐘の台・エンドロッド・避雷針・トリップワイヤーフックは、
   ゲームの模型（assets/minecraft/blockstates と models）をそのまま読む。
 - 看板・旗・チェスト・寝台・鐘の本体（ゲームが別に描くもの）と、額縁・防具立て（もの）は、ここで箱を組む。
 
@@ -41,7 +41,7 @@ MODEL_BLOCKS = {"lantern", "soul_lantern", "chain", "campfire", "soul_campfire",
                 "torch", "wall_torch", "poppy", "dandelion", "allium", "azure_bluet", "oxeye_daisy", "cornflower",
                 "lily_of_the_valley", "blue_orchid", "red_tulip", "orange_tulip", "white_tulip", "pink_tulip",
                 "brewing_stand", "ladder", "stonecutter", "amethyst_cluster", "large_amethyst_bud", "medium_amethyst_bud",
-                "small_amethyst_bud"}
+                "small_amethyst_bud", "tripwire_hook"}
 
 
 def is_model_block(name):

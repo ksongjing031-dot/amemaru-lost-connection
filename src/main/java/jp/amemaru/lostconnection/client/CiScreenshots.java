@@ -58,6 +58,10 @@ import java.util.Locale;
  *       正面は北）。武器工房を片づけた同じ所に置き、まわりの6か所から撮る</li>
  *   <li>建物の見本（11月20日、PHASE 4 の設計）：コネリアの装飾工房（{@code amemaru:map/conelia/accessory_workshop}。
  *       正面は南）。防具工房を片づけた同じ所に置き、まわりの6か所から撮る</li>
+ *   <li>建物の見本（11月20日、PHASE 5 の設計）：商店街の北（料理屋が開く前と、開いたあとを重ねた形）と南</li>
+ *   <li>建物の見本（11月20日、PHASE 6 の設計）：個人倉庫（{@code amemaru:map/conelia/personal_storage}）。
+ *       商店街を片づけてギルドを置き直し、その東に受付棟と地下の保管庫を置く（ギルドの東の扉から渡り廊下でつながる形）。
+ *       外の6か所と、1階・地下1層・ギルドの下の保管庫・地下2層の中の7か所から撮る</li>
  * </ul>
  */
 @Mod.EventBusSubscriber(modid = AmemaruMod.MOD_ID, value = Dist.CLIENT)
@@ -101,7 +105,10 @@ public final class CiScreenshots {
      *  環状路から北へ・西の店の並び・東の店の並び・中央広場から・上から・西の裏通り）、
      *  {@link #MARKET_OPEN_SHOT} の1枚は、寄付で開いた料理屋を重ねて置いたあと（中央広場の側の席）、
      *  {@link #MARKET_SOUTH_FIRST} からの6枚は商店街の南（VIEWS_SOUTH と同じ：環状路から南へ・渡り廊下・
-     *  フリーマーケットへの通り抜け・南門の前の小広場・上から・環状路の交差点）。 */
+     *  フリーマーケットへの通り抜け・南門の前の小広場・上から・環状路の交差点）。
+     *  {@link #STORAGE_FIRST} からの13枚は個人倉庫（tools/mapgen/build_storage.py の CI_SHOTS と同じ：正面・入口・
+     *  北東の角から・荷揚げの妻・裏・上から・広間・ハーヴィの立ち位置から窓口ごしに広間・地下1層の廊下・小部屋・鉄格子から保管庫・保管庫の中・
+     *  地下2層の古代の間）。座標はギルドを置いた所から（個人倉庫は {@link #STORAGE_AT} だけずらして置く）。 */
     private static final String[] MAP_SHOTS = {
             "map_guild_front", "map_guild_left", "map_guild_right", "map_guild_close", "map_guild_aerial", "map_guild_back",
             "map_weapon_front", "map_weapon_gate", "map_weapon_west", "map_weapon_close", "map_weapon_aerial",
@@ -114,7 +121,10 @@ public final class CiScreenshots {
             "map_market_north_aerial", "map_market_north_back",
             "map_market_restaurant_open",
             "map_market_south_street", "map_market_south_west", "map_market_south_arch", "map_market_south_gate",
-            "map_market_south_aerial", "map_market_south_corner"};
+            "map_market_south_aerial", "map_market_south_corner",
+            "map_storage_front", "map_storage_entrance", "map_storage_east", "map_storage_hoist", "map_storage_back",
+            "map_storage_aerial", "map_storage_hall", "map_storage_counter", "map_storage_corridor", "map_storage_room",
+            "map_storage_grille", "map_storage_vault", "map_storage_ancient"};
     private static final double[][] MAP_VIEWS = {
             {-30, 16, 21, 18, 13, 21},
             {-22, 22, -18, 16, 12, 16},
@@ -153,6 +163,19 @@ public final class CiScreenshots {
             {9, 6.5, 50, 8, 2.5, 38},
             {36, 34, -6, 8, 2, 24},
             {27, 5, -10, 16, 4, 4},
+            {39, 8, 59, 41, 7.5, 32},
+            {43.5, 4.6, 46.5, 43.5, 6.2, 37},
+            {64, 9, 48, 50, 8.5, 29},
+            {61, 7, 36, 51, 12.5, 29},
+            {58, 14, 4, 42, 8, 28},
+            {62, 32, 58, 39, 6, 26},
+            {43.5, 4.62, 36.4, 43.5, 4.2, 28},
+            {43.5, 4.62, 29.2, 43.5, 4.2, 37},
+            {46.3, 0.62, 35.4, 30, -0.5, 34.5},
+            {41.5, 0.62, 31.9, 41.5, -0.6, 29},
+            {33.8, 0.62, 34.8, 18, -0.2, 35},
+            {29.4, 0.62, 22.5, 17, -0.5, 28},
+            {44.5, -3.38, 22.5, 35, -4.2, 27.5},
     };
     /** 武器工房の写真の始まり。ここで、ギルドを片づけて武器工房を置く。 */
     private static final int WEAPON_FIRST = 6;
@@ -168,6 +191,12 @@ public final class CiScreenshots {
     private static final int MARKET_SOUTH_FIRST = 31;
     /** 重ねて置く構造物（前の建物を片づけない）。 */
     private static final String MARKET_OPEN = "market_restaurant_open";
+    /** 個人倉庫の写真の始まり。ここで、商店街の南を片づけてギルドを置き直し、その東に個人倉庫を重ねて置く。 */
+    private static final int STORAGE_FIRST = 37;
+    /** 個人倉庫の構造物。ギルドの後に置く（ギルドの東の扉の外の段と、地下の保管庫の所のギルドの土台を上書きする）。 */
+    private static final String STORAGE = "personal_storage";
+    /** 個人倉庫を置く所（ギルドを置いた所から）：世界の (x 22, 道の下 7, z -82) とギルドの (x 6, 道, z -100) の差。 */
+    private static final int[] STORAGE_AT = {16, -7, 18};
     /** 片づける範囲（東西・高さ・南北）：いちばん大きい構造物（東西は商店街の37、南北は商店街の南の44）を包む大きさ。 */
     private static final int[] CLEAR_SIZE = {37, 38, 44};
     /**
@@ -896,6 +925,9 @@ public final class CiScreenshots {
                     String name = buildingFrom(view + 1);
                     if (MARKET_OPEN.equals(name)) {
                         overlay(minecraft, name);
+                    } else if (STORAGE.equals(name)) {
+                        replaceBuilding(minecraft, "guild_hall");
+                        overlayAt(minecraft, STORAGE, STORAGE_AT);
                     } else {
                         replaceBuilding(minecraft, name);
                     }
@@ -940,7 +972,22 @@ public final class CiScreenshots {
         if (view == MARKET_SOUTH_FIRST) {
             return "market_south";
         }
+        if (view == STORAGE_FIRST) {
+            return STORAGE;
+        }
         return null;
+    }
+
+    /** 今の建物の横に、構造物 {@code name} を {@code at}（建物を置いた所から）ずらして重ねて置く（個人倉庫。片づけない）。 */
+    private static void overlayAt(Minecraft minecraft, String name, int[] at) {
+        BlockPos o = mapOrigin;
+        if (o == null) {
+            return;
+        }
+        command(minecraft, "gamerule doTileDrops false");
+        command(minecraft, String.format(Locale.ROOT, "place template amemaru:map/conelia/%s %d %d %d",
+                name, o.getX() + at[0], o.getY() + at[1], o.getZ() + at[2]));
+        command(minecraft, "gamerule doTileDrops true");
     }
 
     /** 今の建物の上に、構造物 {@code name} を同じ所から重ねて置く（寄付で開いた料理屋など。片づけない）。 */

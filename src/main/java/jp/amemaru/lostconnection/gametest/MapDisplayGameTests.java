@@ -66,6 +66,7 @@ public final class MapDisplayGameTests {
     private static final String MARKET_NORTH = "map/conelia/market_north";
     private static final String MARKET_SOUTH = "map/conelia/market_south";
     private static final String MARKET_OPEN = "map/conelia/market_restaurant_open";
+    private static final String STORAGE = "map/conelia/personal_storage";
 
     /** 防具立てを右クリックする高さ（足・脚・胴・手・頭のあたり）。 */
     private static final double[] CLICK_HEIGHTS = {0.2, 0.6, 1.0, 1.3, 1.8};
@@ -116,6 +117,12 @@ public final class MapDisplayGameTests {
     @GameTest(template = EMPTY)
     public static void marketRestaurantOpenDisplaysCannotBeTaken(GameTestHelper helper) {
         checkBuilding(helper, MARKET_OPEN, "market_open", 8, 0);
+    }
+
+    /** 個人倉庫：額縁5（入口の吊り看板の下の、鍵に見えるトリップワイヤーフック・事務の壁の保管庫の配置図・地下1層の小部屋の扉の上の名札3）。防具立てはない。 */
+    @GameTest(template = EMPTY)
+    public static void personalStorageDisplaysCannotBeTaken(GameTestHelper helper) {
+        checkBuilding(helper, STORAGE, "storage", 5, 0);
     }
 
     /**
