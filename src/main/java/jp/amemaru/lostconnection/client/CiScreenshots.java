@@ -46,6 +46,10 @@ import java.util.Locale;
  *   <li>奥義のもう一つ（11月17日）：天断ちの構えと断った瞬間、奥義のつまみ（2つから1つ）、氷華の檻の詠唱と花が咲いたところ</li>
  *   <li>建物の見本（11月19日、PHASE 1 の設計）：コネリアの冒険者ギルド（{@code amemaru:map/conelia/guild_hall}。
  *       正面は西）を空に置き、まわりの6か所から撮る（HUDは隠す）</li>
+ *   <li>建物の見本（11月19日、PHASE 2 の設計）：コネリアの武器工房（{@code amemaru:map/conelia/weapon_workshop}。
+ *       正面は南）。ギルドを片づけた同じ所に置き、まわりの6か所から撮る</li>
+ *   <li>建物の見本（11月19日、PHASE 3 の設計）：コネリアの防具工房（{@code amemaru:map/conelia/armor_workshop}。
+ *       正面は北）。武器工房を片づけた同じ所に置き、まわりの6か所から撮る</li>
  * </ul>
  */
 @Mod.EventBusSubscriber(modid = AmemaruMod.MOD_ID, value = Dist.CLIENT)
@@ -77,10 +81,18 @@ public final class CiScreenshots {
     private static BlockPos returnPos;
     private static String returnMode = "creative";
 
-    /** 建物の見本の写真の名前と、撮る所：目の位置と見る所（構造物の中の座標。y=0 が地面の草）。
-     *  tools/mapgen/build_guild.py の VIEWS と同じ（正面・左前・右前・入口の近く・上から・裏）。 */
+    /** 建物の見本の写真の名前と、撮る所：目の位置と見る所（構造物の中の座標。y=0 が地面）。
+     *  はじめの6枚はギルド（tools/mapgen/build_guild.py の VIEWS と同じ：正面・左前・右前・入口の近く・上から・裏）。
+     *  {@link #WEAPON_FIRST} からの6枚は武器工房（tools/mapgen/build_weapon.py の VIEWS と同じ：
+     *  正面・東門の方・西・入口の近く・上から・裏）。
+     *  {@link #ARMOR_FIRST} からの6枚は防具工房（tools/mapgen/build_armor.py の VIEWS と同じ：
+     *  正面・交差点の角・環状路（西）・入口の近く・上から・裏）。 */
     private static final String[] MAP_SHOTS = {
-            "map_guild_front", "map_guild_left", "map_guild_right", "map_guild_close", "map_guild_aerial", "map_guild_back"};
+            "map_guild_front", "map_guild_left", "map_guild_right", "map_guild_close", "map_guild_aerial", "map_guild_back",
+            "map_weapon_front", "map_weapon_gate", "map_weapon_west", "map_weapon_close", "map_weapon_aerial",
+            "map_weapon_back",
+            "map_armor_front", "map_armor_corner", "map_armor_west", "map_armor_close", "map_armor_aerial",
+            "map_armor_back"};
     private static final double[][] MAP_VIEWS = {
             {-30, 16, 21, 18, 13, 21},
             {-22, 22, -18, 16, 12, 16},
@@ -88,7 +100,25 @@ public final class CiScreenshots {
             {-15, 11, 21, 6, 13, 21},
             {-16, 42, 54, 20, 12, 21},
             {66, 26, -14, 20, 12, 18},
+            {0, 5, 36, 9, 10, 14},
+            {38, 7, 34, 14, 8, 11},
+            {-22, 6, 30, 9, 8, 11},
+            {11, 2.8, 25, 10, 4, 18},
+            {-6, 30, 36, 11, 8, 10},
+            {2, 15, -16, 12, 9, 8},
+            {11, 5, -22, 11, 9, 9},
+            {-9, 6, -11, 8, 8, 8},
+            {-20, 5, 14, 2, 6, 10},
+            {4, 2.8, -9, 7, 3.5, 2},
+            {-7, 25, -12, 9, 8, 10},
+            {24, 14, 34, 10, 8, 12},
     };
+    /** 武器工房の写真の始まり。ここで、ギルドを片づけて武器工房を置く。 */
+    private static final int WEAPON_FIRST = 6;
+    /** 防具工房の写真の始まり。ここで、武器工房を片づけて防具工房を置く。 */
+    private static final int ARMOR_FIRST = 12;
+    /** ギルドの構造物の大きさ（東西・高さ・南北）。片づける範囲。 */
+    private static final int[] GUILD_SIZE = {36, 38, 41};
     /** 建物の見本の写真の段階の始まり。 */
     private static final int MAP_STAGE = 70;
 
@@ -597,6 +627,9 @@ public final class CiScreenshots {
             }
             case MAP_STAGE + 1 -> {
                 BlockPos o = mapOrigin;
+                // 草の下に土を1段（構造物の足もとの砂利が、空へ落ちないように）
+                command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:dirt",
+                        o.getX() - 24, o.getY() - 1, o.getZ() - 24, o.getX() + 71, o.getY() - 1, o.getZ() + 63));
                 command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:grass_block",
                         o.getX() - 24, o.getY(), o.getZ() - 24, o.getX() + 71, o.getY(), o.getZ() + 63));
                 command(minecraft, String.format(Locale.ROOT, "place template amemaru:map/conelia/guild_hall %d %d %d",
@@ -616,6 +649,11 @@ public final class CiScreenshots {
                     clean(minecraft);
                     pendingShot = MAP_SHOTS[view];
                     next(stage + 1, 2);
+                } else if (view + 1 == WEAPON_FIRST || view + 1 == ARMOR_FIRST) {
+                    replaceBuilding(minecraft, view + 1 == WEAPON_FIRST ? "weapon_workshop" : "armor_workshop");
+                    mapView(view + 1);
+                    // 置き替えた構造物の形を作り直して描くまで、長めに待つ
+                    next(stage + 1, 300);
                 } else if (view + 1 < MAP_SHOTS.length) {
                     mapView(view + 1);
                     next(stage + 1, 80);
@@ -631,6 +669,32 @@ public final class CiScreenshots {
                 }
             }
         }
+    }
+
+    /**
+     * 前の建物を片づけて（額縁などのもの・ブロック・足もとの石畳を草に戻す）、同じ所に次の建物（{@code name}）を置く。
+     * 次の建物の写真に前の建物が映らないようにするため。片づける範囲は、いちばん大きいギルドの大きさ。
+     * 1回の fill は 32768 ブロックまでなので、南北に2つに分けて片づける。
+     */
+    private static void replaceBuilding(Minecraft minecraft, String name) {
+        BlockPos o = mapOrigin;
+        if (o == null) {
+            return;
+        }
+        int x0 = o.getX();
+        int y0 = o.getY();
+        int z0 = o.getZ();
+        int x1 = x0 + GUILD_SIZE[0] - 1;
+        int y1 = y0 + GUILD_SIZE[1] - 1;
+        int z1 = z0 + GUILD_SIZE[2] - 1;
+        int zm = z0 + GUILD_SIZE[2] / 2;
+        command(minecraft, String.format(Locale.ROOT, "kill @e[type=!minecraft:player,x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d]",
+                x0, y0, z0, GUILD_SIZE[0], GUILD_SIZE[1], GUILD_SIZE[2]));
+        command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:air", x0, y0 + 1, z0, x1, y1, zm - 1));
+        command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:air", x0, y0 + 1, zm, x1, y1, z1));
+        command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:grass_block", x0, y0, z0, x1, y0, z1));
+        command(minecraft, String.format(Locale.ROOT, "place template amemaru:map/conelia/%s %d %d %d",
+                name, x0, y0, z0));
     }
 
     /** 建物の見本の撮る所へ、観戦モードのまま移る（目の高さは足もとの 1.62 上）。 */

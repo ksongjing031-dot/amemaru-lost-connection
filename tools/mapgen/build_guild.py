@@ -20,6 +20,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from mapgen.arch import Palette, Pyramid, Roof, finial, gable_wall
 from mapgen.facade import cell, origin, window
+from mapgen.fixtures import hang_lantern, lamp_post, wall_lantern
 from mapgen.world import (AIR, World, banner_nbt, block, door, fence, lantern, leaves, log, pane, sign_nbt, slab, stairs,
                           trapdoor, wall)
 
@@ -293,10 +294,9 @@ def front_posts_and_jetty():
     # 張り出しの北の端（Z=25）は露台の南の壁：漆喰と柱
     for y in range(F2, YA):
         w.put(7, y, 25, block(pal.plaster))
-    # 柱に腕木を出して灯りを吊る（Z=29、Z=37）
+    # 柱に腕木を出して灯りを吊る（Z=29、Z=37。都市のルール⑦の壁のランタン）
     for z in (29, 37):
-        w.put(5, 12, z, fence(pal.trim))
-        w.put(5, 11, z, lantern(True))
+        wall_lantern(w, 6, 12, z, "west")
 
 
 def north_jetty():
@@ -422,9 +422,9 @@ def porch():
         for z in range(17, 25):
             w.put(x, YA, z, block("spruce_planks"))
     w.put(6, YA - 1, 21, lantern(True))
-    # ポーチの天井から灯りを吊る
+    # ポーチの天井から、鎖で灯りを吊る
     for z in (19, 23):
-        w.put(6, 8, z, lantern(True))
+        hang_lantern(w, 6, 8, z)
     # 大看板（入口の上のアーチの帯）と旗
     w.put(4, 8, 21, block("spruce_wall_sign", facing="west", waterlogged=False),
           sign_nbt(["", "冒険者ギルド", "コネリア", ""], color="black"))
@@ -433,6 +433,8 @@ def porch():
     # 吊り看板（北の柱から、塔の道の方へ）
     w.put(4, 5, 17, block("spruce_wall_hanging_sign", facing="north", waterlogged=False),
           sign_nbt(["冒険者ギルド", "", "", ""], ["冒険者ギルド", "", "", ""], hanging=True))
+    # 吊り看板の下に、ギルドの品（地図）を額縁で見せる（⑦）。北の柱の西の面に掛け、塔の道の方を向く
+    w.item_frame(4, 4, 17, "west", "map")
 
 
 # ---------------------------------------------------------------- 塔（北西の角、9×9）
@@ -1077,13 +1079,9 @@ def interior_attic():
 
 # ---------------------------------------------------------------- まわり
 def surroundings():
-    # 再建のランタン灯（小広場の北と南の角）
-    for z, arm in ((13, 1), (29, -1)):
-        w.put(1, 1, z, wall("stone_brick"))
-        for y in (2, 3, 4):
-            w.put(1, y, z, fence("spruce"))
-        w.put(1, 4, z + arm, fence("spruce"))
-        w.put(1, 3, z + arm, lantern(True))
+    # 再建のランタン灯（小広場の北と南の角。都市のルール⑦の両腕の形：塔の道と小広場の両方を照らす）
+    for z in (13, 29):
+        lamp_post(w, 1, 1, z, arms=("west", "east"))
     # 長椅子（小広場の北と南の帯、小広場の方を向く）
     for (x, z, facing) in ((3, 11, "north"), (4, 11, "north"), (3, 31, "south"), (4, 31, "south")):
         w.put(x, 1, z, stairs("spruce", facing))

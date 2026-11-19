@@ -5,8 +5,8 @@
 （~/.cache/amemaru-mapgen）。リポジトリには入れない。
 
 1ブロックを 4×4×4 の小さな箱に分けて、階段・ハーフ・柵・塀・トラップドア・板ガラスの形を表す。
+ランタン・鎖・看板・旗・額縁・防具立てなどの小さな部品は、models.py の模型（ゲームと同じ形とテクスチャ）で描いて重ねる。
 """
-import io
 import math
 import os
 import urllib.request
@@ -14,6 +14,7 @@ import urllib.request
 import numpy as np
 from PIL import Image
 
+from .models import build_pieces, is_model_block
 from .world import kind, props_of
 
 S = 4  # 1ブロックを何等分するか
@@ -63,6 +64,8 @@ SOLID_COLORS = {
     "white_bed": ((230, 230, 230), None, False),
     "brown_bed": ((120, 80, 50), None, False),
     "blue_wall_banner": ((52, 72, 170), None, False),
+    "red_wall_banner": ((164, 40, 34), None, False),
+    "black_wall_banner": ((30, 30, 34), None, False),
     "white_wall_banner": ((236, 236, 236), None, False),
     "spruce_wall_sign": ((114, 84, 48), None, False),
     "spruce_wall_hanging_sign": ((114, 84, 48), None, False),
@@ -192,12 +195,35 @@ def face_textures(name, props):
         "crafting_table": lambda: [texture("crafting_table_side")] * 2 + [texture("crafting_table_top"), texture("oak_planks")] + [texture("crafting_table_front")] * 2,
         "cauldron": lambda: [texture("cauldron_side")] * 2 + [texture("cauldron_top"), texture("cauldron_bottom")] + [texture("cauldron_side")] * 2,
         "quartz_pillar": lambda: [texture("quartz_pillar")] * 2 + [texture("quartz_pillar_top")] * 2 + [texture("quartz_pillar")] * 2,
-        "chiseled_quartz_block": lambda: [texture("chiseled_quartz_block")] * 2 + [texture("chiseled_quartz_block_top")] * 2 + [texture("chiseled_quartz_block")] * 2,
         "tinted_glass": lambda: all6(texture("tinted_glass")),
+        "smithing_table": lambda: [texture("smithing_table_side")] * 2 + [texture("smithing_table_top"),
+                                   texture("smithing_table_bottom")] + [texture("smithing_table_front")] * 2,
+        "grindstone": lambda: all6(texture("grindstone_side")),
+        "anvil": lambda: [texture("anvil")] * 2 + [texture("anvil_top"), texture("anvil")] + [texture("anvil")] * 2,
+        "chipped_anvil": lambda: [texture("anvil")] * 2 + [texture("chipped_anvil_top"), texture("anvil")] + [texture("anvil")] * 2,
+        "damaged_anvil": lambda: [texture("anvil")] * 2 + [texture("damaged_anvil_top"), texture("anvil")] + [texture("anvil")] * 2,
+        "water_cauldron": lambda: [texture("cauldron_side")] * 2 + [_tinted("water_still", WATER_TINT),
+                                   texture("cauldron_bottom")] + [texture("cauldron_side")] * 2,
+        "magma_block": lambda: all6(texture("magma")),
+        "raw_iron_block": lambda: all6(texture("raw_iron_block")),
     }
+    if name == "loom":
+        return _oriented(texture("loom_front"), texture("loom_side"), texture("loom_top"), texture("loom_bottom"),
+                         props.get("facing", "north"))
+    if name == "blast_furnace":
+        front = texture("blast_furnace_front_on" if props.get("lit") == "true" else "blast_furnace_front")
+        return _oriented(front, texture("blast_furnace_side"), texture("blast_furnace_top"), texture("blast_furnace_top"),
+                         props.get("facing", "north"))
     if name in special:
         return special[name]()
     return all6(texture(name))
+
+
+def _oriented(front, side, top, bottom, facing):
+    """前の面を facing の向きに置いた6面（東・西・上・下・南・北）。"""
+    faces = [side, side, top, bottom, side, side]
+    faces[{"east": 0, "west": 1, "south": 4, "north": 5}.get(facing, 5)] = front
+    return faces
 
 
 def shape_mask(name, props):
@@ -326,6 +352,10 @@ def shape_mask(name, props):
         m[2, 2, 2] = True
     elif k == "button":
         m[1:3, 0, 1:3] = True
+    elif k == "pot":
+        m[1:3, 0:3, 1:3] = True
+    elif k == "candle":
+        m[2, 0:2, 2] = True
     else:
         m[:] = True
     return m
@@ -347,6 +377,39 @@ def _stair_quads(facing, shape):
     return half[facing] + extra
 
 
+PIECE_FACES = ("west", "east", "down", "up", "north", "south")   # 2*軸 + (負の側 0 / 正の側 1)
+
+
+def _face_st(face, p, frm, to):
+    """模型の面の上の点 p（1/16 の単位）→ 面の上の位置 (s, t)。s は右へ、t は下へ 0〜1。"""
+    def ratio(a, lo, hi):
+        d = hi - lo
+        return np.clip((a - lo) / d, 0.0, 1.0) if abs(d) > 1e-9 else np.full(a.shape, 0.5)
+    x, y, z = p[:, 0], p[:, 1], p[:, 2]
+    if face == "up":
+        return ratio(x, frm[0], to[0]), ratio(z, frm[2], to[2])
+    if face == "down":
+        return ratio(x, frm[0], to[0]), 1.0 - ratio(z, frm[2], to[2])
+    if face == "north":
+        return 1.0 - ratio(x, frm[0], to[0]), 1.0 - ratio(y, frm[1], to[1])
+    if face == "south":
+        return ratio(x, frm[0], to[0]), 1.0 - ratio(y, frm[1], to[1])
+    if face == "west":
+        return ratio(z, frm[2], to[2]), 1.0 - ratio(y, frm[1], to[1])
+    return 1.0 - ratio(z, frm[2], to[2]), 1.0 - ratio(y, frm[1], to[1])
+
+
+def _rotate_st(s, t, rot):
+    """面のテクスチャの回転（時計回り）。"""
+    if rot == 90:
+        return t, 1.0 - s
+    if rot == 180:
+        return 1.0 - s, 1.0 - t
+    if rot == 270:
+        return 1.0 - t, s
+    return s, t
+
+
 class Scene:
     """設計データを、光線で描ける形（小さな箱の格子）にする。"""
 
@@ -365,6 +428,8 @@ class Scene:
             name, props = state[0], props_of(state)
             if name in SOLID_COLORS:
                 base, glow, emissive = SOLID_COLORS[name]
+                if props.get("lit") == "false":
+                    glow, emissive = None, False       # 火のついていないろうそく
                 color = np.array(glow if glow else base, dtype=np.float32) / 255.0
                 self.flat[i] = color
                 self.has_flat[i] = True
@@ -385,12 +450,15 @@ class Scene:
                 if kind(name) in ("fence", "gate", "wall", "stairs", "slab", "door") or name.endswith("_log"):
                     # 透けない（ドアの窓の穴などは、形が粗いので塗りつぶす）
                     self.tex[i, :, :, :, 3] = np.maximum(self.tex[i, :, :, :, 3], 1.0)
-            masks[i] = shape_mask(name, props)
+            # 模型で描くもの（ランタン・看板・旗など）は、小さな箱の格子には入れない（_trace_pieces で描く）
+            masks[i] = np.zeros((S, S, S), dtype=bool) if is_model_block(name) else shape_mask(name, props)
         self.cells = np.zeros((world.w * S, world.h * S, world.d * S), dtype=np.uint16)
         for (x, y, z), state in world.blocks.items():
             i = index[state]
             sub = self.cells[x * S:(x + 1) * S, y * S:(y + 1) * S, z * S:(z + 1) * S]
             sub[masks[i]] = i
+        self.pieces = build_pieces(world)
+        self._corners = np.array([p.corners for p in self.pieces]) if self.pieces else np.zeros((0, 8, 3))
         self.ground_y = (ground_y if ground_y is not None else 0) * S
 
     # ---------------------------------------------------------------- 光線
@@ -459,7 +527,6 @@ class Scene:
                 break
             a = active
             ax = t_max[a].argmin(axis=1)
-            rows = np.arange(a.size)
             t_enter[a] = t_max[a, ax]
             cell[a, ax] += step[a, ax]
             t_max[a, ax] += t_delta[a, ax]
@@ -467,8 +534,103 @@ class Scene:
             ca = cell[a]
             out = (ca[:, 0] < 0) | (ca[:, 0] >= gx) | (ca[:, 1] < 0) | (ca[:, 1] >= gy) | (ca[:, 2] < 0) | (ca[:, 2] >= gz)
             active = a[~out]
-            del rows
         return hit, hit_t, hit_axis, hit_id, hit_face, hit_uv
+
+    # ---------------------------------------------------------------- 模型の部品
+    def _trace_pieces(self, eye_b, dirs, depth, width, height, fwd, right, up, tan, aspect):
+        """模型の箱（ランタン・看板・旗・額縁など）を、手前にあるものだけ描く。ブロックの単位。"""
+        n = dirs.shape[0]
+        det = np.zeros(n, dtype=bool)
+        col_out = np.zeros((n, 3), dtype=np.float32)
+        nrm_out = np.zeros((n, 3), dtype=np.float64)
+        emis_out = np.zeros(n, dtype=bool)
+        shade_out = np.ones(n, dtype=bool)
+        depth = depth.copy()
+        if not self.pieces:
+            return det, depth, col_out, nrm_out, emis_out, shade_out
+        v = self._corners - eye_b
+        zc = v @ fwd
+        xc = v @ right
+        yc = v @ up
+        for i, piece in enumerate(self.pieces):
+            zi = zc[i]
+            if (zi <= 0.05).all():
+                continue
+            if (zi > 0.05).all():
+                sx = (xc[i] / (zi * tan * aspect) + 1.0) * 0.5 * width
+                sy = (1.0 - yc[i] / (zi * tan)) * 0.5 * height
+                x0 = max(int(math.floor(sx.min())) - 1, 0)
+                x1 = min(int(math.ceil(sx.max())) + 1, width)
+                y0 = max(int(math.floor(sy.min())) - 1, 0)
+                y1 = min(int(math.ceil(sy.max())) + 1, height)
+            else:
+                x0, y0, x1, y1 = 0, 0, width, height
+            if x0 >= x1 or y0 >= y1:
+                continue
+            gy, gx = np.mgrid[y0:y1, x0:x1]
+            idx = (gy * width + gx).ravel()
+            near = float(zi.min())
+            idx = idx[depth[idx] > near - 0.05]
+            if not idx.size:
+                continue
+            o_l = piece.Ainv @ (eye_b - piece.b)
+            d_l = dirs[idx] @ piece.Ainv.T
+            d_l = np.where(np.abs(d_l) < 1e-12, 1e-12, d_l)
+            inv = 1.0 / d_l
+            t1 = (-1.0 - o_l) * inv
+            t2 = (1.0 - o_l) * inv
+            tmn = np.minimum(t1, t2)
+            tmx = np.maximum(t1, t2)
+            tn = tmn.max(axis=1)
+            tf = tmx.min(axis=1)
+            ok = (tf >= tn) & (tn > 1e-4) & (tn < depth[idx])
+            if not ok.any():
+                continue
+            sel = np.nonzero(ok)[0]
+            k = tmn[sel].argmax(axis=1)
+            neg = d_l[sel, k] > 0
+            L = o_l + d_l[sel] * tn[sel, None]
+            half = np.maximum((piece.to - piece.frm) / 2.0, 0.002)
+            pm = (piece.frm + piece.to) / 2.0 + L * half
+            fidx = 2 * k + np.where(neg, 0, 1)
+            hit_ok = np.zeros(sel.size, dtype=bool)
+            col = np.zeros((sel.size, 3), dtype=np.float32)
+            emis = np.zeros(sel.size, dtype=bool)
+            for fi in np.unique(fidx):
+                fname = PIECE_FACES[fi]
+                face = piece.faces.get(fname)
+                if face is None:
+                    continue
+                m = np.nonzero(fidx == fi)[0]
+                tex, uv, rot, tint, em = face
+                s_, t_ = _face_st(fname, pm[m], piece.frm, piece.to)
+                s_, t_ = _rotate_st(s_, t_, rot)
+                u = uv[0] + s_ * (uv[2] - uv[0])
+                w_ = uv[1] + t_ * (uv[3] - uv[1])
+                th, tw = tex.shape[0], tex.shape[1]
+                ui = np.clip(np.floor(u * tw / 16.0).astype(np.int64), 0, tw - 1)
+                vi = np.clip(np.floor(w_ * th / 16.0).astype(np.int64), 0, th - 1)
+                texel = tex[vi, ui]
+                a = texel[:, 3] >= 0.5
+                rgb = texel[:, :3] * (tint if tint is not None else 1.0)
+                hit_ok[m[a]] = True
+                col[m[a]] = rgb[a]
+                emis[m[a]] = em
+            if not hit_ok.any():
+                continue
+            g = idx[sel[hit_ok]]
+            depth[g] = tn[sel[hit_ok]]
+            det[g] = True
+            col_out[g] = col[hit_ok]
+            kk = k[hit_ok]
+            nl = np.zeros((kk.size, 3))
+            nl[np.arange(kk.size), kk] = np.where(neg[hit_ok], -1.0, 1.0)
+            nw = nl @ piece.Ainv
+            nw /= np.maximum(np.linalg.norm(nw, axis=1, keepdims=True), 1e-9)
+            nrm_out[g] = nw
+            emis_out[g] = emis[hit_ok]
+            shade_out[g] = piece.shade
+        return det, depth, col_out, nrm_out, emis_out, shade_out
 
     # ---------------------------------------------------------------- 絵
     def render(self, eye, target, width=1280, height=720, fov=55.0, sun=(-0.45, 0.8, 0.55), shadows=True, path=None):
@@ -497,13 +659,22 @@ class Scene:
         t_plane = np.where(going_down, (self.ground_y - origins[:, 1]) / np.where(going_down, dirs[:, 1], -1.0), np.inf)
         under = hit & going_down & (t > t_plane + 0.05)
         hit = hit & ~under
+        # 模型の部品（ランタン・看板・旗・額縁など）：ブロックや地面より手前にあるものを描く
+        eye_b = eye / S
+        depth = np.full(n, np.inf)
+        depth[hit] = t[hit] / S
+        ground_pix = ~hit & going_down
+        depth[ground_pix] = t_plane[ground_pix] / S
+        det, det_t, det_col, det_nrm, det_emis, det_shade = self._trace_pieces(
+            eye_b, dirs, depth, width, height, forward, right, up, tan, aspect)
+        hit = hit & ~det
         color = np.zeros((n, 3), dtype=np.float32)
         # 空：地平線は明るく、上は青く
         sky_t = np.clip(dirs[:, 1] * 1.6, 0.0, 1.0)[:, None]
         sky = (1 - sky_t) * np.array([0.78, 0.86, 0.95]) + sky_t * np.array([0.42, 0.62, 0.92])
         color[:] = sky
         # 地面（形の外）：草
-        miss = ~hit
+        miss = ~hit & ~det
         down = miss & (dirs[:, 1] < -1e-4)
         if down.any():
             tg = (self.ground_y - origins[down, 1]) / dirs[down, 1]
@@ -542,6 +713,28 @@ class Scene:
             dist = t[hi] / S
             fog = np.clip((dist - 60.0) / 200.0, 0.0, 0.6)[:, None]
             color[hi] = col * (1 - fog) + sky[hi] * fog
+        if det.any():
+            di = np.nonzero(det)[0]
+            nw = det_nrm[di]
+            ax = np.abs(nw).argmax(axis=1)
+            pos = nw[np.arange(di.size), ax] > 0
+            fid = np.where(ax == 0, np.where(pos, 0, 1), np.where(ax == 1, np.where(pos, 2, 3), np.where(pos, 4, 5)))
+            light = np.where(det_shade[di], FACE_LIGHT[fid], 0.9).astype(np.float64)
+            if shadows:
+                sun_v = np.array(sun, dtype=np.float64)
+                sun_v /= np.linalg.norm(sun_v)
+                lit_side = ((nw @ sun_v) > 0) | ~det_shade[di]
+                p = (eye_b + dirs[di] * det_t[di, None] + nw * 0.01) * S
+                shadow_hit = np.zeros(di.size, dtype=bool)
+                cand = np.nonzero(lit_side)[0]
+                if cand.size:
+                    sh, _, _, _, _, _ = self.trace(p[cand], np.repeat(sun_v[None, :], cand.size, axis=0))
+                    shadow_hit[cand] = sh
+                light = light * np.where(lit_side & ~shadow_hit, 1.0, 0.68)
+            shade = np.where(det_emis[di][:, None], 1.0, light[:, None])
+            col = det_col[di] * shade
+            fog = np.clip((det_t[di] - 60.0) / 200.0, 0.0, 0.6)[:, None]
+            color[di] = col * (1 - fog) + sky[di] * fog
         img = (np.clip(color, 0, 1) * 255).astype(np.uint8).reshape(height, width, 3)
         image = Image.fromarray(img, "RGB")
         if path:
