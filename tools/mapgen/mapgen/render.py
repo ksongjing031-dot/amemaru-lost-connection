@@ -39,7 +39,7 @@ BASE = {
     "nether_brick": "nether_bricks", "red_nether_brick": "red_nether_bricks", "prismarine": "prismarine",
     "cut_copper": "cut_copper", "weathered_cut_copper": "weathered_cut_copper", "oxidized_cut_copper": "oxidized_cut_copper",
     "red_sandstone": "red_sandstone", "smooth_red_sandstone": "red_sandstone_top", "tuff": "tuff", "calcite": "calcite",
-    "petrified_oak": "oak_planks",
+    "petrified_oak": "oak_planks", "quartz_brick": "quartz_bricks", "smooth_quartz_block": "quartz_block_bottom",
 }
 for _w in WOODS:
     BASE[_w] = _w + "_planks"
@@ -54,6 +54,21 @@ SOLID_COLORS = {
     "torch": ((255, 200, 90), None, True),
     "bell": ((222, 176, 60), None, False),
     "wall_torch": ((255, 200, 90), None, True),
+    "chest": ((150, 104, 52), None, False),
+    "candle": ((236, 224, 196), (255, 214, 120), True),
+    "white_candle": ((236, 224, 196), (255, 214, 120), True),
+    "red_candle": ((180, 50, 40), (255, 190, 110), True),
+    "red_bed": ((170, 40, 36), None, False),
+    "lime_bed": ((120, 180, 50), None, False),
+    "white_bed": ((230, 230, 230), None, False),
+    "brown_bed": ((120, 80, 50), None, False),
+    "blue_wall_banner": ((52, 72, 170), None, False),
+    "white_wall_banner": ((236, 236, 236), None, False),
+    "spruce_wall_sign": ((114, 84, 48), None, False),
+    "spruce_wall_hanging_sign": ((114, 84, 48), None, False),
+    "spruce_hanging_sign": ((114, 84, 48), None, False),
+    "potted_azalea_bush": ((90, 120, 60), None, False),
+    "potted_red_tulip": ((90, 120, 60), None, False),
 }
 
 _TEX_CACHE = {}
@@ -61,6 +76,8 @@ _TEX_CACHE = {}
 
 def texture(name):
     """16x16 の RGBA（0〜1）。動くテクスチャは最初の1枚。"""
+    if name.startswith("waxed_"):
+        name = name[len("waxed_"):]
     if name in _TEX_CACHE:
         return _TEX_CACHE[name]
     path = os.path.join(CACHE, name + ".png")
@@ -168,6 +185,15 @@ def face_textures(name, props):
         "moss_block": lambda: all6(texture("moss_block")),
         "campfire": lambda: all6(texture("campfire_log")),
         "flower_pot": lambda: all6(texture("flower_pot")),
+        "lectern": lambda: [texture("lectern_sides")] * 2 + [texture("lectern_top"), texture("oak_planks")] + [texture("lectern_front")] * 2,
+        "cartography_table": lambda: [texture("cartography_table_side1")] * 2 + [texture("cartography_table_top"), texture("dark_oak_planks")] + [texture("cartography_table_side2")] * 2,
+        "smoker": lambda: [texture("smoker_side")] * 2 + [texture("smoker_top"), texture("smoker_bottom")] + [texture("smoker_front")] * 2,
+        "furnace": lambda: [texture("furnace_side")] * 2 + [texture("furnace_top")] * 2 + [texture("furnace_front")] * 2,
+        "crafting_table": lambda: [texture("crafting_table_side")] * 2 + [texture("crafting_table_top"), texture("oak_planks")] + [texture("crafting_table_front")] * 2,
+        "cauldron": lambda: [texture("cauldron_side")] * 2 + [texture("cauldron_top"), texture("cauldron_bottom")] + [texture("cauldron_side")] * 2,
+        "quartz_pillar": lambda: [texture("quartz_pillar")] * 2 + [texture("quartz_pillar_top")] * 2 + [texture("quartz_pillar")] * 2,
+        "chiseled_quartz_block": lambda: [texture("chiseled_quartz_block")] * 2 + [texture("chiseled_quartz_block_top")] * 2 + [texture("chiseled_quartz_block")] * 2,
+        "tinted_glass": lambda: all6(texture("tinted_glass")),
     }
     if name in special:
         return special[name]()
@@ -179,6 +205,32 @@ def shape_mask(name, props):
     k = kind(name)
     m = np.zeros((S, S, S), dtype=bool)
     h = S // 2
+    f = props.get("facing", "north")
+    if name.endswith("_wall_sign") or name.endswith("_wall_banner"):
+        # 壁に貼る板：向きと反対の側（壁の側）に薄い板
+        side = {"north": (slice(None), slice(S - 1, S)), "south": (slice(None), slice(0, 1)),
+                "west": (slice(S - 1, S), slice(None)), "east": (slice(0, 1), slice(None))}[f]
+        ys = slice(1, 3) if name.endswith("_wall_sign") else slice(0, S)
+        m[side[0], ys, side[1]] = True
+        return m
+    if name.endswith("_hanging_sign"):
+        if f in ("north", "south"):
+            m[:, 0:3, 1:3] = True
+        else:
+            m[1:3, 0:3, :] = True
+        return m
+    if name.endswith("_bed"):
+        m[:, 0:2, :] = True
+        return m
+    if name.endswith("candle"):
+        m[1:3, 0:2, 1:3] = True
+        return m
+    if name == "bell":
+        m[1:3, 0:3, 1:3] = True
+        return m
+    if name == "campfire":
+        m[:, 0:2, :] = True
+        return m
     if k in ("cube", "leaves", "glass"):
         m[:] = True
     elif k == "slab":

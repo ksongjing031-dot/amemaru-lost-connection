@@ -8,13 +8,13 @@
 ```sh
 pip install nbtlib numpy pillow
 python3 tools/mapgen/build_guild.py                       # Modの data/amemaru/structures/map/conelia/guild_hall.nbt を書き直す
-python3 tools/mapgen/build_guild.py /tmp/out --render /tmp/out   # 別の所に書き出して、見本の絵（6つの向き＋まとめた1枚）も描く
+python3 tools/mapgen/build_guild.py /tmp/out --render /tmp/out   # 別の所に書き出して、見本の絵も描く（6つの向き＋まとめた1枚、各階を上で切った絵3枚、中の絵4枚）
 ```
 
 見本の絵のテクスチャは、初めて使うときに GitHub の Minecraft の素材の写し（1.20.1）から取ってきて、
 `~/.cache/amemaru-mapgen` にためます（リポジトリには入れません）。
 
-ゲームの中では、クリエイティブで平らな所に立って次のコマンドで置けます（正面は南。置いた範囲の中は片づきます）。
+ゲームの中では、クリエイティブで平らな所に立って次のコマンドで置けます（正面は西。置いた範囲の中は片づきます）。
 
 ```
 /place template amemaru:map/conelia/guild_hall ~ ~-1 ~
@@ -28,7 +28,7 @@ python3 tools/mapgen/build_guild.py /tmp/out --render /tmp/out   # 別の所に�
 | `mapgen/arch.py` | 切妻の屋根（`Roof`）・四角すいの屋根（`Pyramid`）・切妻の三角の壁・飾りの小塔（`finial`） |
 | `mapgen/facade.py` | 壁の立面を、奥行きの層ごとの文字の絵で描いて置く（`stamp`・`compose`）、窓（`window`） |
 | `mapgen/render.py` | 見本の絵。1ブロックを 4×4×4 の小さな箱に分けて、階段・ハーフ・柵・トラップドアなどの形と、日の光の影を描く |
-| `build_guild.py` | コネリアの冒険者ギルド本館（48×48×40） |
+| `build_guild.py` | コネリアの冒険者ギルド（PHASE 1 の設計。36×38×41、正面は西。外観・内装・まわりまで） |
 
 ## 決まり
 
@@ -40,6 +40,10 @@ python3 tools/mapgen/build_guild.py /tmp/out --render /tmp/out   # 別の所に�
 - 立面の文字の絵では、層 0 が1階の石の面、+1 が柱と2階の漆喰、+2 が2階の木組み（張り出し）、+3 が花箱の前板や灯りの腕木。
   文字の意味は `facade.legend()` にある（例：`P` 漆喰、`S` 石、`|` 柱、`=` 梁、`(` `)` 石のアーチの角、`[` `]` 木のアーチの角、
   `v` 持ち送り、`g` 板ガラス、`f` `a` 花箱の葉、`L` 吊るした灯り、`.` 空ける、空白は何もしない）。
+- 看板の文字と旗の模様は、`World.put(x, y, z, 状態, nbt)` の `nbt` に `sign_nbt(...)`・`banner_nbt(...)` を渡す
+  （構造物ファイルの、ブロックの追加データとして書き出す）。
+- 2つの屋根の軒が同じ高さで出会う角では、`inside()` どうしが消し合ってすき間ができることがある。組み立てた後で手で埋める
+  （`build_guild.py` の `roofs()` の終わり）。
 - 置いた後で壊れないように、吊るす灯りの上・置く灯りの下・花の下（草）・扉の下には、支えになるブロックを置く。
   板ガラスは、両脇がガラスかブロックになるようにする（つながらないと細い柱に見える）。
 

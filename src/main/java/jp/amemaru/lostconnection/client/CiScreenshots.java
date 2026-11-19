@@ -44,8 +44,8 @@ import java.util.Locale;
  *   <li>スキルの拡張（11月17日）：ナイトの溜め（誓いの円陣の中で）と溜め斬り、敵の頭の上の状態の印、凍てつく波動（凍結の氷と棘）、
  *       氷柱で砕く、星爆、雷霆、光の帳</li>
  *   <li>奥義のもう一つ（11月17日）：天断ちの構えと断った瞬間、奥義のつまみ（2つから1つ）、氷華の檻の詠唱と花が咲いたところ</li>
- *   <li>建物の見本（11月17日）：コネリアの冒険者ギルド本館（{@code amemaru:map/conelia/guild_hall}）を空に置き、
- *       まわりの6か所から撮る（HUDは隠す）</li>
+ *   <li>建物の見本（11月19日、PHASE 1 の設計）：コネリアの冒険者ギルド（{@code amemaru:map/conelia/guild_hall}。
+ *       正面は西）を空に置き、まわりの6か所から撮る（HUDは隠す）</li>
  * </ul>
  */
 @Mod.EventBusSubscriber(modid = AmemaruMod.MOD_ID, value = Dist.CLIENT)
@@ -77,16 +77,17 @@ public final class CiScreenshots {
     private static BlockPos returnPos;
     private static String returnMode = "creative";
 
-    /** 建物の見本の写真の名前と、撮る所：目の位置と見る所（構造物の中の座標。y=0 が地面の草）。 */
+    /** 建物の見本の写真の名前と、撮る所：目の位置と見る所（構造物の中の座標。y=0 が地面の草）。
+     *  tools/mapgen/build_guild.py の VIEWS と同じ（正面・左前・右前・入口の近く・上から・裏）。 */
     private static final String[] MAP_SHOTS = {
             "map_guild_front", "map_guild_left", "map_guild_right", "map_guild_close", "map_guild_aerial", "map_guild_back"};
     private static final double[][] MAP_VIEWS = {
-            {24, 21, 68, 24, 24, 20},
-            {-8, 21, 54, 20, 19, 20},
-            {58, 21, 54, 27, 18, 20},
-            {12, 8, 46, 20, 9, 28},
-            {58, 44, 64, 24, 14, 20},
-            {52, 24, -18, 24, 18, 16},
+            {-30, 16, 21, 18, 13, 21},
+            {-22, 22, -18, 16, 12, 16},
+            {-20, 18, 62, 16, 12, 24},
+            {-15, 11, 21, 6, 13, 21},
+            {-16, 42, 54, 20, 12, 21},
+            {66, 26, -14, 20, 12, 18},
     };
     /** 建物の見本の写真の段階の始まり。 */
     private static final int MAP_STAGE = 70;

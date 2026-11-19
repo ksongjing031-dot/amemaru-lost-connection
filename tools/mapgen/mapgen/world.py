@@ -77,6 +77,39 @@ def door(wood, facing, upper, hinge="left"):
 
 AIR = block("air")
 
+
+# ---------------------------------------------------------------- 追加データ（看板の文字・旗の模様）
+def sign_nbt(front, back=None, color="black", glow=False, hanging=False):
+    """看板の文字（1.20.1 の形）。front・back は4行までの文字列のリスト。"""
+    import json
+    from nbtlib.tag import Byte
+
+    def side(lines):
+        lines = (list(lines) + ["", "", "", ""])[:4]
+        return Compound({
+            "messages": List[String]([String(json.dumps({"text": t}, ensure_ascii=False)) for t in lines]),
+            "color": String(color),
+            "has_glowing_text": Byte(1 if glow else 0),
+        })
+    return Compound({
+        "id": String("minecraft:hanging_sign" if hanging else "minecraft:sign"),
+        "front_text": side(front),
+        "back_text": side(back if back is not None else []),
+        "is_waxed": Byte(1),
+    })
+
+
+DYE = {"white": 0, "orange": 1, "magenta": 2, "light_blue": 3, "yellow": 4, "lime": 5, "pink": 6, "gray": 7,
+       "light_gray": 8, "cyan": 9, "purple": 10, "blue": 11, "brown": 12, "green": 13, "red": 14, "black": 15}
+
+
+def banner_nbt(patterns):
+    """旗の模様。patterns は (模様の記号, 色の名前) のリスト（例：("bo", "white") は白い縁）。"""
+    return Compound({
+        "id": String("minecraft:banner"),
+        "Patterns": List[Compound]([Compound({"Pattern": String(p), "Color": Int(DYE[c])}) for p, c in patterns]),
+    })
+
 # 形のあるブロックの見分け（つながりの計算と、見本の絵で使う）
 def kind(name):
     if name == "air":
@@ -125,17 +158,21 @@ class World:
     def __init__(self, w, h, d):
         self.w, self.h, self.d = w, h, d
         self.blocks = {}
+        self.nbt = {}     # ブロックの追加データ（看板の文字・旗の模様など）。(x, y, z) → nbtlib の Compound
 
     # ---- 置く・消す
     def inside(self, x, y, z):
         return 0 <= x < self.w and 0 <= y < self.h and 0 <= z < self.d
 
-    def put(self, x, y, z, state):
+    def put(self, x, y, z, state, nbt=None):
         if self.inside(x, y, z):
+            self.nbt.pop((x, y, z), None)
             if state[0] == "air":
                 self.blocks.pop((x, y, z), None)
             else:
                 self.blocks[(x, y, z)] = state
+                if nbt is not None:
+                    self.nbt[(x, y, z)] = nbt
 
     def put_if_empty(self, x, y, z, state):
         if (x, y, z) not in self.blocks:
@@ -150,6 +187,7 @@ class World:
 
     def clear(self, x, y, z):
         self.blocks.pop((x, y, z), None)
+        self.nbt.pop((x, y, z), None)
 
     def fill(self, x0, y0, z0, x1, y1, z1, state):
         for x in range(min(x0, x1), max(x0, x1) + 1):
@@ -282,7 +320,10 @@ class World:
                         if not with_air:
                             continue
                         state = AIR
-                    entries.append(Compound({"state": Int(pidx(state)), "pos": List[Int]([Int(x), Int(y), Int(z)])}))
+                    entry = {"state": Int(pidx(state)), "pos": List[Int]([Int(x), Int(y), Int(z)])}
+                    if (x, y, z) in self.nbt:
+                        entry["nbt"] = self.nbt[(x, y, z)]
+                    entries.append(Compound(entry))
         pal = []
         for name, props in palette:
             c = {"Name": String("minecraft:" + name)}
