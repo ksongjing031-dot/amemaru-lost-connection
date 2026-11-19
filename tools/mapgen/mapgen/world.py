@@ -99,6 +99,24 @@ def sign_nbt(front, back=None, color="black", glow=False, hanging=False):
     })
 
 
+def lectern_nbt(title, author, pages):
+    """書見台に置く本（書き終えた本。1.20.1 の形）。pages は1ページずつの文字列のリスト。ブロックは has_book=True にする。
+    アドベンチャーのプレイヤーは読めるが、取れない（本を取るにはブロックを変えられる権限が要る）。"""
+    import json
+    from nbtlib.tag import Byte
+    book = Compound({
+        "id": String("minecraft:written_book"),
+        "Count": Byte(1),
+        "tag": Compound({
+            "title": String(title),
+            "author": String(author),
+            "resolved": Byte(1),
+            "pages": List[String]([String(json.dumps({"text": p}, ensure_ascii=False)) for p in pages]),
+        }),
+    })
+    return Compound({"id": String("minecraft:lectern"), "Book": book, "Page": Int(0)})
+
+
 DYE = {"white": 0, "orange": 1, "magenta": 2, "light_blue": 3, "yellow": 4, "lime": 5, "pink": 6, "gray": 7,
        "light_gray": 8, "cyan": 9, "purple": 10, "blue": 11, "brown": 12, "green": 13, "red": 14, "black": 15}
 

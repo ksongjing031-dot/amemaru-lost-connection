@@ -56,6 +56,8 @@ import java.util.Locale;
  *       正面は南）。ギルドを片づけた同じ所に置き、まわりの6か所から撮る</li>
  *   <li>建物の見本（11月19日、PHASE 3 の設計）：コネリアの防具工房（{@code amemaru:map/conelia/armor_workshop}。
  *       正面は北）。武器工房を片づけた同じ所に置き、まわりの6か所から撮る</li>
+ *   <li>建物の見本（11月20日、PHASE 4 の設計）：コネリアの装飾工房（{@code amemaru:map/conelia/accessory_workshop}。
+ *       正面は南）。防具工房を片づけた同じ所に置き、まわりの6か所から撮る</li>
  * </ul>
  */
 @Mod.EventBusSubscriber(modid = AmemaruMod.MOD_ID, value = Dist.CLIENT)
@@ -92,13 +94,17 @@ public final class CiScreenshots {
      *  {@link #WEAPON_FIRST} からの6枚は武器工房（tools/mapgen/build_weapon.py の VIEWS と同じ：
      *  正面・東門の方・西・入口の近く・上から・裏）。
      *  {@link #ARMOR_FIRST} からの6枚は防具工房（tools/mapgen/build_armor.py の VIEWS と同じ：
+     *  正面・交差点の角・環状路（西）・入口の近く・上から・裏）。
+     *  {@link #ACCESSORY_FIRST} からの6枚は装飾工房（tools/mapgen/build_accessory.py の VIEWS と同じ：
      *  正面・交差点の角・環状路（西）・入口の近く・上から・裏）。 */
     private static final String[] MAP_SHOTS = {
             "map_guild_front", "map_guild_left", "map_guild_right", "map_guild_close", "map_guild_aerial", "map_guild_back",
             "map_weapon_front", "map_weapon_gate", "map_weapon_west", "map_weapon_close", "map_weapon_aerial",
             "map_weapon_back",
             "map_armor_front", "map_armor_corner", "map_armor_west", "map_armor_close", "map_armor_aerial",
-            "map_armor_back"};
+            "map_armor_back",
+            "map_accessory_front", "map_accessory_corner", "map_accessory_west", "map_accessory_close",
+            "map_accessory_aerial", "map_accessory_back"};
     private static final double[][] MAP_VIEWS = {
             {-30, 16, 21, 18, 13, 21},
             {-22, 22, -18, 16, 12, 16},
@@ -118,11 +124,19 @@ public final class CiScreenshots {
             {4, 2.8, -9, 7, 3.5, 2},
             {-7, 25, -12, 9, 8, 10},
             {24, 14, 34, 10, 8, 12},
+            {10, 5, 38, 10, 8.5, 12},
+            {-12, 6, 33, 9, 8, 12},
+            {-22, 6, 13, 3, 8, 12},
+            {3, 2.8, 28, 4, 3.2, 19},
+            {-8, 27, 34, 9, 9, 12},
+            {26, 14, -12, 9, 8, 10},
     };
     /** 武器工房の写真の始まり。ここで、ギルドを片づけて武器工房を置く。 */
     private static final int WEAPON_FIRST = 6;
     /** 防具工房の写真の始まり。ここで、武器工房を片づけて防具工房を置く。 */
     private static final int ARMOR_FIRST = 12;
+    /** 装飾工房の写真の始まり。ここで、防具工房を片づけて装飾工房を置く。 */
+    private static final int ACCESSORY_FIRST = 18;
     /** ギルドの構造物の大きさ（東西・高さ・南北）。片づける範囲。 */
     private static final int[] GUILD_SIZE = {36, 38, 41};
     /**
@@ -847,8 +861,8 @@ public final class CiScreenshots {
                     clean(minecraft);
                     pendingShot = MAP_SHOTS[view];
                     next(stage + 1, 2);
-                } else if (view + 1 == WEAPON_FIRST || view + 1 == ARMOR_FIRST) {
-                    replaceBuilding(minecraft, view + 1 == WEAPON_FIRST ? "weapon_workshop" : "armor_workshop");
+                } else if (buildingFrom(view + 1) != null) {
+                    replaceBuilding(minecraft, buildingFrom(view + 1));
                     mapView(view + 1);
                     // 置き替えた構造物の形を作り直して描くまで、長めに待つ
                     next(stage + 1, 300);
@@ -867,6 +881,21 @@ public final class CiScreenshots {
                 }
             }
         }
+    }
+
+    /** 建物の見本の写真 {@code view} から次の建物に移るなら、その構造物の名前（{@code map/conelia/} の後ろ）。移らないなら null。 */
+    @Nullable
+    private static String buildingFrom(int view) {
+        if (view == WEAPON_FIRST) {
+            return "weapon_workshop";
+        }
+        if (view == ARMOR_FIRST) {
+            return "armor_workshop";
+        }
+        if (view == ACCESSORY_FIRST) {
+            return "accessory_workshop";
+        }
+        return null;
     }
 
     /**

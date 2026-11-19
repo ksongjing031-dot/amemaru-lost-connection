@@ -14,6 +14,8 @@ python3 tools/mapgen/build_weapon.py /tmp/out --render /tmp/out  # 見本の絵�
 python3 tools/mapgen/build_armor.py                       # armor_workshop.nbt（防具工房）を書き直す
 python3 tools/mapgen/build_armor.py /tmp/out --render /tmp/out   # 見本の絵も描く（6つの向き＋まとめた1枚、切った絵2枚、中の絵6枚＋第4章の型紙の壁）
 python3 tools/mapgen/build_armor.py /tmp/out --render /tmp/out --only front,in_shop   # 一部の絵だけ描く
+python3 tools/mapgen/build_accessory.py                   # accessory_workshop.nbt（装飾工房）を書き直す
+python3 tools/mapgen/build_accessory.py /tmp/out --render /tmp/out   # 見本の絵も描く（6つの向き＋まとめた1枚、切った絵2枚、中の絵9枚＋留め具の枠のいまと第3章）
 ```
 
 見本の絵のテクスチャと模型（ランタン・看板・旗などの形）は、初めて使うときに GitHub の Minecraft の素材の写し（1.20.1）から
@@ -25,11 +27,13 @@ python3 tools/mapgen/build_armor.py /tmp/out --render /tmp/out --only front,in_s
 /place template amemaru:map/conelia/guild_hall ~ ~-1 ~
 /place template amemaru:map/conelia/weapon_workshop ~ ~-1 ~
 /place template amemaru:map/conelia/armor_workshop ~ ~-1 ~
+/place template amemaru:map/conelia/accessory_workshop ~ ~-1 ~
 ```
 
 武器工房は正面が南です（立った所から東へ25、南へ22ブロック広がります）。古代炉に火が入った形（12日目）は、
 工房を置いた角から (13, 1, 3) ずらした所に `amemaru:map/conelia/weapon_forge_lit` を重ねて置きます（古代炉のまわりの 5×20×4 だけが入れ替わります）。
 防具工房は正面が北です（立った所から東へ22、南へ23ブロック広がります）。
+装飾工房は正面が南です（立った所から東へ19、南へ22ブロック広がります）。
 
 ## 中身
 
@@ -44,6 +48,7 @@ python3 tools/mapgen/build_armor.py /tmp/out --render /tmp/out --only front,in_s
 | `build_guild.py` | コネリアの冒険者ギルド（PHASE 1 の設計。36×38×41、正面は西。外観・内装・まわりまで） |
 | `build_weapon.py` | コネリアの武器工房（PHASE 2 の設計。25×24×22、正面は南）と、古代炉に火が入った形（5×20×4） |
 | `build_armor.py` | コネリアの防具工房（PHASE 3 の設計。22×24×23、正面は北）。型紙の壁が章ごとに増える形は `patterns_world(枚数)` |
+| `build_accessory.py` | コネリアの装飾工房（PHASE 4 の設計。19×24×22、正面は南）。第3章で留め具の枠が埋まる形は `clasp_world()` |
 
 ## 決まり
 
@@ -55,8 +60,8 @@ python3 tools/mapgen/build_armor.py /tmp/out --render /tmp/out --only front,in_s
 - 立面の文字の絵では、層 0 が1階の石の面、+1 が柱と2階の漆喰、+2 が2階の木組み（張り出し）、+3 が花箱の前板や灯りの腕木。
   文字の意味は `facade.legend()` にある（例：`P` 漆喰、`S` 石、`|` 柱、`=` 梁、`(` `)` 石のアーチの角、`[` `]` 木のアーチの角、
   `v` 持ち送り、`g` 板ガラス、`f` `a` 花箱の葉、`L` 吊るした灯り、`.` 空ける、空白は何もしない）。
-- 看板の文字と旗の模様は、`World.put(x, y, z, 状態, nbt)` の `nbt` に `sign_nbt(...)`・`banner_nbt(...)` を渡す
-  （構造物ファイルの、ブロックの追加データとして書き出す）。
+- 看板の文字・旗の模様・書見台の本は、`World.put(x, y, z, 状態, nbt)` の `nbt` に `sign_nbt(...)`・`banner_nbt(...)`・
+  `lectern_nbt(題, 書いた人, [ページ, ...])` を渡す（構造物ファイルの、ブロックの追加データとして書き出す。書見台の状態は `has_book=True`）。
 - 2つの屋根の軒が同じ高さで出会う角では、`inside()` どうしが消し合ってすき間ができることがある。組み立てた後で手で埋める
   （`build_guild.py` の `roofs()` の終わり）。
 - 灯りは `fixtures.py` の形を使う（どの建物でも同じ形にするため）。形を変えるときは、建築の文書の都市のルール⑦も直す。

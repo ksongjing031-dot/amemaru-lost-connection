@@ -40,7 +40,8 @@ MODEL_BLOCKS = {"lantern", "soul_lantern", "chain", "campfire", "soul_campfire",
                 "anvil", "chipped_anvil", "damaged_anvil", "grindstone", "lectern", "cauldron", "water_cauldron", "bell",
                 "torch", "wall_torch", "poppy", "dandelion", "allium", "azure_bluet", "oxeye_daisy", "cornflower",
                 "lily_of_the_valley", "blue_orchid", "red_tulip", "orange_tulip", "white_tulip", "pink_tulip",
-                "brewing_stand", "ladder"}
+                "brewing_stand", "ladder", "stonecutter", "amethyst_cluster", "large_amethyst_bud", "medium_amethyst_bud",
+                "small_amethyst_bud"}
 
 
 def is_model_block(name):
@@ -473,7 +474,7 @@ def candle_flames(props, cell):
 def _item_texture(item):
     item = (item or "").replace("minecraft:", "")
     names = {"crossbow": "crossbow_standby", "filled_map": "filled_map", "map": "map", "trident": "trident",
-             "shield": "shield"}
+             "shield": "shield", "clock": "clock_00", "compass": "compass_16"}
     return "item/" + names.get(item, item)
 
 

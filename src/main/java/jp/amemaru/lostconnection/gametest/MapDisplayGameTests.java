@@ -62,6 +62,7 @@ public final class MapDisplayGameTests {
     private static final String GUILD = "map/conelia/guild_hall";
     private static final String WEAPON = "map/conelia/weapon_workshop";
     private static final String ARMOR = "map/conelia/armor_workshop";
+    private static final String ACCESSORY = "map/conelia/accessory_workshop";
 
     /** 防具立てを右クリックする高さ（足・脚・胴・手・頭のあたり）。 */
     private static final double[] CLICK_HEIGHTS = {0.2, 0.6, 1.0, 1.3, 1.8};
@@ -88,6 +89,12 @@ public final class MapDisplayGameTests {
     @GameTest(template = EMPTY)
     public static void armorWorkshopDisplaysCannotBeTaken(GameTestHelper helper) {
         checkBuilding(helper, ARMOR, "armor", 27, 9);
+    }
+
+    /** 装飾工房：額縁32（宝石・鉱石・依頼の紙・素材の見本など。空の留め具の枠1を含む）。防具立てはない。 */
+    @GameTest(template = EMPTY)
+    public static void accessoryWorkshopDisplaysCannotBeTaken(GameTestHelper helper) {
+        checkBuilding(helper, ACCESSORY, "accessory", 32, 0);
     }
 
     /**
