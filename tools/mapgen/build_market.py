@@ -207,7 +207,9 @@ class Shop:
         self.left = "south" if side == "W" else "north"
         self.right = OPP[self.left]
         self.floors = [Y1, Y2, Y3] if kind == "C" else [Y1, Y2]
-        self.eave = self.floors[-1] + 4                    # 壁の上の梁（屋根の軒先の高さ）
+        # 壁の上の梁（屋根の軒先の高さ）。2階建ては2階の壁を1段高くして軒 +11、棟 +18（都市のルール④の店の棟 18〜22。
+        # 中央広場を囲む最初の列の雑貨屋・料理屋も、棟18までの中）。3階建ては軒 +15、棟 +21
+        self.eave = self.floors[-1] + (5 if kind != "C" else 4)
         self.attic = self.eave + 1                         # 屋根裏の床
         F = self.F
         self.door_a = F - 2 if F <= 7 else F - 3            # 入口（両開きなら door_a と door_a+1）
@@ -285,18 +287,23 @@ class Shop:
                 else:
                     self.put(a, b, y, gray_stone())
 
+    def ceiling(self, fy):
+        """階 fy の天井のブロックの高さ（上の階の床か、屋根裏の床）。"""
+        return self.attic if fy == self.floors[-1] else fy + 5
+
     def upper_walls(self, fy):
-        """木組みの階：fy は床の高さ（梁の帯）、fy+1..fy+3 は柱と漆喰、fy+4 は桁。"""
+        """木組みの階：fy は床の高さ（梁の帯）、その上は柱と漆喰、いちばん上の段は桁（いちばん上の階は軒の梁 self.eave）。"""
         F, bf = self.F, self.bf
         posts_a = {0, F - 1} | ({F // 2} if F >= 8 else set())
         posts_b = {bf, 10, 4, 7}
+        top = self.eave if fy == self.floors[-1] else fy + 4
         for (a, b) in self.walls_at(fy):
             along_a = b in (bf, 10) and a not in (0, F - 1)
             axis = self._axis_along_a() if along_a else self._axis_along_b()
             self.put(a, b, fy, beam(axis))
-            self.put(a, b, fy + 4, beam(axis))
+            self.put(a, b, top, beam(axis))
             is_post = (b in (bf, 10) and a in posts_a) or (a in (0, F - 1) and b in posts_b)
-            for y in range(fy + 1, fy + 4):
+            for y in range(fy + 1, top):
                 self.put(a, b, y, POST if is_post else block(pal.plaster))
         if self.jetty and fy == Y2:
             for a in sorted(posts_a):
@@ -373,8 +380,11 @@ class Shop:
                     self.put(a, bf, y, pane())
                 self.put(a, bf - 1, fy + 1, leaves("flowering_azalea_leaves" if rng.random() < 0.6 else "azalea_leaves"))
                 self.put(a, bf - 2, fy + 1, trapdoor(pal.frame, self.front, "bottom", True))
-            # 裏の窓（花箱なし、雨戸）
-            for a in (2, 3) if F <= 7 else (2, 3, 5):
+            # 裏の窓（花箱なし）。煙突のある店は、煙突（a=2）をよける
+            back = (2, 3) if F <= 7 else (2, 3, 5)
+            if self.chimney:
+                back = (3, 4)
+            for a in back:
                 for y in (fy + 2, fy + 3):
                     self.put(a, 10, y, pane())
         color = self.t["color"]
@@ -613,10 +623,11 @@ class Shop:
             self.put(F - 3, 2, Y2 - 1, lantern(True))
         self.put(1, 7, Y2 - 1, lantern(True))
         for fy in self.floors[1:]:
-            top = fy + 4
+            top = self.ceiling(fy) - 1                     # 天井から吊るす
             self.put(2, 2, top, lantern(True))
             self.put(1, 7, top, lantern(True))
-        self.put(2, 5, self.attic + 1, lantern(False))
+        if self.get(2, 5, self.attic + 1) is None:          # 屋根裏の灯り（屋根の中の詰め物の所には置かない）
+            self.put(2, 5, self.attic + 1, lantern(False))
 
     def upstairs_room(self):
         """2階（3階建ては3階）の住まい：寝台・箱・机と椅子・敷物。2階建ては2階、3階建ては2階が仕事部屋で3階が寝室。"""
@@ -963,6 +974,8 @@ def restaurant_terrace(seg):
         seg.put(x - 1, 1, 23, stairs("spruce", "west"))
         seg.put(x + 1, 1, 23, stairs("spruce", "east"))
     for x in range(-14, -7):
+        if seg.get(x, 4, 24) is not None:
+            continue                    # 横の吊り看板（料理屋）の所は、日よけを切る
         seg.put(x, 4, 24, trapdoor("dark_oak", "south", "top", False))
         seg.put(x, 5, 24, block("orange_carpet" if x % 2 else "white_carpet"))
     for x in (-15, -7):
