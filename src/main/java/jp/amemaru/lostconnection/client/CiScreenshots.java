@@ -96,7 +96,7 @@ public final class CiScreenshots {
      *  {@link #ARMOR_FIRST} からの6枚は防具工房（tools/mapgen/build_armor.py の VIEWS と同じ：
      *  正面・交差点の角・環状路（西）・入口の近く・上から・裏）。
      *  {@link #ACCESSORY_FIRST} からの6枚は装飾工房（tools/mapgen/build_accessory.py の VIEWS と同じ：
-     *  正面・交差点の角・環状路（西）・入口の近く・上から・裏）。 */
+     *  正面・広場の角・中央広場（西）・入口の近く・上から・裏）。 */
     private static final String[] MAP_SHOTS = {
             "map_guild_front", "map_guild_left", "map_guild_right", "map_guild_close", "map_guild_aerial", "map_guild_back",
             "map_weapon_front", "map_weapon_gate", "map_weapon_west", "map_weapon_close", "map_weapon_aerial",
