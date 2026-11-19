@@ -886,6 +886,9 @@ public final class CiScreenshots {
         int y1 = y0 + GUILD_SIZE[1] - 1;
         int z1 = z0 + GUILD_SIZE[2] - 1;
         int zm = z0 + GUILD_SIZE[2] / 2;
+        // 2つに分けて片づけると、境目をまたいで掛かった灯りなどが支えを失って落ち、アイテムになって草の上に散らばる。
+        // 片づけて置き直す間だけ、壊れたブロックがアイテムを落とさないようにする（終わったら元に戻す）
+        command(minecraft, "gamerule doTileDrops false");
         command(minecraft, String.format(Locale.ROOT, "kill @e[type=!minecraft:player,x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d]",
                 x0, y0, z0, GUILD_SIZE[0], GUILD_SIZE[1], GUILD_SIZE[2]));
         command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:air", x0, y0 + 1, z0, x1, y1, zm - 1));
@@ -893,6 +896,7 @@ public final class CiScreenshots {
         command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:grass_block", x0, y0, z0, x1, y0, z1));
         command(minecraft, String.format(Locale.ROOT, "place template amemaru:map/conelia/%s %d %d %d",
                 name, x0, y0, z0));
+        command(minecraft, "gamerule doTileDrops true");
     }
 
     /** 建物の見本の撮る所へ、観戦モードのまま移る（目の高さは足もとの 1.62 上）。 */
