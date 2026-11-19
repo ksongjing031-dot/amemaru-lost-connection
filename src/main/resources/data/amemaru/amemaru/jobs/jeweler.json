@@ -1,0 +1,9 @@
+{
+  "kind": "production",
+  "order": 220,
+  "name": "装飾師",
+  "role": "生産職",
+  "description": "装飾工房で、指輪・首飾り・腕輪・お守りなどのアクセサリーを作る。結晶に残った響きを聞き分け、石と金属に結び留める。",
+  "color": "#E59BFF",
+  "workshop": "accessory"
+}

@@ -1,0 +1,27 @@
+{
+  "slot": "offhand",
+  "generation": 1,
+  "series": "古代石シリーズ",
+  "rarity": "common",
+  "required_level": 5,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "defense": 9,
+    "hp": 40
+  },
+  "durability": 450,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:moss_iron",
+      "count": 2
+    },
+    {
+      "item": "amemaru:ancient_stone",
+      "count": 1
+    }
+  ],
+  "description": "古代の見張りの盾を写して作った、石の板の盾。"
+}

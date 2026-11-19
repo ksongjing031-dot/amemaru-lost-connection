@@ -1,0 +1,17 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "見習い装備",
+  "rarity": "common",
+  "required_level": 1,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "attack": 10
+  },
+  "fixed": true,
+  "durability": 0,
+  "binding": "bound",
+  "description": "ギルドが新しい冒険者に貸す両手剣。"
+}

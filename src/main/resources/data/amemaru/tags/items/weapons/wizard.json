@@ -1,6 +1,8 @@
 {
   "replace": false,
   "values": [
-    "amemaru:apprentice_staff"
+    "amemaru:apprentice_staff",
+    "amemaru:ancient_stone_staff",
+    "amemaru:bee_crystal_staff"
   ]
 }

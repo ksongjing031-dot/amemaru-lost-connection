@@ -1,9 +1,7 @@
 package jp.amemaru.lostconnection.job;
 
 import jp.amemaru.lostconnection.AmemaruMod;
-import jp.amemaru.lostconnection.item.ApprenticeShieldItem;
-import jp.amemaru.lostconnection.item.ApprenticeWeaponItem;
-import jp.amemaru.lostconnection.item.GearStats;
+import jp.amemaru.lostconnection.equipment.GearItem;
 import jp.amemaru.lostconnection.job.def.JobDef;
 import jp.amemaru.lostconnection.job.def.PassiveDef;
 import jp.amemaru.lostconnection.job.def.SkillDef;
@@ -92,7 +90,7 @@ public final class PassiveService {
     /** 盾を持ち、両手持ちの武器を持っていないか。 */
     public static boolean holdsShield(ServerPlayer player) {
         ItemStack main = player.getMainHandItem();
-        if (main.getItem() instanceof ApprenticeWeaponItem weapon && weapon.isTwoHanded()) {
+        if (main.getItem() instanceof GearItem weapon && weapon.isTwoHanded()) {
             return false;
         }
         return player.getOffhandItem().getItem() instanceof ShieldItem;
@@ -158,16 +156,7 @@ public final class PassiveService {
                 }
             }
         }
-        // 見習い装備（手に持っている武器と、もう片方の手の盾）
-        ItemStack main = player.getMainHandItem();
-        boolean twoHanded = false;
-        if (main.getItem() instanceof ApprenticeWeaponItem weapon) {
-            addGear(event, weapon.stats());
-            twoHanded = weapon.isTwoHanded();
-        }
-        if (!twoHanded && player.getOffhandItem().getItem() instanceof ApprenticeShieldItem shield) {
-            addGear(event, shield.stats());
-        }
+        // 装備と結晶果の分は GearService、アクセサリーの分は AccessoryService が足す（Phase 3）
         // 近くに味方がいると上がるパッシブ
         int conditions = conditions(player, data);
         Active pride = find(data, PassiveDef.Type.GUARDIAN_PRIDE);
@@ -183,12 +172,6 @@ public final class PassiveService {
             event.addPercent(StatType.ATTACK, spirit.value());
         }
         LAST_CONDITIONS.put(player.getUUID(), conditions);
-    }
-
-    private static void addGear(CollectStatsEvent event, GearStats stats) {
-        for (Map.Entry<StatType, Double> entry : stats.values().entrySet()) {
-            event.addFlat(entry.getKey(), entry.getValue());
-        }
     }
 
     /**
@@ -245,18 +228,7 @@ public final class PassiveService {
         }
     }
 
-    /** 持ち物を持ちかえたら、装備の分を計算し直す。 */
-    @SubscribeEvent
-    public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
-        if (!(event.getEntity() instanceof ServerPlayer player)) {
-            return;
-        }
-        EquipmentSlot slot = event.getSlot();
-        if (slot != EquipmentSlot.MAINHAND && slot != EquipmentSlot.OFFHAND) {
-            return;
-        }
-        PlayerDataCapability.get(player).ifPresent(PlayerData::invalidateStats);
-    }
+
 
     /** ログアウトしたプレイヤーの記録を消す。 */
     public static void forget(UUID player) {

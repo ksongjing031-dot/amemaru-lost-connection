@@ -1,0 +1,23 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "accessory",
+  "mastery": 1,
+  "mastery_exp": 10,
+  "ingredients": [
+    {
+      "item": "amemaru:moss_iron",
+      "count": 3
+    },
+    {
+      "item": "amemaru:bee_stinger",
+      "count": 2
+    },
+    {
+      "item": "amemaru:crystal_shard",
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "amemaru:moss_iron_wisdom_ring"
+  }
+}

@@ -117,6 +117,10 @@ public final class CombatTextRenderer {
                 addWord(entity, Component.translatable("combat.amemaru.frozen").getString(), 0x9FE6FF, 0x06304A, 1.2F, now);
                 return;
             }
+            case DODGE -> {
+                addWord(entity, Component.translatable("combat.amemaru.dodge").getString(), 0xE8F4FF, 0x1A2A3A, 1.2F, now);
+                return;
+            }
             default -> {
             }
         }

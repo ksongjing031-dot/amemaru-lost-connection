@@ -2,7 +2,15 @@ package jp.amemaru.lostconnection.client;
 
 import jp.amemaru.lostconnection.client.fx.StatusVisuals;
 import jp.amemaru.lostconnection.client.screen.JobSelectScreen;
+import jp.amemaru.lostconnection.enemy.EnemyDefs;
+import jp.amemaru.lostconnection.equipment.EquipmentDef;
+import jp.amemaru.lostconnection.equipment.EquipmentDefs;
+import jp.amemaru.lostconnection.network.s2c.AccessoryVisibilityS2C;
 import jp.amemaru.lostconnection.network.s2c.CombatTextS2C;
+import jp.amemaru.lostconnection.network.s2c.SpecialMomentS2C;
+import jp.amemaru.lostconnection.network.s2c.SyncAdventureS2C;
+import jp.amemaru.lostconnection.network.s2c.SyncContentS2C;
+import jp.amemaru.lostconnection.workshop.ProductionRules;
 import jp.amemaru.lostconnection.network.s2c.OpenJobScreenS2C;
 import jp.amemaru.lostconnection.network.s2c.SkillFxS2C;
 import jp.amemaru.lostconnection.network.s2c.SkillResultS2C;
@@ -47,5 +55,30 @@ public final class ClientPacketHandler {
 
     public static void handleOpenJobScreen(OpenJobScreenS2C message) {
         Minecraft.getInstance().setScreen(new JobSelectScreen(message));
+    }
+
+    // ---- Phase 3
+
+    public static void handleAdventure(SyncAdventureS2C message) {
+        ClientAdventure.apply(message);
+    }
+
+    public static void handleContent(SyncContentS2C message) {
+        java.util.Map<net.minecraft.resources.ResourceLocation, EquipmentDef> map = new java.util.LinkedHashMap<>();
+        for (EquipmentDef def : message.equipment()) {
+            map.put(def.id(), def);
+        }
+        EquipmentDefs.setClient(new EquipmentDefs.Snapshot(java.util.Map.copyOf(map), message.rules()));
+        EnemyDefs.setClientInfo(message.enemies());
+        ProductionRules.setClient(message.production());
+        ClientContent.setProductionJobs(message.productionJobs());
+    }
+
+    public static void handleAccessoryVisibility(AccessoryVisibilityS2C message) {
+        ClientAdventure.setHidden(message.entityId(), message.hiddenBits());
+    }
+
+    public static void handleSpecialMoment(SpecialMomentS2C message) {
+        SpecialMomentFx.show(message.kind(), message.stack());
     }
 }

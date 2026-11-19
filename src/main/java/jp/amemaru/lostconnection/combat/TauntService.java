@@ -1,6 +1,7 @@
 package jp.amemaru.lostconnection.combat;
 
 import jp.amemaru.lostconnection.AmemaruMod;
+import jp.amemaru.lostconnection.enemy.AmemaruMob;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -20,8 +21,8 @@ import java.util.UUID;
 /**
  * 敵視を集める（ナイトの「呼び声」）。決まった時間、魔物の狙いをナイトに固定する。
  *
- * <p>Phase 3でこのModの敵がヘイトの表を持つようになったら、表の一番上に置く形に変える。それまでは、バニラの魔物の
- * 「狙い」を書きかえる。狙いを変えようとしたら、ナイトに戻す。</p>
+ * <p>このModの敵（Phase 3）はヘイトの表を持ち、挑発した人を表の一番上に置く（挑発の間は、表に関係なく挑発した人を狙う）。
+ * バニラの魔物は「狙い」を書きかえ、狙いを変えようとしたら、ナイトに戻す。</p>
  */
 @Mod.EventBusSubscriber(modid = AmemaruMod.MOD_ID)
 public final class TauntService {
@@ -39,6 +40,10 @@ public final class TauntService {
             return;
         }
         TAUNTS.put(mob.getUUID(), new Taunt(taunter.getUUID(), now + ticks));
+        if (mob instanceof AmemaruMob enemy) {
+            // このModの敵は、ヘイトの表の一番上に置く（Phase 3）
+            enemy.onTaunted(taunter);
+        }
         mob.setTarget(taunter);
         if (mob instanceof NeutralMob neutral) {
             neutral.setPersistentAngerTarget(taunter.getUUID());

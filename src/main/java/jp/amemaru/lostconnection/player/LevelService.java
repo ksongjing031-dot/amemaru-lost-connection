@@ -2,6 +2,7 @@ package jp.amemaru.lostconnection.player;
 
 import jp.amemaru.lostconnection.core.config.ServerConfig;
 import jp.amemaru.lostconnection.job.SkillTreeService;
+import jp.amemaru.lostconnection.progression.ProgressionData;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
@@ -26,8 +27,14 @@ public final class LevelService {
     // ---------------------------------------------------------------- 経験値とレベル
 
     /**
-     * 経験値を足す。足りればレベルを上げる。最大レベルでは経験値はたまらない
-     * （Phase 3で、代わりに「結晶の欠片」がたまるようにする）。
+     * 経験値を足す。足りればレベルを上げる。
+     *
+     * <ul>
+     *   <li>遊んで得た経験値には、config の倍率と、追いつき補正（サーバーのレベルの中央値より5以上低い人は+50%、
+     *       10以上低い人は+100%。Phase 0-A 19章）をかける</li>
+     *   <li>レベルは今の章の上限（第1章Lv15・第2章Lv28・第3章Lv40・第4章Lv50）で止まる。上限に届いている間は、
+     *       経験値の代わりに交換用の「結晶の欠片」がたまる（{@code growth} の {@code overflow}。無駄にならない）</li>
+     * </ul>
      *
      * @return 上がったレベルの数
      */
@@ -36,30 +43,80 @@ public final class LevelService {
             return 0;
         }
         GrowthDef growth = GrowthRules.current();
-        double scaled = source == ExpSource.GAMEPLAY ? amount * ServerConfig.EXP_MULTIPLIER.get() : amount;
+        double scaled = amount;
+        if (source == ExpSource.GAMEPLAY) {
+            scaled *= ServerConfig.EXP_MULTIPLIER.get();
+            scaled *= 1.0 + catchUpBonus(player, data, growth) / 100.0;
+        }
         long gained = Math.max(0L, Math.round(scaled));
+        int cap = Math.min(growth.maxLevel(), ProgressionData.currentLevelCap(player.server));
 
         int startLevel = data.getLevel();
         int level = startLevel;
         long exp = (long) data.getExp() + gained;
-        while (level < growth.maxLevel()) {
-            int need = growth.expToNext(level);
-            if (exp < need) {
-                break;
+        long overflow = 0L;
+        if (level >= cap) {
+            // もう上限：すべて結晶の欠片へ
+            overflow = gained;
+            exp = data.getExp();
+        } else {
+            while (level < cap) {
+                int need = growth.expToNext(level);
+                if (exp < need) {
+                    break;
+                }
+                exp -= need;
+                level++;
             }
-            exp -= need;
-            level++;
-        }
-        if (level >= growth.maxLevel()) {
-            level = growth.maxLevel();
-            exp = 0;
+            if (level >= cap) {
+                overflow = exp;
+                exp = 0;
+            }
         }
         data.setExp((int) Math.min(exp, Integer.MAX_VALUE));
         if (level != startLevel) {
             data.setLevel(level);
             onLevelChanged(player, data, startLevel, level);
         }
+        if (overflow > 0) {
+            addOverflow(player, data, growth, overflow);
+        }
         return level - startLevel;
+    }
+
+    /** 追いつき補正（%）。サーバーのレベルの中央値より低いほど増える。 */
+    public static double catchUpBonus(ServerPlayer player, PlayerData data, GrowthDef growth) {
+        int median = ProgressionData.get(player.server).medianLevel();
+        return growth.catchUpBonus(median - data.getLevel());
+    }
+
+    /** 上限に届いている間の経験値をためて、決まった量ごとに結晶の欠片を渡す（持ち物がいっぱいなら足元に落とす）。 */
+    private static void addOverflow(ServerPlayer player, PlayerData data, GrowthDef growth, long amount) {
+        int per = growth.expPerShard();
+        if (per <= 0 || growth.overflowItem() == null) {
+            return;
+        }
+        long total = data.getAdventure().overflowExp() + amount;
+        int shards = (int) Math.min(64 * 36, total / per);
+        data.getAdventure().setOverflowExp(total - (long) shards * per);
+        if (shards <= 0) {
+            return;
+        }
+        net.minecraft.world.item.Item item = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(growth.overflowItem());
+        if (item == null || item == net.minecraft.world.item.Items.AIR) {
+            return;
+        }
+        int left = shards;
+        while (left > 0) {
+            int count = Math.min(left, item.getMaxStackSize());
+            net.minecraft.world.item.ItemStack stack = new net.minecraft.world.item.ItemStack(item, count);
+            if (!player.getInventory().add(stack)) {
+                player.drop(stack, false);
+            }
+            left -= count;
+        }
+        player.displayClientMessage(Component.translatable("message.amemaru.level_cap.shards", shards,
+                new net.minecraft.world.item.ItemStack(item).getHoverName()).withStyle(ChatFormatting.AQUA), true);
     }
 
     /** レベルを指定する（管理者用）。経験値は0に戻す。下げたときに振り分けが多すぎれば、振り分けを戻す。 */
@@ -77,6 +134,7 @@ public final class LevelService {
 
     private static void onLevelChanged(ServerPlayer player, PlayerData data, int oldLevel, int newLevel) {
         GrowthDef growth = GrowthRules.current();
+        recordLevel(player, data);
         recompute(player, data);
         if (newLevel < oldLevel) {
             // レベルを下げて、使ったスキルポイントがもらえる合計を超えたら、スキルをやり直す
@@ -98,6 +156,14 @@ public final class LevelService {
                     SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 0.8F, 1.0F);
         }
         data.markDirty(PlayerData.SYNC_GROWTH);
+    }
+
+    /** サーバーのレベルの記録（追いつき補正の中央値）を更新する。テスト用の偽のプレイヤーは数えない。 */
+    public static void recordLevel(ServerPlayer player, PlayerData data) {
+        if (player instanceof net.minecraftforge.common.util.FakePlayer) {
+            return;
+        }
+        ProgressionData.get(player.server).recordLevel(player.getUUID(), data.getLevel());
     }
 
     // ---------------------------------------------------------------- ポイント
@@ -155,6 +221,8 @@ public final class LevelService {
             data.setExp(0);
         }
         data.applyStats(StatCalculator.compute(player, data, growth));
+        // 素早さ：移動と攻撃の速さ（回避は受けたときに抽選する）
+        SpeedService.apply(player, data);
         if (!data.vitalsInitialized()) {
             data.setHp(data.getStats().maxHp());
             data.setMp(data.getStats().maxMp());

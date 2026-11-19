@@ -96,6 +96,8 @@ public final class JobDef {
     private final List<KitEntry> starterKit;
     @Nullable
     private final UpperDef upper;
+    /** 生産職の工房（weapon・armor・accessory。戦闘職は空）。 */
+    private String workshop = "";
 
     private JobDef(ResourceLocation id, Kind kind, int order, String name, String role, String description, int color,
                    ResourceLocation icon, @Nullable TagKey<Item> weapons, String weaponText, Set<String> tags,
@@ -207,9 +209,11 @@ public final class JobDef {
                     Json.optionalInt(upperJson, "min_level", 30, 1, 200), Json.optionalInt(upperJson, "min_day", 11, 1, 365));
         }
 
-        return new JobDef(id, kind, order, name, role, description, color, icon, weapons, weaponText,
+        JobDef def = new JobDef(id, kind, order, name, role, description, color, icon, weapons, weaponText,
                 Collections.unmodifiableSet(tags), statPercent, statFlat, gauge, Collections.unmodifiableList(schools),
                 Collections.unmodifiableList(startingSkills), Collections.unmodifiableList(kit), upper);
+        def.workshop = Json.optionalString(json, "workshop", "");
+        return def;
     }
 
     private static void readStats(@Nullable JsonObject object, double[] target, String where, double min, double max) {
@@ -312,6 +316,11 @@ public final class JobDef {
 
     public List<KitEntry> starterKit() {
         return starterKit;
+    }
+
+    /** 生産職の工房（weapon・armor・accessory。戦闘職は空）。 */
+    public String workshop() {
+        return workshop;
     }
 
     @Nullable

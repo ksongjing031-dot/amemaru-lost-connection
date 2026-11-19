@@ -1,0 +1,19 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "weapon",
+  "mastery": 1,
+  "mastery_exp": 10,
+  "ingredients": [
+    {
+      "item": "amemaru:moss_iron",
+      "count": 5
+    },
+    {
+      "item": "amemaru:crystal_shard",
+      "count": 2
+    }
+  ],
+  "result": {
+    "item": "amemaru:ancient_stone_sword"
+  }
+}

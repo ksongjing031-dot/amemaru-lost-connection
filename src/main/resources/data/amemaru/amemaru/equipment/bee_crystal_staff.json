@@ -1,0 +1,36 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "1階のレア装備",
+  "rarity": "rare",
+  "required_level": 4,
+  "jobs": [
+    "amemaru:wizard"
+  ],
+  "stats": {
+    "magic": 19,
+    "mp": 30
+  },
+  "durability": 500,
+  "binding": "on_equip",
+  "effects": [
+    {
+      "type": "extra_damage",
+      "chance": 10,
+      "percent": 40,
+      "source": "skill"
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:crystal_shard",
+      "count": 2
+    },
+    {
+      "item": "amemaru:bee_stinger",
+      "count": 2
+    }
+  ],
+  "description": "結晶蜂の核を先にはめた杖。核は今も、針を撃つ前のように脈打っている。"
+}

@@ -1,0 +1,26 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "古代石シリーズ",
+  "rarity": "common",
+  "required_level": 6,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "attack": 23
+  },
+  "durability": 450,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:moss_iron",
+      "count": 3
+    },
+    {
+      "item": "amemaru:ancient_stone",
+      "count": 1
+    }
+  ],
+  "description": "重い古代石の刃。振り下ろすと、草原の土が鳴る。"
+}

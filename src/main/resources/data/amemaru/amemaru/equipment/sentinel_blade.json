@@ -1,0 +1,35 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "1階のレア装備",
+  "rarity": "rare",
+  "required_level": 4,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "attack": 16,
+    "crit": 2
+  },
+  "durability": 500,
+  "binding": "on_equip",
+  "effects": [
+    {
+      "type": "extra_damage",
+      "chance": 15,
+      "percent": 50
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:moss_iron",
+      "count": 3
+    },
+    {
+      "item": "amemaru:ancient_stone",
+      "count": 2
+    }
+  ],
+  "description": "石くれ兵が巡回の間ずっと握っていた石刃。刃に、見張りの古い命令の文字が残っている。"
+}

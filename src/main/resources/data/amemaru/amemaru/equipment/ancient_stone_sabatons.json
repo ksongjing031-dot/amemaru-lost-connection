@@ -1,0 +1,27 @@
+{
+  "slot": "feet",
+  "generation": 1,
+  "series": "古代石シリーズ（重鎧）",
+  "rarity": "common",
+  "required_level": 5,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "defense": 3,
+    "hp": 20,
+    "speed": 1
+  },
+  "durability": 280,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:moss_iron",
+      "count": 1
+    },
+    {
+      "item": "amemaru:ancient_stone",
+      "count": 1
+    }
+  ]
+}

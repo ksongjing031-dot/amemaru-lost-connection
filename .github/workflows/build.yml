@@ -33,7 +33,7 @@ jobs:
       - name: Gradle を用意する（ラッパーの検証とキャッシュ）
         uses: gradle/actions/setup-gradle@v5
 
-      # build/dist に、遊ぶときに mods に置く jar（このMod ＋ クライアントに要る playerAnimator）がそろう
+      # build/dist に、遊ぶときに mods に置く jar（このMod ＋ playerAnimator・GeckoLib・Curios）がそろう
       - name: ビルドする
         run: |
           chmod +x ./gradlew
@@ -48,8 +48,8 @@ jobs:
           unzip -p "$JAR" META-INF/mods.toml
           echo "----- mods に置く jar（build/dist） -----"
           ls -la build/dist
-          if [ "$(ls build/dist/*.jar | wc -l)" -lt 2 ]; then
-            echo "::error::build/dist に、このModと playerAnimator の2つの jar がそろっていません"
+          if [ "$(ls build/dist/*.jar | wc -l)" -lt 4 ]; then
+            echo "::error::build/dist に、このModと playerAnimator・GeckoLib・Curios の4つの jar がそろっていません"
             exit 1
           fi
 
@@ -111,7 +111,7 @@ jobs:
 
   # 本物の手順（Forgeを入れたMinecraftの mods に jar を置く）でクライアントを起動し、
   # シングルプレイのワールドに入ってHUDが描かれる状態を数秒続け、落ちずに終わるかを確かめる。
-  # mods には、このModと playerAnimator（クライアントに要る）の2つを置く。
+  # mods には、このModと playerAnimator・GeckoLib・Curios の4つを置く。
   client-test:
     name: クライアントで起動を確かめる
     needs: build

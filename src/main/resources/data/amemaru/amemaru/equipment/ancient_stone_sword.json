@@ -1,0 +1,22 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "古代石シリーズ",
+  "rarity": "common",
+  "required_level": 5,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "attack": 14
+  },
+  "durability": 400,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:moss_iron",
+      "count": 2
+    }
+  ],
+  "description": "古代の道標と同じ石を、苔鉄の芯で鍛えた片手剣。"
+}

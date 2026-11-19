@@ -1,0 +1,19 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "accessory",
+  "mastery": 2,
+  "mastery_exp": 12,
+  "ingredients": [
+    {
+      "item": "amemaru:ancient_stone",
+      "count": 4
+    },
+    {
+      "item": "amemaru:moss_iron",
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "amemaru:ishikure_bracelet"
+  }
+}
