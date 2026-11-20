@@ -19,7 +19,7 @@
     （表の露台）・働く人の部屋、奥にジゼルの部屋。
   - 地下（秘密の階）：VIPルームの本棚の扉から下りる。噂の間・初代の金庫。働く人の階段の下は酒と道具の地下室
     （土台の鉄格子の小窓。都市のルール③）。
-  - 中に入れる所の樽は、鍵をかける（Lock）。チェスト・かまど・醸造台は置かない。
+  - 中に入れる所の樽と、瓶の見せ物（醸造台の形）は、鍵をかける（Lock）。チェスト・かまどは置かない。
 
 座標：世界の座標（大結晶が x 0・z 0。x が東、z が南）。高さ y は道のブロックが 0（足もとが 1）。
 建物の中の座標 (u, v) は、u が西→東（u=0 が世界の x 13、正面の壁）、v が北→南（v=0 が世界の z 72、北の壁）。
@@ -37,7 +37,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from nbtlib.tag import Compound, String
+from nbtlib.tag import Byte, Compound, List, String
 
 from mapgen.arch import Palette, Roof
 from mapgen.fixtures import hang_lantern, lamp_post, wall_lantern
@@ -174,6 +174,16 @@ def one_door(u, v, y, facing, wood="spruce", hinge="left"):
 def barrel(u, v, y, facing="up"):
     bput(u, v, y, block("barrel", facing=facing, open=False),
          Compound({"id": String("minecraft:barrel"), "Lock": String(LOCK)}))
+
+
+def bottle_stand(u, v, y, slots):
+    """瓶の見せ物（醸造台の形）。中身の入れられるブロックなので、樽と同じ鍵をかけ、見せる瓶（水の瓶）を入れておく
+    （瓶の形は中身に合わせて変わるので、中身がないと置いたあとに瓶が消える）"""
+    bits = {"has_bottle_%d" % i: (i in slots) for i in range(3)}
+    items = List[Compound]([Compound({"Slot": Byte(i), "id": String("minecraft:potion"), "Count": Byte(1),
+                                      "tag": Compound({"Potion": String("minecraft:water")})}) for i in slots])
+    bput(u, v, y, block("brewing_stand", **bits),
+         Compound({"id": String("minecraft:brewing_stand"), "Lock": String(LOCK), "Items": items}))
 
 
 def candle(u, v, y, n=1, color=""):
@@ -1029,7 +1039,7 @@ def bar():
             bput(u, 1, FT + 2, block("decorated_pot", facing="south", waterlogged=False))
         else:
             candle(u, 1, FT + 2, 2)
-    bput(17, 1, FT, block("brewing_stand", has_bottle_0=True, has_bottle_1=True, has_bottle_2=False))
+    bottle_stand(17, 1, FT, (0, 1))
     for u in range(14, 21):
         bput(u, 3, FT, block("dark_oak_planks"))
     bput(13, 3, FT, block("spruce_fence_gate", facing="east", in_wall=False, open=False, powered=False))
@@ -1156,7 +1166,7 @@ def vip_room():
         bput(28, v, FT, stairs("dark_oak", "east"))
     barrel(23, 16, FT, "up")
     barrel(23, 17, FT, "up")
-    bput(23, 16, FT + 1, block("brewing_stand", has_bottle_0=True, has_bottle_1=False, has_bottle_2=True))
+    bottle_stand(23, 16, FT + 1, (0, 2))
     bput(28, 17, FT, block("potted_azalea_bush"))
     # 北の本棚の壁（v 10）と、東の端の扉（秘密の階段へ）
     for u in range(23, 29):
