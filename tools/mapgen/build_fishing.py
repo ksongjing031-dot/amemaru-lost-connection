@@ -1178,6 +1178,16 @@ def gate_channel():
             for y in range(-YOFF, 1):
                 gput(x, z, y, block("stone") if y < WL - 2 else white_stone())
             gput(x, z, 1, wall("stone_brick" if hsh(x, 5, z) < 0.6 else "mossy_stone_brick"))
+    # 水路の口から西へ、湖の水まで掘る（湖の水が落とし格子の前まで来る。両わきの土の岸が水を止める）
+    for z in CH_Z:
+        x = CANAL_X0 - 1
+        while gname(x, z, WL) != "water" and x > GX0:
+            for y in range(WL + 1, 1):
+                gput(x, z, y, AIR)
+            for y in range(WL - 1, WL + 1):
+                gput(x, z, y, WATER)
+            gput(x, z, WL - 2, block("gravel"))
+            x -= 1
 
 
 def gatehouse():
@@ -1273,8 +1283,9 @@ def gatehouse():
     gput(-95, 62, base, lantern(False))
     cpal = Palette(seed=910, roof="waxed_oxidized_cut_copper", roof_block="waxed_oxidized_copper", trim="dark_oak",
                    post="spruce", beam="dark_oak", plaster="calcite", frame="spruce")
+    # 破風の縁と破風板は付けない（付けると縁の頂が +22・+23 になり、城門の塔の22を超える）。いちばん上は棟の笠 +21
     roof = Roof(g, cpal, x0=x0 - GX0, x1=x1 - GX0, z0=z0 - GZ0, z1=z1 - GZ0, y0=base + 3 + YOFF, ridge="z", pitch=2,
-                side_overhang=1, end_overhang=1, ends=("start", "end"), thickness=2, kick=False)
+                side_overhang=1, end_overhang=1, ends=(), thickness=2, kick=False)
     roof.build(skip=lambda X, Y, Z: x0 - GX0 <= X <= x1 - GX0 and z0 - GZ0 <= Z <= z1 - GZ0 and Y < base + 3 + YOFF)
     for at in (z0, z1):
         gable_wall(g, cpal, roof, at - GZ0, posts=())
@@ -1889,13 +1900,13 @@ def base_parts(which="base"):
 
 VIEWS = {
     "entrance": ((44.0, 13.0, 34.0), (22.0, 9.0, 25.0)),      # 環状路の南西の角から、入口の門と池
-    "aerial": ((46.0, 34.0, 56.0), (16.0, 6.0, 24.0)),         # 上から（南東）
+    "aerial": ((20.0, 44.0, 10.0), (15.0, 5.0, 29.0)),          # 上から（北の高い所）：池の全体、右に釣り具屋、奥に城壁と水門
     "aerial_nw": ((-10.0, 30.0, 0.0), (20.0, 6.0, 28.0)),      # 上から（北西。記憶の庭の側）
     "deck": ((27.6, 12.9, 21.6), (9.0, 7.0, 31.0)),            # 上の台から池（南西）
     "pier": ((11.5, 9.62, 26.5), (28.0, 11.0, 20.0)),          # 下の桟橋の先から、台と釣り具屋
     "arch": ((16.5, 11.62, 12.5), (16.5, 7.0, 24.0)),          # 北の遊歩道から、アーチの下の桟橋
     "spring": ((8.4, 10.4, 22.4), (5.5, 8.6, 16.6)),           # 入り江の南東の岸から、湧き口と石の橋
-    "west": ((2.0, 11.62, 31.0), (24.0, 11.0, 20.0)),          # 西の岸から、池と台と釣り具屋
+    "west": ((2.0, 11.62, 28.5), (25.0, 10.0, 22.0)),           # 西の小道（桜とオークの間）から、池と台と釣り具屋
     "south": ((20.5, 11.62, 41.5), (16.0, 8.0, 18.0)),         # 南の遊歩道から北へ
     "shop": ((26.5, 12.62, 19.5), (30.5, 11.4, 17.5)),         # 台から釣り具屋のカウンター
     "shed": ((16.5, 9.62, 26.5), (21.5, 8.0, 31.0)),           # 下の桟橋から水辺の小屋
@@ -1911,7 +1922,7 @@ VIEWS_LAKESIDE = {
     "gate_open": ((14.0, 11.62, 47.0), (-1.0, 12.0, 40.0)),    # 水門の内側（落とし格子が上がり、堰が開いた）
 }
 VIEWS_FROZEN = {
-    "frozen": ((11.5, 12.4, 12.4), (18.0, 6.0, 22.0)),         # 第2章：北の遊歩道から、凍った池の北の半分
+    "frozen": ((22.5, 15.5, 13.0), (13.0, 6.0, 21.5)),         # 第2章：北の遊歩道の上から、凍った池の北の半分と釣り穴
 }
 
 

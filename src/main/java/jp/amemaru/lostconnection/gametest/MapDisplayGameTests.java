@@ -150,7 +150,7 @@ public final class MapDisplayGameTests {
         checkBuilding(helper, CHURCH, "church", 2, 0);
     }
 
-    /** 釣り堀：額縁7（店の吊り看板の下の生鱈、「今日の魚」の鮭・熱帯魚・ふぐ、店の中の貸し竿、入口の門の柱の生鱈、
+    /** 釣り堀：額縁7（店の西の面のカウンターの南の柱の生鱈、「今日の魚」の鮭・熱帯魚・ふぐ、店の中の貸し竿、入口の門の柱の生鱈、
      *  上の台の魚の樽のふたの生鱈）。防具立てはない。水門と湖（water_gate）・路地（fishing_alley）・第2章の氷
      *  （fishing_pond_frozen）には、額縁も防具立てもない。 */
     @GameTest(template = EMPTY)
