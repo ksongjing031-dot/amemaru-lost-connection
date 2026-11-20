@@ -116,7 +116,7 @@ jobs:
     name: クライアントで起動を確かめる
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 35
+    timeout-minutes: 55
     steps:
       - name: Java 17 を用意する
         uses: actions/setup-java@v5
@@ -137,8 +137,9 @@ jobs:
           printf 'earlyWindowControl = false\n' > run/config/fml.toml
 
       # 建物の写真が増えると長くなる（PHASE 11 の塔の入口まで110枚で約16〜18分。PHASE 10 のカジノまでの98枚で約13分半）。区画を足すたびに、ここの時間に収まるかを見る
+      # 11月21日：装備のデザインの写真と、街全体の写真（街を空に建てて28枚）を足したので、45分にした
       - name: クライアントを起動し、ワールドに入って出る（画面写真も撮る）
-        timeout-minutes: 25
+        timeout-minutes: 45
         uses: headlesshq/mc-runtime-test@5.0.0
         with:
           mc: 1.20.1

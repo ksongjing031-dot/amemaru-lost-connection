@@ -2,6 +2,7 @@ package jp.amemaru.lostconnection.client;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import jp.amemaru.lostconnection.AmemaruMod;
+import jp.amemaru.lostconnection.admin.CityCommands;
 import jp.amemaru.lostconnection.client.screen.BestiaryScreen;
 import jp.amemaru.lostconnection.client.screen.SkillTreeScreen;
 import jp.amemaru.lostconnection.client.screen.StatusScreen;
@@ -406,6 +407,36 @@ public final class CiScreenshots {
     /** 装備のデザインの写真の前にいた場所（撮り終えたら戻る）。 */
     @Nullable
     private static BlockPos gearReturn;
+    /**
+     * 街全体の写真（11月21日）の段階の始まり。建物の見本の写真の後に、確かめ用の {@code /amemaru admin city build} で
+     * 11施設を地図の位置に並べて空に建て、{@code /amemaru admin city tp} の場所から撮る。
+     */
+    private static final int CITY = 700;
+    /** 街を建てる高さ（道のブロックの高さ。空に建てる） */
+    private static final int CITY_Y = 200;
+    /** 街を建てた所（中央広場の真ん中） */
+    @Nullable
+    private static BlockPos cityOrigin;
+    /** 建て終わるのを待つ：建てる前の回数と、待った回数 */
+    private static int cityBuilds;
+    private static int cityWaits;
+    private static boolean cityDone;
+    /**
+     * 街全体の写真：{写真の名前, city tp の場所}。場所が null の行は、写真の代わりに夜にする（night）・
+     * 育ったあとの形を建て直す（grown）。
+     */
+    private static final String[][] CITY_SHOTS = {
+            {"city_top", "top"}, {"city_aerial_se", "aerial_se"}, {"city_aerial_nw", "aerial_nw"},
+            {"city_plaza", "plaza"}, {"city_guild", "guild"}, {"city_storage", "storage"}, {"city_weapon", "weapon"},
+            {"city_armor", "armor"}, {"city_accessory", "accessory"}, {"city_market", "market"},
+            {"city_free_market", "free_market"}, {"city_church", "church"}, {"city_fishing", "fishing"},
+            {"city_lake", "lake"}, {"city_casino", "casino"}, {"city_tower", "tower"},
+            {"night", null},
+            {"city_top_night", "top"}, {"city_plaza_night", "plaza"}, {"city_market_night", "market"},
+            {"city_church_night", "church"}, {"city_tower_night", "tower"},
+            {"grown", null},
+            {"city_grown_top", "top"}, {"city_grown_market", "market"}, {"city_grown_free_market", "free_market"},
+            {"city_grown_fishing", "fishing"}, {"city_grown_lake", "lake"}, {"city_grown_tower", "tower"}};
 
     private CiScreenshots() {
     }
@@ -424,6 +455,10 @@ public final class CiScreenshots {
             return;
         }
         if (frames < MIN_FRAMES) {
+            return;
+        }
+        if (stage >= CITY) {
+            cityStage(minecraft);
             return;
         }
         switch (stage) {
@@ -1517,11 +1552,98 @@ public final class CiScreenshots {
                                 returnPos.getX(), returnPos.getY(), returnPos.getZ()));
                     }
                     command(minecraft, "gamemode " + returnMode + " @a");
-                    minecraft.setScreen(null);
-                    next(MAP_STAGE + 2 + MAP_SHOTS.length * 2, 0);
+                    // 街全体の写真へ（透明な画面は開いたまま。撮り終えたら閉じる）
+                    next(CITY, 40);
                 }
             }
         }
+    }
+
+    /**
+     * 街全体の写真（11月21日）：11施設を地図の位置に空に建て（{@code /amemaru admin city build at}）、上から・斜めから・各施設の前・
+     * 夜・育ったあとの形を撮る。街の箱（x −144〜135、z −184〜127）の真ん中が、建物の写真の後に戻った所の真上に来るように建てる
+     * （まわりの区画は読み込み済み。描く距離12でも、真上から街全体が入る）。
+     */
+    private static void cityStage(Minecraft minecraft) {
+        int k = stage - CITY;
+        if (k == 0) {
+            clean(minecraft);
+            hideHud = true;
+            command(minecraft, "gamemode spectator @a");
+            command(minecraft, "time set noon");
+            command(minecraft, "weather clear");
+            BlockPos at = minecraft.player.blockPosition();
+            cityOrigin = new BlockPos(at.getX() + 4, CITY_Y, at.getZ() + 28);
+            command(minecraft, String.format(Locale.ROOT, "tp @p %d %d %d 180 90", at.getX(), CITY_Y + 120, at.getZ()));
+            next(CITY + 1, 100);
+            return;
+        }
+        if (k == 1) {
+            cityBuild(minecraft, false);
+            next(CITY + 2, 20);
+            return;
+        }
+        if (k == 2) {
+            // 建て終わるまで待つ（サーバーは同じJVM。建てている間もクライアントは動く）。そのあと、光の計算と形の作り直しを待つ
+            if (CityCommands.builds == cityBuilds && cityWaits++ < 150) {
+                next(CITY + 2, 20);
+            } else {
+                next(CITY + 3, 600);
+            }
+            return;
+        }
+        int j = k - 3;
+        if (j >= CITY_SHOTS.length * 2) {
+            if (!cityDone) {
+                cityDone = true;
+                hideHud = false;
+                command(minecraft, "time set noon");
+                if (returnPos != null) {
+                    command(minecraft, String.format(Locale.ROOT, "tp @p %d %d %d",
+                            returnPos.getX(), returnPos.getY(), returnPos.getZ()));
+                }
+                command(minecraft, "gamemode " + returnMode + " @a");
+                minecraft.setScreen(null);
+            }
+            return;
+        }
+        String[] shot = CITY_SHOTS[j / 2];
+        boolean first = j % 2 == 0;
+        if (shot[1] != null) {
+            if (first) {
+                command(minecraft, "amemaru admin city tp " + shot[1]);
+                next(stage + 1, 80);
+            } else {
+                clean(minecraft);
+                pendingShot = shot[0];
+                next(stage + 1, 2);
+            }
+        } else if ("night".equals(shot[0])) {
+            if (first) {
+                command(minecraft, "time set midnight");
+            }
+            next(stage + 1, first ? 60 : 0);
+        } else if (first) {
+            // 育ったあとの形：はじめから建て直して、重ねる形も置く
+            command(minecraft, "time set noon");
+            cityBuild(minecraft, true);
+            next(stage + 1, 20);
+        } else if (CityCommands.builds == cityBuilds && cityWaits++ < 150) {
+            next(stage, 20);
+        } else {
+            next(stage + 1, 600);
+        }
+    }
+
+    private static void cityBuild(Minecraft minecraft, boolean grown) {
+        BlockPos o = cityOrigin;
+        if (o == null) {
+            return;
+        }
+        cityBuilds = CityCommands.builds;
+        cityWaits = 0;
+        command(minecraft, String.format(Locale.ROOT, "amemaru admin city build at %d %d %d%s",
+                o.getX(), o.getY(), o.getZ(), grown ? " grown" : ""));
     }
 
     /** 建物の見本の写真 {@code view} から次の建物に移るなら、その構造物の名前（{@code map/conelia/} の後ろ）。移らないなら null。 */
