@@ -646,6 +646,7 @@ def gates(p):
 # ---------------------------------------------------------------- 古い泉（噴水）
 FOUNTAIN = (12, 17)             # 縁の u（v も同じ）。水は 13..16、真ん中の柱は 14..15
 PILLAR = ((14, 14), (15, 14), (14, 15), (15, 15))
+SPRING = ((14, 14), (15, 15))   # 柱の頭の水（北西と南東）。北西の水は西と北へ、南東の水は東と南へ落ちる
 
 
 def fountain(p):
@@ -662,7 +663,8 @@ def fountain(p):
                     p.put(u, v, 1, block("quartz_bricks"))
                     p.put(u, v, 2, block("quartz_pillar", axis="y"))
                     p.put(u, v, 3, block("chiseled_quartz_block"))
-                    p.put(u, v, 4, block("water", level=0))
+                    # 柱の頭：斜めの2マスに水、残りの2マスは石英。水は各面に1筋ずつ落ち、柱が水に隠れない
+                    p.put(u, v, 4, block("water", level=0) if (u, v) in SPRING else block("chiseled_quartz_block"))
                 else:
                     p.put(u, v, 1, block("water", level=0))
     # 苔（古い泉）：縁の四すみと、ところどころ
@@ -673,15 +675,15 @@ def fountain(p):
 def fountain_flow(world):
     """見本の絵だけ：柱の上の水が四方へ落ちる流れ（ゲームでは置いたあとに水が流れてこうなる）。
     絵の道具は水を箱で描くので、落ちる水は柱に沿った薄い板（水色のガラス板）で表す"""
-    for (u, v, ax) in ((13, 14, "z"), (13, 15, "z"), (16, 14, "z"), (16, 15, "z"),
-                       (14, 13, "x"), (15, 13, "x"), (14, 16, "x"), (15, 16, "x")):
+    for (u, v, ax) in ((13, 14, "z"), (16, 15, "z"), (14, 13, "x"), (15, 16, "x")):
         x, z = XZ(u, v)
         for y in (2, 3, 4):
+            # 1マスの幅の流れ：板を流れの面いっぱいに（両側につなぐ）
             if ax == "z":
-                st = block("light_blue_stained_glass_pane", north=(v == 15), south=(v == 14), east=False, west=False,
+                st = block("light_blue_stained_glass_pane", north=True, south=True, east=False, west=False,
                            waterlogged=False)
             else:
-                st = block("light_blue_stained_glass_pane", east=(u == 14), west=(u == 15), north=False, south=False,
+                st = block("light_blue_stained_glass_pane", east=True, west=True, north=False, south=False,
                            waterlogged=False)
             world.put(x, y, z, st)
 
