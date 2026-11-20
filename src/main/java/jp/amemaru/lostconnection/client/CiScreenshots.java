@@ -108,7 +108,11 @@ public final class CiScreenshots {
      *  フリーマーケットへの通り抜け・南門の前の小広場・上から・環状路の交差点）。
      *  {@link #STORAGE_FIRST} からの13枚は個人倉庫（tools/mapgen/build_storage.py の CI_SHOTS と同じ：正面・入口・
      *  北東の角から・荷揚げの妻・裏・上から・広間・ハーヴィの立ち位置から窓口ごしに広間・地下1層の廊下・小部屋・鉄格子から保管庫・保管庫の中・
-     *  地下2層の古代の間）。座標はギルドを置いた所から（個人倉庫は {@link #STORAGE_AT} だけずらして置く）。 */
+     *  地下2層の古代の間）。座標はギルドを置いた所から（個人倉庫は {@link #STORAGE_AT} だけずらして置く）。
+     *  {@link #FREE_FIRST} からの7枚はフリーマーケットのはじめの形（tools/mapgen/build_freemarket.py の CI_SHOTS と同じ：
+     *  北の門・東の門（通り抜けから）・中央通路・泉・市場監督の小屋・休み場・上から）、{@link #FREE_MORE_SHOT} からの2枚は
+     *  寄付で露店が増えたあと（上から・北の島の並び）。座標はフリーマーケットを置いた所から（商店街の南を
+     *  {@link #FREE_SOUTH_AT} だけずらして東に並べる）。 */
     private static final String[] MAP_SHOTS = {
             "map_guild_front", "map_guild_left", "map_guild_right", "map_guild_close", "map_guild_aerial", "map_guild_back",
             "map_weapon_front", "map_weapon_gate", "map_weapon_west", "map_weapon_close", "map_weapon_aerial",
@@ -124,7 +128,10 @@ public final class CiScreenshots {
             "map_market_south_aerial", "map_market_south_corner",
             "map_storage_front", "map_storage_entrance", "map_storage_east", "map_storage_hoist", "map_storage_back",
             "map_storage_aerial", "map_storage_hall", "map_storage_counter", "map_storage_corridor", "map_storage_room",
-            "map_storage_grille", "map_storage_vault", "map_storage_ancient"};
+            "map_storage_grille", "map_storage_vault", "map_storage_ancient",
+            "map_freemarket_north_gate", "map_freemarket_east_gate", "map_freemarket_lane", "map_freemarket_fountain",
+            "map_freemarket_booth", "map_freemarket_rest", "map_freemarket_aerial",
+            "map_freemarket_more_aerial", "map_freemarket_more_north"};
     private static final double[][] MAP_VIEWS = {
             {-30, 16, 21, 18, 13, 21},
             {-22, 22, -18, 16, 12, 16},
@@ -176,6 +183,15 @@ public final class CiScreenshots {
             {33.8, 0.62, 34.8, 18, -0.2, 35},
             {29.4, 0.62, 22.5, 17, -0.5, 28},
             {44.5, -3.38, 22.5, 35, -4.2, 27.5},
+            {14.5, 3.6, -6, 14.5, 2.8, 14},
+            {38, 2.62, 17, 15, 3, 17},
+            {27.5, 2.62, 17, 12, 2.6, 17},
+            {21.4, 3.3, 23.6, 12.5, 2.2, 13},
+            {14.5, 2.62, 9.5, 19.5, 3, 3.6},
+            {14.5, 3.3, 21.4, 14.5, 4, 30},
+            {-8, 21, 41, 15.5, 0, 14.5},
+            {-8, 21, 41, 15.5, 0, 14.5},
+            {1.6, 2.62, 7.5, 28, 2.4, 7.5},
     };
     /** 武器工房の写真の始まり。ここで、ギルドを片づけて武器工房を置く。 */
     private static final int WEAPON_FIRST = 6;
@@ -197,6 +213,21 @@ public final class CiScreenshots {
     private static final String STORAGE = "personal_storage";
     /** 個人倉庫を置く所（ギルドを置いた所から）：世界の (x 22, 道の下 7, z -82) とギルドの (x 6, 道, z -100) の差。 */
     private static final int[] STORAGE_AT = {16, -7, 18};
+    /** フリーマーケットの写真の始まり。ここで、ギルドと個人倉庫（地下も）を広く片づけ、フリーマーケットを置き、その東に商店街の南を並べる。 */
+    private static final int FREE_FIRST = 50;
+    /** フリーマーケットの構造物（はじめの形。露店12区画）。 */
+    private static final String FREE = "free_market";
+    /** 寄付で露店が増えたあとの写真。ここで、はじめの形の上に、増えた8区画を同じ所から重ねて置く（片づけない）。 */
+    private static final int FREE_MORE_SHOT = 57;
+    /** 重ねて置く構造物（増えた8区画の露店。区画の外は structure_void）。 */
+    private static final String FREE_MORE = "free_market_expanded";
+    /** 商店街の南を置く所（フリーマーケットを置いた所から）：世界の (x −18, 道, z 60) とフリーマーケットの (x −48, 道, z 60) の差。 */
+    private static final int[] FREE_SOUTH_AT = {30, 0, 0};
+    /**
+     * フリーマーケットの前に片づける範囲（建物を置いた所から。東西・高さ・南北の始まりと終わり）：ギルド（0〜35、0〜37、0〜40）と、
+     * その東の個人倉庫（16〜55、−7〜22、18〜40）を両方包む。
+     */
+    private static final int[] FREE_CLEAR = {0, -7, 0, 55, 37, 43};
     /** 片づける範囲（東西・高さ・南北）：いちばん大きい構造物（東西は商店街の37、南北は商店街の南の44）を包む大きさ。 */
     private static final int[] CLEAR_SIZE = {37, 38, 44};
     /**
@@ -923,11 +954,15 @@ public final class CiScreenshots {
                     next(stage + 1, 2);
                 } else if (buildingFrom(view + 1) != null) {
                     String name = buildingFrom(view + 1);
-                    if (MARKET_OPEN.equals(name)) {
+                    if (MARKET_OPEN.equals(name) || FREE_MORE.equals(name)) {
                         overlay(minecraft, name);
                     } else if (STORAGE.equals(name)) {
                         replaceBuilding(minecraft, "guild_hall");
                         overlayAt(minecraft, STORAGE, STORAGE_AT);
+                    } else if (FREE.equals(name)) {
+                        clearWide(minecraft, FREE_CLEAR);
+                        overlayAt(minecraft, FREE, new int[]{0, 0, 0});
+                        overlayAt(minecraft, "market_south", FREE_SOUTH_AT);
                     } else {
                         replaceBuilding(minecraft, name);
                     }
@@ -974,6 +1009,12 @@ public final class CiScreenshots {
         }
         if (view == STORAGE_FIRST) {
             return STORAGE;
+        }
+        if (view == FREE_FIRST) {
+            return FREE;
+        }
+        if (view == FREE_MORE_SHOT) {
+            return FREE_MORE;
         }
         return null;
     }
@@ -1029,6 +1070,36 @@ public final class CiScreenshots {
         command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:grass_block", x0, y0, z0, x1, y0, z1));
         command(minecraft, String.format(Locale.ROOT, "place template amemaru:map/conelia/%s %d %d %d",
                 name, x0, y0, z0));
+        command(minecraft, "gamerule doTileDrops true");
+    }
+
+    /**
+     * 建物を置いた所から {@code box}（東西・高さ・南北の始まりと終わり）の範囲を片づけ、土と草の地面を敷き直す（地下のある建物の後）。
+     * 1回の fill は 32768 ブロックまでなので、南北に薄く分けて片づける。もの（額縁など）は先に消す。
+     */
+    private static void clearWide(Minecraft minecraft, int[] box) {
+        BlockPos o = mapOrigin;
+        if (o == null) {
+            return;
+        }
+        int x0 = o.getX() + box[0];
+        int y0 = o.getY() + box[1];
+        int z0 = o.getZ() + box[2];
+        int x1 = o.getX() + box[3];
+        int y1 = o.getY() + box[4];
+        int z1 = o.getZ() + box[5];
+        int slice = Math.max(1, 32768 / ((x1 - x0 + 1) * (y1 - y0 + 1)));
+        command(minecraft, "gamerule doTileDrops false");
+        command(minecraft, String.format(Locale.ROOT, "kill @e[type=!minecraft:player,x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d]",
+                x0, y0, z0, x1 - x0 + 1, y1 - y0 + 1, z1 - z0 + 1));
+        for (int z = z0; z <= z1; z += slice) {
+            command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:air",
+                    x0, y0, z, x1, y1, Math.min(z1, z + slice - 1)));
+        }
+        command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:dirt",
+                x0, o.getY() - 1, z0, x1, o.getY() - 1, z1));
+        command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:grass_block",
+                x0, o.getY(), z0, x1, o.getY(), z1));
         command(minecraft, "gamerule doTileDrops true");
     }
 

@@ -67,6 +67,8 @@ public final class MapDisplayGameTests {
     private static final String MARKET_SOUTH = "map/conelia/market_south";
     private static final String MARKET_OPEN = "map/conelia/market_restaurant_open";
     private static final String STORAGE = "map/conelia/personal_storage";
+    private static final String FREE = "map/conelia/free_market";
+    private static final String FREE_MORE = "map/conelia/free_market_expanded";
 
     /** 防具立てを右クリックする高さ（足・脚・胴・手・頭のあたり）。 */
     private static final double[] CLICK_HEIGHTS = {0.2, 0.6, 1.0, 1.3, 1.8};
@@ -123,6 +125,19 @@ public final class MapDisplayGameTests {
     @GameTest(template = EMPTY)
     public static void personalStorageDisplaysCannotBeTaken(GameTestHelper helper) {
         checkBuilding(helper, STORAGE, "storage", 5, 0);
+    }
+
+    /** フリーマーケット（はじめの形）：額縁30（12区画の露店の台・裏・壁の品25、市場監督の小屋の3（相場表の板と台のエメラルド2・台帳）、
+     *  北の門の柱のエメラルド2）、防具立て1（古道具の露店の、鎖の兜と鉄の胴鎧）。 */
+    @GameTest(template = EMPTY)
+    public static void freeMarketDisplaysCannotBeTaken(GameTestHelper helper) {
+        checkBuilding(helper, FREE, "free_market", 30, 1);
+    }
+
+    /** フリーマーケットの増えた8区画（重ねて置く形）：額縁16（8区画の露店の台・裏・壁の品）。防具立てはない。 */
+    @GameTest(template = EMPTY)
+    public static void freeMarketExpandedDisplaysCannotBeTaken(GameTestHelper helper) {
+        checkBuilding(helper, FREE_MORE, "free_market_more", 16, 0);
     }
 
     /**

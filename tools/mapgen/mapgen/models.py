@@ -54,7 +54,7 @@ def is_model_block(name):
 def is_custom_block(name):
     """ゲームが別に描くブロック（ここで箱を組む）か。"""
     return (name == "chest" or name == "trapped_chest" or name.endswith("_bed") or name.endswith("_sign")
-            or name.endswith("_banner"))
+            or name.endswith("_banner") or name == "decorated_pot")
 
 
 # ---------------------------------------------------------------- 素材を取ってくる
@@ -451,6 +451,20 @@ def bed_pieces(name, props, cell):
             Piece(cell, (0, 0, z0), (3, 3, z1), leg, R=R), Piece(cell, (13, 0, z0), (16, 3, z1), leg, R=R)]
 
 
+def decorated_pot_pieces(props, cell):
+    """飾り壺（ゲームは別に描く）：胴と首。横は壺の側面の絵、上と下は土台の絵"""
+    side = image("entity/decorated_pot/decorated_pot_side")
+    base = image("entity/decorated_pot/decorated_pot_base")
+    R = block_rotation(0, YROT[props.get("facing", "north")])
+    body = {f: _face(side, (0, 0, 16, 16)) for f in ("north", "south", "west", "east")}
+    body["up"] = _face(base, px_uv(0, 0, 14, 14, 32, 32))
+    body["down"] = _face(base, px_uv(0, 0, 14, 14, 32, 32))
+    neck = {f: _face(base, px_uv(0, 14, 8, 17, 32, 32)) for f in ("north", "south", "west", "east")}
+    neck["up"] = _face(base, px_uv(16, 0, 24, 8, 32, 32))
+    neck["down"] = neck["up"]
+    return [Piece(cell, (1, 0, 1), (15, 13, 15), body, R=R), Piece(cell, (4, 13, 4), (12, 16, 12), neck, R=R)]
+
+
 def bell_body_pieces(props, cell):
     tex = image("entity/bell/bell_body")
     body = {k: _face(tex, v) for k, v in box_uv(0, 0, 6, 7, 6, 32, 32).items()}
@@ -757,6 +771,8 @@ def block_pieces(name, props, nbt, cell):
         return chest_pieces(props, cell)
     if name.endswith("_bed"):
         return bed_pieces(name, props, cell)
+    if name == "decorated_pot":
+        return decorated_pot_pieces(props, cell)
     pieces = []
     for model, x, y in block_models(name, props):
         pieces.extend(model_pieces(model, cell, x, y))

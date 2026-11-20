@@ -118,6 +118,22 @@ def _tinted(name, tint, rows=None):
     return arr
 
 
+def _front_faces(name, props):
+    """表のある箱（巣箱など）：東・西・上・下・南・北の順。facing の面が表"""
+    f = props.get("facing", "south")
+    out = []
+    for face in FACES:
+        if face == "up":
+            out.append(texture(name + "_top"))
+        elif face == "down":
+            out.append(texture(name + "_bottom"))
+        elif face == f:
+            out.append(texture(name + "_front"))
+        else:
+            out.append(texture(name + "_side"))
+    return out
+
+
 def face_textures(name, props):
     """6面（東・西・上・下・南・北）のテクスチャ。"""
     k = kind(name)
@@ -212,6 +228,10 @@ def face_textures(name, props):
                               texture("composter_bottom")] + [texture("composter_side")] * 2,
         "cake": lambda: [texture("cake_side")] * 2 + [texture("cake_top"), texture("cake_bottom")] + [texture("cake_side")] * 2,
         "lodestone": lambda: [texture("lodestone_side")] * 2 + [texture("lodestone_top")] * 2 + [texture("lodestone_side")] * 2,
+        "bee_nest": lambda: _front_faces("bee_nest", props),
+        "honey_block": lambda: [texture("honey_block_side")] * 2 + [texture("honey_block_top"), texture("honey_block_bottom")]
+        + [texture("honey_block_side")] * 2,
+        "beehive": lambda: _front_faces("beehive", props),
     }
     if name == "loom":
         return _oriented(texture("loom_front"), texture("loom_side"), texture("loom_top"), texture("loom_bottom"),
