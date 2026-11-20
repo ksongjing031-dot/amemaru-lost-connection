@@ -438,10 +438,11 @@ public final class CiScreenshots {
             {"city_market_night", "market", "100"}, {"city_church_night", "church", "100"}, {"city_tower_night", "tower", "100"},
             {"grown", null, "600"},
             {"city_grown_top_n", "top_n", "200"}, {"city_grown_top_s", "top_s", "200"},
-            {"city_grown_restaurant", "restaurant", "100"}, {"city_grown_stalls", "stalls", "100"},
-            {"city_grown_frozen_pond", "frozen_pond", "100"}, {"city_grown_highlow", "highlow", "100"},
-            {"city_grown_fishrace", "fishrace", "100"}, {"city_grown_monument", "monument", "100"},
-            {"city_grown_forge", "forge", "100"}, {"city_grown_lake", "lake", "100"}};
+            // 北から東・南・西へ回る（遠くへ移るほど長めに待つ）
+            {"city_grown_monument", "monument", "200"}, {"city_grown_forge", "forge", "200"},
+            {"city_grown_highlow", "highlow", "200"}, {"city_grown_fishrace", "fishrace", "100"},
+            {"city_grown_restaurant", "restaurant", "140"}, {"city_grown_stalls", "stalls", "140"},
+            {"city_grown_frozen_pond", "frozen_pond", "140"}, {"city_grown_lake", "lake", "140"}};
 
     private CiScreenshots() {
     }

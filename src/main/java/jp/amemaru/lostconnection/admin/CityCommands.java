@@ -133,7 +133,7 @@ public final class CityCommands {
             // 育ったあとに重ねる形の見どころ
             new View("restaurant", 2.5, 1, 28.5, 90, -5),
             new View("stalls", -33.5, 30, 76.5, 180, 90),
-            new View("frozen_pond", -67.5, 2, 40.5, 90, 30),
+            new View("frozen_pond", -79.5, 30, 46.5, 180, 90),
             new View("highlow", 22.5, 3, 92.5, 0, 20),
             new View("fishrace", 25.5, 10, 80.5, 0, 35),
             new View("monument", -5.5, 2, -127.5, 108, -5),

@@ -54,7 +54,7 @@
 | `aerial_nw` | 上空（北西から） | (−126, 70, −151) | 南東 |
 | `restaurant` | 料理屋（育ったあと） | 市場通り (2, 1, 28) | 西（商店街の北の西の店） |
 | `stalls` | フリーマーケットの露店 | 高さ30、(−34, 76) の上 | 真下 |
-| `frozen_pond` | 釣り堀の池（第2章の氷） | 上の台 (−68, 2, 40) | 西（池） |
+| `frozen_pond` | 釣り堀の池（第2章の氷） | 高さ30、(−80, 47) の上 | 真下 |
 | `highlow` | ハイ＆ローの卓（育ったあと） | カジノ1階 (22, 3, 92) | 南（カードの卓） |
 | `fishrace` | 魚レースの走路（育ったあと） | カジノ2階の宴の間 (25, 10, 80) | 南（水の走路） |
 | `monument` | 記念碑（育ったあと） | 塔前広場 (−6, 2, −128) | 西（記念碑） |
@@ -69,10 +69,11 @@
 - 上から・斜めから：`city_top_n`・`city_top_s`・`city_aerial_se`・`city_aerial_nw`
 - 各施設の前：`city_plaza`・`city_guild`・`city_storage`・`city_weapon`・`city_armor`・`city_accessory`・`city_market`・`city_free_market`・`city_church`・`city_fishing`・`city_lake`・`city_casino`・`city_tower`
 - 夜：`city_top_n_night`・`city_top_s_night`・`city_plaza_night`・`city_market_night`・`city_church_night`・`city_tower_night`
-- 育ったあとの形：`city_grown_top_n`・`city_grown_top_s`・`city_grown_restaurant`・`city_grown_stalls`・`city_grown_frozen_pond`・`city_grown_highlow`・`city_grown_fishrace`・`city_grown_monument`・`city_grown_forge`・`city_grown_lake`
+- 育ったあとの形：`city_grown_top_n`・`city_grown_top_s`・`city_grown_monument`・`city_grown_forge`・`city_grown_highlow`・`city_grown_fishrace`・`city_grown_restaurant`・`city_grown_stalls`・`city_grown_frozen_pond`・`city_grown_lake`
 
 写真が33枚増えたので、クライアントの確かめの時間の上限を45分にしました（ジョブは55分）。
-CIのコマンドはサーバーとして動くので、移る人を `@p` で渡します（`city tp <場所> @p`）。遠くへ移ったあとは、まわりの形を作り直すのを待ってから撮ります（上からと斜めは10〜12秒、ほかは5秒）。
+CIのコマンドはサーバーとして動くので、移る人を `@p` で渡します（`city tp <場所> @p`）。遠くへ移ったあとは、まわりの形を作り直すのを待ってから撮ります（上からと斜め、100ブロックより遠くへ移るときは10〜12秒、ほかは5〜7秒）。
+空に建てているので、城壁の外の遠くは空の色に写ります（描く距離12チャンクの霧の外は描かれない）。
 
 ## ファイル
 
