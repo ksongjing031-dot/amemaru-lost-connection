@@ -50,8 +50,18 @@ import java.util.Locale;
  *   <li>Phase 3：1階の4種類の敵、敵の予兆（突進の帯・叩きつけの円）、レアドロップの光の柱と知らせ、手に持った3Dの武器
  *       （一人称）、重鎧と法衣を着た姿（三人称。首飾り・腕輪・お守りを体に表示）、装備とアクセサリーの説明文、
  *       アクセサリーの画面、武器の工房（作る・強化）、図鑑</li>
- *   <li>建物の見本（11月17日）：コネリアの冒険者ギルド本館（{@code amemaru:map/conelia/guild_hall}）を空に置き、
- *       まわりの6か所から撮る（HUDは隠す）</li>
+ *   <li>建物の見本（11月19日、PHASE 1 の設計）：コネリアの冒険者ギルド（{@code amemaru:map/conelia/guild_hall}。
+ *       正面は西）を空に置き、まわりの6か所から撮る（HUDは隠す）</li>
+ *   <li>建物の見本（11月19日、PHASE 2 の設計）：コネリアの武器工房（{@code amemaru:map/conelia/weapon_workshop}。
+ *       正面は南）。ギルドを片づけた同じ所に置き、まわりの6か所から撮る</li>
+ *   <li>建物の見本（11月19日、PHASE 3 の設計）：コネリアの防具工房（{@code amemaru:map/conelia/armor_workshop}。
+ *       正面は北）。武器工房を片づけた同じ所に置き、まわりの6か所から撮る</li>
+ *   <li>建物の見本（11月20日、PHASE 4 の設計）：コネリアの装飾工房（{@code amemaru:map/conelia/accessory_workshop}。
+ *       正面は南）。防具工房を片づけた同じ所に置き、まわりの6か所から撮る</li>
+ *   <li>建物の見本（11月20日、PHASE 5 の設計）：商店街の北（料理屋が開く前と、開いたあとを重ねた形）と南</li>
+ *   <li>建物の見本（11月20日、PHASE 6 の設計）：個人倉庫（{@code amemaru:map/conelia/personal_storage}）。
+ *       商店街を片づけてギルドを置き直し、その東に受付棟と地下の保管庫を置く（ギルドの東の扉から渡り廊下でつながる形）。
+ *       外の6か所と、1階・地下1層・ギルドの下の保管庫・地下2層の中の7か所から撮る</li>
  * </ul>
  */
 @Mod.EventBusSubscriber(modid = AmemaruMod.MOD_ID, value = Dist.CLIENT)
@@ -83,19 +93,304 @@ public final class CiScreenshots {
     private static BlockPos returnPos;
     private static String returnMode = "creative";
 
-    /** 建物の見本の写真の名前と、撮る所：目の位置と見る所（構造物の中の座標。y=0 が地面の草）。 */
+    /** 建物の見本の写真の名前と、撮る所：目の位置と見る所（構造物の中の座標。y=0 が地面）。
+     *  はじめの6枚はギルド（tools/mapgen/build_guild.py の VIEWS と同じ：正面・左前・右前・入口の近く・上から・裏）。
+     *  {@link #WEAPON_FIRST} からの6枚は武器工房（tools/mapgen/build_weapon.py の VIEWS と同じ：
+     *  正面・東門の方・西・入口の近く・上から・裏）。
+     *  {@link #ARMOR_FIRST} からの6枚は防具工房（tools/mapgen/build_armor.py の VIEWS と同じ：
+     *  正面・交差点の角・環状路（西）・入口の近く・上から・裏）。
+     *  {@link #ACCESSORY_FIRST} からの6枚は装飾工房（tools/mapgen/build_accessory.py の VIEWS と同じ：
+     *  正面・広場の角・中央広場（西）・入口の近く・上から・裏）。
+     *  {@link #MARKET_NORTH_FIRST} からの6枚は商店街の北（tools/mapgen/build_market.py の VIEWS_NORTH と同じ：
+     *  環状路から北へ・西の店の並び・東の店の並び・中央広場から・上から・西の裏通り）、
+     *  {@link #MARKET_OPEN_SHOT} の1枚は、寄付で開いた料理屋を重ねて置いたあと（中央広場の側の席）、
+     *  {@link #MARKET_SOUTH_FIRST} からの6枚は商店街の南（VIEWS_SOUTH と同じ：環状路から南へ・渡り廊下・
+     *  フリーマーケットへの通り抜け・南門の前の小広場・上から・環状路の交差点）。
+     *  {@link #STORAGE_FIRST} からの13枚は個人倉庫（tools/mapgen/build_storage.py の CI_SHOTS と同じ：正面・入口・
+     *  北東の角から・荷揚げの妻・裏・上から・広間・ハーヴィの立ち位置から窓口ごしに広間・地下1層の廊下・小部屋・鉄格子から保管庫・保管庫の中・
+     *  地下2層の古代の間）。座標はギルドを置いた所から（個人倉庫は {@link #STORAGE_AT} だけずらして置く）。
+     *  {@link #FREE_FIRST} からの7枚はフリーマーケットのはじめの形（tools/mapgen/build_freemarket.py の CI_SHOTS と同じ：
+     *  北の門・東の門（通り抜けから）・中央通路・泉・市場監督の小屋・休み場・上から）、{@link #FREE_MORE_SHOT} からの2枚は
+     *  寄付で露店が増えたあと（上から・北の島の並び）。座標はフリーマーケットを置いた所から（商店街の南を
+     *  {@link #FREE_SOUTH_AT} だけずらして東に並べる）。
+     *  {@link #CHURCH_FIRST} からの12枚は結びの教会（tools/mapgen/build_church.py の CI_SHOTS と同じ：正面・鐘楼・南・上から・
+     *  裏・身廊・内陣・南の側廊・鐘の間・療養所の2階・記憶の庭・名を刻む石）、{@link #CHURCH_COUNSEL_SHOT} の1枚は、
+     *  6日目に開く記憶の相談所を重ねたあと（南の側廊から書庫の扉）。座標は教会を置いた所から（記憶の庭を
+     *  {@link #CHURCH_GARDEN_AT} だけずらして南に並べる）。
+     *  {@link #FISH_FIRST} からの11枚は釣り堀（tools/mapgen/build_fishing.py の CI_SHOTS と同じ：入口の門・上から・上の台・
+     *  下の桟橋の先・アーチの下の桟橋・湧き口・西の岸・釣り具屋のカウンター・水門の内側・水門の外の面・路地）、
+     *  {@link #FISH_LAKESIDE_SHOT} からの3枚は寄付で開いた湖畔の釣り場を重ねたあと（岸の板の道・長い桟橋の先から・
+     *  開いた水門の内側）、{@link #FISH_FROZEN_SHOT} の1枚は第2章の氷を重ねたあと。座標は釣り堀の地面の所から
+     *  （釣り堀は {@link #FISH_POND_AT}、水門と湖は {@link #FISH_GATE_AT}、路地は {@link #FISH_ALLEY_AT} だけずらして置く）。
+     *  {@link #CASINO_FIRST} からの9枚はカジノ（tools/mapgen/build_casino.py の CI_SHOTS と同じ：正面・南門の内から・上から・
+     *  背面・大広間のアーチから・酒場・VIPルーム・地下の噂の間・2階の宴の間）、{@link #CASINO_HIGHLOW_SHOT} の1枚は
+     *  共同事業②の「ハイ＆ロー」を重ねたあと（カードの卓）、{@link #CASINO_FISHRACE_SHOT} の1枚は共同事業⑥の「魚レース」を
+     *  重ねたあと（宴の間の水の走路）。座標はカジノの地面の所から（カジノは {@link #CASINO_AT} だけずらして置く）。
+     *  {@link #TOWER_FIRST} からの11枚は塔の入口（tools/mapgen/build_tower.py の CI_SHOTS と同じ：北門の外から・広場の南西から・
+     *  上から・東から・門の前から通路ごし・広間の入口から転移門・台の上から輪の向こうの大扉・塔の灯りとバルドの書見台・受付・
+     *  控えの間・門の上の歩廊）、{@link #TOWER_MONUMENT_SHOT} の1枚は、1週目の共同の目標のあとの記念碑を重ねたあと。
+     *  座標は塔の入口を置いた所の足もとの地面（世界の x −22, y 0, z −177）から（塔の入口は {@link #TOWER_AT}、塔前広場は
+     *  {@link #TOWER_PLAZA_AT} だけずらして置く）。 */
     private static final String[] MAP_SHOTS = {
-            "map_guild_front", "map_guild_left", "map_guild_right", "map_guild_close", "map_guild_aerial", "map_guild_back"};
+            "map_guild_front", "map_guild_left", "map_guild_right", "map_guild_close", "map_guild_aerial", "map_guild_back",
+            "map_weapon_front", "map_weapon_gate", "map_weapon_west", "map_weapon_close", "map_weapon_aerial",
+            "map_weapon_back",
+            "map_armor_front", "map_armor_corner", "map_armor_west", "map_armor_close", "map_armor_aerial",
+            "map_armor_back",
+            "map_accessory_front", "map_accessory_corner", "map_accessory_west", "map_accessory_close",
+            "map_accessory_aerial", "map_accessory_back",
+            "map_market_north_street", "map_market_north_west", "map_market_north_east", "map_market_north_plaza",
+            "map_market_north_aerial", "map_market_north_back",
+            "map_market_restaurant_open",
+            "map_market_south_street", "map_market_south_west", "map_market_south_arch", "map_market_south_gate",
+            "map_market_south_aerial", "map_market_south_corner",
+            "map_storage_front", "map_storage_entrance", "map_storage_east", "map_storage_hoist", "map_storage_back",
+            "map_storage_aerial", "map_storage_hall", "map_storage_counter", "map_storage_corridor", "map_storage_room",
+            "map_storage_grille", "map_storage_vault", "map_storage_ancient",
+            "map_freemarket_north_gate", "map_freemarket_east_gate", "map_freemarket_lane", "map_freemarket_fountain",
+            "map_freemarket_booth", "map_freemarket_rest", "map_freemarket_aerial",
+            "map_freemarket_more_aerial", "map_freemarket_more_north",
+            "map_church_front", "map_church_tower", "map_church_south", "map_church_aerial", "map_church_back",
+            "map_church_nave", "map_church_chancel", "map_church_aisle", "map_church_bell", "map_church_sanatorium",
+            "map_church_garden", "map_church_memorial", "map_church_counsel",
+            "map_fishing_entrance", "map_fishing_aerial", "map_fishing_deck", "map_fishing_pier", "map_fishing_arch",
+            "map_fishing_spring", "map_fishing_west", "map_fishing_shop", "map_fishing_gate_in", "map_fishing_gate_out",
+            "map_fishing_alley", "map_fishing_lakeside", "map_fishing_lakeside_pier", "map_fishing_gate_open",
+            "map_fishing_frozen",
+            "map_casino_front", "map_casino_gate", "map_casino_aerial", "map_casino_back", "map_casino_in_hall",
+            "map_casino_in_bar", "map_casino_vip", "map_casino_rumor", "map_casino_banquet", "map_casino_highlow",
+            "map_casino_fishrace",
+            "map_tower_approach", "map_tower_plaza", "map_tower_aerial", "map_tower_east", "map_tower_passage",
+            "map_tower_hall", "map_tower_ring", "map_tower_board", "map_tower_reception", "map_tower_waiting",
+            "map_tower_walk", "map_tower_monument"};
     private static final double[][] MAP_VIEWS = {
-            {24, 21, 68, 24, 24, 20},
-            {-8, 21, 54, 20, 19, 20},
-            {58, 21, 54, 27, 18, 20},
-            {12, 8, 46, 20, 9, 28},
-            {58, 44, 64, 24, 14, 20},
-            {52, 24, -18, 24, 18, 16},
+            {-30, 16, 21, 18, 13, 21},
+            {-22, 22, -18, 16, 12, 16},
+            {-20, 18, 62, 16, 12, 24},
+            {-15, 11, 21, 6, 13, 21},
+            {-16, 42, 54, 20, 12, 21},
+            {66, 26, -14, 20, 12, 18},
+            {0, 5, 36, 9, 10, 14},
+            {38, 7, 34, 14, 8, 11},
+            {-22, 6, 30, 9, 8, 11},
+            {11, 2.8, 25, 10, 4, 18},
+            {-6, 30, 36, 11, 8, 10},
+            {2, 15, -16, 12, 9, 8},
+            {11, 5, -22, 11, 9, 9},
+            {-9, 6, -11, 8, 8, 8},
+            {-20, 5, 14, 2, 6, 10},
+            {4, 2.8, -9, 7, 3.5, 2},
+            {-7, 25, -12, 9, 8, 10},
+            {24, 14, 34, 10, 8, 12},
+            {10, 5, 38, 10, 8.5, 12},
+            {-12, 6, 33, 9, 8, 12},
+            {-22, 6, 13, 3, 8, 12},
+            {3, 2.8, 28, 4, 3.2, 19},
+            {-8, 27, 34, 9, 9, 12},
+            {26, 14, -12, 9, 8, 10},
+            {18.5, 9, 38, 18.5, 4, 0},
+            {22.5, 3, 22, 10, 6, 9},
+            {17.5, 4, 26, 27, 6, 8},
+            {18.5, 5, -14, 18.5, 5, 10},
+            {38, 36, 48, 16, 2, 14},
+            {-6, 12, 38, 6, 7, 16},
+            {15, 3.8, -6, 6.5, 5.5, 5},
+            {18.5, 9, -8, 18.5, 3, 30},
+            {23, 4, 16.5, 10, 6.5, 16.5},
+            {19, 2.6, 17, 8, 3.5, 17},
+            {9, 6.5, 50, 8, 2.5, 38},
+            {36, 34, -6, 8, 2, 24},
+            {27, 5, -10, 16, 4, 4},
+            {39, 8, 59, 41, 7.5, 32},
+            {43.5, 4.6, 46.5, 43.5, 6.2, 37},
+            {64, 9, 48, 50, 8.5, 29},
+            {61, 7, 36, 51, 12.5, 29},
+            {58, 14, 4, 42, 8, 28},
+            {62, 32, 58, 39, 6, 26},
+            {43.5, 4.62, 36.4, 43.5, 4.2, 28},
+            {43.5, 4.62, 29.2, 43.5, 4.2, 37},
+            {46.3, 0.62, 35.4, 30, -0.5, 34.5},
+            {41.5, 0.62, 31.9, 41.5, -0.6, 29},
+            {33.8, 0.62, 34.8, 18, -0.2, 35},
+            {29.4, 0.62, 22.5, 17, -0.5, 28},
+            {44.5, -3.38, 22.5, 35, -4.2, 27.5},
+            {14.5, 3.6, -6, 14.5, 2.8, 14},
+            {38, 2.62, 17, 15, 3, 17},
+            {27.5, 2.62, 17, 12, 2.6, 17},
+            {21.4, 3.3, 23.6, 12.5, 2.2, 13},
+            {14.5, 2.62, 9.5, 19.5, 3, 3.6},
+            {14.5, 3.3, 21.4, 14.5, 4, 30},
+            {-8, 21, 41, 15.5, 0, 14.5},
+            {-8, 21, 41, 15.5, 0, 14.5},
+            {1.6, 2.62, 7.5, 28, 2.4, 7.5},
+            {60, 5, 22.5, 28, 14, 20.5},
+            {48, 8, -7, 29, 20, 8},
+            {44, 6, 44, 15, 9, 28},
+            {70, 50, 70, 20, 8, 24},
+            {-14, 10, -6, 8, 10, 14},
+            {32.5, 4.62, 22.5, 6, 6.5, 22.5},
+            {15.5, 4.62, 22.5, 2, 7.5, 22.5},
+            {24.5, 4.62, 24.5, 31.5, 4, 30.5},
+            {26.5, 22.62, 10.5, 31, 24.5, 6},
+            {5.5, 8.62, 9.5, 5.5, 8.4, 3},
+            {21.5, 2.62, 39.5, 21.5, 3, 52},
+            {21.5, 2.62, 47.2, 21.5, 3.6, 51.5},
+            {14.3, 4.62, 28.4, 9, 4.3, 29.8},
+            {44, 4, 34, 22, 0, 25},
+            {20, 35, 10, 15, -4, 29},
+            {27.6, 3.9, 21.6, 9, -2, 31},
+            {11.5, 0.62, 26.5, 28, 2, 20},
+            {16.5, 2.62, 12.5, 16.5, -2, 24},
+            {8.4, 1.4, 22.4, 5.5, -0.4, 16.6},
+            {2, 2.62, 28.5, 25, 1, 22},
+            {26.5, 3.62, 19.5, 30.5, 2.4, 17.5},
+            {14, 2.62, 47, -1, 3, 40},
+            {-18, 2.62, 52, -1, 4, 41},
+            {36, 2.62, 60, 30, 0, 45},
+            {-8, 2.62, 47, -18, -2, 54},
+            {-22, 0.62, 52.5, -2, 1, 52.5},
+            {14, 2.62, 47, -1, 3, 40},
+            {22.5, 6.5, 13, 13, -3, 21.5},
+            {-11, 2.62, 16.5, 8, 12, 16.5},
+            {-6, 2.62, 36, 15, 10, 18},
+            {-9, 30, 42, 22, 6, 16},
+            {55, 14, -2, 25, 8, 18},
+            {15.5, 4.62, 16.5, 30, 5, 16.5},
+            {18.5, 4.62, 21.5, 27, 4.5, 6},
+            {30.5, 4.62, 16.5, 36.5, 3.6, 18.5},
+            {31.6, 0.62, 15.6, 36.6, -0.1, 18},
+            {16.6, 11.62, 16.5, 29, 13, 16.5},
+            {20.4, 5.4, 24.6, 17.6, 3.6, 26.8},
+            {16.5, 12.62, 16.5, 27.5, 10.2, 17},
+            {22.5, 2.62, 59.5, 22.5, 20, 12},
+            {9.5, 2.62, 60.5, 30, 9, 31},
+            {-14, 44, 69, 22, 14, 27},
+            {66, 12, 49, 30, 18, 17},
+            {22.5, 5.62, 29.5, 22.5, 9, 5},
+            {22.5, 5.62, 18.5, 22.5, 11, 4},
+            {22.5, 8.62, 10.5, 22.5, 10, 0},
+            {26.5, 8.62, 10.5, 35, 8, 12},
+            {15.5, 5.62, 21.5, 10, 5, 26},
+            {6.5, 5.62, 18.5, 3, 4.5, 11},
+            {34.5, 16.62, 23.5, 16, 18, 23.5},
+            {17.5, 3.62, 51.5, 9, 5, 47},
     };
-    /** 建物の見本の写真の段階の始まり。 */
-    private static final int MAP_STAGE = 70;
+    /** 武器工房の写真の始まり。ここで、ギルドを片づけて武器工房を置く。 */
+    private static final int WEAPON_FIRST = 6;
+    /** 防具工房の写真の始まり。ここで、武器工房を片づけて防具工房を置く。 */
+    private static final int ARMOR_FIRST = 12;
+    /** 装飾工房の写真の始まり。ここで、防具工房を片づけて装飾工房を置く。 */
+    private static final int ACCESSORY_FIRST = 18;
+    /** 商店街の北の写真の始まり。ここで、装飾工房を片づけて商店街の北（中央広場の縁から環状路まで）を置く。 */
+    private static final int MARKET_NORTH_FIRST = 24;
+    /** 寄付で開いた料理屋の写真。ここで、商店街の北の上に、開いたあとの料理屋を重ねて置く（片づけない）。 */
+    private static final int MARKET_OPEN_SHOT = 30;
+    /** 商店街の南の写真の始まり。ここで、北を片づけて商店街の南（環状路から南門の前まで）を置く。 */
+    private static final int MARKET_SOUTH_FIRST = 31;
+    /** 重ねて置く構造物（前の建物を片づけない）。 */
+    private static final String MARKET_OPEN = "market_restaurant_open";
+    /** 個人倉庫の写真の始まり。ここで、商店街の南を片づけてギルドを置き直し、その東に個人倉庫を重ねて置く。 */
+    private static final int STORAGE_FIRST = 37;
+    /** 個人倉庫の構造物。ギルドの後に置く（ギルドの東の扉の外の段と、地下の保管庫の所のギルドの土台を上書きする）。 */
+    private static final String STORAGE = "personal_storage";
+    /** 個人倉庫を置く所（ギルドを置いた所から）：世界の (x 22, 道の下 7, z -82) とギルドの (x 6, 道, z -100) の差。 */
+    private static final int[] STORAGE_AT = {16, -7, 18};
+    /** フリーマーケットの写真の始まり。ここで、ギルドと個人倉庫（地下も）を広く片づけ、フリーマーケットを置き、その東に商店街の南を並べる。 */
+    private static final int FREE_FIRST = 50;
+    /** フリーマーケットの構造物（はじめの形。露店12区画）。 */
+    private static final String FREE = "free_market";
+    /** 寄付で露店が増えたあとの写真。ここで、はじめの形の上に、増えた8区画を同じ所から重ねて置く（片づけない）。 */
+    private static final int FREE_MORE_SHOT = 57;
+    /** 重ねて置く構造物（増えた8区画の露店。区画の外は structure_void）。 */
+    private static final String FREE_MORE = "free_market_expanded";
+    /** 商店街の南を置く所（フリーマーケットを置いた所から）：世界の (x −18, 道, z 60) とフリーマーケットの (x −48, 道, z 60) の差。 */
+    private static final int[] FREE_SOUTH_AT = {30, 0, 0};
+    /**
+     * フリーマーケットの前に片づける範囲（建物を置いた所から。東西・高さ・南北の始まりと終わり）：ギルド（0〜35、0〜37、0〜40）と、
+     * その東の個人倉庫（16〜55、−7〜22、18〜40）を両方包む。
+     */
+    private static final int[] FREE_CLEAR = {0, -7, 0, 55, 37, 43};
+    /** 結びの教会の写真の始まり。ここで、フリーマーケットと商店街の南を広く片づけ、教会を置き、その南に記憶の庭を並べる。 */
+    private static final int CHURCH_FIRST = 59;
+    /** 結びの教会の構造物（礼拝堂・鐘楼・療養所の棟と、教会前広場・北の庭・南の小道。46×41×38）。 */
+    private static final String CHURCH = "church";
+    /** 記憶の庭の構造物（25×12×18）。 */
+    private static final String CHURCH_GARDEN = "church_garden";
+    /** 記憶の庭を置く所（教会を置いた所から）：世界の (x −96, 道, z 16) と教会の (x −105, 道, z −22) の差。 */
+    private static final int[] CHURCH_GARDEN_AT = {9, 0, 38};
+    /** 記憶の相談所が開いたあとの写真。ここで、教会の上に、相談所の看板・待つ長椅子・腰かけを同じ所から重ねて置く（片づけない）。 */
+    private static final int CHURCH_COUNSEL_SHOT = 71;
+    /** 重ねて置く構造物（6日目に開く記憶の相談所。ほかのマスは書いていないので、教会を消さない）。 */
+    private static final String CHURCH_COUNSEL = "church_counsel";
+    /**
+     * 教会の前に片づける範囲（建物を置いた所から）：フリーマーケット（0〜29、0〜9、0〜31）と、その東の商店街の南
+     * （30〜66、0〜37、0〜43）を包み、教会（0〜45、0〜40、0〜37）と記憶の庭（9〜33、0〜11、38〜55）の所まで広げる。
+     */
+    private static final int[] CHURCH_CLEAR = {0, 0, 0, 66, 40, 55};
+    /** 釣り堀の写真の始まり。ここで、教会と記憶の庭を広く片づけ、釣り堀・水門と湖・路地を並べて置く。 */
+    private static final int FISH_FIRST = 72;
+    /** 釣り堀の構造物（池・古い石の縁とアーチ・湧き口・上の台と釣り具屋・桟橋・水辺の小屋・入口の広場。36×25×44。地面は Y 9）。 */
+    private static final String FISH = "fishing_pond";
+    /** 水門と湖の構造物（水門の門の建物と、そのまわりの城壁・城壁沿いの道・城壁の外の湖。48×34×48）。 */
+    private static final String FISH_GATE = "water_gate";
+    /** 釣り堀の南東の出口から、フリーマーケットの西の門への路地の構造物（18×8×14。地面は Y 1）。 */
+    private static final String FISH_ALLEY = "fishing_alley";
+    /** 釣り堀を置く所：地面のブロック（Y 9）を、片づけたあとの草の高さにそろえる。 */
+    private static final int[] FISH_POND_AT = {0, -9, 0};
+    /** 水門と湖を置く所（釣り堀の地面の所から）：世界の (x −131, z 48) と釣り堀の (x −95, z 23) の差。高さは釣り堀と同じ。 */
+    private static final int[] FISH_GATE_AT = {-36, -9, 25};
+    /** 路地を置く所：世界の (x −66, z 66) と釣り堀の (x −95, z 23) の差。路地の地面は Y 1。 */
+    private static final int[] FISH_ALLEY_AT = {29, -1, 43};
+    /** 寄付で開いた湖畔の釣り場の写真の始まり。ここで、水門と湖の上に、開いたあとの形を同じ所から重ねて置く（片づけない）。 */
+    private static final int FISH_LAKESIDE_SHOT = 83;
+    /** 重ねて置く構造物（湖畔の釣り場。古い堰・水門の堰板・落とし格子を開け、岸の板の道・大会の台・長い桟橋・受付の小屋を足す）。 */
+    private static final String FISH_LAKESIDE = "fishing_lakeside";
+    /** 第2章の氷の写真。ここで、釣り堀の上に、凍った池の北の半分を同じ所から重ねて置く（片づけない）。 */
+    private static final int FISH_FROZEN_SHOT = 86;
+    /** 重ねて置く構造物（第2章の氷。氷のマスだけを書く）。 */
+    private static final String FISH_FROZEN = "fishing_pond_frozen";
+    /**
+     * 釣り堀の前に片づける範囲（建物を置いた所から）：教会と記憶の庭（0〜66、0〜40、0〜55）を包み、釣り堀（0〜35、−9〜15、0〜43）・
+     * 水門と湖（−36〜11、−9〜24、25〜72）・路地（29〜46、−1〜6、43〜56）の所まで広げる。
+     */
+    private static final int[] FISH_CLEAR = {-36, -9, 0, 66, 40, 72};
+    /** カジノの写真の始まり。ここで、釣り堀・水門と湖・路地を広く片づけ（{@link #FISH_CLEAR}）、カジノを置く。 */
+    private static final int CASINO_FIRST = 87;
+    /** カジノの構造物（建物・前の小広場・北の路地・東の裏の通路・南の小道と、地下の秘密の階。43×29×36。地面は Y 3）。 */
+    private static final String CASINO = "casino";
+    /** カジノを置く所：地面のブロック（Y 3）を、片づけたあとの草の高さにそろえる。 */
+    private static final int[] CASINO_AT = {0, -3, 0};
+    /** 共同事業②の「ハイ＆ロー」の写真。ここで、カジノの上に、カードの卓を同じ所から重ねて置く（片づけない）。 */
+    private static final int CASINO_HIGHLOW_SHOT = 96;
+    /** 重ねて置く構造物（ハイ＆ロー。南の側廊のカードの卓の布と仕切りと札、卓のカードとチップの額縁だけを書く）。 */
+    private static final String CASINO_HIGHLOW = "casino_highlow";
+    /** 共同事業⑥の「魚レース」の写真。ここで、カジノの上に、宴の間の水の走路を同じ所から重ねて置く（片づけない）。 */
+    private static final int CASINO_FISHRACE_SHOT = 97;
+    /** 重ねて置く構造物（魚レース。宴の間の真ん中の走路と灯りと札だけを書く）。 */
+    private static final String CASINO_FISHRACE = "casino_fishrace";
+    /** 塔の入口の写真の始まり。ここで、カジノを広く片づけ（{@link #TOWER_CLEAR}）、塔の入口と、その南に塔前広場を置く。 */
+    private static final int TOWER_FIRST = 98;
+    /** 塔の入口の構造物（門の棟・広間・転移門・両翼・塔の基部の壁。45×48×30。足もとの地面の1つ上から置く）。 */
+    private static final String TOWER = "tower_entrance";
+    /** 塔前広場の構造物（47×18×32。地面は Y 1）。 */
+    private static final String TOWER_PLAZA = "tower_plaza";
+    /** 塔の入口を置く所：足もとの地面（草）の1つ上から。 */
+    private static final int[] TOWER_AT = {0, 1, 0};
+    /** 塔前広場を置く所：世界の (x −23, y −1, z −147) と、塔の入口の足もとの (x −22, y 0, z −177) の差。 */
+    private static final int[] TOWER_PLAZA_AT = {-1, -1, 30};
+    /** 1週目の共同の目標のあとの写真。ここで、塔前広場の上に、記念碑を同じ所から重ねて置く（片づけない）。 */
+    private static final int TOWER_MONUMENT_SHOT = 109;
+    /** 重ねて置く構造物（記念碑。台と碑と碑文の看板だけを書く）。 */
+    private static final String TOWER_MONUMENT = "tower_plaza_monument";
+    /** 塔の入口の前に片づける範囲（建物を置いた所から）：カジノ（0〜42、−3〜25、0〜35）を包み、塔前広場の所（−1〜45、30〜61）まで広げる。 */
+    private static final int[] TOWER_CLEAR = {-1, -3, 0, 45, 25, 61};
+    /** 片づける範囲（東西・高さ・南北）：いちばん大きい構造物（東西は商店街の37、南北は商店街の南の44）を包む大きさ。 */
+    private static final int[] CLEAR_SIZE = {37, 38, 44};
+    /**
+     * 建物の見本の写真の段階の始まり（Phase 3 の写真の後に撮る）。写真1枚に2段階を使い、建物が増えると段階も増えるので、
+     * ほかの段階（0〜62・100〜124・330〜331）と重ならない所から始める。
+     */
+    private static final int MAP_STAGE = 400;
     /** Phase 3（敵・ドロップ・装備・工房・図鑑）の写真の段階の始まり（建物の見本の前に撮る）。 */
     private static final int P3 = 100;
     /** Phase 3の工房の写真で置いた台の場所。 */
@@ -1139,6 +1434,9 @@ public final class CiScreenshots {
             }
             case MAP_STAGE + 1 -> {
                 BlockPos o = mapOrigin;
+                // 草の下に土を1段（構造物の足もとの砂利が、空へ落ちないように）
+                command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:dirt",
+                        o.getX() - 24, o.getY() - 1, o.getZ() - 24, o.getX() + 71, o.getY() - 1, o.getZ() + 63));
                 command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:grass_block",
                         o.getX() - 24, o.getY(), o.getZ() - 24, o.getX() + 71, o.getY(), o.getZ() + 63));
                 command(minecraft, String.format(Locale.ROOT, "place template amemaru:map/conelia/guild_hall %d %d %d",
@@ -1158,6 +1456,57 @@ public final class CiScreenshots {
                     clean(minecraft);
                     pendingShot = MAP_SHOTS[view];
                     next(stage + 1, 2);
+                } else if (buildingFrom(view + 1) != null) {
+                    String name = buildingFrom(view + 1);
+                    if (MARKET_OPEN.equals(name) || FREE_MORE.equals(name) || CHURCH_COUNSEL.equals(name)) {
+                        overlay(minecraft, name);
+                    } else if (STORAGE.equals(name)) {
+                        replaceBuilding(minecraft, "guild_hall");
+                        overlayAt(minecraft, STORAGE, STORAGE_AT);
+                    } else if (FISH.equals(name)) {
+                        // 水と桟橋と灯りを見せるので、日の高いうちに撮る
+                        command(minecraft, "time set noon");
+                        clearWide(minecraft, FISH_CLEAR);
+                        overlayAt(minecraft, FISH, FISH_POND_AT);
+                        overlayAt(minecraft, FISH_GATE, FISH_GATE_AT);
+                        overlayAt(minecraft, FISH_ALLEY, FISH_ALLEY_AT);
+                    } else if (FISH_LAKESIDE.equals(name)) {
+                        overlayAt(minecraft, FISH_LAKESIDE, FISH_GATE_AT);
+                    } else if (FISH_FROZEN.equals(name)) {
+                        overlayAt(minecraft, FISH_FROZEN, FISH_POND_AT);
+                    } else if (CASINO.equals(name)) {
+                        // 正面の灯りと中の大きな吊り灯を見せるので、日の高いうちに撮る
+                        command(minecraft, "time set noon");
+                        clearWide(minecraft, FISH_CLEAR);
+                        overlayAt(minecraft, CASINO, CASINO_AT);
+                    } else if (CASINO_HIGHLOW.equals(name) || CASINO_FISHRACE.equals(name)) {
+                        overlayAt(minecraft, name, CASINO_AT);
+                    } else if (TOWER.equals(name)) {
+                        // 白い石と、広場の結晶灯・転移門の輪を見せるので、日の高いうちに撮る
+                        command(minecraft, "time set noon");
+                        clearWide(minecraft, TOWER_CLEAR);
+                        overlayAt(minecraft, TOWER, TOWER_AT);
+                        overlayAt(minecraft, TOWER_PLAZA, TOWER_PLAZA_AT);
+                    } else if (TOWER_MONUMENT.equals(name)) {
+                        overlayAt(minecraft, TOWER_MONUMENT, TOWER_PLAZA_AT);
+                    } else if (CHURCH.equals(name)) {
+                        // 色ガラスと中の灯りを見せるので、日の高いうちに撮る
+                        command(minecraft, "time set noon");
+                        clearWide(minecraft, CHURCH_CLEAR);
+                        overlayAt(minecraft, CHURCH, new int[]{0, 0, 0});
+                        overlayAt(minecraft, CHURCH_GARDEN, CHURCH_GARDEN_AT);
+                    } else if (FREE.equals(name)) {
+                        // 屋根のない広場なので、日の高いうちに撮る（建物の写真は長いので、ここまでで日が傾いている）
+                        command(minecraft, "time set noon");
+                        clearWide(minecraft, FREE_CLEAR);
+                        overlayAt(minecraft, FREE, new int[]{0, 0, 0});
+                        overlayAt(minecraft, "market_south", FREE_SOUTH_AT);
+                    } else {
+                        replaceBuilding(minecraft, name);
+                    }
+                    mapView(view + 1);
+                    // 置き替えた構造物の形を作り直して描くまで、長めに待つ
+                    next(stage + 1, 300);
                 } else if (view + 1 < MAP_SHOTS.length) {
                     mapView(view + 1);
                     next(stage + 1, 80);
@@ -1173,6 +1522,153 @@ public final class CiScreenshots {
                 }
             }
         }
+    }
+
+    /** 建物の見本の写真 {@code view} から次の建物に移るなら、その構造物の名前（{@code map/conelia/} の後ろ）。移らないなら null。 */
+    @Nullable
+    private static String buildingFrom(int view) {
+        if (view == WEAPON_FIRST) {
+            return "weapon_workshop";
+        }
+        if (view == ARMOR_FIRST) {
+            return "armor_workshop";
+        }
+        if (view == ACCESSORY_FIRST) {
+            return "accessory_workshop";
+        }
+        if (view == MARKET_NORTH_FIRST) {
+            return "market_north";
+        }
+        if (view == MARKET_OPEN_SHOT) {
+            return MARKET_OPEN;
+        }
+        if (view == MARKET_SOUTH_FIRST) {
+            return "market_south";
+        }
+        if (view == STORAGE_FIRST) {
+            return STORAGE;
+        }
+        if (view == FREE_FIRST) {
+            return FREE;
+        }
+        if (view == FREE_MORE_SHOT) {
+            return FREE_MORE;
+        }
+        if (view == CHURCH_FIRST) {
+            return CHURCH;
+        }
+        if (view == CHURCH_COUNSEL_SHOT) {
+            return CHURCH_COUNSEL;
+        }
+        if (view == FISH_FIRST) {
+            return FISH;
+        }
+        if (view == FISH_LAKESIDE_SHOT) {
+            return FISH_LAKESIDE;
+        }
+        if (view == FISH_FROZEN_SHOT) {
+            return FISH_FROZEN;
+        }
+        if (view == CASINO_FIRST) {
+            return CASINO;
+        }
+        if (view == CASINO_HIGHLOW_SHOT) {
+            return CASINO_HIGHLOW;
+        }
+        if (view == CASINO_FISHRACE_SHOT) {
+            return CASINO_FISHRACE;
+        }
+        if (view == TOWER_FIRST) {
+            return TOWER;
+        }
+        if (view == TOWER_MONUMENT_SHOT) {
+            return TOWER_MONUMENT;
+        }
+        return null;
+    }
+
+    /** 今の建物の横に、構造物 {@code name} を {@code at}（建物を置いた所から）ずらして重ねて置く（個人倉庫。片づけない）。 */
+    private static void overlayAt(Minecraft minecraft, String name, int[] at) {
+        BlockPos o = mapOrigin;
+        if (o == null) {
+            return;
+        }
+        command(minecraft, "gamerule doTileDrops false");
+        command(minecraft, String.format(Locale.ROOT, "place template amemaru:map/conelia/%s %d %d %d",
+                name, o.getX() + at[0], o.getY() + at[1], o.getZ() + at[2]));
+        command(minecraft, "gamerule doTileDrops true");
+    }
+
+    /** 今の建物の上に、構造物 {@code name} を同じ所から重ねて置く（寄付で開いた料理屋など。片づけない）。 */
+    private static void overlay(Minecraft minecraft, String name) {
+        BlockPos o = mapOrigin;
+        if (o == null) {
+            return;
+        }
+        command(minecraft, "gamerule doTileDrops false");
+        command(minecraft, String.format(Locale.ROOT, "place template amemaru:map/conelia/%s %d %d %d",
+                name, o.getX(), o.getY(), o.getZ()));
+        command(minecraft, "gamerule doTileDrops true");
+    }
+
+    /**
+     * 前の建物を片づけて（額縁などのもの・ブロック・足もとの石畳を草に戻す）、同じ所に次の建物（{@code name}）を置く。
+     * 次の建物の写真に前の建物が映らないようにするため。片づける範囲は {@link #CLEAR_SIZE}（いちばん大きい構造物を包む）。
+     * 1回の fill は 32768 ブロックまでなので、南北に2つに分けて片づける。
+     */
+    private static void replaceBuilding(Minecraft minecraft, String name) {
+        BlockPos o = mapOrigin;
+        if (o == null) {
+            return;
+        }
+        int x0 = o.getX();
+        int y0 = o.getY();
+        int z0 = o.getZ();
+        int x1 = x0 + CLEAR_SIZE[0] - 1;
+        int y1 = y0 + CLEAR_SIZE[1] - 1;
+        int z1 = z0 + CLEAR_SIZE[2] - 1;
+        int zm = z0 + CLEAR_SIZE[2] / 2;
+        // 2つに分けて片づけると、境目をまたいで掛かった灯りなどが支えを失って落ち、アイテムになって草の上に散らばる。
+        // 片づけて置き直す間だけ、壊れたブロックがアイテムを落とさないようにする（終わったら元に戻す）
+        command(minecraft, "gamerule doTileDrops false");
+        command(minecraft, String.format(Locale.ROOT, "kill @e[type=!minecraft:player,x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d]",
+                x0, y0, z0, CLEAR_SIZE[0], CLEAR_SIZE[1], CLEAR_SIZE[2]));
+        command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:air", x0, y0 + 1, z0, x1, y1, zm - 1));
+        command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:air", x0, y0 + 1, zm, x1, y1, z1));
+        command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:grass_block", x0, y0, z0, x1, y0, z1));
+        command(minecraft, String.format(Locale.ROOT, "place template amemaru:map/conelia/%s %d %d %d",
+                name, x0, y0, z0));
+        command(minecraft, "gamerule doTileDrops true");
+    }
+
+    /**
+     * 建物を置いた所から {@code box}（東西・高さ・南北の始まりと終わり）の範囲を片づけ、土と草の地面を敷き直す（地下のある建物の後）。
+     * 1回の fill は 32768 ブロックまでなので、南北に薄く分けて片づける。もの（額縁など）は先に消す。
+     */
+    private static void clearWide(Minecraft minecraft, int[] box) {
+        BlockPos o = mapOrigin;
+        if (o == null) {
+            return;
+        }
+        int x0 = o.getX() + box[0];
+        int y0 = o.getY() + box[1];
+        int z0 = o.getZ() + box[2];
+        int x1 = o.getX() + box[3];
+        int y1 = o.getY() + box[4];
+        int z1 = o.getZ() + box[5];
+        int slice = Math.max(1, 32768 / ((x1 - x0 + 1) * (y1 - y0 + 1)));
+        command(minecraft, "gamerule doTileDrops false");
+        command(minecraft, String.format(Locale.ROOT, "kill @e[type=!minecraft:player,x=%d,y=%d,z=%d,dx=%d,dy=%d,dz=%d]",
+                x0, y0, z0, x1 - x0 + 1, y1 - y0 + 1, z1 - z0 + 1));
+        for (int z = z0; z <= z1; z += slice) {
+            command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:air",
+                    x0, y0, z, x1, y1, Math.min(z1, z + slice - 1)));
+        }
+        command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:dirt",
+                x0, o.getY() - 1, z0, x1, o.getY() - 1, z1));
+        command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:grass_block",
+                x0, o.getY(), z0, x1, o.getY(), z1));
+        command(minecraft, "gamerule doTileDrops true");
     }
 
     /** 建物の見本の撮る所へ、観戦モードのまま移る（目の高さは足もとの 1.62 上）。 */

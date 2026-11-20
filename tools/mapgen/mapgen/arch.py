@@ -37,8 +37,10 @@ class Roof:
     """
 
     def __init__(self, w, pal, x0, x1, z0, z1, y0, ridge="z", pitch=2, side_overhang=1, end_overhang=1, courses=True,
-                 ends=("start", "end"), ridge_cap=True, thickness=3, kick=True):
+                 ends=("start", "end"), ridge_cap=True, thickness=3, kick=True, trim_block=None):
         self.w, self.pal = w, pal
+        # 縁取りのブロック（ふつうは濃い木の板。カジノの金の縁は、なめらかな砂岩）
+        self.trim_block = trim_block or pal.trim + "_planks"
         self.x0, self.x1, self.z0, self.z1, self.y0 = x0, x1, z0, z1, y0
         self.ridge, self.pitch = ridge, pitch
         self.so, self.eo = side_overhang, end_overhang
@@ -99,7 +101,7 @@ class Roof:
                     top = self.y0 + self.pitch * i + self.pitch - 1
                     if rim:
                         # 縁取り：屋根の面より1段高い、濃い木の縁
-                        self._put(skip, c, top, l, block(trim + "_planks"))
+                        self._put(skip, c, top, l, block(self.trim_block))
                         self._put(skip, c, top + 1, l, stairs(trim, up))
                         continue
                     for y in range(max(self.y0, top - self.thickness), top):
@@ -119,7 +121,7 @@ class Roof:
                 top = self.y0 + self.pitch * self.half
                 if rim:
                     for y in range(top, top + self.pitch + 1):
-                        self._put(skip, c, y, l, block(trim + "_planks"))
+                        self._put(skip, c, y, l, block(self.trim_block))
                     self._put(skip, c, top + self.pitch + 1, l, slab(trim, "bottom"))
                     continue
                 for y in range(max(self.y0, top - self.thickness), top + self.pitch - 1):
@@ -148,7 +150,7 @@ class Roof:
             if self.odd:
                 top = self.y0 + self.pitch * self.half
                 self._put(skip, self.center, top + self.pitch - 1, l, slab(trim, "top"))
-                self._put(skip, self.center, top + self.pitch, l, block(trim + "_planks"))
+                self._put(skip, self.center, top + self.pitch, l, block(self.trim_block))
 
     def apex(self, which="end"):
         """縁取りの端の頂（飾りの小塔を立てる所）の (x, y, z)。"""
