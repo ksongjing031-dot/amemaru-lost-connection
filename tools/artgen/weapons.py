@@ -42,13 +42,74 @@ def write_json(path, data):
         fp.write("\n")
 
 
-def export_weapon(repo, name, model, frames, icon, kind, credit, display=None, frametime=4):
+# ---------------------------------------------------------------- 手に持ったときの大きさと、片刃の向き
+# 持ったときの大きさ（11月21日に、剣を1.35倍・大剣を1.7倍にした。三人称では剣が約1.7〜1.8ブロック、大剣が約2.6〜2.7
+# ブロック（体の高さ2の約1.3倍）になる）。2つ目の数は、一人称で刃を前（向こう）へ倒す角度。大きくした刃が画面の上で
+# 切れすぎないように、大剣ほど深く倒す。杖・盾は変えていない。
+HOLD_SIZE = {"sword": (1.35, 10), "greatsword": (1.7, 24)}
+
+
+def _rot(r):
+    return rot_matrix("x", r[0]) @ rot_matrix("y", r[1]) @ rot_matrix("z", r[2])
+
+
+def _grip(d):
+    """その持ち方で手の原点に来るモデルの点を、刃の軸（x 8・z 8）の上へ寄せた点（ピクセル）。大きくするときの中心。"""
+    s = d["scale"][0]
+    g = np.array([8.0, 8.0, 8.0]) - np.linalg.inv(_rot(d["rotation"])) @ np.array(d["translation"], dtype=float) / s
+    return np.array([8.0, g[1], 8.0])
+
+
+def _resize(d, k, g, tilt=None):
+    """握りの点 g が手の同じ所に来るまま、k 倍にする（tilt を渡すと、一人称の前への倒し方も変える）。"""
+    s0 = d["scale"][0]
+    p = _rot(d["rotation"]) @ (s0 * (g - 8.0)) + np.array(d["translation"], dtype=float)
+    rot = list(d["rotation"]) if tilt is None else [d["rotation"][0], d["rotation"][1], tilt]
+    s1 = s0 * k
+    t = p - _rot(rot) @ (s1 * (g - 8.0))
+    return {"rotation": rot, "translation": [round(float(v), 3) + 0.0 for v in t], "scale": [round(s1, 4)] * 3}
+
+
+def _edge_forward(d):
+    """刃の軸（モデルの y）のまわりに180度回した持ち方（片刃の刃を、三人称では下、一人称では向こうへ向ける）。
+
+    Minecraft の手の向き（右手の y −90 度）では、モデルの +x の側が、三人称では上、一人称では自分の方を向く
+    （バニラの釣り竿が y +90 度で持たせているのと同じ理由）。回す軸の上にある握りの点は動かない。"""
+    rx, ry, rz = d["rotation"]
+    ry = ry + 180 if ry <= 0 else ry - 180
+    return dict(d, rotation=[rx, ry, -rz])
+
+
+def _mirror(d):
+    """右手の持ち方を左手に写す（ゲームが左手の x の移動を逆にするので、移動はそのまま）。"""
+    rx, ry, rz = d["rotation"]
+    return {"rotation": [rx, -ry, -rz], "translation": list(d["translation"]), "scale": list(d["scale"])}
+
+
+def hold_display(display, kind, edge_forward=False):
+    """手に持ったときの大きさ（HOLD_SIZE）と片刃の向きを、display に掛ける。左手は右手を写す。"""
+    if kind not in HOLD_SIZE and not edge_forward:
+        return display
+    out = json.loads(json.dumps(display))
+    k, tilt = HOLD_SIZE.get(kind, (1.0, None))
+    for view in ("thirdperson", "firstperson"):
+        d = out[view + "_righthand"]
+        nd = _resize(d, k, _grip(d), tilt if view == "firstperson" else None)
+        if edge_forward:
+            nd = _edge_forward(nd)
+        out[view + "_righthand"] = nd
+        out[view + "_lefthand"] = _mirror(nd)
+    return out
+
+
+def export_weapon(repo, name, model, frames, icon, kind, credit, display=None, frametime=4, edge_forward=False):
+    """武器を書き出す。edge_forward：片刃の武器（刃の側をモデルの +x に作った）を、刃が前を向くように持たせる。"""
     base = os.path.join(repo, "src/main/resources/assets/amemaru")
     models = os.path.join(base, "models/item")
     textures = os.path.join(base, "textures/item")
     tex_ref = "amemaru:item/" + name + "_model"
     model.save_json(os.path.join(models, name + "_3d.json"), tex_ref, credit,
-                    display=display or WEAPON_DISPLAY[kind])
+                    display=hold_display(display or WEAPON_DISPLAY[kind], kind, edge_forward))
     icon_ref = "amemaru:item/" + name
     flat = {"parent": "minecraft:item/generated", "textures": {"layer0": icon_ref}}
     write_json(os.path.join(models, name + ".json"), {
