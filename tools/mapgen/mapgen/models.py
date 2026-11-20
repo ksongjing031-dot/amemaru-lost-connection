@@ -41,7 +41,8 @@ MODEL_BLOCKS = {"lantern", "soul_lantern", "chain", "campfire", "soul_campfire",
                 "torch", "wall_torch", "poppy", "dandelion", "allium", "azure_bluet", "oxeye_daisy", "cornflower",
                 "lily_of_the_valley", "blue_orchid", "red_tulip", "orange_tulip", "white_tulip", "pink_tulip",
                 "brewing_stand", "ladder", "stonecutter", "amethyst_cluster", "large_amethyst_bud", "medium_amethyst_bud",
-                "small_amethyst_bud", "tripwire_hook"}
+                "small_amethyst_bud", "tripwire_hook", "flowering_azalea", "azalea", "pink_petals", "sugar_cane",
+                "lily_pad", "seagrass", "tall_seagrass", "cobweb", "kelp", "kelp_plant"}
 
 
 def is_model_block(name):
@@ -273,8 +274,10 @@ def _tint_for(tex):
     t = tex.replace("minecraft:", "")
     if "water" in t:
         return WATER_TINT
-    if "grass" in t or "fern" in t:
+    if "grass" in t or "fern" in t or "sugar_cane" in t or "pink_petals_stem" in t:
         return GRASS_TINT
+    if "lily_pad" in t:
+        return np.array([0.13, 0.5, 0.19], dtype=np.float32)
     if "leaves" in t or "vine" in t:
         return FOLIAGE_TINT
     return None

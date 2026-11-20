@@ -116,7 +116,12 @@ public final class CiScreenshots {
      *  {@link #CHURCH_FIRST} からの12枚は結びの教会（tools/mapgen/build_church.py の CI_SHOTS と同じ：正面・鐘楼・南・上から・
      *  裏・身廊・内陣・南の側廊・鐘の間・療養所の2階・記憶の庭・名を刻む石）、{@link #CHURCH_COUNSEL_SHOT} の1枚は、
      *  6日目に開く記憶の相談所を重ねたあと（南の側廊から書庫の扉）。座標は教会を置いた所から（記憶の庭を
-     *  {@link #CHURCH_GARDEN_AT} だけずらして南に並べる）。 */
+     *  {@link #CHURCH_GARDEN_AT} だけずらして南に並べる）。
+     *  {@link #FISH_FIRST} からの11枚は釣り堀（tools/mapgen/build_fishing.py の CI_SHOTS と同じ：入口の門・上から・上の台・
+     *  下の桟橋の先・アーチの下の桟橋・湧き口・西の岸・釣り具屋のカウンター・水門の内側・水門の外の面・路地）、
+     *  {@link #FISH_LAKESIDE_SHOT} からの3枚は寄付で開いた湖畔の釣り場を重ねたあと（岸の板の道・長い桟橋の先から・
+     *  開いた水門の内側）、{@link #FISH_FROZEN_SHOT} の1枚は第2章の氷を重ねたあと。座標は釣り堀の地面の所から
+     *  （釣り堀は {@link #FISH_POND_AT}、水門と湖は {@link #FISH_GATE_AT}、路地は {@link #FISH_ALLEY_AT} だけずらして置く）。 */
     private static final String[] MAP_SHOTS = {
             "map_guild_front", "map_guild_left", "map_guild_right", "map_guild_close", "map_guild_aerial", "map_guild_back",
             "map_weapon_front", "map_weapon_gate", "map_weapon_west", "map_weapon_close", "map_weapon_aerial",
@@ -138,7 +143,11 @@ public final class CiScreenshots {
             "map_freemarket_more_aerial", "map_freemarket_more_north",
             "map_church_front", "map_church_tower", "map_church_south", "map_church_aerial", "map_church_back",
             "map_church_nave", "map_church_chancel", "map_church_aisle", "map_church_bell", "map_church_sanatorium",
-            "map_church_garden", "map_church_memorial", "map_church_counsel"};
+            "map_church_garden", "map_church_memorial", "map_church_counsel",
+            "map_fishing_entrance", "map_fishing_aerial", "map_fishing_deck", "map_fishing_pier", "map_fishing_arch",
+            "map_fishing_spring", "map_fishing_west", "map_fishing_shop", "map_fishing_gate_in", "map_fishing_gate_out",
+            "map_fishing_alley", "map_fishing_lakeside", "map_fishing_lakeside_pier", "map_fishing_gate_open",
+            "map_fishing_frozen"};
     private static final double[][] MAP_VIEWS = {
             {-30, 16, 21, 18, 13, 21},
             {-22, 22, -18, 16, 12, 16},
@@ -212,6 +221,21 @@ public final class CiScreenshots {
             {21.5, 2.62, 39.5, 21.5, 3, 52},
             {21.5, 2.62, 47.2, 21.5, 3.6, 51.5},
             {14.3, 4.62, 28.4, 9, 4.3, 29.8},
+            {44, 4, 34, 22, 0, 25},
+            {46, 25, 56, 16, -3, 24},
+            {27.6, 3.9, 21.6, 9, -2, 31},
+            {11.5, 0.62, 26.5, 28, 2, 20},
+            {16.5, 2.62, 12.5, 16.5, -2, 24},
+            {8.4, 1.4, 22.4, 5.5, -0.4, 16.6},
+            {2, 2.62, 31, 24, 2, 20},
+            {26.5, 3.62, 19.5, 30.5, 2.4, 17.5},
+            {14, 2.62, 47, -1, 3, 40},
+            {-18, 2.62, 52, -1, 4, 41},
+            {36, 2.62, 60, 30, 0, 45},
+            {-8, 2.62, 47, -18, -2, 54},
+            {-22, 0.62, 52.5, -2, 1, 52.5},
+            {14, 2.62, 47, -1, 3, 40},
+            {11.5, 3.4, 12.4, 18, -3, 22},
     };
     /** 武器工房の写真の始まり。ここで、ギルドを片づけて武器工房を置く。 */
     private static final int WEAPON_FIRST = 6;
@@ -265,6 +289,33 @@ public final class CiScreenshots {
      * （30〜66、0〜37、0〜43）を包み、教会（0〜45、0〜40、0〜37）と記憶の庭（9〜33、0〜11、38〜55）の所まで広げる。
      */
     private static final int[] CHURCH_CLEAR = {0, 0, 0, 66, 40, 55};
+    /** 釣り堀の写真の始まり。ここで、教会と記憶の庭を広く片づけ、釣り堀・水門と湖・路地を並べて置く。 */
+    private static final int FISH_FIRST = 72;
+    /** 釣り堀の構造物（池・古い石の縁とアーチ・湧き口・上の台と釣り具屋・桟橋・水辺の小屋・入口の広場。36×25×44。地面は Y 9）。 */
+    private static final String FISH = "fishing_pond";
+    /** 水門と湖の構造物（水門の門の建物と、そのまわりの城壁・城壁沿いの道・城壁の外の湖。48×34×48）。 */
+    private static final String FISH_GATE = "water_gate";
+    /** 釣り堀の南東の出口から、フリーマーケットの西の門への路地の構造物（18×8×14。地面は Y 1）。 */
+    private static final String FISH_ALLEY = "fishing_alley";
+    /** 釣り堀を置く所：地面のブロック（Y 9）を、片づけたあとの草の高さにそろえる。 */
+    private static final int[] FISH_POND_AT = {0, -9, 0};
+    /** 水門と湖を置く所（釣り堀の地面の所から）：世界の (x −131, z 48) と釣り堀の (x −95, z 23) の差。高さは釣り堀と同じ。 */
+    private static final int[] FISH_GATE_AT = {-36, -9, 25};
+    /** 路地を置く所：世界の (x −66, z 66) と釣り堀の (x −95, z 23) の差。路地の地面は Y 1。 */
+    private static final int[] FISH_ALLEY_AT = {29, -1, 43};
+    /** 寄付で開いた湖畔の釣り場の写真の始まり。ここで、水門と湖の上に、開いたあとの形を同じ所から重ねて置く（片づけない）。 */
+    private static final int FISH_LAKESIDE_SHOT = 83;
+    /** 重ねて置く構造物（湖畔の釣り場。古い堰・水門の堰板・落とし格子を開け、岸の板の道・大会の台・長い桟橋・受付の小屋を足す）。 */
+    private static final String FISH_LAKESIDE = "fishing_lakeside";
+    /** 第2章の氷の写真。ここで、釣り堀の上に、凍った池の北の半分を同じ所から重ねて置く（片づけない）。 */
+    private static final int FISH_FROZEN_SHOT = 86;
+    /** 重ねて置く構造物（第2章の氷。氷のマスだけを書く）。 */
+    private static final String FISH_FROZEN = "fishing_pond_frozen";
+    /**
+     * 釣り堀の前に片づける範囲（建物を置いた所から）：教会と記憶の庭（0〜66、0〜40、0〜55）を包み、釣り堀（0〜35、−9〜15、0〜43）・
+     * 水門と湖（−36〜11、−9〜24、25〜72）・路地（29〜46、−1〜6、43〜56）の所まで広げる。
+     */
+    private static final int[] FISH_CLEAR = {-36, -9, 0, 66, 40, 72};
     /** 片づける範囲（東西・高さ・南北）：いちばん大きい構造物（東西は商店街の37、南北は商店街の南の44）を包む大きさ。 */
     private static final int[] CLEAR_SIZE = {37, 38, 44};
     /**
@@ -996,6 +1047,17 @@ public final class CiScreenshots {
                     } else if (STORAGE.equals(name)) {
                         replaceBuilding(minecraft, "guild_hall");
                         overlayAt(minecraft, STORAGE, STORAGE_AT);
+                    } else if (FISH.equals(name)) {
+                        // 水と桟橋と灯りを見せるので、日の高いうちに撮る
+                        command(minecraft, "time set noon");
+                        clearWide(minecraft, FISH_CLEAR);
+                        overlayAt(minecraft, FISH, FISH_POND_AT);
+                        overlayAt(minecraft, FISH_GATE, FISH_GATE_AT);
+                        overlayAt(minecraft, FISH_ALLEY, FISH_ALLEY_AT);
+                    } else if (FISH_LAKESIDE.equals(name)) {
+                        overlayAt(minecraft, FISH_LAKESIDE, FISH_GATE_AT);
+                    } else if (FISH_FROZEN.equals(name)) {
+                        overlayAt(minecraft, FISH_FROZEN, FISH_POND_AT);
                     } else if (CHURCH.equals(name)) {
                         // 色ガラスと中の灯りを見せるので、日の高いうちに撮る
                         command(minecraft, "time set noon");
@@ -1066,6 +1128,15 @@ public final class CiScreenshots {
         }
         if (view == CHURCH_COUNSEL_SHOT) {
             return CHURCH_COUNSEL;
+        }
+        if (view == FISH_FIRST) {
+            return FISH;
+        }
+        if (view == FISH_LAKESIDE_SHOT) {
+            return FISH_LAKESIDE;
+        }
+        if (view == FISH_FROZEN_SHOT) {
+            return FISH_FROZEN;
         }
         return null;
     }

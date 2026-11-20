@@ -70,6 +70,8 @@ public final class MapDisplayGameTests {
     private static final String FREE = "map/conelia/free_market";
     private static final String FREE_MORE = "map/conelia/free_market_expanded";
     private static final String CHURCH = "map/conelia/church";
+    private static final String FISHING = "map/conelia/fishing_pond";
+    private static final String FISHING_LAKESIDE = "map/conelia/fishing_lakeside";
 
     /** 防具立てを右クリックする高さ（足・脚・胴・手・頭のあたり）。 */
     private static final double[] CLICK_HEIGHTS = {0.2, 0.6, 1.0, 1.3, 1.8};
@@ -146,6 +148,20 @@ public final class MapDisplayGameTests {
     @GameTest(template = EMPTY)
     public static void churchDisplaysCannotBeTaken(GameTestHelper helper) {
         checkBuilding(helper, CHURCH, "church", 2, 0);
+    }
+
+    /** 釣り堀：額縁7（店の吊り看板の下の生鱈、「今日の魚」の鮭・熱帯魚・ふぐ、店の中の貸し竿、入口の門の柱の生鱈、
+     *  上の台の魚の樽のふたの生鱈）。防具立てはない。水門と湖（water_gate）・路地（fishing_alley）・第2章の氷
+     *  （fishing_pond_frozen）には、額縁も防具立てもない。 */
+    @GameTest(template = EMPTY)
+    public static void fishingDisplaysCannotBeTaken(GameTestHelper helper) {
+        checkBuilding(helper, FISHING, "fishing", 7, 0);
+    }
+
+    /** 湖畔の釣り場（寄付のあとに重ねる形）：額縁1（受付・計量の小屋の吊り看板の下の生鱈）。 */
+    @GameTest(template = EMPTY)
+    public static void fishingLakesideDisplaysCannotBeTaken(GameTestHelper helper) {
+        checkBuilding(helper, FISHING_LAKESIDE, "fishing_lakeside", 1, 0);
     }
 
     /**
