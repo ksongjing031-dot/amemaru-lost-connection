@@ -844,7 +844,7 @@ def entrance():
             bput(7, v, y, block("cut_sandstone") if y not in (FT, CL - 1) else block("chiseled_sandstone"))
     for v in range(10, 16):
         bput(7, v, CL - 1, block("chiseled_sandstone") if v in AX else block("cut_sandstone"))
-    # きまりの書見台（入口の右手。チップ・上限・景品・卓）【補完】
+    # きまりの書見台（大広間のアーチの手前の北の角。チップ・上限・景品・卓）【補完】
     bput(6, 10, FT, block("lectern", facing="south", has_book=True, powered=False),
          lectern_nbt("ラッキーノットのきまり", "ジゼル・ノワール", [
              "遊戯館ラッキーノットへ、ようこそ。\n\n遊べるのは、街の通貨（ノット）で買ったチップだけです。チップは受付（北の窓口）で。1日に買える数には上限があります。",
@@ -855,7 +855,7 @@ def entrance():
     # 吊り灯（入口の間の真ん中。鎖で2つ）
     for v in AX:
         hang(3, v, CL - 1, chain=1)
-    # 掲示板（入口の左手の壁。今日の催し）
+    # 掲示板（入口の間の南の壁。今日の催し）
     wall_sign(1, 15, FT + 2, "north", ["今日の催し", "カジノナイトは", "広場の告知で", ""])
 
 
@@ -1067,7 +1067,7 @@ def lounge():
 
 
 def card_bays(after=False, target=None):
-    """南の側廊のカードの卓（2×2、v 22..23）。係は卓の奥（v 24）。
+    """南の側廊のカードの卓（2×2、v 22..23）。係は卓の奥（v 24）。札は卓の両わきの南の壁（窓の間）に掛ける。
     はじめ（after=False）：布（白い絨毯）をかけた卓と、鎖の仕切り、準備中の札。共同事業②のあと：緑の布と、カードと札"""
     P = target or bput
     for (u0, u1) in CARD_BAYS:
@@ -1083,7 +1083,7 @@ def card_bays(after=False, target=None):
                 P(u, 21, FT + 1, lantern(False))
             for u in (u0, u1):
                 P(u, 21, FT, block("chain", axis="x", waterlogged=False))
-            P(u0, 24, FT + 2, block("spruce_wall_sign", facing="north", waterlogged=False),
+            P(u0 - 1, 24, FT + 2, block("spruce_wall_sign", facing="north", waterlogged=False),
               sign_nbt(["ハイ＆ロー", "ただいま準備中", "（共同事業②）", ""]))
         else:
             for u in (u0, u1):
@@ -1092,9 +1092,9 @@ def card_bays(after=False, target=None):
             for u in (u0 - 1, u1 + 1):
                 P(u, 21, FT, AIR)
                 P(u, 21, FT + 1, AIR)
-            P(u0, 24, FT + 2, block("spruce_wall_sign", facing="north", waterlogged=False),
+            P(u0 - 1, 24, FT + 2, block("spruce_wall_sign", facing="north", waterlogged=False),
               sign_nbt(["ハイ＆ロー", "次のカードは", "上か下か", ""]))
-            P(u1, 24, FT + 2, block("spruce_wall_sign", facing="north", waterlogged=False),
+            P(u1 + 1, 24, FT + 2, block("spruce_wall_sign", facing="north", waterlogged=False),
               sign_nbt(["4人から", "卓を囲もう", "", ""]))
 
 
