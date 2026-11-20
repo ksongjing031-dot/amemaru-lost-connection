@@ -27,6 +27,9 @@ python3 tools/mapgen/build_freemarket.py /tmp/out --ci    # 自動の確認の�
 python3 tools/mapgen/build_church.py                      # church.nbt（結びの教会）・church_garden.nbt（記憶の庭）・church_counsel.nbt（6日目の記憶の相談所）を書き直す
 python3 tools/mapgen/build_church.py /tmp/out --render /tmp/out   # 見本の絵も描く（外5枚・中5枚・記憶の庭2枚・相談所1枚、高さ7・12・17で切った絵3枚。記憶の庭を並べて描く）
 python3 tools/mapgen/build_church.py /tmp/out --ci        # 自動の確認の写真の座標（CiScreenshots.java の MAP_VIEWS の行）を出す
+python3 tools/mapgen/build_fishing.py                     # fishing_pond.nbt（釣り堀）・water_gate.nbt（水門と湖）・fishing_alley.nbt（路地）・fishing_lakeside.nbt（湖畔の釣り場）・fishing_pond_frozen.nbt（第2章の氷）を書き直す
+python3 tools/mapgen/build_fishing.py /tmp/out --render /tmp/out   # 見本の絵も描く（はじめの形16枚・湖畔の釣り場4枚・氷1枚、高さ1・3で切った絵2枚。水門と湖・路地を並べて描く）
+python3 tools/mapgen/build_fishing.py /tmp/out --ci       # 自動の確認の写真の座標（CiScreenshots.java の MAP_VIEWS の行）を出す
 ```
 
 見本の絵のテクスチャと模型（ランタン・看板・旗などの形）は、初めて使うときに GitHub の Minecraft の素材の写し（1.20.1）から
@@ -42,6 +45,9 @@ python3 tools/mapgen/build_church.py /tmp/out --ci        # 自動の確認の�
 /place template amemaru:map/conelia/market_north ~ ~-1 ~
 /place template amemaru:map/conelia/market_south ~ ~-1 ~38
 /place template amemaru:map/conelia/personal_storage ~16 ~-8 ~18
+/place template amemaru:map/conelia/fishing_pond ~ ~-10 ~
+/place template amemaru:map/conelia/water_gate ~-36 ~-10 ~25
+/place template amemaru:map/conelia/fishing_alley ~29 ~-2 ~43
 ```
 
 武器工房は正面が南です（立った所から東へ25、南へ22ブロック広がります）。古代炉に火が入った形（12日目）は、
@@ -56,6 +62,10 @@ python3 tools/mapgen/build_church.py /tmp/out --ci        # 自動の確認の�
 個人倉庫は、ギルドを置いた後に、ギルドの角から東へ16・下へ7・南へ18ずらして重ねます（上の最後の行。ギルドを `~ ~-1 ~` で
 置いたとき）。地上の受付棟とギルドの東の渡り廊下に加えて、ギルドの1階の床の下（保管庫）と、受付棟の下の地下2層まで入っています。
 ギルドの建物の中・軒・地面の下の土は書かないので、置いてもギルドは消えません（下の決まりの `owned`）。
+釣り堀は池の底が道より9低いので、道に立って `~ ~-10 ~` で置きます（立った所から東へ36、南へ44）。水門と湖（城壁の一部と
+城壁の外の湖を含む）は西へ36・南へ25、路地は東へ29・南へ43・上へ8（釣り堀の構造物の底から）ずらして並べます（上の最後の3行）。
+釣り堀の構造物は記憶の庭と城壁沿いの道のマスを書かないので、記憶の庭の後に置いても庭は消えません。寄付で開く湖畔の釣り場
+（`fishing_lakeside`）は水門と同じ所に、第2章の氷（`fishing_pond_frozen`）は釣り堀と同じ所に重ねます（書き換えるマスだけを書く）。
 
 ## 中身
 
@@ -75,6 +85,7 @@ python3 tools/mapgen/build_church.py /tmp/out --ci        # 自動の確認の�
 | `build_storage.py` | コネリアの個人倉庫（PHASE 6 の設計。40×30×23、正面は南）。平面図の (u, v) と高さ y（道のブロックが 0、地下は負）で組み立てる。地下の部屋は「中のマス」を決めて `shell()` でまわりを壁・床・天井で囲む。ギルドと重ねた写しは `combined_world()`（見本の絵と確かめで使う） |
 | `build_freemarket.py` | コネリアのフリーマーケット（PHASE 7 の設計。30×10×32、北の門と東の門）。露店20区画は `PLOTS`（番号・場所・向き・型・色・縁の木・品）で、7つの型（`STYLES`）の部品を組み替える。はじめの形 `build(False)` と増えたあと `build(True)` は同じ乱数の種で作り、重ねる形は増える8区画の箱だけを書く（`overlay()`）。商店街の南と並べた写しは `combined_world()` |
 | `build_church.py` | コネリアの結びの教会（PHASE 8 の設計。46×41×38、正面は東）と記憶の庭（25×12×18）。平面図の (u, v) と高さ y（道のブロックが 0）で組み立てる。アーチは `arch_row()`、色ガラスの窓は `lancet()` と `rose()`、鐘楼のらせん階段は `spiral()`（1回りめは下を埋め、2回りめは裏に逆さの階段）。記憶の庭を並べた写しは `combined_world()`（見本の絵と確かめで使う）。6日目の記憶の相談所の重ねる形は `counsel_overlay()`（書く所は `COUNSEL_OWNED` の4マスだけ）、重ねたあとは `counsel_world()` |
+| `build_fishing.py` | コネリアの釣り堀（PHASE 9 の設計。36×25×44、入口は東）と、水門と湖（48×34×48）・路地（18×8×14）。平面図の (u, v) と高さ y（道のブロックが 0、水面のブロックは −3）で組み立てる。池の形は `POND_ROWS`、水の深さは `depth()`（岸からの近さ）、岸の斜面は `land_dist()`。釣り堀が書くマスは `mine()`（記憶の庭と城壁沿いの道は書かない）。水は構造物ごとに漏れない（池は `weir()` の堰板、水門は `gate_channel()` の堰板で止まる）。寄付で開く湖畔の釣り場は `lakeside()`（書くマスは `LK_OWNED`）、第2章の氷は `frozen_overlay()`（`FROZEN_OWNED`）。3つの形を並べた写しは `checked_world(which)`（見本の絵と確かめで使う） |
 
 ## 決まり
 
