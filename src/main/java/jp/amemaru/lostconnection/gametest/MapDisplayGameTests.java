@@ -69,6 +69,7 @@ public final class MapDisplayGameTests {
     private static final String STORAGE = "map/conelia/personal_storage";
     private static final String FREE = "map/conelia/free_market";
     private static final String FREE_MORE = "map/conelia/free_market_expanded";
+    private static final String CHURCH = "map/conelia/church";
 
     /** 防具立てを右クリックする高さ（足・脚・胴・手・頭のあたり）。 */
     private static final double[] CLICK_HEIGHTS = {0.2, 0.6, 1.0, 1.3, 1.8};
@@ -138,6 +139,13 @@ public final class MapDisplayGameTests {
     @GameTest(template = EMPTY)
     public static void freeMarketExpandedDisplaysCannotBeTaken(GameTestHelper helper) {
         checkBuilding(helper, FREE_MORE, "free_market_more", 16, 0);
+    }
+
+    /** 結びの教会：額縁2（控室の壁の鈴＝呼び戻しの儀の鐘、書庫の壁の古い地図）。防具立てはない。
+     *  記憶の庭（church_garden）には、額縁も防具立てもない。 */
+    @GameTest(template = EMPTY)
+    public static void churchDisplaysCannotBeTaken(GameTestHelper helper) {
+        checkBuilding(helper, CHURCH, "church", 2, 0);
     }
 
     /**

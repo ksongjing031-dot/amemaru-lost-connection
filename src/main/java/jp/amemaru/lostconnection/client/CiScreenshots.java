@@ -112,7 +112,10 @@ public final class CiScreenshots {
      *  {@link #FREE_FIRST} からの7枚はフリーマーケットのはじめの形（tools/mapgen/build_freemarket.py の CI_SHOTS と同じ：
      *  北の門・東の門（通り抜けから）・中央通路・泉・市場監督の小屋・休み場・上から）、{@link #FREE_MORE_SHOT} からの2枚は
      *  寄付で露店が増えたあと（上から・北の島の並び）。座標はフリーマーケットを置いた所から（商店街の南を
-     *  {@link #FREE_SOUTH_AT} だけずらして東に並べる）。 */
+     *  {@link #FREE_SOUTH_AT} だけずらして東に並べる）。
+     *  {@link #CHURCH_FIRST} からの12枚は結びの教会（tools/mapgen/build_church.py の CI_SHOTS と同じ：正面・鐘楼・南・上から・
+     *  裏・身廊・内陣・南の側廊・鐘の間・療養所の2階・記憶の庭・名を刻む石）。座標は教会を置いた所から（記憶の庭を
+     *  {@link #CHURCH_GARDEN_AT} だけずらして南に並べる）。 */
     private static final String[] MAP_SHOTS = {
             "map_guild_front", "map_guild_left", "map_guild_right", "map_guild_close", "map_guild_aerial", "map_guild_back",
             "map_weapon_front", "map_weapon_gate", "map_weapon_west", "map_weapon_close", "map_weapon_aerial",
@@ -131,7 +134,10 @@ public final class CiScreenshots {
             "map_storage_grille", "map_storage_vault", "map_storage_ancient",
             "map_freemarket_north_gate", "map_freemarket_east_gate", "map_freemarket_lane", "map_freemarket_fountain",
             "map_freemarket_booth", "map_freemarket_rest", "map_freemarket_aerial",
-            "map_freemarket_more_aerial", "map_freemarket_more_north"};
+            "map_freemarket_more_aerial", "map_freemarket_more_north",
+            "map_church_front", "map_church_tower", "map_church_south", "map_church_aerial", "map_church_back",
+            "map_church_nave", "map_church_chancel", "map_church_aisle", "map_church_bell", "map_church_sanatorium",
+            "map_church_garden", "map_church_memorial"};
     private static final double[][] MAP_VIEWS = {
             {-30, 16, 21, 18, 13, 21},
             {-22, 22, -18, 16, 12, 16},
@@ -192,6 +198,18 @@ public final class CiScreenshots {
             {-8, 21, 41, 15.5, 0, 14.5},
             {-8, 21, 41, 15.5, 0, 14.5},
             {1.6, 2.62, 7.5, 28, 2.4, 7.5},
+            {60, 5, 22.5, 28, 14, 20.5},
+            {48, 8, -7, 29, 20, 8},
+            {44, 6, 44, 15, 9, 28},
+            {70, 50, 70, 20, 8, 24},
+            {-14, 10, -6, 8, 10, 14},
+            {32.5, 4.62, 22.5, 6, 6.5, 22.5},
+            {15.5, 4.62, 22.5, 2, 7.5, 22.5},
+            {24.5, 4.62, 24.5, 31.5, 4, 30.5},
+            {26.5, 22.62, 10.5, 31, 24.5, 6},
+            {5.5, 8.62, 9.5, 5.5, 8.4, 3},
+            {21.5, 2.62, 39.5, 21.5, 3, 52},
+            {21.5, 2.62, 47.2, 21.5, 3.6, 51.5},
     };
     /** 武器工房の写真の始まり。ここで、ギルドを片づけて武器工房を置く。 */
     private static final int WEAPON_FIRST = 6;
@@ -228,6 +246,19 @@ public final class CiScreenshots {
      * その東の個人倉庫（16〜55、−7〜22、18〜40）を両方包む。
      */
     private static final int[] FREE_CLEAR = {0, -7, 0, 55, 37, 43};
+    /** 結びの教会の写真の始まり。ここで、フリーマーケットと商店街の南を広く片づけ、教会を置き、その南に記憶の庭を並べる。 */
+    private static final int CHURCH_FIRST = 59;
+    /** 結びの教会の構造物（礼拝堂・鐘楼・療養所の棟と、教会前広場・北の庭・南の小道。46×41×38）。 */
+    private static final String CHURCH = "church";
+    /** 記憶の庭の構造物（25×12×18）。 */
+    private static final String CHURCH_GARDEN = "church_garden";
+    /** 記憶の庭を置く所（教会を置いた所から）：世界の (x −96, 道, z 16) と教会の (x −105, 道, z −22) の差。 */
+    private static final int[] CHURCH_GARDEN_AT = {9, 0, 38};
+    /**
+     * 教会の前に片づける範囲（建物を置いた所から）：フリーマーケット（0〜29、0〜9、0〜31）と、その東の商店街の南
+     * （30〜66、0〜37、0〜43）を包み、教会（0〜45、0〜40、0〜37）と記憶の庭（9〜33、0〜11、38〜55）の所まで広げる。
+     */
+    private static final int[] CHURCH_CLEAR = {0, 0, 0, 66, 40, 55};
     /** 片づける範囲（東西・高さ・南北）：いちばん大きい構造物（東西は商店街の37、南北は商店街の南の44）を包む大きさ。 */
     private static final int[] CLEAR_SIZE = {37, 38, 44};
     /**
@@ -959,6 +990,12 @@ public final class CiScreenshots {
                     } else if (STORAGE.equals(name)) {
                         replaceBuilding(minecraft, "guild_hall");
                         overlayAt(minecraft, STORAGE, STORAGE_AT);
+                    } else if (CHURCH.equals(name)) {
+                        // 色ガラスと中の灯りを見せるので、日の高いうちに撮る
+                        command(minecraft, "time set noon");
+                        clearWide(minecraft, CHURCH_CLEAR);
+                        overlayAt(minecraft, CHURCH, new int[]{0, 0, 0});
+                        overlayAt(minecraft, CHURCH_GARDEN, CHURCH_GARDEN_AT);
                     } else if (FREE.equals(name)) {
                         // 屋根のない広場なので、日の高いうちに撮る（建物の写真は長いので、ここまでで日が傾いている）
                         command(minecraft, "time set noon");
@@ -1017,6 +1054,9 @@ public final class CiScreenshots {
         }
         if (view == FREE_MORE_SHOT) {
             return FREE_MORE;
+        }
+        if (view == CHURCH_FIRST) {
+            return CHURCH;
         }
         return null;
     }

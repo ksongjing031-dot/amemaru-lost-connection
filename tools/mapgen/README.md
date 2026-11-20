@@ -24,6 +24,9 @@ python3 tools/mapgen/build_storage.py /tmp/out --ci       # 自動の確認の�
 python3 tools/mapgen/build_freemarket.py                  # free_market.nbt（フリーマーケットのはじめの形）と free_market_expanded.nbt（増えた8区画）を書き直す
 python3 tools/mapgen/build_freemarket.py /tmp/out --render /tmp/out   # 見本の絵も描く（はじめの形8枚・増えたあと3枚、高さ4で切った絵と真上の絵を2つずつ）
 python3 tools/mapgen/build_freemarket.py /tmp/out --ci    # 自動の確認の写真の座標（CiScreenshots.java の MAP_VIEWS の行）を出す
+python3 tools/mapgen/build_church.py                      # church.nbt（結びの教会）と church_garden.nbt（記憶の庭）を書き直す
+python3 tools/mapgen/build_church.py /tmp/out --render /tmp/out   # 見本の絵も描く（外5枚・中5枚・記憶の庭2枚、高さ7・12・17で切った絵3枚。記憶の庭を並べて描く）
+python3 tools/mapgen/build_church.py /tmp/out --ci        # 自動の確認の写真の座標（CiScreenshots.java の MAP_VIEWS の行）を出す
 ```
 
 見本の絵のテクスチャと模型（ランタン・看板・旗などの形）は、初めて使うときに GitHub の Minecraft の素材の写し（1.20.1）から
@@ -71,6 +74,7 @@ python3 tools/mapgen/build_freemarket.py /tmp/out --ci    # 自動の確認の�
 | `build_market.py` | コネリアの商店街（PHASE 5 の設計。北 37×26×32・南 37×26×44）。14軒の店は4つの型（A 平入り2階・B 妻入り2階・C 妻入り3階・D 角の平入り）の `Shop` を組み替え、店ごとの品と色は `TRADES`。寄付で開いた料理屋の形は `restaurant_overlay()` |
 | `build_storage.py` | コネリアの個人倉庫（PHASE 6 の設計。40×30×23、正面は南）。平面図の (u, v) と高さ y（道のブロックが 0、地下は負）で組み立てる。地下の部屋は「中のマス」を決めて `shell()` でまわりを壁・床・天井で囲む。ギルドと重ねた写しは `combined_world()`（見本の絵と確かめで使う） |
 | `build_freemarket.py` | コネリアのフリーマーケット（PHASE 7 の設計。30×10×32、北の門と東の門）。露店20区画は `PLOTS`（番号・場所・向き・型・色・縁の木・品）で、7つの型（`STYLES`）の部品を組み替える。はじめの形 `build(False)` と増えたあと `build(True)` は同じ乱数の種で作り、重ねる形は増える8区画の箱だけを書く（`overlay()`）。商店街の南と並べた写しは `combined_world()` |
+| `build_church.py` | コネリアの結びの教会（PHASE 8 の設計。46×41×38、正面は東）と記憶の庭（25×12×18）。平面図の (u, v) と高さ y（道のブロックが 0）で組み立てる。アーチは `arch_row()`、色ガラスの窓は `lancet()` と `rose()`、鐘楼のらせん階段は `spiral()`（1回りめは下を埋め、2回りめは裏に逆さの階段）。記憶の庭を並べた写しは `combined_world()`（見本の絵と確かめで使う） |
 
 ## 決まり
 
