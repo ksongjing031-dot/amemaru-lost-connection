@@ -74,6 +74,7 @@ public final class MapDisplayGameTests {
     private static final String FISHING_LAKESIDE = "map/conelia/fishing_lakeside";
     private static final String CASINO = "map/conelia/casino";
     private static final String CASINO_HIGHLOW = "map/conelia/casino_highlow";
+    private static final String TOWER = "map/conelia/tower_entrance";
 
     /** 防具立てを右クリックする高さ（足・脚・胴・手・頭のあたり）。 */
     private static final double[] CLICK_HEIGHTS = {0.2, 0.6, 1.0, 1.3, 1.8};
@@ -178,6 +179,13 @@ public final class MapDisplayGameTests {
     @GameTest(template = EMPTY)
     public static void casinoHighLowDisplaysCannotBeTaken(GameTestHelper helper) {
         checkBuilding(helper, CASINO_HIGHLOW, "casino_highlow", 4, 0);
+    }
+
+    /** 塔の入口：額縁7（受付の塔の地図2、衛兵の間の武器掛けの剣2と弩、控えの間の机の地図2）、防具立て3（衛兵の間の予備の鎧2、
+     *  門番の部屋の古い鎧）。塔前広場（tower_plaza）と記念碑（tower_plaza_monument）には、額縁も防具立てもない。 */
+    @GameTest(template = EMPTY)
+    public static void towerEntranceDisplaysCannotBeTaken(GameTestHelper helper) {
+        checkBuilding(helper, TOWER, "tower_entrance", 7, 3);
     }
 
     /**

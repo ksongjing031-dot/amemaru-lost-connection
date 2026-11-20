@@ -125,7 +125,12 @@ public final class CiScreenshots {
      *  {@link #CASINO_FIRST} からの9枚はカジノ（tools/mapgen/build_casino.py の CI_SHOTS と同じ：正面・南門の内から・上から・
      *  背面・大広間のアーチから・酒場・VIPルーム・地下の噂の間・2階の宴の間）、{@link #CASINO_HIGHLOW_SHOT} の1枚は
      *  共同事業②の「ハイ＆ロー」を重ねたあと（カードの卓）、{@link #CASINO_FISHRACE_SHOT} の1枚は共同事業⑥の「魚レース」を
-     *  重ねたあと（宴の間の水の走路）。座標はカジノの地面の所から（カジノは {@link #CASINO_AT} だけずらして置く）。 */
+     *  重ねたあと（宴の間の水の走路）。座標はカジノの地面の所から（カジノは {@link #CASINO_AT} だけずらして置く）。
+     *  {@link #TOWER_FIRST} からの11枚は塔の入口（tools/mapgen/build_tower.py の CI_SHOTS と同じ：北門の外から・広場の南西から・
+     *  上から・東から・門の前から通路ごし・広間の入口から転移門・台の上から輪の向こうの大扉・塔の灯りとバルドの書見台・受付・
+     *  控えの間・門の上の歩廊）、{@link #TOWER_MONUMENT_SHOT} の1枚は、1週目の共同の目標のあとの記念碑を重ねたあと。
+     *  座標は塔の入口を置いた所の足もとの地面（世界の x −22, y 0, z −177）から（塔の入口は {@link #TOWER_AT}、塔前広場は
+     *  {@link #TOWER_PLAZA_AT} だけずらして置く）。 */
     private static final String[] MAP_SHOTS = {
             "map_guild_front", "map_guild_left", "map_guild_right", "map_guild_close", "map_guild_aerial", "map_guild_back",
             "map_weapon_front", "map_weapon_gate", "map_weapon_west", "map_weapon_close", "map_weapon_aerial",
@@ -154,7 +159,10 @@ public final class CiScreenshots {
             "map_fishing_frozen",
             "map_casino_front", "map_casino_gate", "map_casino_aerial", "map_casino_back", "map_casino_in_hall",
             "map_casino_in_bar", "map_casino_vip", "map_casino_rumor", "map_casino_banquet", "map_casino_highlow",
-            "map_casino_fishrace"};
+            "map_casino_fishrace",
+            "map_tower_approach", "map_tower_plaza", "map_tower_aerial", "map_tower_east", "map_tower_passage",
+            "map_tower_hall", "map_tower_ring", "map_tower_board", "map_tower_reception", "map_tower_waiting",
+            "map_tower_walk", "map_tower_monument"};
     private static final double[][] MAP_VIEWS = {
             {-30, 16, 21, 18, 13, 21},
             {-22, 22, -18, 16, 12, 16},
@@ -254,6 +262,18 @@ public final class CiScreenshots {
             {16.6, 11.62, 16.5, 29, 13, 16.5},
             {20.4, 5.4, 24.6, 17.6, 3.6, 26.8},
             {16.5, 12.62, 16.5, 27.5, 10.2, 17},
+            {22.5, 2.62, 59.5, 22.5, 20, 12},
+            {9.5, 2.62, 60.5, 30, 9, 31},
+            {-14, 44, 69, 22, 14, 27},
+            {66, 12, 49, 30, 18, 17},
+            {22.5, 5.62, 29.5, 22.5, 9, 5},
+            {22.5, 5.62, 18.5, 22.5, 11, 4},
+            {22.5, 8.62, 10.5, 22.5, 10, 0},
+            {26.5, 8.62, 10.5, 35, 8, 12},
+            {15.5, 5.62, 21.5, 10, 5, 26},
+            {6.5, 5.62, 18.5, 3, 4.5, 11},
+            {34.5, 16.62, 23.5, 16, 18, 23.5},
+            {17.5, 3.62, 51.5, 9, 5, 47},
     };
     /** 武器工房の写真の始まり。ここで、ギルドを片づけて武器工房を置く。 */
     private static final int WEAPON_FIRST = 6;
@@ -348,6 +368,22 @@ public final class CiScreenshots {
     private static final int CASINO_FISHRACE_SHOT = 97;
     /** 重ねて置く構造物（魚レース。宴の間の真ん中の走路と灯りと札だけを書く）。 */
     private static final String CASINO_FISHRACE = "casino_fishrace";
+    /** 塔の入口の写真の始まり。ここで、カジノを広く片づけ（{@link #TOWER_CLEAR}）、塔の入口と、その南に塔前広場を置く。 */
+    private static final int TOWER_FIRST = 98;
+    /** 塔の入口の構造物（門の棟・広間・転移門・両翼・塔の基部の壁。45×48×30。足もとの地面の1つ上から置く）。 */
+    private static final String TOWER = "tower_entrance";
+    /** 塔前広場の構造物（47×18×32。地面は Y 1）。 */
+    private static final String TOWER_PLAZA = "tower_plaza";
+    /** 塔の入口を置く所：足もとの地面（草）の1つ上から。 */
+    private static final int[] TOWER_AT = {0, 1, 0};
+    /** 塔前広場を置く所：世界の (x −23, y −1, z −147) と、塔の入口の足もとの (x −22, y 0, z −177) の差。 */
+    private static final int[] TOWER_PLAZA_AT = {-1, -1, 30};
+    /** 1週目の共同の目標のあとの写真。ここで、塔前広場の上に、記念碑を同じ所から重ねて置く（片づけない）。 */
+    private static final int TOWER_MONUMENT_SHOT = 109;
+    /** 重ねて置く構造物（記念碑。台と碑と碑文の看板だけを書く）。 */
+    private static final String TOWER_MONUMENT = "tower_plaza_monument";
+    /** 塔の入口の前に片づける範囲（建物を置いた所から）：カジノ（0〜42、−3〜25、0〜35）を包み、塔前広場の所（−1〜45、30〜61）まで広げる。 */
+    private static final int[] TOWER_CLEAR = {-1, -3, 0, 45, 25, 61};
     /** 片づける範囲（東西・高さ・南北）：いちばん大きい構造物（東西は商店街の37、南北は商店街の南の44）を包む大きさ。 */
     private static final int[] CLEAR_SIZE = {37, 38, 44};
     /**
@@ -1097,6 +1133,14 @@ public final class CiScreenshots {
                         overlayAt(minecraft, CASINO, CASINO_AT);
                     } else if (CASINO_HIGHLOW.equals(name) || CASINO_FISHRACE.equals(name)) {
                         overlayAt(minecraft, name, CASINO_AT);
+                    } else if (TOWER.equals(name)) {
+                        // 白い石と、広場の結晶灯・転移門の輪を見せるので、日の高いうちに撮る
+                        command(minecraft, "time set noon");
+                        clearWide(minecraft, TOWER_CLEAR);
+                        overlayAt(minecraft, TOWER, TOWER_AT);
+                        overlayAt(minecraft, TOWER_PLAZA, TOWER_PLAZA_AT);
+                    } else if (TOWER_MONUMENT.equals(name)) {
+                        overlayAt(minecraft, TOWER_MONUMENT, TOWER_PLAZA_AT);
                     } else if (CHURCH.equals(name)) {
                         // 色ガラスと中の灯りを見せるので、日の高いうちに撮る
                         command(minecraft, "time set noon");
@@ -1185,6 +1229,12 @@ public final class CiScreenshots {
         }
         if (view == CASINO_FISHRACE_SHOT) {
             return CASINO_FISHRACE;
+        }
+        if (view == TOWER_FIRST) {
+            return TOWER;
+        }
+        if (view == TOWER_MONUMENT_SHOT) {
+            return TOWER_MONUMENT;
         }
         return null;
     }

@@ -34,6 +34,10 @@ python3 tools/mapgen/build_casino.py                      # casino.nbt（カジ�
 python3 tools/mapgen/build_casino.py /tmp/out --render /tmp/out   # 見本の絵も描く（外6枚・中13枚・ハイ＆ロー1枚・魚レース2枚、地下・1階・2階で切った絵3枚）
 python3 tools/mapgen/build_casino.py /tmp/out --render /tmp/out --only front,vip   # 一部の絵だけ描く
 python3 tools/mapgen/build_casino.py /tmp/out --ci        # 自動の確認の写真の座標（CiScreenshots.java の MAP_VIEWS の行）を出す
+python3 tools/mapgen/build_tower.py                       # tower_entrance.nbt（塔の入口）・tower_plaza.nbt（塔前広場）・tower_plaza_monument.nbt（1週目の記念碑）を書き直す
+python3 tools/mapgen/build_tower.py /tmp/out --render /tmp/out   # 見本の絵も描く（外6枚・中13枚・記念碑1枚、高さ5・17で切った絵2枚。入口と広場を合わせて描く）
+python3 tools/mapgen/build_tower.py /tmp/out --render /tmp/out --only hall,ring   # 一部の絵だけ描く
+python3 tools/mapgen/build_tower.py /tmp/out --ci         # 自動の確認の写真の座標（CiScreenshots.java の MAP_VIEWS の行）を出す
 ```
 
 見本の絵のテクスチャと模型（ランタン・看板・旗などの形）は、初めて使うときに GitHub の Minecraft の素材の写し（1.20.1）から
@@ -53,6 +57,8 @@ python3 tools/mapgen/build_casino.py /tmp/out --ci        # 自動の確認の�
 /place template amemaru:map/conelia/water_gate ~-36 ~-10 ~25
 /place template amemaru:map/conelia/fishing_alley ~29 ~-2 ~43
 /place template amemaru:map/conelia/casino ~ ~-4 ~
+/place template amemaru:map/conelia/tower_entrance ~ ~ ~
+/place template amemaru:map/conelia/tower_plaza ~-1 ~-2 ~30
 ```
 
 武器工房は正面が南です（立った所から東へ25、南へ22ブロック広がります）。古代炉に火が入った形（12日目）は、
@@ -75,6 +81,9 @@ python3 tools/mapgen/build_casino.py /tmp/out --ci        # 自動の確認の�
 建物は東へ8・南へ4の所から 30×26）。城壁沿いの道（中心から半径107より外）・南門の前の東の区画・茶と香辛料の店（商店街の南の東の角の店）の
 南の横の地面より上は書かないので、商店街の南の後に置いても店の入口の段や屋根は消えません。寄付で足すハイ＆ロー
 （`casino_highlow`）と魚レース（`casino_fishrace`）は、カジノと同じ所に重ねます（書き換えるマスだけを書く）。
+塔の入口は足もとの地面（道の高さ）を書かないので、地面に立って `~ ~ ~` で置きます（足もとの1つ上から、東へ45、南へ30、上へ48。
+正面は南）。塔前広場は西へ1・下へ2・南へ30ずらして並べます（上の最後の2行。広場の南の端が北門の外の面に接します）。
+1週目の共同の目標のあとの記念碑（`tower_plaza_monument`）は、塔前広場と同じ所に重ねます（台と碑と碑文のマスだけを書く）。
 
 ## 中身
 
@@ -96,6 +105,7 @@ python3 tools/mapgen/build_casino.py /tmp/out --ci        # 自動の確認の�
 | `build_church.py` | コネリアの結びの教会（PHASE 8 の設計。46×41×38、正面は東）と記憶の庭（25×12×18）。平面図の (u, v) と高さ y（道のブロックが 0）で組み立てる。アーチは `arch_row()`、色ガラスの窓は `lancet()` と `rose()`、鐘楼のらせん階段は `spiral()`（1回りめは下を埋め、2回りめは裏に逆さの階段）。記憶の庭を並べた写しは `combined_world()`（見本の絵と確かめで使う）。6日目の記憶の相談所の重ねる形は `counsel_overlay()`（書く所は `COUNSEL_OWNED` の4マスだけ）、重ねたあとは `counsel_world()` |
 | `build_fishing.py` | コネリアの釣り堀（PHASE 9 の設計。36×25×44、入口は東）と、水門と湖（48×34×48）・路地（18×8×14）。平面図の (u, v) と高さ y（道のブロックが 0、水面のブロックは −3）で組み立てる。池の形は `POND_ROWS`、水の深さは `depth()`（岸からの近さ）、岸の斜面は `land_dist()`。釣り堀が書くマスは `mine()`（記憶の庭と城壁沿いの道は書かない）。水は構造物ごとに漏れない（池は `weir()` の堰板、水門は `gate_channel()` の堰板で止まる）。寄付で開く湖畔の釣り場は `lakeside()`（書くマスは `LK_OWNED`）、第2章の氷は `frozen_overlay()`（`FROZEN_OWNED`）。3つの形を並べた写しは `checked_world(which)`（見本の絵と確かめで使う） |
 | `build_casino.py` | コネリアのカジノ「ラッキーノット」（PHASE 10 の設計。43×29×36、正面は西）。建物の中の (u, v)（u 0 = 世界の x 13、v 0 = 世界の z 72）と高さ y（道のブロックが 0、地下は負）で組み立てる。屋根は前と奥の寄棟 `Hip`（金の縁の軒）、大広間の切妻と真ん中の帯の切妻（`Roof`、縁は `dark_rim()` で黒くして外の破風板だけを金に）、正面の両端の小塔。ルーレットの卓は `roulette()`（12の目は `POCKETS`）、大きな吊り灯は `chandelier()`、部屋から見える屋根の下は `roof_boards()` で野地板にする。書くマスは `owned()`（城壁沿いの道・南門の前の東の区画・茶と香辛料の店の横は書かない）。寄付で足すハイ＆ローは `highlow_overlay()`（`HL_OWNED`）、魚レースは `fishrace_overlay()`（`FR_OWNED`）。重ねたあとの写しは `checked_world(which)` |
+| `build_tower.py` | コネリアの塔の入口（PHASE 11 の設計。入口 45×48×30・塔前広場 47×18×32、正面は南）。世界の座標（x・z）と高さ y（道のブロックが 0）で、入口と広場を1つの合わせた形（47×50×62）に組み立て、書き出すときに2つの箱に切り分ける（`split()`。箱からはみ出すブロックがあれば止まる）。塔の基部の丸い壁は `base_face()`（3つの帯の半径 `BANDS`）、門のアーチは `arch_open()`、転移門の輪は `ring_cell()`・`ring_open()`、左右の塔のらせん階段は `spiral()`、広場の段は `terrace()`。重ねる形は記念碑（`M`）。確かめの写し `checked_world()` は、建物の下と外にゲームの地面（y 0）を足す |
 
 ## 決まり
 
@@ -106,6 +116,10 @@ python3 tools/mapgen/build_casino.py /tmp/out --ci        # 自動の確認の�
   これで谷ができ、低い方の屋根は高い方の下に隠れる。
 - 屋根の縁取りのブロックは `Roof(trim_block=...)` で変えられる（ふつうは `pal.trim + "_planks"`。カジノの金の縁は、なめらかな砂岩）。
 - 感圧板は、見本の絵でも確かめでも、当たりのない薄い板（絨毯と同じ形）として扱う（カジノのルーレットの金の軸と金庫）。
+- 構造物ファイル1つは 48×48×48 まで。それより大きい施設（塔の入口と塔前広場）は、1つの合わせた形で設計して、
+  書き出すときに箱ごとに切り分ける（`build_tower.py` の `split()`。額縁の `TileX`・`TileY`・`TileZ` も箱の中の位置に直す）。
+- 地面より上だけを書く構造物（塔の入口）は、足もとの地面の1つ上から置く。地面の高さに置く部品（壁の足もとの水切りなど）は、
+  地面の1つ上の半ブロックで作る（その下はゲームの地面のまま）。
 - 立面の文字の絵では、層 0 が1階の石の面、+1 が柱と2階の漆喰、+2 が2階の木組み（張り出し）、+3 が花箱の前板や灯りの腕木。
   文字の意味は `facade.legend()` にある（例：`P` 漆喰、`S` 石、`|` 柱、`=` 梁、`(` `)` 石のアーチの角、`[` `]` 木のアーチの角、
   `v` 持ち送り、`g` 板ガラス、`f` `a` 花箱の葉、`L` 吊るした灯り、`.` 空ける、空白は何もしない）。
