@@ -352,6 +352,7 @@ def openings():
     put(0, 10, Y1 + 1, door(pal.frame, "west", False))
     put(0, 10, Y1 + 2, door(pal.frame, "west", True))
     put(0, 10, Y1 + 3, stairs("stone_brick", "west", "top"))
+    put(-1, 10, Y1, stairs("stone_brick", "east"))      # 戸の外の段（作業場の地面から跳ばずに上がる）
     plain_window("west", 0, 14, 1, Y1 + 2, 2)
     # 裏（南、裏通りへ）：裏口（素材の搬入）と、階段の下の窓
     put(12, 16, Y1 + 1, door(pal.frame, "south", False))
@@ -622,7 +623,8 @@ def surroundings():
         put(u, v, 2, wall("stone_brick"))
     for u in (-2, -1):
         put(u, 0, 1, block("spruce_fence_gate", facing="north", open=False, powered=False, in_wall=False))
-    put(-2, 16, 1, block("spruce_fence_gate", facing="south", open=False, powered=False, in_wall=True))
+    # 南の門は、片流れの屋根の柱（u -2、v 15）の前をよけて u -3 に置く
+    put(-3, 16, 1, block("spruce_fence_gate", facing="south", open=False, powered=False, in_wall=True))
     # 門の看板（防具職人の作業場）
     put(-3, -1, 2, block("spruce_wall_sign", facing="north", waterlogged=False),
         sign_nbt(["防具職人の", "作業場", "", ""], ["防具職人の", "作業場", "", ""]))

@@ -987,6 +987,11 @@ def build():
     barrels_and_nets()
     deck_benches()
     bait_bed()
+    # 石の橋の北西のすみ（u 0、v 16）は、岸を削った残りの1マスの穴（深さ2。跳んでも出られない）になっていたので、
+    # 西のふちの草と同じ高さまで埋める（街全体の通しの確かめで直した）
+    for y in (-2, -1):
+        put(0, 16, y, block("dirt"))
+    put(0, 16, 0, block("grass_block", snowy=False))
     w.finalize()
     return shop_roof, shed_roof
 
@@ -1490,6 +1495,10 @@ def lakeside():
         lput(-100, z, -2, block("spruce_planks"))
         lput(-100, z, 0, AIR)
         lput(-99, z, 0, stairs("spruce", "east"))
+        # 階段を下りきった所（台の東の端 x -101）は、板の道の西の端の板（y 0）と柱（y -1）の下になるので、
+        # 頭の上をあける（台から跳ばずに板の道へ戻れるように。街全体の通しの確かめで直した）
+        lput(-101, z, 0, AIR)
+        lput(-101, z, -1, AIR)
     # ---- 長い桟橋と、先の T
     for (ax0, ax1, az0, az1) in (LK_PIER, LK_HEAD):
         for x in range(ax0, ax1 + 1):

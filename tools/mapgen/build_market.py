@@ -541,10 +541,15 @@ class Shop:
                                     seg.w.put(x, y, zc, pane())
 
     def build_chimney(self):
-        top = max(r.ridge_y for r in self.roofs) + 3
+        # 煙突の先（焚き火）は棟の3上。ただし都市のルール④の「店・工房・倉庫は22まで」を超えない（3階建てのパン屋は22）。
+        # 乱数は前と同じ数だけ引く（ほかの店の石の割れ目などが変わらないように）
+        full = max(r.ridge_y for r in self.roofs) + 3
+        top = min(full, 22)
         x, z = self.xz(2, 10)
-        for y in range(Y1, top):
-            self.seg.put(x, y, z, block("stone_bricks") if rng.random() < 0.85 else block("cracked_stone_bricks"))
+        for y in range(Y1, full):
+            st = block("stone_bricks") if rng.random() < 0.85 else block("cracked_stone_bricks")
+            if y < top:
+                self.seg.put(x, y, z, st)
         self.seg.put(x, top, z, block("campfire", lit=True, facing="north", signal_fire=False, waterlogged=False))
 
     # -- 中

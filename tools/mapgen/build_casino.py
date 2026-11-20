@@ -1187,7 +1187,7 @@ def secret_stair():
                 bput(u, v, y, AIR)
             bput(u, v, BF, block("polished_andesite"))
     for v in (8, 9):
-        bput(28, v, FL, block("dark_oak_planks"))          # いちばん上（足もと +3）
+        bput(28, v, FL, stairs("stone_brick", "east"))    # いちばん上の段（1階の床の高さ。足もと +3 へ跳ばずに上がる）
         bput(28, v, 1, block("stone_bricks"))
         bput(28, v, 0, block("stone_bricks"))
         bput(28, v, -1, block("stone_bricks"))
@@ -1213,6 +1213,7 @@ def staff_back():
         for u in range(25, 29):
             for y in range(BF + 1, CL):
                 bput(u, v, y, AIR)
+        bput(24, v, FL, stairs("stone_brick", "west"))     # いちばん上の段（1階の床の高さ。跳ばずに上がれるように）
         bput(25, v, 1, stairs("stone_brick", "west"))
         bput(25, v, 0, block("stone_bricks"))
         bput(26, v, 0, stairs("stone_brick", "west"))

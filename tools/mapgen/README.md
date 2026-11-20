@@ -38,6 +38,9 @@ python3 tools/mapgen/build_tower.py                       # tower_entrance.nbt�
 python3 tools/mapgen/build_tower.py /tmp/out --render /tmp/out   # 見本の絵も描く（外6枚・中13枚・記念碑1枚、高さ5・17で切った絵2枚。入口と広場を合わせて描く）
 python3 tools/mapgen/build_tower.py /tmp/out --render /tmp/out --only hall,ring   # 一部の絵だけ描く
 python3 tools/mapgen/build_tower.py /tmp/out --ci         # 自動の確認の写真の座標（CiScreenshots.java の MAP_VIEWS の行）を出す
+python3 tools/mapgen/check_city.py                        # 11の施設の構造物を世界の座標に並べて、街全体を通しで確かめる（はじめの形と育ったあとの形。15秒ほど）
+python3 tools/mapgen/check_city.py --render /tmp/city     # 結果（city_check.json）と、上から見た街・南から見た高さ・夜の灯り・つながる道の絵も書く
+python3 tools/mapgen/check_city.py --render /tmp/city --aerial   # 鳥瞰の絵も描く（光線で描くので1〜2分）
 ```
 
 見本の絵のテクスチャと模型（ランタン・看板・旗などの形）は、初めて使うときに GitHub の Minecraft の素材の写し（1.20.1）から
@@ -105,6 +108,8 @@ python3 tools/mapgen/build_tower.py /tmp/out --ci         # 自動の確認の�
 | `build_church.py` | コネリアの結びの教会（PHASE 8 の設計。46×41×38、正面は東）と記憶の庭（25×12×18）。平面図の (u, v) と高さ y（道のブロックが 0）で組み立てる。アーチは `arch_row()`、色ガラスの窓は `lancet()` と `rose()`、鐘楼のらせん階段は `spiral()`（1回りめは下を埋め、2回りめは裏に逆さの階段）。記憶の庭を並べた写しは `combined_world()`（見本の絵と確かめで使う）。6日目の記憶の相談所の重ねる形は `counsel_overlay()`（書く所は `COUNSEL_OWNED` の4マスだけ）、重ねたあとは `counsel_world()` |
 | `build_fishing.py` | コネリアの釣り堀（PHASE 9 の設計。36×25×44、入口は東）と、水門と湖（48×34×48）・路地（18×8×14）。平面図の (u, v) と高さ y（道のブロックが 0、水面のブロックは −3）で組み立てる。池の形は `POND_ROWS`、水の深さは `depth()`（岸からの近さ）、岸の斜面は `land_dist()`。釣り堀が書くマスは `mine()`（記憶の庭と城壁沿いの道は書かない）。水は構造物ごとに漏れない（池は `weir()` の堰板、水門は `gate_channel()` の堰板で止まる）。寄付で開く湖畔の釣り場は `lakeside()`（書くマスは `LK_OWNED`）、第2章の氷は `frozen_overlay()`（`FROZEN_OWNED`）。3つの形を並べた写しは `checked_world(which)`（見本の絵と確かめで使う） |
 | `build_casino.py` | コネリアのカジノ「ラッキーノット」（PHASE 10 の設計。43×29×36、正面は西）。建物の中の (u, v)（u 0 = 世界の x 13、v 0 = 世界の z 72）と高さ y（道のブロックが 0、地下は負）で組み立てる。屋根は前と奥の寄棟 `Hip`（金の縁の軒）、大広間の切妻と真ん中の帯の切妻（`Roof`、縁は `dark_rim()` で黒くして外の破風板だけを金に）、正面の両端の小塔。ルーレットの卓は `roulette()`（12の目は `POCKETS`）、大きな吊り灯は `chandelier()`、部屋から見える屋根の下は `roof_boards()` で野地板にする。書くマスは `owned()`（城壁沿いの道・南門の前の東の区画・茶と香辛料の店の横は書かない）。寄付で足すハイ＆ローは `highlow_overlay()`（`HL_OWNED`）、魚レースは `fishrace_overlay()`（`FR_OWNED`）。重ねたあとの写しは `checked_world(which)` |
+| `check_city.py` | 街全体の通しの確かめ。構造物ファイル（`src/main/resources/.../map/conelia/*.nbt`）を、地図を組むときの位置と順番（`PLACEMENTS`。docs/map_style.md の「置き方（地図を組むとき）」と同じ）に並べた街 `City(stage)`（`"start"` はじめの形、`"grown"` 重ねる形をすべて重ねた形）で、構造物どうしの重なり（`overlaps`）、ゾーニングの図の道と広場（`ROADS`・`ROAD_CENTERS`。まだ作っていない所も）の真ん中と上の物、城壁と城壁沿いの道にかかる物、高さ（`footprints`・`ring_heights`）、灯り（`lamp_kinds`・`chandeliers`・`door_lamps`・`dark_spots`）、つながる道（`walk`・`back_reach`。まだない道は道の高さの地面、施設のない土地は歩けない所）と各 PHASE の行き先（`GOALS`）を確かめる。読んだ構造物は `~/.cache/amemaru-mapgen/city` にためる |
+| `city_figures.py` | 街全体の絵（`check_city.py --render` から呼ぶ）：上から見た街（各柱のいちばん上のブロックの色と陰）・南から見た高さ（施設ごとの影絵と④の線）・夜の灯り（中央広場から歩ける所の明るさと灯りの種類）・つながる道・鳥瞰（`render_aerial()`。池と湖は `render(sunken=...)` で地面の平らな面の下も描く） |
 | `build_tower.py` | コネリアの塔の入口（PHASE 11 の設計。入口 45×48×30・塔前広場 47×18×32、正面は南）。世界の座標（x・z）と高さ y（道のブロックが 0）で、入口と広場を1つの合わせた形（47×50×62）に組み立て、書き出すときに2つの箱に切り分ける（`split()`。箱からはみ出すブロックがあれば止まる）。塔の基部の丸い壁は `base_face()`（3つの帯の半径 `BANDS`）、門のアーチは `arch_open()`、転移門の輪は `ring_cell()`・`ring_open()`、左右の塔のらせん階段は `spiral()`、広場の段は `terrace()`。重ねる形は記念碑（`M`）。確かめの写し `checked_world()` は、建物の下と外にゲームの地面（y 0）を足す |
 
 ## 決まり
@@ -148,5 +153,9 @@ python3 tools/mapgen/build_tower.py /tmp/out --ci         # 自動の確認の�
 - 上にふさぐブロックがある土の道（`dirt_path`）は、置いたときにゲームが土に変えるので、`finalize()` で先に土にする。
 - 物語で形が変わる所（育つ施設）は、変わる範囲だけの小さな構造物を別に書き出して、後から重ねて置く
   （`build_weapon.py` の `forge_lit_world()`。範囲の中は空気も書き出すので、外したブロックは消える）。
+- 施設を足したり、置き方や形を直したりしたら、`check_city.py` で街全体を通しで確かめる。新しい施設は `PLACEMENTS` に
+  置く所と順番（後に置くほど上書きする）を足し、重ねる形は土台の構造物の名前も書く。各 PHASE の行き先は `GOALS` に足す。
+- 1つの施設の中の直しで、乱数を引く数を変えない（`rng.random()` を引く回数が変わると、そのあとに作る形の乱数がすべてずれて、
+  直していない所まで変わる。`build_market.py` の `build_chimney()` のように、引く数はそのままにして、置くかどうかだけを変える）。
 
 様式（材料・層・屋根・飾り）の決まりは `docs/map_style.md` にまとめています。

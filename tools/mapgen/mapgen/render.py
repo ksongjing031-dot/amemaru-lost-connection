@@ -663,8 +663,12 @@ class Scene:
         return det, depth, col_out, nrm_out, emis_out, shade_out
 
     # ---------------------------------------------------------------- 絵
-    def render(self, eye, target, width=1280, height=720, fov=55.0, sun=(-0.45, 0.8, 0.55), shadows=True, path=None):
-        """eye・target はブロックの単位。絵（PIL.Image）を返す。"""
+    def render(self, eye, target, width=1280, height=720, fov=55.0, sun=(-0.45, 0.8, 0.55), shadows=True, path=None,
+               fog=(60.0, 200.0, 0.6), ground_fog=(40.0, 160.0, 0.85), sunken=()):
+        """eye・target はブロックの単位。絵（PIL.Image）を返す。
+        fog・ground_fog は（かすみ始める距離、かすみ切るまでの距離、いちばん濃いかすみ）。街全体のような遠い絵で薄くする。
+        sunken は、地面の平らな面より低い所を見せる四角（x0, z0, x1, z1。ブロックの単位）。池や湖のように地面より低い所"""
+        fog_cfg = fog
         eye = np.array(eye, dtype=np.float64) * S
         target = np.array(target, dtype=np.float64) * S
         forward = target - eye
@@ -688,6 +692,14 @@ class Scene:
         going_down = dirs[:, 1] < -1e-4
         t_plane = np.where(going_down, (self.ground_y - origins[:, 1]) / np.where(going_down, dirs[:, 1], -1.0), np.inf)
         under = hit & going_down & (t > t_plane + 0.05)
+        if sunken:
+            fin = np.isfinite(t_plane)
+            gx = np.where(fin, origins[:, 0] + dirs[:, 0] * np.where(fin, t_plane, 0.0), np.nan) / S
+            gz = np.where(fin, origins[:, 2] + dirs[:, 2] * np.where(fin, t_plane, 0.0), np.nan) / S
+            keep = np.zeros(n, dtype=bool)
+            for (sx0, sz0, sx1, sz1) in sunken:
+                keep |= fin & (gx >= sx0) & (gx <= sx1 + 1) & (gz >= sz0) & (gz <= sz1 + 1)
+            under &= ~keep
         hit = hit & ~under
         # 模型の部品（ランタン・看板・旗・額縁など）：ブロックや地面より手前にあるものを描く
         eye_b = eye / S
@@ -714,7 +726,7 @@ class Scene:
             gv = (np.floor(gp[:, 2] / S * 16) % 16).astype(np.int64)
             gcol = grass[gv, gu, :3] * 0.95
             dist = tg / S
-            fog = np.clip((dist - 40.0) / 160.0, 0.0, 0.85)[:, None]
+            fog = np.clip((dist - ground_fog[0]) / ground_fog[1], 0.0, ground_fog[2])[:, None]
             color[down] = gcol * (1 - fog) + sky[down] * fog
 
         if hit.any():
@@ -741,7 +753,7 @@ class Scene:
             shade = np.where(emissive[:, None], 1.0, light[:, None])
             col = texel * shade
             dist = t[hi] / S
-            fog = np.clip((dist - 60.0) / 200.0, 0.0, 0.6)[:, None]
+            fog = np.clip((dist - fog_cfg[0]) / fog_cfg[1], 0.0, fog_cfg[2])[:, None]
             color[hi] = col * (1 - fog) + sky[hi] * fog
         if det.any():
             di = np.nonzero(det)[0]
@@ -763,7 +775,7 @@ class Scene:
                 light = light * np.where(lit_side & ~shadow_hit, 1.0, 0.68)
             shade = np.where(det_emis[di][:, None], 1.0, light[:, None])
             col = det_col[di] * shade
-            fog = np.clip((det_t[di] - 60.0) / 200.0, 0.0, 0.6)[:, None]
+            fog = np.clip((det_t[di] - fog_cfg[0]) / fog_cfg[1], 0.0, fog_cfg[2])[:, None]
             color[di] = col * (1 - fog) + sky[di] * fog
         img = (np.clip(color, 0, 1) * 255).astype(np.uint8).reshape(height, width, 3)
         image = Image.fromarray(img, "RGB")

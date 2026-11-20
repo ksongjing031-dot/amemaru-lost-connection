@@ -471,12 +471,12 @@ def tower():
     # 狭間（細い窓）：西と北の面
     for (x, y, z) in ((8, 13, 9), (8, 14, 9), (12, 12, 5), (12, 13, 5), (12, 22, 5), (12, 23, 5), (8, 19, 9), (8, 20, 9)):
         w.put(x, y, z, pane())
-    # 鐘の間（床 y=24、開口 y 25..28）
+    # 鐘の間（床 y=24、開口 y 25..28）。開口の足もと（y 25）は手すり（柵）にして、外の屋根へ出られないようにする
     for (face, a0) in (("west", 8), ("north", 11), ("south", 11)):
         for k in range(3):
             for y in range(25, 28):
                 x, z = ((8 if face == "west" else 16), a0 + k) if face in ("west", "east") else (a0 + k, (5 if face == "north" else 13))
-                w.put(x, y, z, AIR)
+                w.put(x, y, z, fence(pal.trim) if y == 25 else AIR)
         if face == "west":
             x = 8
             w.put(x, 27, 8, stairs("stone_brick", "north", "top"))
@@ -1093,6 +1093,11 @@ def surroundings():
     w.put(33, 6, 11, slab("brick", "bottom"))
     for z in (10, 11, 12):
         w.put(33, 6, z, slab("brick", "bottom"))
+    # 北西の庭（塔の道の側）と、南の植え込みの帯（環状路の側）の再建のランタン灯。街全体の通しの確かめで、
+    # この2か所が暗くて湧ける地面だったので足した（都市のルール⑦：塔の道の側は小広場の2本と同じ両腕、
+    # 環状路の側は通りの端なので片腕。南の1本は、環状路を作るときの灯りの並びの1本目になる）
+    lamp_post(w, 1, 1, 2, arms=("west", "east"))
+    lamp_post(w, 13, 1, 39, arms=("south",))
 
 
 # ---------------------------------------------------------------- 組み立て
