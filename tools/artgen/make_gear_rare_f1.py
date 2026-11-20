@@ -612,27 +612,38 @@ def build_all():
     return items
 
 
-def main():
+# 片刃の武器（持ったときに刃が前を向くようにする。weapons.hold_display）
+SINGLE_EDGE = ("sentinel_blade", "chipped_fang_greatsword")
+
+
+def base_display(name, kind):
+    """持ち方のもと（weapons.hold_display で大きさと片刃の向きを掛ける前）。古代石の武器と同じ持ち方から始める。"""
     from make_gear_ancient_stone import weapon_display
+    display = weapon_display(kind)
+    # 一人称の大きさ：石刃は刃が太く、杖は先の六角が大きいので、古代石の武器より少し小さくする（CIの写真で決めた）
+    fp = {"sentinel_blade": (0.5, 0.0), "bee_crystal_staff": (0.42, -0.75)}.get(name)
+    if fp:
+        for hand in ("firstperson_righthand", "firstperson_lefthand"):
+            t = list(display[hand]["translation"])
+            t[1] = round(t[1] + fp[1], 2)
+            display[hand] = dict(display[hand], scale=[fp[0]] * 3, translation=t)
+    return display
+
+
+def main():
     from setsheet import make_set_sheet
     repo = sys.argv[1] if len(sys.argv) > 1 else "."
     out = sys.argv[2] if len(sys.argv) > 2 else "/tmp/gear_rare"
     os.makedirs(out, exist_ok=True)
     items = build_all()
     for it in items:
-        display = weapon_display(it["kind"])
-        # 一人称の大きさ：石刃は刃が太く、杖は先の六角が大きいので、古代石の武器より少し小さくする（CIの写真で決めた）
-        fp = {"sentinel_blade": (0.5, 0.0), "bee_crystal_staff": (0.42, -0.75)}.get(it["name"])
-        if fp:
-            for hand in ("firstperson_righthand", "firstperson_lefthand"):
-                t = list(display[hand]["translation"])
-                t[1] = round(t[1] + fp[1], 2)
-                display[hand] = dict(display[hand], scale=[fp[0]] * 3, translation=t)
+        display = base_display(it["name"], it["kind"])
         if it["name"] == "bee_crystal_staff":
             export_bee_staff(repo, it["model"], it["frames"], it["icon"], display)
         else:
+            # 石刃と大剣は片刃（刃の側がモデルの +x）。持ったときに刃が前を向くように、手の中で刃の軸のまわりに回す
             weapons.export_weapon(repo, it["name"], it["model"], it["frames"], it["icon"], it["kind"], CREDIT,
-                                  display=display)
+                                  display=display, edge_forward=it["name"] in SINGLE_EDGE)
         c, lo, hi = extent_center(it["model"])
         if it["name"] == "bee_crystal_staff":
             c = c + np.array([8.0, 8.16, 8.0])

@@ -1062,6 +1062,51 @@ public final class CiScreenshots {
             }
             case GEAR + 47 -> {
                 minecraft.options.setCameraType(CameraType.FIRST_PERSON);
+                next(GEAR + 48, 2);
+            }
+            case GEAR + 48 -> {
+                // 持ったときの大きさと刃の向き（docs/gear/hold_sheet.png）：一人称の残りの2つ（古代石の剣・見習いの大剣）
+                hideHud = false;
+                CiPhase3.onServer(minecraft, CiPhase3::cleanup);
+                CiPhase3.onServer(minecraft, player -> CiGear.hold(player, "ancient_stone_sword", null));
+                if (gearReturn != null) {
+                    command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %d %.1f 0 8", gearReturn.getX() + 0.5, P3_FLOOR + 1,
+                            gearReturn.getZ() + 0.5));
+                }
+                next(GEAR + 49, 30);
+            }
+            case GEAR + 49 -> {
+                clean(minecraft);
+                pendingShot = "gear_fp_ancient_sword";
+                next(GEAR + 50, 2);
+            }
+            case GEAR + 50 -> {
+                CiPhase3.onServer(minecraft, player -> CiGear.hold(player, "apprentice_greatsword", null));
+                next(GEAR + 51, 20);
+            }
+            case GEAR + 51 -> {
+                clean(minecraft);
+                pendingShot = "gear_fp_apprentice_greatsword";
+                next(GEAR + 52, 2);
+            }
+            case GEAR + 52 -> {
+                // 三人称を横から：防具立てに右手で持たせ、右の側をこちら（北）へ向ける（西を向く。刃の先は画面の右）
+                CiPhase3.onServer(minecraft, CiPhase3::cleanup);
+                holdSide(minecraft, CiGear.HOLD_SWORDS);
+                next(GEAR + 53, 30);
+            }
+            case GEAR + 53 -> {
+                clean(minecraft);
+                pendingShot = "gear_hold_side_swords";
+                next(GEAR + 54, 2);
+            }
+            case GEAR + 54 -> {
+                holdSide(minecraft, CiGear.HOLD_GREATSWORDS);
+                next(GEAR + 55, 30);
+            }
+            case GEAR + 55 -> {
+                clean(minecraft);
+                pendingShot = "gear_hold_side_greatswords";
                 next(GEAR + 40, 2);
             }
             case GEAR + 40 -> {
@@ -1162,6 +1207,22 @@ public final class CiScreenshots {
         command(minecraft, CiGear.armoredStand("bee_crystal_staff", null, CiGear.ROBE, x - 1.1, P3_FLOOR + 1, z, front));
         command(minecraft, CiGear.armoredStand("ancient_stone_staff", null, CiGear.ROBE, x - 3.3, P3_FLOOR + 1, z, back));
         command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %.1f %.1f 0 8", x, P3_FLOOR + 1.0, gearReturn.getZ() + 0.8));
+    }
+
+    /** 剣・大剣の3つを、防具立てで横から撮る用意（間は3.4ブロック。刃の先は西＝画面の右）。 */
+    private static void holdSide(Minecraft minecraft, String[] blades) {
+        hideHud = true;
+        command(minecraft, "gamemode spectator @a");
+        command(minecraft, "kill @e[tag=amemaru_ci_gear]");
+        if (gearReturn == null) {
+            return;
+        }
+        double x = gearReturn.getX() + 0.5;
+        double z = gearReturn.getZ() + 5.5;
+        for (int k = 0; k < blades.length; k++) {
+            command(minecraft, CiGear.holdingStand(blades[k], x + 4.2 - 3.4 * k, P3_FLOOR + 1, z, 90.0F));
+        }
+        command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %d %.1f 0 10", x - 0.1, P3_FLOOR + 1, gearReturn.getZ() + 0.5));
     }
 
     private static void lineup(Minecraft minecraft, float yaw) {
