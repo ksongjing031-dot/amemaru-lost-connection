@@ -422,21 +422,26 @@ public final class CiScreenshots {
     private static int cityWaits;
     private static boolean cityDone;
     /**
-     * 街全体の写真：{写真の名前, city tp の場所}。場所が null の行は、写真の代わりに夜にする（night）・
-     * 育ったあとの形を建て直す（grown）。
+     * 街全体の写真：{写真の名前, city tp の場所, 移ってから待つ tick}。場所が null の行は、写真の代わりに夜にする（night）・
+     * 育ったあとの形を建て直す（grown）。遠くへ移ると、まわりの形を作り直すのに時間がかかる（上からと斜めは長めに待つ）。
      */
     private static final String[][] CITY_SHOTS = {
-            {"city_top", "top"}, {"city_aerial_se", "aerial_se"}, {"city_aerial_nw", "aerial_nw"},
-            {"city_plaza", "plaza"}, {"city_guild", "guild"}, {"city_storage", "storage"}, {"city_weapon", "weapon"},
-            {"city_armor", "armor"}, {"city_accessory", "accessory"}, {"city_market", "market"},
-            {"city_free_market", "free_market"}, {"city_church", "church"}, {"city_fishing", "fishing"},
-            {"city_lake", "lake"}, {"city_casino", "casino"}, {"city_tower", "tower"},
-            {"night", null},
-            {"city_top_night", "top"}, {"city_plaza_night", "plaza"}, {"city_market_night", "market"},
-            {"city_church_night", "church"}, {"city_tower_night", "tower"},
-            {"grown", null},
-            {"city_grown_top", "top"}, {"city_grown_market", "market"}, {"city_grown_free_market", "free_market"},
-            {"city_grown_fishing", "fishing"}, {"city_grown_lake", "lake"}, {"city_grown_tower", "tower"}};
+            {"city_top_n", "top_n", "200"}, {"city_top_s", "top_s", "200"},
+            {"city_aerial_se", "aerial_se", "240"}, {"city_aerial_nw", "aerial_nw", "240"},
+            {"city_plaza", "plaza", "100"}, {"city_guild", "guild", "100"}, {"city_storage", "storage", "100"},
+            {"city_weapon", "weapon", "100"}, {"city_armor", "armor", "100"}, {"city_accessory", "accessory", "100"},
+            {"city_market", "market", "100"}, {"city_free_market", "free_market", "100"}, {"city_church", "church", "100"},
+            {"city_fishing", "fishing", "100"}, {"city_lake", "lake", "100"}, {"city_casino", "casino", "100"},
+            {"city_tower", "tower", "100"},
+            {"night", null, "60"},
+            {"city_top_n_night", "top_n", "200"}, {"city_top_s_night", "top_s", "200"}, {"city_plaza_night", "plaza", "100"},
+            {"city_market_night", "market", "100"}, {"city_church_night", "church", "100"}, {"city_tower_night", "tower", "100"},
+            {"grown", null, "600"},
+            {"city_grown_top_n", "top_n", "200"}, {"city_grown_top_s", "top_s", "200"},
+            {"city_grown_restaurant", "restaurant", "100"}, {"city_grown_stalls", "stalls", "100"},
+            {"city_grown_frozen_pond", "frozen_pond", "100"}, {"city_grown_highlow", "highlow", "100"},
+            {"city_grown_fishrace", "fishrace", "100"}, {"city_grown_monument", "monument", "100"},
+            {"city_grown_forge", "forge", "100"}, {"city_grown_lake", "lake", "100"}};
 
     private CiScreenshots() {
     }
@@ -1609,11 +1614,12 @@ public final class CiScreenshots {
         }
         String[] shot = CITY_SHOTS[j / 2];
         boolean first = j % 2 == 0;
+        int waitTicks = Integer.parseInt(shot[2]);
         if (shot[1] != null) {
             if (first) {
                 // CIのコマンドはサーバーとして動くので、移る人を @p で渡す
                 command(minecraft, "amemaru admin city tp " + shot[1] + " @p");
-                next(stage + 1, 80);
+                next(stage + 1, waitTicks);
             } else {
                 clean(minecraft);
                 pendingShot = shot[0];
@@ -1623,7 +1629,7 @@ public final class CiScreenshots {
             if (first) {
                 command(minecraft, "time set midnight");
             }
-            next(stage + 1, first ? 60 : 0);
+            next(stage + 1, first ? waitTicks : 0);
         } else if (first) {
             // 育ったあとの形：はじめから建て直して、重ねる形も置く
             command(minecraft, "time set noon");
@@ -1632,7 +1638,7 @@ public final class CiScreenshots {
         } else if (CityCommands.builds == cityBuilds && cityWaits++ < 150) {
             next(stage, 20);
         } else {
-            next(stage + 1, 600);
+            next(stage + 1, waitTicks);
         }
     }
 

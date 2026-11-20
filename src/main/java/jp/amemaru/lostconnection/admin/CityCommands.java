@@ -118,16 +118,26 @@ public final class CityCommands {
             new View("weapon", 90.5, 1, 6.5, 180, -20),
             new View("armor", 71.5, 1, -6.5, 0, -20),
             new View("accessory", 31.5, 1, 6.5, 180, -20),
-            new View("market", 0.5, 1, 24.5, 0, -5),
+            new View("market", 0.5, 1, 17.5, 0, 0),
             new View("free_market", -33.5, 1, 51.5, 0, -5),
             new View("church", -50.5, 1, 0.5, 90, -25),
-            new View("fishing", -54.5, 1, 56.5, 90, 15),
-            new View("lake", -88.5, 1, 65.5, 90, 0),
+            new View("fishing", -49.5, 1, 56.5, 90, 5),
+            new View("lake", -99.5, 1, 88.5, 140, 15),
             new View("casino", -1.5, 1, 84.5, -90, -25),
             new View("tower", 0.5, 1, -109.5, 180, -20),
-            new View("top", -13.5, 210, -36.5, 180, 90),
+            // 上から：描く距離12チャンクでも霧に隠れないよう、北と南の半分ずつ（高さ110）
+            new View("top_n", -13.5, 110, -100.5, 180, 90),
+            new View("top_s", -13.5, 110, 26.5, 180, 90),
             new View("aerial_se", 110.5, 70, 110.5, 135, 25),
-            new View("aerial_nw", -125.5, 70, -150.5, -45, 25));
+            new View("aerial_nw", -125.5, 70, -150.5, -45, 25),
+            // 育ったあとに重ねる形の見どころ
+            new View("restaurant", 2.5, 1, 28.5, 90, -5),
+            new View("stalls", -33.5, 30, 76.5, 180, 90),
+            new View("frozen_pond", -67.5, 2, 40.5, 90, 30),
+            new View("highlow", 22.5, 3, 92.5, 0, 20),
+            new View("fishrace", 25.5, 10, 80.5, 0, 35),
+            new View("monument", -5.5, 2, -127.5, 108, -5),
+            new View("forge", 93.5, 1, -14.5, 180, -10));
 
     private static final SuggestionProvider<CommandSourceStack> PLACES = (context, builder) -> {
         for (View view : VIEWS) {

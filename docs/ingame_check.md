@@ -42,29 +42,37 @@
 | `weapon` | 武器工房 | 工房通りの南 (90, 1, 6) | 北（正面） |
 | `armor` | 防具工房 | 工房通りの北 (71, 1, −7) | 南（正面） |
 | `accessory` | 装飾工房 | 工房通りの南 (31, 1, 6) | 北（正面） |
-| `market` | 商店街 | 市場通りの北の端 (0, 1, 24) | 南（通りの奥） |
+| `market` | 商店街 | 中央広場の南の端 (0, 1, 17) | 南（市場通りの奥） |
 | `free_market` | フリーマーケット | 環状路の北 (−34, 1, 51) | 南（北の門） |
 | `church` | 結びの教会 | 祈りの道 (−51, 1, 0) | 西（正面と鐘楼） |
-| `fishing` | 釣り堀 | 環状路の南西の角 (−55, 1, 56) | 西（入口の門と池） |
-| `lake` | 水門と湖 | 水門の内の口 (−89, 1, 65) | 西（水門と湖） |
+| `fishing` | 釣り堀 | 環状路の南 (−50, 1, 56) | 西（入口の門と池） |
+| `lake` | 水門と湖 | 城壁の外の湖の南東の岸 (−100, 1, 88) | 北西（湖と水門） |
 | `casino` | カジノ | 市場通り (−2, 1, 84) | 東（正面） |
 | `tower` | 塔の入口 | 塔の道の北の端 (0, 1, −110) | 北（北門の外の広場と塔の入口） |
-| `top` | 上空（真上から） | 街の箱の真ん中の上、210 | 真下（画面の上が北） |
+| `top_n`・`top_s` | 上空（北の半分・南の半分） | 高さ110、(−14, −101)・(−14, 26) の上 | 真下（画面の上が北） |
 | `aerial_se` | 上空（南東から） | (110, 70, 110) | 北西 |
 | `aerial_nw` | 上空（北西から） | (−126, 70, −151) | 南東 |
+| `restaurant` | 料理屋（育ったあと） | 市場通り (2, 1, 28) | 西（商店街の北の西の店） |
+| `stalls` | フリーマーケットの露店 | 高さ30、(−34, 76) の上 | 真下 |
+| `frozen_pond` | 釣り堀の池（第2章の氷） | 上の台 (−68, 2, 40) | 西（池） |
+| `highlow` | ハイ＆ローの卓（育ったあと） | カジノ1階 (22, 3, 92) | 南（カードの卓） |
+| `fishrace` | 魚レースの走路（育ったあと） | カジノ2階の宴の間 (25, 10, 80) | 南（水の走路） |
+| `monument` | 記念碑（育ったあと） | 塔前広場 (−6, 2, −128) | 西（記念碑） |
+| `forge` | 古代炉（育ったあと） | 武器工房の炉の間 (93, 1, −15) | 北（古代炉） |
 
-描く距離が12チャンクより短いと、上空から街の端が霧で見えにくくなります（真上からは、街全体が12チャンクの中に入るように置いています）。
+描く距離が12チャンクだと、それより遠い所は霧で見えません。そのため、上からの見どころは北と南の半分ずつにしています。描く距離を20チャンク以上にすれば、もっと高い所から全体を見られます。
 
 ## CIで撮る写真（11月21日に足した）
 
 建物の見本の写真の後に、街を空（道の高さ y 200）に建てて、次の写真を撮ります。
 
-- 上から・斜めから：`city_top`・`city_aerial_se`・`city_aerial_nw`
+- 上から・斜めから：`city_top_n`・`city_top_s`・`city_aerial_se`・`city_aerial_nw`
 - 各施設の前：`city_plaza`・`city_guild`・`city_storage`・`city_weapon`・`city_armor`・`city_accessory`・`city_market`・`city_free_market`・`city_church`・`city_fishing`・`city_lake`・`city_casino`・`city_tower`
-- 夜：`city_top_night`・`city_plaza_night`・`city_market_night`・`city_church_night`・`city_tower_night`
-- 育ったあとの形：`city_grown_top`・`city_grown_market`・`city_grown_free_market`・`city_grown_fishing`・`city_grown_lake`・`city_grown_tower`
+- 夜：`city_top_n_night`・`city_top_s_night`・`city_plaza_night`・`city_market_night`・`city_church_night`・`city_tower_night`
+- 育ったあとの形：`city_grown_top_n`・`city_grown_top_s`・`city_grown_restaurant`・`city_grown_stalls`・`city_grown_frozen_pond`・`city_grown_highlow`・`city_grown_fishrace`・`city_grown_monument`・`city_grown_forge`・`city_grown_lake`
 
-写真が27枚増えたので、クライアントの確かめの時間の上限を45分にしました（ジョブは55分）。
+写真が33枚増えたので、クライアントの確かめの時間の上限を45分にしました（ジョブは55分）。
+CIのコマンドはサーバーとして動くので、移る人を `@p` で渡します（`city tp <場所> @p`）。遠くへ移ったあとは、まわりの形を作り直すのを待ってから撮ります（上からと斜めは10〜12秒、ほかは5秒）。
 
 ## ファイル
 

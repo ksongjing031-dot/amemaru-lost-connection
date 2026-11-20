@@ -519,8 +519,16 @@
   "commands.amemaru.city.place.lake": "水門と湖",
   "commands.amemaru.city.place.casino": "カジノ",
   "commands.amemaru.city.place.tower": "塔の入口",
-  "commands.amemaru.city.place.top": "上空（真上から）",
   "commands.amemaru.city.place.aerial_se": "上空（南東から）",
   "commands.amemaru.city.place.aerial_nw": "上空（北西から）",
-  "generator.amemaru.conelia_check": "コネリアの確かめ用（平地）"
+  "generator.amemaru.conelia_check": "コネリアの確かめ用（平地）",
+  "commands.amemaru.city.place.top_n": "上空（北の半分を真上から）",
+  "commands.amemaru.city.place.top_s": "上空（南の半分を真上から）",
+  "commands.amemaru.city.place.restaurant": "料理屋（育ったあと）",
+  "commands.amemaru.city.place.stalls": "フリーマーケットの露店（真上から）",
+  "commands.amemaru.city.place.frozen_pond": "釣り堀の池（第2章の氷）",
+  "commands.amemaru.city.place.highlow": "ハイ＆ローの卓（育ったあと）",
+  "commands.amemaru.city.place.fishrace": "魚レースの走路（育ったあと）",
+  "commands.amemaru.city.place.monument": "記念碑（育ったあと）",
+  "commands.amemaru.city.place.forge": "古代炉（育ったあと）"
 }
