@@ -2,7 +2,7 @@
 
 塔の門（古代の転移門。門番バルド。Phase 0-A）は、北門を出た先の塔前広場の奥に、塔の足もととして建つ（都市のルール⑧）。
 正面は南（北門の方）。北の大通り（塔の道）からまっすぐ、北門 → 塔前広場 → 塔の入口が一直線に並ぶ。
-  - 門の棟（正面）：左右の塔（9×9。胴は +24、上の段は一回り細い7×7、緑青の銅の四角すいの屋根の先が +36＝正面の高さ）と、
+  - 門の棟（正面）：左右の塔（9×9。胴は +20、上の段は一回り細い7×7、緑青の銅の四角すい 2：1 の屋根の先が +36＝正面の高さ）と、
     その間の門の壁（胸壁の凸まで +17。塔は門の壁の約2倍）。真ん中に大きな丸いアーチ（幅9、高さ11）と、上げた落とし格子。
     アーチの上に、模様入りの石で彫った古代の紋章（結界の紋：円・四角・十字。真ん中に結晶）の板が +28 まで立ち上がる。
     アーチの左右は、受付（西。通路に向いた窓口）と衛兵の間（東）。左右の塔のらせん階段で、門の上の歩廊（+15）へ出る。
@@ -10,6 +10,8 @@
     はめ込み、3段上がった台の上に転移の円。輪の向こうに、封じられた塔の大扉が見える。台の東に門番バルドの書見台、
     その後ろの東の壁に「塔の灯り」（章の色のろうそく20本。ひらいた階だけ灯る【提案】）。両側と南の高窓から光が入る。
   - 両翼（1階建て）：西は控えの間（パーティーの待ち合わせ）と補給の隅、東は門番の部屋と踏破の記録の間。
+  - 屋根（都市のルール⑥。緑青の銅だけ）：広間は寄棟 1：1（軒 +21、棟 +30）、両翼は広間の壁に掛ける片流れ 1：1（教会の側廊と同じ）、
+    左右の塔は四角すい 2：1。
   - 塔の基部の壁：建物の奥いっぱいに、塔の丸い基部の南の弧が +48 まで立ち上がる（段になった3つの帯、8ごとの付け柱、
     縦一列の窓、上の冠と結晶の灯り）。上はあとで足す（いちばん上の半ブロックの段の上に、塔の胴の構造物を置く）。
   - 塔前広場（47×32）：白い石畳。塔の入口に向かって、ゆるい段で3段上がる（+0 → +3）。真ん中は塔の道の続き（8ごとに
@@ -55,8 +57,8 @@ FL, FT = 3, 4                    # 床のブロック・足もと
 CEIL = 20                        # 広間の天井のブロック（広間の中は y 4..19 の16）
 WALK = 15                        # 門の上の歩廊の床（足もと 16）
 LOW_CEIL = 9                     # 受付・衛兵の間・両翼の天井
-TW_BODY = 24                     # 左右の塔の胴の上
-TW_TOP = 31                      # 上の段の壁の上（屋根は +32..+36）
+TW_BODY = 20                     # 左右の塔の胴の上
+TW_TOP = 26                      # 上の段の壁の上（屋根は 2：1 の四角すいで +27..+36）
 APEX = 36                        # 左右の塔の屋根の先（正面の高さ）
 BASE_TOP = 48                    # 塔の基部の壁の上（半ブロックの段）
 Z_TF, Z_TB = -148, -156          # 左右の塔の正面・裏
@@ -360,7 +362,7 @@ def base_wall():
             put(xc, base_face(xc, y1 + 1), y1 + 1, QB)
 
 
-# ---------------------------------------------------------------- 左右の塔（9×9。胴 +24、上の段 7×7、銅の屋根の先 +36）
+# ---------------------------------------------------------------- 左右の塔（9×9。胴 +20、上の段 7×7、銅の屋根 2：1 の先 +36）
 def towers():
     for s in (-1, 1):
         x0, x1 = sorted((14 * s, 22 * s))
@@ -385,7 +387,7 @@ def towers():
                         put(x, z, y, floor_tile())
                     elif y >= 19:
                         put(x, z, y, white())                         # らせん階段の上は詰める
-        # 胴の上の水切り（上の段のまわり、+25）
+        # 胴の上の水切り（上の段のまわり、+21）
         xi0, xi1 = sorted((15 * s, 21 * s))
         for x in range(x0, x1 + 1):
             for z in range(Z_TB, Z_TF + 1):
@@ -398,7 +400,7 @@ def towers():
                 else:
                     f = "east" if x == x0 else "west"
                 put(x, z, TW_BODY + 1, stairs("quartz", f))
-        # 上の段（7×7、+25..+31）
+        # 上の段（7×7、+21..+26）
         for x in range(xi0, xi1 + 1):
             for z in range(Z_TB + 1, Z_TF):
                 edge = x in (xi0, xi1) or z in (Z_TB + 1, Z_TF - 1)
@@ -411,12 +413,12 @@ def towers():
         # 上の段の窓（遮光ガラス。中は詰まっている）
         xc = 18 * s
         for (x, z) in ((xc, Z_TF - 1), (xc, Z_TB + 1), (21 * s, -152), (15 * s, -152)):
-            for y in (27, 28, 29):
+            for y in (23, 24, 25):
                 put(x, z, y, block("tinted_glass"))
-            put(x, z, 26, QB)
-        # 緑青の銅の四角すいの屋根（軒の縁は石英の逆さ階段。先 +36）
+            put(x, z, 22, QB)
+        # 緑青の銅の四角すいの屋根（2：1。軒の縁は石英の逆さ階段。先 +36）
         X, Y, Z = 18 * s - CX0, TW_TOP + 1 - CY0, -152 - CZ0
-        Pyramid(C, copper, X, Z, 4, Y, pitch=1, thickness=5, mat="waxed_oxidized_cut_copper",
+        Pyramid(C, copper, X, Z, 4, Y, pitch=2, thickness=9, mat="waxed_oxidized_cut_copper",
                 mat_block="waxed_oxidized_copper").build()
         put(18 * s, -152, APEX, slab("waxed_oxidized_cut_copper", "bottom"))   # 先（半ブロック。上に湧かない）
         spiral(s)
@@ -633,7 +635,7 @@ def hall():
     for s in (-1, 1):
         for zs in ((-160, -159), (-165, -164), (-171, -170)):
             for z in zs:
-                for y in (15, 16, 17, 18):
+                for y in (17, 18, 19):
                     put(14 * s, z, y, pane(GLASS))
 
 
@@ -715,21 +717,20 @@ def wings():
                     for y in (1, 2):
                         put(x, z, y, STONE)
                     put(x, z, FL, floor_tile())
-        # 屋根（片流れ。広間の側 +13 から、外の軒 +9.5 へ）
+        # 屋根（片流れ 1：1。教会の側廊と同じ。外の軒 +9 から、広間の側 +16 へ。軒の下に石英の持ち送り）
+        up = "west" if s > 0 else "east"
         for a in range(15, 23):
             x = a * s
-            k = 22 - a
-            yr = LOW_CEIL + k // 2
+            yr = LOW_CEIL + (22 - a)
             for z in range(Z_GB, -178, -1):
                 if z <= base_face(x, yr):
                     break
                 if a <= 21:
                     for y in range(LOW_CEIL, yr):
                         put(x, z, y, white())
-                if k % 2 == 0:
-                    put(x, z, yr, slab("waxed_oxidized_cut_copper", "bottom"))
-                else:
-                    put(x, z, yr, stairs("waxed_oxidized_cut_copper", "west" if s > 0 else "east"))
+                put(x, z, yr, stairs("waxed_oxidized_cut_copper", up))
+                if a == 22 and z > base_face(x, LOW_CEIL - 1):
+                    put(x, z, LOW_CEIL - 1, stairs("quartz", up, "top"))
         # 外の窓
         for z in (-160, -164, -170):
             for y in (5, 6):
@@ -739,21 +740,46 @@ def wings():
             put(22 * s, z, 1, slab("polished_diorite", "bottom"))
 
 
-# ---------------------------------------------------------------- 広間の屋根（片流れ。南 +21 から、塔の壁へ上がる）
+# ---------------------------------------------------------------- 広間の屋根（寄棟 1：1。軒 +21、棟 +30、半ブロック +31）
+def in_tower(x, z):
+    """左右の塔（胴・上の段・屋根）の範囲"""
+    return 14 <= abs(x) <= 22 and Z_TB <= z <= Z_TF
+
+
 def hall_roof():
-    for x in range(-15, 16):
-        for z in range(Z_GB, -178, -1):
-            k = Z_GB - z
-            yr = CEIL + 1 + k // 2
-            if z <= base_face(x, yr):
-                break
-            if abs(x) <= 14:
-                for y in range(CEIL + 1, yr):
-                    put(x, z, y, white())
-            if k % 2 == 0:
-                put(x, z, yr, slab("waxed_oxidized_cut_copper", "bottom"))
+    """広間の寄棟（都市のルール⑥：幅12以上は 1：1）。範囲は軒の出を含む x −15..15、z −174..−156。
+    北の面は塔の基部の壁に入る所を置かない（壁にぶつかって終わる）。南西・南東の角は左右の塔に入る所を置かない。
+    屋根の下（広間の天井 +20 の上）は詰める"""
+    x0, x1, z0, z1, y0 = -15, 15, -174, Z_TB, CEIL + 1
+    km = min((x1 - x0) // 2, (z1 - z0) // 2)
+    for x in range(x0, x1 + 1):
+        for z in range(z0, z1 + 1):
+            if in_tower(x, z):
+                continue
+            dx, dz = min(x - x0, x1 - x), min(z - z0, z1 - z)
+            k = min(dx, dz)
+            top = y0 + k
+
+            def free(y):
+                return not in_base(x, z, y)
+            if abs(x) <= 14 and z <= Z_GB:
+                for y in range(y0, top):
+                    if free(y):
+                        put(x, z, y, white())
+            if k >= km:
+                if free(top):
+                    put(x, z, top, block("waxed_oxidized_copper"))
+                if free(top + 1):
+                    put(x, z, top + 1, slab("waxed_oxidized_cut_copper", "bottom"))
+                continue
+            if dx <= dz:
+                facing = "east" if x - x0 <= x1 - x else "west"
             else:
-                put(x, z, yr, stairs("waxed_oxidized_cut_copper", "north"))
+                facing = "south" if z - z0 <= z1 - z else "north"
+            if free(top):
+                put(x, z, top, stairs("waxed_oxidized_cut_copper", facing))
+            if k == 0 and free(y0 - 1) and not (abs(x) <= 14 and z <= Z_GB):
+                put(x, z, y0 - 1, stairs("quartz", facing, "top"))
 
 
 # ---------------------------------------------------------------- 受付（西）と衛兵の間（東）
