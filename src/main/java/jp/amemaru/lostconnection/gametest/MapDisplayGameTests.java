@@ -72,6 +72,8 @@ public final class MapDisplayGameTests {
     private static final String CHURCH = "map/conelia/church";
     private static final String FISHING = "map/conelia/fishing_pond";
     private static final String FISHING_LAKESIDE = "map/conelia/fishing_lakeside";
+    private static final String CASINO = "map/conelia/casino";
+    private static final String CASINO_HIGHLOW = "map/conelia/casino_highlow";
 
     /** 防具立てを右クリックする高さ（足・脚・胴・手・頭のあたり）。 */
     private static final double[] CLICK_HEIGHTS = {0.2, 0.6, 1.0, 1.3, 1.8};
@@ -162,6 +164,20 @@ public final class MapDisplayGameTests {
     @GameTest(template = EMPTY)
     public static void fishingLakesideDisplaysCannotBeTaken(GameTestHelper helper) {
         checkBuilding(helper, FISHING_LAKESIDE, "fishing_lakeside", 1, 0);
+    }
+
+    /** カジノ：額縁14（吊り看板の下の金のリンゴ、景品の台の称号の札・留め糸・旗の模様・金のリンゴ、景品の交換所の壁の楽の円盤、
+     *  地下の噂の間の地図の壁の地図と紙8）、防具立て4（景品の見た目の服2、2階の働く人の部屋の係の服2）。
+     *  魚レース（casino_fishrace）には、額縁も防具立てもない。 */
+    @GameTest(template = EMPTY)
+    public static void casinoDisplaysCannotBeTaken(GameTestHelper helper) {
+        checkBuilding(helper, CASINO, "casino", 14, 4);
+    }
+
+    /** ハイ＆ロー（共同事業②のあとに重ねる形）：額縁4（2つのカードの卓のカードとチップ）。 */
+    @GameTest(template = EMPTY)
+    public static void casinoHighLowDisplaysCannotBeTaken(GameTestHelper helper) {
+        checkBuilding(helper, CASINO_HIGHLOW, "casino_highlow", 4, 0);
     }
 
     /**

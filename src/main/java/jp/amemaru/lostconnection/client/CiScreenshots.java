@@ -121,7 +121,11 @@ public final class CiScreenshots {
      *  下の桟橋の先・アーチの下の桟橋・湧き口・西の岸・釣り具屋のカウンター・水門の内側・水門の外の面・路地）、
      *  {@link #FISH_LAKESIDE_SHOT} からの3枚は寄付で開いた湖畔の釣り場を重ねたあと（岸の板の道・長い桟橋の先から・
      *  開いた水門の内側）、{@link #FISH_FROZEN_SHOT} の1枚は第2章の氷を重ねたあと。座標は釣り堀の地面の所から
-     *  （釣り堀は {@link #FISH_POND_AT}、水門と湖は {@link #FISH_GATE_AT}、路地は {@link #FISH_ALLEY_AT} だけずらして置く）。 */
+     *  （釣り堀は {@link #FISH_POND_AT}、水門と湖は {@link #FISH_GATE_AT}、路地は {@link #FISH_ALLEY_AT} だけずらして置く）。
+     *  {@link #CASINO_FIRST} からの9枚はカジノ（tools/mapgen/build_casino.py の CI_SHOTS と同じ：正面・南門の内から・上から・
+     *  背面・大広間のアーチから・酒場・VIPルーム・地下の噂の間・2階の宴の間）、{@link #CASINO_HIGHLOW_SHOT} の1枚は
+     *  共同事業②の「ハイ＆ロー」を重ねたあと（カードの卓）、{@link #CASINO_FISHRACE_SHOT} の1枚は共同事業⑥の「魚レース」を
+     *  重ねたあと（宴の間の水の走路）。座標はカジノの地面の所から（カジノは {@link #CASINO_AT} だけずらして置く）。 */
     private static final String[] MAP_SHOTS = {
             "map_guild_front", "map_guild_left", "map_guild_right", "map_guild_close", "map_guild_aerial", "map_guild_back",
             "map_weapon_front", "map_weapon_gate", "map_weapon_west", "map_weapon_close", "map_weapon_aerial",
@@ -147,7 +151,10 @@ public final class CiScreenshots {
             "map_fishing_entrance", "map_fishing_aerial", "map_fishing_deck", "map_fishing_pier", "map_fishing_arch",
             "map_fishing_spring", "map_fishing_west", "map_fishing_shop", "map_fishing_gate_in", "map_fishing_gate_out",
             "map_fishing_alley", "map_fishing_lakeside", "map_fishing_lakeside_pier", "map_fishing_gate_open",
-            "map_fishing_frozen"};
+            "map_fishing_frozen",
+            "map_casino_front", "map_casino_gate", "map_casino_aerial", "map_casino_back", "map_casino_in_hall",
+            "map_casino_in_bar", "map_casino_vip", "map_casino_rumor", "map_casino_banquet", "map_casino_highlow",
+            "map_casino_fishrace"};
     private static final double[][] MAP_VIEWS = {
             {-30, 16, 21, 18, 13, 21},
             {-22, 22, -18, 16, 12, 16},
@@ -236,6 +243,17 @@ public final class CiScreenshots {
             {-22, 0.62, 52.5, -2, 1, 52.5},
             {14, 2.62, 47, -1, 3, 40},
             {22.5, 6.5, 13, 13, -3, 21.5},
+            {-11, 2.62, 16.5, 8, 12, 16.5},
+            {-6, 2.62, 36, 15, 10, 18},
+            {-9, 30, 42, 22, 6, 16},
+            {55, 14, -2, 25, 8, 18},
+            {15.5, 4.62, 16.5, 30, 5, 16.5},
+            {18.5, 4.62, 21.5, 27, 4.5, 6},
+            {30.5, 4.62, 16.5, 36.5, 3.6, 18.5},
+            {31.6, 0.62, 15.6, 36.6, -0.1, 18},
+            {16.6, 11.62, 16.5, 29, 13, 16.5},
+            {20.4, 5.4, 24.6, 17.6, 3.6, 26.8},
+            {16.5, 12.62, 16.5, 27.5, 10.2, 17},
     };
     /** 武器工房の写真の始まり。ここで、ギルドを片づけて武器工房を置く。 */
     private static final int WEAPON_FIRST = 6;
@@ -316,6 +334,20 @@ public final class CiScreenshots {
      * 水門と湖（−36〜11、−9〜24、25〜72）・路地（29〜46、−1〜6、43〜56）の所まで広げる。
      */
     private static final int[] FISH_CLEAR = {-36, -9, 0, 66, 40, 72};
+    /** カジノの写真の始まり。ここで、釣り堀・水門と湖・路地を広く片づけ（{@link #FISH_CLEAR}）、カジノを置く。 */
+    private static final int CASINO_FIRST = 87;
+    /** カジノの構造物（建物・前の小広場・北の路地・東の裏の通路・南の小道と、地下の秘密の階。43×29×36。地面は Y 3）。 */
+    private static final String CASINO = "casino";
+    /** カジノを置く所：地面のブロック（Y 3）を、片づけたあとの草の高さにそろえる。 */
+    private static final int[] CASINO_AT = {0, -3, 0};
+    /** 共同事業②の「ハイ＆ロー」の写真。ここで、カジノの上に、カードの卓を同じ所から重ねて置く（片づけない）。 */
+    private static final int CASINO_HIGHLOW_SHOT = 96;
+    /** 重ねて置く構造物（ハイ＆ロー。南の側廊のカードの卓の布と仕切りと札、卓のカードとチップの額縁だけを書く）。 */
+    private static final String CASINO_HIGHLOW = "casino_highlow";
+    /** 共同事業⑥の「魚レース」の写真。ここで、カジノの上に、宴の間の水の走路を同じ所から重ねて置く（片づけない）。 */
+    private static final int CASINO_FISHRACE_SHOT = 97;
+    /** 重ねて置く構造物（魚レース。宴の間の真ん中の走路と灯りと札だけを書く）。 */
+    private static final String CASINO_FISHRACE = "casino_fishrace";
     /** 片づける範囲（東西・高さ・南北）：いちばん大きい構造物（東西は商店街の37、南北は商店街の南の44）を包む大きさ。 */
     private static final int[] CLEAR_SIZE = {37, 38, 44};
     /**
@@ -1058,6 +1090,13 @@ public final class CiScreenshots {
                         overlayAt(minecraft, FISH_LAKESIDE, FISH_GATE_AT);
                     } else if (FISH_FROZEN.equals(name)) {
                         overlayAt(minecraft, FISH_FROZEN, FISH_POND_AT);
+                    } else if (CASINO.equals(name)) {
+                        // 正面の灯りと中の大きな吊り灯を見せるので、日の高いうちに撮る
+                        command(minecraft, "time set noon");
+                        clearWide(minecraft, FISH_CLEAR);
+                        overlayAt(minecraft, CASINO, CASINO_AT);
+                    } else if (CASINO_HIGHLOW.equals(name) || CASINO_FISHRACE.equals(name)) {
+                        overlayAt(minecraft, name, CASINO_AT);
                     } else if (CHURCH.equals(name)) {
                         // 色ガラスと中の灯りを見せるので、日の高いうちに撮る
                         command(minecraft, "time set noon");
@@ -1137,6 +1176,15 @@ public final class CiScreenshots {
         }
         if (view == FISH_FROZEN_SHOT) {
             return FISH_FROZEN;
+        }
+        if (view == CASINO_FIRST) {
+            return CASINO;
+        }
+        if (view == CASINO_HIGHLOW_SHOT) {
+            return CASINO_HIGHLOW;
+        }
+        if (view == CASINO_FISHRACE_SHOT) {
+            return CASINO_FISHRACE;
         }
         return null;
     }

@@ -199,8 +199,8 @@ def kind(name):
         return "trapdoor"
     if name.endswith("_door"):
         return "door"
-    if name.endswith("_carpet") or name == "moss_carpet":
-        return "carpet"
+    if name.endswith("_carpet") or name == "moss_carpet" or name.endswith("_pressure_plate"):
+        return "carpet"            # 感圧板も、薄い板（当たりなし）として扱う
     if name in ("lantern", "soul_lantern"):
         return "lantern"
     if name in ("chain",):

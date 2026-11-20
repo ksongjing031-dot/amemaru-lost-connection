@@ -172,6 +172,10 @@ def face_textures(name, props):
         tint = np.array([0.38, 0.6, 0.38], dtype=np.float32) if name == "spruce_leaves" else FOLIAGE_TINT
         return all6(_tinted(name, tint))
     if k == "carpet":
+        if name.endswith("_pressure_plate"):
+            plate = {"light_weighted_pressure_plate": "gold_block", "heavy_weighted_pressure_plate": "iron_block",
+                     "stone_pressure_plate": "stone", "polished_blackstone_pressure_plate": "polished_blackstone"}
+            return all6(texture(plate.get(name, name.replace("_pressure_plate", "_planks"))))
         return all6(texture(name.replace("_carpet", "_wool")) if name != "moss_carpet" else texture("moss_block"))
     if k == "flower":
         if name in ("grass", "fern"):

@@ -30,6 +30,10 @@ python3 tools/mapgen/build_church.py /tmp/out --ci        # 自動の確認の�
 python3 tools/mapgen/build_fishing.py                     # fishing_pond.nbt（釣り堀）・water_gate.nbt（水門と湖）・fishing_alley.nbt（路地）・fishing_lakeside.nbt（湖畔の釣り場）・fishing_pond_frozen.nbt（第2章の氷）を書き直す
 python3 tools/mapgen/build_fishing.py /tmp/out --render /tmp/out   # 見本の絵も描く（はじめの形16枚・湖畔の釣り場4枚・氷1枚、高さ1・3で切った絵2枚。水門と湖・路地を並べて描く）
 python3 tools/mapgen/build_fishing.py /tmp/out --ci       # 自動の確認の写真の座標（CiScreenshots.java の MAP_VIEWS の行）を出す
+python3 tools/mapgen/build_casino.py                      # casino.nbt（カジノ）・casino_highlow.nbt（共同事業②のハイ＆ロー）・casino_fishrace.nbt（共同事業⑥の魚レース）を書き直す
+python3 tools/mapgen/build_casino.py /tmp/out --render /tmp/out   # 見本の絵も描く（外6枚・中13枚・ハイ＆ロー1枚・魚レース2枚、地下・1階・2階で切った絵3枚）
+python3 tools/mapgen/build_casino.py /tmp/out --render /tmp/out --only front,vip   # 一部の絵だけ描く
+python3 tools/mapgen/build_casino.py /tmp/out --ci        # 自動の確認の写真の座標（CiScreenshots.java の MAP_VIEWS の行）を出す
 ```
 
 見本の絵のテクスチャと模型（ランタン・看板・旗などの形）は、初めて使うときに GitHub の Minecraft の素材の写し（1.20.1）から
@@ -48,6 +52,7 @@ python3 tools/mapgen/build_fishing.py /tmp/out --ci       # 自動の確認の�
 /place template amemaru:map/conelia/fishing_pond ~ ~-10 ~
 /place template amemaru:map/conelia/water_gate ~-36 ~-10 ~25
 /place template amemaru:map/conelia/fishing_alley ~29 ~-2 ~43
+/place template amemaru:map/conelia/casino ~ ~-4 ~
 ```
 
 武器工房は正面が南です（立った所から東へ25、南へ22ブロック広がります）。古代炉に火が入った形（12日目）は、
@@ -66,6 +71,10 @@ python3 tools/mapgen/build_fishing.py /tmp/out --ci       # 自動の確認の�
 城壁の外の湖を含む）は西へ36・南へ25、路地は東へ29・南へ43・上へ8（釣り堀の構造物の底から）ずらして並べます（上の最後の3行）。
 釣り堀の構造物は記憶の庭と城壁沿いの道のマスを書かないので、記憶の庭の後に置いても庭は消えません。寄付で開く湖畔の釣り場
 （`fishing_lakeside`）は水門と同じ所に、第2章の氷（`fishing_pond_frozen`）は釣り堀と同じ所に重ねます（書き換えるマスだけを書く）。
+カジノは地下（秘密の階）があり、構造物の底が道より3低いので、道に立って `~ ~-4 ~` で置きます（立った所から東へ43、南へ36。
+建物は東へ8・南へ4の所から 30×26）。城壁沿いの道（中心から半径107より外）・南門の前の東の区画・茶と香辛料の店（商店街の南の東の角の店）の
+南の横の地面より上は書かないので、商店街の南の後に置いても店の入口の段や屋根は消えません。寄付で足すハイ＆ロー
+（`casino_highlow`）と魚レース（`casino_fishrace`）は、カジノと同じ所に重ねます（書き換えるマスだけを書く）。
 
 ## 中身
 
@@ -86,6 +95,7 @@ python3 tools/mapgen/build_fishing.py /tmp/out --ci       # 自動の確認の�
 | `build_freemarket.py` | コネリアのフリーマーケット（PHASE 7 の設計。30×10×32、北の門と東の門）。露店20区画は `PLOTS`（番号・場所・向き・型・色・縁の木・品）で、7つの型（`STYLES`）の部品を組み替える。はじめの形 `build(False)` と増えたあと `build(True)` は同じ乱数の種で作り、重ねる形は増える8区画の箱だけを書く（`overlay()`）。商店街の南と並べた写しは `combined_world()` |
 | `build_church.py` | コネリアの結びの教会（PHASE 8 の設計。46×41×38、正面は東）と記憶の庭（25×12×18）。平面図の (u, v) と高さ y（道のブロックが 0）で組み立てる。アーチは `arch_row()`、色ガラスの窓は `lancet()` と `rose()`、鐘楼のらせん階段は `spiral()`（1回りめは下を埋め、2回りめは裏に逆さの階段）。記憶の庭を並べた写しは `combined_world()`（見本の絵と確かめで使う）。6日目の記憶の相談所の重ねる形は `counsel_overlay()`（書く所は `COUNSEL_OWNED` の4マスだけ）、重ねたあとは `counsel_world()` |
 | `build_fishing.py` | コネリアの釣り堀（PHASE 9 の設計。36×25×44、入口は東）と、水門と湖（48×34×48）・路地（18×8×14）。平面図の (u, v) と高さ y（道のブロックが 0、水面のブロックは −3）で組み立てる。池の形は `POND_ROWS`、水の深さは `depth()`（岸からの近さ）、岸の斜面は `land_dist()`。釣り堀が書くマスは `mine()`（記憶の庭と城壁沿いの道は書かない）。水は構造物ごとに漏れない（池は `weir()` の堰板、水門は `gate_channel()` の堰板で止まる）。寄付で開く湖畔の釣り場は `lakeside()`（書くマスは `LK_OWNED`）、第2章の氷は `frozen_overlay()`（`FROZEN_OWNED`）。3つの形を並べた写しは `checked_world(which)`（見本の絵と確かめで使う） |
+| `build_casino.py` | コネリアのカジノ「ラッキーノット」（PHASE 10 の設計。43×29×36、正面は西）。建物の中の (u, v)（u 0 = 世界の x 13、v 0 = 世界の z 72）と高さ y（道のブロックが 0、地下は負）で組み立てる。屋根は前と奥の寄棟 `Hip`（金の縁の軒）、大広間の切妻と真ん中の帯の切妻（`Roof`、縁は `dark_rim()` で黒くして外の破風板だけを金に）、正面の両端の小塔。ルーレットの卓は `roulette()`（12の目は `POCKETS`）、大きな吊り灯は `chandelier()`、部屋から見える屋根の下は `roof_boards()` で野地板にする。書くマスは `owned()`（城壁沿いの道・南門の前の東の区画・茶と香辛料の店の横は書かない）。寄付で足すハイ＆ローは `highlow_overlay()`（`HL_OWNED`）、魚レースは `fishrace_overlay()`（`FR_OWNED`）。重ねたあとの写しは `checked_world(which)` |
 
 ## 決まり
 
@@ -94,6 +104,8 @@ python3 tools/mapgen/build_fishing.py /tmp/out --ci       # 自動の確認の�
 - 開いたトラップドアの板は、`facing` と反対の側にある。壁に沿わせる（雨戸）ときは、`facing` を壁の外向きにする。
 - 屋根どうしが交わる所は、`Roof.inside()`（屋根の面より下か）で、ほかの屋根の中に入るブロックを置かない。
   これで谷ができ、低い方の屋根は高い方の下に隠れる。
+- 屋根の縁取りのブロックは `Roof(trim_block=...)` で変えられる（ふつうは `pal.trim + "_planks"`。カジノの金の縁は、なめらかな砂岩）。
+- 感圧板は、見本の絵でも確かめでも、当たりのない薄い板（絨毯と同じ形）として扱う（カジノのルーレットの金の軸と金庫）。
 - 立面の文字の絵では、層 0 が1階の石の面、+1 が柱と2階の漆喰、+2 が2階の木組み（張り出し）、+3 が花箱の前板や灯りの腕木。
   文字の意味は `facade.legend()` にある（例：`P` 漆喰、`S` 石、`|` 柱、`=` 梁、`(` `)` 石のアーチの角、`[` `]` 木のアーチの角、
   `v` 持ち送り、`g` 板ガラス、`f` `a` 花箱の葉、`L` 吊るした灯り、`.` 空ける、空白は何もしない）。

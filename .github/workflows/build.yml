@@ -136,7 +136,7 @@ jobs:
           mkdir -p run/config
           printf 'earlyWindowControl = false\n' > run/config/fml.toml
 
-      # 建物の写真が増えると長くなる（PHASE 9 の釣り堀まで87枚で約14分半）。区画を足すたびに、ここの時間に収まるかを見る
+      # 建物の写真が増えると長くなる（PHASE 10 のカジノまで98枚。PHASE 9 の釣り堀までの87枚で約14分半）。区画を足すたびに、ここの時間に収まるかを見る
       - name: クライアントを起動し、ワールドに入って出る（画面写真も撮る）
         timeout-minutes: 20
         uses: headlesshq/mc-runtime-test@5.0.0
