@@ -1611,7 +1611,8 @@ public final class CiScreenshots {
         boolean first = j % 2 == 0;
         if (shot[1] != null) {
             if (first) {
-                command(minecraft, "amemaru admin city tp " + shot[1]);
+                // CIのコマンドはサーバーとして動くので、移る人を @p で渡す
+                command(minecraft, "amemaru admin city tp " + shot[1] + " @p");
                 next(stage + 1, 80);
             } else {
                 clean(minecraft);

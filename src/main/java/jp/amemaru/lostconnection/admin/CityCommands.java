@@ -2,12 +2,12 @@ package jp.amemaru.lostconnection.admin;
 
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import jp.amemaru.lostconnection.AmemaruMod;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.commands.arguments.coordinates.BlockPosArgument;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -30,6 +30,7 @@ import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
@@ -42,7 +43,7 @@ import java.util.Optional;
  *   <li>{@code city build [grown]}：中央広場の真ん中（大結晶の場所）を世界の (0, 64, 0) にして建てる。{@code grown} なら、
  *       育ったあとに重ねる形（料理屋・露店の8区画・記憶の相談所・湖畔の釣り場・第2章の氷・ハイ＆ロー・魚レース・記念碑・古代炉）も重ねる</li>
  *   <li>{@code city build at <x y z> [grown]}：真ん中の場所を決めて建てる（CIの写真では空に建てる）</li>
- *   <li>{@code city tp [場所]}：見どころへ移る（場所を省くと一覧）。最後に建てた所が基準</li>
+ *   <li>{@code city tp [場所] [人]}：見どころへ移る（場所を省くと一覧。人を省くと自分）。最後に建てた所が基準</li>
  * </ul>
  *
  * <p>置き場所・順番・道と広場の範囲は {@code tools/mapgen/check_city.py}（街全体の通しの確かめ）と同じ。座標は、道のブロックの高さが 0、
@@ -155,7 +156,11 @@ public final class CityCommands {
                 .then(Commands.literal("tp")
                         .executes(ctx -> listPlaces(ctx.getSource()))
                         .then(Commands.argument("place", StringArgumentType.word()).suggests(PLACES)
-                                .executes(ctx -> tp(ctx.getSource(), StringArgumentType.getString(ctx, "place")))));
+                                .executes(ctx -> tp(ctx.getSource(), StringArgumentType.getString(ctx, "place"),
+                                        List.of(ctx.getSource().getPlayerOrException())))
+                                .then(Commands.argument("targets", EntityArgument.players())
+                                        .executes(ctx -> tp(ctx.getSource(), StringArgumentType.getString(ctx, "place"),
+                                                EntityArgument.getPlayers(ctx, "targets"))))));
     }
 
     // ---------------------------------------------------------------- 建てる
@@ -265,8 +270,7 @@ public final class CityCommands {
 
     // ---------------------------------------------------------------- 見て回る
 
-    private static int tp(CommandSourceStack source, String id) throws CommandSyntaxException {
-        ServerPlayer player = source.getPlayerOrException();
+    private static int tp(CommandSourceStack source, String id, Collection<ServerPlayer> players) {
         View view = null;
         for (View v : VIEWS) {
             if (v.id().equals(id)) {
@@ -279,10 +283,12 @@ public final class CityCommands {
         }
         ServerLevel level = source.getLevel();
         BlockPos o = CityData.get(level).origin;
-        player.teleportTo(level, o.getX() + view.x(), o.getY() + view.y(), o.getZ() + view.z(), view.yaw(), view.pitch());
+        for (ServerPlayer player : players) {
+            player.teleportTo(level, o.getX() + view.x(), o.getY() + view.y(), o.getZ() + view.z(), view.yaw(), view.pitch());
+        }
         View chosen = view;
         source.sendSuccess(() -> Component.translatable("commands.amemaru.city.tp", placeName(chosen.id())), false);
-        return 1;
+        return players.size();
     }
 
     private static int listPlaces(CommandSourceStack source) {

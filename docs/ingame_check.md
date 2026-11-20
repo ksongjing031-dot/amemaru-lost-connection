@@ -26,7 +26,7 @@
 | `/amemaru admin city build` | 11施設を地図の位置に建てます（はじめの形）。中央広場の真ん中（大結晶の場所）が (0, 64, 0) になります。数秒、ゲームが止まります |
 | `/amemaru admin city build grown` | はじめから建て直し、育ったあとに重ねる形9つも置きます（料理屋・露店の8区画・記憶の相談所・湖畔の釣り場・第2章の氷・ハイ＆ロー・魚レース・記念碑・古代炉） |
 | `/amemaru admin city build at <x y z> [grown]` | 真ん中の場所を決めて建てます（CIの写真では空に建てる） |
-| `/amemaru admin city tp [場所]` | 見どころへ移ります（場所を省くと一覧）。最後に建てた所が基準です |
+| `/amemaru admin city tp [場所] [人]` | 見どころへ移ります（場所を省くと一覧、人を省くと自分）。最後に建てた所が基準です |
 
 - 置き場所と順番は、街全体の通しの確かめ（`tools/mapgen/check_city.py`）と同じです。
 - 建てる範囲（x −144〜135、z −184〜127）は、道の高さの13下から64上までを作り直します。
@@ -64,7 +64,7 @@
 - 夜：`city_top_night`・`city_plaza_night`・`city_market_night`・`city_church_night`・`city_tower_night`
 - 育ったあとの形：`city_grown_top`・`city_grown_market`・`city_grown_free_market`・`city_grown_fishing`・`city_grown_lake`・`city_grown_tower`
 
-写真が28枚増えたので、クライアントの確かめの時間の上限を45分にしました（ジョブは55分）。
+写真が27枚増えたので、クライアントの確かめの時間の上限を45分にしました（ジョブは55分）。
 
 ## ファイル
 
