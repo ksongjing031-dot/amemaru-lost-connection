@@ -114,7 +114,8 @@ public final class CiScreenshots {
      *  寄付で露店が増えたあと（上から・北の島の並び）。座標はフリーマーケットを置いた所から（商店街の南を
      *  {@link #FREE_SOUTH_AT} だけずらして東に並べる）。
      *  {@link #CHURCH_FIRST} からの12枚は結びの教会（tools/mapgen/build_church.py の CI_SHOTS と同じ：正面・鐘楼・南・上から・
-     *  裏・身廊・内陣・南の側廊・鐘の間・療養所の2階・記憶の庭・名を刻む石）。座標は教会を置いた所から（記憶の庭を
+     *  裏・身廊・内陣・南の側廊・鐘の間・療養所の2階・記憶の庭・名を刻む石）、{@link #CHURCH_COUNSEL_SHOT} の1枚は、
+     *  6日目に開く記憶の相談所を重ねたあと（南の側廊から書庫の扉）。座標は教会を置いた所から（記憶の庭を
      *  {@link #CHURCH_GARDEN_AT} だけずらして南に並べる）。 */
     private static final String[] MAP_SHOTS = {
             "map_guild_front", "map_guild_left", "map_guild_right", "map_guild_close", "map_guild_aerial", "map_guild_back",
@@ -137,7 +138,7 @@ public final class CiScreenshots {
             "map_freemarket_more_aerial", "map_freemarket_more_north",
             "map_church_front", "map_church_tower", "map_church_south", "map_church_aerial", "map_church_back",
             "map_church_nave", "map_church_chancel", "map_church_aisle", "map_church_bell", "map_church_sanatorium",
-            "map_church_garden", "map_church_memorial"};
+            "map_church_garden", "map_church_memorial", "map_church_counsel"};
     private static final double[][] MAP_VIEWS = {
             {-30, 16, 21, 18, 13, 21},
             {-22, 22, -18, 16, 12, 16},
@@ -210,6 +211,7 @@ public final class CiScreenshots {
             {5.5, 8.62, 9.5, 5.5, 8.4, 3},
             {21.5, 2.62, 39.5, 21.5, 3, 52},
             {21.5, 2.62, 47.2, 21.5, 3.6, 51.5},
+            {14.3, 4.62, 28.4, 9, 4.3, 29.8},
     };
     /** 武器工房の写真の始まり。ここで、ギルドを片づけて武器工房を置く。 */
     private static final int WEAPON_FIRST = 6;
@@ -254,6 +256,10 @@ public final class CiScreenshots {
     private static final String CHURCH_GARDEN = "church_garden";
     /** 記憶の庭を置く所（教会を置いた所から）：世界の (x −96, 道, z 16) と教会の (x −105, 道, z −22) の差。 */
     private static final int[] CHURCH_GARDEN_AT = {9, 0, 38};
+    /** 記憶の相談所が開いたあとの写真。ここで、教会の上に、相談所の看板・待つ長椅子・腰かけを同じ所から重ねて置く（片づけない）。 */
+    private static final int CHURCH_COUNSEL_SHOT = 71;
+    /** 重ねて置く構造物（6日目に開く記憶の相談所。ほかのマスは書いていないので、教会を消さない）。 */
+    private static final String CHURCH_COUNSEL = "church_counsel";
     /**
      * 教会の前に片づける範囲（建物を置いた所から）：フリーマーケット（0〜29、0〜9、0〜31）と、その東の商店街の南
      * （30〜66、0〜37、0〜43）を包み、教会（0〜45、0〜40、0〜37）と記憶の庭（9〜33、0〜11、38〜55）の所まで広げる。
@@ -985,7 +991,7 @@ public final class CiScreenshots {
                     next(stage + 1, 2);
                 } else if (buildingFrom(view + 1) != null) {
                     String name = buildingFrom(view + 1);
-                    if (MARKET_OPEN.equals(name) || FREE_MORE.equals(name)) {
+                    if (MARKET_OPEN.equals(name) || FREE_MORE.equals(name) || CHURCH_COUNSEL.equals(name)) {
                         overlay(minecraft, name);
                     } else if (STORAGE.equals(name)) {
                         replaceBuilding(minecraft, "guild_hall");
@@ -1057,6 +1063,9 @@ public final class CiScreenshots {
         }
         if (view == CHURCH_FIRST) {
             return CHURCH;
+        }
+        if (view == CHURCH_COUNSEL_SHOT) {
+            return CHURCH_COUNSEL;
         }
         return null;
     }

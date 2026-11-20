@@ -12,6 +12,8 @@
   - 控室（内陣の北）と書庫（内陣の南）。教会前広場（白い石畳、正面へ2段）。北の庭と、南の小道（記憶の庭へ）。
   - 正面の入口には扉を付けない（呼び戻しの儀で戻る人のため、昼も夜も開いている【補完】）。
   - 記憶の庭（南）は別の構造物（church_garden.nbt）。塔から帰らなかった人々の名を刻む石と、桜【提案】。
+  - 6日目に開く「記憶の相談所」（Phase 0-A：記憶を戻すクエスト）は、書庫を使う。重ねる形（church_counsel.nbt）で、
+    南の側廊の書庫の扉の上の看板・待つ長椅子・書庫の机の向かいの腰かけを足す（育つ前・育った後。都市のルール⑩）。
   - 中に入れる所の樽は、鍵をかける（Lock）。チェスト・かまど・醸造台は置かない。
 
 座標：平面図の (u, v) は、u が西→東（u=0 が世界の x −105）、v が北→南（v=0 が世界の z −22）。
@@ -20,9 +22,9 @@
 記憶の庭の構造物の (0, 0, 0) は世界の (x −96, 道のブロック, z 16)（教会の構造物から u 9・v 38）。庭の中の座標は (gu, gv)。
 
 使い方: python3 tools/mapgen/build_church.py [出力のフォルダ] [--render 絵のフォルダ] [--only 名前,...] [--ci]
-  - <出力>/church.nbt（46×41×38）と church_garden.nbt（25×12×18）
+  - <出力>/church.nbt（46×41×38）・church_garden.nbt（25×12×18）・church_counsel.nbt（記憶の相談所。教会と同じ所に重ねる）
   - --ci：自動の確認の写真の座標（CiScreenshots の MAP_VIEWS の行）を出す
-ゲームの中では /place template amemaru:map/conelia/church と amemaru:map/conelia/church_garden で置ける。
+ゲームの中では /place template amemaru:map/conelia/church・church_garden・church_counsel で置ける。
 """
 import math
 import os
@@ -1135,6 +1137,42 @@ def build():
 
 ROOF, SPIRE = build()
 
+# ---------------------------------------------------------------- 記憶の相談所（6日目。重ねる形）
+COUNSEL = World(W, H, D)
+COUNSEL_OWNED = set()
+
+
+def counsel_overlay():
+    """6日目に開く「記憶の相談所」：書庫の扉（南の側廊の西の端）の上の看板、側廊の待つ長椅子、書庫の机の向かいの腰かけ。
+    重ねる形は、この3つの所（4マス）だけを書く（ほかのマスは書かないので、教会の上に置いても何も消さない）"""
+    def cput(u, v, y, state, nbt=None):
+        COUNSEL.put(u, y, v, state, nbt)
+        COUNSEL_OWNED.add((u, y, v))
+    cput(10, 29, FT + 2, block("spruce_wall_sign", facing="east", waterlogged=False),
+         sign_nbt(["記憶の", "相談所", "お話を", "うかがいます"]))
+    for u in (11, 12):
+        cput(u, 30, FT, stairs("spruce", "south"))
+    cput(3, 28, FT, stairs("spruce", "north"))
+
+
+counsel_overlay()
+
+
+def counsel_world():
+    """相談所を重ねたあとの教会（見本の絵と確かめのため）"""
+    cw = World(W, H, D)
+    cw.blocks = dict(w.blocks)
+    cw.nbt = dict(w.nbt)
+    cw.entities = list(w.entities)
+    for c in COUNSEL_OWNED:
+        if c in COUNSEL.blocks:
+            cw.blocks[c] = COUNSEL.blocks[c]
+            if c in COUNSEL.nbt:
+                cw.nbt[c] = COUNSEL.nbt[c]
+        else:
+            cw.blocks.pop(c, None)
+    return cw
+
 # ---------------------------------------------------------------- 見本の絵（教会の構造物の中の座標。y=0 が地面のブロック、足もとが 1。
 # 記憶の庭は教会の構造物から u 9・v 38 に並べて描く）
 VIEWS = {
@@ -1151,16 +1189,20 @@ VIEWS = {
     "garden": ((21.5, 2.62, 39.5), (21.5, 3.0, 52.0)),         # 記憶の庭の北の門を入った所から、名を刻む石と桜
     "memorial": ((21.5, 2.62, 47.2), (21.5, 3.6, 51.5)),       # 名を刻む石の前
 }
+VIEWS_COUNSEL = {
+    "counsel": ((14.3, 4.62, 28.4), (9.0, 4.3, 29.8)),          # 6日目：南の側廊から、記憶の相談所（書庫の扉と看板・待つ長椅子）
+}
 
 
-def combined_world():
-    """教会と記憶の庭を並べた写し（見本の絵と、確かめのため）"""
+def combined_world(base=None):
+    """教会と記憶の庭を並べた写し（見本の絵と、確かめのため）。base を渡すと、その教会（相談所を重ねたあとなど）で"""
+    base = w if base is None else base
     cw = World(W, max(H, GH), GARDEN_AT[2] + GD)
-    for p, st in w.blocks.items():
+    for p, st in base.blocks.items():
         cw.blocks[p] = st
-        if p in w.nbt:
-            cw.nbt[p] = w.nbt[p]
-    cw.entities = list(w.entities)
+        if p in base.nbt:
+            cw.nbt[p] = base.nbt[p]
+    cw.entities = list(base.entities)
     ox, oy, oz = GARDEN_AT
     for (x, y, z), st in g.blocks.items():
         cw.blocks[(x + ox, y + oy, z + oz)] = st
@@ -1191,6 +1233,12 @@ def render_views(out_dir, width=960, height=540, fov=70, only=None):
         sc.render(eye=eye, target=target, width=width, height=height, fov=fov,
                   path=os.path.join(out_dir, "church_%s.png" % name))
         print("描きました:", name)
+    if not only or "counsel" in only:
+        sc2 = Scene(combined_world(counsel_world()), ground_y=1)
+        for name, (eye, target) in VIEWS_COUNSEL.items():
+            sc2.render(eye=eye, target=target, width=width, height=height, fov=fov,
+                       path=os.path.join(out_dir, "church_%s.png" % name))
+            print("描きました:", name)
     for key, y_cut in (("cut1", 7), ("cut2", 12), ("cut3", 17)):
         if only and key not in only:
             continue
@@ -1201,12 +1249,14 @@ def render_views(out_dir, width=960, height=540, fov=70, only=None):
 
 
 CI_SHOTS = ["front", "tower", "south", "aerial", "back", "nave", "chancel", "aisle", "bell", "sanatorium", "garden",
-            "memorial"]
+            "memorial", "counsel"]
 
 
 def ci_views():
-    """自動の確認の写真の目と見る所（教会を置いた所から）。CiScreenshots の MAP_VIEWS と同じ"""
-    return [(shot, VIEWS[shot][0], VIEWS[shot][1]) for shot in CI_SHOTS]
+    """自動の確認の写真の目と見る所（教会を置いた所から）。CiScreenshots の MAP_VIEWS と同じ。最後の1枚は相談所を重ねたあと"""
+    allv = dict(VIEWS)
+    allv.update(VIEWS_COUNSEL)
+    return [(shot, allv[shot][0], allv[shot][1]) for shot in CI_SHOTS]
 
 
 if __name__ == "__main__":
@@ -1232,6 +1282,9 @@ if __name__ == "__main__":
     path = os.path.join(out, "church_garden.nbt")
     n = g.save_structure(path)
     print("書き出しました:", path, "ブロック", len(g.blocks), "種類", n, "もの", len(g.entities), "大きさ", (GW, GH, GD))
+    path = os.path.join(out, "church_counsel.nbt")
+    n = COUNSEL.save_structure(path, owned=lambda x, y, z: (x, y, z) in COUNSEL_OWNED)
+    print("書き出しました:", path, "ブロック", len(COUNSEL.blocks), "種類", n, "（教会と同じ所に重ねる）")
     if render_dir:
         render_views(render_dir, only=only)
     if ci:
