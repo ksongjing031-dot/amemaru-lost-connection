@@ -628,8 +628,7 @@ def misc():
 
 
 if __name__ == "__main__":
-    weapons()
-    armor_and_accessories()
+    # 武器・盾・防具・アクセサリーは、作り直した make_gear_*.py が作る（docs/gear/）。ここでは素材・作業台などだけを書く
     materials()
     workbenches()
     misc()

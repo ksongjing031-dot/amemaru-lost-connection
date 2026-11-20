@@ -1,5 +1,5 @@
 {
-  "parent": "amemaru:item/apprentice_shield_model",
+  "parent": "amemaru:item/ancient_stone_shield_model",
   "display": {
     "thirdperson_righthand": {
       "rotation": [
@@ -8,14 +8,14 @@
         0
       ],
       "translation": [
-        10,
-        6,
-        -4
+        10.0,
+        6.0,
+        -3.2
       ],
       "scale": [
-        1,
-        1,
-        1
+        0.95,
+        0.95,
+        0.95
       ]
     },
     "thirdperson_lefthand": {
@@ -30,43 +30,43 @@
         12
       ],
       "scale": [
-        1,
-        1,
-        1
+        0.95,
+        0.95,
+        0.95
       ]
     },
     "firstperson_righthand": {
       "rotation": [
-        0,
-        180,
-        5
+        -8,
+        165,
+        6
       ],
       "translation": [
-        -10,
-        2,
-        -10
+        -2.6,
+        1.03,
+        -16.1
       ],
       "scale": [
-        1.25,
-        1.25,
-        1.25
+        0.95,
+        0.95,
+        0.95
       ]
     },
     "firstperson_lefthand": {
       "rotation": [
-        0,
-        180,
-        5
+        -8,
+        165,
+        6
       ],
       "translation": [
-        10,
+        12,
         0,
-        -10
+        -12
       ],
       "scale": [
-        1.25,
-        1.25,
-        1.25
+        0.95,
+        0.95,
+        0.95
       ]
     },
     "gui": {
@@ -76,14 +76,14 @@
         -5
       ],
       "translation": [
-        2,
+        3.5,
         3,
         0
       ],
       "scale": [
-        0.65,
-        0.65,
-        0.65
+        0.66,
+        0.66,
+        0.66
       ]
     },
     "fixed": {
@@ -98,9 +98,9 @@
         -5
       ],
       "scale": [
-        0.55,
-        0.55,
-        0.55
+        0.5,
+        0.5,
+        0.5
       ]
     },
     "ground": {
@@ -128,9 +128,5 @@
       },
       "model": "amemaru:item/ancient_stone_shield_blocking"
     }
-  ],
-  "textures": {
-    "shield": "amemaru:item/ancient_stone_shield_model",
-    "particle": "amemaru:item/ancient_stone_shield_model"
-  }
+  ]
 }

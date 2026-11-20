@@ -207,7 +207,7 @@ final class CiPhase3 {
         player.getInventory().clearContent();
     }
 
-    private static void setCurio(ServerPlayer player, AccessorySlot slot, ItemStack stack) {
+    static void setCurio(ServerPlayer player, AccessorySlot slot, ItemStack stack) {
         CuriosApi.getCuriosInventory(player).ifPresent(handler -> handler.getStacksHandler(slot.curiosId()).ifPresent(stacks -> {
             if (stacks.getSlots() > 0) {
                 stacks.getStacks().setStackInSlot(0, stack);

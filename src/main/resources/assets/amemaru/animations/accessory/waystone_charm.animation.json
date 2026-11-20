@@ -3,28 +3,8 @@
  "animations": {
   "animation.waystone_charm.idle": {
    "loop": true,
-   "animation_length": 2.4,
-   "bones": {
-    "charm": {
-     "rotation": {
-      "0": [
-       0,
-       0,
-       -8
-      ],
-      "1.2": [
-       0,
-       0,
-       8
-      ],
-      "2.4": [
-       0,
-       0,
-       -8
-      ]
-     }
-    }
-   }
+   "animation_length": 1.0,
+   "bones": {}
   }
  }
 }
