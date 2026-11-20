@@ -960,6 +960,8 @@ public final class CiScreenshots {
                         replaceBuilding(minecraft, "guild_hall");
                         overlayAt(minecraft, STORAGE, STORAGE_AT);
                     } else if (FREE.equals(name)) {
+                        // 屋根のない広場なので、日の高いうちに撮る（建物の写真は長いので、ここまでで日が傾いている）
+                        command(minecraft, "time set noon");
                         clearWide(minecraft, FREE_CLEAR);
                         overlayAt(minecraft, FREE, new int[]{0, 0, 0});
                         overlayAt(minecraft, "market_south", FREE_SOUTH_AT);
