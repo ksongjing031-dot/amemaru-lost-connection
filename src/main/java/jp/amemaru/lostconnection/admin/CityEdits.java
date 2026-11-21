@@ -106,12 +106,13 @@ final class CityEdits {
             "Health", "ForgeCaps", "ForgeData", "CanUpdate", "TileX", "TileY", "TileZ");
     /**
      * 自然に変わる（直しとして数えない）ブロックの性質。水につかる（waterlogged）も入れる：後に置く構造物の半ブロックなどは、前の
-     * 構造物の水の所に置くと、ゲームが水につける（建て直しても同じになる）
+     * 構造物の水の所に置くと、ゲームが水につける（建て直しても同じになる）。醸造台の瓶の形（has_bottle）は中身に合わせて
+     * ゲームが変える（中身の違いは、ブロックの中身で比べる）
      */
     private static final Set<String> VOLATILE_PROPERTIES = Set.of("lit", "distance", "persistent", "snowy", "power", "powered",
             "level", "age", "moisture", "open", "occupied", "bites", "triggered", "attached", "disarmed", "extended", "has_record",
             "honey_level", "stage", "leaves", "hatch", "dusted", "bloom", "sculk_sensor_phase", "can_summon", "shrieking", "berries",
-            "enabled", "bottom", "waterlogged");
+            "enabled", "bottom", "waterlogged", "has_bottle_0", "has_bottle_1", "has_bottle_2");
     /** 防具立てのすべての場所の出し入れを止める値（tools/mapgen/mapgen/world.py と同じ） */
     private static final int ALL_SLOTS_DISABLED = 4144959;
     /** ログに書く違いの見本の数（構造物ごと。マスと「もの」のマス） */

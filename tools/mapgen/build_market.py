@@ -20,12 +20,15 @@ import sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+from nbtlib.tag import Byte, Compound, List, String
+
 from mapgen.arch import Palette, Roof, gable_wall
 from mapgen.fixtures import crystal_lamp, hang_lantern, lamp_post, wall_lantern
 from mapgen.world import (AIR, World, banner_nbt, block, door, fence, lantern, leaves, log, sign_nbt, slab, stairs,
                           trapdoor, wall)
 
 XMIN, XMAX = -18, 18
+LOCK = "amemaru:market_lock"     # 見せ物の醸造台の鍵（この名前のアイテムを持たないと開かない）
 H = 26
 Y1, Y2, Y3 = 1, 6, 11
 OPP = {"north": "south", "south": "north", "east": "west", "west": "east"}
@@ -639,7 +642,13 @@ class Shop:
             elif name == "chest":
                 self.put(ac, b, Y1 + 1, block("chest", facing=self.front, type="single", waterlogged=False))
             elif name == "brewing_stand":
-                self.put(ac, b, Y1 + 1, block("brewing_stand", has_bottle_0=True, has_bottle_1=False, has_bottle_2=True))
+                # 瓶の形は中身に合わせて変わるので、見せる瓶（水の瓶）を入れ、鍵をかける（中身がないと、置いたあとに瓶が消える。
+                # 11月21日、書き出しの確かめで見つけた。カジノの瓶の見せ物と同じ）【補完】
+                slots = (0, 2)
+                items = List[Compound]([Compound({"Slot": Byte(i), "id": String("minecraft:potion"), "Count": Byte(1),
+                                                  "tag": Compound({"Potion": String("minecraft:water")})}) for i in slots])
+                self.put(ac, b, Y1 + 1, block("brewing_stand", has_bottle_0=True, has_bottle_1=False, has_bottle_2=True),
+                         Compound({"id": String("minecraft:brewing_stand"), "Lock": String(LOCK), "Items": items}))
             elif name == "composter":
                 self.put(ac, b, Y1 + 1, block("composter", level=4))
             elif name == "hay_block":
