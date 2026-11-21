@@ -62,7 +62,9 @@ public final class SkillService {
         SPAM("", false),
         NOT_READY("", false),
         NO_BRANDED("message.amemaru.skill.no_branded", true),
-        NOT_CHARGING("", false);
+        NOT_CHARGING("", false),
+        /** ダウン中（Phase 4）。番号を変えないように、いちばん後ろに足す */
+        DOWN("message.amemaru.skill.down", true);
 
         private final String key;
         private final boolean shown;
@@ -118,6 +120,9 @@ public final class SkillService {
         }
         if (!player.isAlive() || player.isSpectator()) {
             return new Result(Failure.DEAD);
+        }
+        if (data.down().isDown()) {
+            return fail(player, Failure.DOWN);
         }
         if (!data.isStatsReady()) {
             // 持ちかえなどで計算し直す印がついているだけなら、ここで計算する
@@ -234,6 +239,8 @@ public final class SkillService {
         Failure failure = null;
         if (!player.isAlive()) {
             failure = Failure.DEAD;
+        } else if (data.down().isDown()) {
+            failure = Failure.DOWN;
         } else if (skill == null || job == null || !skill.job().equals(job.id()) || data.getSkillRank(skill.id()) <= 0) {
             failure = Failure.NOT_LEARNED;
         } else if (!hasWeapon(player, job)) {

@@ -38,6 +38,9 @@ import java.util.Optional;
  * ほかのコマンドは、それを使う仕組みと同じPhaseで足す。実行した人・対象・内容は、サーバーのログに残す。</p>
  *
  * <p>確かめ用の {@code city}（コネリアの街の11施設をまとめて建てて、見て回る）は、11月21日に足した（{@link CityCommands}）。</p>
+ *
+ * <p>Phase 4で {@code down}（ダウン・起こす・教会へ）・{@code church}（教会での復活の場所）・{@code money}（所持金）・
+ * {@code party list} を足した（{@link DownCommands}）。だれでも使える {@code /amemaru party …} もここで登録する。</p>
  */
 @Mod.EventBusSubscriber(modid = AmemaruMod.MOD_ID)
 public final class AdminCommands {
@@ -56,6 +59,8 @@ public final class AdminCommands {
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
         dispatcher.register(Commands.literal("amemaru")
+                // だれでも使える：パーティ（Phase 4）
+                .then(jp.amemaru.lostconnection.party.PartyCommands.partyCommand())
                 .then(Commands.literal("admin")
                         .requires(source -> source.hasPermission(2))
                         .then(levelCommand())
@@ -70,6 +75,10 @@ public final class AdminCommands {
                         .then(GearCommands.fruitCommand())
                         .then(GearCommands.adventureCommand())
                         .then(CityCommands.cityCommand())
+                        .then(DownCommands.downCommand())
+                        .then(DownCommands.churchCommand())
+                        .then(DownCommands.moneyCommand())
+                        .then(DownCommands.partyCommand())
                         .then(debugCommand())));
     }
 

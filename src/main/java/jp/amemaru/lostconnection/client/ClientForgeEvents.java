@@ -86,5 +86,7 @@ public final class ClientForgeEvents {
         SkillFx.reset();
         SkillInput.reset();
         CombatTextRenderer.reset();
+        ClientDown.reset();
+        ClientParty.reset();
     }
 }

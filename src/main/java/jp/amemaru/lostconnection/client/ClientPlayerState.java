@@ -131,7 +131,19 @@ public final class ClientPlayerState {
     }
 
     /** ログアウトしたときに消す。 */
+    /** 所持金（ノット。Phase 4） */
+    private long knots;
+
+    public long knots() {
+        return knots;
+    }
+
+    public void setKnots(long value) {
+        knots = Math.max(0L, value);
+    }
+
     public void reset() {
+        knots = 0;
         growthReceived = false;
         statsReceived = false;
         vitalsReceived = false;

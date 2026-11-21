@@ -231,7 +231,8 @@ public final class SkillTargeting {
     public static List<LivingEntity> alliesNear(ServerLevel level, Vec3 center, double radius) {
         List<LivingEntity> list = new ArrayList<>();
         for (ServerPlayer player : level.players()) {
-            if (!player.isAlive() || player.isSpectator() || Math.abs(player.getY() - center.y) > 3.0) {
+            if (!player.isAlive() || player.isSpectator() || Math.abs(player.getY() - center.y) > 3.0
+                    || jp.amemaru.lostconnection.player.DownHandler.isDown(player)) {
                 continue;
             }
             double dx = player.getX() - center.x;
@@ -255,7 +256,14 @@ public final class SkillTargeting {
             double reach = radius + entity.getBbWidth() / 2.0;
             return entity.distanceToSqr(player) <= reach * reach;
         }));
-        list.sort(Comparator.comparingDouble(entity -> entity.distanceToSqr(player)));
+        if (affects == Affects.ENEMIES) {
+            list.sort(Comparator.comparingDouble(entity -> entity.distanceToSqr(player)));
+        } else {
+            // 味方は、パーティのメンバーを先に（Phase 4。人数に上限のある強化・回復で、パーティが先に選ばれる）
+            list.sort(Comparator.<LivingEntity>comparingInt(entity -> entity instanceof ServerPlayer other
+                            && jp.amemaru.lostconnection.party.PartyService.sameParty(player, other) ? 0 : 1)
+                    .thenComparingDouble(entity -> entity.distanceToSqr(player)));
+        }
         return list;
     }
 }
