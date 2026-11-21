@@ -1,0 +1,22 @@
+{
+  "format": "amemaru-city-edits",
+  "version": 1,
+  "structure": "tower_entrance",
+  "facility": "tower",
+  "dataVersion": 3465,
+  "cells": [
+    {"pos": [6, 15, 24], "state": "minecraft:polished_diorite"},
+    {"pos": [7, 15, 24], "state": "minecraft:polished_diorite"},
+    {"pos": [37, 15, 24], "state": "minecraft:diorite"},
+    {"pos": [38, 15, 24], "state": "minecraft:polished_diorite"},
+    {"pos": [6, 16, 24], "state": "minecraft:calcite"},
+    {"pos": [7, 16, 24], "state": "minecraft:polished_diorite"},
+    {"pos": [37, 16, 24], "state": "minecraft:calcite"},
+    {"pos": [38, 16, 24], "state": "minecraft:diorite"},
+    {"pos": [6, 17, 24], "state": "minecraft:polished_diorite"},
+    {"pos": [7, 17, 24], "state": "minecraft:calcite"},
+    {"pos": [37, 17, 24], "state": "minecraft:polished_diorite"},
+    {"pos": [38, 17, 24], "state": "minecraft:calcite"}
+  ],
+  "entityCells": []
+}
