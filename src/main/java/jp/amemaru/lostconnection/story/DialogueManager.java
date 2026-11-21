@@ -259,6 +259,19 @@ public final class DialogueManager {
         return SESSIONS.containsKey(player.getUUID());
     }
 
+    /** 今の会話の番号（会話していなければ −1。自動テストで、選んだ知らせを送るときに使う）。 */
+    public static int sessionOf(ServerPlayer player) {
+        Session session = SESSIONS.get(player.getUUID());
+        return session == null ? -1 : session.id();
+    }
+
+    /** 今の会話の定義（会話していなければ null。自動テスト用）。 */
+    @Nullable
+    public static ResourceLocation dialogueOf(ServerPlayer player) {
+        Session session = SESSIONS.get(player.getUUID());
+        return session == null ? null : session.dialogue();
+    }
+
     @SubscribeEvent
     public static void onLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         SESSIONS.remove(event.getEntity().getUUID());

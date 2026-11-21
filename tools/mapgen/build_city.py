@@ -13,6 +13,8 @@
   python3 tools/mapgen/build_city.py                    # Modの data/amemaru/structures/map/conelia/town/ を書き直す
   python3 tools/mapgen/build_city.py /tmp/out --render /tmp/out   # 別の所に書き出して、上から見た地図も描く
 """
+import gzip
+import io
 import math
 import os
 import random
@@ -854,7 +856,11 @@ def spruce_tree(t, x, z):
 
 
 def yards(t):
-    """家の裏の空き地：菜園（小麦・ニンジン・ジャガイモ）、木、花の咲いたツツジ、低い柵"""
+    """家の裏の空き地：花の畑、木、花の咲いたツツジ。
+
+    畑に作物（小麦・ニンジン・ジャガイモ）は植えない（11月21日）。作物は時間で育ち、建てた直後に一部が消えることもあり
+    （CIの自動テストで、ニンジンの畑のマスが空気に変わった）、建てた形と比べる「直した所」の確かめに出てしまうため。
+    """
     lots = [(x, z) for (x, z), s in t.surface.items() if s == "lot" and (x, z) not in t.used and (x, z) not in t.foot]
     rng2 = random.Random(31)
     rng2.shuffle(lots)
@@ -878,13 +884,15 @@ def yards(t):
                 for dz in range(-3, 4):
                     planted.add((x + dx, z + dz))
         elif k < 0.16:
-            # 菜園（3×4。耕地に作物、まわりに低い柵の角）
+            # 花の畑（3×4。根の張った土の畝に、2種類の花を1列ずつ交互に。畝の間はシダ）
             cells = [(x + dx, z + dz) for dx in range(3) for dz in range(4)]
             if all(t.surface.get(c) == "lot" and c not in t.used and c not in t.foot and c not in planted for c in cells):
-                crop = rng2.choice(["wheat", "carrots", "potatoes"])
+                kinds = rng2.sample(["allium", "azure_bluet", "oxeye_daisy", "cornflower", "lily_of_the_valley", "red_tulip",
+                                     "white_tulip", "pink_tulip", "orange_tulip"], 2)
                 for (cx, cz) in cells:
-                    t.put(cx, 0, cz, block("farmland", moisture=7))
-                    t.put(cx, 1, cz, block(crop, age=rng2.randint(3, 7)))
+                    row = cz - z
+                    t.put(cx, 0, cz, block("rooted_dirt"))
+                    t.put(cx, 1, cz, block("fern") if cx - x == 1 and row % 2 == 1 else block(kinds[row % 2]))
                     planted.add((cx, cz))
                     t.used.add((cx, cz))
         elif k < 0.30:
@@ -1091,11 +1099,17 @@ def save_tiles(t, out_dir):
             for name, props in palette:
                 c = {"Name": String(name if ":" in name else "minecraft:" + name)}
                 if props:
-                    c["Properties"] = Compound({k: String(v) for k, v in props})
+                    # 性質は名前の順に（書き出すたびに同じファイルになるように。性質の組の並びは、Python の文字列のハッシュで変わる）
+                    c["Properties"] = Compound({k: String(v) for k, v in sorted(props)})
                 pal_.append(Compound(c))
-            nbtlib.File({"DataVersion": Int(DATA_VERSION), "size": List[Int]([Int(TILE), Int(H), Int(TILE)]),
-                         "palette": List[Compound](pal_), "blocks": List[Compound](entries),
-                         "entities": List[Compound]([])}, gzipped=True).save(path)
+            root = nbtlib.File({"DataVersion": Int(DATA_VERSION), "size": List[Int]([Int(TILE), Int(H), Int(TILE)]),
+                                "palette": List[Compound](pal_), "blocks": List[Compound](entries),
+                                "entities": List[Compound]([])}, gzipped=True)
+            # 圧縮の時刻を 0 にして、同じ設計からは同じファイルができるようにする（mapgen/world.py と同じ）
+            raw = io.BytesIO()
+            root.write(raw)
+            with open(path, "wb") as f, gzip.GzipFile(filename="", mode="wb", fileobj=f, mtime=0) as g:
+                g.write(raw.getvalue())
             written.append(("t%d_%d" % (i, j), (X0 + i * TILE, Y0, Z0 + j * TILE)))
     return written
 

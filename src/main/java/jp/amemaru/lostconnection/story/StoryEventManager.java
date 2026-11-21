@@ -82,6 +82,19 @@ public final class StoryEventManager {
         return PLAYING.containsKey(player.getUUID());
     }
 
+    /** 流している演出の番号（流していなければ −1。自動テストで、見終えた知らせを送るときに使う）。 */
+    public static int sceneOf(ServerPlayer player) {
+        Playing playing = PLAYING.get(player.getUUID());
+        return playing == null ? -1 : playing.scene();
+    }
+
+    /** 流している演出（流していなければ null。自動テスト用）。 */
+    @Nullable
+    public static ResourceLocation eventOf(ServerPlayer player) {
+        Playing playing = PLAYING.get(player.getUUID());
+        return playing == null ? null : playing.event();
+    }
+
     /**
      * その人の画面で演出を流す。{@code replay} なら記憶の再生（物語の処理は行わない）。流せなければ false。
      */
