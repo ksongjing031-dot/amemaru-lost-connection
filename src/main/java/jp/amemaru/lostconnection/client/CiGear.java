@@ -83,6 +83,21 @@ final class CiGear {
                 x, y, z, yaw, hand(main), hand(off));
     }
 
+    /** 持ったときの大きさと刃の向きを横から見る剣・大剣（docs/gear/hold_sheet.png と同じ順）。 */
+    static final String[] HOLD_SWORDS = {"apprentice_sword", "ancient_stone_sword", "sentinel_blade"};
+    static final String[] HOLD_GREATSWORDS = {"apprentice_greatsword", "ancient_stone_greatsword", "chipped_fang_greatsword"};
+
+    /**
+     * 防具立て（腕あり・台なし）に、右手で武器を持たせるコマンド。右腕は、プレイヤーが物を持って立っているときと同じく
+     * 前へ18度（HumanoidModel の −π/10）にする。
+     */
+    static String holdingStand(String main, double x, double y, double z, float yaw) {
+        return String.format(Locale.ROOT,
+                "summon minecraft:armor_stand %.2f %.2f %.2f {ShowArms:1b,NoBasePlate:1b,NoGravity:1b,Rotation:[%.1ff,0f],"
+                        + "Pose:{RightArm:[-18f,0f,0f]},Tags:[\"amemaru_ci_gear\"],HandItems:[%s,{}]}",
+                x, y, z, yaw, hand(main));
+    }
+
     /** 防具立てに、防具（頭・胴・脚・足の順の4つ。空なら null）と手の持ち物を着せて置くコマンド。 */
     static String armoredStand(String main, String off, String[] armor, double x, double y, double z, float yaw) {
         return String.format(Locale.ROOT,
