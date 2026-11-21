@@ -33,6 +33,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 import javax.annotation.Nullable;
+import java.util.List;
 import java.util.Base64;
 import java.util.Locale;
 
@@ -455,7 +456,35 @@ public final class CiScreenshots {
             {"city_grown_monument", "monument", "200"}, {"city_grown_forge", "forge", "200"},
             {"city_grown_highlow", "highlow", "200"}, {"city_grown_fishrace", "fishrace", "100"},
             {"city_grown_restaurant", "restaurant", "140"}, {"city_grown_stalls", "stalls", "140"},
-            {"city_grown_frozen_pond", "frozen_pond", "140"}, {"city_grown_lake", "lake", "140"}};
+            {"city_grown_frozen_pond", "frozen_pond", "140"}, {"city_grown_lake", "lake", "140"},
+            // Phase 4：パーティのHUDと画面（見本の様子）、起こす手がかり（見本：名前の付いた防具立てをダウンに見せる）、
+            // ダウン（本当にダウンにする）・教会へ戻る（育ったあとの街の教会の呼び戻しの円）
+            {"hud", null, "5", "on"},
+            {"cmd", null, "20", "gamemode adventure @p"},
+            {"cmd", null, "60", "amemaru admin city tp plaza @p"},
+            {"party_preview", null, "10"},
+            {"snap", null, "20", "phase4_party_hud"},
+            {"screen", null, "20", "party"},
+            {"snap", null, "10", "phase4_party_screen"},
+            {"screen", null, "10", "hold"},
+            {"cmd", null, "20", "execute at @p run summon minecraft:armor_stand ~0.8 ~ ~-1.6 {CustomName:'\"Ren\"',NoGravity:1b,ShowArms:1b}"},
+            {"fake_down_near", null, "10"},
+            {"snap", null, "10", "phase4_revive_hint"},
+            {"fake_reviving", null, "5"},
+            {"snap", null, "5", "phase4_reviving"},
+            {"fake_clear", null, "5"},
+            {"cmd", null, "10", "kill @e[type=minecraft:armor_stand,name=Ren]"},
+            {"cmd", null, "40", "amemaru admin down @p"},
+            {"snap", null, "10", "phase4_down"},
+            {"view", null, "10", "third"},
+            {"snap", null, "10", "phase4_down_third"},
+            {"view", null, "5", "first"},
+            {"cmd", null, "30", "amemaru admin down @p church"},
+            {"snap_keep", null, "5", "phase4_church"},
+            {"party_clear", null, "5"},
+            {"cmd", null, "10", "effect clear @p"},
+            {"cmd", null, "10", "gamemode spectator @p"},
+            {"hud", null, "5", "off"}};
 
     private CiScreenshots() {
     }
@@ -1649,6 +1678,19 @@ public final class CiScreenshots {
                 command(minecraft, cityCommand(shot[3]));
             }
             next(stage + 1, first ? waitTicks : 0);
+        } else if ("snap".equals(shot[0]) || "snap_keep".equals(shot[0])) {
+            // その場で撮る（移らない）。snap_keep はチャットを消さない
+            if (first) {
+                next(stage + 1, waitTicks);
+            } else {
+                if ("snap".equals(shot[0])) {
+                    clean(minecraft);
+                }
+                pendingShot = shot[3];
+                next(stage + 1, 2);
+            }
+        } else if (phase4Action(minecraft, shot, first)) {
+            next(stage + 1, first ? waitTicks : 0);
         } else if (first) {
             // 建て直す：grown は育ったあとの形（はじめから建て直して、重ねる形も置く）、rebuild ははじめの形（書き出した直しを重ねる）
             command(minecraft, "time set noon");
@@ -1659,6 +1701,81 @@ public final class CiScreenshots {
         } else {
             next(stage + 1, waitTicks);
         }
+    }
+
+    // ---------------------------------------------------------------- Phase 4 の写真の小物
+
+    /** 防具立てをダウンに見せている間、その「もの」の番号（見本） */
+    private static int fakeDownId = -1;
+
+    /** Phase 4 の写真の段取り（HUD・見本のパーティ・画面・視点・見本のダウン）。その種類の行なら true。 */
+    private static boolean phase4Action(Minecraft minecraft, String[] shot, boolean first) {
+        String kind = shot[0];
+        if (!List.of("hud", "party_preview", "party_clear", "screen", "view", "fake_down_near", "fake_reviving", "fake_clear")
+                .contains(kind)) {
+            return false;
+        }
+        if (!first) {
+            return true;
+        }
+        switch (kind) {
+            case "hud" -> hideHud = !"on".equals(shot[3]);
+            case "party_preview" -> ClientParty.apply(samplePartyState(minecraft));
+            case "party_clear" -> ClientParty.reset();
+            case "screen" -> minecraft.setScreen("party".equals(shot[3])
+                    ? new jp.amemaru.lostconnection.client.screen.PartyScreen() : new HoldScreen());
+            case "view" -> minecraft.options.setCameraType("third".equals(shot[3]) ? CameraType.THIRD_PERSON_BACK : CameraType.FIRST_PERSON);
+            case "fake_down_near" -> fakeDown(minecraft, false);
+            case "fake_reviving" -> fakeDown(minecraft, true);
+            default -> {
+                if (fakeDownId >= 0) {
+                    ClientDown.apply(new jp.amemaru.lostconnection.network.s2c.DownStateS2C(fakeDownId, false, 0, 0, 0, 0, -1));
+                }
+                fakeDownId = -1;
+            }
+        }
+        return true;
+    }
+
+    /** 見本のパーティ：自分（リーダー）・HPが減った人・ダウンした人・いない人と、届いている誘い。 */
+    private static jp.amemaru.lostconnection.network.s2c.PartyStateS2C samplePartyState(Minecraft minecraft) {
+        java.util.UUID self = minecraft.player.getUUID();
+        java.util.function.Function<String, java.util.UUID> id = name ->
+                java.util.UUID.nameUUIDFromBytes(("amemaru-ci:" + name).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        List<jp.amemaru.lostconnection.network.s2c.PartyStateS2C.Member> members = List.of(
+                new jp.amemaru.lostconnection.network.s2c.PartyStateS2C.Member(self, minecraft.player.getGameProfile().getName(),
+                        true, true, 12, 0.92F, false, 0, 0, true),
+                new jp.amemaru.lostconnection.network.s2c.PartyStateS2C.Member(id.apply("aoi"), "Aoi", false, true, 14, 0.64F, false,
+                        0, 0, true),
+                new jp.amemaru.lostconnection.network.s2c.PartyStateS2C.Member(id.apply("ren"), "Ren", false, true, 11, 0.0F, true,
+                        360, 600, true),
+                new jp.amemaru.lostconnection.network.s2c.PartyStateS2C.Member(id.apply("kai"), "Kai", false, false, 0, 0.0F, false,
+                        0, 0, false));
+        List<jp.amemaru.lostconnection.network.s2c.PartyStateS2C.Invite> invites = List.of(
+                new jp.amemaru.lostconnection.network.s2c.PartyStateS2C.Invite(id.apply("kotone"), "Kotone", 900));
+        return new jp.amemaru.lostconnection.network.s2c.PartyStateS2C(true, members, invites);
+    }
+
+    /** 近くの「Ren」という名前の防具立てを、ダウンしている人に見せる（reviving なら、自分が起こしている途中）。 */
+    private static void fakeDown(Minecraft minecraft, boolean reviving) {
+        if (minecraft.level == null || minecraft.player == null) {
+            return;
+        }
+        net.minecraft.world.entity.Entity found = null;
+        for (net.minecraft.world.entity.Entity entity : minecraft.level.getEntities(minecraft.player,
+                minecraft.player.getBoundingBox().inflate(6.0))) {
+            if (entity instanceof net.minecraft.world.entity.decoration.ArmorStand && entity.hasCustomName()
+                    && "Ren".equals(entity.getCustomName().getString())) {
+                found = entity;
+            }
+        }
+        if (found == null) {
+            AmemaruMod.LOGGER.warn("[amemaru][ci] no armor stand named Ren near the player");
+            return;
+        }
+        fakeDownId = found.getId();
+        ClientDown.apply(new jp.amemaru.lostconnection.network.s2c.DownStateS2C(fakeDownId, true, reviving ? 340 : 360, 600,
+                reviving ? 36 : 0, 60, reviving ? minecraft.player.getId() : -1));
     }
 
     /** CIのコマンドの {origin}（街の真ん中）と {guild}（ギルドの構造物の上の空。構造物の中の (1, 37, 1)。はじめは空気）を埋める */

@@ -13,6 +13,7 @@ import jp.amemaru.lostconnection.equipment.GearItem;
 import jp.amemaru.lostconnection.equipment.Rarity;
 import jp.amemaru.lostconnection.network.ModNetwork;
 import jp.amemaru.lostconnection.network.s2c.SpecialMomentS2C;
+import jp.amemaru.lostconnection.party.PartyExp;
 import jp.amemaru.lostconnection.player.LevelService;
 import jp.amemaru.lostconnection.player.PlayerData;
 import jp.amemaru.lostconnection.player.PlayerDataCapability;
@@ -43,7 +44,8 @@ import java.util.UUID;
  *
  * <ul>
  *   <li>受け取るのは、その敵に攻撃を当てた人（と挑発した人）。倒れた場所から遠すぎる人（config の {@code lootRange}）は除く</li>
- *   <li>経験値：敵の経験値を、受け取る人の数で均等に分ける（人数のボーナスはPhase 4のパーティで足す）</li>
+ *   <li>経験値：敵の経験値を、受け取る人の数で均等に分ける。Phase 4：受け取る人のパーティのメンバーで、32ブロック以内の人も
+ *       受け取り、パーティごとに人数のボーナスをかける（{@link PartyExp}）</li>
  *   <li>ふつうのドロップ：一人ずつドロップ表を引く（config の {@code dropRateMultiplier} の回数）</li>
  *   <li>レアドロップ：一人ずつ、敵の定義の確率 × config の {@code rareDropMultiplier}（天井のある敵は、外れるたびに
  *       +10%）で抽選する。出たら、その人の画面にだけ光と音、その品の確率（定義の確率）が {@code rareAnnounceThreshold}%
@@ -65,13 +67,16 @@ public final class DropService {
         if (def == null || receivers.isEmpty()) {
             return;
         }
-        int share = expShare(def.exp(), receivers.size());
+        // Phase 4：近くのパーティのメンバーも受け取り、パーティの人数のボーナスをかける
+        receivers = PartyExp.withPartyMembers(receivers, mob, level);
+        Map<UUID, Integer> shares = PartyExp.shares(def.exp(), receivers);
         for (ServerPlayer player : receivers) {
             PlayerData data = PlayerDataCapability.get(player).orElse(null);
             if (data == null) {
                 continue;
             }
             data.getAdventure().recordKill(def.id());
+            int share = shares.getOrDefault(player.getUUID(), 0);
             if (share > 0) {
                 LevelService.addExp(player, data, share, LevelService.ExpSource.GAMEPLAY);
             }

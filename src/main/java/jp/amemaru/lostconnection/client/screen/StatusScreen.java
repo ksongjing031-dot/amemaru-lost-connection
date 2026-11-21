@@ -28,7 +28,7 @@ import java.util.Map;
  */
 public class StatusScreen extends Screen {
     private static final int PANEL_WIDTH = 248;
-    private static final int PANEL_HEIGHT = 222;
+    private static final int PANEL_HEIGHT = 236;
     private static final int ROW_HEIGHT = 13;
     private static final int STATS_TOP = 73;
     private static final int SUB_TOP = 181;
@@ -150,6 +150,10 @@ public class StatusScreen extends Screen {
         renderGrowth(graphics, state);
         renderStats(graphics, state);
         renderSubStats(graphics, state);
+        // 所持金（Phase 4）
+        Component money = Component.translatable("screen.amemaru.status.money",
+                String.format(java.util.Locale.ROOT, "%,d", state.knots()));
+        graphics.drawString(font, money, left + 16, top + SUB_TOP + 25, TEXT_POINTS, true);
 
         super.render(graphics, mouseX, mouseY, partialTick);
     }

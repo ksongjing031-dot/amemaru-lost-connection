@@ -62,6 +62,22 @@ public final class ServerConfig {
     public static final ForgeConfigSpec.DoubleValue WORKSHOP_REACH;
     public static final ForgeConfigSpec.DoubleValue ENEMY_LEASH_RANGE;
 
+    // ---- ダウンと復活・パーティ（Phase 4。Phase 0-B 7章「ダウンと復活」）
+    public static final ForgeConfigSpec.IntValue DOWN_SECONDS;
+    public static final ForgeConfigSpec.DoubleValue REVIVE_SECONDS;
+    public static final ForgeConfigSpec.DoubleValue HEALER_REVIVE_SECONDS;
+    public static final ForgeConfigSpec.DoubleValue REVIVE_RANGE;
+    public static final ForgeConfigSpec.DoubleValue REVIVE_HP_PERCENT;
+    public static final ForgeConfigSpec.DoubleValue REVIVE_INVULNERABLE_SECONDS;
+    public static final ForgeConfigSpec.DoubleValue DEATH_MONEY_PERCENT;
+    public static final ForgeConfigSpec.IntValue WEAKNESS_SECONDS;
+    public static final ForgeConfigSpec.DoubleValue WEAKNESS_PERCENT;
+    public static final ForgeConfigSpec.DoubleValue CHURCH_SCATTER;
+    public static final ForgeConfigSpec.IntValue PARTY_MAX_MEMBERS;
+    public static final ForgeConfigSpec.DoubleValue PARTY_EXP_RANGE;
+    public static final ForgeConfigSpec.DoubleValue PARTY_EXP_BONUS;
+    public static final ForgeConfigSpec.IntValue PARTY_INVITE_SECONDS;
+
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
 
@@ -192,6 +208,56 @@ public final class ServerConfig {
         LOOT_RANGE = b
                 .comment("敵が倒れたとき、この距離（ブロック）より遠くにいる人は、ドロップと経験値を受け取れない")
                 .defineInRange("lootRange", 48.0, 4.0, 512.0);
+        b.pop();
+
+        b.comment("ダウンと復活（Phase 4。Phase 0-A 24章：ダウン30秒・しゃがんで3秒で蘇生・時間切れで教会へ、所持金の5%と60秒の衰弱）")
+                .push("down");
+        DOWN_SECONDS = b
+                .comment("HPが0になってから、教会へ戻るまでの秒数（この間、近くの仲間がしゃがんで起こせる）")
+                .defineInRange("downSeconds", 30, 5, 600);
+        REVIVE_SECONDS = b
+                .comment("仲間を起こすのに、そばでしゃがみ続ける秒数")
+                .defineInRange("reviveSeconds", 3.0, 0.5, 60.0);
+        HEALER_REVIVE_SECONDS = b
+                .comment("ヒーラーが仲間を起こす秒数")
+                .defineInRange("healerReviveSeconds", 1.5, 0.5, 60.0);
+        REVIVE_RANGE = b
+                .comment("起こせる距離（ブロック。倒れた人の足もとから、しゃがんでいる人の足もとまで）")
+                .defineInRange("reviveRange", 2.5, 1.0, 8.0);
+        REVIVE_HP_PERCENT = b
+                .comment("起き上がったときのHP（最大HPの%）")
+                .defineInRange("reviveHpPercent", 30.0, 1.0, 100.0);
+        REVIVE_INVULNERABLE_SECONDS = b
+                .comment("起き上がってから、ダメージを受けない秒数（すぐにまた倒れないように）")
+                .defineInRange("reviveInvulnerableSeconds", 2.0, 0.0, 30.0);
+        DEATH_MONEY_PERCENT = b
+                .comment("教会へ戻るとき（呼び戻しの儀の代価として）失う所持金の割合（%）。経験値とアイテムは失わない")
+                .defineInRange("deathMoneyPercent", 5.0, 0.0, 100.0);
+        WEAKNESS_SECONDS = b
+                .comment("教会へ戻った後の「衰弱」の秒数（0なら衰弱しない）")
+                .defineInRange("weaknessSeconds", 60, 0, 3600);
+        WEAKNESS_PERCENT = b
+                .comment("「衰弱」の間に下がるステータスの割合（%。HP・MP・攻撃・魔力・防御・素早さ・会心）")
+                .defineInRange("weaknessPercent", 10.0, 0.0, 90.0);
+        CHURCH_SCATTER = b
+                .comment("教会の呼び戻しの円で、戻る場所をばらす半径（ブロック。同時に戻った人が重ならないように）")
+                .defineInRange("churchScatter", 3.0, 0.0, 16.0);
+        b.pop();
+
+        b.comment("パーティ（Phase 4。Phase 0-A 20章：経験値は近くのメンバーで均等に分け、合計が「1＋0.2×（人数−1）」倍）")
+                .push("party");
+        PARTY_MAX_MEMBERS = b
+                .comment("パーティの人数の上限")
+                .defineInRange("maxMembers", 6, 2, 6);
+        PARTY_EXP_RANGE = b
+                .comment("敵が倒れたとき、この距離（ブロック）以内のパーティのメンバーが、経験値とドロップを受け取る")
+                .defineInRange("expShareRange", 32.0, 4.0, 256.0);
+        PARTY_EXP_BONUS = b
+                .comment("パーティの経験値のボーナス：1人増えるごとに、合計がこの割合だけ増える（0.2なら3人で1.4倍を3人で分ける）")
+                .defineInRange("expBonusPerMember", 0.2, 0.0, 2.0);
+        PARTY_INVITE_SECONDS = b
+                .comment("パーティの招待が、何秒で消えるか")
+                .defineInRange("inviteSeconds", 60, 10, 3600);
         b.pop();
 
         b.comment("装備とアクセサリー（Phase 3）").push("equipment");

@@ -82,6 +82,7 @@ public final class ClientModEvents {
     public static void onRegisterKeys(RegisterKeyMappingsEvent event) {
         event.register(KeyBindings.OPEN_STATUS);
         event.register(KeyBindings.OPEN_SKILL_TREE);
+        event.register(KeyBindings.OPEN_PARTY);
         for (KeyMapping key : KeyBindings.SKILLS) {
             event.register(key);
         }
@@ -92,6 +93,9 @@ public final class ClientModEvents {
         // ホットバーのすぐ後に描く（ハートや空気の泡より先に描き、高さの計算を渡すため）
         event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "status", AmemaruHud.STATUS);
         event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "skills", SkillHud.OVERLAY);
+        // Phase 4：パーティのメンバー（左上）と、ダウン（自分が倒れた・仲間を起こしている）
+        event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "party", PartyHud.OVERLAY);
+        event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "down", DownHud.OVERLAY);
         // Phase 3：レアドロップ・工房などの特別な演出の帯
         event.registerAboveAll("special_moment", SpecialMomentFx.OVERLAY);
     }

@@ -331,6 +331,25 @@ public final class CityCommands {
         return names;
     }
 
+    /** 教会の呼び戻しの円の真ん中の足もと（中央広場の真ん中から。tools/mapgen/build_church.py の CIRCLE） */
+    private static final double CHURCH_CIRCLE_X = -92 + 0.5;
+    private static final double CHURCH_CIRCLE_Y = 3;
+    private static final double CHURCH_CIRCLE_Z = 0 + 0.5;
+
+    /**
+     * このワールドに確かめ用の街を建てていれば、教会の呼び戻しの円の真ん中（足もと）。Phase 4の「教会での復活」の場所の
+     * 初期値（{@code /amemaru admin church set} で決めた場所があれば、そちらが先）。
+     */
+    public static java.util.Optional<net.minecraft.world.phys.Vec3> churchCircle(ServerLevel level) {
+        CityData data = CityData.get(level);
+        if (!data.built) {
+            return java.util.Optional.empty();
+        }
+        BlockPos o = data.origin;
+        return java.util.Optional.of(new net.minecraft.world.phys.Vec3(o.getX() + CHURCH_CIRCLE_X, o.getY() + CHURCH_CIRCLE_Y,
+                o.getZ() + CHURCH_CIRCLE_Z));
+    }
+
     /** 道の高さのブロック：ゾーニングの図の道と広場は土の道、まだ作っていない城壁は砂利、ほかは草 */
     static BlockState surface(int x, int z) {
         double r = Math.sqrt((double) x * x + (double) z * z);

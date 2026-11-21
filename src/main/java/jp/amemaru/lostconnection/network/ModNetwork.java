@@ -32,7 +32,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
  * {@link #PROTOCOL_VERSION} を上げる。クライアントが送るのは「何をしたいか」だけで、数値の計算はサーバーで行う。</p>
  */
 public final class ModNetwork {
-    public static final String PROTOCOL_VERSION = "4";
+    public static final String PROTOCOL_VERSION = "5";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             AmemaruMod.id("main"),
@@ -150,6 +150,27 @@ public final class ModNetwork {
                 .encoder(AccessoryActionC2S::encode)
                 .decoder(AccessoryActionC2S::decode)
                 .consumerMainThread(AccessoryActionC2S::handle)
+                .add();
+        // Phase 4：ダウン・パーティ・所持金
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.DownStateS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.DownStateS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.DownStateS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.DownStateS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.PartyStateS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.PartyStateS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.PartyStateS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.PartyStateS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.SyncWalletS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.SyncWalletS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.SyncWalletS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.SyncWalletS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.c2s.PartyActionC2S.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(jp.amemaru.lostconnection.network.c2s.PartyActionC2S::encode)
+                .decoder(jp.amemaru.lostconnection.network.c2s.PartyActionC2S::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.c2s.PartyActionC2S::handle)
                 .add();
     }
 

@@ -23,6 +23,10 @@ public final class PlayerSync {
             ModNetwork.sendTo(player, SyncAdventureS2C.of(player, data));
             sections &= ~PlayerData.SYNC_ADVENTURE;
         }
+        if ((sections & PlayerData.SYNC_WALLET) != 0) {
+            ModNetwork.sendTo(player, new jp.amemaru.lostconnection.network.s2c.SyncWalletS2C(data.getKnots()));
+            sections &= ~PlayerData.SYNC_WALLET;
+        }
         if (sections != 0 && data.isStatsReady()) {
             ModNetwork.sendTo(player, SyncPlayerDataS2C.of(data, GrowthRules.current(),
                     ProgressionData.currentLevelCap(player.server), sections, player.level().getGameTime()));
