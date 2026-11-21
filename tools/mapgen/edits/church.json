@@ -1,0 +1,11 @@
+{
+  "format": "amemaru-city-edits",
+  "version": 1,
+  "structure": "church",
+  "facility": "church",
+  "dataVersion": 3465,
+  "cells": [
+    {"pos": [4, 11, 5], "state": "minecraft:calcite"}
+  ],
+  "entityCells": []
+}

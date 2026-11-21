@@ -39,6 +39,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 from nbtlib.tag import Byte, Compound, List, String
 
+from mapgen import edits as edits_mod
 from mapgen.arch import Palette, Roof
 from mapgen.fixtures import hang_lantern, lamp_post, wall_lantern
 from mapgen.world import (AIR, World, banner_nbt, block, door, fence, lantern, leaves, lectern_nbt, log, pane, sign_nbt,
@@ -1797,7 +1798,29 @@ def build():
     roof_boards()
     basement()
     surroundings()
+    fill_closed_passage()
     w.finalize()
+
+
+# ゲームの中の直し（11月21日に取り込んだ tools/mapgen/edits/casino.json）で、2階の奥の細い通路（構造物の z 24、x 31..36）の
+# 出入口（北の2つ・南の1つ）がふさがれ、閉じた空き間になった。暗くて魔物が湧くので、直しがそう閉じているときだけ、壁と同じ
+# 石レンガで埋める（見た目は変わらない）【補完】
+PASSAGE_DOORS = [(31, y, 23) for y in (6, 7, 8)] + [(36, y, 23) for y in (6, 7, 8)] + \
+    [(x, y, 25) for x in (31, 32) for y in (6, 7, 8)]
+PASSAGE_CELLS = [(x, y, 24) for x in (31, 32) for y in range(6, 12)] + \
+    [(x, y, 24) for x in (33, 34, 35) for y in range(6, 10)] + [(36, y, 24) for y in (6, 7, 8)]
+
+
+def fill_closed_passage():
+    data = edits_mod.load("casino")
+    if data is None:
+        return
+    cells = data["cells"]
+    if not all(p in cells and cells[p][0][0] not in ("air", "cave_air") for p in PASSAGE_DOORS):
+        return
+    for x, y, z in PASSAGE_CELLS:
+        if (x, y, z) not in cells and (w.get(x, y, z) or AIR)[0] == "air":
+            w.put(x, y, z, block("stone_bricks"))
 
 
 build()
