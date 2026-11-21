@@ -498,8 +498,9 @@ public final class CiScreenshots {
             {"await_floor", null, "0"},
             {"cmd", null, "80", "tp @p {at:21.5,3,-78.5} -90 6"},
             {"snap", null, "40", "phase5_npc_guild"},
-            // バルドは書見台の東に立つので、書見台の陰にならない北西の斜めから（11月22日）
-            {"cmd", null, "80", "tp @p {at:10.0,4,-168.0} -35 8"},
+            // バルドは書見台の東に立つので、書見台の陰にならない南の斜めから（11月22日。広間の柱は (±8, −161)・(±8, −169) の
+            // 3×3 で、台の段は x 10 まで。x 11 の列は空いている）
+            {"cmd", null, "80", "tp @p {at:11.5,4,-161.5} -162 11"},
             {"snap", null, "40", "phase5_npc_bard"},
             // 11月22日：立体のモデルになったNPC（教会のセレナ・武器工房のドラン）
             {"cmd", null, "80", "tp @p {at:-95.0,4,0.5} 90 4"},
@@ -575,14 +576,16 @@ public final class CiScreenshots {
             {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
             {"cmd", null, "2", "execute in amemaru:tower run tp @e[type=amemaru:veldhorn,limit=1] {f1:192.5,15,51.5} 0 0"},
             {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,60.5} 180 14"},
-            {"cmd", null, "6", "amemaru admin boss skill 1 upthrust"},
+            // 突き上げの予兆は0.6秒（12 tick）。撮るまでに、待ちのほかに6 tick ほどかかるので、すぐ撮る
+            {"cmd", null, "1", "amemaru admin boss skill 1 upthrust"},
             {"snap", null, "0", "phase5_boss_upthrust"},
             // 後ろ蹴りの後ろの扇（ボスの後ろ＝4北に立ち、南のボスを見る）
             {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
             {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
             {"cmd", null, "2", "execute in amemaru:tower run tp @e[type=amemaru:veldhorn,limit=1] {f1:192.5,15,51.5} 0 0"},
             {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,47.5} 0 22"},
-            {"cmd", null, "5", "amemaru admin boss skill 1 kick"},
+            // 後ろ蹴りの予兆は0.5秒（10 tick）。すぐ撮る
+            {"cmd", null, "1", "amemaru admin boss skill 1 kick"},
             {"snap", null, "0", "phase5_boss_kick"},
             // 大跳躍の降りる円（12南。円は立っている所に出るので、下を向いて前の半分とボスを写す）
             {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},

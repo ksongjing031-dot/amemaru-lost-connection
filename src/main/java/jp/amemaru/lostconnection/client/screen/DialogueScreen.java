@@ -337,7 +337,8 @@ public class DialogueScreen extends Screen {
                     false);
             NpcDef def = p.portrait() == null ? null : NpcDefs.client(p.portrait());
             if (def != null && !def.title().isEmpty()) {
-                graphics.drawString(font, def.title(), nx + nameW + 6, ny + 3, UiStyle.TEXT_DIM, false);
+                // 肩書きは街の景色の上に出るので、影をつけて読みやすく
+                graphics.drawString(font, def.title(), nx + nameW + 6, ny + 3, UiStyle.TEXT_DIM, true);
             }
         }
         if (replay) {
