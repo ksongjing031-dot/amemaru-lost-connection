@@ -403,8 +403,9 @@ final class CityEdits {
         root.addProperty("structure", placement.name());
         root.addProperty("facility", placement.facility());
         root.addProperty("dataVersion", SharedConstants.getCurrentVersion().getDataVersion().getVersion());
-        Comparator<BlockPos> order = Comparator.comparingInt(BlockPos::getY).thenComparingInt(BlockPos::getZ)
-                .thenComparingInt(BlockPos::getX);
+        // BlockPos には位置を詰めた long を読む static の getY(long) もあるので、メソッド参照ではなくラムダで書く
+        Comparator<BlockPos> order = Comparator.comparingInt((BlockPos p) -> p.getY()).thenComparingInt(p -> p.getZ())
+                .thenComparingInt(p -> p.getX());
         JsonArray cells = new JsonArray();
         edits.cells.entrySet().stream().sorted(Map.Entry.<BlockPos, CellEdit>comparingByKey(order)).forEach(e -> {
             JsonObject cell = new JsonObject();
