@@ -113,6 +113,60 @@ public final class TowerService {
         if (now % 5 == 0) {
             checkReturnCircles(tower, byFloor);
         }
+        if (now % 10 == 0) {
+            checkTablets(byFloor);
+        }
+    }
+
+    // ---------------------------------------------------------------- 古代記録の石板（Phase 0-A 9章「道標の石板・一」）
+
+    /** 石板を読んだ人（ログインの間だけ覚える。近づいたときに一度だけ出す）。 */
+    private static final Map<UUID, java.util.Set<Integer>> TABLET_SEEN = new HashMap<>();
+
+    private static void checkTablets(Map<Integer, List<ServerPlayer>> byFloor) {
+        for (Map.Entry<Integer, List<ServerPlayer>> entry : byFloor.entrySet()) {
+            FloorDef def = FloorDefs.byNumber(entry.getKey());
+            if (def == null || def.tablet() == null) {
+                continue;
+            }
+            Vec3 at = def.world(Vec3.atCenterOf(def.tablet().pos()));
+            for (ServerPlayer player : entry.getValue()) {
+                if (player.position().distanceToSqr(at) <= 4.5 * 4.5
+                        && TABLET_SEEN.computeIfAbsent(player.getUUID(), k -> new java.util.HashSet<>()).add(def.number())) {
+                    readTablet(player, def);
+                }
+            }
+        }
+    }
+
+    /** 石板の文字を出す（古代文字から、大結晶の仲立ちで読める字に変わる）。 */
+    public static void readTablet(ServerPlayer player, FloorDef def) {
+        FloorDef.Tablet tablet = def.tablet();
+        if (tablet == null) {
+            return;
+        }
+        ModNetwork.sendTo(player, new StoryTextS2C(StoryTextS2C.Kind.ANCIENT, tablet.title(), tablet.text(), 160));
+        player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS,
+                1.0F, 0.6F);
+    }
+
+    /** 石板を右クリックしたとき（何度でも読める）。 */
+    @SubscribeEvent
+    public static void onRightClickBlock(net.minecraftforge.event.entity.player.PlayerInteractEvent.RightClickBlock event) {
+        if (!(event.getEntity() instanceof ServerPlayer player) || event.getHand() != net.minecraft.world.InteractionHand.MAIN_HAND) {
+            return;
+        }
+        if (!player.level().dimension().equals(FloorDefs.TOWER)) {
+            return;
+        }
+        FloorDef def = FloorDefs.floorAt(player.level(), player.position());
+        if (def == null || def.tablet() == null) {
+            return;
+        }
+        BlockPos tablet = def.world(def.tablet().pos());
+        if (event.getPos().distSqr(tablet) <= 2.0 * 2.0) {
+            readTablet(player, def);
+        }
     }
 
     // ---------------------------------------------------------------- 塔の門（街）
@@ -299,6 +353,7 @@ public final class TowerService {
         ON_GATE.remove(id);
         GATE_COOLDOWN.remove(id);
         RETURN_CHARGE.remove(id);
+        TABLET_SEEN.remove(id);
     }
 
     // ---------------------------------------------------------------- 石柱

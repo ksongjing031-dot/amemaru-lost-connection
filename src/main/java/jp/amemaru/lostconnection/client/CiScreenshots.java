@@ -483,6 +483,74 @@ public final class CiScreenshots {
             {"snap_keep", null, "5", "phase4_church"},
             {"party_clear", null, "5"},
             {"cmd", null, "10", "effect clear @p"},
+            // ---- Phase 5：街のNPC・オープニング（その人の画面だけで流れる）・会話と名簿・職業の画面・進行の知らせ・塔の門・
+            // 1階（入口・石橋・石柱・封印・石板）・ボス（戦い・予兆・初撃破）・出口の円・記憶の再生・1階を上から
+            {"hud", null, "5", "on"},
+            {"cmd", null, "10", "gamemode creative @p"},
+            {"p5_build_floor", null, "20"},
+            {"await_floor", null, "0"},
+            {"cmd", null, "80", "tp @p {at:21.5,3,-78.5} -90 6"},
+            {"snap", null, "40", "phase5_npc_guild"},
+            {"cmd", null, "80", "tp @p {at:7.5,4,-164.5} -90 4"},
+            {"snap", null, "40", "phase5_npc_bard"},
+            {"cmd", null, "10", "gamemode adventure @p"},
+            {"cmd", null, "5", "amemaru admin story opening start @p"},
+            {"snap", null, "10", "phase5_opening_wait"},
+            {"await_scene", null, "0"},
+            {"snap", null, "70", "phase5_opening_voice"},
+            {"snap", null, "160", "phase5_opening_awake"},
+            {"snap", null, "75", "phase5_opening_lilia"},
+            {"await_dialogue", null, "0"},
+            {"snap", null, "30", "phase5_dialogue"},
+            {"dialogue_end", null, "10"},
+            {"snap", null, "10", "phase5_dialogue_choices"},
+            {"dialogue_choose", null, "20", "0"},
+            {"dialogue_end", null, "10"},
+            {"snap", null, "10", "phase5_dialogue_roster"},
+            {"dialogue_finish", null, "30"},
+            {"snap", null, "20", "phase5_job_screen"},
+            {"screen", null, "10", "hold"},
+            {"cmd", null, "40", "amemaru admin floor unlock 2 in 30"},
+            {"snap", null, "10", "phase5_announce"},
+            {"cmd", null, "80", "tp @p {at:0.5,7,-160.5} 180 12"},
+            {"snap", null, "30", "phase5_tower_gate"},
+            {"cmd", null, "10", "tp @p {at:0.5,7,-167.5} 180 12"},
+            {"await_screen", null, "0", "floor_select"},
+            {"snap", null, "20", "phase5_floor_select"},
+            {"floor_select", null, "40", "1"},
+            {"snap", null, "10", "phase5_floor1_arrival"},
+            {"snap", null, "130", "phase5_floor1_entrance"},
+            {"cmd", null, "100", "execute in amemaru:tower run tp @p {f1:184.5,24,252.5} 165 18"},
+            {"snap", null, "40", "phase5_floor1_bridge"},
+            {"cmd", null, "80", "amemaru admin floor tp 1 pillar1 @p"},
+            {"p5_pillar", null, "20", "0"},
+            {"snap", null, "10", "phase5_pillar_text"},
+            {"snap", null, "70", "phase5_pillar_lit"},
+            {"cmd", null, "80", "amemaru admin floor tp 1 boss @p"},
+            {"snap", null, "40", "phase5_boss_gate_sealed"},
+            {"cmd", null, "10", "amemaru admin pillars complete 1 @p"},
+            {"snap", null, "40", "phase5_boss_gate_open"},
+            {"cmd", null, "30", "execute in amemaru:tower run tp @p {f1:192.5,15,107.5} 180 8"},
+            {"snap", null, "40", "phase5_tablet"},
+            {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "60", "execute in amemaru:tower run tp @p {f1:192.5,15,68.5} 180 4"},
+            {"snap", null, "60", "phase5_boss_fight"},
+            {"await_telegraph", null, "0"},
+            {"snap", null, "4", "phase5_boss_telegraph"},
+            {"cmd", null, "10", "gamemode creative @p"},
+            {"cmd", null, "5", "kill @e[type=amemaru:veldhorn]"},
+            {"snap_keep", null, "60", "phase5_boss_first_kill"},
+            {"snap", null, "70", "phase5_boss_title"},
+            {"cmd", null, "10", "gamemode adventure @p"},
+            {"cmd", null, "10", "execute in amemaru:tower run tp @p {f1:192.5,15,38.5} 180 10"},
+            {"snap", null, "70", "phase5_return_gate"},
+            {"p5_replay", null, "20"},
+            {"snap", null, "10", "phase5_replay"},
+            {"screen", null, "10", "hold"},
+            {"cmd", null, "10", "gamemode spectator @p"},
+            {"cmd", null, "10", "execute in amemaru:tower run tp @p {f1:192.5,70,392.5} 180 22"},
+            {"hud", null, "5", "off"},
+            {"snap", null, "220", "phase5_floor1_aerial"},
             {"cmd", null, "10", "gamemode spectator @p"},
             {"hud", null, "5", "off"}};
 
@@ -1689,6 +1757,22 @@ public final class CiScreenshots {
                 pendingShot = shot[3];
                 next(stage + 1, 2);
             }
+        } else if (shot[0].startsWith("await_")) {
+            // 待つ：まだなら同じ行をもう一度（5 tick ごと。長く待っても来なければ、あきらめて次へ）
+            if (first) {
+                if (!awaitReady(minecraft, shot) && awaitTicks < awaitLimit(shot[0])) {
+                    awaitTicks += 5;
+                    next(stage, 5);
+                } else {
+                    if (awaitTicks >= awaitLimit(shot[0])) {
+                        AmemaruMod.LOGGER.warn("[amemaru] CI: gave up waiting ({})", shot[0]);
+                    }
+                    awaitTicks = 0;
+                    next(stage + 2, 0);
+                }
+            }
+        } else if (phase5Action(minecraft, shot, first)) {
+            next(stage + 1, first ? waitTicks : 0);
         } else if (phase4Action(minecraft, shot, first)) {
             next(stage + 1, first ? waitTicks : 0);
         } else if (first) {
@@ -1705,6 +1789,83 @@ public final class CiScreenshots {
             }
             next(stage + 1, waitTicks);
         }
+    }
+
+    // ---------------------------------------------------------------- Phase 5 の写真の小物
+
+    private static int awaitTicks;
+    private static int floorBuilds;
+
+    private static int awaitLimit(String kind) {
+        return switch (kind) {
+            case "await_floor" -> 20 * 120;
+            case "await_scene" -> 20 * 60;
+            case "await_dialogue" -> 20 * 40;
+            case "await_telegraph" -> 20 * 25;
+            default -> 20 * 20;
+        };
+    }
+
+    private static boolean awaitReady(Minecraft minecraft, String[] shot) {
+        return switch (shot[0]) {
+            case "await_floor" -> jp.amemaru.lostconnection.tower.FloorBuild.builds > floorBuilds;
+            case "await_scene" -> ScenePlayer.isPlaying();
+            case "await_dialogue" -> minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.DialogueScreen;
+            case "await_screen" -> minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.FloorSelectScreen;
+            case "await_telegraph" -> CiPhase3.anyTelegraph(minecraft);
+            default -> true;
+        };
+    }
+
+    /** Phase 5 の写真の段取り（階を建てる・会話を進める・階を選ぶ・石柱を起動する・記憶の再生）。その種類の行なら true。 */
+    private static boolean phase5Action(Minecraft minecraft, String[] shot, boolean first) {
+        String kind = shot[0];
+        if (!List.of("p5_build_floor", "dialogue_end", "dialogue_choose", "dialogue_finish", "floor_select", "p5_pillar", "p5_replay")
+                .contains(kind)) {
+            return false;
+        }
+        if (!first) {
+            return true;
+        }
+        jp.amemaru.lostconnection.client.screen.DialogueScreen dialogue =
+                minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.DialogueScreen d ? d : null;
+        switch (kind) {
+            case "p5_build_floor" -> {
+                floorBuilds = jp.amemaru.lostconnection.tower.FloorBuild.builds;
+                command(minecraft, "amemaru admin map build floor 1");
+            }
+            case "dialogue_end" -> {
+                if (dialogue != null) {
+                    dialogue.ciToEnd();
+                }
+            }
+            case "dialogue_choose" -> {
+                if (dialogue != null) {
+                    dialogue.ciChoose(Integer.parseInt(shot[3]));
+                }
+            }
+            case "dialogue_finish" -> {
+                if (dialogue != null) {
+                    dialogue.ciFinish();
+                }
+            }
+            case "floor_select" -> {
+                ModNetwork.sendToServer(new jp.amemaru.lostconnection.network.c2s.FloorSelectC2S(Integer.parseInt(shot[3])));
+                minecraft.setScreen(new HoldScreen());
+            }
+            case "p5_pillar" -> {
+                int index = Integer.parseInt(shot[3]);
+                CiPhase3.onServer(minecraft, player -> {
+                    jp.amemaru.lostconnection.tower.FloorDef def = jp.amemaru.lostconnection.tower.FloorDefs.byNumber(1);
+                    if (def != null && index < def.pillars().size()) {
+                        jp.amemaru.lostconnection.tower.TowerService.activatePillar(player, 1, index,
+                                def.world(def.pillars().get(index).pos()));
+                    }
+                });
+            }
+            default -> CiPhase3.onServer(minecraft, jp.amemaru.lostconnection.story.StoryEventManager::openReplayList);
+        }
+        return true;
     }
 
     // ---------------------------------------------------------------- Phase 4 の写真の小物
@@ -1786,8 +1947,21 @@ public final class CiScreenshots {
     private static String cityCommand(String template) {
         BlockPos o = cityOrigin == null ? BlockPos.ZERO : cityOrigin;
         BlockPos guild = o.offset(6 + 1, 37, -100 + 1);
-        return template.replace("{origin}", o.getX() + " " + o.getY() + " " + o.getZ())
+        String out = template.replace("{origin}", o.getX() + " " + o.getY() + " " + o.getZ())
                 .replace("{guild}", guild.getX() + " " + guild.getY() + " " + guild.getZ());
+        // {at:x,y,z}：街の真ん中からの位置。{f1:x,y,z}：塔の1階の (0, 0, 0) からの位置（Phase 5）
+        jp.amemaru.lostconnection.tower.FloorDef floor1 = jp.amemaru.lostconnection.tower.FloorDefs.byNumber(1);
+        BlockPos f1 = floor1 != null ? floor1.origin() : new BlockPos(3904, 60, -192);
+        java.util.regex.Matcher m = java.util.regex.Pattern.compile("\\{(at|f1):(-?[0-9.]+),(-?[0-9.]+),(-?[0-9.]+)\\}").matcher(out);
+        StringBuilder sb = new StringBuilder();
+        while (m.find()) {
+            BlockPos base = "at".equals(m.group(1)) ? o : f1;
+            String pos = String.format(Locale.ROOT, "%.2f %.2f %.2f", base.getX() + Double.parseDouble(m.group(2)),
+                    base.getY() + Double.parseDouble(m.group(3)), base.getZ() + Double.parseDouble(m.group(4)));
+            m.appendReplacement(sb, pos);
+        }
+        m.appendTail(sb);
+        return sb.toString();
     }
 
     private static void cityBuild(Minecraft minecraft, boolean grown) {

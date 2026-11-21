@@ -193,6 +193,33 @@ public class DialogueScreen extends Screen {
         Minecraft.getInstance().setScreen(null);
     }
 
+    // ---------------------------------------------------------------- 自動の確認（CIの写真）から
+
+    /** 今のまとまりの最後の吹き出しまで進め、文字をすべて出す（選択肢があれば出る）。 */
+    public void ciToEnd() {
+        if (page < pages.size() - 1) {
+            for (int i = page + 1; i < pages.size(); i++) {
+                log.add(pages.get(i));
+            }
+            page = pages.size() - 1;
+        }
+        pageStart = Util.getMillis() - 100_000L;
+    }
+
+    /** 選択肢を選ぶ（番号は画面の上からの順）。 */
+    public void ciChoose(int index) {
+        ciToEnd();
+        choose(index);
+    }
+
+    /** 最後の吹き出しまで読み終えたことにする（選択肢がなければ、会話を終える）。 */
+    public void ciFinish() {
+        ciToEnd();
+        if (choices.isEmpty()) {
+            finish(-1);
+        }
+    }
+
     // ---------------------------------------------------------------- 入力
 
     @Override

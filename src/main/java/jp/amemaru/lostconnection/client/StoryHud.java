@@ -221,7 +221,8 @@ public final class StoryHud {
 
     private static void renderGuide(GuiGraphics graphics, Font font, int width, Minecraft minecraft) {
         var story = ClientStory.story();
-        if (story.guideIndex() < 0 || story.guideText().isEmpty() || minecraft.screen != null) {
+        if (story.guideIndex() < 0 || story.guideText().isEmpty()
+                || minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.DialogueScreen) {
             return;
         }
         int w = 150;

@@ -1,0 +1,393 @@
+{
+  "_comment": "塔の1階「始まりの草原」（tools/mapgen/build_floor1.py が書き出す。手で直すときは、スクリプトを直して作り直す）",
+  "floor": 1,
+  "chapter": 1,
+  "name": "始まりの草原",
+  "chapter_title": "第1章　失われた古代領域",
+  "recommended_level": [
+    1,
+    4
+  ],
+  "origin": [
+    3904,
+    60,
+    -192
+  ],
+  "size": [
+    384,
+    48,
+    384
+  ],
+  "structure": "amemaru:map/floor1/",
+  "piece_size": 48,
+  "entrance": {
+    "pos": [
+      192.5,
+      13,
+      343.5
+    ],
+    "yaw": 180
+  },
+  "return_circle": {
+    "center": [
+      192.5,
+      13,
+      352.5
+    ],
+    "radius": 2.6
+  },
+  "boss_room": {
+    "boss": "amemaru:veldhorn",
+    "name": "草原の主の広間",
+    "spawn": {
+      "pos": [
+        192.5,
+        15,
+        51.5
+      ],
+      "yaw": 0
+    },
+    "arena": {
+      "center": [
+        192.5,
+        15,
+        58.5
+      ],
+      "radius": 30.0,
+      "y_min": 13,
+      "y_max": 28
+    },
+    "seal": [
+      [
+        190,
+        15,
+        90
+      ],
+      [
+        194,
+        20,
+        90
+      ]
+    ],
+    "start_radius": 20,
+    "respawn_seconds": 120,
+    "max_players": 8,
+    "hp_per_extra_player": 0.6,
+    "exit": {
+      "center": [
+        192.5,
+        15,
+        38.5
+      ],
+      "radius": 2.6
+    }
+  },
+  "pillars": [
+    {
+      "pos": [
+        65,
+        12,
+        232
+      ],
+      "line": "この塔は、つながる者のために建てられた"
+    },
+    {
+      "pos": [
+        317,
+        10,
+        196
+      ],
+      "line": "ひとりの手では、門は動かない"
+    },
+    {
+      "pos": [
+        96,
+        14,
+        105
+      ],
+      "line": "手をつなげ。道は、その先にある"
+    }
+  ],
+  "pillars_done": "",
+  "tablet": {
+    "pos": [
+      192,
+      16,
+      103
+    ],
+    "title": "道標の石板・一",
+    "text": "ひとりで来たのなら、引き返せ。この先は、手をつなぐ者のための道"
+  },
+  "spawns": [
+    {
+      "id": "meadow_south",
+      "enemy": "amemaru:tsunomofu",
+      "center": [
+        150,
+        14,
+        300
+      ],
+      "radius": 20,
+      "max": 7,
+      "respawn_seconds": 40,
+      "group": [
+        3,
+        5
+      ],
+      "activation": 56
+    },
+    {
+      "id": "meadow_east",
+      "enemy": "amemaru:tsunomofu",
+      "center": [
+        252,
+        14,
+        296
+      ],
+      "radius": 20,
+      "max": 7,
+      "respawn_seconds": 40,
+      "group": [
+        3,
+        5
+      ],
+      "activation": 56
+    },
+    {
+      "id": "meadow_west",
+      "enemy": "amemaru:tsunomofu",
+      "center": [
+        112,
+        14,
+        196
+      ],
+      "radius": 18,
+      "max": 6,
+      "respawn_seconds": 40,
+      "group": [
+        3,
+        4
+      ],
+      "activation": 56
+    },
+    {
+      "id": "meadow_north",
+      "enemy": "amemaru:tsunomofu",
+      "center": [
+        268,
+        14,
+        140
+      ],
+      "radius": 18,
+      "max": 6,
+      "respawn_seconds": 45,
+      "group": [
+        3,
+        4
+      ],
+      "activation": 56
+    },
+    {
+      "id": "road_south",
+      "enemy": "amemaru:ishikure_soldier",
+      "center": [
+        180,
+        14,
+        280
+      ],
+      "radius": 6,
+      "max": 2,
+      "respawn_seconds": 50,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 64,
+      "route": [
+        [
+          186,
+          14,
+          304
+        ],
+        [
+          175,
+          14,
+          280
+        ],
+        [
+          173,
+          14,
+          262
+        ],
+        [
+          179,
+          14,
+          244
+        ]
+      ]
+    },
+    {
+      "id": "road_north",
+      "enemy": "amemaru:ishikure_soldier",
+      "center": [
+        202,
+        14,
+        160
+      ],
+      "radius": 6,
+      "max": 2,
+      "respawn_seconds": 50,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 64,
+      "route": [
+        [
+          206,
+          14,
+          182
+        ],
+        [
+          206,
+          14,
+          166
+        ],
+        [
+          201,
+          14,
+          146
+        ],
+        [
+          194,
+          14,
+          128
+        ]
+      ]
+    },
+    {
+      "id": "ruins_east",
+      "enemy": "amemaru:ishikure_soldier",
+      "center": [
+        318,
+        14,
+        196
+      ],
+      "radius": 6,
+      "max": 2,
+      "respawn_seconds": 60,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 56,
+      "route": [
+        [
+          311,
+          14,
+          190
+        ],
+        [
+          325,
+          14,
+          190
+        ],
+        [
+          325,
+          14,
+          202
+        ],
+        [
+          311,
+          14,
+          202
+        ]
+      ]
+    },
+    {
+      "id": "crystals_east",
+      "enemy": "amemaru:crystal_bee",
+      "center": [
+        282,
+        14,
+        236
+      ],
+      "radius": 10,
+      "max": 4,
+      "respawn_seconds": 45,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 56
+    },
+    {
+      "id": "crystals_west",
+      "enemy": "amemaru:crystal_bee",
+      "center": [
+        128,
+        14,
+        142
+      ],
+      "radius": 10,
+      "max": 4,
+      "respawn_seconds": 45,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 56
+    },
+    {
+      "id": "crystals_north",
+      "enemy": "amemaru:crystal_bee",
+      "center": [
+        300,
+        14,
+        104
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 50,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 56
+    },
+    {
+      "id": "lost_west",
+      "enemy": "amemaru:kakekiba_wolf",
+      "center": [
+        58,
+        14,
+        300
+      ],
+      "radius": 16,
+      "max": 3,
+      "respawn_seconds": 60,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 56
+    },
+    {
+      "id": "lost_north",
+      "enemy": "amemaru:kakekiba_wolf",
+      "center": [
+        330,
+        14,
+        86
+      ],
+      "radius": 16,
+      "max": 3,
+      "respawn_seconds": 60,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 56
+    }
+  ]
+}
