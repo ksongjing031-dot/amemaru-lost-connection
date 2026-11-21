@@ -17,7 +17,8 @@ import java.util.Map;
  *
  * <ul>
  *   <li>自分がダウンしている：画面のふちを暗い赤にし、真ん中に「ダウン」と、教会へ戻るまでの秒数と残りのバー、
- *       「仲間がそばでしゃがむと起き上がれます」。だれかが起こしていれば、その人の名前と、起こした量のバー。</li>
+ *       「仲間がそばでしゃがむと起き上がれます」。だれかが起こしていれば、その人の名前と、起こした量のバー。
+ *       その下に「［H］を長押しでリタイア」と、押している間はたまる量のバー（11月22日）。</li>
  *   <li>自分が仲間を起こしている：照準の下に「〇〇を起こしています」と、起こした量のバー。</li>
  *   <li>そばにダウンしている人がいる：照準の下に「しゃがむと〇〇を起こせます」。</li>
  * </ul>
@@ -32,6 +33,7 @@ public final class DownHud {
     private static final int WHITE = 0xFFFFFFFF;
     private static final int DIM = 0xFFC8CEDC;
     private static final int AQUA = 0xFF8FD3FF;
+    private static final int GOLD = 0xFFFFD27A;
 
     private DownHud() {
     }
@@ -89,6 +91,20 @@ public final class DownHud {
         } else {
             Component hint = Component.translatable("hud.amemaru.down.hint");
             graphics.drawString(font, hint, cx - font.width(hint) / 2, y, DIM, true);
+        }
+        // リタイア（11月22日のご指示）：キーを押し続けると、教会へ戻る
+        y += reviver != null ? 12 : 16;
+        if (DownClientEvents.retireSent()) {
+            Component text = Component.translatable("hud.amemaru.down.retiring");
+            graphics.drawString(font, text, cx - font.width(text) / 2, y, GOLD, true);
+            return;
+        }
+        Component retire = Component.translatable("hud.amemaru.down.retire", KeyBindings.RETIRE.getTranslatedKeyMessage(),
+                DownClientEvents.RETIRE_TICKS / 20);
+        float held = DownClientEvents.retireProgress(partialTick);
+        graphics.drawString(font, retire, cx - font.width(retire) / 2, y, held > 0.0F ? GOLD : DIM, true);
+        if (held > 0.0F) {
+            drawBar(graphics, cx - 50, y + 11, 100, held, GOLD);
         }
     }
 

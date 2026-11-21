@@ -5,8 +5,10 @@ import jp.amemaru.lostconnection.enemy.AmemaruMob;
 import jp.amemaru.lostconnection.enemy.EnemyCombat;
 import jp.amemaru.lostconnection.enemy.EnemyDef;
 import jp.amemaru.lostconnection.enemy.Tsunomofu;
+import jp.amemaru.lostconnection.entity.GroundMarker;
 import jp.amemaru.lostconnection.tower.BossRoom;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -17,6 +19,7 @@ import net.minecraft.world.BossEvent;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
@@ -30,16 +33,28 @@ import java.util.UUID;
  * 1階のボス、草原の主ヴェルドホーン（Phase 0-A 9章「巨大な角の獣で、突進の通り道が地面に線で表示される。HP50%でツノモフを呼ぶ。
  * ヘイト・回避・蘇生のチュートリアルを兼ねる」）。
  *
+ * <p>どの技も、当たる所を地面に赤く出してから打つ（11月22日のご指示「ボスの通常攻撃も当たり判定を出したい」）。技は、そのとき
+ * 出せるものから重みをつけて選び、毎回同じ順番にならないようにする（11月22日のご指示「ボスの攻撃パターンを増やす」）。</p>
  * <ul>
- *   <li>角の薙ぎ払い：敵視のいちばん高い人（盾役）へ。前の扇形（体が光ってから）【提案】</li>
- *   <li>突進：離れた人へ、地面に通り道の線を出してから、まっすぐ突っ込む。壁にぶつかると、しばらく動けない（攻める好機）【提案】</li>
- *   <li>踏みつけ：まわりに人が集まると、地面に円を出してから、まわりをまとめて打つ【提案】</li>
- *   <li>HP50%：吠えて、ツノモフを呼ぶ（2匹＋参加者の数。6匹まで）。突進の予兆が短くなる。HP20%：さらに技の間が短くなる【提案】</li>
+ *   <li>角の薙ぎ払い：敵視のいちばん高い人（盾役）へ。前の扇形（120度・5.5ブロック）【提案】。11月22日から扇形を地面に出す</li>
+ *   <li>角の突き上げ：前のまっすぐな帯（幅2.6・長さ7）。当たると打ち上げられる【補完】（11月22日）</li>
+ *   <li>後ろ蹴り：しばらく後ろにいる人へ。後ろの扇形（140度・4.5ブロック）【補完】（11月22日）</li>
+ *   <li>突進：離れた人へ、地面に通り道の線を出してから、まっすぐ突っ込む。壁にぶつかると、しばらく動けない（攻める好機）【提案】。
+ *       11月22日のご指示「突進はもっと早くていい」で、予兆を1.4秒から1.0秒に、速さを1.5倍にした</li>
+ *   <li>踏みつけ：まわりに人が集まると、地面に円を出してから、まわりをまとめて打つ【提案】。11月22日から、ひとりでも近くにいれば、ときどき</li>
+ *   <li>大跳躍：離れた人の足もとに円を出し、跳んでその円に降りる【補完】（11月22日）</li>
+ *   <li>根の牙（HP50%から）：みんなの足もとに円を出し、根の牙が突き上がる。HP20%からは2回続く【補完】（11月22日）</li>
+ *   <li>HP50%：吠えて、ツノモフを呼ぶ（2匹＋参加者の数。6匹まで）。突進の予兆が短くなり、続けて2回突っ込むことがある。
+ *       HP20%：さらに技の間が短くなり、突進は2〜3回続く【提案】</li>
  * </ul>
- * 数値は敵の定義（{@code enemies/veldhorn.json}）の技で変えられる。
+ * 数値は敵の定義（{@code enemies/veldhorn.json}）の技で変えられる。管理者は {@code /amemaru admin boss skill 1 <技>} で、戦いの間に
+ * 技を出させられる（{@link #SKILLS}）。
  */
 public class Veldhorn extends AmemaruBoss {
-    private enum Action { NONE, SWEEP, CHARGE_WINDUP, CHARGING, STUNNED, STOMP, ROAR }
+    /** 技の名前（管理者のコマンドで出させる名前）。 */
+    public static final List<String> SKILLS = List.of("sweep", "upthrust", "kick", "charge", "stomp", "leap", "roots", "roar");
+
+    private enum Action { NONE, SWEEP, UPTHRUST, KICK, CHARGE_WINDUP, CHARGING, STUNNED, RECOVER, STOMP, LEAP_WINDUP, LEAPING, ROOTS, ROAR }
 
     private Action action = Action.NONE;
     private int timer;
@@ -50,6 +65,19 @@ public class Veldhorn extends AmemaruBoss {
     private final Set<UUID> hit = new HashSet<>();
     private final List<UUID> summoned = new ArrayList<>();
     private int chargesLeft;
+    /** 後ろに人がいる長さ（tick）。後ろ蹴りに使う */
+    private int behindTicks;
+    /** 大跳躍：跳ぶ所・降りる所・空にいる長さ・跳んでからの tick */
+    private Vec3 leapFrom = Vec3.ZERO;
+    private Vec3 leapTo = Vec3.ZERO;
+    private int leapAir;
+    private int leapTicks;
+    /** 根の牙：牙が出る所と、残りの回数 */
+    private final List<Vec3> rootSpots = new ArrayList<>();
+    private int rootWaves;
+    /** HP50%で吠えるのを、跳んでいる・突っ込んでいる技が終わるまで待つ */
+    private boolean roarPending;
+    private final Set<String> tips = new HashSet<>();
 
     public Veldhorn(EntityType<? extends Veldhorn> type, Level level) {
         super(type, level, BossEvent.BossBarColor.GREEN);
@@ -62,7 +90,7 @@ public class Veldhorn extends AmemaruBoss {
 
     @Override
     protected String[] actionNames() {
-        return new String[]{"skill_charge", "skill_stomp", "skill_roar"};
+        return new String[]{"skill_charge", "skill_stomp", "skill_roar", "skill_upthrust", "skill_kick", "skill_leap", "skill_roots"};
     }
 
     @Override
@@ -81,9 +109,41 @@ public class Veldhorn extends AmemaruBoss {
                 : def.skill(name, power, windup, cooldown, range);
     }
 
+    private EnemyDef.Skill sweepSkill() {
+        return skill("sweep", 1.2, 0.8, 3.5, 5.5);
+    }
+
+    private EnemyDef.Skill upthrustSkill() {
+        return skill("upthrust", 1.3, 0.6, 5.0, 7.0);
+    }
+
+    private EnemyDef.Skill kickSkill() {
+        return skill("kick", 1.0, 0.5, 6.0, 4.5);
+    }
+
+    private EnemyDef.Skill chargeSkill() {
+        return skill("charge", 2.2, 1.0, 9.0, 22.0);
+    }
+
+    private EnemyDef.Skill stompSkill() {
+        return skill("stomp", 1.4, 1.2, 12.0, 6.0);
+    }
+
+    private EnemyDef.Skill leapSkill() {
+        return skill("leap", 1.8, 1.1, 11.0, 20.0);
+    }
+
+    private EnemyDef.Skill rootsSkill() {
+        return skill("roots", 1.0, 1.0, 13.0, 24.0);
+    }
+
     private int cooldown(EnemyDef.Skill skill) {
         double scale = phase() >= 3 ? 0.7 : phase() == 2 ? 0.85 : 1.0;
         return (int) Math.round(skill.cooldownTicks() * scale);
+    }
+
+    private static int ticks(double seconds) {
+        return (int) Math.round(seconds * 20.0);
     }
 
     // ---------------------------------------------------------------- 戦い
@@ -97,12 +157,11 @@ public class Veldhorn extends AmemaruBoss {
     @Override
     protected void onPhaseChanged(ServerLevel level, int from, int to) {
         if (to >= 2 && from < 2) {
-            action = Action.ROAR;
-            timer = 40;
-            clearTelegraph();
-            setTelegraph(TELEGRAPH_ALERT, 40, getYRot(), 0.0F);
-            playAction("skill_roar");
-            level.playSound(null, getX(), getY(), getZ(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 2.0F, 0.7F);
+            if (action == Action.NONE || action == Action.RECOVER || action == Action.STUNNED) {
+                startRoar(level);
+            } else {
+                roarPending = true;
+            }
             line("boss.amemaru.veldhorn.line.call");
         }
         if (to >= 3 && from < 3) {
@@ -117,13 +176,17 @@ public class Veldhorn extends AmemaruBoss {
         action = Action.NONE;
         timer = 0;
         hit.clear();
+        behindTicks = 0;
+        rootSpots.clear();
+        rootWaves = 0;
+        roarPending = false;
         discardSummoned();
     }
 
     @Override
     public void tick() {
         super.tick();
-        if (!(level() instanceof ServerLevel level) || !isAlive() || isReturning()) {
+        if (!(level() instanceof ServerLevel level) || !isAlive() || isRemoved() || isReturning()) {
             return;
         }
         BossRoom room = room();
@@ -138,29 +201,56 @@ public class Veldhorn extends AmemaruBoss {
         switch (action) {
             case NONE -> choose(level);
             case SWEEP -> tickSweep(level);
+            case UPTHRUST -> tickUpthrust(level);
+            case KICK -> tickKick(level);
             case CHARGE_WINDUP -> tickChargeWindup(level);
             case CHARGING -> tickCharging(level);
             case STUNNED -> tickStunned(level);
+            case RECOVER -> tickRecover();
             case STOMP -> tickStomp(level);
+            case LEAP_WINDUP -> tickLeapWindup(level);
+            case LEAPING -> tickLeaping(level);
+            case ROOTS -> tickRoots(level);
             case ROAR -> tickRoar(level);
         }
     }
 
+    /** 次の技を選ぶ（何もしていないとき、毎 tick）。 */
     private void choose(ServerLevel level) {
         if (isBusy()) {
+            return;
+        }
+        if (roarPending) {
+            roarPending = false;
+            startRoar(level);
             return;
         }
         List<ServerPlayer> players = targets(level);
         if (players.isEmpty()) {
             getNavigation().stop();
+            behindTicks = 0;
             return;
         }
         ServerPlayer top = topThreat();
         if (top == null || !players.contains(top)) {
             top = players.get(0);
         }
-        // 踏みつけ：まわりに2人以上
-        EnemyDef.Skill stomp = skill("stomp", 1.4, 1.2, 12.0, 6.0);
+        // 後ろ蹴り：しばらく後ろにいる人がいる（後ろに回りこみ続けると蹴られる）
+        EnemyDef.Skill kick = kickSkill();
+        boolean someoneBehind = false;
+        for (ServerPlayer player : players) {
+            if (player.distanceTo(this) <= kick.range() + 0.5 && behind(player.position(), kick.param("angle", 140.0) / 2.0)) {
+                someoneBehind = true;
+                break;
+            }
+        }
+        behindTicks = someoneBehind ? behindTicks + 1 : 0;
+        if (someoneBehind && behindTicks >= ticks(kick.param("after", 0.8)) && ready("kick")) {
+            startKick(kick);
+            return;
+        }
+        // 踏みつけ：まわりに2人以上なら、先に
+        EnemyDef.Skill stomp = stompSkill();
         int near = 0;
         for (ServerPlayer player : players) {
             if (player.distanceTo(this) <= stomp.range()) {
@@ -171,30 +261,54 @@ public class Veldhorn extends AmemaruBoss {
             startStomp(stomp);
             return;
         }
-        // 突進：離れた人（いちばん遠い人）
-        EnemyDef.Skill charge = skill("charge", 2.2, 1.4, 9.0, 22.0);
-        if (ready("charge")) {
-            ServerPlayer far = null;
-            double best = -1;
-            for (ServerPlayer player : players) {
-                double d = player.distanceTo(this);
-                if (d >= charge.param("min_range", 6.0) && d <= charge.range() && hasLineOfSight(player) && d > best) {
-                    far = player;
-                    best = d;
+        // ほかの技：そのとき出せるものから、重みをつけて選ぶ（同じ順番にならないように）
+        List<Action> pool = new ArrayList<>();
+        double dist = top.distanceTo(this);
+        EnemyDef.Skill sweep = sweepSkill();
+        EnemyDef.Skill upthrust = upthrustSkill();
+        EnemyDef.Skill charge = chargeSkill();
+        EnemyDef.Skill leap = leapSkill();
+        if (ready("sweep") && dist <= sweep.range()) {
+            add(pool, Action.SWEEP, 3);
+        }
+        if (ready("upthrust") && dist <= upthrust.range() - 0.5) {
+            add(pool, Action.UPTHRUST, 2);
+        }
+        if (ready("stomp") && near >= 1) {
+            add(pool, Action.STOMP, 1);
+        }
+        ServerPlayer far = farthest(players, charge.param("min_range", 6.0), charge.range(), true);
+        if (ready("charge") && far != null) {
+            add(pool, Action.CHARGE_WINDUP, 3);
+        }
+        ServerPlayer leapTarget = farthest(players, leap.param("min_range", 6.0), leap.range(), false);
+        if (ready("leap") && leapTarget != null) {
+            add(pool, Action.LEAP_WINDUP, phase() >= 3 ? 3 : 2);
+        }
+        if (phase() >= 2 && ready("roots")) {
+            add(pool, Action.ROOTS, 2);
+        }
+        if (!pool.isEmpty()) {
+            Action pick = pool.get(random.nextInt(pool.size()));
+            switch (pick) {
+                case SWEEP -> {
+                    faceTowards(top.position());
+                    startSweep(sweep);
+                }
+                case UPTHRUST -> {
+                    faceTowards(top.position());
+                    startUpthrust(upthrust);
+                }
+                case STOMP -> startStomp(stomp);
+                case CHARGE_WINDUP -> {
+                    chargesLeft = chargeCount();
+                    startCharge(far, charge);
+                }
+                case LEAP_WINDUP -> startLeap(level, leapTarget, leap);
+                case ROOTS -> startRoots(level, rootsSkill());
+                default -> {
                 }
             }
-            if (far != null) {
-                chargesLeft = phase() >= 2 && random.nextInt(3) == 0 ? 2 : 1;
-                startCharge(far, charge);
-                return;
-            }
-        }
-        // 薙ぎ払い：敵視のいちばん高い人が前にいる
-        EnemyDef.Skill sweep = skill("sweep", 1.2, 0.8, 3.5, 5.5);
-        double dist = top.distanceTo(this);
-        if (ready("sweep") && dist <= sweep.range()) {
-            faceTowards(top.position());
-            startSweep(sweep);
             return;
         }
         // 近づく
@@ -204,6 +318,40 @@ public class Veldhorn extends AmemaruBoss {
             getNavigation().stop();
             faceTowards(top.position());
         }
+    }
+
+    private static void add(List<Action> pool, Action action, int weight) {
+        for (int i = 0; i < weight; i++) {
+            pool.add(action);
+        }
+    }
+
+    /** 続けて突っ込む回数（HP50%から1/3で2回、HP20%から2〜3回）。 */
+    private int chargeCount() {
+        if (phase() >= 3) {
+            return 2 + random.nextInt(2);
+        }
+        return phase() == 2 && random.nextInt(3) == 0 ? 2 : 1;
+    }
+
+    /** 範囲の中で、いちばん遠い人（{@code sight}：見えている人だけ）。 */
+    @Nullable
+    private ServerPlayer farthest(List<ServerPlayer> players, double min, double max, boolean sight) {
+        ServerPlayer best = null;
+        double bestDistance = -1;
+        for (ServerPlayer player : players) {
+            double d = player.distanceTo(this);
+            if (d >= min && d <= max && (!sight || hasLineOfSight(player)) && d > bestDistance) {
+                best = player;
+                bestDistance = d;
+            }
+        }
+        return best;
+    }
+
+    /** その所が、後ろの扇形（半分の角度 {@code halfAngle}）の中か。 */
+    private boolean behind(Vec3 point, double halfAngle) {
+        return !inFront(point, 180.0 - halfAngle);
     }
 
     /** 部屋の参加者のうち、狙える人（倒れている人・見ているだけの人は除く）。 */
@@ -226,31 +374,49 @@ public class Veldhorn extends AmemaruBoss {
         return list;
     }
 
-    // ---- 薙ぎ払い
+    private boolean tipped(String key) {
+        return !tips.add(key);
+    }
+
+    private void tipOnce(String key) {
+        if (!tipped(key)) {
+            tip("boss.amemaru.veldhorn.tip." + key);
+        }
+    }
+
+    private void strikeAway(ServerPlayer player, double power, double horizontal, double lift) {
+        if (EnemyCombat.strike(this, player, power, null)) {
+            Vec3 away = player.position().subtract(position()).multiply(1, 0, 1);
+            Vec3 push = away.lengthSqr() < 1.0E-4 ? Vec3.ZERO : away.normalize().scale(horizontal);
+            player.push(push.x, lift, push.z);
+            player.hurtMarked = true;
+        }
+    }
+
+    // ---- 角の薙ぎ払い（前の扇形）
 
     private void startSweep(EnemyDef.Skill sweep) {
         action = Action.SWEEP;
         timer = Math.max(1, sweep.windupTicks());
         getNavigation().stop();
+        chargeYaw = getYRot();
         setBusy(timer + 10);
-        setTelegraph(TELEGRAPH_WINDUP, timer, getYRot(), (float) sweep.range());
+        setTelegraph(TELEGRAPH_CONE, timer, getYRot(), (float) sweep.range(), (float) sweep.param("angle", 120.0));
         playAction("attack");
     }
 
     private void tickSweep(ServerLevel level) {
         getNavigation().stop();
+        // 地面の扇形と同じ向きのまま打つ
+        lockRotation();
         if (--timer > 0) {
             return;
         }
-        EnemyDef.Skill sweep = skill("sweep", 1.2, 0.8, 3.5, 5.5);
+        EnemyDef.Skill sweep = sweepSkill();
         double half = sweep.param("angle", 120.0) / 2.0;
         for (ServerPlayer player : targets(level)) {
             if (player.distanceTo(this) <= sweep.range() + 0.6 && inFront(player.position(), half)) {
-                if (EnemyCombat.strike(this, player, sweep.power(), null)) {
-                    Vec3 push = player.position().subtract(position()).multiply(1, 0, 1).normalize().scale(0.8);
-                    player.push(push.x, 0.25, push.z);
-                    player.hurtMarked = true;
-                }
+                strikeAway(player, sweep.power(), 0.8, 0.25);
             }
         }
         level.playSound(null, getX(), getY(), getZ(), SoundEvents.RAVAGER_ATTACK, SoundSource.HOSTILE, 1.4F, 0.8F);
@@ -261,7 +427,85 @@ public class Veldhorn extends AmemaruBoss {
         action = Action.NONE;
     }
 
-    // ---- 突進
+    // ---- 角の突き上げ（前のまっすぐな帯。打ち上げる）
+
+    private void startUpthrust(EnemyDef.Skill upthrust) {
+        action = Action.UPTHRUST;
+        timer = Math.max(1, upthrust.windupTicks());
+        getNavigation().stop();
+        chargeYaw = getYRot();
+        setBusy(timer + 12);
+        setTelegraph(TELEGRAPH_LINE, timer, chargeYaw, (float) upthrust.range(), (float) upthrust.param("width", 2.6));
+        playAction("skill_upthrust");
+    }
+
+    private void tickUpthrust(ServerLevel level) {
+        getNavigation().stop();
+        lockRotation();
+        if (--timer > 0) {
+            return;
+        }
+        EnemyDef.Skill upthrust = upthrustSkill();
+        Vec3 dir = Vec3.directionFromRotation(0.0F, chargeYaw).normalize();
+        double half = upthrust.param("width", 2.6) / 2.0;
+        for (ServerPlayer player : targets(level)) {
+            Vec3 rel = player.position().subtract(position());
+            double along = rel.x * dir.x + rel.z * dir.z;
+            double side = Math.abs(rel.x * dir.z - rel.z * dir.x);
+            if (along >= -0.5 && along <= upthrust.range() + 0.5 && side <= half + 0.4) {
+                if (EnemyCombat.strike(this, player, upthrust.power(), null)) {
+                    player.push(dir.x * 0.3, upthrust.param("lift", 0.9), dir.z * 0.3);
+                    player.hurtMarked = true;
+                }
+            }
+        }
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.RAVAGER_ATTACK, SoundSource.HOSTILE, 1.4F, 0.6F);
+        for (int i = 1; i <= 6; i++) {
+            double d = upthrust.range() * i / 6.0;
+            level.sendParticles(ParticleTypes.CRIT, getX() + dir.x * d, getY() + 0.3, getZ() + dir.z * d, 4, 0.4, 0.5, 0.4, 0.15);
+        }
+        startCooldown("upthrust", cooldown(upthrust));
+        clearTelegraph();
+        action = Action.RECOVER;
+        timer = 6;
+    }
+
+    // ---- 後ろ蹴り（後ろの扇形）
+
+    private void startKick(EnemyDef.Skill kick) {
+        action = Action.KICK;
+        timer = Math.max(1, kick.windupTicks());
+        getNavigation().stop();
+        chargeYaw = getYRot();
+        behindTicks = 0;
+        setBusy(timer + 10);
+        setTelegraph(TELEGRAPH_CONE, timer, getYRot() + 180.0F, (float) kick.range(), (float) kick.param("angle", 140.0));
+        playAction("skill_kick");
+        tipOnce("kick");
+    }
+
+    private void tickKick(ServerLevel level) {
+        getNavigation().stop();
+        lockRotation();
+        if (--timer > 0) {
+            return;
+        }
+        EnemyDef.Skill kick = kickSkill();
+        double half = kick.param("angle", 140.0) / 2.0;
+        for (ServerPlayer player : targets(level)) {
+            if (player.distanceTo(this) <= kick.range() + 0.6 && behind(player.position(), half)) {
+                strikeAway(player, kick.power(), kick.param("push", 1.3), 0.4);
+            }
+        }
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.HORSE_ANGRY, SoundSource.HOSTILE, 1.4F, 0.5F);
+        Vec3 back = getLookAngle().multiply(-1, 0, -1).normalize();
+        level.sendParticles(ParticleTypes.CLOUD, getX() + back.x * 2.5, getY() + 0.4, getZ() + back.z * 2.5, 12, 1.0, 0.2, 1.0, 0.04);
+        startCooldown("kick", cooldown(kick));
+        clearTelegraph();
+        action = Action.NONE;
+    }
+
+    // ---- 突進（地面に通り道の線）
 
     private void startCharge(LivingEntity target, EnemyDef.Skill charge) {
         getNavigation().stop();
@@ -270,22 +514,16 @@ public class Veldhorn extends AmemaruBoss {
         chargeDir = Vec3.directionFromRotation(0.0F, chargeYaw).normalize();
         chargeLength = Math.min(charge.range(), distanceTo(target) + 4.0);
         double windup = charge.windup() * (phase() >= 2 ? 0.78 : 1.0);
-        timer = Math.max(8, (int) Math.round(windup * 20.0));
+        timer = Math.max(8, ticks(windup));
         traveled = 0.0;
         hit.clear();
         action = Action.CHARGE_WINDUP;
         setBusy(timer + 80);
-        setTelegraph(TELEGRAPH_LINE, timer, chargeYaw, (float) chargeLength);
+        setTelegraph(TELEGRAPH_LINE, timer, chargeYaw, (float) chargeLength, (float) charge.param("width", 1.6));
         playAction("skill_charge");
-        if (phase() == 1 && !tipped("charge")) {
-            tip("boss.amemaru.veldhorn.tip.charge");
+        if (phase() == 1) {
+            tipOnce("charge");
         }
-    }
-
-    private final Set<String> tips = new HashSet<>();
-
-    private boolean tipped(String key) {
-        return !tips.add(key);
     }
 
     private void lockRotation() {
@@ -309,8 +547,8 @@ public class Veldhorn extends AmemaruBoss {
     }
 
     private void tickCharging(ServerLevel level) {
-        EnemyDef.Skill charge = skill("charge", 2.2, 1.4, 9.0, 22.0);
-        double speed = charge.param("speed", 1.0);
+        EnemyDef.Skill charge = chargeSkill();
+        double speed = charge.param("speed", 1.5);
         lockRotation();
         setDeltaMovement(chargeDir.x * speed, getDeltaMovement().y, chargeDir.z * speed);
         hasImpulse = true;
@@ -331,12 +569,10 @@ public class Veldhorn extends AmemaruBoss {
             if (wall) {
                 // 壁にぶつかった：しばらく動けない（攻める好機）
                 action = Action.STUNNED;
-                timer = (int) Math.round(charge.param("stun", 2.5) * 20.0);
+                timer = ticks(charge.param("stun", 2.5));
                 level.playSound(null, getX(), getY(), getZ(), SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 1.0F, 0.5F);
                 level.sendParticles(ParticleTypes.CRIT, getX(), getY() + 2.5, getZ(), 20, 0.8, 0.4, 0.8, 0.1);
-                if (!tipped("stun")) {
-                    tip("boss.amemaru.veldhorn.tip.stun");
-                }
+                tipOnce("stun");
                 startCooldown("charge", cooldown(charge));
             } else if (--chargesLeft > 0) {
                 // HP50%から：続けてもう一度
@@ -353,8 +589,8 @@ public class Veldhorn extends AmemaruBoss {
     }
 
     private void finishCharge(EnemyDef.Skill charge) {
-        action = Action.STUNNED;
-        timer = (int) Math.round(charge.param("recover", 1.0) * 20.0);
+        action = Action.RECOVER;
+        timer = ticks(charge.param("recover", 0.8));
         startCooldown("charge", cooldown(charge));
     }
 
@@ -370,7 +606,17 @@ public class Veldhorn extends AmemaruBoss {
         }
     }
 
-    // ---- 踏みつけ
+    /** 技のあとの、短い立て直し（動かない）。 */
+    private void tickRecover() {
+        getNavigation().stop();
+        setDeltaMovement(0.0, getDeltaMovement().y, 0.0);
+        if (--timer <= 0) {
+            action = Action.NONE;
+            clearBusy();
+        }
+    }
+
+    // ---- 踏みつけ（まわりの円）
 
     private void startStomp(EnemyDef.Skill stomp) {
         action = Action.STOMP;
@@ -379,9 +625,7 @@ public class Veldhorn extends AmemaruBoss {
         setBusy(timer + 10);
         setTelegraph(TELEGRAPH_CIRCLE, timer, getYRot(), (float) stomp.range());
         playAction("skill_stomp");
-        if (!tipped("stomp")) {
-            tip("boss.amemaru.veldhorn.tip.stomp");
-        }
+        tipOnce("stomp");
     }
 
     private void tickStomp(ServerLevel level) {
@@ -389,14 +633,10 @@ public class Veldhorn extends AmemaruBoss {
         if (--timer > 0) {
             return;
         }
-        EnemyDef.Skill stomp = skill("stomp", 1.4, 1.2, 12.0, 6.0);
+        EnemyDef.Skill stomp = stompSkill();
         for (ServerPlayer player : targets(level)) {
             if (player.distanceTo(this) <= stomp.range() + 0.5) {
-                if (EnemyCombat.strike(this, player, stomp.power(), null)) {
-                    Vec3 push = player.position().subtract(position()).multiply(1, 0, 1).normalize().scale(0.6);
-                    player.push(push.x, 0.6, push.z);
-                    player.hurtMarked = true;
-                }
+                strikeAway(player, stomp.power(), 0.6, 0.6);
             }
         }
         level.playSound(null, getX(), getY(), getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 0.8F, 0.6F);
@@ -410,7 +650,167 @@ public class Veldhorn extends AmemaruBoss {
         action = Action.NONE;
     }
 
+    // ---- 大跳躍（降りる所に円を出し、跳んで降りる）
+
+    private void startLeap(ServerLevel level, ServerPlayer target, EnemyDef.Skill leap) {
+        action = Action.LEAP_WINDUP;
+        timer = Math.max(8, ticks(leap.windup() * (phase() >= 2 ? 0.85 : 1.0)));
+        leapAir = Math.max(8, ticks(leap.param("air", 0.8)));
+        getNavigation().stop();
+        leapFrom = position();
+        leapTo = landingSpot(target.position());
+        leapTicks = 0;
+        faceTowards(leapTo);
+        chargeYaw = getYRot();
+        setBusy(timer + leapAir + 30);
+        GroundMarker.place(level, leapTo, (float) leap.param("radius", 4.0), timer + leapAir);
+        playAction("skill_leap");
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 1.4F, 0.6F);
+        tipOnce("leap");
+    }
+
+    /** 降りる所（ねらった人の足もと。部屋の壁の近くなら、部屋の中へ寄せる。高さはボスの足もと＝部屋の床）。 */
+    private Vec3 landingSpot(Vec3 target) {
+        Vec3 at = new Vec3(target.x, getY(), target.z);
+        BossRoom room = room();
+        if (room != null) {
+            Vec3 center = room.arenaCenter();
+            double limit = Math.max(2.0, room.def().arenaRadius() - 4.0);
+            Vec3 flat = new Vec3(at.x - center.x, 0.0, at.z - center.z);
+            if (flat.length() > limit) {
+                flat = flat.normalize().scale(limit);
+                at = new Vec3(center.x + flat.x, getY(), center.z + flat.z);
+            }
+        }
+        return at;
+    }
+
+    private void tickLeapWindup(ServerLevel level) {
+        getNavigation().stop();
+        setDeltaMovement(0.0, getDeltaMovement().y, 0.0);
+        lockRotation();
+        if (timer % 5 == 0) {
+            level.sendParticles(ParticleTypes.CLOUD, getX(), getY() + 0.1, getZ(), 5, 0.8, 0.05, 0.8, 0.02);
+        }
+        if (--timer <= 0) {
+            action = Action.LEAPING;
+            leapFrom = position();
+            leapTicks = 0;
+            level.playSound(null, getX(), getY(), getZ(), SoundEvents.HORSE_JUMP, SoundSource.HOSTILE, 1.6F, 0.5F);
+        }
+    }
+
+    private void tickLeaping(ServerLevel level) {
+        EnemyDef.Skill leap = leapSkill();
+        leapTicks++;
+        double t = Math.min(1.0, leapTicks / (double) leapAir);
+        double height = leap.param("height", 6.0);
+        double y = Mth.lerp(t, leapFrom.y, leapTo.y) + 4.0 * height * t * (1.0 - t);
+        lockRotation();
+        setPos(Mth.lerp(t, leapFrom.x, leapTo.x), y, Mth.lerp(t, leapFrom.z, leapTo.z));
+        setDeltaMovement(Vec3.ZERO);
+        resetFallDistance();
+        if (t < 1.0) {
+            return;
+        }
+        // 降りた：円の中の人を打つ
+        double radius = leap.param("radius", 4.0);
+        for (ServerPlayer player : targets(level)) {
+            double dx = player.getX() - leapTo.x;
+            double dz = player.getZ() - leapTo.z;
+            if (dx * dx + dz * dz <= (radius + 0.5) * (radius + 0.5) && Math.abs(player.getY() - leapTo.y) < 3.0) {
+                strikeAway(player, leap.power(), 0.9, 0.5);
+            }
+        }
+        level.playSound(null, leapTo.x, leapTo.y, leapTo.z, SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 1.2F, 0.5F);
+        level.playSound(null, leapTo.x, leapTo.y, leapTo.z, SoundEvents.ANVIL_LAND, SoundSource.HOSTILE, 0.8F, 0.4F);
+        level.sendParticles(ParticleTypes.EXPLOSION, leapTo.x, leapTo.y + 0.5, leapTo.z, 3, 1.0, 0.2, 1.0, 0.0);
+        for (int i = 0; i < 32; i++) {
+            double a = i / 32.0 * Math.PI * 2.0;
+            level.sendParticles(ParticleTypes.POOF, leapTo.x + Math.cos(a) * radius, leapTo.y + 0.1, leapTo.z + Math.sin(a) * radius,
+                    1, 0.1, 0.0, 0.1, 0.02);
+        }
+        startCooldown("leap", cooldown(leap));
+        action = Action.RECOVER;
+        timer = ticks(leap.param("recover", 0.7));
+    }
+
+    // ---- 根の牙（みんなの足もとの円。HP50%から。HP20%からは2回）
+
+    private void startRoots(ServerLevel level, EnemyDef.Skill roots) {
+        action = Action.ROOTS;
+        rootWaves = phase() >= 3 ? (int) Math.round(roots.param("waves_enraged", 2.0)) : 1;
+        getNavigation().stop();
+        playAction("skill_roots");
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 1.2F, 1.1F);
+        placeRoots(level, roots, Math.max(8, roots.windupTicks()));
+        tipOnce("roots");
+    }
+
+    /** みんなの足もとに円を置く（{@code delay} のあと牙が出る）。 */
+    private void placeRoots(ServerLevel level, EnemyDef.Skill roots, int delay) {
+        rootSpots.clear();
+        timer = delay;
+        float radius = (float) roots.param("radius", 2.2);
+        for (ServerPlayer player : targets(level)) {
+            if (player.distanceTo(this) <= roots.range()) {
+                Vec3 at = new Vec3(player.getX(), getY(), player.getZ());
+                rootSpots.add(at);
+                GroundMarker.place(level, at, radius, delay);
+            }
+        }
+        setBusy(delay + 20);
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.ROOTED_DIRT_BREAK, SoundSource.HOSTILE, 1.4F, 0.6F);
+    }
+
+    private void tickRoots(ServerLevel level) {
+        getNavigation().stop();
+        if (--timer > 0) {
+            return;
+        }
+        EnemyDef.Skill roots = rootsSkill();
+        double radius = roots.param("radius", 2.2);
+        Set<UUID> struck = new HashSet<>();
+        BlockParticleOption dirt = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.ROOTED_DIRT.defaultBlockState());
+        BlockParticleOption moss = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MOSS_BLOCK.defaultBlockState());
+        for (Vec3 spot : rootSpots) {
+            for (ServerPlayer player : targets(level)) {
+                double dx = player.getX() - spot.x;
+                double dz = player.getZ() - spot.z;
+                if (dx * dx + dz * dz <= (radius + 0.4) * (radius + 0.4) && Math.abs(player.getY() - spot.y) < 3.0
+                        && struck.add(player.getUUID())) {
+                    if (EnemyCombat.strike(this, player, roots.power(), null)) {
+                        player.push(0.0, roots.param("lift", 0.8), 0.0);
+                        player.hurtMarked = true;
+                    }
+                }
+            }
+            level.sendParticles(dirt, spot.x, spot.y + 0.4, spot.z, 30, radius * 0.4, 0.5, radius * 0.4, 0.15);
+            level.sendParticles(moss, spot.x, spot.y + 0.8, spot.z, 16, radius * 0.3, 0.6, radius * 0.3, 0.1);
+            level.sendParticles(ParticleTypes.CRIT, spot.x, spot.y + 1.0, spot.z, 10, radius * 0.3, 0.6, radius * 0.3, 0.2);
+            level.playSound(null, spot.x, spot.y, spot.z, SoundEvents.EVOKER_FANGS_ATTACK, SoundSource.HOSTILE, 1.0F, 0.7F);
+        }
+        if (--rootWaves > 0) {
+            // HP20%から：みんなの今の足もとに、もう一度
+            placeRoots(level, roots, Math.max(8, ticks(roots.param("wave_gap", 0.8))));
+            return;
+        }
+        rootSpots.clear();
+        startCooldown("roots", cooldown(roots));
+        action = Action.RECOVER;
+        timer = 8;
+    }
+
     // ---- 吠える（HP50%：ツノモフを呼ぶ）
+
+    private void startRoar(ServerLevel level) {
+        action = Action.ROAR;
+        timer = 40;
+        clearTelegraph();
+        setTelegraph(TELEGRAPH_ALERT, 40, getYRot(), 0.0F);
+        playAction("skill_roar");
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 2.0F, 0.7F);
+    }
 
     private void tickRoar(ServerLevel level) {
         getNavigation().stop();
@@ -462,6 +862,60 @@ public class Veldhorn extends AmemaruBoss {
             }
         }
         summoned.clear();
+    }
+
+    // ---------------------------------------------------------------- 管理者
+
+    @Override
+    public List<String> skillNames() {
+        return SKILLS;
+    }
+
+    /** 管理者：技を出させる（戦いの間だけ。間合いや待ち時間は見ない）。出せたら true。 */
+    @Override
+    public boolean forceSkill(String name) {
+        if (!(level() instanceof ServerLevel level) || !isAlive()) {
+            return false;
+        }
+        BossRoom room = room();
+        if (room != null && !room.fighting()) {
+            return false;
+        }
+        List<ServerPlayer> players = targets(level);
+        if (players.isEmpty() || !SKILLS.contains(name)) {
+            return false;
+        }
+        ServerPlayer top = topThreat();
+        if (top == null || !players.contains(top)) {
+            top = players.get(0);
+        }
+        clearTelegraph();
+        clearBusy();
+        action = Action.NONE;
+        timer = 0;
+        switch (name) {
+            case "sweep" -> {
+                faceTowards(top.position());
+                startSweep(sweepSkill());
+            }
+            case "upthrust" -> {
+                faceTowards(top.position());
+                startUpthrust(upthrustSkill());
+            }
+            case "kick" -> {
+                faceTowards(position().add(position().subtract(top.position())));
+                startKick(kickSkill());
+            }
+            case "charge" -> {
+                chargesLeft = 1;
+                startCharge(top, chargeSkill());
+            }
+            case "stomp" -> startStomp(stompSkill());
+            case "leap" -> startLeap(level, top, leapSkill());
+            case "roots" -> startRoots(level, rootsSkill());
+            default -> startRoar(level);
+        }
+        return true;
     }
 
     @Override

@@ -184,6 +184,30 @@ public final class PartyDownGameTests {
         helper.succeed();
     }
 
+    /** 11月22日：ダウン中のリタイア。ダウンしていなければ何もしない。ダウン中なら、時間切れと同じく教会へ（代価・衰弱・全快）。 */
+    @GameTest(template = EMPTY)
+    public static void retireWhileDown(GameTestHelper helper) {
+        FakePlayer player = fake(helper, "retire_p");
+        PlayerData data = data(helper, player);
+        player.removeAllEffects();
+        LevelService.recompute(player, data);
+        Wallet.set(player, data, 1000, "gametest");
+        int churchBefore = data.getChurchCount();
+        check(helper, !DownHandler.retire(player, data), "ダウンしていないのにリタイアできました");
+        check(helper, data.getKnots() == 1000 && data.getChurchCount() == churchBefore, "ダウンしていないリタイアで教会へ戻りました");
+        DownHandler.goDown(player, data);
+        check(helper, data.down().isDown(), "ダウンになっていません");
+        check(helper, DownHandler.retire(player, data), "ダウン中にリタイアできません");
+        check(helper, !data.down().isDown(), "リタイアしてもダウンのままです");
+        check(helper, data.getKnots() == 950, "リタイアの代価が時間切れ（所持金の5%）と違います：" + data.getKnots());
+        check(helper, data.getChurchCount() == churchBefore + 1, "教会に戻った回数が増えていません");
+        check(helper, player.hasEffect(ModEffects.WEAKENED.get()), "リタイアで衰弱になっていません");
+        check(helper, Math.abs(data.getHp() - data.getStats().maxHp()) < 1.0E-6, "リタイアのあとHPが全快ではありません");
+        check(helper, !DownHandler.retire(player, data), "教会に戻ったあとも、もう一度リタイアできました");
+        player.removeAllEffects();
+        helper.succeed();
+    }
+
     /** 所持金・ダウン・記録は保存され、ダウン中に抜けた印は「入り直したら教会へ」になる。 */
     @GameTest(template = EMPTY)
     public static void walletAndDownSaved(GameTestHelper helper) {

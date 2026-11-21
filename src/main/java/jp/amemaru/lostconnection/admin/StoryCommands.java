@@ -251,7 +251,41 @@ public final class StoryCommands {
                                     AdminCommands.log(ctx.getSource(), "boss respawn " + floor);
                                     ctx.getSource().sendSuccess(() -> Component.translatable("commands.amemaru.boss.respawn", floor), true);
                                     return 1;
-                                })));
+                                })))
+                // 11月22日：戦いの間に、ボスに技を出させる（技の確かめ用）
+                .then(Commands.literal("skill")
+                        .then(Commands.argument("floor", IntegerArgumentType.integer(1, 99)).suggests(FLOORS)
+                                .then(Commands.argument("name", com.mojang.brigadier.arguments.StringArgumentType.word())
+                                        .suggests((ctx, builder) -> net.minecraft.commands.SharedSuggestionProvider.suggest(
+                                                bossSkillNames(IntegerArgumentType.getInteger(ctx, "floor")), builder))
+                                        .executes(ctx -> bossSkill(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"),
+                                                com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "name"))))));
+    }
+
+    @javax.annotation.Nullable
+    private static jp.amemaru.lostconnection.enemy.boss.AmemaruBoss currentBoss(int floor) {
+        FloorRuntime runtime = TowerService.runtime(floor);
+        return runtime == null || runtime.bossRoom() == null ? null : runtime.bossRoom().boss();
+    }
+
+    private static java.util.List<String> bossSkillNames(int floor) {
+        jp.amemaru.lostconnection.enemy.boss.AmemaruBoss boss = currentBoss(floor);
+        return boss != null ? boss.skillNames() : jp.amemaru.lostconnection.enemy.boss.Veldhorn.SKILLS;
+    }
+
+    private static int bossSkill(CommandSourceStack source, int floor, String name) {
+        jp.amemaru.lostconnection.enemy.boss.AmemaruBoss boss = currentBoss(floor);
+        if (boss == null) {
+            source.sendFailure(Component.translatable("commands.amemaru.boss.none", floor));
+            return 0;
+        }
+        if (!boss.forceSkill(name)) {
+            source.sendFailure(Component.translatable("commands.amemaru.boss.skill_failed", floor, String.join("・", boss.skillNames())));
+            return 0;
+        }
+        AdminCommands.log(source, "boss skill " + floor + " " + name);
+        source.sendSuccess(() -> Component.translatable("commands.amemaru.boss.skill", floor, name), true);
+        return 1;
     }
 
     static LiteralArgumentBuilder<CommandSourceStack> blessingCommand() {

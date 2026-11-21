@@ -128,13 +128,13 @@
         300
       ],
       "radius": 20,
-      "max": 7,
-      "respawn_seconds": 40,
+      "max": 10,
+      "respawn_seconds": 28,
       "group": [
         3,
-        5
+        6
       ],
-      "activation": 56
+      "activation": 64
     },
     {
       "id": "meadow_east",
@@ -145,13 +145,13 @@
         296
       ],
       "radius": 20,
-      "max": 7,
-      "respawn_seconds": 40,
+      "max": 10,
+      "respawn_seconds": 28,
       "group": [
         3,
-        5
+        6
       ],
-      "activation": 56
+      "activation": 64
     },
     {
       "id": "meadow_west",
@@ -162,13 +162,13 @@
         196
       ],
       "radius": 18,
-      "max": 6,
-      "respawn_seconds": 40,
+      "max": 9,
+      "respawn_seconds": 28,
       "group": [
         3,
-        4
+        5
       ],
-      "activation": 56
+      "activation": 64
     },
     {
       "id": "meadow_north",
@@ -179,13 +179,13 @@
         140
       ],
       "radius": 18,
-      "max": 6,
-      "respawn_seconds": 45,
+      "max": 9,
+      "respawn_seconds": 32,
       "group": [
         3,
-        4
+        5
       ],
-      "activation": 56
+      "activation": 64
     },
     {
       "id": "road_south",
@@ -196,13 +196,13 @@
         280
       ],
       "radius": 6,
-      "max": 2,
-      "respawn_seconds": 50,
+      "max": 3,
+      "respawn_seconds": 35,
       "group": [
         1,
         1
       ],
-      "activation": 64,
+      "activation": 72,
       "route": [
         [
           186,
@@ -235,13 +235,13 @@
         160
       ],
       "radius": 6,
-      "max": 2,
-      "respawn_seconds": 50,
+      "max": 3,
+      "respawn_seconds": 35,
       "group": [
         1,
         1
       ],
-      "activation": 64,
+      "activation": 72,
       "route": [
         [
           206,
@@ -274,13 +274,13 @@
         196
       ],
       "radius": 6,
-      "max": 2,
-      "respawn_seconds": 60,
+      "max": 3,
+      "respawn_seconds": 40,
       "group": [
         1,
         1
       ],
-      "activation": 56,
+      "activation": 64,
       "route": [
         [
           311,
@@ -313,13 +313,13 @@
         236
       ],
       "radius": 10,
-      "max": 4,
-      "respawn_seconds": 45,
+      "max": 6,
+      "respawn_seconds": 30,
       "group": [
-        1,
-        2
+        2,
+        3
       ],
-      "activation": 56
+      "activation": 64
     },
     {
       "id": "crystals_west",
@@ -330,13 +330,13 @@
         142
       ],
       "radius": 10,
-      "max": 4,
-      "respawn_seconds": 45,
+      "max": 6,
+      "respawn_seconds": 30,
       "group": [
-        1,
-        2
+        2,
+        3
       ],
-      "activation": 56
+      "activation": 64
     },
     {
       "id": "crystals_north",
@@ -347,13 +347,13 @@
         104
       ],
       "radius": 10,
-      "max": 3,
-      "respawn_seconds": 50,
+      "max": 5,
+      "respawn_seconds": 35,
       "group": [
-        1,
-        2
+        2,
+        3
       ],
-      "activation": 56
+      "activation": 64
     },
     {
       "id": "lost_west",
@@ -364,13 +364,13 @@
         300
       ],
       "radius": 16,
-      "max": 3,
-      "respawn_seconds": 60,
+      "max": 4,
+      "respawn_seconds": 45,
       "group": [
         1,
         2
       ],
-      "activation": 56
+      "activation": 64
     },
     {
       "id": "lost_north",
@@ -381,13 +381,13 @@
         86
       ],
       "radius": 16,
-      "max": 3,
-      "respawn_seconds": 60,
+      "max": 4,
+      "respawn_seconds": 45,
       "group": [
         1,
         2
       ],
-      "activation": 56
+      "activation": 64
     }
   ]
 }

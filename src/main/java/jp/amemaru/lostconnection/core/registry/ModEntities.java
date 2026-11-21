@@ -102,7 +102,19 @@ public final class ModEntities {
                             MobCategory.MONSTER)
                     .sized(2.6F, 3.2F)
                     .clientTrackingRange(16)
+                    // 突進と大跳躍は速いので、位置を毎 tick 送る（なめらかに見せる。11月22日）
+                    .updateInterval(1)
                     .build(AmemaruMod.id("veldhorn").toString()));
+
+    /** 地面の印（ボスの技の当たる所。跳んで降りる所・人の足もと。11月22日）。保存しない。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.entity.GroundMarker>> GROUND_MARKER = ENTITIES.register("ground_marker", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.entity.GroundMarker>of(jp.amemaru.lostconnection.entity.GroundMarker::new, MobCategory.MISC)
+                    .sized(0.5F, 0.1F)
+                    .clientTrackingRange(8)
+                    .updateInterval(20)
+                    .noSave()
+                    .fireImmune()
+                    .build(AmemaruMod.id("ground_marker").toString()));
 
     private ModEntities() {
     }

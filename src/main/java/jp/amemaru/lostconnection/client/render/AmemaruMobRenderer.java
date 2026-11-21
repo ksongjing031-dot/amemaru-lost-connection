@@ -3,7 +3,6 @@ package jp.amemaru.lostconnection.client.render;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
-import jp.amemaru.lostconnection.AmemaruMod;
 import jp.amemaru.lostconnection.enemy.AmemaruMob;
 import jp.amemaru.lostconnection.enemy.EnemyDef;
 import jp.amemaru.lostconnection.enemy.EnemyDefs;
@@ -12,12 +11,10 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
-import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 import software.bernie.geckolib.renderer.GeoEntityRenderer;
 
@@ -33,8 +30,6 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
  * </ul>
  */
 public class AmemaruMobRenderer<T extends AmemaruMob> extends GeoEntityRenderer<T> {
-    private static final ResourceLocation TELEGRAPH = AmemaruMod.id("textures/fx/telegraph.png");
-    private static final int TELEGRAPH_COLOR = 0xFF4A3A;
 
     public AmemaruMobRenderer(EntityRendererProvider.Context context, String name, float shadow) {
         super(context, new AssetGeoModel<>("entity", name));
@@ -65,36 +60,28 @@ public class AmemaruMobRenderer<T extends AmemaruMob> extends GeoEntityRenderer<
             return;
         }
         float total = Math.max(1, entity.telegraphTicks());
-        float progress = Mth.clamp(entity.telegraphAge(partialTick) / total, 0.0F, 1.0F);
+        float age = entity.telegraphAge(partialTick);
+        float progress = Mth.clamp(age / total, 0.0F, 1.0F);
         if (kind == AmemaruMob.TELEGRAPH_ALERT) {
             renderAlert(entity, poseStack, buffer, progress);
             return;
         }
-        float pulse = 0.5F + 0.5F * Mth.sin(entity.telegraphAge(partialTick) * 0.6F);
-        int alpha = Math.round((0.25F + 0.55F * progress + 0.15F * pulse) * 255.0F);
-        VertexConsumer consumer = buffer.getBuffer(RenderType.entityTranslucentEmissive(TELEGRAPH));
+        int alpha = TelegraphDraw.alpha(progress, age);
+        VertexConsumer consumer = TelegraphDraw.consumer(buffer);
         poseStack.pushPose();
         poseStack.translate(0.0, 0.06, 0.0);
         if (kind == AmemaruMob.TELEGRAPH_LINE) {
-            // 体の向きではなく、予兆を出したときの向き（固定）で地面に帯を描く
+            // 体の向きではなく、予兆を出したときの向き（固定）で地面に帯を描く。幅は arg（0 なら 1.5）
             poseStack.mulPose(Axis.YP.rotationDegrees(-entity.telegraphYaw()));
-            float length = entity.telegraphSize();
-            float half = 0.75F;
-            quad(consumer, poseStack, -half, 0.0F, half, length, alpha);
-            // 終わり近くは、帯の中を進む明るい線で「いつ来るか」を見せる
-            float sweep = length * progress;
-            quad(consumer, poseStack, -half, Math.max(0.0F, sweep - 0.4F), half, sweep, Math.min(255, alpha + 60));
+            float width = entity.telegraphArg() > 0.0F ? entity.telegraphArg() : 1.5F;
+            TelegraphDraw.band(consumer, poseStack, width, entity.telegraphSize(), progress, alpha);
         } else if (kind == AmemaruMob.TELEGRAPH_CIRCLE) {
-            float radius = entity.telegraphSize() + 0.5F;
-            int segments = 32;
-            for (int i = 0; i < segments; i++) {
-                float a0 = (float) (i * Math.PI * 2.0 / segments);
-                float a1 = (float) ((i + 1) * Math.PI * 2.0 / segments);
-                float inner = radius * progress;
-                wedge(consumer, poseStack, a0, a1, Math.max(0.0F, inner - 0.3F), inner, Math.min(255, alpha + 60));
-                wedge(consumer, poseStack, a0, a1, radius - 0.2F, radius, alpha);
-                wedge(consumer, poseStack, a0, a1, 0.0F, radius - 0.2F, alpha / 3);
-            }
+            TelegraphDraw.circle(consumer, poseStack, entity.telegraphSize() + 0.5F, progress, alpha);
+        } else if (kind == AmemaruMob.TELEGRAPH_CONE) {
+            // 扇形（薙ぎ払い・後ろ蹴り）：予兆を出したときの向き（固定）。開きは arg（度）
+            poseStack.mulPose(Axis.YP.rotationDegrees(-entity.telegraphYaw()));
+            float angle = entity.telegraphArg() > 0.0F ? entity.telegraphArg() : 120.0F;
+            TelegraphDraw.cone(consumer, poseStack, angle, entity.telegraphSize() + 0.4F, progress, alpha);
         }
         poseStack.popPose();
     }
@@ -110,38 +97,6 @@ public class AmemaruMobRenderer<T extends AmemaruMob> extends GeoEntityRenderer<
         font.drawInBatch(mark, x, 0.0F, 0xFFFF5040, false, poseStack.last().pose(), buffer, Font.DisplayMode.SEE_THROUGH,
                 0x40000000, 0xF000F0);
         poseStack.popPose();
-    }
-
-    /** 地面に平らな四角（x0〜x1、奥行き z0〜z1）。 */
-    private static void quad(VertexConsumer consumer, PoseStack poseStack, float x0, float z0, float x1, float z1, int alpha) {
-        PoseStack.Pose pose = poseStack.last();
-        Matrix4f matrix = pose.pose();
-        Matrix3f normal = pose.normal();
-        vertex(consumer, matrix, normal, x0, z0, 0.0F, 0.0F, alpha);
-        vertex(consumer, matrix, normal, x0, z1, 0.0F, 1.0F, alpha);
-        vertex(consumer, matrix, normal, x1, z1, 1.0F, 1.0F, alpha);
-        vertex(consumer, matrix, normal, x1, z0, 1.0F, 0.0F, alpha);
-    }
-
-    /** 地面に扇形の帯（半径 r0〜r1、角度 a0〜a1）。 */
-    private static void wedge(VertexConsumer consumer, PoseStack poseStack, float a0, float a1, float r0, float r1, int alpha) {
-        PoseStack.Pose pose = poseStack.last();
-        Matrix4f matrix = pose.pose();
-        Matrix3f normal = pose.normal();
-        vertex(consumer, matrix, normal, Mth.cos(a0) * r0, Mth.sin(a0) * r0, 0.0F, 0.0F, alpha);
-        vertex(consumer, matrix, normal, Mth.cos(a0) * r1, Mth.sin(a0) * r1, 0.0F, 1.0F, alpha);
-        vertex(consumer, matrix, normal, Mth.cos(a1) * r1, Mth.sin(a1) * r1, 1.0F, 1.0F, alpha);
-        vertex(consumer, matrix, normal, Mth.cos(a1) * r0, Mth.sin(a1) * r0, 1.0F, 0.0F, alpha);
-    }
-
-    private static void vertex(VertexConsumer consumer, Matrix4f matrix, Matrix3f normal, float x, float z, float u, float v, int alpha) {
-        consumer.vertex(matrix, x, 0.0F, z)
-                .color((TELEGRAPH_COLOR >> 16) & 0xFF, (TELEGRAPH_COLOR >> 8) & 0xFF, TELEGRAPH_COLOR & 0xFF, alpha)
-                .uv(u, v)
-                .overlayCoords(OverlayTexture.NO_OVERLAY)
-                .uv2(0xF000F0)
-                .normal(normal, 0.0F, 1.0F, 0.0F)
-                .endVertex();
     }
 
     // ---------------------------------------------------------------- 名前とHP

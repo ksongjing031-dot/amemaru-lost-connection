@@ -69,6 +69,8 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
     public static final int TELEGRAPH_CIRCLE = 3;
     /** 頭の上に「！」（仲間を呼ぶ）。 */
     public static final int TELEGRAPH_ALERT = 4;
+    /** 地面に、向きを持つ扇形（薙ぎ払い・後ろ蹴り。開きの角度は {@link #telegraphArg}）。11月22日 */
+    public static final int TELEGRAPH_CONE = 5;
 
     private static final EntityDataAccessor<Float> DATA_HP = SynchedEntityData.defineId(AmemaruMob.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> DATA_MAX_HP = SynchedEntityData.defineId(AmemaruMob.class, EntityDataSerializers.FLOAT);
@@ -76,6 +78,8 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
     private static final EntityDataAccessor<Integer> DATA_TELEGRAPH_TICKS = SynchedEntityData.defineId(AmemaruMob.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Float> DATA_TELEGRAPH_YAW = SynchedEntityData.defineId(AmemaruMob.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> DATA_TELEGRAPH_SIZE = SynchedEntityData.defineId(AmemaruMob.class, EntityDataSerializers.FLOAT);
+    /** 予兆の形のほかの数（扇形の開きの角度・帯の幅。0 は決まった形） */
+    private static final EntityDataAccessor<Float> DATA_TELEGRAPH_ARG = SynchedEntityData.defineId(AmemaruMob.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Boolean> DATA_RETURNING = SynchedEntityData.defineId(AmemaruMob.class, EntityDataSerializers.BOOLEAN);
 
     /** 倒れてから消えるまで（死ぬアニメーションの長さ）。 */
@@ -136,6 +140,7 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
         entityData.define(DATA_TELEGRAPH_TICKS, 0);
         entityData.define(DATA_TELEGRAPH_YAW, 0.0F);
         entityData.define(DATA_TELEGRAPH_SIZE, 0.0F);
+        entityData.define(DATA_TELEGRAPH_ARG, 0.0F);
         entityData.define(DATA_RETURNING, false);
     }
 
@@ -484,6 +489,16 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
      * @param size 線の長さ・円の半径
      */
     public void setTelegraph(int kind, int ticks, float yaw, float size) {
+        setTelegraph(kind, ticks, yaw, size, 0.0F);
+    }
+
+    /**
+     * 予兆を出す（形のほかの数つき）。
+     *
+     * @param arg 扇形の開きの角度（度）・帯の幅（ブロック）。0 なら決まった形
+     */
+    public void setTelegraph(int kind, int ticks, float yaw, float size, float arg) {
+        entityData.set(DATA_TELEGRAPH_ARG, arg);
         entityData.set(DATA_TELEGRAPH_YAW, yaw);
         entityData.set(DATA_TELEGRAPH_SIZE, size);
         entityData.set(DATA_TELEGRAPH_TICKS, ticks);
@@ -510,6 +525,10 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
 
     public float telegraphSize() {
         return entityData.get(DATA_TELEGRAPH_SIZE);
+    }
+
+    public float telegraphArg() {
+        return entityData.get(DATA_TELEGRAPH_ARG);
     }
 
     /** クライアント：予兆が始まってからの時間（tick）。 */

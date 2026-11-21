@@ -1,5 +1,5 @@
 {
-  "_comment": "1階のボス（Phase 0-A 9章）。突進の通り道が地面に線で表示される。HP50%でツノモフを呼ぶ。ヘイト・回避・蘇生のチュートリアルを兼ねる。HPは1人のとき。部屋に入った人数で増える（階のJSONの hp_per_extra_player。1人増えるごとに+60%）。数値は【補完】（4人で5分ほど）",
+  "_comment": "1階のボス（Phase 0-A 9章）。突進の通り道が地面に線で表示される。HP50%でツノモフを呼ぶ。ヘイト・回避・蘇生のチュートリアルを兼ねる。HPは1人のとき。部屋に入った人数で増える（階のJSONの hp_per_extra_player。1人増えるごとに+60%）。数値は【補完】（4人で5分ほど）。11月22日のご指示で、突進を早く（予兆1.4秒→1.0秒、速さ1.0→1.5）し、技を足した（角の突き上げ・後ろ蹴り・大跳躍・根の牙。数値は【補完】）。どの技も当たる所を地面に出す",
   "name": "草原の主ヴェルドホーン",
   "floor": 1,
   "level": 6,
@@ -21,15 +21,32 @@
       "range": 5.5,
       "angle": 120
     },
+    "upthrust": {
+      "power": 1.3,
+      "windup": 0.6,
+      "cooldown": 5.0,
+      "range": 7.0,
+      "width": 2.6,
+      "lift": 0.9
+    },
+    "kick": {
+      "power": 1.0,
+      "windup": 0.5,
+      "cooldown": 6.0,
+      "range": 4.5,
+      "angle": 140,
+      "after": 0.8,
+      "push": 1.3
+    },
     "charge": {
       "power": 2.2,
-      "windup": 1.4,
+      "windup": 1.0,
       "cooldown": 9,
       "range": 22,
       "min_range": 6,
-      "speed": 1.0,
+      "speed": 1.5,
       "width": 1.6,
-      "recover": 1.0,
+      "recover": 0.8,
       "stun": 2.5
     },
     "stomp": {
@@ -37,6 +54,27 @@
       "windup": 1.2,
       "cooldown": 12,
       "range": 6
+    },
+    "leap": {
+      "power": 1.8,
+      "windup": 1.1,
+      "cooldown": 11.0,
+      "range": 20.0,
+      "min_range": 6.0,
+      "radius": 4.0,
+      "air": 0.8,
+      "height": 6.0,
+      "recover": 0.7
+    },
+    "roots": {
+      "power": 1.0,
+      "windup": 1.0,
+      "cooldown": 13.0,
+      "range": 24.0,
+      "radius": 2.2,
+      "lift": 0.8,
+      "waves_enraged": 2,
+      "wave_gap": 0.8
     },
     "call": {
       "count": 2,

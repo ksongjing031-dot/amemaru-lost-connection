@@ -84,6 +84,7 @@ public final class ClientModEvents {
         event.register(KeyBindings.OPEN_STATUS);
         event.register(KeyBindings.OPEN_SKILL_TREE);
         event.register(KeyBindings.OPEN_PARTY);
+        event.register(KeyBindings.RETIRE);
         for (KeyMapping key : KeyBindings.SKILLS) {
             event.register(key);
         }
@@ -128,6 +129,7 @@ public final class ClientModEvents {
         // Phase 5：NPC・1階のボス・塔の仕掛け
         event.registerEntityRenderer(ModEntities.NPC.get(), jp.amemaru.lostconnection.client.render.NpcRenderer::new);
         event.registerEntityRenderer(ModEntities.VELDHORN.get(), context -> new AmemaruMobRenderer<>(context, "veldhorn", 1.6F));
+        event.registerEntityRenderer(ModEntities.GROUND_MARKER.get(), jp.amemaru.lostconnection.client.render.GroundMarkerRenderer::new);
         event.registerBlockEntityRenderer(jp.amemaru.lostconnection.core.registry.ModBlockEntities.TOWER_PILLAR.get(),
                 jp.amemaru.lostconnection.client.render.TowerPillarRenderer::new);
         event.registerBlockEntityRenderer(jp.amemaru.lostconnection.core.registry.ModBlockEntities.FLOOR_SEAL.get(),

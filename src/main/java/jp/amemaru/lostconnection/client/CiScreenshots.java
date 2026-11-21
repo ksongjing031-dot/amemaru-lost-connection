@@ -550,6 +550,24 @@ public final class CiScreenshots {
             {"snap", null, "60", "phase5_boss_fight"},
             {"await_telegraph", null, "0"},
             {"snap", null, "4", "phase5_boss_telegraph"},
+            // 11月22日：技の当たる所（薙ぎ払いの扇形・突き上げの帯・大跳躍の降りる円・根の牙の足もとの円）。管理者のコマンドで技を
+            // 出させて、打つ少し前に撮る。間でHPを戻す。円は足もとに出るので、そのときは下を向く（CIのコマンドはサーバーとして動くので、
+            // 向きは execute as @p at @s で、その人の所から変える）
+            {"cmd", null, "30", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "12", "amemaru admin boss skill 1 sweep"},
+            {"snap", null, "0", "phase5_boss_sweep"},
+            {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "8", "amemaru admin boss skill 1 upthrust"},
+            {"snap", null, "0", "phase5_boss_upthrust"},
+            {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "5", "execute as @p at @s run tp @s ~ ~ ~ 180 50"},
+            {"cmd", null, "14", "amemaru admin boss skill 1 leap"},
+            {"snap", null, "0", "phase5_boss_leap"},
+            {"cmd", null, "60", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "5", "execute as @p at @s run tp @s ~ ~ ~ 180 50"},
+            {"cmd", null, "12", "amemaru admin boss skill 1 roots"},
+            {"snap", null, "0", "phase5_boss_roots"},
+            {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
             // 戦っている人のまま（アドベンチャー。クリエイティブにすると戦いから外れる）倒す。
             // 倒してすぐ：ボスの名前の大きな字（下に出口の円の知らせ）。初撃破の場面がHUDを隠す（50 tick 待って白く光り、125〜215 tick に
             // 「始まりの草原　踏破」、215〜295 tick に字幕）。場面が終わると、初撃破の知らせの帯が出る（演出の間に届いた知らせは、演出の後に出す）

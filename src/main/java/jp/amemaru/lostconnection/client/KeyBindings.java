@@ -39,6 +39,17 @@ public final class KeyBindings {
             GLFW.GLFW_KEY_U,
             CATEGORY);
 
+    /**
+     * ダウン中に押し続けると、教会へ戻る（リタイア。初期値：H。11月22日のご指示）。H はバニラでもこのModでも使っていないキー。
+     * スペースなどの動くキーは、ダウンした直後に押したままのことがあるので使わない。
+     */
+    public static final KeyMapping RETIRE = new KeyMapping(
+            "key.amemaru.retire",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_H,
+            CATEGORY);
+
     private static final int[] SKILL_DEFAULTS = {
             GLFW.GLFW_KEY_R, GLFW.GLFW_KEY_G, GLFW.GLFW_KEY_V, GLFW.GLFW_KEY_Z, GLFW.GLFW_KEY_X, GLFW.GLFW_KEY_C};
 

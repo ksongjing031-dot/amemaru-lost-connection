@@ -238,6 +238,11 @@ public final class ModNetwork {
                 .decoder(jp.amemaru.lostconnection.network.c2s.ReplayMemoryC2S::decode)
                 .consumerMainThread(jp.amemaru.lostconnection.network.c2s.ReplayMemoryC2S::handle)
                 .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.c2s.RetireC2S.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(jp.amemaru.lostconnection.network.c2s.RetireC2S::encode)
+                .decoder(jp.amemaru.lostconnection.network.c2s.RetireC2S::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.c2s.RetireC2S::handle)
+                .add();
     }
 
     /** 1人のプレイヤーに送る。 */

@@ -101,6 +101,16 @@ public abstract class AmemaruBoss extends AmemaruMob {
         phase = 1;
     }
 
+    /** 管理者のコマンドで出させられる技の名前（{@code /amemaru admin boss skill}）。 */
+    public List<String> skillNames() {
+        return List.of();
+    }
+
+    /** 管理者：技を出させる（戦いの間だけ）。出せたら true。 */
+    public boolean forceSkill(String name) {
+        return false;
+    }
+
     /** 参加者に、戦い方の手がかりを出す（ボスのチュートリアル。Phase 0-A 9章「ヘイト・回避・蘇生のチュートリアルを兼ねる」）。 */
     protected void tip(String key) {
         if (room == null) {
