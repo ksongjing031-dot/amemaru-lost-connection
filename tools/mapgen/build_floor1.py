@@ -344,7 +344,8 @@ def fill_ground(f):
                 elif y >= top - 2:
                     st = "dirt" if R.at(x, y, z, 1) < 0.85 else "coarse_dirt"
                 else:
-                    st = R.pick([("stone", 6), ("andesite", 2), ("dirt", 2), ("gravel", 1)], x, y, z, 2)
+                    # 地面の下の詰め物。砂利は置かない（下が空いた所で落ちる：柱の底や洞の天井。11月22日、洞の通路に落ちていた）
+                    st = R.pick([("stone", 6), ("andesite", 2), ("dirt", 2), ("tuff", 1)], x, y, z, 2)
                 f.put(x, y, z, block(st))
             if (x, z) in f.ledge:
                 # 西の丘の巻き道：古い石の道（11月22日）
@@ -1326,8 +1327,8 @@ def ruins_compound(f):
         f.put(x, g + 1 + i, sz0 + 2, stairs("stone_brick", "east"))
     for yy in range(g + 1, g + 6):
         f.put(340, yy, sz0 + 2, block("stone_bricks"))
-    f.put(334, g + 1, sz0 + 3, block("spruce_sign", rotation=8, waterlogged=False),
-          sign_nbt(["出口", "壁の上へ上がり", "北の水の溜まりへ", "飛び下りる"]))
+    f.put(334, g + 1, sz0 + 3, block("spruce_sign", rotation=0, waterlogged=False),
+          sign_nbt(["出口", "壁の上へ上がり", "北の水の溜まりへ", "飛び下りる"]))   # 奥の院の中（南）から読む
     for x in range(337, 342):
         for z in range(sz0 - 4, sz0):
             f.put(x, g, z, block("water", level=0))
@@ -1338,7 +1339,7 @@ def ruins_compound(f):
             if f.get(x, g, z) is not None and f.get(x, g, z)[0] != "water":
                 f.put(x, g, z, block("mossy_cobblestone"))
     # 奥の院の宝箱と灯り
-    chest_in_sanctum = (sx1 - 4, g + 1, sz1 - 4)
+    chest_in_sanctum = (sx1 - 5, g + 1, sz1 - 5)        # 南東の隅の灯りから1つあける
     for x in (sx0 + 3, sx1 - 3):
         for z in (sz0 + 3, sz1 - 3):
             if (x, z) == (340, sz0 + 3):

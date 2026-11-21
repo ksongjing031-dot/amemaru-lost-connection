@@ -549,8 +549,8 @@ public final class CiScreenshots {
             {"snap", null, "40", "phase5_floor1_hill_path"},
             {"cmd", null, "40", "execute in amemaru:tower run tp @p {f1:80.5,14,232.5} 102 6"},
             {"snap", null, "40", "phase5_floor1_cave"},
-            // 台地に上がると、群れの長が出る（人が40ブロックの中に来たら。1秒ごとに見る）
-            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f1:68.5,28,236.5} 143 8"},
+            // 台地に上がると、群れの長が出る（人が40ブロックの中に来たら。1秒ごとに見る）。石柱の陰にならない東から、出る所を見る
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f1:66.5,28,222.5} 101 6"},
             {"snap", null, "70", "phase5_guardian"},
             {"cmd", null, "10", "amemaru admin floor tp 1 pillar1 @p"},
             {"p5_pillar_try", null, "20", "0"},
@@ -570,7 +570,7 @@ public final class CiScreenshots {
             {"p5_switch", null, "10", "1"},
             {"cmd", null, "10", "execute in amemaru:tower run tp @p {f1:306.5,10,195.5} -90 2"},
             {"snap", null, "30", "phase5_ruins_gate_open"},
-            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f1:336.5,10,203.5} -90 32"},
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f1:336.5,10,202.5} -90 32"},
             {"p5_chest", null, "20", "2"},
             {"snap", null, "10", "phase5_chest_open"},
             {"cmd", null, "80", "amemaru admin floor tp 1 boss @p"},
@@ -649,9 +649,13 @@ public final class CiScreenshots {
             {"dialogue_finish", null, "10"},
             {"screen", null, "10", "hold"},
             {"cmd", null, "10", "gamemode spectator @p"},
-            {"cmd", null, "10", "execute in amemaru:tower run tp @p {f1:192.5,70,392.5} 180 22"},
+            // 1階を上から：CIの描く距離は短いので、階の外から全体ではなく、入口の上から北（2本目の小川と石橋・古代の道）と、
+            // 東の遺跡の上から（奥の院と庭と回廊）を撮る（11月22日。前の階の外からの写真は、空しか写っていなかった）
+            {"cmd", null, "10", "execute in amemaru:tower run tp @p {f1:192.5,44,372.5} 180 34"},
             {"hud", null, "5", "off"},
-            {"snap", null, "220", "phase5_floor1_aerial"},
+            {"snap", null, "200", "phase5_floor1_aerial"},
+            {"cmd", null, "10", "execute in amemaru:tower run tp @p {f1:318.5,46,244.5} 180 46"},
+            {"snap", null, "160", "phase5_floor1_ruins_aerial"},
             {"cmd", null, "10", "gamemode spectator @p"},
             {"hud", null, "5", "off"}};
 

@@ -8,6 +8,7 @@
   3. 奥の院の中から、出口の階段と水の溜まりを通って、入口まで戻れる（中に閉じこめられない）
   4. 西の丘の台地には、巻き道を通らないと上がれない（巻き道をふさぐと、台地へ行けない）
   5. 光る苔の洞の中に、暗い所（空の光も灯りも届かない、湧ける床）がない
+  6. 砂利・砂の下が空いていない（置いたときに落ちない）
 """
 import math
 import os
@@ -192,6 +193,11 @@ def main():
         if not w.standable(*gp) or gp not in seen:
             problems.append("守り手 %s の出る所に立てないか、入口から行けない：%s" % (g["id"], gp))
     print("湧く所:", len(data["spawns"]), "守り手:", len(data.get("guardians", [])))
+    # 落ちるブロック（砂利・砂）の下が空いている所（置くと落ちる。柱の底なら奈落へ、洞の天井なら通路へ）
+    falling = [p for p, st in f.blocks.items() if st[0] in ("gravel", "sand", "red_sand") and f.get(p[0], p[1] - 1, p[2]) is None]
+    print("下が空いた砂利・砂:", len(falling))
+    if falling:
+        problems.append("下が空いた砂利・砂がある：%s" % (falling[:5],))
     # 洞の暗い所（空の光も灯りも届かない、湧ける床）
     dark = cave_dark_spots(f)
     print("洞の暗くて湧ける所:", len(dark))
