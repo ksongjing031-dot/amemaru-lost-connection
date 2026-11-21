@@ -116,6 +116,16 @@ public final class StoryTowerGameTests {
         // 封印は入口の門の幅（両端を含む）で、部屋の縁にある
         BlockPosBox seal = new BlockPosBox(def.world(boss.sealMin()), def.world(boss.sealMax()));
         check(helper, seal.width() >= 3 && seal.height() >= 3, "封印の幅か高さが足りません：" + seal);
+        // 戦いの間は、門の通路（封印の1ブロック手前）も部屋の中に数える。技で押し出されても、戦いがはじめからにならない（11月22日）
+        Vec3 sealCenter = o.add((boss.sealMin().getX() + boss.sealMax().getX() + 1) / 2.0, boss.sealMin().getY(),
+                (boss.sealMin().getZ() + boss.sealMax().getZ() + 1) / 2.0);
+        Vec3 center = o.add(boss.arenaCenter());
+        Vec3 toCenter = new Vec3(center.x - sealCenter.x, 0.0, center.z - sealCenter.z).normalize();
+        Vec3 passage = sealCenter.add(toCenter);
+        check(helper, !boss.inside(passage, o) && boss.insideFight(passage, o),
+                "門の通路が、戦いの間の部屋の中に数えられていません：" + passage);
+        check(helper, !boss.insideFight(o.add(def.entrance().pos()), o) && !boss.insideFight(sealCenter.subtract(toCenter.scale(3.0)), o),
+                "部屋の外（入口・封印の外）が、戦いの間の部屋の中に数えられています");
         helper.succeed();
     }
 

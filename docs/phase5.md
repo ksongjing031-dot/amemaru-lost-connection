@@ -64,7 +64,7 @@ Phase 0-B 13章の「Phase 5で作るもの」（縦切り版：コネリア、1
 | 職業の画面 | オープニングの会話の終わりと、受付のリリアとの会話から開く。開いた所から離れなければ選べる（誓約の結晶のブロックがなくてもよい） |
 | 石柱 | 起動すると、本人と、同じパーティでサーバーにいる人の分も数える。1本ずつ古代文字の一行が出る（もう一度読める） |
 | 封印 | 3本を起動した人だけが通れる（クリエイティブ・スペクテイターは通れる）。戦いの間は誰も通れない |
-| ボスの戦い | 部屋の中で、ボスから20ブロックに入ると始まる。そのとき部屋にいる人が参加者（クリエイティブ・スペクテイターの人は入らない）。参加者がみな部屋からいなくなったら、はじめから（HPも戻る）。全員がダウンしたら、教会へ戻るのを待つ |
+| ボスの戦い | 部屋の中で、ボスから20ブロックに入ると始まる。そのとき部屋にいる人が参加者（クリエイティブ・スペクテイターの人は入らない）。参加者がみな部屋からいなくなったら、はじめから（HPも戻る）。戦いの間は、門の通路（部屋の円のまわり4ブロック）にいる人も部屋にいる人に数える（技で押し出されても、はじめからにならない。11月22日）。全員がダウンしたら、教会へ戻るのを待つ |
 | ボスのHP | 1人のとき 3600。部屋に入った人数で1人増えるごとに +60%。部屋に入れる人数は決めていない（定義の目安は8人） |
 | また現れるまで | 倒してから2分 |
 | 初撃破 | 倒れたときに戦っている人がいれば、その人たちの名前で記録して全員に知らせる。戦っている人がいないまま倒れたとき（コマンドで消したなど）は記録しない |
@@ -123,6 +123,7 @@ Phase 0-B 13章の「Phase 5で作るもの」（縦切り版：コネリア、1
 - 待ち時間は、HP50%以下で×0.85、HP20%以下で×0.7。
 - 後ろ蹴り・大跳躍・根の牙は、その戦いで初めて出したときに、手引きの一言が出ます（戦いごとに1度）。
 - 確かめ用に、戦っている間のボスに技を出させるコマンドを足しました（`/amemaru admin boss skill <階> <技>`）。
+- 戦いの間は、門の通路（部屋の円のまわり4ブロック。門は光の幕で閉じている）にいる人も、部屋にいる人に数えます。CIの写真で、大跳躍と踏みつけを続けて受けた人が門の通路まで押し出され、ひとりの戦いがはじめから（ボスのHPも満タン）になったためです。
 
 **NPCのモデル【補完】**
 
@@ -130,6 +131,7 @@ Phase 0-B 13章の「Phase 5で作るもの」（縦切り版：コネリア、1
 - 表情：リリア4（ふつう・笑顔・驚き・心配）、セレナ2（ふつう・笑顔）、ガルド2（ふつう・厳しい顔）、ドラン2（ふつう・にやり）、バルド1。会話の表情に合わせて替わります。
 - 動き：待機（4秒。息・まばたき・頭のかたむき・髪やマントの揺れ・持ち物）と歩き（1秒）。頭は見ている人の方を向きます。
 - NPCの定義に `model`・`model_scale`（大きさ）・`portrait_y`（会話の画面の顔の高さ）を足しました。
+- 会話の画面の名前札と肩書きは、立ち絵の右に置きます（立ち絵は立体で手前に描かれるので、重なると札が隠れていたため）。
 - デザインの考え方と、参考にした既存のMod（名前と作り方だけ。デザインはまねない）は、建築の文書の「NPCのデザイン（11月22日）」のタブにまとめました。
 
 ## 3. 遊び方
@@ -203,8 +205,8 @@ Phase 0-B 13章の「Phase 5で作るもの」（縦切り版：コネリア、1
 ## 6. 自動の確認
 
 - 自動テスト（GameTest）に7つ足しました（全部で80）：Phase 5 の定義（NPC5・会話11・ストーリーイベント4・手引き・進行日・1階）、1階の形（広さ・入口・石柱・湧く所・石板・ボスと出口の円は部屋の中・湧く所と石柱は部屋の外・封印の幅）、進行日と階の解放・予告・初撃破・加護と保存、本人の物語の記録（石柱・訪問・撃破・既読・演出・手引き）、条件（フラグ・オープニングの進み・進行日・職業）、**その人ごとのオープニング**（準備を待つ → 演出 → 目覚め → 会話 → 名簿 → 職業の画面。遅れて始めた人の演出は別で、ほかの人の知らせで終わらない。会話を閉じた人は2度目の目覚め）、石柱と封印。直しの書き出しの通しのテスト（`CityEditsGameTests`）は、街並みも入れて確かめます。
-- 11月22日に3つ足しました（全部で83）：保存しない敵と古いボス（`transientEnemiesAndStaleBoss`。保存しない敵は中身を書かない・部屋が持っていないボスは消える）、ダウン中のリタイア（`retireWhileDown`。ダウンしていなければ何もしない・代価・教会・衰弱・2度目はしない）、NPCのモデル（`npcModelsPresent`。5人のモデル・まぶた・待機と歩きの動き・表情の絵・大きさ）。
-- CIの写真（街の写真の後）：`city_houses`・`city_gate_south`・`city_warehouses`・`city_wall`（と夜の `city_houses_night`・`city_gate_south_night`）、`phase5_npc_guild`・`phase5_npc_bard`・`phase5_npc_serena`・`phase5_npc_doran`（11月22日から立体のモデル）、オープニング `phase5_opening_wait`・`phase5_opening_voice`・`phase5_opening_awake`・`phase5_opening_lilia`、会話 `phase5_dialogue`・`phase5_dialogue_choices`・`phase5_dialogue_roster`、`phase5_job_screen`、`phase5_announce`、塔の門 `phase5_tower_gate`・`phase5_floor_select`、1階 `phase5_floor1_arrival`・`phase5_floor1_entrance`・`phase5_floor1_bridge`・`phase5_pillar_text`・`phase5_pillar_lit`・`phase5_boss_gate_sealed`・`phase5_boss_gate_open`・`phase5_tablet`、ボス `phase5_boss_fight`・`phase5_boss_telegraph`・技の当たる所 `phase5_boss_sweep`・`phase5_boss_upthrust`・`phase5_boss_leap`・`phase5_boss_roots`・`phase5_boss_defeated`（倒した直後）・`phase5_boss_title`（初撃破の場面）・`phase5_boss_first_kill`（場面の後の初撃破の知らせ）、`phase5_return_gate`、`phase5_replay`、`phase5_floor1_aerial`。
+- 11月22日に3つ足しました（全部で83）：保存しない敵と古いボス（`transientEnemiesAndStaleBoss`。保存しない敵は中身を書かない・部屋が持っていないボスは消える）、ダウン中のリタイア（`retireWhileDown`。ダウンしていなければ何もしない・代価・教会・衰弱・2度目はしない）、NPCのモデル（`npcModelsPresent`。5人のモデル・まぶた・待機と歩きの動き・表情の絵・大きさ）。1階の形のテストに、戦いの間は門の通路も部屋に数えること（封印の外と入口は数えない）を足しました。
+- CIの写真（街の写真の後）：`city_houses`・`city_gate_south`・`city_warehouses`・`city_wall`（と夜の `city_houses_night`・`city_gate_south_night`）、`phase5_npc_guild`・`phase5_npc_bard`・`phase5_npc_serena`・`phase5_npc_doran`（11月22日から立体のモデル）、オープニング `phase5_opening_wait`・`phase5_opening_voice`・`phase5_opening_awake`・`phase5_opening_lilia`、会話 `phase5_dialogue`・`phase5_dialogue_choices`・`phase5_dialogue_roster`、`phase5_job_screen`、`phase5_announce`、塔の門 `phase5_tower_gate`・`phase5_floor_select`、1階 `phase5_floor1_arrival`・`phase5_floor1_entrance`・`phase5_floor1_bridge`・`phase5_pillar_text`・`phase5_pillar_lit`・`phase5_boss_gate_sealed`・`phase5_boss_gate_open`・`phase5_tablet`、ボス `phase5_boss_fight`・`phase5_boss_telegraph`・技の当たる所 `phase5_boss_sweep`・`phase5_boss_upthrust`・`phase5_boss_kick`・`phase5_boss_leap`・`phase5_boss_roots`（`phase5_boss_telegraph` は突進の通り道の線）・`phase5_boss_defeated`（倒した直後）・`phase5_boss_title`（初撃破の場面）・`phase5_boss_first_kill`（場面の後の初撃破の知らせ）、`phase5_return_gate`、`phase5_replay`、`phase5_floor1_aerial`。
 - 写真の途中で何もない画面になると、自動テストが先に始まって、終わるとゲームが閉じます。Phase 5 の写真の間は、画面が閉じたら何も描かない画面を開き直します（`keep_hold`）。
 - 2人でしか確かめられないこと（2人が同時・遅れてログインしたオープニング、石柱をパーティの仲間の分も数える、2人でのボス戦とHP）は、LANの2人の確かめでします。
 

@@ -778,7 +778,6 @@ def doran():
     g.bone("head", (0, 24, 0), "body")
     g.bone("eyelids", (0, 28, -4), "head")
     g.bone("beard", (0, 25, -4), "head")
-    g.bone("hammer", (-7.5, 12, -0.5), "right_arm") if False else None
     g.bone("right_arm", (-7.5, 22.5, 0), "body")
     g.bone("left_arm", (7.5, 22.5, 0), "body")
     g.bone("hammer", (-7.5, 11.5, -0.5), "right_arm")

@@ -96,6 +96,11 @@ public final class BossRoom {
         return def.inside(pos, floor.originVec());
     }
 
+    /** 戦いの間の「部屋の中」（門の通路まで。{@link FloorDef.BossRoomDef#insideFight}）。 */
+    public boolean insideFight(Vec3 pos) {
+        return def.insideFight(pos, floor.originVec());
+    }
+
     /** 戦いの参加者（いまサーバーにいる人）。 */
     public List<ServerPlayer> participants() {
         List<ServerPlayer> list = new ArrayList<>();
@@ -261,11 +266,11 @@ public final class BossRoom {
             wipe(level, null);
             return;
         }
-        // 部屋からいなくなった人（教会へ戻った・抜けた・ほかの階へ）を外す
+        // 部屋からいなくなった人（教会へ戻った・抜けた・ほかの階へ）を外す。技で門の通路まで押し出された人は、まだ部屋にいる
         List<ServerPlayer> present = new ArrayList<>();
         for (UUID id : new ArrayList<>(participants)) {
             ServerPlayer player = level.getServer().getPlayerList().getPlayer(id);
-            if (player == null || player.level() != level || !inside(player.position()) || !eligible(player)) {
+            if (player == null || player.level() != level || !insideFight(player.position()) || !eligible(player)) {
                 participants.remove(id);
             } else {
                 present.add(player);

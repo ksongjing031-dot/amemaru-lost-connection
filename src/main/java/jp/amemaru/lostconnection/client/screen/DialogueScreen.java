@@ -326,10 +326,11 @@ public class DialogueScreen extends Screen {
         UiStyle.panel(graphics, box[0], box[1], box[2], box[3]);
         int textX = box[0] + 12;
         int textW = box[2] - box[0] - 24;
-        // 名前札
+        // 名前札。立ち絵があるときは、立ち絵の右に置く（立ち絵は立体で手前に描かれるので、重なると札と肩書きが隠れる。11月22日）
         if (p != null && !p.speaker().isEmpty()) {
             int nameW = font.width(p.speaker()) + 16;
-            int nx = box[0] + 8;
+            boolean besidePortrait = p.portrait() != null && portrait != null;
+            int nx = besidePortrait ? box[0] + PORTRAIT_X + (int) (portraitScale() * 0.62F) + 4 : box[0] + 8;
             int ny = box[1] - 14;
             UiStyle.card(graphics, nx, ny, nx + nameW, ny + 14, "player".equals(p.speakerKind()) ? 0xFFF2A8 : 0x8FD3FF, true);
             graphics.drawString(font, p.speaker(), nx + 8, ny + 3, "player".equals(p.speakerKind()) ? UiStyle.TEXT_GOLD : UiStyle.TEXT_HEADER,
@@ -398,12 +399,20 @@ public class DialogueScreen extends Screen {
         renderPortraitEntity(graphics, box);
     }
 
+    /** 立ち絵の真ん中（会話の枠の左のふちから）。 */
+    private static final int PORTRAIT_X = 44;
+
+    /** 立ち絵の大きさ（1ブロックの画面の大きさ）。画面の高さに合わせる。 */
+    private int portraitScale() {
+        return Mth.clamp(height / 4, 46, 76);
+    }
+
     private void renderPortraitEntity(GuiGraphics graphics, int[] box) {
         if (portrait == null) {
             return;
         }
-        int scale = Mth.clamp(height / 4, 46, 76);
-        int x = box[0] + 44;
+        int scale = portraitScale();
+        int x = box[0] + PORTRAIT_X;
         // 枠の下のふちに来る高さ（NPCの定義の portrait_y。立体のモデルは人ごとに頭の高さが違うので、あごの少し下で切る）
         jp.amemaru.lostconnection.npc.NpcDef def = NpcDefs.client(portrait.npcId());
         float cut = def != null ? def.portraitY() : 1.35F;

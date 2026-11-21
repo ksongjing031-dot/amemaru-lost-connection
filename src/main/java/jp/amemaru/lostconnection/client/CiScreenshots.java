@@ -498,7 +498,8 @@ public final class CiScreenshots {
             {"await_floor", null, "0"},
             {"cmd", null, "80", "tp @p {at:21.5,3,-78.5} -90 6"},
             {"snap", null, "40", "phase5_npc_guild"},
-            {"cmd", null, "80", "tp @p {at:7.5,4,-164.5} -90 4"},
+            // バルドは書見台の東に立つので、書見台の陰にならない北西の斜めから（11月22日）
+            {"cmd", null, "80", "tp @p {at:10.0,4,-168.0} -35 8"},
             {"snap", null, "40", "phase5_npc_bard"},
             // 11月22日：立体のモデルになったNPC（教会のセレナ・武器工房のドラン）
             {"cmd", null, "80", "tp @p {at:-95.0,4,0.5} 90 4"},
@@ -553,24 +554,49 @@ public final class CiScreenshots {
             {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
             {"cmd", null, "60", "execute in amemaru:tower run tp @p {f1:192.5,15,68.5} 180 4"},
             {"snap", null, "60", "phase5_boss_fight"},
-            {"await_telegraph", null, "0"},
-            {"snap", null, "4", "phase5_boss_telegraph"},
-            // 11月22日：技の当たる所（薙ぎ払いの扇形・突き上げの帯・大跳躍の降りる円・根の牙の足もとの円）。管理者のコマンドで技を
-            // 出させて、打つ少し前に撮る。間でHPを戻す。円は足もとに出るので、そのときは下を向く（CIのコマンドはサーバーとして動くので、
-            // 向きは execute as @p at @s で、その人の所から変える）
-            {"cmd", null, "30", "amemaru admin debug vitals @a 100 100"},
-            {"cmd", null, "12", "amemaru admin boss skill 1 sweep"},
+            // 11月22日：技ごとの当たる所。ボスを出る所（{f1:192.5,15,51.5}。南を向く）に戻し、決まった所に立って、管理者のコマンドで
+            // 技を出させ、打つ前に撮る（技は見ている人の方を向いて出る）。跳んでいる途中のボスは戻しても跳び続けるので、先に踏みつけを
+            // 出させて（その場で1.2秒ためる）止めてから戻す。踏みつけは、次の技を出させると取り消される。間でHPを戻す。
+            // 突進の通り道の線（14南。前は自然に出た最初の予兆を撮っていたが、大跳躍のときは円が足もとに出て写らない）
+            {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @e[type=amemaru:veldhorn,limit=1] {f1:192.5,15,51.5} 0 0"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,65.5} 180 10"},
+            {"cmd", null, "10", "amemaru admin boss skill 1 charge"},
+            {"snap", null, "0", "phase5_boss_telegraph"},
+            // 薙ぎ払いの扇（5南。届く長さ5.5）
+            {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @e[type=amemaru:veldhorn,limit=1] {f1:192.5,15,51.5} 0 0"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,56.5} 180 20"},
+            {"cmd", null, "8", "amemaru admin boss skill 1 sweep"},
             {"snap", null, "0", "phase5_boss_sweep"},
+            // 角の突き上げの帯（9南。帯は長さ7）
             {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
-            {"cmd", null, "8", "amemaru admin boss skill 1 upthrust"},
+            {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @e[type=amemaru:veldhorn,limit=1] {f1:192.5,15,51.5} 0 0"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,60.5} 180 14"},
+            {"cmd", null, "6", "amemaru admin boss skill 1 upthrust"},
             {"snap", null, "0", "phase5_boss_upthrust"},
+            // 後ろ蹴りの後ろの扇（ボスの後ろ＝4北に立ち、南のボスを見る）
             {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
-            {"cmd", null, "5", "execute as @p at @s run tp @s ~ ~ ~ 180 50"},
-            {"cmd", null, "14", "amemaru admin boss skill 1 leap"},
+            {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @e[type=amemaru:veldhorn,limit=1] {f1:192.5,15,51.5} 0 0"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,47.5} 0 22"},
+            {"cmd", null, "5", "amemaru admin boss skill 1 kick"},
+            {"snap", null, "0", "phase5_boss_kick"},
+            // 大跳躍の降りる円（12南。円は立っている所に出るので、下を向いて前の半分とボスを写す）
+            {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @e[type=amemaru:veldhorn,limit=1] {f1:192.5,15,51.5} 0 0"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,63.5} 180 40"},
+            {"cmd", null, "12", "amemaru admin boss skill 1 leap"},
             {"snap", null, "0", "phase5_boss_leap"},
+            // 根の牙の足もとの円（10南。降りてくるのを待ってから。真下に近い向きで円を写す）
             {"cmd", null, "60", "amemaru admin debug vitals @a 100 100"},
-            {"cmd", null, "5", "execute as @p at @s run tp @s ~ ~ ~ 180 50"},
-            {"cmd", null, "12", "amemaru admin boss skill 1 roots"},
+            {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @e[type=amemaru:veldhorn,limit=1] {f1:192.5,15,51.5} 0 0"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,61.5} 180 55"},
+            {"cmd", null, "10", "amemaru admin boss skill 1 roots"},
             {"snap", null, "0", "phase5_boss_roots"},
             {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
             // 戦っている人のまま（アドベンチャー。クリエイティブにすると戦いから外れる）倒す。

@@ -74,12 +74,28 @@ public record FloorDef(
     public record BossRoomDef(ResourceLocation boss, Spot spawn, Vec3 arenaCenter, double arenaRadius, int arenaYMin,
                               int arenaYMax, BlockPos sealMin, BlockPos sealMax, double startRadius, int respawnSeconds,
                               int maxPlayers, double hpPerExtraPlayer, Circle exit, String name) {
+        /** 戦いの間だけ、部屋の円のまわりに足すはば（門の通路のぶん）。 */
+        public static final double FIGHT_MARGIN = 4.0;
+
         /** 部屋の中か（世界の座標）。 */
         public boolean inside(Vec3 world, Vec3 origin) {
             double dx = world.x - (origin.x + arenaCenter.x);
             double dz = world.z - (origin.z + arenaCenter.z);
             double y = world.y - origin.y;
             return dx * dx + dz * dz <= arenaRadius * arenaRadius && y >= arenaYMin && y <= arenaYMax;
+        }
+
+        /**
+         * 戦いの間の「部屋の中」か：門は光の幕で閉じているので、部屋の円のまわり {@link #FIGHT_MARGIN} ブロック（門の通路）にいる人も
+         * 中に数える。突進・後ろ蹴り・大跳躍で門の通路まで押し出された人が「部屋を出た」ことになり、戦いがはじめからにならないように
+         * 【補完】（11月22日）。高さは、突き上げで浮いたぶんも入れる。
+         */
+        public boolean insideFight(Vec3 world, Vec3 origin) {
+            double dx = world.x - (origin.x + arenaCenter.x);
+            double dz = world.z - (origin.z + arenaCenter.z);
+            double y = world.y - origin.y;
+            double r = arenaRadius + FIGHT_MARGIN;
+            return dx * dx + dz * dz <= r * r && y >= arenaYMin - 2 && y <= arenaYMax + 4;
         }
     }
 
