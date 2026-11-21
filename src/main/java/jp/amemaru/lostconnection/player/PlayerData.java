@@ -103,6 +103,8 @@ public final class PlayerData {
     @Nullable
     private ResourceKey<Level> oathCrystalLevel;
     private long oathCrystalUntil;
+    /** 職業選択の画面を、会話（リリア・オープニング）から開いたか（Phase 5。保存しない）。 */
+    private boolean oathFromDialogue;
 
     // ---- 冒険の記録（保存する。Phase 3）
     private final AdventureData adventure = new AdventureData(() -> markDirty(SYNC_ADVENTURE));
@@ -521,9 +523,22 @@ public final class PlayerData {
 
     /** 職業選択の画面を開いた誓約の結晶の場所（画面を開いている間だけ有効）。 */
     public void setOathCrystal(@Nullable BlockPos pos, @Nullable ResourceKey<Level> level, long until) {
+        setOathCrystal(pos, level, until, false);
+    }
+
+    /**
+     * {@code fromDialogue}：会話から開いた画面（ギルドの受付のリリア、オープニングの大結晶のそばでのリリア）。このときは、
+     * 開いた所から離れていないかだけを見る（誓約の結晶のブロックがなくてもよい。「職業登録＝大結晶への誓約」。Phase 5）。
+     */
+    public void setOathCrystal(@Nullable BlockPos pos, @Nullable ResourceKey<Level> level, long until, boolean fromDialogue) {
         oathCrystalPos = pos;
         oathCrystalLevel = level;
         oathCrystalUntil = until;
+        oathFromDialogue = fromDialogue && pos != null;
+    }
+
+    public boolean isOathFromDialogue() {
+        return oathFromDialogue;
     }
 
     @Nullable
@@ -615,6 +630,7 @@ public final class PlayerData {
         pendingConfirm = "";
         oathCrystalPos = null;
         oathCrystalLevel = null;
+        oathFromDialogue = false;
         dirty = SYNC_ALL;
     }
 

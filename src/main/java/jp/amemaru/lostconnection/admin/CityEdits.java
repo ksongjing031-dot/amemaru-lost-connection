@@ -637,6 +637,11 @@ final class CityEdits {
             return false;
         }
         if (now.getBlock() == want.getBlock() && now.hasBlockEntity()) {
+            // 塔の灯りの札は、進行（階の解放・予告）に合わせて文字が変わる（Phase 5）
+            if (now.getBlock() instanceof net.minecraft.world.level.block.SignBlock
+                    && jp.amemaru.lostconnection.tower.TowerHall.isManagedSign(level, pos)) {
+                return true;
+            }
             CompoundTag a = normalizedBlockEntity(level, pos, now, wantNbt);
             BlockEntity be = level.getBlockEntity(pos);
             return a == null || be == null || a.equals(stripBlock(be.saveWithoutMetadata()));

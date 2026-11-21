@@ -1,0 +1,15 @@
+{
+  "_comment": "セレナ・アステル（Phase 0-A 8章）。結びの教会の司祭。1日目は呼び戻しの説明。立つ所は内陣の祭壇の前（身廊を向く）",
+  "name": "セレナ",
+  "title": "結びの教会の司祭",
+  "skin": "amemaru:textures/entity/npc/serena.png",
+  "slim": true,
+  "expressions": ["smile"],
+  "home": {
+    "place": "conelia",
+    "pos": [-98.5, 4, 0.5],
+    "yaw": -90
+  },
+  "roles": ["church"],
+  "talk_range": 5
+}

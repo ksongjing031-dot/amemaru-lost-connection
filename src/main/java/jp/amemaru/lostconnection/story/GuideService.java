@@ -29,7 +29,8 @@ import java.util.Optional;
  * はじめの手引き（データパックの {@code guides/first_steps.json}）：目覚めてから1階のボスまでの道しるべ（Phase 5 の縦切り版の確認の目安
  * 「初めてのログインから1階のボスまで、通して遊べる」に合わせて足した【補完】）。画面の右上に、今することと、行き先の向きと距離を出す。
  *
- * <p>段の終わり（{@code done}）：{@code job_selected}（職業を選んだ）・{@code tower_gate}（塔の門の転移の円に立った）・
+ * <p>段の終わり（{@code done}）：{@code registered}（リリアに名前を伝えて、名簿に書いてもらった）・{@code job_selected}（職業を選んだ）・
+ * {@code tower_gate}（塔の門の転移の円に立った）・
  * {@code floor_entered:N}（N階に入った）・{@code pillars:N}（N階の石柱をすべて起動した）・{@code boss:N}（N階のボスを倒した）。
  * もう済んでいる段は飛ばす（途中から始めた人・後から参加した人も、今いる段から始まる）。Phase 6 のクエストの仕組みができたら、
  * 「街めぐりクエスト」などと一緒にそちらへ移す。</p>
@@ -94,7 +95,8 @@ public final class GuideService {
 
     /** 済んだ段を飛ばして、今の段を決め直す（変わったら本人に送る）。 */
     public static void refresh(ServerPlayer player, PlayerData data) {
-        if (data.getStory().opening() < PlayerStory.OPENING_DONE) {
+        // 目覚める前（オープニングの演出を見る前）は出さない。目覚めた後に会話を閉じた人には、リリアの所を示す
+        if (data.getStory().opening() < PlayerStory.OPENING_AWAKENED) {
             data.markDirty(PlayerData.SYNC_STORY);
             return;
         }
@@ -129,6 +131,7 @@ public final class GuideService {
         }
         PlayerStory story = data.getStory();
         return switch (kind) {
+            case "registered" -> story.opening() >= PlayerStory.OPENING_DONE;
             case "job_selected" -> data.getCombatJob() != null;
             case "tower_gate" -> story.has(FLAG_TOWER_GATE) || story.visited(1);
             case "floor_entered" -> story.visited(floor);
@@ -142,10 +145,10 @@ public final class GuideService {
         };
     }
 
-    /** 今の段（オープニングの前・手引きを終えたあとは null）。 */
+    /** 今の段（目覚める前・手引きを終えたあとは null）。 */
     @Nullable
     public static View view(ServerPlayer player, PlayerData data) {
-        if (data.getStory().opening() < PlayerStory.OPENING_DONE) {
+        if (data.getStory().opening() < PlayerStory.OPENING_AWAKENED) {
             return null;
         }
         List<Step> steps = steps();

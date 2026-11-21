@@ -1,0 +1,68 @@
+{
+  "_comment": "オープニングのリリア（1日目に目覚めた人）。大結晶のそばで名前を尋ね、名簿に書く（最初のつながり）。最後に職業を選ぶ画面を開く。Phase 0-A 8章・11章の1日目",
+  "npc": "amemaru:lilia",
+  "priority": 100,
+  "conditions": {
+    "opening_max": 1,
+    "day_max": 1
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "expression": "surprised",
+      "text": "あっ……目が覚めましたか？　よかった！",
+      "next": "s2"
+    },
+    "s2": {
+      "expression": "smile",
+      "text": "ここはコネリア。塔のふもとにある街ですよ",
+      "next": "s3"
+    },
+    "s3": {
+      "text": "大結晶のそばには、ときどき迷い人さんが現れるんです",
+      "next": "s4"
+    },
+    "s4": {
+      "expression": "smile",
+      "text": "わたしはリリア。冒険者ギルドの受付です。お名前は？",
+      "choices": [
+        {
+          "text": "{player}です",
+          "next": "s5"
+        },
+        {
+          "text": "{player}……だったと思う",
+          "next": "s5"
+        }
+      ]
+    },
+    "s5": {
+      "expression": "smile",
+      "text": "{player}さん、ですね。名簿に書いておきますね！",
+      "next": "s6",
+      "actions": [
+        {
+          "type": "amemaru:roster"
+        }
+      ]
+    },
+    "s6": {
+      "speaker": "narration",
+      "text": "リリアが、分厚い冒険者名簿に名前を書き込んだ。",
+      "next": "s7"
+    },
+    "s7": {
+      "expression": "smile",
+      "text": "これで、この街とのつながりがひとつできました",
+      "next": "s8"
+    },
+    "s8": {
+      "text": "塔に入るには、大結晶に職業を誓うんです。選んでみてください！"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:open_job_screen"
+    }
+  ]
+}

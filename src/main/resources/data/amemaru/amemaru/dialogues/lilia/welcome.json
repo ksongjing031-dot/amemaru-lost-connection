@@ -1,0 +1,51 @@
+{
+  "_comment": "ふだんのリリア（口ぐせ「おかえりなさい！」）。職業を変えるときも、ここから画面を開く",
+  "npc": "amemaru:lilia",
+  "priority": 10,
+  "conditions": {
+    "opening": 2,
+    "has_job": true
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "expression": "smile",
+      "text": "{player}さん、おかえりなさい！",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "今日はどうしましたか？",
+      "choices": [
+        {
+          "text": "塔のことを聞きたい",
+          "next": "t1"
+        },
+        {
+          "text": "職業を変えたい",
+          "next": "end",
+          "actions": [
+            {
+              "type": "amemaru:open_job_screen"
+            }
+          ]
+        },
+        {
+          "text": "なんでもない",
+          "next": "end"
+        }
+      ]
+    },
+    "t1": {
+      "text": "塔の門は、北門を出た先の広場の奥にあります",
+      "next": "t2"
+    },
+    "t2": {
+      "text": "門番のバルドさんに声をかければ、行ける階を教えてくれますよ",
+      "next": "t3"
+    },
+    "t3": {
+      "expression": "worried",
+      "text": "……無理はしないでくださいね。待ってますから"
+    }
+  }
+}

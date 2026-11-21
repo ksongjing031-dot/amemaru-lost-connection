@@ -1,0 +1,69 @@
+{
+  "_comment": "遅れて届いた人のオープニング（2〜14日目。Phase 0-A 14章「また迷い人さんですね」）",
+  "npc": "amemaru:lilia",
+  "priority": 100,
+  "conditions": {
+    "opening_max": 1,
+    "day_min": 2,
+    "day_max": 14
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "expression": "surprised",
+      "text": "あっ、目が覚めましたか？　また迷い人さんですね",
+      "next": "s2"
+    },
+    "s2": {
+      "expression": "smile",
+      "text": "大丈夫ですよ。ここはコネリア、塔のふもとの街です",
+      "next": "s3"
+    },
+    "s3": {
+      "text": "先に来た人たちも、もう塔に挑んでいるんですよ",
+      "next": "s4"
+    },
+    "s4": {
+      "expression": "smile",
+      "text": "わたしはリリア。冒険者ギルドの受付です。お名前は？",
+      "choices": [
+        {
+          "text": "{player}です",
+          "next": "s5"
+        },
+        {
+          "text": "{player}……だったと思う",
+          "next": "s5"
+        }
+      ]
+    },
+    "s5": {
+      "expression": "smile",
+      "text": "{player}さん、ですね。名簿に書いておきますね！",
+      "next": "s6",
+      "actions": [
+        {
+          "type": "amemaru:roster"
+        }
+      ]
+    },
+    "s6": {
+      "speaker": "narration",
+      "text": "リリアが、分厚い冒険者名簿に名前を書き込んだ。",
+      "next": "s7"
+    },
+    "s7": {
+      "expression": "smile",
+      "text": "これで、この街とのつながりがひとつできました",
+      "next": "s8"
+    },
+    "s8": {
+      "text": "塔に入るには、大結晶に職業を誓うんです。選んでみてください！"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:open_job_screen"
+    }
+  ]
+}

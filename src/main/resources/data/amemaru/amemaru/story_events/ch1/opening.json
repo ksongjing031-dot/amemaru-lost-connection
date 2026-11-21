@@ -1,0 +1,131 @@
+{
+  "_comment": "目覚め（Phase 0-A 11章の1日目「大結晶のそばで目覚め、リリアと出会う」。大結晶から「……み、つけ……た」）。その人の画面だけで、その人の速さで流す。クライアントがまわりを読み込んでから始まる（OpeningService）",
+  "title": "目覚め",
+  "trigger": {
+    "type": "amemaru:first_login"
+  },
+  "scope": "player",
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:hud",
+      "hide": true
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "black",
+      "to": "black",
+      "ticks": 30
+    },
+    {
+      "type": "amemaru:camera",
+      "look_at": {
+        "anchor": "crystal",
+        "offset": [
+          0,
+          17,
+          0
+        ]
+      },
+      "wait": false
+    },
+    {
+      "type": "amemaru:sound",
+      "sound": "minecraft:block.beacon.ambient",
+      "volume": 1.0,
+      "pitch": 0.6
+    },
+    {
+      "type": "amemaru:subtitle",
+      "style": "core",
+      "text": "……み、つけ……た",
+      "ticks": 80
+    },
+    {
+      "type": "amemaru:wait",
+      "ticks": 20
+    },
+    {
+      "type": "amemaru:sound",
+      "sound": "minecraft:block.amethyst_block.chime",
+      "volume": 1.0,
+      "pitch": 0.7
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "black",
+      "to": "none",
+      "ticks": 80
+    },
+    {
+      "type": "amemaru:particles",
+      "particle": "minecraft:end_rod",
+      "pos": {
+        "anchor": "crystal",
+        "offset": [
+          0,
+          12,
+          0
+        ]
+      },
+      "count": 80,
+      "spread": 5.0
+    },
+    {
+      "type": "amemaru:wait",
+      "ticks": 40
+    },
+    {
+      "type": "amemaru:actor",
+      "id": "lilia",
+      "npc": "amemaru:lilia",
+      "pos": {
+        "anchor": "wake",
+        "offset": [
+          11,
+          0,
+          -5
+        ]
+      },
+      "yaw": 110,
+      "expression": "surprised"
+    },
+    {
+      "type": "amemaru:camera",
+      "actor": "lilia",
+      "wait": false
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "あっ……！　だ、大丈夫ですか！？",
+      "ticks": 50,
+      "wait": false
+    },
+    {
+      "type": "amemaru:actor_move",
+      "id": "lilia",
+      "to": {
+        "anchor": "wake",
+        "offset": [
+          1.4,
+          0,
+          -1.6
+        ]
+      },
+      "ticks": 60
+    },
+    {
+      "type": "amemaru:actor_look",
+      "id": "lilia",
+      "expression": "surprised"
+    },
+    {
+      "type": "amemaru:wait",
+      "ticks": 15
+    },
+    {
+      "type": "amemaru:open_dialogue",
+      "npc": "amemaru:lilia"
+    }
+  ]
+}

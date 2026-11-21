@@ -18,15 +18,15 @@ import java.util.List;
  *   <li>{@code flags_all}・{@code flags_any}・{@code flags_none}：物語フラグ（サーバー全体のフラグと、本人のフラグのどちらかで立っていればよい）</li>
  *   <li>{@code day_min}・{@code day_max}：進行日の範囲。{@code chapter}：章</li>
  *   <li>{@code has_job}：戦闘職を選んでいるか（Phase 5で足した）。{@code job}：その戦闘職か</li>
- *   <li>{@code opening}：オープニングの進み（0・1・2。Phase 5で足した）</li>
+ *   <li>{@code opening}：オープニングの進み（0・1・2。Phase 5で足した）。{@code opening_max}：オープニングの進みがこれ以下</li>
  *   <li>{@code affinity_min}・{@code title}・{@code remembered}：親密度・称号・NPCの記憶。Phase 6・8で働く（いまは読み取るだけ。
  *       親密度と称号はまだないので「足りている」、記憶はまだ失われないので「覚えている」とみなす）</li>
  * </ul>
  */
 public record Conditions(List<ResourceLocation> flagsAll, List<ResourceLocation> flagsAny, List<ResourceLocation> flagsNone,
                          int dayMin, int dayMax, int chapter, @Nullable Boolean hasJob, @Nullable ResourceLocation job,
-                         int opening, int affinityMin, @Nullable ResourceLocation title, @Nullable Boolean remembered) {
-    public static final Conditions NONE = new Conditions(List.of(), List.of(), List.of(), 0, Integer.MAX_VALUE, 0, null, null, -1, 0,
+                         int opening, int openingMax, int affinityMin, @Nullable ResourceLocation title, @Nullable Boolean remembered) {
+    public static final Conditions NONE = new Conditions(List.of(), List.of(), List.of(), 0, Integer.MAX_VALUE, 0, null, null, -1, -1, 0,
             null, null);
 
     public static Conditions parse(@Nullable JsonObject json) {
@@ -40,6 +40,7 @@ public record Conditions(List<ResourceLocation> flagsAll, List<ResourceLocation>
                 Json.optionalInt(json, "day_max", Integer.MAX_VALUE, 0, Integer.MAX_VALUE),
                 Json.optionalInt(json, "chapter", 0, 0, 9), hasJob, Json.optionalId(json, "job"),
                 Json.optionalInt(json, "opening", -1, -1, PlayerStory.OPENING_DONE),
+                Json.optionalInt(json, "opening_max", -1, -1, PlayerStory.OPENING_DONE),
                 Json.optionalInt(json, "affinity_min", 0, 0, 5), Json.optionalId(json, "title"), remembered);
     }
 
@@ -84,6 +85,9 @@ public record Conditions(List<ResourceLocation> flagsAll, List<ResourceLocation>
             return false;
         }
         if (opening >= 0 && (data == null || data.getStory().opening() != opening)) {
+            return false;
+        }
+        if (openingMax >= 0 && (data == null || data.getStory().opening() > openingMax)) {
             return false;
         }
         // 親密度・称号（Phase 6）・NPCの記憶（Phase 8）はまだないので、いまは条件に合っているとみなす

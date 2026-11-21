@@ -86,8 +86,9 @@ public record StoryAction(String type, JsonObject params) {
             }
             case "amemaru:roster" -> OpeningService.onRoster(player);
             case "amemaru:open_job_screen" -> {
+                // NPCの前（受付のリリア）か、本人のいる所（オープニングの大結晶のそば）で開く
                 BlockPos at = npc != null ? npc.blockPosition() : player.blockPosition();
-                JobService.openJobScreen(player, at);
+                JobService.openJobScreen(player, at, true);
             }
             case "amemaru:open_floor_select" -> TowerService.openFloorSelect(player, true);
             case "amemaru:guide" -> GuideService.event(player, Json.optionalString(params, "event", ""));

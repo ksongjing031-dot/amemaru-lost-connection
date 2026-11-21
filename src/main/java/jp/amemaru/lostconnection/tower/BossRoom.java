@@ -58,6 +58,8 @@ public final class BossRoom {
     private long respawnAt;
     private long stateSince;
     private boolean sealed;
+    /** この戦いで、蘇生の手がかり（倒れた仲間はしゃがんで起こせる）を出したか（ヘイト・回避・蘇生のチュートリアル）。 */
+    private boolean reviveTipShown;
 
     public BossRoom(FloorDef floor, FloorDef.BossRoomDef def) {
         this.floor = floor;
@@ -213,6 +215,7 @@ public final class BossRoom {
     }
 
     private void startFight(ServerLevel level, AmemaruBoss boss, List<ServerPlayer> onFloor) {
+        reviveTipShown = false;
         participants.clear();
         List<ServerPlayer> inside = new ArrayList<>();
         for (ServerPlayer player : onFloor) {
@@ -258,6 +261,21 @@ public final class BossRoom {
             }
         }
         boss.setParticipants(present);
+        // 蘇生のチュートリアル：はじめて誰かが倒れたら、ほかの人に起こし方を出す（Phase 0-A 9章「ヘイト・回避・蘇生のチュートリアルを兼ねる」）
+        if (!reviveTipShown) {
+            for (ServerPlayer player : present) {
+                if (isDown(player)) {
+                    reviveTipShown = true;
+                    String text = Component.translatable("boss.amemaru.tip.revive", player.getGameProfile().getName()).getString();
+                    for (ServerPlayer other : present) {
+                        if (other != player) {
+                            ModNetwork.sendTo(other, new StoryTextS2C(StoryTextS2C.Kind.TIP, "", text, 120));
+                        }
+                    }
+                    break;
+                }
+            }
+        }
         boolean anyStanding = false;
         for (ServerPlayer player : present) {
             if (!isDown(player)) {

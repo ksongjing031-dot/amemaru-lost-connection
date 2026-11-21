@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_column",
+  "textures": {
+    "end": "amemaru:block/memory_stone_top",
+    "side": "amemaru:block/memory_stone_side"
+  }
+}

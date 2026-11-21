@@ -1,0 +1,15 @@
+{
+  "_comment": "門番バルド（Phase 0-A 8章）。塔の門番。第七次遠征の数少ない生き残りで、ガルドの元部下。無口。立つ所は塔の入口の広間、書見台の東（転移の円の台を向く）",
+  "name": "バルド",
+  "title": "塔の門番",
+  "skin": "amemaru:textures/entity/npc/bard.png",
+  "slim": false,
+  "expressions": [],
+  "home": {
+    "place": "conelia",
+    "pos": [12.5, 4, -164.5],
+    "yaw": 90
+  },
+  "roles": ["tower_gate"],
+  "talk_range": 5
+}

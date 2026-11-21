@@ -45,8 +45,14 @@ public final class OpeningService {
     public static final ResourceLocation OPENING = AmemaruMod.id("ch1/opening");
     /** 目覚めた後に抜けた人の続き（リリアとの出会いから）。 */
     public static final ResourceLocation OPENING_AGAIN = AmemaruMod.id("ch1/opening_again");
-    /** オープニングのリリアとの会話。 */
+    /**
+     * オープニングのリリアとの会話（1日目）。2〜14日目に目覚めた人は {@code lilia/opening_late}（「また迷い人さんですね」）、
+     * 15日目からは {@code lilia/opening_called}（「あなたも、呼ばれてきたんですね」）。どれも {@code lilia/opening} で始まる名前にし、
+     * 条件（進行日・オープニングの進み）で選ぶ（Phase 0-A 14章「遅れて届いた人のオープニング」）。
+     */
     public static final ResourceLocation OPENING_DIALOGUE = AmemaruMod.id("lilia/opening");
+    /** リリア（オープニングの会話の話し手）。 */
+    public static final ResourceLocation LILIA = AmemaruMod.id("lilia");
     /** サーバーで最初の1人が目覚めた（Phase 0-A 12章の ch1_awaken）。 */
     public static final ResourceLocation FLAG_AWAKEN = AmemaruMod.id("ch1/awaken");
     /** 本人：目覚めた。 */
@@ -112,7 +118,7 @@ public final class OpeningService {
         if (!StoryEventManager.play(player, event, false)) {
             // 演出の定義がないとき：会話だけ始める
             data.getStory().setOpening(PlayerStory.OPENING_AWAKENED);
-            DialogueManager.open(player, AmemaruMod.id("lilia"), OPENING_DIALOGUE, false);
+            DialogueManager.open(player, LILIA, null, false);
         }
         AmemaruMod.LOGGER.info("[amemaru] Opening started for {} ({})", player.getGameProfile().getName(), event);
     }
@@ -200,10 +206,15 @@ public final class OpeningService {
 
     /** 会話が終わった（オープニングの会話を途中で閉じたら、手引きでリリアの所を示す）。 */
     static void onDialogueClosed(ServerPlayer player, ResourceLocation dialogue, boolean finished) {
-        if (!dialogue.equals(OPENING_DIALOGUE) || finished) {
+        if (!isOpeningDialogue(dialogue) || finished) {
             return;
         }
         PlayerDataCapability.get(player).ifPresent(data -> GuideService.refresh(player, data));
+    }
+
+    /** オープニングのリリアとの会話か（{@code lilia/opening}・{@code lilia/opening_late}・{@code lilia/opening_called}）。 */
+    public static boolean isOpeningDialogue(ResourceLocation dialogue) {
+        return dialogue.getNamespace().equals(OPENING_DIALOGUE.getNamespace()) && dialogue.getPath().startsWith(OPENING_DIALOGUE.getPath());
     }
 
     // ---------------------------------------------------------------- 目覚める所

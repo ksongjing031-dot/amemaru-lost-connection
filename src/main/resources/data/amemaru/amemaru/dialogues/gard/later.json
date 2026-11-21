@@ -1,0 +1,16 @@
+{
+  "_comment": "5日目から（名前で呼ぶ。昇格式などの物語はPhase 8で足す）",
+  "npc": "amemaru:gard",
+  "priority": 10,
+  "conditions": {
+    "opening": 2,
+    "day_min": 5
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "expression": "stern",
+      "text": "{player}。生きて戻れ。それが命令だ"
+    }
+  }
+}

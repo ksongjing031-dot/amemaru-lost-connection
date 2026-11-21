@@ -1,0 +1,15 @@
+{
+  "_comment": "リリア・フェルン（Phase 0-A 8章）。冒険者ギルドの受付。最初に出会うNPC【確定】。名簿に名前を書き、職業の登録の窓口になる。立つ所は受付のカウンターの奥（ギルドの1階。中央広場の真ん中からの位置、道の高さが0）",
+  "name": "リリア",
+  "title": "冒険者ギルドの受付",
+  "skin": "amemaru:textures/entity/npc/lilia.png",
+  "slim": true,
+  "expressions": ["smile", "surprised", "worried"],
+  "home": {
+    "place": "conelia",
+    "pos": [26.5, 3, -78.5],
+    "yaw": 90
+  },
+  "roles": ["job_registration"],
+  "talk_range": 5
+}

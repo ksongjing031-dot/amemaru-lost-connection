@@ -1,0 +1,54 @@
+{
+  "_comment": "目覚めた後、名簿に名前を書く前に抜けた人の続き（リリアとの出会いから）",
+  "title": "目覚め（続き）",
+  "trigger": {
+    "type": "amemaru:admin"
+  },
+  "scope": "player",
+  "replayable": false,
+  "steps": [
+    {
+      "type": "amemaru:hud",
+      "hide": true
+    },
+    {
+      "type": "amemaru:actor",
+      "id": "lilia",
+      "npc": "amemaru:lilia",
+      "pos": {
+        "anchor": "wake",
+        "offset": [
+          1.4,
+          0,
+          -1.6
+        ]
+      },
+      "yaw": 140,
+      "expression": "smile"
+    },
+    {
+      "type": "amemaru:actor_look",
+      "id": "lilia",
+      "expression": "smile"
+    },
+    {
+      "type": "amemaru:camera",
+      "actor": "lilia",
+      "wait": false
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "black",
+      "to": "none",
+      "ticks": 50
+    },
+    {
+      "type": "amemaru:wait",
+      "ticks": 20
+    },
+    {
+      "type": "amemaru:open_dialogue",
+      "npc": "amemaru:lilia"
+    }
+  ]
+}

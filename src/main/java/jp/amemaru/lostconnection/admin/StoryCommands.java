@@ -429,14 +429,17 @@ public final class StoryCommands {
                 default -> {
                     PlayerData data = PlayerDataCapability.get(player).orElse(null);
                     int stage = data == null ? -1 : data.getStory().opening();
-                    source.sendSuccess(() -> Component.translatable("commands.amemaru.story.opening_status", player.getDisplayName(), stage,
-                            OpeningService.isPending(player)), false);
+                    Component stageText = Component.translatable("commands.amemaru.story.opening.stage." + Math.max(0, Math.min(2, stage)));
+                    Component pendingText = OpeningService.isPending(player)
+                            ? Component.translatable("commands.amemaru.story.opening.pending") : Component.empty();
+                    source.sendSuccess(() -> Component.translatable("commands.amemaru.story.opening_status", player.getDisplayName(), stageText,
+                            pendingText), false);
                 }
             }
         }
         if (!"status".equals(action)) {
             AdminCommands.log(source, "story opening " + action + " x" + players.size());
-            source.sendSuccess(() -> Component.translatable("commands.amemaru.story.opening_done", action, players.size()), true);
+            source.sendSuccess(() -> Component.translatable("commands.amemaru.story.opening." + action, players.size()), true);
         }
         return players.size();
     }

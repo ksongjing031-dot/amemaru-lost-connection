@@ -1,0 +1,73 @@
+{
+  "_comment": "1階のボス（Phase 0-A 9章）。突進の通り道が地面に線で表示される。HP50%でツノモフを呼ぶ。ヘイト・回避・蘇生のチュートリアルを兼ねる。HPは1人のとき。部屋に入った人数で増える（階のJSONの hp_per_extra_player。1人増えるごとに+60%）。数値は【補完】（4人で5分ほど）",
+  "name": "草原の主ヴェルドホーン",
+  "floor": 1,
+  "level": 6,
+  "description": "始まりの草原の主。苔むした古い石を背負ったような、巨大な角の獣。突進の前には、通り道が地面に光の線で浮かぶ。追いつめられると角を鳴らし、ツノモフの群れを呼び寄せる。",
+  "stats": {
+    "hp": 3600,
+    "attack": 30,
+    "defense": 8,
+    "move_speed": 0.26,
+    "follow_range": 64,
+    "aggro_range": 20
+  },
+  "exp": 200,
+  "skills": {
+    "sweep": {
+      "power": 1.2,
+      "windup": 0.8,
+      "cooldown": 3.5,
+      "range": 5.5,
+      "angle": 120
+    },
+    "charge": {
+      "power": 2.2,
+      "windup": 1.4,
+      "cooldown": 9,
+      "range": 22,
+      "min_range": 6,
+      "speed": 1.0,
+      "width": 1.6,
+      "recover": 1.0,
+      "stun": 2.5
+    },
+    "stomp": {
+      "power": 1.4,
+      "windup": 1.2,
+      "cooldown": 12,
+      "range": 6
+    },
+    "call": {
+      "count": 2,
+      "per_player": 1,
+      "max": 6
+    }
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/veldhorn",
+    "pity": true,
+    "rare": [
+      {
+        "item": "amemaru:grassland_horn",
+        "chance": 8,
+        "rarity": "rare"
+      },
+      {
+        "item": "amemaru:crystal_fruit_jade",
+        "chance": 15,
+        "pity": false
+      },
+      {
+        "item": "amemaru:crystal_fruit_crimson",
+        "chance": 10,
+        "pity": false
+      },
+      {
+        "item": "amemaru:crystal_fruit_amber",
+        "chance": 10,
+        "pity": false
+      }
+    ]
+  }
+}

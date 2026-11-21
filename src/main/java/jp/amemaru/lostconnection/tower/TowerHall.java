@@ -81,6 +81,19 @@ public final class TowerHall {
                 next != null ? Component.translatable("message.amemaru.floor.number", next.value()) : Component.literal("—")});
     }
 
+    /**
+     * {@link #update} が書き換える札（「次にひらく階」と「塔の知らせ」）か。街の直しの見張り（{@code CityEdits}）は、ここの文字の違いを
+     * 直しに数えない（進行に合わせて変わる所のため）。
+     */
+    public static boolean isManagedSign(ServerLevel level, BlockPos pos) {
+        Optional<BlockPos> found = CityCommands.builtOrigin(level);
+        if (found.isEmpty()) {
+            return false;
+        }
+        BlockPos o = found.get();
+        return pos.equals(o.offset(13, 6, -162)) || pos.equals(o.offset(12, 4, -131));
+    }
+
     private static void setSign(ServerLevel level, BlockPos pos, Component[] lines) {
         level.getChunkAt(pos);
         BlockEntity be = level.getBlockEntity(pos);

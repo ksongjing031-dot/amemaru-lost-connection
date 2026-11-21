@@ -1,0 +1,15 @@
+{
+  "_comment": "ドラン・ベルク（Phase 0-A 8章）。武器職人。立つ所は武器工房の店のカウンターの奥（赤い敷物の先。入口を向く）",
+  "name": "ドラン",
+  "title": "武器工房の親方",
+  "skin": "amemaru:textures/entity/npc/doran.png",
+  "slim": false,
+  "expressions": ["grin"],
+  "home": {
+    "place": "conelia",
+    "pos": [88.5, 2, -16.5],
+    "yaw": 0
+  },
+  "roles": ["weapon_workshop"],
+  "talk_range": 5
+}

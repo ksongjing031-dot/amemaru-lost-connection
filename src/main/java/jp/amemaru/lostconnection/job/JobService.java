@@ -55,9 +55,14 @@ public final class JobService {
 
     /** 誓約の結晶を右クリックしたとき：職業選択の画面を開く。 */
     public static void openJobScreen(ServerPlayer player, BlockPos pos) {
+        openJobScreen(player, pos, false);
+    }
+
+    /** {@code fromDialogue}：会話（リリア）から開く（誓約の結晶のブロックがなくても、開いた所の近くなら選べる。Phase 5）。 */
+    public static void openJobScreen(ServerPlayer player, BlockPos pos, boolean fromDialogue) {
         jp.amemaru.lostconnection.player.PlayerDataCapability.get(player).ifPresent(data -> {
             long now = player.level().getGameTime();
-            data.setOathCrystal(pos, player.level().dimension(), now + SCREEN_TICKS);
+            data.setOathCrystal(pos, player.level().dimension(), now + SCREEN_TICKS, fromDialogue);
             ChangeRule rule = changeRule(player, data);
             ModNetwork.sendTo(player, new OpenJobScreenS2C(
                     SkillRegistry.get().jobIndex(data.getCombatJob()),
@@ -80,6 +85,7 @@ public final class JobService {
         if (pos == null || data.getOathCrystalLevel() != player.level().dimension()
                 || pos.distToCenterSqr(player.position()) > reach * reach
                 || !(player.level().getBlockState(pos).getBlock() instanceof OathCrystalBlock
+                || data.isOathFromDialogue()
                 || (player.level() instanceof net.minecraft.server.level.ServerLevel serverLevel
                 && jp.amemaru.lostconnection.npc.NpcService.isRegistrarAt(serverLevel, pos)))) {
             SkillTreeService.tell(player, Component.translatable("message.amemaru.job.too_far"));
