@@ -171,7 +171,7 @@ public class DialogueScreen extends Screen {
         }
         done = true;
         ModNetwork.sendToServer(new DialogueChoiceC2S(session, code));
-        Minecraft.getInstance().setScreen(null);
+        Minecraft.getInstance().setScreen(jp.amemaru.lostconnection.client.CiScreenshots.screenAfterClose());
     }
 
     private static void click() {
@@ -190,7 +190,7 @@ public class DialogueScreen extends Screen {
     /** サーバーから閉じる知らせが来た。 */
     public void closeFromServer() {
         done = true;
-        Minecraft.getInstance().setScreen(null);
+        Minecraft.getInstance().setScreen(jp.amemaru.lostconnection.client.CiScreenshots.screenAfterClose());
     }
 
     // ---------------------------------------------------------------- 自動の確認（CIの写真）から

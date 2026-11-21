@@ -62,6 +62,21 @@ PLACEMENTS = [
     ("casino_fishrace", (5, -3, 68), "カジノ", "casino"),
     ("tower_plaza_monument", (-23, -1, -147), "塔の入口", "tower_plaza"),
 ]
+# 街並み（Phase 5。build_city.py が書き出す区画。地面を作った後、11の施設より先に置く）
+TOWN_LIST = os.path.join(SRC, "town", "placements.txt")
+
+
+def town_placements():
+    out = []
+    if os.path.exists(TOWN_LIST):
+        with open(TOWN_LIST, encoding="utf-8") as f:
+            for line in f:
+                parts = line.split()
+                if len(parts) == 4:
+                    out.append(("town/" + parts[0], (int(parts[1]), int(parts[2]), int(parts[3])), "街並み", None))
+    return out
+
+
 FACILITIES = ["ギルド", "武器工房", "防具工房", "装飾工房", "商店街", "個人倉庫", "フリーマーケット", "結びの教会", "釣り堀",
               "カジノ", "塔の入口"]
 
@@ -134,6 +149,7 @@ def load(name):
     path = os.path.join(SRC, name + ".nbt")
     os.makedirs(CACHE, exist_ok=True)
     cpath = os.path.join(CACHE, name + ".pickle")
+    os.makedirs(os.path.dirname(cpath), exist_ok=True)
     stamp = os.path.getmtime(path)
     if os.path.exists(cpath):
         with open(cpath, "rb") as f:
@@ -167,7 +183,7 @@ def props(st):
 class City:
     """並べた街。world[(x, y, z)] = 状態（空気も入れる）。owner[(x, y, z)] = その所を最後に書いた構造物"""
 
-    def __init__(self, stage="start"):
+    def __init__(self, stage="start", town=True):
         self.stage = stage
         self.world = {}
         self.owner = {}
@@ -175,7 +191,7 @@ class City:
         self.boxes = {}
         self.entities = []
         self.writes = {}          # 構造物 → 書いた所（空気も）
-        for name, (ox, oy, oz), fac, base in PLACEMENTS:
+        for name, (ox, oy, oz), fac, base in (town_placements() if town else []) + PLACEMENTS:
             if base is not None and stage == "start":
                 continue
             blocks, size, ents = load(name)
@@ -221,7 +237,7 @@ def overlaps(city):
             (bx0, by0, bz0), (bx1, by1, bz1) = city.boxes[b]
             if ax1 < bx0 or bx1 < ax0 or ay1 < by0 or by1 < ay0 or az1 < bz0 or bz1 < az0:
                 continue
-            base_b = [p[3] for p in PLACEMENTS if p[0] == b][0]
+            base_b = next((p[3] for p in town_placements() + PLACEMENTS if p[0] == b), None)
             if base_b == a or city.fac_of[a] == city.fac_of[b] and base_b is not None:
                 continue          # 重ねる形とその土台
             wa, wb = city.writes[a], city.writes[b]
@@ -266,7 +282,7 @@ PLANTS = FLOWERS | {"flowering_azalea", "azalea", "sweet_berry_bush"}
 
 
 def full_cube(n):
-    if n in ("air", "cave_air", "void_air", "structure_void", "water", "lava"):
+    if n in ("air", "cave_air", "void_air", "structure_void", "water", "lava", "light"):
         return False
     if n in FLOWERS:
         return False
@@ -275,6 +291,8 @@ def full_cube(n):
 
 def emit(st):
     n, p = st[0], dict(st[1])
+    if n == "light":
+        return int(p.get("level", 15))      # 見えない灯り（Phase 5 の街の家の中など）
     if n.endswith("candle") or n == "candle":
         return 3 * int(p.get("candles", 1)) if p.get("lit") == "true" else 0
     if n.endswith("campfire") and p.get("lit") == "false":
@@ -318,6 +336,8 @@ def ring_heights(city, r_max=36.0):
             continue
         if road_at(x, z) and road_at(x, z) != "中央広場":
             continue
+        if st[0] == "light":
+            continue          # 見えない灯り（形がなく、街の並びの高さに入らない）
         k = (x, z)
         if y > cols.get(k, (-1, None))[0]:
             cols[k] = (y, st[0], city.facility_at((x, y, z)))
@@ -344,8 +364,11 @@ def road_use(city):
             paving[(rd, fac)][st[0]] += 1
         elif y >= 1:
             above[(rd, fac)][st[0]] += 1
+            if st[0] == "light":
+                continue      # 見えない灯り（当たり判定がなく、道をふさがない。街並みの暗い所を埋める）
             c = center_at(x, z)
-            if c is not None:
+            # 門の口の上（y 9 から）の城壁は、道の真ん中に置いた物に入れない（門のアーチ。下の口は高さ8あいている）
+            if c is not None and not (y >= 9 and math.hypot(x, z) >= WALL_IN):
                 centers[c].append(((x, y, z), st[0], fac))
             if not any(t in st[0] for t in ALLOWED_ON_ROAD) and rd not in ("中央広場",):
                 odd[(rd, fac)].append(((x, y, z), st[0]))
@@ -536,7 +559,7 @@ def compute_light(city, pad=16):
 
 def floor_ok(st):
     n, p = st[0], dict(st[1])
-    if n in GLOW15 or n == "__lot__":
+    if n in GLOW15 or n in ("__lot__", "barrier", "light") or n.endswith("_leaves"):
         return False
     if n.endswith("_slab"):
         return p.get("type") in ("top", "double")
@@ -1002,7 +1025,7 @@ def check(stage, verbose=True):
         pr("   ", d)
 
     # ---- つながる道
-    start = (0, 1, 0)
+    start = (0, 1, 12)      # 中央広場の、大結晶の台座の南（目覚める所。Phase 5 で大結晶を建てた）
     reach, via = walk(city, [start], BOUNDS)
     back = back_reach(city, start, BOUNDS)
     cells = walkable_cells(city, BOUNDS)

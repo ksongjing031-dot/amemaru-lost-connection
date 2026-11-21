@@ -122,7 +122,9 @@ public final class ClientPacketHandler {
 
     public static void handleScene(jp.amemaru.lostconnection.network.s2c.SceneS2C message) {
         Minecraft minecraft = Minecraft.getInstance();
-        if (minecraft.screen != null && !(minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.DialogueScreen)) {
+        // 場面は、開いている画面（メニューなど）を閉じて見せる。会話の画面と、CIの何も描かない画面は閉じない
+        if (minecraft.screen != null && !(minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.DialogueScreen)
+                && !CiScreenshots.isHoldScreen(minecraft.screen)) {
             minecraft.setScreen(null);
         }
         ScenePlayer.start(message);

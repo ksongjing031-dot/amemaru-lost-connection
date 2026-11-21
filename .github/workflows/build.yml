@@ -138,6 +138,7 @@ jobs:
 
       # 建物の写真が増えると長くなる（PHASE 11 の塔の入口まで110枚で約16〜18分。PHASE 10 のカジノまでの98枚で約13分半）。区画を足すたびに、ここの時間に収まるかを見る
       # 11月21日：装備のデザインの写真と、街全体の写真（街を空に建てて33枚）を足したので、45分にした
+      # 11月21日（Phase 5）：写真の名前に数字（phase5_*）が入るので、取り出す名前に数字も入れた
       - name: クライアントを起動し、ワールドに入って出る（画面写真も撮る）
         timeout-minutes: 45
         uses: headlesshq/mc-runtime-test@5.0.0
@@ -158,7 +159,7 @@ jobs:
           import base64, collections, glob, re
           parts = collections.defaultdict(dict)
           totals = {}
-          pattern = re.compile(r'AMEMARU_SHOT\|([a-z_]+)\|(\d+)\|(\d+)\|([A-Za-z0-9+/=]+)')
+          pattern = re.compile(r'AMEMARU_SHOT\|([a-z_0-9]+)\|(\d+)\|(\d+)\|([A-Za-z0-9+/=]+)')
           for path in glob.glob('run/logs/*.log'):
               with open(path, encoding='utf-8', errors='replace') as f:
                   for line in f:

@@ -435,6 +435,9 @@ public final class CiScreenshots {
             {"city_market", "market", "100"}, {"city_free_market", "free_market", "100"}, {"city_church", "church", "100"},
             {"city_fishing", "fishing", "100"}, {"city_lake", "lake", "100"}, {"city_casino", "casino", "100"},
             {"city_tower", "tower", "100"},
+            // Phase 5：街並み（家並み・南の門・倉庫地区・角の塔と城壁）
+            {"city_houses", "houses", "140"}, {"city_gate_south", "gate_south", "140"}, {"city_warehouses", "warehouses", "140"},
+            {"city_wall", "wall", "100"},
             // 直しの書き出しを通しで確かめる（ログで見る）。直しがなければ「新しい直しはありませんでした」（自然に変わる所を数えない）。
             // ギルドの上の空に金のブロックを置くと、書き出す前の建て直しは止まる。書き出すと、建て直しても残る。空気に戻して書き出すと、
             // 直しのファイルは消える（Modの形と同じになった直しを外す）
@@ -450,6 +453,7 @@ public final class CiScreenshots {
             {"night", null, "60"},
             {"city_top_n_night", "top_n", "200"}, {"city_top_s_night", "top_s", "200"}, {"city_plaza_night", "plaza", "100"},
             {"city_market_night", "market", "100"}, {"city_church_night", "church", "100"}, {"city_tower_night", "tower", "100"},
+            {"city_houses_night", "houses", "140"}, {"city_gate_south_night", "gate_south", "140"},
             {"grown", null, "600"},
             {"city_grown_top_n", "top_n", "200"}, {"city_grown_top_s", "top_s", "200"},
             // 北から東・南・西へ回る（遠くへ移るほど長めに待つ）
@@ -485,6 +489,9 @@ public final class CiScreenshots {
             {"cmd", null, "10", "effect clear @p"},
             // ---- Phase 5：街のNPC・オープニング（その人の画面だけで流れる）・会話と名簿・職業の画面・進行の知らせ・塔の門・
             // 1階（入口・石橋・石柱・封印・石板）・ボス（戦い・予兆・初撃破）・出口の円・記憶の再生・1階を上から
+            // keep_hold：ここから終わりまで、画面が閉じたら何も描かない画面を開き直す（オープニングの場面は開いている画面を閉じ、
+            // 会話の画面も閉じると何もない画面になる。何もない画面になると、自動テストが写真の途中で始まり、終わるとゲームが閉じる）
+            {"keep_hold", null, "5"},
             {"hud", null, "5", "on"},
             {"cmd", null, "10", "gamemode creative @p"},
             {"p5_build_floor", null, "20"},
@@ -563,6 +570,9 @@ public final class CiScreenshots {
             return;
         }
         Minecraft minecraft = Minecraft.getInstance();
+        if (keepHold && !cityDone && minecraft.player != null && minecraft.screen == null) {
+            minecraft.setScreen(new HoldScreen());
+        }
         if (minecraft.player == null || !ClientPlayerState.get().hasData() || pendingShot != null) {
             return;
         }
@@ -1712,6 +1722,7 @@ public final class CiScreenshots {
         if (j >= CITY_SHOTS.length * 2) {
             if (!cityDone) {
                 cityDone = true;
+                keepHold = false;
                 hideHud = false;
                 command(minecraft, "time set noon");
                 if (returnPos != null) {
@@ -1795,6 +1806,21 @@ public final class CiScreenshots {
 
     private static int awaitTicks;
     private static int floorBuilds;
+    /** Phase 5 の写真の間（keep_hold の行から終わりまで）。画面が閉じたら、何も描かない画面を開き直す */
+    private static boolean keepHold;
+
+    /**
+     * 画面を閉じるときに開く画面。CIで写真を撮っている間（keep_hold から）は、何も描かない画面（何もない画面になると、自動テストが
+     * 写真の途中で始まるため）。ふだんは null（閉じる）。
+     */
+    public static net.minecraft.client.gui.screens.Screen screenAfterClose() {
+        return ENABLED && keepHold && !cityDone ? new HoldScreen() : null;
+    }
+
+    /** CIの、何も描かない画面か（場面が始まるときに閉じない） */
+    public static boolean isHoldScreen(net.minecraft.client.gui.screens.Screen screen) {
+        return screen instanceof HoldScreen;
+    }
 
     private static int awaitLimit(String kind) {
         return switch (kind) {
@@ -1820,8 +1846,8 @@ public final class CiScreenshots {
     /** Phase 5 の写真の段取り（階を建てる・会話を進める・階を選ぶ・石柱を起動する・記憶の再生）。その種類の行なら true。 */
     private static boolean phase5Action(Minecraft minecraft, String[] shot, boolean first) {
         String kind = shot[0];
-        if (!List.of("p5_build_floor", "dialogue_end", "dialogue_choose", "dialogue_finish", "floor_select", "p5_pillar", "p5_replay")
-                .contains(kind)) {
+        if (!List.of("keep_hold", "p5_build_floor", "dialogue_end", "dialogue_choose", "dialogue_finish", "floor_select", "p5_pillar",
+                "p5_replay").contains(kind)) {
             return false;
         }
         if (!first) {
@@ -1830,6 +1856,12 @@ public final class CiScreenshots {
         jp.amemaru.lostconnection.client.screen.DialogueScreen dialogue =
                 minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.DialogueScreen d ? d : null;
         switch (kind) {
+            case "keep_hold" -> {
+                keepHold = true;
+                if (minecraft.screen == null) {
+                    minecraft.setScreen(new HoldScreen());
+                }
+            }
             case "p5_build_floor" -> {
                 floorBuilds = jp.amemaru.lostconnection.tower.FloorBuild.builds;
                 command(minecraft, "amemaru admin map build floor 1");
