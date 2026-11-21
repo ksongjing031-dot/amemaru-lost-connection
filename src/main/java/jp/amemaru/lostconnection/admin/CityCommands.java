@@ -3,7 +3,6 @@ package jp.amemaru.lostconnection.admin;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
-import jp.amemaru.lostconnection.AmemaruMod;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -15,11 +14,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.level.TicketType;
 import net.minecraft.world.Clearable;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.ChunkPos;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
@@ -31,9 +28,7 @@ import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 確かめ用のコマンド {@code /amemaru admin city …}（11月21日）：コネリアの街の11施設の構造物を、地図を組むときの位置と順番で
@@ -44,6 +39,10 @@ import java.util.Optional;
  *       育ったあとに重ねる形（料理屋・露店の8区画・記憶の相談所・湖畔の釣り場・第2章の氷・ハイ＆ロー・魚レース・記念碑・古代炉）も重ねる</li>
  *   <li>{@code city build at <x y z> [grown]}：真ん中の場所を決めて建てる（CIの写真では空に建てる）</li>
  *   <li>{@code city tp [場所] [人]}：見どころへ移る（場所を省くと一覧。人を省くと自分）。最後に建てた所が基準</li>
+ *   <li>{@code city export}：クリエイティブで直した所を、構造物ごとにワールドの {@code generated/amemaru/city/edits/} へ書き出す
+ *       （{@link CityEdits}）。このワールドの {@code city build} は、Modに入っている形に書き出した直しを重ねて建てる。書き出していない
+ *       直しがあると {@code city build} は止まる（最後に {@code force} を付けると、書き出していない直しを捨てて建て直す）</li>
+ *   <li>建てる・書き出すのは、街の範囲の区画と「もの」が読み込まれてから（{@link CityLoad}。遠くにいても使える）</li>
  * </ul>
  *
  * <p>置き場所・順番・道と広場の範囲は {@code tools/mapgen/check_city.py}（街全体の通しの確かめ）と同じ。座標は、道のブロックの高さが 0、
@@ -57,47 +56,50 @@ public final class CityCommands {
     /** 建て終えた回数（CIの写真が、建て終わるのを待つのに使う。同じJVMの中のサーバー） */
     public static volatile int builds;
 
-    private static final int MIN_X = -144;
-    private static final int MAX_X = 135;
-    private static final int MIN_Z = -184;
-    private static final int MAX_Z = 127;
-    private static final int GROUND_DEPTH = 13;
-    private static final int CLEAR_HEIGHT = 64;
+    static final int MIN_X = -144;
+    static final int MAX_X = 135;
+    static final int MIN_Z = -184;
+    static final int MAX_Z = 127;
+    static final int GROUND_DEPTH = 13;
+    static final int CLEAR_HEIGHT = 64;
     private static final double PLAZA_R = 22.5;
     private static final double WALLROAD_IN = 107.0;
     private static final double WALL_IN = 112.0;
     private static final double WALL_OUT = 116.0;
 
-    /** 構造物（{@code map/conelia/} の後ろ）と、その (0, 0, 0) を置く所。grown は育ったあとに重ねる形。並びは置く順番。 */
-    private record Placement(String name, int x, int y, int z, boolean grown) {
+    /**
+     * 構造物（{@code map/conelia/} の後ろ）と、その (0, 0, 0) を置く所。facility は施設（見どころの名前）。grown は育ったあとに
+     * 重ねる形。並びは置く順番。
+     */
+    record Placement(String name, String facility, int x, int y, int z, boolean grown) {
     }
 
-    private static final List<Placement> PLACEMENTS = List.of(
-            new Placement("guild_hall", 6, 0, -100, false),
-            new Placement("personal_storage", 22, -7, -82, false),        // ギルドの後に置く
-            new Placement("weapon_workshop", 79, 0, -26, false),
-            new Placement("armor_workshop", 60, 0, 4, false),
-            new Placement("accessory_workshop", 22, 0, -26, false),
-            new Placement("market_north", -18, 0, 22, false),
-            new Placement("market_south", -18, 0, 60, false),
-            new Placement("free_market", -48, 0, 60, false),
-            new Placement("church", -105, 0, -22, false),
-            new Placement("church_garden", -96, 0, 16, false),
-            new Placement("fishing_pond", -95, -9, 23, false),            // 記憶の庭の後に置く
-            new Placement("water_gate", -131, -9, 48, false),
-            new Placement("fishing_alley", -66, -1, 66, false),
-            new Placement("casino", 5, -3, 68, false),                     // 商店街の南の後に置く
-            new Placement("tower_entrance", -22, 1, -177, false),
-            new Placement("tower_plaza", -23, -1, -147, false),
-            new Placement("weapon_forge_lit", 92, 1, -23, true),
-            new Placement("market_restaurant_open", -18, 0, 22, true),
-            new Placement("free_market_expanded", -48, 0, 60, true),
-            new Placement("church_counsel", -105, 0, -22, true),
-            new Placement("fishing_lakeside", -131, -9, 48, true),
-            new Placement("fishing_pond_frozen", -95, -9, 23, true),
-            new Placement("casino_highlow", 5, -3, 68, true),
-            new Placement("casino_fishrace", 5, -3, 68, true),
-            new Placement("tower_plaza_monument", -23, -1, -147, true));
+    static final List<Placement> PLACEMENTS = List.of(
+            new Placement("guild_hall", "guild", 6, 0, -100, false),
+            new Placement("personal_storage", "storage", 22, -7, -82, false),        // ギルドの後に置く
+            new Placement("weapon_workshop", "weapon", 79, 0, -26, false),
+            new Placement("armor_workshop", "armor", 60, 0, 4, false),
+            new Placement("accessory_workshop", "accessory", 22, 0, -26, false),
+            new Placement("market_north", "market", -18, 0, 22, false),
+            new Placement("market_south", "market", -18, 0, 60, false),
+            new Placement("free_market", "free_market", -48, 0, 60, false),
+            new Placement("church", "church", -105, 0, -22, false),
+            new Placement("church_garden", "church", -96, 0, 16, false),
+            new Placement("fishing_pond", "fishing", -95, -9, 23, false),            // 記憶の庭の後に置く
+            new Placement("water_gate", "lake", -131, -9, 48, false),
+            new Placement("fishing_alley", "fishing", -66, -1, 66, false),
+            new Placement("casino", "casino", 5, -3, 68, false),                     // 商店街の南の後に置く
+            new Placement("tower_entrance", "tower", -22, 1, -177, false),
+            new Placement("tower_plaza", "tower", -23, -1, -147, false),
+            new Placement("weapon_forge_lit", "weapon", 92, 1, -23, true),
+            new Placement("market_restaurant_open", "market", -18, 0, 22, true),
+            new Placement("free_market_expanded", "free_market", -48, 0, 60, true),
+            new Placement("church_counsel", "church", -105, 0, -22, true),
+            new Placement("fishing_lakeside", "lake", -131, -9, 48, true),
+            new Placement("fishing_pond_frozen", "fishing", -95, -9, 23, true),
+            new Placement("casino_highlow", "casino", 5, -3, 68, true),
+            new Placement("casino_fishrace", "casino", 5, -3, 68, true),
+            new Placement("tower_plaza_monument", "tower", -23, -1, -147, true));
 
     /** ゾーニングの図の道と広場（x0, z0, x1, z1。両端を含む）。中央広場と城壁沿いの道は丸いので別に見る。 */
     private static final int[][] ROADS = {
@@ -146,23 +148,31 @@ public final class CityCommands {
         return builder.buildFuture();
     };
 
-    /** 建てた範囲の区画を、光の計算が終わるまで読み込んでおく（30秒） */
-    private static final TicketType<ChunkPos> TICKET = TicketType.create("amemaru_city", Comparator.comparingLong(ChunkPos::toLong), 20 * 30);
-
     private CityCommands() {
     }
 
     static LiteralArgumentBuilder<CommandSourceStack> cityCommand() {
         return Commands.literal("city")
                 .then(Commands.literal("build")
-                        .executes(ctx -> build(ctx.getSource(), DEFAULT_ORIGIN, false))
+                        .executes(ctx -> build(ctx.getSource(), DEFAULT_ORIGIN, false, false))
+                        .then(Commands.literal("force")
+                                .executes(ctx -> build(ctx.getSource(), DEFAULT_ORIGIN, false, true)))
                         .then(Commands.literal("grown")
-                                .executes(ctx -> build(ctx.getSource(), DEFAULT_ORIGIN, true)))
+                                .executes(ctx -> build(ctx.getSource(), DEFAULT_ORIGIN, true, false))
+                                .then(Commands.literal("force")
+                                        .executes(ctx -> build(ctx.getSource(), DEFAULT_ORIGIN, true, true))))
                         .then(Commands.literal("at")
                                 .then(Commands.argument("origin", BlockPosArgument.blockPos())
-                                        .executes(ctx -> build(ctx.getSource(), BlockPosArgument.getLoadedBlockPos(ctx, "origin"), false))
+                                        .executes(ctx -> build(ctx.getSource(), BlockPosArgument.getLoadedBlockPos(ctx, "origin"), false, false))
+                                        .then(Commands.literal("force")
+                                                .executes(ctx -> build(ctx.getSource(), BlockPosArgument.getLoadedBlockPos(ctx, "origin"), false, true)))
                                         .then(Commands.literal("grown")
-                                                .executes(ctx -> build(ctx.getSource(), BlockPosArgument.getLoadedBlockPos(ctx, "origin"), true))))))
+                                                .executes(ctx -> build(ctx.getSource(), BlockPosArgument.getLoadedBlockPos(ctx, "origin"), true, false))
+                                                .then(Commands.literal("force")
+                                                        .executes(ctx -> build(ctx.getSource(),
+                                                                BlockPosArgument.getLoadedBlockPos(ctx, "origin"), true, true)))))))
+                .then(Commands.literal("export")
+                        .executes(ctx -> CityEdits.export(ctx.getSource())))
                 .then(Commands.literal("tp")
                         .executes(ctx -> listPlaces(ctx.getSource()))
                         .then(Commands.argument("place", StringArgumentType.word()).suggests(PLACES)
@@ -175,36 +185,82 @@ public final class CityCommands {
 
     // ---------------------------------------------------------------- 建てる
 
-    private static int build(CommandSourceStack source, BlockPos origin, boolean grown) {
+    private static int build(CommandSourceStack source, BlockPos origin, boolean grown, boolean force) {
         ServerLevel level = source.getLevel();
         if (origin.getY() - GROUND_DEPTH < level.getMinBuildHeight() || origin.getY() + CLEAR_HEIGHT >= level.getMaxBuildHeight()) {
             source.sendFailure(Component.translatable("commands.amemaru.city.height",
                     level.getMinBuildHeight() + GROUND_DEPTH, level.getMaxBuildHeight() - CLEAR_HEIGHT - 1));
             return 0;
         }
-        StructureTemplateManager manager = level.getStructureManager();
-        List<StructureTemplate> templates = new ArrayList<>();
-        for (Placement placement : PLACEMENTS) {
-            Optional<StructureTemplate> template = manager.get(AmemaruMod.id("map/conelia/" + placement.name()));
-            if (template.isEmpty()) {
-                source.sendFailure(Component.translatable("commands.amemaru.city.missing", placement.name()));
-                return 0;
+        CityData before = CityData.get(level);
+        // 前に建てた街に、書き出していない直しがあれば建て直さない（直した所が消えるため）。force なら確かめない
+        boolean check = before.built && !force;
+        BlockPos at = origin.immutable();
+        List<BlockPos> areas = new ArrayList<>();
+        areas.add(at);
+        if (check && !before.origin.equals(at)) {
+            areas.add(before.origin);
+        }
+        // 区画と「もの」が読み込まれてから建てる（古い額縁・防具立てを残さず消すため）
+        CityLoad.whenLoaded(source, level, areas, () -> buildLoaded(source, level, at, grown, check));
+        return 1;
+    }
+
+    private static void buildLoaded(CommandSourceStack source, ServerLevel level, BlockPos origin, boolean grown, boolean check) {
+        if (check) {
+            CityData before = CityData.get(level);
+            List<String> unsaved;
+            try {
+                unsaved = CityEdits.unsavedFacilities(level, before.origin, before.grown);
+            } catch (CityEdits.EditsException e) {
+                source.sendFailure(Component.translatable("commands.amemaru.city.edits_bad", e.getMessage()));
+                return;
             }
-            templates.add(template.get());
+            if (!unsaved.isEmpty()) {
+                source.sendFailure(Component.translatable("commands.amemaru.city.unsaved", facilityNames(unsaved)));
+                return;
+            }
+        }
+        // 建てる形：Modに入っている形に、このワールドで書き出した直しを重ねたもの（CityEdits）
+        StructureTemplateManager manager = level.getStructureManager();
+        List<CompoundTag> tags = new ArrayList<>();
+        List<StructureTemplate> templates = new ArrayList<>();
+        List<String> edited = new ArrayList<>();
+        for (Placement placement : PLACEMENTS) {
+            if (placement.grown() && !grown) {
+                tags.add(null);
+                templates.add(null);
+                continue;
+            }
+            CompoundTag tag;
+            try {
+                tag = CityEdits.buildTag(level, placement);
+            } catch (CityEdits.EditsException e) {
+                source.sendFailure(Component.translatable("commands.amemaru.city.edits_bad", e.getMessage()));
+                return;
+            }
+            if (tag == null) {
+                source.sendFailure(Component.translatable("commands.amemaru.city.missing", placement.name()));
+                return;
+            }
+            if (CityEdits.hasEdits(level, placement) && !edited.contains(placement.facility())) {
+                edited.add(placement.facility());
+            }
+            tags.add(tag);
+            templates.add(manager.readStructure(tag.copy()));
         }
         long started = System.currentTimeMillis();
         int x0 = origin.getX() + MIN_X;
         int x1 = origin.getX() + MAX_X;
         int z0 = origin.getZ() + MIN_Z;
         int z1 = origin.getZ() + MAX_Z;
-        // 範囲の区画を読み込む（まだなければ作る）。光の計算が終わるまで、しばらく読み込んだままにする
+        // 範囲の区画（読み込み済み）。光の計算が終わるまで、しばらく読み込んだままにする
         for (int cx = x0 >> 4; cx <= x1 >> 4; cx++) {
             for (int cz = z0 >> 4; cz <= z1 >> 4; cz++) {
                 level.getChunk(cx, cz);
             }
         }
-        ChunkPos middle = new ChunkPos(new BlockPos((x0 + x1) / 2, origin.getY(), (z0 + z1) / 2));
-        level.getChunkSource().addRegionTicket(TICKET, middle, Math.max((x1 - x0) / 32, (z1 - z0) / 32) + 2, middle);
+        CityLoad.hold(level, origin);
         // 範囲の中の「もの」を消す（構造物の額縁・防具立てが、建て直すたびに重ならないように）
         AABB box = new AABB(x0, origin.getY() - GROUND_DEPTH, z0, x1 + 1, origin.getY() + CLEAR_HEIGHT + 1, z1 + 1);
         for (Entity entity : level.getEntities((Entity) null, box, e -> !(e instanceof Player))) {
@@ -238,28 +294,45 @@ public final class CityCommands {
         StructurePlaceSettings settings = new StructurePlaceSettings();
         for (int i = 0; i < PLACEMENTS.size(); i++) {
             Placement placement = PLACEMENTS.get(i);
-            if (placement.grown() && !grown) {
+            if (templates.get(i) == null) {
                 continue;
             }
             BlockPos at = origin.offset(placement.x(), placement.y(), placement.z());
             templates.get(i).placeInWorld(level, at, at, settings, level.getRandom(), Block.UPDATE_CLIENTS);
         }
+        // 建てた形を控える（あとで、直した所を見分けるもと）
+        CityEdits.saveBuilt(level, tags);
         CityData data = CityData.get(level);
         data.origin = origin.immutable();
         data.grown = grown;
+        data.built = true;
         data.setDirty();
         builds++;
         long millis = System.currentTimeMillis() - started;
         AdminCommands.log(source, "city build " + origin.toShortString() + (grown ? " grown" : "") + " (" + changed + " ground blocks, "
-                + millis + " ms)");
+                + millis + " ms" + (edited.isEmpty() ? "" : ", edits: " + String.join(",", edited)) + ")");
         Component form = Component.translatable(grown ? "commands.amemaru.city.form.grown" : "commands.amemaru.city.form.start");
         source.sendSuccess(() -> Component.translatable("commands.amemaru.city.built", form,
                 origin.getX(), origin.getY(), origin.getZ()), true);
-        return 1;
+        if (!edited.isEmpty()) {
+            source.sendSuccess(() -> Component.translatable("commands.amemaru.city.built_edits", facilityNames(edited)), true);
+        }
+    }
+
+    /** 施設（見どころの名前）を「、」でつなぐ */
+    static MutableComponent facilityNames(List<String> facilities) {
+        MutableComponent names = Component.empty();
+        for (int i = 0; i < facilities.size(); i++) {
+            if (i > 0) {
+                names.append(Component.translatable("commands.amemaru.separator"));
+            }
+            names.append(placeName(facilities.get(i)));
+        }
+        return names;
     }
 
     /** 道の高さのブロック：ゾーニングの図の道と広場は土の道、まだ作っていない城壁は砂利、ほかは草 */
-    private static BlockState surface(int x, int z) {
+    static BlockState surface(int x, int z) {
         double r = Math.sqrt((double) x * x + (double) z * z);
         if (r <= PLAZA_R) {
             return Blocks.DIRT_PATH.defaultBlockState();
@@ -315,21 +388,24 @@ public final class CityCommands {
         return VIEWS.size();
     }
 
-    private static Component placeName(String id) {
+    static Component placeName(String id) {
         return Component.translatable("commands.amemaru.city.place." + id);
     }
 
     // ---------------------------------------------------------------- 最後に建てた所（ワールドの data の amemaru_city_check.dat）
 
-    private static final class CityData extends SavedData {
+    static final class CityData extends SavedData {
         private static final String NAME = "amemaru_city_check";
-        private BlockPos origin = DEFAULT_ORIGIN;
-        private boolean grown;
+        BlockPos origin = DEFAULT_ORIGIN;
+        boolean grown;
+        /** このワールドに街を建てたか */
+        boolean built;
 
         static CityData load(CompoundTag tag) {
             CityData data = new CityData();
             if (tag.contains("x")) {
                 data.origin = new BlockPos(tag.getInt("x"), tag.getInt("y"), tag.getInt("z"));
+                data.built = !tag.contains("built") || tag.getBoolean("built");
             }
             data.grown = tag.getBoolean("grown");
             return data;
@@ -341,6 +417,7 @@ public final class CityCommands {
             tag.putInt("y", origin.getY());
             tag.putInt("z", origin.getZ());
             tag.putBoolean("grown", grown);
+            tag.putBoolean("built", built);
             return tag;
         }
 

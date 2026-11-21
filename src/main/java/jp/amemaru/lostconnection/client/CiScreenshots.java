@@ -423,7 +423,8 @@ public final class CiScreenshots {
     private static boolean cityDone;
     /**
      * 街全体の写真：{写真の名前, city tp の場所, 移ってから待つ tick}。場所が null の行は、写真の代わりに夜にする（night）・
-     * 育ったあとの形を建て直す（grown）。遠くへ移ると、まわりの形を作り直すのに時間がかかる（上からと斜めは長めに待つ）。
+     * コマンドを送る（cmd。4つめがコマンド）・はじめの形を建て直す（rebuild）・育ったあとの形を建て直す（grown）。
+     * 遠くへ移ると、まわりの形を作り直すのに時間がかかる（上からと斜めは長めに待つ）。
      */
     private static final String[][] CITY_SHOTS = {
             {"city_top_n", "top_n", "200"}, {"city_top_s", "top_s", "200"},
@@ -433,6 +434,18 @@ public final class CiScreenshots {
             {"city_market", "market", "100"}, {"city_free_market", "free_market", "100"}, {"city_church", "church", "100"},
             {"city_fishing", "fishing", "100"}, {"city_lake", "lake", "100"}, {"city_casino", "casino", "100"},
             {"city_tower", "tower", "100"},
+            // 直しの書き出しを通しで確かめる（ログで見る）。直しがなければ「新しい直しはありませんでした」（自然に変わる所を数えない）。
+            // ギルドの上の空に金のブロックを置くと、書き出す前の建て直しは止まる。書き出すと、建て直しても残る。空気に戻して書き出すと、
+            // 直しのファイルは消える（Modの形と同じになった直しを外す）
+            {"cmd", null, "60", "amemaru admin city export"},
+            {"cmd", null, "20", "setblock {guild} minecraft:gold_block"},
+            {"cmd", null, "60", "amemaru admin city build at {origin}"},
+            {"cmd", null, "60", "amemaru admin city export"},
+            {"rebuild", null, "100"},
+            {"cmd", null, "20", "execute if block {guild} minecraft:gold_block run say city_edit_kept"},
+            {"cmd", null, "20", "setblock {guild} minecraft:air"},
+            {"cmd", null, "60", "amemaru admin city export"},
+            {"rebuild", null, "600"},
             {"night", null, "60"},
             {"city_top_n_night", "top_n", "200"}, {"city_top_s_night", "top_s", "200"}, {"city_plaza_night", "plaza", "100"},
             {"city_market_night", "market", "100"}, {"city_church_night", "church", "100"}, {"city_tower_night", "tower", "100"},
@@ -1631,16 +1644,29 @@ public final class CiScreenshots {
                 command(minecraft, "time set midnight");
             }
             next(stage + 1, first ? waitTicks : 0);
+        } else if ("cmd".equals(shot[0])) {
+            if (first) {
+                command(minecraft, cityCommand(shot[3]));
+            }
+            next(stage + 1, first ? waitTicks : 0);
         } else if (first) {
-            // 育ったあとの形：はじめから建て直して、重ねる形も置く
+            // 建て直す：grown は育ったあとの形（はじめから建て直して、重ねる形も置く）、rebuild ははじめの形（書き出した直しを重ねる）
             command(minecraft, "time set noon");
-            cityBuild(minecraft, true);
+            cityBuild(minecraft, "grown".equals(shot[0]));
             next(stage + 1, 20);
         } else if (CityCommands.builds == cityBuilds && cityWaits++ < 150) {
             next(stage, 20);
         } else {
             next(stage + 1, waitTicks);
         }
+    }
+
+    /** CIのコマンドの {origin}（街の真ん中）と {guild}（ギルドの構造物の上の空。構造物の中の (1, 37, 1)。はじめは空気）を埋める */
+    private static String cityCommand(String template) {
+        BlockPos o = cityOrigin == null ? BlockPos.ZERO : cityOrigin;
+        BlockPos guild = o.offset(6 + 1, 37, -100 + 1);
+        return template.replace("{origin}", o.getX() + " " + o.getY() + " " + o.getZ())
+                .replace("{guild}", guild.getX() + " " + guild.getY() + " " + guild.getZ());
     }
 
     private static void cityBuild(Minecraft minecraft, boolean grown) {
@@ -1651,7 +1677,7 @@ public final class CiScreenshots {
         cityBuilds = CityCommands.builds;
         cityWaits = 0;
         command(minecraft, String.format(Locale.ROOT, "amemaru admin city build at %d %d %d%s",
-                o.getX(), o.getY(), o.getZ(), grown ? " grown" : ""));
+                o.getX(), o.getY(), o.getZ(), grown ? " grown force" : ""));
     }
 
     /** 建物の見本の写真 {@code view} から次の建物に移るなら、その構造物の名前（{@code map/conelia/} の後ろ）。移らないなら null。 */

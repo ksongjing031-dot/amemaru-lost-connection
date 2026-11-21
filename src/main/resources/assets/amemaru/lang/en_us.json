@@ -530,5 +530,19 @@
   "commands.amemaru.city.place.highlow": "ハイ＆ローの卓（育ったあと）",
   "commands.amemaru.city.place.fishrace": "魚レースの走路（育ったあと）",
   "commands.amemaru.city.place.monument": "記念碑（育ったあと）",
-  "commands.amemaru.city.place.forge": "古代炉（育ったあと）"
+  "commands.amemaru.city.place.forge": "古代炉（育ったあと）",
+  "commands.amemaru.city.unsaved": "書き出していない直しがあります（%s）。先に /amemaru admin city export で書き出してください（書き出していない直しを捨てて建て直すなら、最後に force を付けます）",
+  "commands.amemaru.city.not_built": "このワールドには、まだ街を建てていません（/amemaru admin city build）",
+  "commands.amemaru.city.export.none": "新しい直しはありませんでした",
+  "commands.amemaru.city.export.done": "直した所を書き出しました（構造物 %s 個）",
+  "commands.amemaru.city.export.piece": "・%s（%s）：今回 直したマス %s・「もの」のマス %s ／ 書き出してある直し：マス %s・「もの」のマス %s",
+  "commands.amemaru.city.export.outside": "建物の外（道・広場・野原）で変わった所が %s マスあります（例：%s。中央広場の真ん中からの位置）。どの構造物にも入らないので、書き出せません",
+  "commands.amemaru.city.export.outside_entities": "建物の外で「もの」の変わった所が %s か所あります。書き出せません",
+  "commands.amemaru.city.export.failed": "書き出せませんでした：%s",
+  "commands.amemaru.city.export.files": "書き出してある直しは、構造物 %s 個分です。ワールドのフォルダの %s にあります（このフォルダごと送ってください）。このワールドで city build を使うと、直した形で建ちます",
+  "commands.amemaru.city.edits_bad": "書き出した直しのファイルが読めません：%s",
+  "commands.amemaru.city.built_edits": "書き出した直しを重ねて建てました：%s",
+  "commands.amemaru.city.loading": "街の区画を読み込んでいます…（読み込めたら続けます）",
+  "commands.amemaru.city.load_timeout": "街の区画を読み込めませんでした。もう一度試してください",
+  "commands.amemaru.city.failed": "うまくいきませんでした：%s"
 }
