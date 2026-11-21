@@ -2,6 +2,7 @@ package jp.amemaru.lostconnection.client;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import jp.amemaru.lostconnection.AmemaruMod;
+import jp.amemaru.lostconnection.admin.CityCommands;
 import jp.amemaru.lostconnection.client.screen.BestiaryScreen;
 import jp.amemaru.lostconnection.client.screen.SkillTreeScreen;
 import jp.amemaru.lostconnection.client.screen.StatusScreen;
@@ -406,6 +407,55 @@ public final class CiScreenshots {
     /** 装備のデザインの写真の前にいた場所（撮り終えたら戻る）。 */
     @Nullable
     private static BlockPos gearReturn;
+    /**
+     * 街全体の写真（11月21日）の段階の始まり。建物の見本の写真の後に、確かめ用の {@code /amemaru admin city build} で
+     * 11施設を地図の位置に並べて空に建て、{@code /amemaru admin city tp} の場所から撮る。
+     */
+    private static final int CITY = 700;
+    /** 街を建てる高さ（道のブロックの高さ。空に建てる） */
+    private static final int CITY_Y = 200;
+    /** 街を建てた所（中央広場の真ん中） */
+    @Nullable
+    private static BlockPos cityOrigin;
+    /** 建て終わるのを待つ：建てる前の回数と、待った回数 */
+    private static int cityBuilds;
+    private static int cityWaits;
+    private static boolean cityDone;
+    /**
+     * 街全体の写真：{写真の名前, city tp の場所, 移ってから待つ tick}。場所が null の行は、写真の代わりに夜にする（night）・
+     * コマンドを送る（cmd。4つめがコマンド）・はじめの形を建て直す（rebuild）・育ったあとの形を建て直す（grown）。
+     * 遠くへ移ると、まわりの形を作り直すのに時間がかかる（上からと斜めは長めに待つ）。
+     */
+    private static final String[][] CITY_SHOTS = {
+            {"city_top_n", "top_n", "200"}, {"city_top_s", "top_s", "200"},
+            {"city_aerial_se", "aerial_se", "240"}, {"city_aerial_nw", "aerial_nw", "240"},
+            {"city_plaza", "plaza", "100"}, {"city_guild", "guild", "100"}, {"city_storage", "storage", "100"},
+            {"city_weapon", "weapon", "100"}, {"city_armor", "armor", "100"}, {"city_accessory", "accessory", "100"},
+            {"city_market", "market", "100"}, {"city_free_market", "free_market", "100"}, {"city_church", "church", "100"},
+            {"city_fishing", "fishing", "100"}, {"city_lake", "lake", "100"}, {"city_casino", "casino", "100"},
+            {"city_tower", "tower", "100"},
+            // 直しの書き出しを通しで確かめる（ログで見る）。直しがなければ「新しい直しはありませんでした」（自然に変わる所を数えない）。
+            // ギルドの上の空に金のブロックを置くと、書き出す前の建て直しは止まる。書き出すと、建て直しても残る。空気に戻して書き出すと、
+            // 直しのファイルは消える（Modの形と同じになった直しを外す）
+            {"cmd", null, "60", "amemaru admin city export"},
+            {"cmd", null, "20", "setblock {guild} minecraft:gold_block"},
+            {"cmd", null, "60", "amemaru admin city build at {origin}"},
+            {"cmd", null, "60", "amemaru admin city export"},
+            {"rebuild", null, "100"},
+            {"cmd", null, "20", "execute if block {guild} minecraft:gold_block run say city_edit_kept"},
+            {"cmd", null, "20", "setblock {guild} minecraft:air"},
+            {"cmd", null, "60", "amemaru admin city export"},
+            {"rebuild", null, "600"},
+            {"night", null, "60"},
+            {"city_top_n_night", "top_n", "200"}, {"city_top_s_night", "top_s", "200"}, {"city_plaza_night", "plaza", "100"},
+            {"city_market_night", "market", "100"}, {"city_church_night", "church", "100"}, {"city_tower_night", "tower", "100"},
+            {"grown", null, "600"},
+            {"city_grown_top_n", "top_n", "200"}, {"city_grown_top_s", "top_s", "200"},
+            // 北から東・南・西へ回る（遠くへ移るほど長めに待つ）
+            {"city_grown_monument", "monument", "200"}, {"city_grown_forge", "forge", "200"},
+            {"city_grown_highlow", "highlow", "200"}, {"city_grown_fishrace", "fishrace", "100"},
+            {"city_grown_restaurant", "restaurant", "140"}, {"city_grown_stalls", "stalls", "140"},
+            {"city_grown_frozen_pond", "frozen_pond", "140"}, {"city_grown_lake", "lake", "140"}};
 
     private CiScreenshots() {
     }
@@ -424,6 +474,10 @@ public final class CiScreenshots {
             return;
         }
         if (frames < MIN_FRAMES) {
+            return;
+        }
+        if (stage >= CITY) {
+            cityStage(minecraft);
             return;
         }
         switch (stage) {
@@ -1357,6 +1411,51 @@ public final class CiScreenshots {
             }
             case GEAR + 47 -> {
                 minecraft.options.setCameraType(CameraType.FIRST_PERSON);
+                next(GEAR + 48, 2);
+            }
+            case GEAR + 48 -> {
+                // 持ったときの大きさと刃の向き（docs/gear/hold_sheet.png）：一人称の残りの2つ（古代石の剣・見習いの大剣）
+                hideHud = false;
+                CiPhase3.onServer(minecraft, CiPhase3::cleanup);
+                CiPhase3.onServer(minecraft, player -> CiGear.hold(player, "ancient_stone_sword", null));
+                if (gearReturn != null) {
+                    command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %d %.1f 0 8", gearReturn.getX() + 0.5, P3_FLOOR + 1,
+                            gearReturn.getZ() + 0.5));
+                }
+                next(GEAR + 49, 30);
+            }
+            case GEAR + 49 -> {
+                clean(minecraft);
+                pendingShot = "gear_fp_ancient_sword";
+                next(GEAR + 50, 2);
+            }
+            case GEAR + 50 -> {
+                CiPhase3.onServer(minecraft, player -> CiGear.hold(player, "apprentice_greatsword", null));
+                next(GEAR + 51, 20);
+            }
+            case GEAR + 51 -> {
+                clean(minecraft);
+                pendingShot = "gear_fp_apprentice_greatsword";
+                next(GEAR + 52, 2);
+            }
+            case GEAR + 52 -> {
+                // 三人称を横から：防具立てに右手で持たせ、右の側をこちら（北）へ向ける（西を向く。刃の先は画面の右）
+                CiPhase3.onServer(minecraft, CiPhase3::cleanup);
+                holdSide(minecraft, CiGear.HOLD_SWORDS);
+                next(GEAR + 53, 30);
+            }
+            case GEAR + 53 -> {
+                clean(minecraft);
+                pendingShot = "gear_hold_side_swords";
+                next(GEAR + 54, 2);
+            }
+            case GEAR + 54 -> {
+                holdSide(minecraft, CiGear.HOLD_GREATSWORDS);
+                next(GEAR + 55, 30);
+            }
+            case GEAR + 55 -> {
+                clean(minecraft);
+                pendingShot = "gear_hold_side_greatswords";
                 next(GEAR + 40, 2);
             }
             case GEAR + 40 -> {
@@ -1472,11 +1571,117 @@ public final class CiScreenshots {
                                 returnPos.getX(), returnPos.getY(), returnPos.getZ()));
                     }
                     command(minecraft, "gamemode " + returnMode + " @a");
-                    minecraft.setScreen(null);
-                    next(MAP_STAGE + 2 + MAP_SHOTS.length * 2, 0);
+                    // 街全体の写真へ（透明な画面は開いたまま。撮り終えたら閉じる）
+                    next(CITY, 40);
                 }
             }
         }
+    }
+
+    /**
+     * 街全体の写真（11月21日）：11施設を地図の位置に空に建て（{@code /amemaru admin city build at}）、上から・斜めから・各施設の前・
+     * 夜・育ったあとの形を撮る。街の箱（x −144〜135、z −184〜127）の真ん中が、建物の写真の後に戻った所の真上に来るように建てる
+     * （まわりの区画は読み込み済み。描く距離12でも、真上から街全体が入る）。
+     */
+    private static void cityStage(Minecraft minecraft) {
+        int k = stage - CITY;
+        if (k == 0) {
+            clean(minecraft);
+            hideHud = true;
+            command(minecraft, "gamemode spectator @a");
+            command(minecraft, "time set noon");
+            command(minecraft, "weather clear");
+            BlockPos at = minecraft.player.blockPosition();
+            cityOrigin = new BlockPos(at.getX() + 4, CITY_Y, at.getZ() + 28);
+            command(minecraft, String.format(Locale.ROOT, "tp @p %d %d %d 180 90", at.getX(), CITY_Y + 120, at.getZ()));
+            next(CITY + 1, 100);
+            return;
+        }
+        if (k == 1) {
+            cityBuild(minecraft, false);
+            next(CITY + 2, 20);
+            return;
+        }
+        if (k == 2) {
+            // 建て終わるまで待つ（サーバーは同じJVM。建てている間もクライアントは動く）。そのあと、光の計算と形の作り直しを待つ
+            if (CityCommands.builds == cityBuilds && cityWaits++ < 150) {
+                next(CITY + 2, 20);
+            } else {
+                next(CITY + 3, 600);
+            }
+            return;
+        }
+        int j = k - 3;
+        if (j >= CITY_SHOTS.length * 2) {
+            if (!cityDone) {
+                cityDone = true;
+                hideHud = false;
+                command(minecraft, "time set noon");
+                if (returnPos != null) {
+                    command(minecraft, String.format(Locale.ROOT, "tp @p %d %d %d",
+                            returnPos.getX(), returnPos.getY(), returnPos.getZ()));
+                }
+                command(minecraft, "gamemode " + returnMode + " @a");
+                minecraft.setScreen(null);
+            }
+            return;
+        }
+        String[] shot = CITY_SHOTS[j / 2];
+        boolean first = j % 2 == 0;
+        int waitTicks = Integer.parseInt(shot[2]);
+        if (shot[1] != null) {
+            if (first) {
+                // CIのコマンドはサーバーとして動くので、移る人を @p で渡す
+                command(minecraft, "amemaru admin city tp " + shot[1] + " @p");
+                next(stage + 1, waitTicks);
+            } else {
+                clean(minecraft);
+                pendingShot = shot[0];
+                next(stage + 1, 2);
+            }
+        } else if ("night".equals(shot[0])) {
+            if (first) {
+                command(minecraft, "time set midnight");
+            }
+            next(stage + 1, first ? waitTicks : 0);
+        } else if ("cmd".equals(shot[0])) {
+            if (first) {
+                command(minecraft, cityCommand(shot[3]));
+            }
+            next(stage + 1, first ? waitTicks : 0);
+        } else if (first) {
+            // 建て直す：grown は育ったあとの形（はじめから建て直して、重ねる形も置く）、rebuild ははじめの形（書き出した直しを重ねる）
+            command(minecraft, "time set noon");
+            cityBuild(minecraft, "grown".equals(shot[0]));
+            next(stage + 1, 20);
+        } else if (CityCommands.builds == cityBuilds && cityWaits++ < 150) {
+            next(stage, 20);
+        } else {
+            if (CityCommands.builds == cityBuilds) {
+                // 建て直しが止まった（書き出していない直しがある、など）。続く写真は前の形のまま
+                AmemaruMod.LOGGER.warn("[amemaru] CI: city build did not run ({})", shot[0]);
+            }
+            next(stage + 1, waitTicks);
+        }
+    }
+
+    /** CIのコマンドの {origin}（街の真ん中）と {guild}（ギルドの構造物の上の空。構造物の中の (1, 37, 1)。はじめは空気）を埋める */
+    private static String cityCommand(String template) {
+        BlockPos o = cityOrigin == null ? BlockPos.ZERO : cityOrigin;
+        BlockPos guild = o.offset(6 + 1, 37, -100 + 1);
+        return template.replace("{origin}", o.getX() + " " + o.getY() + " " + o.getZ())
+                .replace("{guild}", guild.getX() + " " + guild.getY() + " " + guild.getZ());
+    }
+
+    private static void cityBuild(Minecraft minecraft, boolean grown) {
+        BlockPos o = cityOrigin;
+        if (o == null) {
+            return;
+        }
+        cityBuilds = CityCommands.builds;
+        cityWaits = 0;
+        command(minecraft, String.format(Locale.ROOT, "amemaru admin city build at %d %d %d%s",
+                o.getX(), o.getY(), o.getZ(), grown ? " grown force" : ""));
     }
 
     /** 建物の見本の写真 {@code view} から次の建物に移るなら、その構造物の名前（{@code map/conelia/} の後ろ）。移らないなら null。 */
@@ -1658,6 +1863,22 @@ public final class CiScreenshots {
         command(minecraft, CiGear.armoredStand("bee_crystal_staff", null, CiGear.ROBE, x - 1.1, P3_FLOOR + 1, z, front));
         command(minecraft, CiGear.armoredStand("ancient_stone_staff", null, CiGear.ROBE, x - 3.3, P3_FLOOR + 1, z, back));
         command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %.1f %.1f 0 8", x, P3_FLOOR + 1.0, gearReturn.getZ() + 0.8));
+    }
+
+    /** 剣・大剣の3つを、防具立てで横から撮る用意（間は3.4ブロック。刃の先は西＝画面の右）。 */
+    private static void holdSide(Minecraft minecraft, String[] blades) {
+        hideHud = true;
+        command(minecraft, "gamemode spectator @a");
+        command(minecraft, "kill @e[tag=amemaru_ci_gear]");
+        if (gearReturn == null) {
+            return;
+        }
+        double x = gearReturn.getX() + 0.5;
+        double z = gearReturn.getZ() + 5.5;
+        for (int k = 0; k < blades.length; k++) {
+            command(minecraft, CiGear.holdingStand(blades[k], x + 4.2 - 3.4 * k, P3_FLOOR + 1, z, 90.0F));
+        }
+        command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %d %.1f 0 10", x - 0.1, P3_FLOOR + 1, gearReturn.getZ() + 0.5));
     }
 
     private static void lineup(Minecraft minecraft, float yaw) {

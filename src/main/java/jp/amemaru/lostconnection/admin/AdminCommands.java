@@ -36,6 +36,8 @@ import java.util.Optional;
  * Phase 2で {@code job}（職業）・{@code skill}（スキル）・{@code day}（進行日）・{@code dummy}（訓練人形）と、
  * 状態の見た目の確かめ用の {@code debug status}（凍え・凍結・感電・星痕・防御崩しをかける）を足した。
  * ほかのコマンドは、それを使う仕組みと同じPhaseで足す。実行した人・対象・内容は、サーバーのログに残す。</p>
+ *
+ * <p>確かめ用の {@code city}（コネリアの街の11施設をまとめて建てて、見て回る）は、11月21日に足した（{@link CityCommands}）。</p>
  */
 @Mod.EventBusSubscriber(modid = AmemaruMod.MOD_ID)
 public final class AdminCommands {
@@ -67,6 +69,7 @@ public final class AdminCommands {
                         .then(GearCommands.productionCommand())
                         .then(GearCommands.fruitCommand())
                         .then(GearCommands.adventureCommand())
+                        .then(CityCommands.cityCommand())
                         .then(debugCommand())));
     }
 

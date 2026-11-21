@@ -434,7 +434,17 @@ class World:
 
         owned(x, y, z) を渡すと、何も置いていないマスのうち owned が False の所は書かない（置いても元のブロックを
         消さない。structure_void と同じ）。ほかの建物と重なる構造物（個人倉庫の地下がギルドの下に入るなど）で使う。
+
+        ゲームの中で直して取り込んだ所（tools/mapgen/edits/<ファイルの名前>.json。mapgen/edits.py）があれば、重ねて書く
+        （そのマスは、空気でも、owned でなくても書く。「もの」は、直したマスの分を入れ替える）。
         """
+        from . import edits as edits_mod
+        edit = edits_mod.load(os.path.splitext(os.path.basename(path))[0])
+        edit_cells = edit["cells"] if edit else {}
+        edit_entities = edit["entities"] if edit else {}
+        for pos in list(edit_cells) + list(edit_entities):
+            if not self.inside(*pos):
+                edits_mod.warn("%s：直しのマス %r が構造物の外です（使いません）" % (os.path.basename(path), pos))
         palette, index = [], {}
 
         def pidx(state):
@@ -449,6 +459,13 @@ class World:
         for x in range(self.w):
             for y in range(self.h):
                 for z in range(self.d):
+                    if (x, y, z) in edit_cells:
+                        state, nbt = edit_cells[(x, y, z)]
+                        entry = {"state": Int(pidx(state)), "pos": List[Int]([Int(x), Int(y), Int(z)])}
+                        if nbt is not None:
+                            entry["nbt"] = nbt
+                        entries.append(Compound(entry))
+                        continue
                     state = self.blocks.get((x, y, z))
                     if state is not None and state[0] == "structure_void":
                         # 置いても元のブロックを消さない所は、ファイルに書かない（ゲームの構造物ブロックが保存するときと同じ。
@@ -464,7 +481,7 @@ class World:
                     entries.append(Compound(entry))
         pal = []
         for name, props in palette:
-            c = {"Name": String("minecraft:" + name)}
+            c = {"Name": String(name if ":" in name else "minecraft:" + name)}
             if props:
                 c["Properties"] = Compound({k: String(v) for k, v in props})
             pal.append(Compound(c))
@@ -475,10 +492,12 @@ class World:
             "blocks": List[Compound](entries),
             "entities": List[Compound]([
                 Compound({
-                    "pos": List[Double]([Double(v) for v in e.pos]),
-                    "blockPos": List[Int]([Int(v) for v in e.cell]),
-                    "nbt": e.nbt,
-                }) for e in self.entities]),
+                    "pos": List[Double]([Double(v) for v in pos]),
+                    "blockPos": List[Int]([Int(v) for v in cell]),
+                    "nbt": nbt,
+                }) for pos, cell, nbt in
+                [(e.pos, e.cell, e.nbt) for e in self.entities if tuple(e.cell) not in edit_entities]
+                + [(pos, c, nbt) for c in sorted(edit_entities) if self.inside(*c) for pos, nbt in edit_entities[c]]]),
         }, gzipped=True)
         os.makedirs(os.path.dirname(path) or ".", exist_ok=True)
         # 圧縮の時刻を 0 にして、同じ設計からは同じファイルができるようにする（リポジトリの差分を出さないため）

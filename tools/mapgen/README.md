@@ -41,7 +41,15 @@ python3 tools/mapgen/build_tower.py /tmp/out --ci         # 自動の確認の�
 python3 tools/mapgen/check_city.py                        # 11の施設の構造物を世界の座標に並べて、街全体を通しで確かめる（はじめの形と育ったあとの形。15秒ほど）
 python3 tools/mapgen/check_city.py --render /tmp/city     # 結果（city_check.json）と、上から見た街・南から見た高さ・夜の灯り・つながる道の絵も書く
 python3 tools/mapgen/check_city.py --render /tmp/city --aerial   # 鳥瞰の絵も描く（光線で描くので1〜2分）
+python3 -I tools/mapgen/import_edits.py <送ってもらったフォルダ>   # ゲームの中で直した所（city export）を確かめて edits/ に取り込む
+python3 -I tools/mapgen/import_edits.py <フォルダ> --dry-run       # 確かめるだけ
 ```
+
+ゲームの中で直した所（`/amemaru admin city export` が書き出す `generated/amemaru/city/edits/<構造物>.json`）は、
+`import_edits.py` で `tools/mapgen/edits/` に取り込みます。`World.save_structure` が書き出すときに重ねる（`mapgen/edits.py`）ので、
+`build_*.py` で作り直しても直しは残ります（見本の絵は、書き出す前に描くので、直しは入りません）。取り込んだら、表示される
+`build_*.py` で作り直し、`check_city.py` で街全体を確かめます。送ってもらったファイルは信じずに確かめます（形・構造物の名前・マスの範囲・
+ブロックの書き方・中身・「もの」の種類）。くわしくは `docs/ingame_check.md` の「建物を直す」。
 
 見本の絵のテクスチャと模型（ランタン・看板・旗などの形）は、初めて使うときに GitHub の Minecraft の素材の写し（1.20.1）から
 取ってきて、`~/.cache/amemaru-mapgen` にためます（リポジトリには入れません）。

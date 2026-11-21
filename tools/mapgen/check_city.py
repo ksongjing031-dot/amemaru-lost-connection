@@ -580,15 +580,40 @@ IRON_OK = False      # True にすると、鉄の扉も通れる（鍵を持つ�
 JUMP_OK = False      # True にすると、1段だけ跳んで上がってよい（戻れない所が、跳べば戻れるかを見るため）
 
 
+# 開いた跳ね上げ戸の板がある側（向きの反対。ゲームの形 TrapDoorBlock の *_OPEN_AABB と同じ）。板はマスの端の薄い壁なので、マスには
+# 入れるが、板の側へは越えられない（手すりに使う。11月21日、ゲームの中の直しで階段の手すりに使われた）
+TRAP_SIDE = {"north": (0, 1), "south": (0, -1), "east": (-1, 0), "west": (1, 0)}
+
+
+def panel(city, x, y, z):
+    st = city.get(x, y, z)
+    if st[0].endswith("_trapdoor"):
+        p = dict(st[1])
+        if p.get("open") == "true":
+            return TRAP_SIDE.get(p.get("facing"))
+    return None
+
+
+def edge_blocked(city, a, n, dx, dz):
+    """a から n へ (dx, dz) の向きに動くとき、開いた跳ね上げ戸の板を越えるか（足と頭の高さ）"""
+    x, y, z = a
+    nx, ny, nz = n
+    if any(panel(city, x, yy, z) == (dx, dz) for yy in (y, y + 1)):
+        return True
+    return any(panel(city, nx, yy, nz) == (-dx, -dz) for yy in (ny, ny + 1))
+
+
 def free(city, x, y, z):
     st = city.get(x, y, z)
     n = st[0]
     if n in ("air", "structure_void"):
         return True
+    if n.endswith("_trapdoor") and dict(st[1]).get("open") == "true":
+        return True
     if n.endswith("_door") and (n != "iron_door" or IRON_OK) or n.endswith("_sign") or n.endswith("_banner") \
             or n.endswith("carpet"):
         return True
-    if n in ("tripwire_hook", "moss_carpet", "pink_petals") or n.endswith("_fence_gate"):
+    if n in ("tripwire_hook", "moss_carpet", "pink_petals", "ladder") or n.endswith("_fence_gate"):
         return True
     if n.endswith("_pressure_plate"):
         return True
@@ -616,6 +641,8 @@ def support(city, x, y, z):
 def stand(city, x, y, z):
     if not (free(city, x, y, z) and free(city, x, y + 1, z)):
         return False
+    if city.name(x, y, z) == "ladder":
+        return True     # はしごにつかまっている（11月21日。はしごで上り下りできる所を、歩ける所に入れる）
     if city.name(x, y - 1, z).endswith("carpet"):
         return support(city, x, y - 2, z)
     return support(city, x, y - 1, z)
@@ -637,7 +664,20 @@ def step_to(city, a, dx, dz):
                 continue
         if dy < 0 and not all(free(city, nx, yy, nz) for yy in range(ny, y + 2)):
             continue
+        if edge_blocked(city, a, (nx, ny, nz), dx, dz):
+            continue
         return (nx, ny, nz)
+    return None
+
+
+def climb_to(city, a, up):
+    """はしごで1段上る（up）・下りる。足がはしごの中なら上れ（いちばん上の段の上へも出られる）、足の下がはしごなら下りられる"""
+    x, y, z = a
+    if up:
+        if city.name(x, y, z) == "ladder" and stand(city, x, y + 1, z):
+            return (x, y + 1, z)
+    elif city.name(x, y - 1, z) == "ladder" and stand(city, x, y - 1, z):
+        return (x, y - 1, z)
     return None
 
 
@@ -648,6 +688,11 @@ def back_reach(city, goal, bounds):
     q = deque([goal])
     while q:
         gx, gy, gz = q.popleft()
+        # はしご：下から上って来る・上から下りて来る
+        for a, up in (((gx, gy - 1, gz), True), ((gx, gy + 1, gz), False)):
+            if a not in seen and y0 <= a[1] <= y1 and stand(city, *a) and climb_to(city, a, up) == (gx, gy, gz):
+                seen.add(a)
+                q.append(a)
         for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)):
             for dy in (0, -1, 1, 2):
                 a = (gx - dx, gy - dy, gz - dz)
@@ -668,6 +713,13 @@ def walk(city, starts, bounds):
     via = {}
     while q:
         x, y, z = q.popleft()
+        # はしご：上る・下りる
+        for up in (True, False):
+            n = climb_to(city, (x, y, z), up)
+            if n is not None and n not in seen and y0 <= n[1] <= y1:
+                seen.add(n)
+                via[n] = (x, y, z)
+                q.append(n)
         for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)):
             for dy in (0, 1, -1, -2):
                 nx, ny, nz = x + dx, y + dy, z + dz
@@ -685,6 +737,8 @@ def walk(city, starts, bounds):
                     if not free(city, x, y + 2, z):
                         continue
                 if dy < 0 and not all(free(city, nx, yy, nz) for yy in range(ny, y + 2)):
+                    continue
+                if edge_blocked(city, (x, y, z), (nx, ny, nz), dx, dz):
                     continue
                 seen.add((nx, ny, nz))
                 via[(nx, ny, nz)] = (x, y, z)
@@ -830,12 +884,34 @@ def components(cells):
     return out
 
 
+FALLING = {"gravel", "sand", "red_sand", "suspicious_sand", "suspicious_gravel", "anvil", "chipped_anvil", "damaged_anvil",
+           "dragon_egg"} | {c + "_concrete_powder" for c in ("white", "orange", "magenta", "light_blue", "yellow", "lime", "pink",
+                                                              "gray", "light_gray", "cyan", "purple", "blue", "brown", "green",
+                                                              "red", "black")}
+FALL_THROUGH = {"air", "cave_air", "void_air", "water", "lava", "fire", "soul_fire"}
+
+
+def falling_blocks(city):
+    """下が空気・水の、崩れるブロック（砂利・砂・金床など）。ゲームの中では建てた直後に落ちて、形が変わる
+    （書き出しで「直した所」に見え、建て直すたびに落ちる）"""
+    out = []
+    for (x, y, z), st in city.world.items():
+        if st[0] in FALLING and city.name(x, y - 1, z) in FALL_THROUGH:
+            out.append(((x, y, z), st[0], city.facility_at((x, y, z)), city.name(x, y - 1, z)))
+    return sorted(out)
+
+
 def check(stage, verbose=True):
     city = City(stage)
     res = {"stage": stage}
     pr = print if verbose else (lambda *a, **k: None)
     pr(f"===== {stage}（{'はじめの形' if stage == 'start' else '育ったあとの形（重ねる形をすべて重ねる）'}）")
     pr("並べた構造物:", len(city.writes), " ブロック（空気を除く）:", sum(1 for s in city.world.values() if s[0] != "air"))
+    fall = falling_blocks(city)
+    res["falling"] = fall
+    pr("\n[崩れるブロック]（砂利・砂・金床などで、下が空気か水。建てるとすぐ落ちる）", len(fall))
+    for f in fall[:20]:
+        pr("  ", f)
 
     # ---- 位置
     ov = overlaps(city)
