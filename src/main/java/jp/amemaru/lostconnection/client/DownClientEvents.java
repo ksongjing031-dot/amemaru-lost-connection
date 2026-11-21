@@ -92,6 +92,9 @@ public final class DownClientEvents {
         }
         event.setContent(Component.empty().append(event.getContent()).append(" ")
                 .append(Component.translatable("hud.amemaru.down.tag", info.secondsLeftNow()).withStyle(ChatFormatting.RED)));
-        event.setResult(Event.Result.ALLOW);
+        // ほかの人のダウンは、名前が見えない所でも出す。自分の名前は出さない（三人称で、画面の「ダウン」と重なるため）
+        if (player != Minecraft.getInstance().getCameraEntity()) {
+            event.setResult(Event.Result.ALLOW);
+        }
     }
 }

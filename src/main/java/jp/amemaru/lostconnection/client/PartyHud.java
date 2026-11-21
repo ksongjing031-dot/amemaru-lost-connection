@@ -80,7 +80,8 @@ public final class PartyHud {
         String name = (member.leader() ? "★" : "") + member.name();
         int nameColor = !member.online() ? TEXT_DIM : member.leader() ? LEADER : TEXT;
         graphics.drawString(font, font.plainSubstrByWidth(name, WIDTH - 34), X + 2, y, nameColor, true);
-        if (member.online() && member.level() > 0) {
+        // ダウンの間は、レベルの代わりに「ダウン 残りの秒」を同じ所に書く（重ならないように）
+        if (member.online() && member.level() > 0 && !member.down()) {
             String level = "Lv" + member.level();
             graphics.drawString(font, level, X + WIDTH - 6 - font.width(level), y, TEXT_DIM, true);
         }

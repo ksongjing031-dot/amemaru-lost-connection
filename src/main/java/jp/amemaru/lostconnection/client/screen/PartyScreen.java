@@ -25,7 +25,8 @@ import java.util.UUID;
  * </ul>
  */
 public class PartyScreen extends Screen {
-    private static final int PANEL_WIDTH = 264;
+    /** 幅：名前（96）・HPのバー（40）・レベルの右に、リーダーのボタン（リーダーに・外す）が重ならない幅 */
+    private static final int PANEL_WIDTH = 292;
     private static final int ROW = 16;
     private static final int MAX_MEMBERS_SHOWN = 6;
     private static final int PLAYERS_PER_PAGE = 5;
