@@ -53,8 +53,16 @@ public record EnemyDef(ResourceLocation id, String name, String description, int
         }
     }
 
-    /** レアドロップ（{@code chance} は%。{@code rarity} は装備のレアリティを上げるとき）。 */
-    public record RareDrop(ResourceLocation item, double chance, int count, @Nullable String rarity) {
+    /**
+     * レアドロップ（{@code chance} は%。{@code rarity} は装備のレアリティを上げるとき）。{@code pity}：天井の数に入る品か
+     * （Phase 0-A 20章「同じボスでレアが出なかった回数ごとに」はボスのレア装備のこと。ボスの結晶果は {@code "pity": false} にして、
+     * 出ても天井の数を戻さない。Phase 5で足した【補完】）。
+     */
+    public record RareDrop(ResourceLocation item, double chance, int count, @Nullable String rarity, boolean pity) {
+        public RareDrop(ResourceLocation item, double chance, int count, @Nullable String rarity) {
+            this(item, chance, count, rarity, true);
+        }
+
     }
 
     /** 技の数値（定義になければ、渡した値で作る）。 */
@@ -126,7 +134,8 @@ public record EnemyDef(ResourceLocation id, String name, String description, int
                 JsonObject one = Json.asObject(rareArray.get(i), "drops.rare[" + i + "]");
                 String rarity = Json.optionalString(one, "rarity", "");
                 rare.add(new RareDrop(Json.id(one, "item"), Json.doubleInRange(one, "chance", 0.0, 100.0),
-                        Json.optionalInt(one, "count", 1, 1, 64), rarity.isEmpty() ? null : rarity));
+                        Json.optionalInt(one, "count", 1, 1, 64), rarity.isEmpty() ? null : rarity,
+                        Json.optionalBoolean(one, "pity", true)));
             }
         }
         if (attack <= 0 && !skills.isEmpty()) {

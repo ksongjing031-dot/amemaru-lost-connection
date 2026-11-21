@@ -94,6 +94,8 @@ public final class CombatService {
         if (owner instanceof ServerPlayer player) {
             power *= GearEffects.outgoingMultiplier(player, target, true);
         }
+        // 結晶の加護（その階のボスへの与ダメージ。Phase 5）
+        power *= TargetVitals.takenMultiplier(target);
         DamageCalculator.Result result = DamageCalculator.compute(power, ctx.stat(StatType.CRIT), ctx.stat(StatType.CRIT_DAMAGE),
                 TargetVitals.defense(target), ServerConfig.DAMAGE_VARIANCE.get(), ctx.random());
         DamageSource source = ModDamageTypes.skill(ctx.level, direct != null ? direct : owner, owner);
@@ -226,6 +228,7 @@ public final class CombatService {
                 * (0.2 + 0.8 * strength * strength);
         power *= PassiveService.meleeMultiplier(data, target);
         power *= GearEffects.outgoingMultiplier(attacker, target, false);
+        power *= TargetVitals.takenMultiplier(target);
         DamageCalculator.Result result = DamageCalculator.compute(power, data.getStats().get(StatType.CRIT),
                 data.getStats().get(StatType.CRIT_DAMAGE), TargetVitals.defense(target), ServerConfig.DAMAGE_VARIANCE.get(),
                 attacker.getRandom());

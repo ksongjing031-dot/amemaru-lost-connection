@@ -46,6 +46,7 @@ public final class AmemaruMod {
 
         // 登録（ブロック・アイテム・エンティティ・状態・音・パーティクル・クリエイティブのタブ）
         ModBlocks.BLOCKS.register(modBus);
+        jp.amemaru.lostconnection.core.registry.ModBlockEntities.BLOCK_ENTITIES.register(modBus);
         ModItems.ITEMS.register(modBus);
         ModEntities.ENTITIES.register(modBus);
         ModEffects.EFFECTS.register(modBus);

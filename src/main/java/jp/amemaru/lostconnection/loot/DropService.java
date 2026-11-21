@@ -147,7 +147,7 @@ public final class DropService {
         int misses = def.pity() ? data.getAdventure().pity(def.id()) : 0;
         boolean any = false;
         for (EnemyDef.RareDrop rare : def.rare()) {
-            double chance = rareChance(rare, misses);
+            double chance = rareChance(rare, rare.pity() ? misses : 0);
             if (level.random.nextDouble() * 100.0 >= chance) {
                 continue;
             }
@@ -155,7 +155,9 @@ public final class DropService {
             if (item == null || !rare.item().equals(ForgeRegistries.ITEMS.getKey(item))) {
                 continue;
             }
-            any = true;
+            if (rare.pity()) {
+                any = true;
+            }
             ItemStack stack = new ItemStack(item, rare.count());
             Rarity rarity = rare.rarity() == null ? null : Rarity.byId(rare.rarity());
             finishRare(stack, level, rarity);

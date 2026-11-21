@@ -51,6 +51,7 @@ public final class ClientModEvents {
     public static void onClientSetup(FMLClientSetupEvent event) {
         event.enqueueWork(() -> {
             PlayerAnimations.init();
+            ClientStory.init();
             // このModの盾を構えたときの見た目（バニラの盾と同じ「blocking」の切りかえ）
             for (RegistryObject<Item> shield : ModItems.MANIFEST.category(ItemManifest.Category.SHIELD)) {
                 ItemProperties.register(shield.get(), ResourceLocation.withDefaultNamespace("blocking"),
@@ -98,6 +99,8 @@ public final class ClientModEvents {
         event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "down", DownHud.OVERLAY);
         // Phase 3：レアドロップ・工房などの特別な演出の帯
         event.registerAboveAll("special_moment", SpecialMomentFx.OVERLAY);
+        // Phase 5：暗転・章題・字幕・古代文字・知らせ・カウントダウン・はじめの手引き
+        event.registerAboveAll("story", StoryHud.OVERLAY);
     }
 
     @SubscribeEvent
@@ -122,6 +125,13 @@ public final class ClientModEvents {
         event.registerEntityRenderer(ModEntities.KAKEKIBA_WOLF.get(), context -> new AmemaruMobRenderer<>(context, "kakekiba_wolf", 0.5F));
         event.registerEntityRenderer(ModEntities.CRYSTAL_NEEDLE.get(), CrystalNeedleRenderer::new);
         event.registerEntityRenderer(ModEntities.LOOT_ITEM.get(), LootItemRenderer::new);
+        // Phase 5：NPC・1階のボス・塔の仕掛け
+        event.registerEntityRenderer(ModEntities.NPC.get(), jp.amemaru.lostconnection.client.render.NpcRenderer::new);
+        event.registerEntityRenderer(ModEntities.VELDHORN.get(), context -> new AmemaruMobRenderer<>(context, "veldhorn", 1.6F));
+        event.registerBlockEntityRenderer(jp.amemaru.lostconnection.core.registry.ModBlockEntities.TOWER_PILLAR.get(),
+                jp.amemaru.lostconnection.client.render.TowerPillarRenderer::new);
+        event.registerBlockEntityRenderer(jp.amemaru.lostconnection.core.registry.ModBlockEntities.FLOOR_SEAL.get(),
+                jp.amemaru.lostconnection.client.render.FloorSealRenderer::new);
     }
 
     /** 持ち物のアイコンの飾り（★5のアクセサリーのきらめき・強化+7と+10の星）。 */

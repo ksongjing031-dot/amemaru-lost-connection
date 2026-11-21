@@ -69,6 +69,12 @@ public class IshikureSoldier extends AmemaruMob {
         return patrol;
     }
 
+    /** 巡回の道を決める（塔の階の湧く所の {@code route}。Phase 5）。 */
+    public void setPatrol(List<BlockPos> points) {
+        patrol.clear();
+        patrol.addAll(points);
+    }
+
     /** 見つけたら、仲間を呼ぶ（呼ばれた仲間は、さらに呼ばない）。 */
     @Override
     protected void onAggro(ServerPlayer player, boolean hurt) {

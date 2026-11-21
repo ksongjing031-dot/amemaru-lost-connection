@@ -308,10 +308,13 @@ public final class CityCommands {
         data.grown = grown;
         data.built = true;
         data.setDirty();
+        // Phase 5：街のNPCを立つ所に置き、塔の入口の「塔の灯り」と札を、今の解放に合わせる
+        int npcs = jp.amemaru.lostconnection.npc.NpcService.spawnAll(level, origin);
+        jp.amemaru.lostconnection.tower.TowerHall.update(level.getServer());
         builds++;
         long millis = System.currentTimeMillis() - started;
         AdminCommands.log(source, "city build " + origin.toShortString() + (grown ? " grown" : "") + " (" + changed + " ground blocks, "
-                + millis + " ms" + (edited.isEmpty() ? "" : ", edits: " + String.join(",", edited)) + ")");
+                + millis + " ms, " + npcs + " npcs" + (edited.isEmpty() ? "" : ", edits: " + String.join(",", edited)) + ")");
         Component form = Component.translatable(grown ? "commands.amemaru.city.form.grown" : "commands.amemaru.city.form.start");
         source.sendSuccess(() -> Component.translatable("commands.amemaru.city.built", form,
                 origin.getX(), origin.getY(), origin.getZ()), true);
@@ -331,6 +334,12 @@ public final class CityCommands {
         } catch (CityEdits.EditsException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
+    }
+
+    /** このワールドに街を建てていれば、中央広場の真ん中（大結晶の場所。道のブロックの高さ）。Phase 5の塔の門・NPC・目覚める所の基準。 */
+    public static java.util.Optional<BlockPos> builtOrigin(ServerLevel level) {
+        CityData data = CityData.get(level);
+        return data.built ? java.util.Optional.of(data.origin) : java.util.Optional.empty();
     }
 
     /** その構造物（map/conelia/ の後ろの名前）に、書き出した直しのファイルがあるか（自動テスト用） */

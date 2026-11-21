@@ -52,6 +52,18 @@ public final class TargetVitals {
         return entity.getHealth() * vanillaMultiplier();
     }
 
+    /**
+     * 受けるダメージの倍率（Phase 5：「結晶の加護」。管理者が上げると、その階のボスへの与ダメージが +5% ずつ、最大 +20%。
+     * Phase 0-A 11章）。
+     */
+    public static double takenMultiplier(LivingEntity entity) {
+        if (entity instanceof jp.amemaru.lostconnection.enemy.boss.AmemaruBoss boss && boss.room() != null && boss.getServer() != null) {
+            return jp.amemaru.lostconnection.progression.ProgressionService.blessingMultiplier(boss.getServer(),
+                    boss.room().floor().number());
+        }
+        return 1.0;
+    }
+
     /** 防御（防御崩しの間は {@link StatusService#ARMOR_BREAK_DEFENSE} だけ下がる）。 */
     public static double defense(LivingEntity entity) {
         double base;

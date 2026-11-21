@@ -54,6 +54,20 @@ public final class ModItems {
     public static final RegistryObject<Item> ACCESSORY_WORKBENCH = ITEMS.register("accessory_workbench", () ->
             new BlockItem(ModBlocks.ACCESSORY_WORKBENCH.get(), new Item.Properties()));
 
+    // ---- Phase 5：塔の階・大結晶・街の家のブロック（管理者・建築係が置く）
+    public static final RegistryObject<Item> TOWER_PILLAR = ITEMS.register("tower_pillar", () ->
+            new BlockItem(ModBlocks.TOWER_PILLAR.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> FLOOR_SEAL = ITEMS.register("floor_seal", () ->
+            new BlockItem(ModBlocks.FLOOR_SEAL.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> LOST_BLANK = ITEMS.register("lost_blank", () ->
+            new BlockItem(ModBlocks.LOST_BLANK.get(), new Item.Properties()));
+    public static final RegistryObject<Item> MEMORY_STONE = ITEMS.register("memory_stone", () ->
+            new BlockItem(ModBlocks.MEMORY_STONE.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> HOUSE_DOOR_SPRUCE = ITEMS.register("house_door_spruce", () ->
+            new net.minecraft.world.item.DoubleHighBlockItem(ModBlocks.HOUSE_DOOR_SPRUCE.get(), new Item.Properties()));
+    public static final RegistryObject<Item> HOUSE_DOOR_DARK_OAK = ITEMS.register("house_door_dark_oak", () ->
+            new net.minecraft.world.item.DoubleHighBlockItem(ModBlocks.HOUSE_DOOR_DARK_OAK.get(), new Item.Properties()));
+
     // ---- 敵を呼ぶ卵（管理者・建築係が置く。Phase 3）
     public static final RegistryObject<Item> TSUNOMOFU_SPAWN_EGG = ITEMS.register("tsunomofu_spawn_egg", () ->
             new ForgeSpawnEggItem(ModEntities.TSUNOMOFU, 0xF3EBDD, 0xB58A5C, new Item.Properties()));
@@ -63,6 +77,11 @@ public final class ModItems {
             new ForgeSpawnEggItem(ModEntities.CRYSTAL_BEE, 0x8FD3FF, 0xE8C15A, new Item.Properties()));
     public static final RegistryObject<Item> KAKEKIBA_WOLF_SPAWN_EGG = ITEMS.register("kakekiba_wolf_spawn_egg", () ->
             new ForgeSpawnEggItem(ModEntities.KAKEKIBA_WOLF, 0x5B6270, 0xF4F7FB, new Item.Properties()));
+
+    public static final RegistryObject<Item> VELDHORN_SPAWN_EGG = ITEMS.register("veldhorn_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.VELDHORN, 0x6B5A3E, 0x7FD98A, new Item.Properties()));
+    public static final RegistryObject<Item> NPC_SPAWN_EGG = ITEMS.register("npc_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.NPC, 0x2E5E3A, 0xF3E6C8, new Item.Properties()));
 
     private ModItems() {
     }

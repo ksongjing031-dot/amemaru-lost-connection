@@ -76,9 +76,12 @@ public final class JobService {
         long now = player.level().getGameTime();
         BlockPos pos = data.getOathCrystalPos(now);
         double reach = ServerConfig.OATH_CRYSTAL_REACH.get();
+        // 誓約の結晶か、職業の登録の窓口のNPC（ギルドの受付のリリア。Phase 5）から開いた画面か
         if (pos == null || data.getOathCrystalLevel() != player.level().dimension()
                 || pos.distToCenterSqr(player.position()) > reach * reach
-                || !(player.level().getBlockState(pos).getBlock() instanceof OathCrystalBlock)) {
+                || !(player.level().getBlockState(pos).getBlock() instanceof OathCrystalBlock
+                || (player.level() instanceof net.minecraft.server.level.ServerLevel serverLevel
+                && jp.amemaru.lostconnection.npc.NpcService.isRegistrarAt(serverLevel, pos)))) {
             SkillTreeService.tell(player, Component.translatable("message.amemaru.job.too_far"));
             return null;
         }
@@ -100,6 +103,8 @@ public final class JobService {
             data.setOathCrystal(null, null, 0);
             ((ServerLevel) player.level()).sendParticles(ParticleTypes.END_ROD, pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5,
                     40, 0.4, 0.6, 0.4, 0.05);
+            // はじめの手引き：職業を選んだ（Phase 5）
+            jp.amemaru.lostconnection.story.GuideService.refresh(player, data);
         }
     }
 

@@ -100,6 +100,10 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
     private int busyTicks;
     private int telegraphLeft;
     private final Map<String, Long> cooldowns = new HashMap<>();
+    /** 塔の階の湧く所やボスの部屋が出した敵（保存しない。人が離れて区画が閉じたら消え、また人が来たら出し直す。Phase 5）。 */
+    private boolean transientMob;
+    /** HPの倍率（ボスの人数補正。Phase 5）。 */
+    private double hpMultiplier = 1.0;
 
     // ---- クライアントだけ
     private long telegraphStartClient;
@@ -197,11 +201,69 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
             return;
         }
         double ratio = getEnemyMaxHp() > 0 ? getEnemyHp() / getEnemyMaxHp() : 1.0;
-        double max = def.hp() * ServerConfig.ENEMY_HP_MULTIPLIER.get();
+        double max = def.hp() * ServerConfig.ENEMY_HP_MULTIPLIER.get() * hpMultiplier;
         entityData.set(DATA_MAX_HP, (float) max);
         entityData.set(DATA_HP, (float) Math.max(1.0, max * Math.max(0.0, Math.min(1.0, ratio))));
         getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(def.moveSpeed());
         getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(def.followRange());
+    }
+
+    /** HPの倍率（ボスの人数補正）を変える。HPの割合は保つ。 */
+    public void setHpMultiplier(double multiplier) {
+        hpMultiplier = Math.max(0.1, multiplier);
+        appliedGeneration = -1;
+        if (level() instanceof ServerLevel) {
+            applyDefinition();
+        }
+    }
+
+    public double hpMultiplier() {
+        return hpMultiplier;
+    }
+
+    /** 保存しない敵にする（塔の階の湧く所・ボスの部屋が出した敵）。 */
+    public void setTransient(boolean value) {
+        transientMob = value;
+    }
+
+    public boolean isTransient() {
+        return transientMob;
+    }
+
+    @Override
+    public boolean shouldBeSaved() {
+        return !transientMob && super.shouldBeSaved();
+    }
+
+    /** 戦いをはじめからにする（敵視・貢献・予兆・技の途中を消し、HPを満タンにする）。ボスの部屋で全員が倒れたときに使う。 */
+    public void resetCombat() {
+        threat.clear();
+        contributions.clear();
+        cooldowns.clear();
+        clearTelegraph();
+        clearBusy();
+        setTarget(null);
+        setReturning(false);
+        getNavigation().stop();
+        setEnemyHp(getEnemyMaxHp());
+    }
+
+    /** 敵視のいちばん高い人（いなければ null）。 */
+    @Nullable
+    public ServerPlayer topThreat() {
+        if (!(level() instanceof ServerLevel level)) {
+            return null;
+        }
+        ServerPlayer best = null;
+        double value = -1.0;
+        for (Map.Entry<UUID, Double> entry : threat.entrySet()) {
+            ServerPlayer player = level.getServer().getPlayerList().getPlayer(entry.getKey());
+            if (player != null && player.isAlive() && player.level() == level && entry.getValue() > value) {
+                best = player;
+                value = entry.getValue();
+            }
+        }
+        return best;
     }
 
     /** 独自のダメージを受ける。 */
@@ -481,7 +543,7 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
         if (isReturning()) {
             return;
         }
-        double leash = ServerConfig.ENEMY_LEASH_RANGE.get();
+        double leash = leashRange();
         if (home().distToCenterSqr(position()) > leash * leash) {
             setReturning(true);
             threat.clear();
@@ -489,6 +551,11 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
             clearTelegraph();
             clearBusy();
         }
+    }
+
+    /** 生まれた場所から、追うのをやめて戻る距離（ボスは部屋が決める）。 */
+    protected double leashRange() {
+        return ServerConfig.ENEMY_LEASH_RANGE.get();
     }
 
     private void tickReturn() {

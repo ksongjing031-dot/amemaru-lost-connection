@@ -79,6 +79,17 @@ public final class AdminCommands {
                         .then(DownCommands.churchCommand())
                         .then(DownCommands.moneyCommand())
                         .then(DownCommands.partyCommand())
+                        // Phase 5：塔の階・進行・物語・NPC
+                        .then(StoryCommands.mapCommand())
+                        .then(StoryCommands.floorCommand())
+                        .then(StoryCommands.bossCommand())
+                        .then(StoryCommands.blessingCommand())
+                        .then(StoryCommands.announceCommand())
+                        .then(StoryCommands.scheduleCommand())
+                        .then(StoryCommands.storyCommand())
+                        .then(StoryCommands.flagCommand())
+                        .then(StoryCommands.npcCommand())
+                        .then(StoryCommands.pillarsCommand())
                         .then(debugCommand())));
     }
 
@@ -300,7 +311,7 @@ public final class AdminCommands {
         return data;
     }
 
-    static void log(CommandSourceStack source, String action) {
+    public static void log(CommandSourceStack source, String action) {
         AmemaruMod.LOGGER.info("[amemaru][admin] {} : {}", source.getTextName(), action);
     }
 }

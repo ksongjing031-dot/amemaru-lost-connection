@@ -87,6 +87,23 @@ public final class ModEntities {
                     .updateInterval(20)
                     .build(AmemaruMod.id("loot_item").toString()));
 
+    // ---- Phase 5：NPC と、1階のボス
+
+    /** 街のNPC（倒せない、押されない、その場から動かない。Phase 0-B 4.4）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.npc.NpcEntity>> NPC = ENTITIES.register("npc", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.npc.NpcEntity>of(jp.amemaru.lostconnection.npc.NpcEntity::new, MobCategory.MISC)
+                    .sized(0.6F, 1.8F)
+                    .clientTrackingRange(10)
+                    .build(AmemaruMod.id("npc").toString()));
+
+    /** 1階のボス、草原の主ヴェルドホーン（Phase 0-A 9章）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.boss.Veldhorn>> VELDHORN = ENTITIES.register("veldhorn", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.boss.Veldhorn>of(jp.amemaru.lostconnection.enemy.boss.Veldhorn::new,
+                            MobCategory.MONSTER)
+                    .sized(2.6F, 3.2F)
+                    .clientTrackingRange(16)
+                    .build(AmemaruMod.id("veldhorn").toString()));
+
     private ModEntities() {
     }
 
@@ -97,5 +114,7 @@ public final class ModEntities {
         event.put(ISHIKURE_SOLDIER.get(), AmemaruMob.createAttributes().build());
         event.put(CRYSTAL_BEE.get(), CrystalBee.createBeeAttributes().build());
         event.put(KAKEKIBA_WOLF.get(), AmemaruMob.createAttributes().build());
+        event.put(NPC.get(), jp.amemaru.lostconnection.npc.NpcEntity.createAttributes().build());
+        event.put(VELDHORN.get(), jp.amemaru.lostconnection.enemy.boss.AmemaruBoss.createBossAttributes().build());
     }
 }
