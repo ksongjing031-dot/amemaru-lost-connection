@@ -45,7 +45,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /**
- * ダウンと蘇生・教会での復活・デスペナルティ（Phase 4。Phase 0-A 24章、Phase 0-B 2章「死亡は独自の流れに置き換える」）。
+ * ダウンと蘇生・教会での復活・デスペナルティ（Phase 4。Phase 0-A 20章「ダウンとデスペナルティ」・24章の回答、Phase 0-B 2章「死亡は独自の流れに置き換える」）。
  *
  * <ul>
  *   <li>HPが0になると、バニラの死亡の代わりに「ダウン」になる（config の {@code downSeconds}、初期値30秒）。ダウンの間は

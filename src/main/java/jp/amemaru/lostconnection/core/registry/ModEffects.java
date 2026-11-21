@@ -95,7 +95,7 @@ public final class ModEffects {
                             AttributeModifier.Operation.MULTIPLY_TOTAL));
 
     /**
-     * 衰弱（Phase 4）：教会の呼び戻しの儀で戻った後、しばらくステータスが下がる（Phase 0-A 24章：60秒・−10%。
+     * 衰弱（Phase 4）：教会の呼び戻しの儀で戻った後、しばらくステータスが下がる（Phase 0-A 20章：60秒・−10%。
      * 下がる量は {@code DownHandler}）。牛乳では消えない。
      */
     public static final RegistryObject<MobEffect> WEAKENED = EFFECTS.register("weakened", () ->

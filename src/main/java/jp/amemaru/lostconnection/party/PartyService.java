@@ -41,7 +41,7 @@ import java.util.UUID;
  *   <li>メンバーの名前・レベル・HPの割合・ダウンの様子は、パーティのメンバーにだけ送る（1秒ごと、変わったときはすぐ）。</li>
  * </ul>
  *
- * <p>本来は、ギルドの「結び紐」を交わして組む（Phase 0-A 7章【補完】）。ギルドの窓口はPhase 6で作るので、それまでは
+ * <p>本来は、ギルドの「結び紐」を交わして組む（Phase 0-A 13章「すべてのシステムの世界観」【補完】）。ギルドの窓口はPhase 6で作るので、それまでは
  * パーティの画面（Uキー）と {@code /amemaru party} で組む。</p>
  */
 @Mod.EventBusSubscriber(modid = AmemaruMod.MOD_ID)

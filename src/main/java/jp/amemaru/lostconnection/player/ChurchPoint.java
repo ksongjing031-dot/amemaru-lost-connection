@@ -20,7 +20,7 @@ import javax.annotation.Nullable;
 import java.util.Optional;
 
 /**
- * 教会での復活の場所：結びの教会の「呼び戻しの円」（Phase 4。Phase 0-A 7章・24章、セレナの「呼び戻しの儀」）。
+ * 教会での復活の場所：結びの教会の「呼び戻しの円」（Phase 4。Phase 0-A 7章・13章・20章、セレナの「呼び戻しの儀」）。
  *
  * <p>場所は、次の順に決める。</p>
  * <ol>

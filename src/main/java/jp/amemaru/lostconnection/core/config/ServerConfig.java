@@ -210,7 +210,7 @@ public final class ServerConfig {
                 .defineInRange("lootRange", 48.0, 4.0, 512.0);
         b.pop();
 
-        b.comment("ダウンと復活（Phase 4。Phase 0-A 24章：ダウン30秒・しゃがんで3秒で蘇生・時間切れで教会へ、所持金の5%と60秒の衰弱）")
+        b.comment("ダウンと復活（Phase 4。Phase 0-A 20章：ダウン30秒・しゃがんで3秒で蘇生・時間切れで教会へ、所持金の5%と60秒の衰弱）")
                 .push("down");
         DOWN_SECONDS = b
                 .comment("HPが0になってから、教会へ戻るまでの秒数（この間、近くの仲間がしゃがんで起こせる）")

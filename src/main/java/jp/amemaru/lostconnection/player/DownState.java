@@ -4,7 +4,7 @@ import javax.annotation.Nullable;
 import java.util.UUID;
 
 /**
- * ダウン（蘇生待ち）の状態（Phase 4。Phase 0-A 24章「ダウンとデスペナルティ」、Phase 0-B 4.1「戦闘」）。
+ * ダウン（蘇生待ち）の状態（Phase 4。Phase 0-A 20章「ダウンとデスペナルティ」、Phase 0-B 4.1「戦闘」）。
  *
  * <p>保存するのは「ダウン中か」だけ（{@link #leftWhileDown}：ダウン中に抜けたら、入り直したときに教会へ戻す）。
  * 残り時間・起こしている人・起こした量は保存しない。</p>

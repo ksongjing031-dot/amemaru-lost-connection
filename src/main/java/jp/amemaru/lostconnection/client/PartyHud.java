@@ -13,7 +13,7 @@ import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import java.util.UUID;
 
 /**
- * パーティのHUD（左上。Phase 4。Phase 0-A 7章「仲間の糸が見えるようになる＝パーティHUD」）。
+ * パーティのHUD（左上。Phase 4。Phase 0-A 13章「仲間の糸が見えるようになる＝パーティHUD」）。
  *
  * <p>自分以外のメンバーを、入った順に並べる：名前（リーダーは★）・レベル・HPのバー。ダウンしている人は、赤いバーで
  * 教会へ戻るまでの残り。いない人は「いません」、べつのディメンションの人は「べつの場所」。届いている誘いも出す。
