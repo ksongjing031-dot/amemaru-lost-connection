@@ -1657,6 +1657,10 @@ public final class CiScreenshots {
         } else if (CityCommands.builds == cityBuilds && cityWaits++ < 150) {
             next(stage, 20);
         } else {
+            if (CityCommands.builds == cityBuilds) {
+                // 建て直しが止まった（書き出していない直しがある、など）。続く写真は前の形のまま
+                AmemaruMod.LOGGER.warn("[amemaru] CI: city build did not run ({})", shot[0]);
+            }
             next(stage + 1, waitTicks);
         }
     }

@@ -830,12 +830,34 @@ def components(cells):
     return out
 
 
+FALLING = {"gravel", "sand", "red_sand", "suspicious_sand", "suspicious_gravel", "anvil", "chipped_anvil", "damaged_anvil",
+           "dragon_egg"} | {c + "_concrete_powder" for c in ("white", "orange", "magenta", "light_blue", "yellow", "lime", "pink",
+                                                              "gray", "light_gray", "cyan", "purple", "blue", "brown", "green",
+                                                              "red", "black")}
+FALL_THROUGH = {"air", "cave_air", "void_air", "water", "lava", "fire", "soul_fire"}
+
+
+def falling_blocks(city):
+    """下が空気・水の、崩れるブロック（砂利・砂・金床など）。ゲームの中では建てた直後に落ちて、形が変わる
+    （書き出しで「直した所」に見え、建て直すたびに落ちる）"""
+    out = []
+    for (x, y, z), st in city.world.items():
+        if st[0] in FALLING and city.name(x, y - 1, z) in FALL_THROUGH:
+            out.append(((x, y, z), st[0], city.facility_at((x, y, z)), city.name(x, y - 1, z)))
+    return sorted(out)
+
+
 def check(stage, verbose=True):
     city = City(stage)
     res = {"stage": stage}
     pr = print if verbose else (lambda *a, **k: None)
     pr(f"===== {stage}（{'はじめの形' if stage == 'start' else '育ったあとの形（重ねる形をすべて重ねる）'}）")
     pr("並べた構造物:", len(city.writes), " ブロック（空気を除く）:", sum(1 for s in city.world.values() if s[0] != "air"))
+    fall = falling_blocks(city)
+    res["falling"] = fall
+    pr("\n[崩れるブロック]（砂利・砂・金床などで、下が空気か水。建てるとすぐ落ちる）", len(fall))
+    for f in fall[:20]:
+        pr("  ", f)
 
     # ---- 位置
     ov = overlaps(city)

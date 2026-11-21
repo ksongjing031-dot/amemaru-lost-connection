@@ -16,6 +16,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.DoubleTag;
+import net.minecraft.nbt.FloatTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtIo;
@@ -26,6 +27,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.packs.resources.Resource;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -78,10 +80,12 @@ import java.util.Set;
  * <ul>
  *   <li>マスは、そのマスを書く構造物のうち、置く順番で最後のものに入れる（ギルドと個人倉庫、はじめの形と育ったあとに重ねる形）。</li>
  *   <li>「もの」は額縁・光る額縁・絵・防具立て・表示の「もの」だけを見る（落ちたアイテム・動物などは見ない）。「もの」の変わった
- *       マスは、そのマスを書く構造物に入れ、ほかの構造物にあった同じマスの「もの」は消す（建て直しても重ならない）。</li>
+ *       マスは、そのマスに「もの」を置いた構造物のうち置く順番で最後のもの（なければ、そのマスのブロックを書く構造物）に入れ、
+ *       ほかの構造物にあった同じマスの「もの」は消す（建て直しても重ならない）。向きは −180〜180 にそろえて比べる
+ *       （構造物を置くとき、ゲームは向き 180・270 を −540・−450 にするため）。</li>
  *   <li>額縁と防具立てには、飾りの守り（壊れない・額縁は固定・防具立ては出し入れを止める）を付け直して書き出す。</li>
- *   <li>草が土になる・扉が開く・灯りが点く・氷が溶ける・水が流れる・サトウキビや竹やつるが伸びる・銅が錆びる・柵や階段の形が
- *       まわりに合わせて変わる、などの自然に変わる所は、直しとして数えない。</li>
+ *   <li>草が土になる・扉が開く・灯りが点く・氷が溶ける・水が流れる・サトウキビや竹やつるが伸びる・銅が錆びる・雨で大釜に水が
+ *       たまる・柵や階段の形がまわりに合わせて変わる、などの自然に変わる所は、直しとして数えない。</li>
  *   <li>建物の外（道・広場・野原）は、どの構造物にも入らないので書き出さない（変わった所の数だけ知らせる）。</li>
  * </ul>
  */
@@ -110,6 +114,8 @@ final class CityEdits {
             "enabled", "bottom", "waterlogged");
     /** 防具立てのすべての場所の出し入れを止める値（tools/mapgen/mapgen/world.py と同じ） */
     private static final int ALL_SLOTS_DISABLED = 4144959;
+    /** ログに書く違いの見本の数（構造物ごと。マスと「もの」のマス） */
+    private static final int LOG_EXAMPLES = 5;
 
     private CityEdits() {
     }
@@ -141,6 +147,8 @@ final class CityEdits {
         final List<BlockPos> changedCells = new ArrayList<>();
         final Map<BlockPos, List<Entity>> entityChanges = new LinkedHashMap<>();
         final Set<BlockPos> entityDrops = new LinkedHashSet<>();
+        /** ログに書く見本：「もの」の変わったマスの、建てた形と今の形（比べる形） */
+        final Map<BlockPos, String> entityNotes = new LinkedHashMap<>();
 
         Piece(CityCommands.Placement placement, int index, BlockPos at, int sx, int sy, int sz) {
             this.placement = placement;
@@ -556,7 +564,15 @@ final class CityEdits {
             if (sameMultiset(wantSig, haveSig)) {
                 continue;
             }
-            int o = a.owner.get(cell);
+            // 入れる構造物：そのマスに「もの」を置いた構造物のうち、置く順番で最後のもの（重なる所で、ほかの構造物の額縁を
+            // 自分の直しにしない）。どの構造物も置いていないマスなら、そのマスのブロックを書く構造物
+            int o = -1;
+            for (Expected ex : want) {
+                o = Math.max(o, ex.piece());
+            }
+            if (o < 0) {
+                o = a.owner.get(cell);
+            }
             if (o < 0) {
                 a.outsideEntities++;
                 continue;
@@ -564,6 +580,9 @@ final class CityEdits {
             BlockPos world = BlockPos.of(cell);
             Piece op = a.pieces.get(o);
             op.entityChanges.put(world.subtract(op.at), have);
+            if (op.entityNotes.size() < LOG_EXAMPLES) {
+                op.entityNotes.put(world.subtract(op.at), "built " + clip(wantSig.toString()) + " now " + clip(haveSig.toString()));
+            }
             for (Expected ex : want) {
                 if (ex.piece() != o) {
                     Piece other = a.pieces.get(ex.piece());
@@ -651,6 +670,10 @@ final class CityEdits {
         if (pair(a, b, Blocks.GRASS_BLOCK, Blocks.DIRT) || pair(a, b, Blocks.DIRT_PATH, Blocks.DIRT)
                 || pair(a, b, Blocks.FARMLAND, Blocks.DIRT) || pair(a, b, Blocks.ICE, Blocks.WATER)
                 || pair(a, b, Blocks.FROSTED_ICE, Blocks.WATER) || pair(a, b, Blocks.SNOW, Blocks.AIR)) {
+            return true;
+        }
+        // 雨と雪で、空の大釜に水・粉雪がたまる
+        if (a == Blocks.CAULDRON && (b == Blocks.WATER_CAULDRON || b == Blocks.POWDER_SNOW_CAULDRON)) {
             return true;
         }
         // 水と溶岩が広がる・引く
@@ -772,6 +795,9 @@ final class CityEdits {
         for (String key : VOLATILE_ENTITY_KEYS) {
             tag.remove(key);
         }
+        // 向き：−180〜180 にそろえる。構造物を置くとき、ゲームは向き 180・270 を −540・−450 にして置く（額縁は区画を
+        // 読み直すと戻り、防具立ては戻らない）。そろえないと、置いただけの額縁・防具立てが「直した所」に見える
+        tag.put("Rotation", rotation(e.getYRot(), e.getXRot()));
         if (e instanceof HangingEntity) {
             tag.putBoolean("Invulnerable", true);
         }
@@ -784,6 +810,40 @@ final class CityEdits {
             tag.putInt("DisabledSlots", ALL_SLOTS_DISABLED);
         }
         return tag;
+    }
+
+    /** 向き（yaw を −180〜180 にそろえ、1/100 度に丸める） */
+    private static ListTag rotation(float yaw, float pitch) {
+        ListTag list = new ListTag();
+        list.add(FloatTag.valueOf(Math.round(Mth.wrapDegrees(yaw) * 100.0F) / 100.0F));
+        list.add(FloatTag.valueOf(Math.round(pitch * 100.0F) / 100.0F));
+        return list;
+    }
+
+    /**
+     * 置くための形：構造物の「もの」を、置く所に合わせる（buildTag の形はそのまま控えにするので、写しを変える）。
+     * <ul>
+     *   <li>額縁などの掛かっているマス（TileX・TileY・TileZ）を、世界の位置にする。構造物には構造物の中の位置で入っているので、
+     *       そのまま置くと、ゲームが「Hanging entity at invalid position」とログに書く（置いた後で位置は直るが、1回で約270行）。</li>
+     *   <li>向きを −180〜180 にそろえる（置くときに −540 などにならないように）。</li>
+     * </ul>
+     */
+    static CompoundTag placementTag(CompoundTag tag, BlockPos at) {
+        CompoundTag copy = tag.copy();
+        ListTag entities = copy.getList("entities", Tag.TAG_COMPOUND);
+        for (int i = 0; i < entities.size(); i++) {
+            CompoundTag nbt = entities.getCompound(i).getCompound("nbt");
+            if (nbt.contains("TileX", Tag.TAG_ANY_NUMERIC)) {
+                nbt.putInt("TileX", at.getX() + nbt.getInt("TileX"));
+                nbt.putInt("TileY", at.getY() + nbt.getInt("TileY"));
+                nbt.putInt("TileZ", at.getZ() + nbt.getInt("TileZ"));
+            }
+            ListTag rot = nbt.getList("Rotation", Tag.TAG_FLOAT);
+            if (rot.size() == 2) {
+                nbt.put("Rotation", rotation(rot.getFloat(0), rot.getFloat(1)));
+            }
+        }
+        return copy;
     }
 
     /** ワールドの「もの」を、構造物の中の「もの」として書く（at は構造物の (0, 0, 0)、cell は構造物の中のマス） */
@@ -815,6 +875,38 @@ final class CityEdits {
         return true;
     }
 
+    /**
+     * 直した所の見本をログに書く（構造物ごとに、マスと「もの」のマスを5つずつ。建てた形と今の形）。何が「直した所」に
+     * 見えたかを、あとでログから確かめられるように
+     */
+    private static void logChanges(ServerLevel level, Analysis a, String when) {
+        for (Piece p : a.pieces) {
+            if (!p.changed()) {
+                continue;
+            }
+            AmemaruMod.LOGGER.info("[amemaru][city] {} {}: {} cells, {} entity cells, {} entity cells cleared", when,
+                    p.placement.name(), p.changedCells.size(), p.entityChanges.size(), p.entityDrops.size());
+            for (int i = 0; i < Math.min(LOG_EXAMPLES, p.changedCells.size()); i++) {
+                BlockPos c = p.changedCells.get(i);
+                int k = p.idx(c.getX(), c.getY(), c.getZ());
+                BlockPos w = p.at.offset(c);
+                BlockState now = level.getBlockState(w);
+                BlockEntity be = level.getBlockEntity(w);
+                CompoundTag want = p.states[k] == null ? null : normalizedBlockEntity(level, w, p.states[k], p.nbts[k]);
+                AmemaruMod.LOGGER.info("[amemaru][city]   cell {}: built {}{} / now {}{}", c.toShortString(),
+                        p.states[k] == null ? "-" : BlockStateParser.serialize(p.states[k]), want == null ? "" : " " + clip(want.toString()),
+                        BlockStateParser.serialize(now), be == null ? "" : " " + clip(stripBlock(be.saveWithoutMetadata()).toString()));
+            }
+            for (Map.Entry<BlockPos, String> e : p.entityNotes.entrySet()) {
+                AmemaruMod.LOGGER.info("[amemaru][city]   entity cell {}: {}", e.getKey().toShortString(), e.getValue());
+            }
+        }
+    }
+
+    private static String clip(String s) {
+        return s.length() > 400 ? s.substring(0, 400) + "…" : s;
+    }
+
     // ================================================================ 建て直す前の確かめ
 
     /** 最後に建てた街の、書き出していない直しがある施設（見どころの名前。並びは置く順番） */
@@ -826,7 +918,15 @@ final class CityEdits {
                 out.add(p.placement.facility());
             }
         }
+        if (!out.isEmpty()) {
+            logChanges(level, a, "unsaved");
+        }
         return new ArrayList<>(out);
+    }
+
+    /** この構造物（map/conelia/ の後ろの名前）に、書き出した直しのファイルがあるか */
+    static boolean hasEdits(ServerLevel level, String structure) {
+        return Files.isRegularFile(editsFile(level.getServer(), structure));
     }
 
     // ================================================================ 書き出す
@@ -857,6 +957,7 @@ final class CityEdits {
             source.sendFailure(Component.translatable("commands.amemaru.city.missing", a.missing));
             return;
         }
+        logChanges(level, a, "export");
         List<Piece> changed = new ArrayList<>();
         Map<Piece, Edits> saved = new LinkedHashMap<>();
         try {
