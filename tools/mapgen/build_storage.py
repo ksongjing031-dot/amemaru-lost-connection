@@ -495,6 +495,14 @@ def staff_down_stair():
         put(12, v, -5, block("stone_bricks"))
         put(12, v, -4, block("stone_bricks"))
         put(14, v, -2, block("stone_bricks"))
+    # 段の上の天井になる土間の床（y 0）が砂利だと、ゲームの中で段の上へ落ちる（11月21日、書き出しの確かめで見つけた）。
+    # 土間の床の材料のうち、落ちない丸石にする（乱数の順は変えないので、ほかのマスの柄はそのまま）【補完】
+    for (u, y) in air:
+        if (u, y + 1) in air:
+            continue
+        for v in (14, 15):
+            if name_at(u, v, y + 1) == "gravel":
+                put(u, v, y + 1, block("cobblestone"))
 
 
 # ---------------------------------------------------------------- 受付棟の1階の壁（土台 y 1..2 は古代の白い石、1階 y 3..6 は灰色の石）

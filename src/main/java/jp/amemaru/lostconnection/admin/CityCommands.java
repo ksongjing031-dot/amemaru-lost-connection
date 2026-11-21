@@ -247,7 +247,8 @@ public final class CityCommands {
                 edited.add(placement.facility());
             }
             tags.add(tag);
-            templates.add(manager.readStructure(tag.copy()));
+            // 置くための写し（額縁の掛かっているマスを世界の位置に、向きを −180〜180 に。控えは tag のまま）
+            templates.add(manager.readStructure(CityEdits.placementTag(tag, origin.offset(placement.x(), placement.y(), placement.z()))));
         }
         long started = System.currentTimeMillis();
         int x0 = origin.getX() + MIN_X;
@@ -317,6 +318,24 @@ public final class CityCommands {
         if (!edited.isEmpty()) {
             source.sendSuccess(() -> Component.translatable("commands.amemaru.city.built_edits", facilityNames(edited)), true);
         }
+    }
+
+    /** 最後に建てた街で、書き出していない直しがある施設（自動テスト用。街を建てていなければ空） */
+    public static List<String> unsavedFacilities(ServerLevel level) {
+        CityData data = CityData.get(level);
+        if (!data.built) {
+            return List.of();
+        }
+        try {
+            return CityEdits.unsavedFacilities(level, data.origin, data.grown);
+        } catch (CityEdits.EditsException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+    }
+
+    /** その構造物（map/conelia/ の後ろの名前）に、書き出した直しのファイルがあるか（自動テスト用） */
+    public static boolean hasEditFile(ServerLevel level, String structure) {
+        return CityEdits.hasEdits(level, structure);
     }
 
     /** 施設（見どころの名前）を「、」でつなぐ */
