@@ -896,9 +896,8 @@ def item_training_dummy():
 
 def make_items():
     out = []
-    for name, fn in (("apprentice_sword", item_sword), ("apprentice_greatsword", item_greatsword),
-                     ("apprentice_staff", item_staff),
-                     ("forget_water", item_forget_water), ("blank_oath", item_blank_oath),
+    # 見習いの剣・大剣・杖の絵は、作り直した make_gear_apprentice.py が書く（ここでは書かない）
+    for name, fn in (("forget_water", item_forget_water), ("blank_oath", item_blank_oath),
                      ("job_change_token", item_job_change_token), ("training_dummy", item_training_dummy)):
         out.append(save(fn(), "textures/item/%s.png" % name))
     return out
@@ -1163,7 +1162,7 @@ if __name__ == "__main__":
     files += make_skill_icons()
     files += make_job_emblems()
     files += make_items()
-    files.append(make_shield_model())
+    # 見習いの盾は make_gear_apprentice.py が作る（ここでは書かない）
     files += make_block()
     files.append(make_dummy())
     files.append(make_lamp_bolt())

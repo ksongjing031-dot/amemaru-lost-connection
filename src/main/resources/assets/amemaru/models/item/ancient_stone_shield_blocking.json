@@ -1,5 +1,5 @@
 {
-  "parent": "amemaru:item/apprentice_shield_model",
+  "parent": "amemaru:item/ancient_stone_shield_model",
   "display": {
     "thirdperson_righthand": {
       "rotation": [
@@ -8,14 +8,14 @@
         0
       ],
       "translation": [
-        3.51,
-        11,
-        -2
+        2.76,
+        10.6,
+        -2.6
       ],
       "scale": [
-        1,
-        1,
-        1
+        0.95,
+        0.95,
+        0.95
       ]
     },
     "thirdperson_lefthand": {
@@ -30,9 +30,9 @@
         5
       ],
       "scale": [
-        1,
-        1,
-        1
+        0.95,
+        0.95,
+        0.95
       ]
     },
     "firstperson_righthand": {
@@ -42,14 +42,14 @@
         -5
       ],
       "translation": [
-        -15,
-        5,
-        -11
+        -10.74,
+        3.54,
+        -12.0
       ],
       "scale": [
-        1.25,
-        1.25,
-        1.25
+        1.05,
+        1.05,
+        1.05
       ]
     },
     "firstperson_lefthand": {
@@ -59,14 +59,14 @@
         -5
       ],
       "translation": [
+        6,
         5,
-        5,
-        -11
+        -12
       ],
       "scale": [
-        1.25,
-        1.25,
-        1.25
+        1.05,
+        1.05,
+        1.05
       ]
     },
     "gui": {
@@ -76,19 +76,49 @@
         -5
       ],
       "translation": [
-        2,
+        3.5,
         3,
         0
       ],
       "scale": [
-        0.65,
-        0.65,
-        0.65
+        0.66,
+        0.66,
+        0.66
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        180,
+        0
+      ],
+      "translation": [
+        -4.5,
+        4.5,
+        -5
+      ],
+      "scale": [
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    "ground": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        2,
+        4,
+        2
+      ],
+      "scale": [
+        0.25,
+        0.25,
+        0.25
       ]
     }
-  },
-  "textures": {
-    "shield": "amemaru:item/ancient_stone_shield_model",
-    "particle": "amemaru:item/ancient_stone_shield_model"
   }
 }

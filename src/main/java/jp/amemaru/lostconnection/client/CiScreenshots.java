@@ -401,6 +401,11 @@ public final class CiScreenshots {
     private static BlockPos p3Return;
     /** Phase 3の写真の床の高さ（その場所の真上の空）。 */
     private static final int P3_FLOOR = 229;
+    /** 装備のデザイン（水門の鍵盾）の写真。 */
+    private static final int GEAR = 140;
+    /** 装備のデザインの写真の前にいた場所（撮り終えたら戻る）。 */
+    @Nullable
+    private static BlockPos gearReturn;
 
     private CiScreenshots() {
     }
@@ -1069,6 +1074,304 @@ public final class CiScreenshots {
                     command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:air",
                             p3Return.getX() - 10, P3_FLOOR, p3Return.getZ() - 10, p3Return.getX() + 10, P3_FLOOR, p3Return.getZ() + 10));
                 }
+                next(GEAR, 40);
+            }
+            // ---------------------------------------------------------------- 装備のデザイン：水門の鍵盾（docs/gear/floodgate_key_shield.md）
+            case GEAR -> {
+                clean(minecraft);
+                command(minecraft, "gamemode creative @a");
+                command(minecraft, "time set noon");
+                command(minecraft, "weather clear");
+                command(minecraft, "amemaru admin job set @a amemaru:knight");
+                // Phase 3と同じく、同じ場所の真上（読み込み済み）の空に床を敷いて撮る。南（+Z）を向く
+                gearReturn = minecraft.player == null ? null : minecraft.player.blockPosition();
+                if (gearReturn != null) {
+                    command(minecraft, String.format(Locale.ROOT,
+                            "fill %d %d %d %d %d %d minecraft:smooth_stone replace minecraft:air",
+                            gearReturn.getX() - 8, P3_FLOOR, gearReturn.getZ() - 4, gearReturn.getX() + 8, P3_FLOOR, gearReturn.getZ() + 12));
+                    command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %d %.1f 0 10",
+                            gearReturn.getX() + 0.5, P3_FLOOR + 1, gearReturn.getZ() + 0.5));
+                }
+                CiPhase3.onServer(minecraft, CiGear::equipShield);
+                next(GEAR + 1, 40);
+            }
+            case GEAR + 1 -> {
+                clean(minecraft);
+                pendingShot = "shield_first_person";
+                next(GEAR + 2, 2);
+            }
+            case GEAR + 2 -> {
+                CiGear.block(minecraft, true);
+                next(GEAR + 3, 12);
+            }
+            case GEAR + 3 -> {
+                clean(minecraft);
+                pendingShot = "shield_blocking";
+                next(GEAR + 4, 2);
+            }
+            case GEAR + 4 -> {
+                minecraft.options.setCameraType(CameraType.THIRD_PERSON_FRONT);
+                next(GEAR + 5, 10);
+            }
+            case GEAR + 5 -> {
+                clean(minecraft);
+                pendingShot = "shield_third_person_front";
+                next(GEAR + 6, 2);
+            }
+            case GEAR + 6 -> {
+                minecraft.options.setCameraType(CameraType.THIRD_PERSON_BACK);
+                next(GEAR + 7, 10);
+            }
+            case GEAR + 7 -> {
+                clean(minecraft);
+                pendingShot = "shield_third_person_back";
+                next(GEAR + 8, 2);
+            }
+            case GEAR + 8 -> {
+                // 盾を下ろし、ゲームの中の4方向（表示用のエンティティ）を、少し離れて正面から撮る。
+                // 左から正面・側面・背面・反対の側面（90度ずつ回す）。手が写らないよう、観戦モードにする
+                CiGear.block(minecraft, false);
+                minecraft.options.setCameraType(CameraType.FIRST_PERSON);
+                hideHud = true;
+                command(minecraft, "gamemode spectator @a");
+                if (gearReturn != null) {
+                    double x = gearReturn.getX() + 0.5;
+                    double z = gearReturn.getZ() + 0.5;
+                    command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %d %.1f 0 0", x, P3_FLOOR + 1, z));
+                    // 南を向くと、画面の左は東（+X）。向き0で表が北（こちら）を向く
+                    float[] yaws = {0.0F, 90.0F, 180.0F, 270.0F};
+                    for (int k = 0; k < yaws.length; k++) {
+                        command(minecraft, CiGear.turnaround(x + 4.5 - 3.0 * k, P3_FLOOR + 2.62, z + 7.0, yaws[k]));
+                    }
+                }
+                next(GEAR + 9, 30);
+            }
+            case GEAR + 9 -> {
+                clean(minecraft);
+                pendingShot = "shield_turnaround";
+                next(GEAR + 10, 2);
+            }
+            case GEAR + 10 -> {
+                command(minecraft, "time set midnight");
+                next(GEAR + 11, 30);
+            }
+            case GEAR + 11 -> {
+                clean(minecraft);
+                pendingShot = "shield_turnaround_night";
+                next(GEAR + 12, 2);
+            }
+            case GEAR + 12 -> {
+                // 作り直した装備（見習い・古代石）：表示用のエンティティで横に並べる（正面）
+                command(minecraft, "kill @e[tag=amemaru_ci_gear]");
+                command(minecraft, "time set noon");
+                lineup(minecraft, 0.0F);
+                next(GEAR + 13, 30);
+            }
+            case GEAR + 13 -> {
+                clean(minecraft);
+                pendingShot = "gear_lineup_redesign";
+                next(GEAR + 14, 2);
+            }
+            case GEAR + 14 -> {
+                command(minecraft, "kill @e[tag=amemaru_ci_gear]");
+                lineup(minecraft, 90.0F);
+                next(GEAR + 15, 20);
+            }
+            case GEAR + 15 -> {
+                clean(minecraft);
+                pendingShot = "gear_lineup_redesign_side";
+                next(GEAR + 16, 2);
+            }
+            case GEAR + 16 -> {
+                // 三人称の持ち方：防具立てに持たせる（右手に武器、左手に盾）
+                command(minecraft, "kill @e[tag=amemaru_ci_gear]");
+                if (gearReturn != null) {
+                    double x = gearReturn.getX() + 0.5;
+                    double z = gearReturn.getZ() + 4.5;
+                    String[][] hands = {{"apprentice_sword", "apprentice_shield"}, {"apprentice_greatsword", null},
+                            {"apprentice_staff", null}, {"ancient_stone_sword", "ancient_stone_shield"},
+                            {"ancient_stone_greatsword", null}, {"ancient_stone_staff", null}};
+                    for (int k = 0; k < hands.length; k++) {
+                        command(minecraft, CiGear.stand(hands[k][0], hands[k][1], x + 4.5 - 1.8 * k, P3_FLOOR + 1, z, 180.0F));
+                    }
+                    command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %d %.1f 0 12", x, P3_FLOOR + 1, gearReturn.getZ() + 0.5));
+                }
+                next(GEAR + 17, 30);
+            }
+            case GEAR + 17 -> {
+                clean(minecraft);
+                pendingShot = "gear_stands_redesign";
+                next(GEAR + 18, 2);
+            }
+            case GEAR + 18 -> {
+                // 一人称：見習いの剣と盾
+                command(minecraft, "kill @e[tag=amemaru_ci_gear]");
+                command(minecraft, "gamemode creative @a");
+                hideHud = false;
+                if (gearReturn != null) {
+                    command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %d %.1f 0 8", gearReturn.getX() + 0.5, P3_FLOOR + 1,
+                            gearReturn.getZ() + 0.5));
+                }
+                CiPhase3.onServer(minecraft, player -> CiGear.hold(player, "apprentice_sword", "apprentice_shield"));
+                next(GEAR + 19, 30);
+            }
+            case GEAR + 19 -> {
+                clean(minecraft);
+                pendingShot = "gear_fp_apprentice";
+                next(GEAR + 20, 2);
+            }
+            case GEAR + 20 -> {
+                CiPhase3.onServer(minecraft, player -> CiGear.hold(player, "ancient_stone_greatsword", null));
+                next(GEAR + 21, 20);
+            }
+            case GEAR + 21 -> {
+                clean(minecraft);
+                pendingShot = "gear_fp_ancient_greatsword";
+                next(GEAR + 22, 2);
+            }
+            case GEAR + 22 -> {
+                CiPhase3.onServer(minecraft, player -> CiGear.hold(player, "ancient_stone_staff", null));
+                next(GEAR + 23, 20);
+            }
+            case GEAR + 23 -> {
+                clean(minecraft);
+                pendingShot = "gear_fp_ancient_staff";
+                next(GEAR + 24, 2);
+            }
+            case GEAR + 24 -> {
+                // 作り直した防具：防具立てに着せる（重鎧の前・後ろ、法衣の前・後ろ）
+                armorStands(minecraft, 180.0F, 0.0F);
+                next(GEAR + 25, 40);
+            }
+            case GEAR + 25 -> {
+                clean(minecraft);
+                pendingShot = "gear_armor_redesign";
+                next(GEAR + 26, 2);
+            }
+            case GEAR + 26 -> {
+                // 斜めから（前は右斜め前、後ろは左斜め後ろ）
+                armorStands(minecraft, 145.0F, -35.0F);
+                next(GEAR + 27, 30);
+            }
+            case GEAR + 27 -> {
+                clean(minecraft);
+                pendingShot = "gear_armor_redesign_34";
+                next(GEAR + 28, 2);
+            }
+            case GEAR + 28 -> {
+                // ⑤1階のレア装備：表示用のエンティティで並べる（昼と夜。光る所を見る）
+                command(minecraft, "kill @e[tag=amemaru_ci_gear]");
+                lineup(minecraft, 0.0F, CiGear.REDESIGN_RARE, 2.2);
+                next(GEAR + 29, 30);
+            }
+            case GEAR + 29 -> {
+                clean(minecraft);
+                pendingShot = "gear_lineup_rare";
+                next(GEAR + 30, 2);
+            }
+            case GEAR + 30 -> {
+                command(minecraft, "time set midnight");
+                next(GEAR + 31, 30);
+            }
+            case GEAR + 31 -> {
+                clean(minecraft);
+                pendingShot = "gear_lineup_rare_night";
+                next(GEAR + 32, 2);
+            }
+            case GEAR + 32 -> {
+                // 一人称：見張りの石刃
+                command(minecraft, "kill @e[tag=amemaru_ci_gear]");
+                command(minecraft, "time set noon");
+                command(minecraft, "gamemode creative @a");
+                hideHud = false;
+                if (gearReturn != null) {
+                    command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %d %.1f 0 8", gearReturn.getX() + 0.5, P3_FLOOR + 1,
+                            gearReturn.getZ() + 0.5));
+                }
+                CiPhase3.onServer(minecraft, player -> CiGear.hold(player, "sentinel_blade", null));
+                next(GEAR + 33, 30);
+            }
+            case GEAR + 33 -> {
+                clean(minecraft);
+                pendingShot = "gear_fp_sentinel";
+                next(GEAR + 34, 2);
+            }
+            case GEAR + 34 -> {
+                CiPhase3.onServer(minecraft, player -> CiGear.hold(player, "chipped_fang_greatsword", null));
+                next(GEAR + 35, 20);
+            }
+            case GEAR + 35 -> {
+                clean(minecraft);
+                pendingShot = "gear_fp_fang";
+                next(GEAR + 36, 2);
+            }
+            case GEAR + 36 -> {
+                CiPhase3.onServer(minecraft, player -> CiGear.hold(player, "bee_crystal_staff", null));
+                next(GEAR + 37, 20);
+            }
+            case GEAR + 37 -> {
+                clean(minecraft);
+                pendingShot = "gear_fp_bee";
+                next(GEAR + 38, 2);
+            }
+            case GEAR + 38 -> {
+                // 蜂晶の杖の「使った」のアニメーション（羽が開き、核がふくらむ）
+                CiPhase3.onServer(minecraft, jp.amemaru.lostconnection.item.GeoWeaponItem::playUse);
+                next(GEAR + 39, 5);
+            }
+            case GEAR + 39 -> {
+                clean(minecraft);
+                pendingShot = "gear_fp_bee_use";
+                next(GEAR + 41, 2);
+            }
+            case GEAR + 41 -> {
+                // ⑥アクセサリー：防具なしで付ける（三人称の前から。HUDなし）
+                hideHud = true;
+                minecraft.options.setCameraType(CameraType.THIRD_PERSON_FRONT);
+                CiPhase3.onServer(minecraft, player -> CiGear.wearAccessories(player, null));
+                next(GEAR + 42, 30);
+            }
+            case GEAR + 42 -> {
+                clean(minecraft);
+                pendingShot = "gear_accessories";
+                next(GEAR + 43, 2);
+            }
+            case GEAR + 43 -> {
+                // 重鎧の上に付けたとき（防具の上に見えるように広げて描く）
+                CiPhase3.onServer(minecraft, player -> CiGear.wearAccessories(player, CiGear.PLATE));
+                next(GEAR + 44, 30);
+            }
+            case GEAR + 44 -> {
+                clean(minecraft);
+                pendingShot = "gear_accessories_plate";
+                next(GEAR + 45, 2);
+            }
+            case GEAR + 45 -> {
+                CiPhase3.onServer(minecraft, player -> CiGear.wearAccessories(player, CiGear.ROBE));
+                next(GEAR + 46, 30);
+            }
+            case GEAR + 46 -> {
+                clean(minecraft);
+                pendingShot = "gear_accessories_robe";
+                next(GEAR + 47, 2);
+            }
+            case GEAR + 47 -> {
+                minecraft.options.setCameraType(CameraType.FIRST_PERSON);
+                next(GEAR + 40, 2);
+            }
+            case GEAR + 40 -> {
+                // 後片づけ：表示用のエンティティ・持ち物・床。元の場所へ戻って、建物の写真へ
+                hideHud = false;
+                command(minecraft, "kill @e[tag=amemaru_ci_gear]");
+                command(minecraft, "time set noon");
+                command(minecraft, "gamemode creative @a");
+                CiPhase3.onServer(minecraft, CiPhase3::cleanup);
+                if (gearReturn != null) {
+                    command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %d %.1f", gearReturn.getX() + 0.5, gearReturn.getY(),
+                            gearReturn.getZ() + 0.5));
+                    command(minecraft, String.format(Locale.ROOT, "fill %d %d %d %d %d %d minecraft:air",
+                            gearReturn.getX() - 8, P3_FLOOR, gearReturn.getZ() - 4, gearReturn.getX() + 8, P3_FLOOR, gearReturn.getZ() + 12));
+                }
                 next(MAP_STAGE, 40);
             }
             // ---- 建物の見本：空の高い所に草の広場を敷き、構造物を置いて、まわりから撮る
@@ -1337,6 +1640,44 @@ public final class CiScreenshots {
         float pitch = (float) -Math.toDegrees(Math.atan2(dy, Math.sqrt(dx * dx + dz * dz)));
         command(Minecraft.getInstance(), String.format(Locale.ROOT, "tp @p %.2f %.2f %.2f %.1f %.1f",
                 o.getX() + v[0], o.getY() + v[1] - 1.62, o.getZ() + v[2], yaw, pitch));
+    }
+
+    /** 作り直した装備を、表示用のエンティティで横一列に並べる（南を向いて撮る。画面の左は東）。観戦モード・HUDなし。 */
+    /** 防具立て4つ（重鎧の前・後ろ・法衣の前・後ろ）。前向きは front、後ろ向きは back の向き。 */
+    private static void armorStands(Minecraft minecraft, float front, float back) {
+        hideHud = true;
+        command(minecraft, "gamemode spectator @a");
+        command(minecraft, "kill @e[tag=amemaru_ci_gear]");
+        if (gearReturn == null) {
+            return;
+        }
+        double x = gearReturn.getX() + 0.5;
+        double z = gearReturn.getZ() + 4.0;
+        command(minecraft, CiGear.armoredStand("sentinel_blade", "ancient_stone_shield", CiGear.PLATE, x + 3.3, P3_FLOOR + 1, z, front));
+        command(minecraft, CiGear.armoredStand("chipped_fang_greatsword", null, CiGear.PLATE, x + 1.1, P3_FLOOR + 1, z, back));
+        command(minecraft, CiGear.armoredStand("bee_crystal_staff", null, CiGear.ROBE, x - 1.1, P3_FLOOR + 1, z, front));
+        command(minecraft, CiGear.armoredStand("ancient_stone_staff", null, CiGear.ROBE, x - 3.3, P3_FLOOR + 1, z, back));
+        command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %.1f %.1f 0 8", x, P3_FLOOR + 1.0, gearReturn.getZ() + 0.8));
+    }
+
+    private static void lineup(Minecraft minecraft, float yaw) {
+        lineup(minecraft, yaw, CiGear.REDESIGN_1, 1.6);
+    }
+
+    private static void lineup(Minecraft minecraft, float yaw, java.util.List<CiGear.Piece> pieces, double step) {
+        hideHud = true;
+        command(minecraft, "gamemode spectator @a");
+        if (gearReturn == null) {
+            return;
+        }
+        double x = gearReturn.getX() + 0.5;
+        double z = gearReturn.getZ() + 0.5;
+        command(minecraft, String.format(Locale.ROOT, "tp @p %.1f %d %.1f 0 0", x, P3_FLOOR + 1, z));
+        int n = pieces.size();
+        for (int k = 0; k < n; k++) {
+            double px = x + step * (n - 1) / 2.0 - step * k;
+            command(minecraft, CiGear.display(pieces.get(k), px, P3_FLOOR + 2.4, z + 7.5, yaw, 1.0F));
+        }
     }
 
     /** 建物の写真の間は、HUDを描かない（開いたままの透明な画面があるので、F1 と同じ設定では消えない）。 */
