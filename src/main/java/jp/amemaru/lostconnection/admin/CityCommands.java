@@ -146,15 +146,19 @@ public final class CityCommands {
     public record View(String id, double x, double y, double z, float yaw, float pitch) {
     }
 
+    /**
+     * 11月21日：街並み（家と木）が建ったので、施設の向かいの空き地に立っていた所（個人倉庫・3つの工房・フリーマーケット）を
+     * 通りの上へ、木や倉庫の壁が目の前に来ていた所（倉庫地区・城壁）を見通せる所へ移した（tools/mapgen/check_city.py の街で確かめた）。
+     */
     public static final List<View> VIEWS = List.of(
             new View("plaza", 0.5, 1, 12.5, 180, -5),
             new View("guild", -1.5, 1, -78.5, -90, -25),
-            new View("storage", 49.5, 1, -45.5, 180, -20),
-            new View("weapon", 90.5, 1, 6.5, 180, -20),
-            new View("armor", 71.5, 1, -6.5, 0, -20),
-            new View("accessory", 31.5, 1, 6.5, 180, -20),
+            new View("storage", 54.5, 1, -50.5, 165, -20),
+            new View("weapon", 90.5, 1, 3.5, 180, -25),
+            new View("armor", 71.5, 1, -3.5, 0, -25),
+            new View("accessory", 31.5, 1, 3.5, 180, -25),
             new View("market", 0.5, 1, 17.5, 0, 0),
-            new View("free_market", -33.5, 1, 51.5, 0, -5),
+            new View("free_market", -33.5, 1, 54.5, 0, -10),
             new View("church", -50.5, 1, 0.5, 90, -25),
             new View("fishing", -49.5, 1, 56.5, 90, 5),
             new View("lake", -99.5, 1, 88.5, 140, 15),
@@ -163,8 +167,8 @@ public final class CityCommands {
             // Phase 5：街並み（北西の環状路の家並み・南の門・北東の倉庫地区・北東の角の塔と城壁）
             new View("houses", -30.5, 1, -56.5, 90, -5),
             new View("gate_south", 0.5, 1, 100.5, 0, -10),
-            new View("warehouses", 56.5, 1, -33.5, -90, -10),
-            new View("wall", 72.5, 1, -72.5, -135, -30),
+            new View("warehouses", 68.5, 1, -47.5, -165, -15),
+            new View("wall", 82.5, 1, -65.5, 180, -25),
             // 上から：描く距離12チャンクでも霧に隠れないよう、北と南の半分ずつ（高さ110）
             new View("top_n", -13.5, 110, -100.5, 180, 90),
             new View("top_s", -13.5, 110, 26.5, 180, 90),

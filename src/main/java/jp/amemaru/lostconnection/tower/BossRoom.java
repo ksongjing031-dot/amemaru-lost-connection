@@ -357,6 +357,11 @@ public final class BossRoom {
         }
         level.playSound(null, boss.getX(), boss.getY(), boss.getZ(), SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.PLAYERS, 1.0F, 1.0F);
         ProgressionData progress = ProgressionData.get(level.getServer());
+        if (names.isEmpty()) {
+            // 戦った人がいない（コマンドで消した・部屋の外から倒れた）。初撃破は、倒した人がいるときだけ残して知らせる
+            AmemaruMod.LOGGER.info("[amemaru] Boss of floor {} fell with no one taking part; no first kill recorded", floor.number());
+            return;
+        }
         if (progress.recordFirstKill(floor.number(), System.currentTimeMillis(), names)) {
             ProgressionService.broadcast(level.getServer(), Component.translatable("message.amemaru.boss.first_kill",
                     String.join("・", names), Component.literal(floor.title()), Component.literal(name)), AnnouncementS2C.Kind.BOSS);

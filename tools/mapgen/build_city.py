@@ -20,13 +20,11 @@ import os
 import random
 import sys
 
-import numpy as np
-
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import check_city as cc  # noqa: E402
 from mapgen.arch import Palette, Pyramid, Roof, gable_wall  # noqa: E402
 from mapgen.fixtures import crystal_lamp, lamp_post  # noqa: E402
-from mapgen.world import (DATA_VERSION, World, block, fence, lantern, leaves, log, pane, sign_nbt, slab, stairs,  # noqa: E402
+from mapgen.world import (DATA_VERSION, World, block, fence, lantern, log, pane, sign_nbt, slab, stairs,  # noqa: E402
                           trapdoor, wall)
 
 import nbtlib  # noqa: E402
@@ -300,7 +298,6 @@ def plaza(t):
             z = bz + (k if ax == "z" else 0)
             t.put(x, 1, z, stairs("spruce", f))
         ends = ((bx - 1, bz), (bx + 3, bz)) if ax == "x" else ((bx, bz - 1), (bx, bz + 3))
-        facing = {"north": "south", "south": "north", "east": "west", "west": "east"}
         for (x, z) in ends:
             side = "west" if ax == "x" and x < bx else "east" if ax == "x" else "north" if z < bz else "south"
             t.put(x, 1, z, block("spruce_wall_sign", facing=side, waterlogged=False), sign_nbt(["", "", "", ""]))
@@ -537,7 +534,6 @@ def house(t, x0, z0, length, facing, gable_front=False, eave=11, chimney=False, 
     door_side = facing
     for (axis, fixed, out) in sides:
         n = wx if axis == "x" else wz
-        bays = [i for i in range(1, n - 1) if not post_at(i, n) and (i % 4 == 2 or n <= 7 and i == n // 2)]
         mid = n // 2
         for i in range(1, n - 1):
             if post_at(i, n):
@@ -585,8 +581,10 @@ def house(t, x0, z0, length, facing, gable_front=False, eave=11, chimney=False, 
             return (sx, sz) == (cx_, cz_)
     if max_top is not None:
         base_skip = skip
-        def skip(sx, sy, sz):
+
+        def capped(sx, sy, sz):
             return sy > max_top or (base_skip is not None and base_skip(sx, sy, sz))
+        skip = capped
     roof.build(skip=skip)
     # 妻の三角の壁（漆喰に柱と梁。屋根裏の小窓）
     for at_l in ((x0, x1) if ridge == "x" else (z0, z1)):
