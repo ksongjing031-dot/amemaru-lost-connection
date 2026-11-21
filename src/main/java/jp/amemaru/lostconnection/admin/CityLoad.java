@@ -59,6 +59,7 @@ public final class CityLoad {
             return;
         }
         source.sendSuccess(() -> Component.translatable("commands.amemaru.city.loading"), false);
+        AmemaruMod.LOGGER.info("[amemaru][city] waiting for the city chunks and entities around {}", origins);
         JOBS.add(new Job(level, List.copyOf(origins), source, run));
     }
 
@@ -96,8 +97,10 @@ public final class CityLoad {
             if (loaded(job.level, job.origins)) {
                 it.remove();
                 ready.add(job);
+                AmemaruMod.LOGGER.info("[amemaru][city] city chunks and entities loaded after {} ticks", job.waited);
             } else if (++job.waited > MAX_WAIT_TICKS) {
                 it.remove();
+                AmemaruMod.LOGGER.warn("[amemaru][city] city chunks or entities not loaded after {} ticks", MAX_WAIT_TICKS);
                 job.source.sendFailure(Component.translatable("commands.amemaru.city.load_timeout"));
             } else if (job.waited % 200 == 0) {
                 for (BlockPos origin : job.origins) {
