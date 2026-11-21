@@ -29,7 +29,7 @@ import java.util.List;
  *   <li>HPは、参加者の人数で増える（人数補正。部屋の定義の {@code hp_per_extra_player}）</li>
  *   <li>HPの割合で段階が変わる（{@link #phaseFor}）。段階が変わると {@link #onPhaseChanged} が呼ばれる</li>
  *   <li>倒れたら、部屋に知らせる（初撃破の記録・物語の演出・出口の円）。ドロップと経験値は、ほかの敵と同じく、攻撃を当てた人それぞれに</li>
- *   <li>保存しない（部屋が出し直す）</li>
+ *   <li>保存しない（部屋が出し直す）。部屋が今出しているボスでなければ、自分で消える（{@link BossRoom#owns}）</li>
  * </ul>
  */
 public abstract class AmemaruBoss extends AmemaruMob {
@@ -127,6 +127,14 @@ public abstract class AmemaruBoss extends AmemaruMob {
 
     @Override
     public void tick() {
+        if (!level().isClientSide() && isAlive() && room != null && !room.owns(this)) {
+            // 部屋が今出しているボスではない（部屋が出し直したあとに戻ってきた古いボス）：消す。倒れたボス（部屋はもう手放している）は、倒れる動きを最後まで
+            jp.amemaru.lostconnection.AmemaruMod.LOGGER.info("[amemaru] Removed a stale boss of floor {} ({})", room.floor().number(),
+                    getStringUUID());
+            bossEvent.removeAllPlayers();
+            discard();
+            return;
+        }
         super.tick();
         if (level() instanceof ServerLevel level && isAlive()) {
             EnemyDef def = def();

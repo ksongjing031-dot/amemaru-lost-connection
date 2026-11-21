@@ -230,9 +230,22 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
         return transientMob;
     }
 
+    /*
+     * 保存しない敵は、区画が閉じたら消す（11月22日：ボス戦で倒れるとボスが増えた不具合）。
+     *
+     * 前は shouldBeSaved() を false にしていた。区画を閉じるとき、バニラは shouldBeSaved() の敵だけを書き出して消すので、
+     * そうでない敵は書き出されないうえに消えもせず、見えないまま記憶に残り、区画がまた開くと戻ってきた。部屋や湧く所からは
+     * 見えない間に「いなくなった」と数えて新しく出すので、人が離れて戻るたびにボスや雑魚が1組ずつ増えた。
+     * 今は書き出し（save）だけを断る。区画を閉じるときは、ほかの敵と同じく消える（区画には何も書かれない）。
+     */
     @Override
-    public boolean shouldBeSaved() {
-        return !transientMob && super.shouldBeSaved();
+    public boolean save(net.minecraft.nbt.CompoundTag tag) {
+        return !transientMob && super.save(tag);
+    }
+
+    @Override
+    public boolean saveAsPassenger(net.minecraft.nbt.CompoundTag tag) {
+        return !transientMob && super.saveAsPassenger(tag);
     }
 
     /** 戦いをはじめからにする（敵視・貢献・予兆・技の途中を消し、HPを満タンにする）。ボスの部屋で全員が倒れたときに使う。 */

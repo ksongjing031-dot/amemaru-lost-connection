@@ -82,6 +82,11 @@ public final class BossRoom {
         return state == State.FIGHT;
     }
 
+    /** このボスが、部屋が今出しているボスか（ほかのボスは古いもので、自分で消える）。 */
+    public boolean owns(AmemaruBoss boss) {
+        return bossId != null && bossId.equals(boss.getUUID());
+    }
+
     /** 部屋の真ん中（世界の座標）。 */
     public Vec3 arenaCenter() {
         return floor.world(def.arenaCenter());
@@ -186,6 +191,12 @@ public final class BossRoom {
             return;
         }
         Vec3 spawn = floor.world(def.spawn().pos());
+        // 部屋の近くに、前に出したボスが残っていれば消す（増えないように）
+        for (AmemaruBoss old : level.getEntitiesOfClass(AmemaruBoss.class, new net.minecraft.world.phys.AABB(spawn, spawn).inflate(80.0),
+                other -> other.room() == this)) {
+            AmemaruMod.LOGGER.info("[amemaru] Removed an old boss of floor {} before spawning a new one", floor.number());
+            old.discard();
+        }
         boss.moveTo(spawn.x, spawn.y, spawn.z, def.spawn().yaw(), 0.0F);
         boss.setYHeadRot(def.spawn().yaw());
         boss.setHome(BlockPos.containing(spawn));

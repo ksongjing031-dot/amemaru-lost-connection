@@ -378,6 +378,44 @@ public final class StoryTowerGameTests {
         helper.succeed();
     }
 
+    /**
+     * 11月22日の不具合「ボス戦で倒れるとボスが増える」：保存しない敵は、書き出さないが区画を閉じる一覧には入る（区画と一緒に消える）。
+     * 部屋が手放した（今出していない）ボスは、次の tick で消える。部屋のないボス（コマンドで出した）は消えない。
+     */
+    @GameTest(template = EMPTY, timeoutTicks = 60)
+    public static void transientEnemiesAndStaleBoss(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        jp.amemaru.lostconnection.enemy.Tsunomofu mofu = jp.amemaru.lostconnection.core.registry.ModEntities.TSUNOMOFU.get().create(level);
+        check(helper, mofu != null, "ツノモフを作れません");
+        mofu.setTransient(true);
+        check(helper, mofu.shouldBeSaved(), "保存しない敵が、区画を閉じるときの一覧から外れています（区画を閉じても消えず、また出てきます）");
+        check(helper, !mofu.save(new CompoundTag()) && !mofu.saveAsPassenger(new CompoundTag()), "保存しない敵が書き出されました");
+        mofu.setTransient(false);
+        check(helper, mofu.save(new CompoundTag()), "ふつうの敵が書き出されません");
+        FloorDef floor = FloorDefs.byNumber(1);
+        check(helper, floor != null && floor.bossRoom() != null, "1階のボスの部屋の定義がありません");
+        jp.amemaru.lostconnection.tower.BossRoom room = new jp.amemaru.lostconnection.tower.BossRoom(floor, floor.bossRoom());
+        Vec3 at = helper.absoluteVec(new Vec3(1.5, 2.0, 1.5));
+        jp.amemaru.lostconnection.enemy.boss.Veldhorn stale = jp.amemaru.lostconnection.core.registry.ModEntities.VELDHORN.get().create(level);
+        jp.amemaru.lostconnection.enemy.boss.Veldhorn free = jp.amemaru.lostconnection.core.registry.ModEntities.VELDHORN.get().create(level);
+        check(helper, stale != null && free != null, "ヴェルドホーンを作れません");
+        stale.moveTo(at.x, at.y, at.z, 0.0F, 0.0F);
+        stale.setRoom(room);
+        free.moveTo(at.x + 5.0, at.y, at.z, 0.0F, 0.0F);
+        level.addFreshEntity(stale);
+        level.addFreshEntity(free);
+        check(helper, !room.owns(stale), "部屋が出していないボスを、部屋のものとしています");
+        helper.runAfterDelay(4, () -> {
+            boolean staleGone = stale.isRemoved();
+            boolean freeStays = !free.isRemoved();
+            free.discard();
+            stale.discard();
+            check(helper, staleGone, "部屋が手放したボスが消えていません（ボスが増える不具合）");
+            check(helper, freeStays, "部屋のないボスが消えました");
+            helper.succeed();
+        });
+    }
+
     // ---------------------------------------------------------------- 小物
 
     private record BlockPosBox(net.minecraft.core.BlockPos min, net.minecraft.core.BlockPos max) {
