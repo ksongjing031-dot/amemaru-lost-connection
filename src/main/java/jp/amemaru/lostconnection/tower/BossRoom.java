@@ -326,7 +326,14 @@ public final class BossRoom {
         if (!(boss.level() instanceof ServerLevel level)) {
             return;
         }
-        List<ServerPlayer> winners = participants();
+        // ボスはもう倒れている（isAlive が false）ので participants() は空になる。部屋が覚えている参加者から集める
+        List<ServerPlayer> winners = new ArrayList<>();
+        for (UUID id : participants) {
+            ServerPlayer player = level.getServer().getPlayerList().getPlayer(id);
+            if (player != null) {
+                winners.add(player);
+            }
+        }
         if (winners.isEmpty()) {
             for (UUID id : boss.contributions().keySet()) {
                 ServerPlayer player = level.getServer().getPlayerList().getPlayer(id);

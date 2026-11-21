@@ -148,7 +148,7 @@ public final class CityCommands {
 
     /**
      * 11月21日：街並み（家と木）が建ったので、施設の向かいの空き地に立っていた所（個人倉庫・3つの工房・フリーマーケット）を
-     * 通りの上へ、木や倉庫の壁が目の前に来ていた所（倉庫地区・城壁）を見通せる所へ移した（tools/mapgen/check_city.py の街で確かめた）。
+     * 通りの上へ、木や倉庫の壁が目の前に来ていた所（倉庫地区）を見通せる所へ、城壁と角の塔は城壁の外の北東へ移した（角の塔は城壁の厚みの中に建ち、城壁の上へ6ブロック出るだけなので、内からはほとんど見えない）（tools/mapgen/check_city.py の街で確かめた）。
      */
     public static final List<View> VIEWS = List.of(
             new View("plaza", 0.5, 1, 12.5, 180, -5),
@@ -168,7 +168,7 @@ public final class CityCommands {
             new View("houses", -30.5, 1, -56.5, 90, -5),
             new View("gate_south", 0.5, 1, 100.5, 0, -10),
             new View("warehouses", 68.5, 1, -47.5, -165, -15),
-            new View("wall", 82.5, 1, -65.5, 180, -25),
+            new View("wall", 100.5, 1, -96.5, 51, -14),
             // 上から：描く距離12チャンクでも霧に隠れないよう、北と南の半分ずつ（高さ110）
             new View("top_n", -13.5, 110, -100.5, 180, 90),
             new View("top_s", -13.5, 110, 26.5, 180, 90),

@@ -550,7 +550,7 @@ public final class CiScreenshots {
             {"snap", null, "60", "phase5_boss_fight"},
             {"await_telegraph", null, "0"},
             {"snap", null, "4", "phase5_boss_telegraph"},
-            // 戦っている人（アドベンチャーのまま。クリエイティブにすると戦いから外れ、倒した人のいない初撃破になっていた）のまま倒す。
+            // 戦っている人のまま（アドベンチャー。クリエイティブにすると戦いから外れる）倒す。
             // 倒してすぐ：ボスの名前の大きな字（下に出口の円の知らせ）・初撃破の知らせ・チャット。そのあと初撃破の場面（50 tick 待って白く光り、125〜215 tick に
             // 「始まりの草原　踏破」、215〜295 tick に字幕）
             {"cmd", null, "5", "kill @e[type=amemaru:veldhorn]"},
