@@ -122,12 +122,14 @@ public final class EquipmentGameTests {
                 check(helper, gear.get(item.get()) != null, "装備の定義がありません：" + item.getId());
             }
         }
-        check(helper, AccessoryDefs.all().size() == 5, "アクセサリーの定義が5ではありません：" + AccessoryDefs.all().size());
+        // Phase 5 で、1階のボスのレアのお守り「草原の角笛」が増えた
+        check(helper, AccessoryDefs.all().size() == 6, "アクセサリーの定義が6ではありません：" + AccessoryDefs.all().size());
         for (RegistryObject<Item> item : ModItems.MANIFEST.category(ItemManifest.Category.ACCESSORY)) {
             check(helper, AccessoryDefs.get(item.get()) != null, "アクセサリーの定義がありません：" + item.getId());
         }
 
-        check(helper, EnemyDefs.all().size() == 4, "敵の定義が4ではありません：" + EnemyDefs.all().keySet());
+        // Phase 5 で、1階のボス「草原の主ヴェルドホーン」が増えた
+        check(helper, EnemyDefs.all().size() == 5, "敵の定義が5ではありません：" + EnemyDefs.all().keySet());
         for (EntityType<?> type : List.<EntityType<?>>of(ModEntities.TSUNOMOFU.get(), ModEntities.ISHIKURE_SOLDIER.get(),
                 ModEntities.CRYSTAL_BEE.get(), ModEntities.KAKEKIBA_WOLF.get())) {
             EnemyDef def = EnemyDefs.forType(type);

@@ -130,17 +130,23 @@ public final class FloorSpawner {
         return null;
     }
 
-    /** 上から下へ、立てる地面を探す（足もとの高さを返す）。 */
+    /** 上から下へ、立てる地面を探す（足もとの高さを返す）。足もとと頭の所は、草や花のような当たりのないものでもよい。 */
     private static Integer ground(ServerLevel level, int x, int top, int z, int depth) {
         for (int y = top; y > top - depth; y--) {
             BlockPos feet = new BlockPos(x, y, z);
             BlockState below = level.getBlockState(feet.below());
-            if (!below.isAir() && below.isSolidRender(level, feet.below()) && level.getBlockState(feet).isAir()
-                    && level.getBlockState(feet.above()).isAir() && level.getFluidState(feet).isEmpty()) {
+            if (!below.isAir() && below.isFaceSturdy(level, feet.below(), net.minecraft.core.Direction.UP)
+                    && passable(level, feet) && passable(level, feet.above()) && level.getFluidState(feet.below()).isEmpty()) {
                 return y;
             }
         }
         return null;
+    }
+
+    private static boolean passable(ServerLevel level, BlockPos pos) {
+        BlockState state = level.getBlockState(pos);
+        return state.getCollisionShape(level, pos).isEmpty() && level.getFluidState(pos).isEmpty()
+                && !(state.getBlock() instanceof FloorSealBlock);
     }
 
     private AmemaruMob spawn(ServerLevel level, FloorDef.SpawnZone zone, Vec3 at, RandomSource random) {
