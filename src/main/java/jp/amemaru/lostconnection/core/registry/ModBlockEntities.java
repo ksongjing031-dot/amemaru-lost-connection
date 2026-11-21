@@ -21,6 +21,12 @@ public final class ModBlockEntities {
     public static final RegistryObject<BlockEntityType<FloorSealBlockEntity>> FLOOR_SEAL = BLOCK_ENTITIES.register("floor_seal",
             () -> BlockEntityType.Builder.of(FloorSealBlockEntity::new, ModBlocks.FLOOR_SEAL.get()).build(null));
 
+    /** 古代の仕掛け石・古代の宝箱（どの階の何番目か。11月22日）。 */
+    @SuppressWarnings("DataFlowIssue")
+    public static final RegistryObject<BlockEntityType<jp.amemaru.lostconnection.tower.FloorThingBlockEntity>> FLOOR_THING =
+            BLOCK_ENTITIES.register("floor_thing", () -> BlockEntityType.Builder.of(jp.amemaru.lostconnection.tower.FloorThingBlockEntity::new,
+                    ModBlocks.TOWER_SWITCH.get(), ModBlocks.TOWER_CHEST.get()).build(null));
+
     private ModBlockEntities() {
     }
 }

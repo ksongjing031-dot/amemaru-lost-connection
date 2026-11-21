@@ -225,7 +225,8 @@ def kind(name):
 
 
 FLOWERS = {"poppy", "dandelion", "allium", "azure_bluet", "oxeye_daisy", "cornflower", "lily_of_the_valley", "blue_orchid",
-           "red_tulip", "orange_tulip", "white_tulip", "pink_tulip", "grass", "fern", "sweet_berry_bush"}
+           "red_tulip", "orange_tulip", "white_tulip", "pink_tulip", "grass", "fern", "sweet_berry_bush",
+           "tall_grass", "large_fern", "brown_mushroom", "red_mushroom", "glow_lichen"}
 
 class World:
     def __init__(self, w, h, d):

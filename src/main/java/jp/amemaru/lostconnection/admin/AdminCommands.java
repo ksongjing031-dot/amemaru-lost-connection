@@ -90,6 +90,7 @@ public final class AdminCommands {
                         .then(StoryCommands.flagCommand())
                         .then(StoryCommands.npcCommand())
                         .then(StoryCommands.pillarsCommand())
+                        .then(StoryCommands.chestsCommand())
                         .then(debugCommand())));
     }
 

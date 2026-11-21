@@ -28,9 +28,17 @@ COLORS = {
     "lantern": (200, 160, 80), "spruce_sign": (115, 85, 50), "stone_brick_wall": (122, 121, 122),
     "mossy_stone_brick_wall": (115, 121, 105), "stone_brick_slab": (122, 121, 122), "mossy_stone_brick_slab": (115, 121, 105),
     "polished_andesite_stairs": (132, 135, 134), "chain": (60, 60, 70), "vine": (60, 110, 40),
+    # 11月22日に足した所
+    "dark_oak_leaves": (44, 88, 30), "dark_oak_log": (60, 46, 26), "dark_oak_wood": (60, 46, 26), "podzol": (106, 76, 40),
+    "large_fern": (96, 150, 64), "brown_mushroom": (150, 110, 80), "red_mushroom": (200, 40, 40), "tuff": (108, 109, 102),
+    "glow_lichen": (112, 140, 120), "amemaru:tower_chest": (255, 200, 40), "amemaru:tower_switch": (80, 220, 255),
+    "amemaru:tower_gate": (120, 230, 255), "stone_brick_stairs": (122, 121, 122), "dirt_path": (148, 122, 65),
+    "mossy_stone_brick_wall": (115, 121, 105), "cobblestone_slab": (127, 127, 127), "smooth_basalt": (72, 72, 78),
+    "sea_lantern": (172, 199, 190), "water": (63, 118, 228), "oak_wood": (109, 85, 50),
 }
 SKIP_TOP = {"barrier", "light_blue_stained_glass_pane", "grass", "tall_grass", "fern", "dandelion", "poppy", "oxeye_daisy",
-            "azure_bluet", "cornflower", "moss_carpet", "vine", "chain"}
+            "azure_bluet", "cornflower", "moss_carpet", "vine", "chain", "large_fern", "brown_mushroom", "red_mushroom", "glow_lichen"}
+LEAVES = {"oak_leaves", "birch_leaves", "dark_oak_leaves"}
 
 
 def top_map(f, data, path, scale=2):
@@ -67,6 +75,15 @@ def top_map(f, data, path, scale=2):
         x, _, z = p["pos"]
         dr.ellipse(((x - 4) * scale, (z - 4) * scale, (x + 4) * scale, (z + 4) * scale), outline=(255, 255, 0), width=3)
         dr.text(((x + 5) * scale, (z - 3) * scale), "P%d" % i, fill=(255, 255, 0))
+    for c in data.get("chests", []):
+        x, _, z = c["pos"]
+        dr.rectangle(((x - 2) * scale, (z - 2) * scale, (x + 3) * scale, (z + 3) * scale), outline=(255, 160, 0), width=2)
+    for g in data.get("switches", []):
+        for st in g["stones"]:
+            dr.ellipse(((st[0] - 2) * scale, (st[2] - 2) * scale, (st[0] + 3) * scale, (st[2] + 3) * scale), outline=(0, 200, 255), width=2)
+    for g in data.get("guardians", []):
+        x, _, z = g["pos"]
+        dr.rectangle(((x - 3) * scale, (z - 3) * scale, (x + 3) * scale, (z + 3) * scale), outline=(255, 0, 0), width=3)
     e = data["entrance"]["pos"]
     dr.rectangle(((e[0] - 2) * scale, (e[2] - 2) * scale, (e[0] + 2) * scale, (e[2] + 2) * scale), outline=(0, 255, 255), width=2)
     img.save(path)
@@ -77,7 +94,8 @@ def sub_world(f, x0, y0, z0, x1, y1, z1):
     """範囲を切り出した World（見本の絵のため。Modのブロックは、近い色のバニラのブロックに置きかえる）"""
     w = World(x1 - x0 + 1, y1 - y0 + 1, z1 - z0 + 1)
     swap = {"amemaru:lost_blank": block("white_concrete"), "amemaru:tower_pillar": block("emerald_block"),
-            "amemaru:floor_seal": block("yellow_stained_glass")}
+            "amemaru:floor_seal": block("yellow_stained_glass"), "amemaru:tower_chest": block("barrel", facing="up", open=False),
+            "amemaru:tower_switch": block("chiseled_quartz_block"), "amemaru:tower_gate": block("light_blue_stained_glass")}
     for (x, y, z), st in f.blocks.items():
         if x0 <= x <= x1 and y0 <= y <= y1 and z0 <= z <= z1:
             if st[0] == "barrier":
@@ -87,7 +105,7 @@ def sub_world(f, x0, y0, z0, x1, y1, z1):
     return w
 
 
-def render_all(f, data, out):
+def render_all(f, data, out, only=None):
     os.makedirs(out, exist_ok=True)
     print("描きました:", top_map(f, data, os.path.join(out, "floor1_map.png")))
     from mapgen.render import Scene
@@ -104,7 +122,20 @@ def render_all(f, data, out):
     ex, ez = int(ex), int(ez)
     views.append(("entrance", (ex - 30, 4, ez - 60, ex + 30, 40, ez + 14), (ex + 6, 19, ez + 10), (ex - 4, 14, ez - 40)))
     views.append(("bridge", (150, 4, 170, 250, 40, 250), (176, 22, 236), (200, 11, 205)))
+    # 11月22日に足した所：西の丘（東から・巻き道の上から）・洞・東の遺跡（上から・広場から）・北西の林・結晶の窪み・2つ目の小川
+    views.append(("hill", (20, 4, 186, 120, 46, 280), (112, 30, 262), (62, 20, 230)))
+    views.append(("hill_ledge", (20, 4, 186, 120, 46, 280), (44, 26, 250), (62, 27, 222)))
+    views.append(("hill_cave", (36, 6, 200, 96, 30, 256), (80, 16, 233), (68, 14, 230)))
+    views.append(("ruins_top", (280, 4, 160, 356, 46, 230), (318, 90, 236), (318, 8, 196)))
+    views.append(("ruins_plaza", (280, 4, 160, 356, 46, 230), (292, 18, 196), (330, 12, 195)))
+    views.append(("ruins_sanctum", (280, 4, 160, 356, 46, 230), (324, 25, 200), (336, 12, 192)))
+    views.append(("woods", (40, 4, 60, 160, 46, 160), (150, 26, 118), (96, 14, 104)))
+    views.append(("woods_floor", (40, 4, 60, 160, 46, 160), (124, 17, 112), (98, 15, 104)))
+    views.append(("hollow", (300, 4, 40, 350, 40, 84), (334, 24, 78), (324, 12, 60)))
+    views.append(("stream2", (100, 4, 260, 260, 40, 360), (190, 24, 350), (186, 10, 310)))
     for name, (x0, y0, z0, x1, y1, z1), eye, target in views:
+        if only and name not in only:
+            continue
         w = sub_world(f, x0, y0, z0, x1, y1, z1)
         sc = Scene(w)
         e = (eye[0] - x0, eye[1] - y0, eye[2] - z0)

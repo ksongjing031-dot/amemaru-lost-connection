@@ -137,6 +137,10 @@
     {
       "id": "ishikure_core",
       "rarity": "rare"
+    },
+    {
+      "id": "light_shard",
+      "rarity": "uncommon"
     }
   ],
   "fruits": [

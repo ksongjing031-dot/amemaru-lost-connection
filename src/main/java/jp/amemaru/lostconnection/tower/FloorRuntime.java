@@ -15,7 +15,7 @@ import java.util.UUID;
 
 /**
  * 1つの階の動き（人がいる間だけ動かす）：敵の湧く所（{@link FloorSpawner}）、ボスの部屋（{@link BossRoom}）、
- * 封印の前で止まった人への知らせ。
+ * 封印の前で止まった人への知らせ、石柱の守り手（{@link FloorGuardians}）、仕掛け石と門（{@link FloorGates}。11月22日）。
  */
 public final class FloorRuntime {
     private final FloorDef def;
@@ -23,11 +23,23 @@ public final class FloorRuntime {
     @Nullable
     private final BossRoom bossRoom;
     private final Map<UUID, Long> sealNotice = new HashMap<>();
+    private final FloorGuardians guardians;
+    private final FloorGates gates;
 
     public FloorRuntime(FloorDef def) {
         this.def = def;
         this.spawner = new FloorSpawner(def);
         this.bossRoom = def.bossRoom() == null ? null : new BossRoom(def, def.bossRoom());
+        this.guardians = new FloorGuardians(def);
+        this.gates = new FloorGates(def);
+    }
+
+    public FloorGuardians guardians() {
+        return guardians;
+    }
+
+    public FloorGates gates() {
+        return gates;
     }
 
     public FloorDef def() {
@@ -52,6 +64,10 @@ public final class FloorRuntime {
         }
         if (now % 10 == 0) {
             noticeSeal(onFloor, now);
+        }
+        if (now % 20 == 0) {
+            guardians.tick(level, onFloor, now);
+            gates.tick(level, now);
         }
     }
 
@@ -89,6 +105,8 @@ public final class FloorRuntime {
     /** 階を建て直したとき：湧いた敵を消し、ボスの部屋をはじめに戻す。 */
     public void reset(ServerLevel level) {
         spawner.clear(level);
+        guardians.clear(level);
+        gates.reset(level);
         if (bossRoom != null) {
             bossRoom.reset(level);
         }

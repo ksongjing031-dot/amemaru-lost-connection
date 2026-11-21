@@ -63,6 +63,39 @@ public final class ModBlocks {
                     .isRedstoneConductor((state, level, pos) -> false)
                     .pushReaction(PushReaction.BLOCK)));
 
+    /** 古代の仕掛け石（11月22日。1階の東の遺跡。組の石をそろえて押すと門がひらく）。 */
+    public static final RegistryObject<Block> TOWER_SWITCH = BLOCKS.register("tower_switch", () -> new jp.amemaru.lostconnection.tower.TowerSwitchBlock(
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(-1.0F, 3600000.0F)
+                    .sound(SoundType.STONE)
+                    .lightLevel(state -> state.getValue(jp.amemaru.lostconnection.tower.TowerSwitchBlock.LIT) ? 9 : 2)
+                    .pushReaction(PushReaction.BLOCK)));
+
+    /** 古代の格子（11月22日。仕掛け石でひらく門）。 */
+    public static final RegistryObject<Block> TOWER_GATE = BLOCKS.register("tower_gate", () -> new jp.amemaru.lostconnection.tower.TowerGateBlock(
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.NONE)
+                    .strength(-1.0F, 3600000.0F)
+                    .sound(SoundType.AMETHYST)
+                    .lightLevel(state -> state.getValue(jp.amemaru.lostconnection.tower.TowerGateBlock.OPEN) ? 0 : 6)
+                    .noOcclusion()
+                    .noLootTable()
+                    .isViewBlocking((state, level, pos) -> false)
+                    .isSuffocating((state, level, pos) -> false)
+                    .isRedstoneConductor((state, level, pos) -> false)
+                    .pushReaction(PushReaction.BLOCK)));
+
+    /** 古代の宝箱（11月22日。人それぞれ1度だけ開けられる）。 */
+    public static final RegistryObject<Block> TOWER_CHEST = BLOCKS.register("tower_chest", () -> new jp.amemaru.lostconnection.tower.TowerChestBlock(
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE)
+                    .strength(-1.0F, 3600000.0F)
+                    .sound(SoundType.STONE)
+                    .lightLevel(state -> 3)
+                    .noOcclusion()
+                    .pushReaction(PushReaction.BLOCK)));
+
     /** ロストの「欠け」（白く抜け落ちた所。Phase 0-A 3章）。 */
     public static final RegistryObject<Block> LOST_BLANK = BLOCKS.register("lost_blank", () -> new jp.amemaru.lostconnection.block.LostBlankBlock(
             BlockBehaviour.Properties.of()

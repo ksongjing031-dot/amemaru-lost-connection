@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "top": "amemaru:block/tower_switch_top_lit",
+    "side": "amemaru:block/tower_switch_side_lit",
+    "bottom": "amemaru:block/tower_switch_bottom"
+  }
+}

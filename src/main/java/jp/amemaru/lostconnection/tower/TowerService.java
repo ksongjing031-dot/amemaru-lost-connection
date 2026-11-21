@@ -379,6 +379,12 @@ public final class TowerService {
         }
         FloorDef.PillarDef pillar = def.pillars().get(index);
         ServerLevel level = (ServerLevel) player.level();
+        // 起動する前の課題（11月22日）：まだ起動していなくて、課題も終えていなければ、手がかりを出して止める
+        PlayerData self = PlayerDataCapability.get(player).orElse(null);
+        if (pillar.requires() != null && self != null && !player.isCreative() && (self.getStory().pillars(floor) & (1 << index)) == 0
+                && !self.getStory().pillarAwake(floor, index) && !meetRequirement(player, self, def, pillar, level, pos)) {
+            return;
+        }
         ModNetwork.sendTo(player, new StoryTextS2C(StoryTextS2C.Kind.ANCIENT, Component.translatable("message.amemaru.pillar.label",
                 index + 1).getString(), pillar.line(), 120));
         List<ServerPlayer> credited = new ArrayList<>();
@@ -426,6 +432,145 @@ public final class TowerService {
             level.sendParticles(ParticleTypes.END_ROD, pos.getX() + 0.5, pos.getY() + 1.2, pos.getZ() + 0.5, 40, 0.4, 1.2, 0.4, 0.06);
         } else {
             level.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.0F, 1.0F);
+        }
+    }
+
+    // ---------------------------------------------------------------- 石柱の課題・守り手・仕掛け石・宝箱（11月22日【補完】）
+
+    /** 石柱の課題を、いまこなせるか（光のかけらを持っていれば使う）。こなせなければ手がかりを出して false。 */
+    private static boolean meetRequirement(ServerPlayer player, PlayerData data, FloorDef def, FloorDef.PillarDef pillar, ServerLevel level,
+                                           BlockPos pos) {
+        FloorDef.Requirement req = pillar.requires();
+        if (FloorDef.Requirement.ITEMS.equals(req.type()) && req.item() != null) {
+            net.minecraft.world.item.Item item = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(req.item());
+            int have = item == null ? 0 : player.getInventory().countItem(item);
+            if (item != null && have >= req.count()) {
+                net.minecraft.world.entity.player.Inventory inventory = player.getInventory();
+                int left = req.count();
+                for (int slot = 0; slot < inventory.getContainerSize() && left > 0; slot++) {
+                    net.minecraft.world.item.ItemStack stack = inventory.getItem(slot);
+                    if (stack.is(item)) {
+                        int take = Math.min(left, stack.getCount());
+                        stack.shrink(take);
+                        left -= take;
+                    }
+                }
+                data.getStory().wakePillar(def.number(), pillar.index());
+                player.sendSystemMessage(Component.translatable("message.amemaru.pillar.items_used",
+                        Component.translatable(item.getDescriptionId()), req.count()).withStyle(ChatFormatting.AQUA));
+                level.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.4F, 1.4F);
+                level.sendParticles(ParticleTypes.WHITE_ASH, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 60, 1.6, 0.8, 1.6, 0.02);
+                return true;
+            }
+            hint(player, req, level, pos, item == null ? Component.literal("?") : Component.translatable(item.getDescriptionId()), have);
+            return false;
+        }
+        hint(player, req, level, pos, Component.empty(), 0);
+        return false;
+    }
+
+    private static void hint(ServerPlayer player, FloorDef.Requirement req, ServerLevel level, BlockPos pos, Component item, int have) {
+        Component text = FloorDef.Requirement.ITEMS.equals(req.type())
+                ? Component.translatable("message.amemaru.pillar.need_items", item, have, req.count())
+                : Component.translatable("message.amemaru.pillar.need_guardian");
+        if (!req.hint().isEmpty()) {
+            player.sendSystemMessage(Component.literal(req.hint()).withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+        }
+        player.displayClientMessage(text.copy().withStyle(ChatFormatting.YELLOW), true);
+        level.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_HIT, SoundSource.BLOCKS, 1.0F, 0.6F);
+    }
+
+    /** 仕掛け石を押した。 */
+    public static void pressSwitch(ServerPlayer player, int floor, String group, int index, BlockPos pos) {
+        FloorRuntime runtime = runtime(floor);
+        if (runtime == null || !(player.level() instanceof ServerLevel level)) {
+            return;
+        }
+        runtime.gates().press(level, player, group, index, player.server.overworld().getGameTime());
+    }
+
+    /** 古代の宝箱を開けた（人それぞれ1度だけ。中身はノットと、宝箱の決まりの品）。 */
+    public static void openChest(ServerPlayer player, int floor, int index, BlockPos pos) {
+        FloorDef def = FloorDefs.byNumber(floor);
+        PlayerData data = PlayerDataCapability.get(player).orElse(null);
+        if (def == null || data == null || index < 0 || index >= def.extras().chests().size()
+                || !(player.level() instanceof ServerLevel level)) {
+            return;
+        }
+        int total = def.extras().chests().size();
+        if (!data.getStory().openChest(floor, index)) {
+            player.displayClientMessage(Component.translatable("message.amemaru.chest.already", data.getStory().chestCount(floor), total)
+                    .withStyle(ChatFormatting.GRAY), true);
+            level.playSound(null, pos, SoundEvents.BARREL_CLOSE, SoundSource.BLOCKS, 0.6F, 1.2F);
+            return;
+        }
+        FloorDef.ChestDef chest = def.extras().chests().get(index);
+        long knots = chest.knotsMin();
+        if (chest.knotsMax() > chest.knotsMin()) {
+            knots += level.random.nextInt(chest.knotsMax() - chest.knotsMin() + 1);
+        }
+        if (knots > 0) {
+            jp.amemaru.lostconnection.economy.Wallet.give(player, data, knots, "ancient chest");
+        }
+        int items = chest.lootTable() == null ? 0
+                : jp.amemaru.lostconnection.loot.DropService.dropChest(player, chest.lootTable(), Vec3.atCenterOf(pos).add(0.0, 0.7, 0.0));
+        // ノット（お金）を手に入れる仕組みは Phase 6。宝箱の決まりに knots_min・knots_max がなければ品物だけ（11月22日）
+        player.sendSystemMessage((knots > 0
+                ? Component.translatable("message.amemaru.chest.opened_knots", data.getStory().chestCount(floor), total, knots, items)
+                : Component.translatable("message.amemaru.chest.opened", data.getStory().chestCount(floor), total, items))
+                .withStyle(ChatFormatting.GOLD));
+        level.playSound(null, pos, SoundEvents.CHEST_OPEN, SoundSource.BLOCKS, 1.0F, 0.8F);
+        level.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.0F, 1.3F);
+        level.sendParticles(ParticleTypes.WAX_OFF, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 30, 0.4, 0.4, 0.4, 0.05);
+        AmemaruMod.LOGGER.info("[amemaru] {} opened ancient chest {} of floor {} ({} knots, {} item(s))", player.getGameProfile().getName(),
+                index, floor, knots, items);
+    }
+
+    /** 守り手が倒れた（倒した人がいてもいなくても）：決まった秒数のあとにまた出す。 */
+    public static void onGuardianDied(jp.amemaru.lostconnection.enemy.AmemaruMob mob) {
+        FloorRuntime runtime = runtime(mob.guardianFloor());
+        if (runtime != null && mob.getServer() != null) {
+            runtime.guardians().onDefeated(mob.guardianId(), mob.getServer().overworld().getGameTime());
+        }
+    }
+
+    /** 守り手を倒した人たち（パーティを含む。ドロップを受け取る人）の石柱の課題を終えた印をつける。 */
+    public static void creditGuardian(jp.amemaru.lostconnection.enemy.AmemaruMob mob, List<ServerPlayer> receivers) {
+        FloorDef def = FloorDefs.byNumber(mob.guardianFloor());
+        FloorDef.Guardian guardian = def == null ? null : def.extras().guardian(mob.guardianId());
+        if (guardian == null) {
+            return;
+        }
+        Component name = mob.def() != null ? Component.literal(mob.def().name()) : mob.getDisplayName();
+        for (ServerPlayer player : receivers) {
+            PlayerData data = PlayerDataCapability.get(player).orElse(null);
+            if (data != null && data.getStory().wakePillar(def.number(), guardian.pillar())) {
+                player.sendSystemMessage(Component.translatable("message.amemaru.guardian.defeated", name, guardian.pillar() + 1)
+                        .withStyle(ChatFormatting.AQUA));
+            }
+        }
+    }
+
+    /** 階の中だけのドロップ（光のかけら）：その階の決まりに合う敵なら、倒した人に落とす。 */
+    public static void extraDrops(jp.amemaru.lostconnection.enemy.AmemaruMob mob, ServerLevel level, ServerPlayer player, PlayerData data) {
+        FloorDef def = FloorDefs.floorAt(level, mob.position());
+        if (def == null || def.extras().drops().isEmpty()) {
+            return;
+        }
+        for (FloorDef.ExtraDrop drop : def.extras().drops()) {
+            if (!drop.enemy().equals(mob.enemyId())) {
+                continue;
+            }
+            if (drop.pillar() >= 0 && ((data.getStory().pillars(def.number()) & (1 << drop.pillar())) != 0
+                    || data.getStory().pillarAwake(def.number(), drop.pillar()))) {
+                continue;
+            }
+            net.minecraft.world.item.Item item = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(drop.item());
+            if (item == null || player.getInventory().countItem(item) >= drop.keep() || level.random.nextDouble() * 100.0 >= drop.chance()) {
+                continue;
+            }
+            jp.amemaru.lostconnection.loot.LootItemEntity.spawn(level, mob.getX(), mob.getY() + 0.5, mob.getZ(),
+                    new net.minecraft.world.item.ItemStack(item), player.getUUID(), -1);
         }
     }
 }

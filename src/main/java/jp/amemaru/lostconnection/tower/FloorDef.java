@@ -42,7 +42,8 @@ public record FloorDef(
         List<PillarDef> pillars,
         String pillarsDoneMessage,
         List<SpawnZone> spawns,
-        @Nullable Tablet tablet) {
+        @Nullable Tablet tablet,
+        Extras extras) {
 
     /** 足もとの位置と向き（yaw 0 が南、90 が西、180 が北、−90 が東）。 */
     public record Spot(Vec3 pos, float yaw) {
@@ -58,8 +59,72 @@ public record FloorDef(
         }
     }
 
-    /** 起動する石柱。{@code line} は触れたときに出す古代文字の一行。 */
-    public record PillarDef(int index, BlockPos pos, String line) {
+    /**
+     * 起動する石柱。{@code line} は触れたときに出す古代文字の一行。{@code requires} は起動する前の課題（なければ、触れるとすぐ
+     * 起動する。11月22日【補完】）。
+     */
+    public record PillarDef(int index, BlockPos pos, String line, @Nullable Requirement requires) {
+    }
+
+    /**
+     * 石柱を起動する前の課題（11月22日【補完】。一日一層には中身が薄いというご指示から）。
+     * <ul>
+     *   <li>{@code guardian}：守り手（{@link Guardian} の {@code id}）を倒した人とそのパーティだけが起動できる</li>
+     *   <li>{@code items}：{@code item} を {@code count} 個持って触れると、それを使って起動できる</li>
+     * </ul>
+     * 門の奥にある石柱（仕掛け石で門をひらく）は、課題なし（門そのものが課題）。{@code hint} は、まだ起動できないときに出す一言。
+     */
+    public record Requirement(String type, String guardian, @Nullable ResourceLocation item, int count, String hint) {
+        public static final String GUARDIAN = "guardian";
+        public static final String ITEMS = "items";
+    }
+
+    /** 石柱の守り手：決まった所に1体だけ出る強い敵（{@code variant} は同じ見た目の別の定義）。倒されると {@code respawnSeconds} 後にまた出る。 */
+    public record Guardian(String id, ResourceLocation enemy, @Nullable ResourceLocation variant, Vec3 pos, int respawnSeconds,
+                           double activation, int pillar) {
+    }
+
+    /**
+     * 仕掛け石の組：{@code stones} をすべて {@code windowSeconds} 秒のうちに押すと、門（{@code gateMin}〜{@code gateMax} の格子）が
+     * {@code openSeconds} 秒ひらく。
+     */
+    public record SwitchGroup(String id, List<BlockPos> stones, int windowSeconds, int openSeconds, BlockPos gateMin, BlockPos gateMax) {
+    }
+
+    /** 古代の宝箱：人それぞれ1度だけ開けられる。中身は {@code lootTable} と、{@code knotsMin}〜{@code knotsMax} のノット。 */
+    public record ChestDef(int index, BlockPos pos, @Nullable ResourceLocation lootTable, int knotsMin, int knotsMax) {
+    }
+
+    /**
+     * 階の中だけのドロップ（光のかけら）。{@code enemy} を倒した人に {@code chance}% で落とす。{@code pillar} の石柱を
+     * 起動するまで、持っている数が {@code keep} 個になるまで。
+     */
+    public record ExtraDrop(ResourceLocation enemy, ResourceLocation item, double chance, int pillar, int keep) {
+    }
+
+    /** 11月22日に足した、階の仕掛け（守り手・仕掛け石と門・古代の宝箱・階の中だけのドロップ）。 */
+    public record Extras(List<Guardian> guardians, List<SwitchGroup> switches, List<ChestDef> chests, List<ExtraDrop> drops) {
+        public static final Extras NONE = new Extras(List.of(), List.of(), List.of(), List.of());
+
+        @Nullable
+        public Guardian guardian(String id) {
+            for (Guardian guardian : guardians) {
+                if (guardian.id().equals(id)) {
+                    return guardian;
+                }
+            }
+            return null;
+        }
+
+        @Nullable
+        public SwitchGroup switchGroup(String id) {
+            for (SwitchGroup group : switches) {
+                if (group.id().equals(id)) {
+                    return group;
+                }
+            }
+            return null;
+        }
     }
 
     /**
@@ -165,7 +230,9 @@ public record FloorDef(
         JsonArray pillarArray = Json.optionalArray(json, "pillars");
         for (int i = 0; i < pillarArray.size(); i++) {
             JsonObject p = Json.asObject(pillarArray.get(i), "pillars");
-            pillars.add(new PillarDef(i, blockPos(Json.array(p, "pos"), "pillars.pos"), Json.string(p, "line")));
+            JsonObject req = Json.optionalObject(p, "requires");
+            pillars.add(new PillarDef(i, blockPos(Json.array(p, "pos"), "pillars.pos"), Json.string(p, "line"),
+                    req == null ? null : requirement(req)));
         }
         String done = Json.optionalString(json, "pillars_done", "");
         List<SpawnZone> spawns = new ArrayList<>();
@@ -189,8 +256,91 @@ public record FloorDef(
         JsonObject tabletJson = Json.optionalObject(json, "tablet");
         Tablet tablet = tabletJson == null ? null : new Tablet(blockPos(Json.array(tabletJson, "pos"), "tablet.pos"),
                 Json.string(tabletJson, "title"), Json.string(tabletJson, "text"));
+        Extras extras = new Extras(guardians(json), switchGroups(json), chests(json), extraDrops(json));
+        for (PillarDef pillar : pillars) {
+            if (pillar.requires() != null && Requirement.GUARDIAN.equals(pillar.requires().type())
+                    && extras.guardian(pillar.requires().guardian()) == null) {
+                throw new DefinitionException("石柱 " + (pillar.index() + 1) + " の守り手「" + pillar.requires().guardian() + "」が「guardians」にありません");
+            }
+        }
+        for (Guardian guardian : extras.guardians()) {
+            if (guardian.pillar() >= pillars.size()) {
+                throw new DefinitionException("守り手「" + guardian.id() + "」の石柱の番号が大きすぎます");
+            }
+        }
         return new FloorDef(id, number, chapter, name, chapterTitle, min, max, origin, sx, sy, sz, prefix, piece, entrance,
-                back, boss, List.copyOf(pillars), done, List.copyOf(spawns), tablet);
+                back, boss, List.copyOf(pillars), done, List.copyOf(spawns), tablet, extras);
+    }
+
+    private static Requirement requirement(JsonObject json) {
+        String type = Json.string(json, "type");
+        if (!Requirement.GUARDIAN.equals(type) && !Requirement.ITEMS.equals(type)) {
+            throw new DefinitionException("石柱の「requires.type」は guardian・items のどちらかにしてください");
+        }
+        ResourceLocation item = Requirement.ITEMS.equals(type) ? Json.id(json, "item") : null;
+        return new Requirement(type, Json.optionalString(json, "guardian", ""), item, Json.optionalInt(json, "count", 1, 1, 64),
+                Json.optionalString(json, "hint", ""));
+    }
+
+    private static List<Guardian> guardians(JsonObject json) {
+        List<Guardian> list = new ArrayList<>();
+        for (JsonElement element : Json.optionalArray(json, "guardians")) {
+            JsonObject g = Json.asObject(element, "guardians");
+            list.add(new Guardian(Json.string(g, "id"), Json.id(g, "enemy"), Json.optionalId(g, "variant"),
+                    vec(Json.array(g, "pos"), "guardians.pos"), Json.optionalInt(g, "respawn_seconds", 180, 5, 86400),
+                    Json.optionalDouble(g, "activation", 48.0, 8.0, 512.0), Json.optionalInt(g, "pillar", 0, 0, 31)));
+        }
+        return List.copyOf(list);
+    }
+
+    private static List<SwitchGroup> switchGroups(JsonObject json) {
+        List<SwitchGroup> list = new ArrayList<>();
+        for (JsonElement element : Json.optionalArray(json, "switches")) {
+            JsonObject g = Json.asObject(element, "switches");
+            List<BlockPos> stones = new ArrayList<>();
+            for (JsonElement stone : Json.array(g, "stones")) {
+                stones.add(blockPos(stone.getAsJsonArray(), "switches.stones"));
+            }
+            if (stones.isEmpty()) {
+                throw new DefinitionException("仕掛け石の組「" + Json.string(g, "id") + "」に石がありません");
+            }
+            JsonArray gate = Json.array(g, "gate");
+            if (gate.size() != 2) {
+                throw new DefinitionException("「switches.gate」は [[x, y, z], [x, y, z]] の2つの角にしてください");
+            }
+            BlockPos a = blockPos(gate.get(0).getAsJsonArray(), "switches.gate");
+            BlockPos b = blockPos(gate.get(1).getAsJsonArray(), "switches.gate");
+            list.add(new SwitchGroup(Json.string(g, "id"), List.copyOf(stones), Json.optionalInt(g, "window_seconds", 10, 1, 600),
+                    Json.optionalInt(g, "open_seconds", 60, 1, 3600),
+                    new BlockPos(Math.min(a.getX(), b.getX()), Math.min(a.getY(), b.getY()), Math.min(a.getZ(), b.getZ())),
+                    new BlockPos(Math.max(a.getX(), b.getX()), Math.max(a.getY(), b.getY()), Math.max(a.getZ(), b.getZ()))));
+        }
+        return List.copyOf(list);
+    }
+
+    private static List<ChestDef> chests(JsonObject json) {
+        List<ChestDef> list = new ArrayList<>();
+        JsonArray array = Json.optionalArray(json, "chests");
+        if (array.size() > 64) {
+            throw new DefinitionException("古代の宝箱は1つの階に64個までです");
+        }
+        for (int i = 0; i < array.size(); i++) {
+            JsonObject c = Json.asObject(array.get(i), "chests");
+            int min = Json.optionalInt(c, "knots_min", 0, 0, 1_000_000);
+            int max = Json.optionalInt(c, "knots_max", min, min, 1_000_000);
+            list.add(new ChestDef(i, blockPos(Json.array(c, "pos"), "chests.pos"), Json.optionalId(c, "loot"), min, max));
+        }
+        return List.copyOf(list);
+    }
+
+    private static List<ExtraDrop> extraDrops(JsonObject json) {
+        List<ExtraDrop> list = new ArrayList<>();
+        for (JsonElement element : Json.optionalArray(json, "extra_drops")) {
+            JsonObject d = Json.asObject(element, "extra_drops");
+            list.add(new ExtraDrop(Json.id(d, "enemy"), Json.id(d, "item"), Json.doubleInRange(d, "chance", 0.0, 100.0),
+                    Json.optionalInt(d, "pillar", -1, -1, 31), Json.optionalInt(d, "keep", 64, 1, 64)));
+        }
+        return List.copyOf(list);
     }
 
     private static BossRoomDef bossRoom(JsonObject json) {

@@ -59,6 +59,12 @@ public final class ModItems {
             new BlockItem(ModBlocks.TOWER_PILLAR.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> FLOOR_SEAL = ITEMS.register("floor_seal", () ->
             new BlockItem(ModBlocks.FLOOR_SEAL.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> TOWER_SWITCH = ITEMS.register("tower_switch", () ->
+            new BlockItem(ModBlocks.TOWER_SWITCH.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> TOWER_GATE = ITEMS.register("tower_gate", () ->
+            new BlockItem(ModBlocks.TOWER_GATE.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> TOWER_CHEST = ITEMS.register("tower_chest", () ->
+            new BlockItem(ModBlocks.TOWER_CHEST.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> LOST_BLANK = ITEMS.register("lost_blank", () ->
             new BlockItem(ModBlocks.LOST_BLANK.get(), new Item.Properties()));
     public static final RegistryObject<Item> MEMORY_STONE = ITEMS.register("memory_stone", () ->

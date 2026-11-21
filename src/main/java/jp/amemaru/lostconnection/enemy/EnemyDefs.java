@@ -58,7 +58,7 @@ public final class EnemyDefs {
         for (EnemyDef def : LOADER.all().values()) {
             List<ResourceLocation> drops = new ArrayList<>(LOADER.dropsOf(def.id()));
             list.add(new EnemyDef.Info(def.id(), def.name(), def.description(), def.floor(), def.level(), def.lost(),
-                    List.copyOf(drops), def.rare()));
+                    List.copyOf(drops), def.rare(), def.entity()));
         }
         return list;
     }
@@ -92,9 +92,11 @@ public final class EnemyDefs {
             super.apply(jsons, resourceManager, profiler);
             Map<ResourceLocation, List<ResourceLocation>> found = new LinkedHashMap<>();
             for (EnemyDef def : all().values()) {
-                EntityType<?> type = ForgeRegistries.ENTITY_TYPES.getValue(def.id());
-                if (type == null || !def.id().equals(ForgeRegistries.ENTITY_TYPES.getKey(type))) {
-                    addError(def.id() + "：同じIDの敵（エンティティ）がありません");
+                // 見た目を借りる個体（model）は、借りる先の敵（エンティティ）があればよい（11月22日）
+                EntityType<?> type = ForgeRegistries.ENTITY_TYPES.getValue(def.entity());
+                if (type == null || !def.entity().equals(ForgeRegistries.ENTITY_TYPES.getKey(type))) {
+                    addError(def.id() + (def.model() != null ? "：見た目を借りる敵「" + def.model() + "」がありません"
+                            : "：同じIDの敵（エンティティ）がありません"));
                 }
                 for (EnemyDef.RareDrop rare : def.rare()) {
                     if (!ForgeRegistries.ITEMS.containsKey(rare.item())) {

@@ -39,6 +39,10 @@ public final class PlayerStory {
     private final Set<ResourceLocation> seenEvents = new LinkedHashSet<>();
     private final Set<ResourceLocation> readDialogues = new LinkedHashSet<>();
     private final Map<Integer, Integer> pillars = new TreeMap<>();
+    /** 課題を終えて目覚めた石柱（守り手を倒した・光のかけらを使った。番号のビット。11月22日）。 */
+    private final Map<Integer, Integer> pillarsAwake = new TreeMap<>();
+    /** 開けた古代の宝箱（番号のビット。11月22日）。 */
+    private final Map<Integer, Long> chests = new TreeMap<>();
     private final Set<Integer> floorsVisited = new TreeSet<>();
     private final Map<Integer, Integer> bossKills = new TreeMap<>();
     private int guide;
@@ -138,7 +142,54 @@ public final class PlayerStory {
     }
 
     public void resetPillars(int floor) {
-        if (pillars.remove(floor) != null) {
+        boolean changed = pillars.remove(floor) != null;
+        changed |= pillarsAwake.remove(floor) != null;
+        if (changed) {
+            onChange.run();
+        }
+    }
+
+    /** 石柱の課題を終えたか（守り手を倒した・光のかけらを使った）。 */
+    public boolean pillarAwake(int floor, int index) {
+        return (pillarsAwake.getOrDefault(floor, 0) & (1 << index)) != 0;
+    }
+
+    /** 石柱の課題を終えた印をつける（もうついていれば false）。 */
+    public boolean wakePillar(int floor, int index) {
+        int before = pillarsAwake.getOrDefault(floor, 0);
+        int after = before | (1 << index);
+        if (after == before) {
+            return false;
+        }
+        pillarsAwake.put(floor, after);
+        onChange.run();
+        return true;
+    }
+
+    /** 古代の宝箱を開けたか。 */
+    public boolean chestOpened(int floor, int index) {
+        return (chests.getOrDefault(floor, 0L) & (1L << index)) != 0;
+    }
+
+    /** 古代の宝箱を開けた印をつける（もう開けていれば false）。 */
+    public boolean openChest(int floor, int index) {
+        long before = chests.getOrDefault(floor, 0L);
+        long after = before | (1L << index);
+        if (after == before) {
+            return false;
+        }
+        chests.put(floor, after);
+        onChange.run();
+        return true;
+    }
+
+    /** その階で開けた宝箱の数。 */
+    public int chestCount(int floor) {
+        return Long.bitCount(chests.getOrDefault(floor, 0L));
+    }
+
+    public void resetChests(int floor) {
+        if (chests.remove(floor) != null) {
             onChange.run();
         }
     }
@@ -198,6 +249,16 @@ public final class PlayerStory {
             pillarTag.putInt(Integer.toString(entry.getKey()), entry.getValue());
         }
         tag.put("pillars", pillarTag);
+        CompoundTag awakeTag = new CompoundTag();
+        for (Map.Entry<Integer, Integer> entry : pillarsAwake.entrySet()) {
+            awakeTag.putInt(Integer.toString(entry.getKey()), entry.getValue());
+        }
+        tag.put("pillarsAwake", awakeTag);
+        CompoundTag chestTag = new CompoundTag();
+        for (Map.Entry<Integer, Long> entry : chests.entrySet()) {
+            chestTag.putLong(Integer.toString(entry.getKey()), entry.getValue());
+        }
+        tag.put("chests", chestTag);
         ListTag visited = new ListTag();
         for (int floor : floorsVisited) {
             visited.add(IntTag.valueOf(floor));
@@ -228,6 +289,24 @@ public final class PlayerStory {
         for (String key : pillarTag.getAllKeys()) {
             try {
                 pillars.put(Integer.parseInt(key), pillarTag.getInt(key));
+            } catch (NumberFormatException ignored) {
+                // 読めない記録は飛ばす
+            }
+        }
+        pillarsAwake.clear();
+        CompoundTag awakeTag = tag.getCompound("pillarsAwake");
+        for (String key : awakeTag.getAllKeys()) {
+            try {
+                pillarsAwake.put(Integer.parseInt(key), awakeTag.getInt(key));
+            } catch (NumberFormatException ignored) {
+                // 読めない記録は飛ばす
+            }
+        }
+        chests.clear();
+        CompoundTag chestTag = tag.getCompound("chests");
+        for (String key : chestTag.getAllKeys()) {
+            try {
+                chests.put(Integer.parseInt(key), chestTag.getLong(key));
             } catch (NumberFormatException ignored) {
                 // 読めない記録は飛ばす
             }

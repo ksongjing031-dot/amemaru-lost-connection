@@ -45,7 +45,16 @@ public class AmemaruMobRenderer<T extends AmemaruMob> extends GeoEntityRenderer<
 
     @Override
     public void render(T entity, float yaw, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-        super.render(entity, yaw, partialTick, poseStack, buffer, packedLight);
+        float scale = entity.modelScale();
+        if (Math.abs(scale - 1.0F) > 1.0E-3F) {
+            // 大きな個体（群れの長など。定義の behavior の scale。11月22日）：体だけ大きく描く（名前とHPのバーはそのまま）
+            poseStack.pushPose();
+            poseStack.scale(scale, scale, scale);
+            super.render(entity, yaw, partialTick, poseStack, buffer, packedLight);
+            poseStack.popPose();
+        } else {
+            super.render(entity, yaw, partialTick, poseStack, buffer, packedLight);
+        }
         renderTelegraph(entity, partialTick, poseStack, buffer);
         if (!entity.isDeadOrDying() && entity.distanceToSqr(entityRenderDispatcher.camera.getPosition()) < 24 * 24) {
             renderLabel(entity, poseStack, buffer, packedLight);
@@ -102,7 +111,7 @@ public class AmemaruMobRenderer<T extends AmemaruMob> extends GeoEntityRenderer<
     // ---------------------------------------------------------------- 名前とHP
 
     private void renderLabel(T entity, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-        ResourceLocation id = ForgeRegistries.ENTITY_TYPES.getKey(entity.getType());
+        ResourceLocation id = entity.variantId() != null ? entity.variantId() : ForgeRegistries.ENTITY_TYPES.getKey(entity.getType());
         EnemyDef.Info info = id == null ? null : EnemyDefs.clientInfo().get(id);
         Component name = info == null ? entity.getDisplayName()
                 : Component.translatable("enemy.amemaru.label", info.name(), info.level());

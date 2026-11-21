@@ -118,7 +118,8 @@ public final class FloorSpawner {
                 continue;
             }
             Integer y = ground(level, x, (int) Math.floor(base.y) + 8, z, 20);
-            if (y == null) {
+            if (y == null || y - base.y >= 3.0) {
+                // 湧く所の高さより3つ以上高い所（遺跡の壁の上など）には出さない（11月22日）
                 continue;
             }
             Vec3 at = new Vec3(x + 0.5, y, z + 0.5);
@@ -130,11 +131,18 @@ public final class FloorSpawner {
         return null;
     }
 
-    /** 上から下へ、立てる地面を探す（足もとの高さを返す）。足もとと頭の所は、草や花のような当たりのないものでもよい。 */
+    /**
+     * 上から下へ、立てる地面を探す（足もとの高さを返す）。足もとと頭の所は、草や花のような当たりのないものでもよい。
+     * 木の葉の上・壁や塀の上には出さない（11月22日。北西の林の木の上に狼が出ないように）。
+     */
     private static Integer ground(ServerLevel level, int x, int top, int z, int depth) {
         for (int y = top; y > top - depth; y--) {
             BlockPos feet = new BlockPos(x, y, z);
             BlockState below = level.getBlockState(feet.below());
+            if (below.is(net.minecraft.tags.BlockTags.LEAVES) || below.is(net.minecraft.tags.BlockTags.WALLS)
+                    || below.is(net.minecraft.tags.BlockTags.FENCES)) {
+                continue;
+            }
             if (!below.isAir() && below.isFaceSturdy(level, feet.below(), net.minecraft.core.Direction.UP)
                     && passable(level, feet) && passable(level, feet.above()) && level.getFluidState(feet.below()).isEmpty()) {
                 return y;

@@ -129,7 +129,11 @@ public final class EquipmentGameTests {
         }
 
         // Phase 5 で、1階のボス「草原の主ヴェルドホーン」が増えた
-        check(helper, EnemyDefs.all().size() == 5, "敵の定義が5ではありません：" + EnemyDefs.all().keySet());
+        // 11月22日：1階の西の丘の石柱の守り手「群れの長」（ツノモフの見た目を借りる別の定義）が増えた
+        check(helper, EnemyDefs.all().size() == 6, "敵の定義が6ではありません：" + EnemyDefs.all().keySet());
+        EnemyDef alpha = EnemyDefs.get(AmemaruMod.id("tsunomofu_alpha"));
+        check(helper, alpha != null && AmemaruMod.id("tsunomofu").equals(alpha.entity()) && alpha.behavior().getOrDefault("scale", 1.0) > 1.0,
+                "群れの長が、ツノモフの見た目を借りる大きな個体になっていません");
         for (EntityType<?> type : List.<EntityType<?>>of(ModEntities.TSUNOMOFU.get(), ModEntities.ISHIKURE_SOLDIER.get(),
                 ModEntities.CRYSTAL_BEE.get(), ModEntities.KAKEKIBA_WOLF.get())) {
             EnemyDef def = EnemyDefs.forType(type);

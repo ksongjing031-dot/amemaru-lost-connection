@@ -585,6 +585,25 @@ public final class StoryCommands {
                                                 EntityArgument.getPlayers(ctx, "targets"), true)))));
     }
 
+    /** 古代の宝箱を、開けていない形に戻す（11月22日。確かめ用）。 */
+    static LiteralArgumentBuilder<CommandSourceStack> chestsCommand() {
+        return Commands.literal("chests")
+                .then(Commands.literal("reset")
+                        .then(Commands.argument("floor", IntegerArgumentType.integer(1, 99)).suggests(FLOORS)
+                                .then(Commands.argument("targets", EntityArgument.players())
+                                        .executes(ctx -> {
+                                            int floor = IntegerArgumentType.getInteger(ctx, "floor");
+                                            Collection<ServerPlayer> players = EntityArgument.getPlayers(ctx, "targets");
+                                            for (ServerPlayer player : players) {
+                                                PlayerDataCapability.get(player).ifPresent(data -> data.getStory().resetChests(floor));
+                                            }
+                                            AdminCommands.log(ctx.getSource(), "chests reset " + floor + " x" + players.size());
+                                            ctx.getSource().sendSuccess(() -> Component.translatable("commands.amemaru.chests.reset", floor,
+                                                    players.size()), true);
+                                            return players.size();
+                                        }))));
+    }
+
     private static int pillars(CommandSourceStack source, int floor, Collection<ServerPlayer> players, boolean complete) {
         FloorDef def = FloorDefs.byNumber(floor);
         int count = def == null ? 0 : def.pillars().size();

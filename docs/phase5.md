@@ -152,6 +152,29 @@ Phase 0-B 13章の「Phase 5で作るもの」（縦切り版：コネリア、1
 
 ボスは使いません（部屋が戦いを終わらせる）。自動テスト `enemyLeashOnlyWhenQuiet`。
 
+**1階の中身を濃くしました（11月22日のご指示「一日一層の感じにしては内容が薄く暇になってしまいます。もっとマップを複雑にしてもいいかもしれません。現在30分程度で2人で一層をクリアできました。二人とも３レベ」から。中身はすべて【補完】）**
+
+目安は「2人で1時間半〜2時間、ボスの前でレベル4〜5」です。Phase 0-A 9章の1階（なだらかな草原と小川・半分埋もれた道標・地平線の格子・3本の石柱を探して起動するとボスへの道が開く・道標の石板・一・ロストの欠け）はそのままに、3本の石柱それぞれに「起動する前の課題」を置き、探す所と寄り道を増やしました。
+
+| 所 | 前 | 今 |
+| --- | --- | --- |
+| 西の丘（石柱1） | 草原のなだらかな高まりの上。触れるとすぐ起動 | 上が平らな台地（高さ27。まわりは8〜12段の崖）。南東のふもとから南・西を巻く古い石の道（幅4・長さ約80）でだけ上がれる。台地に石柱の守り手「**群れの長**」（ツノモフの大きな個体）とツノモフの群れ。**群れの長を倒した人とパーティ**だけが起動できる（倒す前に触れると手がかり）。東の崖に「光る苔の洞」（奥に泉と翠の結晶。宝箱）、台地の西に見張り台の跡（宝箱） |
+| 東の遺跡（石柱2） | 崩れた壁の四角の中 | 崩れた外壁（60×52）に囲まれた大きな遺跡：西の正面・広場・北の庭と南の庭・まわりの回廊・北東の物置。石柱は広場の東の「**奥の院**」（高さ5の壁で閉じた庭）の中。奥の院の門は「古代の格子」で、北の庭と南の庭の「**仕掛け石**」を**12秒のうちに両方**押すと**1分**ひらく（2人なら同時に、1人なら走って。約38ブロック）。出るときは、奥の院の中の階段から壁の上へ上がり、北の水の溜まりへ飛び下りる（閉じこめられない）。石柱は課題なし（門が課題）。物置と奥の院に宝箱。石くれ兵が広場と回廊を巡回 |
+| 北西の林（石柱3） | 疎らな林 | 木の茂った見通しの悪い林（樫・白樺・太い濃い樫、苔・羊歯・キノコ・倒れた木。林の東の口から石柱への小道）。石柱のまわりを白い欠けが囲み、**林の欠け牙の狼が落とす「光のかけら」を3つ**持って触れると、かけらを使って起動できる。根元のうろの切り株と、石柱の後ろの祠の跡に宝箱 |
+| 小川 | 1本（北西の泉から南東の池へ） | 2本目の小川（西の泉から、入口の北を通って本流へ）と2つ目の石橋。小川を渡る飛び石が5か所 |
+| 草原 | 開けた野 | 生け垣（葉）と石積みの垣（高さ2。ところどころ切れ目）で野を区切った。北東は結晶の丘（なだらかな高まりと結晶の群れ7つ）と「結晶の窪み」（宝箱） |
+| 古代の宝箱 | — | **10個**。入口の西のひとりで立つ大きな樫の根元・西の丘の洞・見張り台の跡・北西の林の切り株・祠の跡・東の遺跡の物置・奥の院・結晶の窪み・南東の池の小島・本流の石橋の下（水の底）。**人それぞれ1度ずつ**開けられる（開けた数を「この階で3/10」のように出す） |
+| 湧く所 | 12 | 21（ツノモフ7・石くれ兵5・結晶蜂5・欠け牙の狼4）。南の野の群れを入口の側へ動かし、丘の上の群れ・遺跡の広場と北と南の回廊の巡回・北東の結晶の丘の蜂・林の狼を足した |
+
+細かいこと：
+
+- **群れの長**（`enemies/tsunomofu_alpha.json`）：ツノモフの見た目を借りる別の定義（敵の定義の `model`）。Lv5・HP1400・攻撃30・防御10・頭突き（1.3倍・ため0.7秒・届く3.2）・自分から気づく距離9・経験値60・大きさ1.8倍（体の当たりも）。倒されると3分でまた出る（ほかの人も課題をこなせる）。人が40ブロックの中に来たら出て、保存しない（区画が閉じると消え、また近づくと出る）。レアドロップ：柔らかい角25%・草原の首飾り6%・翠の結晶果3%。図鑑には別の敵として載る。
+- **光のかけら**（素材・アンコモン）：林でなくても、1階の欠け牙の狼を倒すと35%で、倒した人（パーティの受け取る人それぞれ）に、その人だけが拾える品として落ちる。北西の林の石柱を起動するまで、持っている数が3つになるまで。石柱に触れると3つ使う。
+- **仕掛け石**：押すと光る（12秒）。そろわなかったら光が消えて、はじめから。門がひらいている間に押すと、閉じるまでの秒数を出す。門の中に人や敵がいる間は閉じない。サーバーを止めたときにひらいていた門は、次に人が来たときに閉じる。
+- **古代の宝箱**の中身（`loot_tables/chests/floor1_ancient.json`）：1階の素材を2〜3つ（苔鉄・古代石・ツノモフの毛・欠けた牙・蜂の針・結晶の欠片・残響の欠片）と、18%で装備かアクセサリー（古代石の剣・道標のお守り・草原の首飾り。レアリティとステータスは落とす品と同じく抽選）。ノット（お金）を手に入れる仕組みは Phase 6 なので、今は出さない（宝箱の決まりに `knots_min`・`knots_max` を書くと出せる）。
+- 石柱の課題を終えた印と開けた宝箱は、その人の物語の記録に残る（保存して読み直しても同じ）。`/amemaru admin pillars reset` で石柱を戻すと、課題の印も消える。宝箱は `/amemaru admin chests reset <階> <人>` で戻せる。
+- 確かめ：`python3 tools/mapgen/check_floor1.py`（入口から歩いて、3本の石柱の核・2つの仕掛け石・10個の宝箱・広間の封印の前へ行ける／門が閉じている間は奥の院に入れず、ひらくと入れる／奥の院の中から入口へ戻れる／巻き道をふさぐと台地へ上がれない／湧く所と巡回の点と守り手の出る所に立てて、巡回の点どうしが歩いてつながる／洞に暗い所がない）。すべて通りました。
+
 ## 3. 遊び方
 
 ### オープニング
@@ -175,6 +198,8 @@ Phase 0-B 13章の「Phase 5で作るもの」（縦切り版：コネリア、1
 ### 1階
 
 - 3本の石柱（西の丘・東の遺跡・北西の林）の前の台にある「古代の石柱の核」を右クリックすると起動します。3本そろうと、広間の南の門の光の幕を通れます。
+- 石柱にはそれぞれ課題があります（11月22日）。西の丘：丘を巻く道を上り、台地の「群れの長」を倒す。東の遺跡：北の庭と南の庭の仕掛け石を12秒のうちに両方押して、奥の院の格子をひらく。北西の林：林の欠け牙の狼が落とす「光のかけら」を3つ集めて触れる。まだのときに触れると、手がかりが出ます。パーティの誰かが起動すると、仲間の分も数えます。
+- 草原のあちこちに「古代の宝箱」が10個あります。右クリックで開けると、その人だけが拾える品が出ます（人それぞれ1度ずつ）。
 - 門の前の広場の「道標の石板・一」は、近づくか右クリックで読めます。
 - 広間に入り、ヴェルドホーンに近づくと戦いが始まります。技の前は、当たる所が地面に赤く出ます（前の扇・前の帯・後ろの扇・通り道の線・まわりの円・降りる所の円・足もとの円）。誰かが倒れたら、しゃがんで起こします（Phase 4）。
 - 自分が倒れたら、起こしてもらうのを待つか、［H］を3秒押し続けてリタイアし、教会へ戻ります（30秒たつと自動で戻ります）。
@@ -197,7 +222,9 @@ Phase 0-B 13章の「Phase 5で作るもの」（縦切り版：コネリア、1
 | `/amemaru admin floor tp <階> [entrance\|boss\|center\|pillar1〜3\|top] [人]` | 階の中の場所へ移る |
 | `/amemaru admin floor return <人>` | 塔の門へ戻す |
 | `/amemaru admin map build floor <階>` | 塔のディメンションに階を建てる（1階は数十秒） |
-| `/amemaru admin pillars reset\|complete <階> <人>` | 石柱を起動していない形に戻す・すべて起動した形にする |
+| `/amemaru admin pillars reset\|complete <階> <人>` | 石柱を起動していない形に戻す（11月22日から、石柱の課題を終えた印も消す）・すべて起動した形にする |
+| `/amemaru admin chests reset <階> <人>` | 古代の宝箱を開けていない形に戻す（11月22日） |
+| `/amemaru admin enemy spawn amemaru:tsunomofu_alpha` | 群れの長を出す（見た目を借りる個体も出せるようにした。11月22日） |
 | `/amemaru admin boss respawn <階>` | ボスをすぐ出し直す |
 | `/amemaru admin boss skill <階> <技>` | 戦っている間のボスに技を出させる（確かめ用。技：sweep・upthrust・kick・charge・stomp・leap・roots・roar） |
 | `/amemaru admin blessing <階>`・`blessing up <階>`・`blessing set <階> <0〜4>` | 結晶の加護を見る・1段上げる・決める |
@@ -224,14 +251,15 @@ Phase 0-B 13章の「Phase 5で作るもの」（縦切り版：コネリア、1
 
 - 自動テスト（GameTest）に7つ足しました（全部で80）：Phase 5 の定義（NPC5・会話11・ストーリーイベント4・手引き・進行日・1階）、1階の形（広さ・入口・石柱・湧く所・石板・ボスと出口の円は部屋の中・湧く所と石柱は部屋の外・封印の幅）、進行日と階の解放・予告・初撃破・加護と保存、本人の物語の記録（石柱・訪問・撃破・既読・演出・手引き）、条件（フラグ・オープニングの進み・進行日・職業）、**その人ごとのオープニング**（準備を待つ → 演出 → 目覚め → 会話 → 名簿 → 職業の画面。遅れて始めた人の演出は別で、ほかの人の知らせで終わらない。会話を閉じた人は2度目の目覚め）、石柱と封印。直しの書き出しの通しのテスト（`CityEditsGameTests`）は、街並みも入れて確かめます。
 - 11月22日に3つ足しました（全部で83）：保存しない敵と古いボス（`transientEnemiesAndStaleBoss`。保存しない敵は中身を書かない・部屋が持っていないボスは消える）、ダウン中のリタイア（`retireWhileDown`。ダウンしていなければ何もしない・代価・教会・衰弱・2度目はしない）、NPCのモデル（`npcModelsPresent`。5人のモデル・まぶた・待機と歩きの動き・表情の絵・大きさ）。1階の形のテストに、戦いの間は門の通路も部屋に数えること（封印の外と入口は数えない）を足しました。
-- CIの写真（街の写真の後）：`city_houses`・`city_gate_south`・`city_warehouses`・`city_wall`（と夜の `city_houses_night`・`city_gate_south_night`）、`phase5_npc_guild`・`phase5_npc_bard`・`phase5_npc_serena`・`phase5_npc_doran`（11月22日から立体のモデル）、オープニング `phase5_opening_wait`・`phase5_opening_voice`・`phase5_opening_awake`・`phase5_opening_lilia`、会話 `phase5_dialogue`・`phase5_dialogue_choices`・`phase5_dialogue_roster`、`phase5_job_screen`、`phase5_announce`、塔の門 `phase5_tower_gate`・`phase5_floor_select`、1階 `phase5_floor1_arrival`・`phase5_floor1_entrance`・`phase5_floor1_bridge`・`phase5_pillar_text`・`phase5_pillar_lit`・`phase5_boss_gate_sealed`・`phase5_boss_gate_open`・`phase5_tablet`、ボス `phase5_boss_fight`・`phase5_boss_telegraph`・技の当たる所 `phase5_boss_sweep`・`phase5_boss_upthrust`・`phase5_boss_kick`・`phase5_boss_leap`・`phase5_boss_roots`（`phase5_boss_telegraph` は突進の通り道の線）・`phase5_boss_defeated`（倒した直後）・`phase5_boss_title`（初撃破の場面）・`phase5_boss_first_kill`（場面の後の初撃破の知らせ）、`phase5_return_gate`、`phase5_replay`、`phase5_floor1_aerial`。
+- 11月22日（後から）に6つ足しました（全部で89）：`replayOpensTheOriginalDialogue`・`enemyLeashOnlyWhenQuiet`（上の2つの直し）、`floor1Extras`（守り手・石柱の課題・光のかけら・仕掛け石と門・宝箱10と宝箱の決まり）、`pillarRequirements`（守り手を倒す前・かけらが3つ未満では起動しない・倒した印・かけらを使う・課題なしの石柱・戻すと印も消える）、`switchesOpenGate`（秒数のうちに両方押すとひらく・間があくとひらかない・決まった秒数で閉じる）、`chestsPerPlayer`（1人1度・中身が出る・ほかの人は開けられる・保存）。石柱と封印のテストは、課題を終えた形にしてから起動します。敵の定義の数のテストに、群れの長（ツノモフの見た目を借りる大きな個体）を足しました。
+- CIの写真（街の写真の後）：`city_houses`・`city_gate_south`・`city_warehouses`・`city_wall`（と夜の `city_houses_night`・`city_gate_south_night`）、`phase5_npc_guild`・`phase5_npc_bard`・`phase5_npc_serena`・`phase5_npc_doran`（11月22日から立体のモデル）、オープニング `phase5_opening_wait`・`phase5_opening_voice`・`phase5_opening_awake`・`phase5_opening_lilia`、会話 `phase5_dialogue`・`phase5_dialogue_choices`・`phase5_dialogue_roster`、`phase5_job_screen`、`phase5_announce`、塔の門 `phase5_tower_gate`・`phase5_floor_select`、1階 `phase5_floor1_arrival`・`phase5_floor1_entrance`・`phase5_floor1_bridge`・西の丘 `phase5_floor1_hill`・巻き道 `phase5_floor1_hill_path`・洞 `phase5_floor1_cave`・群れの長 `phase5_guardian`・石柱の手がかり `phase5_pillar_hint`・`phase5_pillar_text`・`phase5_pillar_lit`・北西の林 `phase5_floor1_woods`・東の遺跡 `phase5_floor1_ruins`・仕掛け石 `phase5_ruins_switch`・門がひらく `phase5_ruins_gate_open`・宝箱 `phase5_chest_open`（ここまで11月22日）・`phase5_boss_gate_sealed`・`phase5_boss_gate_open`・`phase5_tablet`、ボス `phase5_boss_fight`・`phase5_boss_telegraph`・技の当たる所 `phase5_boss_sweep`・`phase5_boss_upthrust`・`phase5_boss_kick`・`phase5_boss_leap`・`phase5_boss_roots`（`phase5_boss_telegraph` は突進の通り道の線）・`phase5_boss_defeated`（倒した直後）・`phase5_boss_title`（初撃破の場面）・`phase5_boss_first_kill`（場面の後の初撃破の知らせ）、`phase5_return_gate`、`phase5_replay`、`phase5_floor1_aerial`。
 - 写真の途中で何もない画面になると、自動テストが先に始まって、終わるとゲームが閉じます。Phase 5 の写真の間は、画面が閉じたら何も描かない画面を開き直します（`keep_hold`）。
 - 2人でしか確かめられないこと（2人が同時・遅れてログインしたオープニング、石柱をパーティの仲間の分も数える、2人でのボス戦とHP）は、LANの2人の確かめでします。
 
 ## 7. マップ（街並みと1階）
 
 - 街並み：`python3 tools/mapgen/build_city.py`（`town/t<i>_<j>.nbt` 31区画）。施設の書くマスを避けて作り、施設より先に置きます。暗くて湧ける所は、見えない灯り（`minecraft:light`）で埋めます。`python3 tools/mapgen/check_city.py` で、街並みを入れた街全体を確かめます（城壁の中の地面・道・建物の中・広場に、暗くて湧ける所は0。道の真ん中の歩く高さに物はない。中央広場を囲む最初の1列は棟18まで。中央広場から行き帰りできない所は増えていない）。
-- 1階：`python3 tools/mapgen/build_floor1.py`（`map/floor1/p<i>_<j>.nbt` 64区画と `floors/floor1.json`）。ゲームの中では `/amemaru admin map build floor 1` で建てます。
+- 1階：`python3 tools/mapgen/build_floor1.py`（`map/floor1/p<i>_<j>.nbt` 64区画と `floors/floor1.json`）。ゲームの中では `/amemaru admin map build floor 1` で建てます。11月22日に作り直したので、前の1階を建てたワールドでは、建て直してください。`python3 tools/mapgen/check_floor1.py` で歩いて確かめます（上の「1階の中身を濃くしました」）。見本の絵は `python3 tools/mapgen/build_floor1.py /tmp/out --render /tmp/out`（西の丘・巻き道・洞・東の遺跡・広場・奥の院・林・結晶の窪み・2本目の小川の絵も描く）。
 - くわしくは `docs/map_style.md` の「街並み」「塔の1階」と、`tools/mapgen/README.md`。
 
 ## 8. 追加・変更したファイル
@@ -264,3 +292,8 @@ Phase 0-B 13章の「Phase 5で作るもの」（縦切り版：コネリア、1
 | `entity/GroundMarker.java`・`client/render/GroundMarkerRenderer.java`・`client/render/TelegraphDraw.java` | 予兆の印（離れた所の円）と、当たる所の形の描き方（11月22日） |
 | `client/render/NpcGeoModel.java`・`NpcRenderer.java`・`assets/amemaru/geo|animations|textures/entity/npc/` | NPCの立体のモデル（11月22日） |
 | `tools/artgen/npcgen.py`・`make_npc_models.py`・`npc_anims.py` | NPCのモデル・絵・動きを作る（11月22日） |
+| `tower/FloorGuardians.java`・`FloorGates.java`・`FloorThingBlockEntity.java`・`TowerSwitchBlock.java`・`TowerGateBlock.java`・`TowerChestBlock.java` | 石柱の守り手・仕掛け石と門・古代の宝箱（11月22日） |
+| `tower/FloorDef.java`・`TowerService.java`・`story/PlayerStory.java` | 石柱の課題・守り手・仕掛け石・宝箱・階の中だけのドロップの定義と処理、課題の印と開けた宝箱の記録（11月22日） |
+| `enemy/EnemyDef.java`（`model`）・`AmemaruMob.java`・`client/render/AmemaruMobRenderer.java` | 見た目を借りる個体と大きさ（群れの長。11月22日） |
+| `data/amemaru/amemaru/enemies/tsunomofu_alpha.json`・`loot_tables/chests/floor1_ancient.json` | 群れの長・古代の宝箱の中身（11月22日） |
+| `tools/mapgen/check_floor1.py`・`tools/artgen/make_floor_things.py` | 1階を歩いて確かめる・仕掛け石と格子と宝箱と光のかけらの絵（11月22日） |

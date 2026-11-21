@@ -542,10 +542,37 @@ public final class CiScreenshots {
             {"snap", null, "130", "phase5_floor1_entrance"},
             {"cmd", null, "100", "execute in amemaru:tower run tp @p {f1:184.5,24,252.5} 165 18"},
             {"snap", null, "40", "phase5_floor1_bridge"},
-            {"cmd", null, "80", "amemaru admin floor tp 1 pillar1 @p"},
+            // 11月22日に濃くした1階：西の丘（崖と巻き道と洞）・群れの長・石柱の課題・北西の林・東の遺跡（仕掛け石と門）・古代の宝箱
+            {"cmd", null, "80", "execute in amemaru:tower run tp @p {f1:112.5,15,262.5} 124 -8"},
+            {"snap", null, "60", "phase5_floor1_hill"},
+            {"cmd", null, "60", "execute in amemaru:tower run tp @p {f1:42.5,20,239.5} 150 0"},
+            {"snap", null, "40", "phase5_floor1_hill_path"},
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f1:80.5,14,232.5} 102 6"},
+            {"snap", null, "40", "phase5_floor1_cave"},
+            // 台地に上がると、群れの長が出る（人が40ブロックの中に来たら。1秒ごとに見る）
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f1:68.5,28,236.5} 143 8"},
+            {"snap", null, "70", "phase5_guardian"},
+            {"cmd", null, "10", "amemaru admin floor tp 1 pillar1 @p"},
+            {"p5_pillar_try", null, "20", "0"},
+            {"snap", null, "10", "phase5_pillar_hint"},
+            {"cmd", null, "10", "execute in amemaru:tower run kill @e[type=amemaru:tsunomofu,distance=..80]"},
+            {"cmd", null, "40", "amemaru admin floor tp 1 pillar1 @p"},
             {"p5_pillar", null, "20", "0"},
             {"snap", null, "10", "phase5_pillar_text"},
             {"snap", null, "70", "phase5_pillar_lit"},
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f1:112.5,17,104.5} 90 4"},
+            {"snap", null, "50", "phase5_floor1_woods"},
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f1:292.5,10,195.5} -90 -6"},
+            {"snap", null, "50", "phase5_floor1_ruins"},
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f1:297.5,10,179.5} 153 28"},
+            {"p5_switch", null, "15", "0"},
+            {"snap", null, "5", "phase5_ruins_switch"},
+            {"p5_switch", null, "10", "1"},
+            {"cmd", null, "10", "execute in amemaru:tower run tp @p {f1:306.5,10,195.5} -90 2"},
+            {"snap", null, "30", "phase5_ruins_gate_open"},
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f1:336.5,10,203.5} -90 32"},
+            {"p5_chest", null, "20", "2"},
+            {"snap", null, "10", "phase5_chest_open"},
             {"cmd", null, "80", "amemaru admin floor tp 1 boss @p"},
             {"snap", null, "40", "phase5_boss_gate_sealed"},
             {"cmd", null, "10", "amemaru admin pillars complete 1 @p"},
@@ -1933,7 +1960,7 @@ public final class CiScreenshots {
     private static boolean phase5Action(Minecraft minecraft, String[] shot, boolean first) {
         String kind = shot[0];
         if (!List.of("keep_hold", "p5_build_floor", "dialogue_end", "dialogue_choose", "dialogue_finish", "floor_select", "p5_pillar",
-                "p5_replay").contains(kind)) {
+                "p5_pillar_try", "p5_switch", "p5_chest", "p5_replay").contains(kind)) {
             return false;
         }
         if (!first) {
@@ -1971,13 +1998,44 @@ public final class CiScreenshots {
                 ModNetwork.sendToServer(new jp.amemaru.lostconnection.network.c2s.FloorSelectC2S(Integer.parseInt(shot[3])));
                 minecraft.setScreen(new HoldScreen());
             }
-            case "p5_pillar" -> {
+            case "p5_pillar", "p5_pillar_try" -> {
+                // p5_pillar_try：課題を終える前に触れる（手がかりが出る）。p5_pillar：課題を終えたことにしてから触れる（11月22日）
                 int index = Integer.parseInt(shot[3]);
+                boolean wake = kind.equals("p5_pillar");
                 CiPhase3.onServer(minecraft, player -> {
                     jp.amemaru.lostconnection.tower.FloorDef def = jp.amemaru.lostconnection.tower.FloorDefs.byNumber(1);
                     if (def != null && index < def.pillars().size()) {
+                        if (wake) {
+                            jp.amemaru.lostconnection.player.PlayerDataCapability.get(player)
+                                    .ifPresent(data -> data.getStory().wakePillar(1, index));
+                        }
                         jp.amemaru.lostconnection.tower.TowerService.activatePillar(player, 1, index,
                                 def.world(def.pillars().get(index).pos()));
+                    }
+                });
+            }
+            case "p5_switch" -> {
+                // 東の遺跡の仕掛け石を押す（11月22日）
+                int index = Integer.parseInt(shot[3]);
+                CiPhase3.onServer(minecraft, player -> {
+                    jp.amemaru.lostconnection.tower.FloorDef def = jp.amemaru.lostconnection.tower.FloorDefs.byNumber(1);
+                    if (def != null && !def.extras().switches().isEmpty()) {
+                        jp.amemaru.lostconnection.tower.FloorDef.SwitchGroup group = def.extras().switches().get(0);
+                        if (index < group.stones().size()) {
+                            jp.amemaru.lostconnection.tower.TowerService.pressSwitch(player, 1, group.id(), index,
+                                    def.world(group.stones().get(index)));
+                        }
+                    }
+                });
+            }
+            case "p5_chest" -> {
+                // 古代の宝箱を開ける（11月22日）
+                int index = Integer.parseInt(shot[3]);
+                CiPhase3.onServer(minecraft, player -> {
+                    jp.amemaru.lostconnection.tower.FloorDef def = jp.amemaru.lostconnection.tower.FloorDefs.byNumber(1);
+                    if (def != null && index < def.extras().chests().size()) {
+                        jp.amemaru.lostconnection.tower.TowerService.openChest(player, 1, index,
+                                def.world(def.extras().chests().get(index).pos()));
                     }
                 });
             }

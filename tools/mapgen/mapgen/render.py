@@ -180,6 +180,8 @@ def face_textures(name, props):
     if k == "flower":
         if name in ("grass", "fern"):
             return all6(_tinted(name, GRASS_TINT))
+        if name in ("tall_grass", "large_fern"):
+            return all6(_tinted(name + ("_top" if props.get("half") == "upper" else "_bottom"), GRASS_TINT))
         return all6(texture(name))
     if name.endswith("_log") or name.endswith("_wood") or name.endswith("_stem") or name.endswith("_hyphae"):
         base = name.replace("_wood", "_log").replace("_hyphae", "_stem")
@@ -206,6 +208,7 @@ def face_textures(name, props):
         "smooth_stone": lambda: all6(texture("smooth_stone")),
         "mud_bricks": lambda: all6(texture("mud_bricks")),
         "moss_block": lambda: all6(texture("moss_block")),
+        "podzol": lambda: [texture("podzol_side")] * 2 + [texture("podzol_top"), texture("dirt")] + [texture("podzol_side")] * 2,
         "campfire": lambda: all6(texture("campfire_log")),
         "flower_pot": lambda: all6(texture("flower_pot")),
         "lectern": lambda: [texture("lectern_sides")] * 2 + [texture("lectern_top"), texture("oak_planks")] + [texture("lectern_front")] * 2,

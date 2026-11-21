@@ -31,6 +31,7 @@ import net.minecraft.world.level.GameType;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
@@ -368,6 +369,7 @@ public final class StoryTowerGameTests {
         try {
             check(helper, !TowerService.pillarsComplete(player, 1) && !FloorSealBlock.canPass(player, 1), "石柱を起動する前に封印を通れます");
             for (int i = 0; i < def.pillars().size(); i++) {
+                data.getStory().wakePillar(1, i);         // 起動する前の課題（11月22日）は pillarRequirements で確かめる
                 TowerService.activatePillar(player, 1, i, def.world(def.pillars().get(i).pos()));
                 TowerService.activatePillar(player, 1, i, def.world(def.pillars().get(i).pos()));
                 boolean last = i == def.pillars().size() - 1;
@@ -515,6 +517,167 @@ public final class StoryTowerGameTests {
             int session = DialogueManager.sessionOf(player);
             if (session >= 0) {
                 DialogueManager.onChoice(player, session, -2);
+            }
+        }
+        helper.succeed();
+    }
+
+    // ---------------------------------------------------------------- 11月22日：1階の課題・仕掛け石と門・古代の宝箱
+
+    /** 1階の仕掛け（西の丘の守り手・石柱の課題・光のかけら・東の遺跡の仕掛け石と門・古代の宝箱10）の定義がそろっている。 */
+    @GameTest(template = EMPTY)
+    public static void floor1Extras(GameTestHelper helper) {
+        FloorDef def = FloorDefs.byNumber(1);
+        check(helper, def != null && def.bossRoom() != null && def.pillars().size() == 3, "1階の定義がありません");
+        FloorDef.Extras extras = def.extras();
+        Vec3 o = def.originVec();
+        FloorDef.Guardian guardian = extras.guardian("hill_alpha");
+        check(helper, guardian != null && guardian.pillar() == 0, "西の丘の守り手がありません");
+        check(helper, AmemaruMod.id("tsunomofu").equals(guardian.enemy()) && AmemaruMod.id("tsunomofu_alpha").equals(guardian.variant())
+                && jp.amemaru.lostconnection.enemy.EnemyDefs.get(guardian.variant()) != null, "守り手の敵が違います");
+        Vec3 guardianAt = def.world(guardian.pos());
+        check(helper, def.contains(guardianAt) && !def.bossRoom().inside(guardianAt, o), "守り手の出る所が違います");
+        FloorDef.Requirement hill = def.pillars().get(0).requires();
+        FloorDef.Requirement woods = def.pillars().get(2).requires();
+        check(helper, hill != null && FloorDef.Requirement.GUARDIAN.equals(hill.type()) && "hill_alpha".equals(hill.guardian())
+                && !hill.hint().isEmpty(), "西の丘の石柱の課題が違います");
+        check(helper, def.pillars().get(1).requires() == null, "東の遺跡の石柱は、課題なし（門が課題）のはずです");
+        check(helper, woods != null && FloorDef.Requirement.ITEMS.equals(woods.type()) && AmemaruMod.id("light_shard").equals(woods.item())
+                && woods.count() == 3 && !woods.hint().isEmpty(), "北西の林の石柱の課題が違います");
+        check(helper, ForgeRegistries.ITEMS.containsKey(AmemaruMod.id("light_shard")), "光のかけらの品がありません");
+        check(helper, extras.drops().size() == 1 && AmemaruMod.id("kakekiba_wolf").equals(extras.drops().get(0).enemy())
+                && AmemaruMod.id("light_shard").equals(extras.drops().get(0).item()) && extras.drops().get(0).pillar() == 2
+                && extras.drops().get(0).keep() == 3, "光のかけらのドロップが違います");
+        FloorDef.SwitchGroup group = extras.switchGroup("ruins");
+        check(helper, group != null && group.stones().size() == 2 && group.windowSeconds() >= 8 && group.openSeconds() >= 30,
+                "東の遺跡の仕掛け石が違います");
+        net.minecraft.core.BlockPos min = group.gateMin();
+        net.minecraft.core.BlockPos max = group.gateMax();
+        check(helper, (max.getX() - min.getX() + 1) * (max.getY() - min.getY() + 1) * (max.getZ() - min.getZ() + 1) >= 8, "門が小さすぎます");
+        double apart = Math.sqrt(group.stones().get(0).distSqr(group.stones().get(1)));
+        check(helper, apart >= 16.0 && apart <= 60.0, "2つの仕掛け石の間が違います：" + apart);
+        for (net.minecraft.core.BlockPos stone : group.stones()) {
+            check(helper, def.contains(Vec3.atBottomCenterOf(def.world(stone))), "仕掛け石が階の外です：" + stone);
+        }
+        check(helper, extras.chests().size() == 10, "古代の宝箱が10個ではありません：" + extras.chests().size());
+        ResourceLocation loot = AmemaruMod.id("chests/floor1_ancient");
+        check(helper, helper.getLevel().getServer().getLootData().getLootTable(loot) != net.minecraft.world.level.storage.loot.LootTable.EMPTY,
+                "宝箱の決まり（ルートテーブル）がありません");
+        for (FloorDef.ChestDef chest : extras.chests()) {
+            Vec3 at = Vec3.atBottomCenterOf(def.world(chest.pos()));
+            check(helper, def.contains(at) && !def.bossRoom().inside(at, o), "宝箱 " + (chest.index() + 1) + " の場所が違います");
+            check(helper, loot.equals(chest.lootTable()), "宝箱 " + (chest.index() + 1) + " の決まりが違います");
+        }
+        helper.succeed();
+    }
+
+    /**
+     * 石柱の課題：西の丘は守り手を倒す前・北西の林は光のかけらを3つ持つ前は起動できない。倒した人（とパーティ）には印がつき、
+     * かけらは使ってなくなる。東の遺跡は課題なし。石柱を戻すと、課題の印も消える。
+     */
+    @GameTest(template = EMPTY)
+    public static void pillarRequirements(GameTestHelper helper) {
+        FakePlayer player = fake(helper, "pillar_task");
+        PlayerData data = data(helper, player);
+        FloorDef def = FloorDefs.byNumber(1);
+        check(helper, def != null && def.pillars().size() == 3, "1階の石柱の定義がありません");
+        net.minecraft.world.item.Item shard = ForgeRegistries.ITEMS.getValue(AmemaruMod.id("light_shard"));
+        player.gameMode.changeGameModeForPlayer(GameType.SURVIVAL);
+        data.getStory().resetPillars(1);
+        player.getInventory().clearContent();
+        try {
+            TowerService.activatePillar(player, 1, 0, def.world(def.pillars().get(0).pos()));
+            check(helper, (data.getStory().pillars(1) & 1) == 0, "守り手を倒す前に、西の丘の石柱を起動できました");
+            jp.amemaru.lostconnection.enemy.AmemaruMob alpha =
+                    jp.amemaru.lostconnection.core.registry.ModEntities.TSUNOMOFU.get().create(helper.getLevel());
+            check(helper, alpha != null, "ツノモフを作れません");
+            alpha.setVariant(AmemaruMod.id("tsunomofu_alpha"));
+            alpha.setGuardian(1, "hill_alpha");
+            check(helper, alpha.def() != null && "群れの長".equals(alpha.def().name()) && alpha.def().behavior().getOrDefault("scale", 1.0) > 1.0,
+                    "群れの長の定義が使われていません");
+            TowerService.creditGuardian(alpha, List.of(player));
+            alpha.discard();
+            check(helper, data.getStory().pillarAwake(1, 0), "守り手を倒した印がつきません");
+            TowerService.activatePillar(player, 1, 0, def.world(def.pillars().get(0).pos()));
+            check(helper, (data.getStory().pillars(1) & 1) != 0, "守り手を倒した後に、西の丘の石柱を起動できません");
+            TowerService.activatePillar(player, 1, 1, def.world(def.pillars().get(1).pos()));
+            check(helper, (data.getStory().pillars(1) & 2) != 0, "東の遺跡の石柱（課題なし）を起動できません");
+            player.getInventory().add(new net.minecraft.world.item.ItemStack(shard, 2));
+            TowerService.activatePillar(player, 1, 2, def.world(def.pillars().get(2).pos()));
+            check(helper, (data.getStory().pillars(1) & 4) == 0 && player.getInventory().countItem(shard) == 2,
+                    "光のかけらが2つなのに、北西の林の石柱を起動したか、かけらが減りました");
+            player.getInventory().add(new net.minecraft.world.item.ItemStack(shard, 2));
+            TowerService.activatePillar(player, 1, 2, def.world(def.pillars().get(2).pos()));
+            check(helper, (data.getStory().pillars(1) & 4) != 0 && player.getInventory().countItem(shard) == 1,
+                    "光のかけら3つで起動しないか、使った数が違います：残り " + player.getInventory().countItem(shard));
+            check(helper, data.getStory().pillarAwake(1, 2) && TowerService.pillarsComplete(player, 1), "3本起動したのに封印を通れません");
+            data.getStory().resetPillars(1);
+            check(helper, !data.getStory().pillarAwake(1, 0) && !data.getStory().pillarAwake(1, 2), "石柱を戻しても、課題の印が残っています");
+        } finally {
+            data.getStory().resetPillars(1);
+            player.getInventory().clearContent();
+        }
+        helper.succeed();
+    }
+
+    /** 仕掛け石：決まった秒数のうちにすべて押すと門がひらき、決まった秒数で閉じる。押す間があきすぎると、ひらかない。 */
+    @GameTest(template = EMPTY)
+    public static void switchesOpenGate(GameTestHelper helper) {
+        check(helper, jp.amemaru.lostconnection.tower.FloorGates.litCount(new long[]{0, 0}, 100, 12) == 0, "押していない石を数えました");
+        check(helper, jp.amemaru.lostconnection.tower.FloorGates.litCount(new long[]{100, 0}, 300, 12) == 1, "押した石の数え方が違います");
+        check(helper, jp.amemaru.lostconnection.tower.FloorGates.litCount(new long[]{100, 300}, 300, 12) == 2, "秒数のうちの2つを数えません");
+        check(helper, jp.amemaru.lostconnection.tower.FloorGates.litCount(new long[]{100, 400}, 400, 12) == 1, "秒数の過ぎた石を数えました");
+        FloorDef def = FloorDefs.byNumber(1);
+        FloorDef.SwitchGroup group = def == null ? null : def.extras().switchGroup("ruins");
+        check(helper, group != null, "東の遺跡の仕掛け石の定義がありません");
+        jp.amemaru.lostconnection.tower.FloorGates gates = new jp.amemaru.lostconnection.tower.FloorGates(def);
+        FakePlayer player = fake(helper, "switch");
+        ServerLevel level = helper.getLevel();
+        long t = 1000;
+        gates.press(level, player, "ruins", 0, t);
+        check(helper, !gates.isOpen("ruins", t), "1つ押しただけで門がひらきました");
+        long late = t + 20L * (group.windowSeconds() + 2);
+        gates.press(level, player, "ruins", 1, late);
+        check(helper, !gates.isOpen("ruins", late), "押す間があきすぎたのに、門がひらきました");
+        long t2 = late + 20;
+        gates.press(level, player, "ruins", 0, t2);
+        check(helper, gates.isOpen("ruins", t2) && gates.isOpen("ruins", t2 + 20L * group.openSeconds() - 1),
+                "決まった秒数のうちに2つ押したのに、門がひらきません");
+        check(helper, !gates.isOpen("ruins", t2 + 20L * group.openSeconds() + 1), "門が決まった秒数で閉じません");
+        helper.succeed();
+    }
+
+    /** 古代の宝箱：人それぞれ1度だけ開けられる（2度目は何も出ない）。ほかの人は同じ宝箱を開けられる。数は保存して読み直しても同じ。 */
+    @GameTest(template = EMPTY)
+    public static void chestsPerPlayer(GameTestHelper helper) {
+        FakePlayer a = fake(helper, "chest_a");
+        FakePlayer b = fake(helper, "chest_b");
+        PlayerData da = data(helper, a);
+        PlayerData db = data(helper, b);
+        da.getStory().resetChests(1);
+        db.getStory().resetChests(1);
+        net.minecraft.core.BlockPos at = helper.absolutePos(new net.minecraft.core.BlockPos(1, 2, 1));
+        net.minecraft.world.phys.AABB around = new net.minecraft.world.phys.AABB(at).inflate(3.0);
+        ServerLevel level = helper.getLevel();
+        try {
+            int before = level.getEntitiesOfClass(jp.amemaru.lostconnection.loot.LootItemEntity.class, around).size();
+            TowerService.openChest(a, 1, 0, at);
+            int after = level.getEntitiesOfClass(jp.amemaru.lostconnection.loot.LootItemEntity.class, around).size();
+            check(helper, da.getStory().chestOpened(1, 0) && da.getStory().chestCount(1) == 1, "宝箱を開けた記録がつきません");
+            check(helper, after > before, "宝箱の中身が出ません");
+            TowerService.openChest(a, 1, 0, at);
+            int again = level.getEntitiesOfClass(jp.amemaru.lostconnection.loot.LootItemEntity.class, around).size();
+            check(helper, again == after && da.getStory().chestCount(1) == 1, "同じ人が同じ宝箱を2度開けられました");
+            TowerService.openChest(b, 1, 0, at);
+            check(helper, db.getStory().chestOpened(1, 0) && !db.getStory().chestOpened(1, 1), "ほかの人が同じ宝箱を開けられません");
+            PlayerStory loaded = new PlayerStory(() -> { });
+            loaded.load(da.getStory().save());
+            check(helper, loaded.chestOpened(1, 0) && loaded.chestCount(1) == 1 && !loaded.chestOpened(1, 1), "読み直した宝箱の記録が違います");
+        } finally {
+            da.getStory().resetChests(1);
+            db.getStory().resetChests(1);
+            for (jp.amemaru.lostconnection.loot.LootItemEntity item : level.getEntitiesOfClass(jp.amemaru.lostconnection.loot.LootItemEntity.class, around)) {
+                item.discard();
             }
         }
         helper.succeed();

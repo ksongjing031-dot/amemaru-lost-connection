@@ -83,6 +83,10 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
     /** 予兆の形のほかの数（扇形の開きの角度・帯の幅。0 は決まった形） */
     private static final EntityDataAccessor<Float> DATA_TELEGRAPH_ARG = SynchedEntityData.defineId(AmemaruMob.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Boolean> DATA_RETURNING = SynchedEntityData.defineId(AmemaruMob.class, EntityDataSerializers.BOOLEAN);
+    /** 同じ見た目の別の定義（強い個体）のID（クライアントの名前の表示に使う。11月22日） */
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(AmemaruMob.class, EntityDataSerializers.STRING);
+    /** 見た目と当たりの大きさ（定義の behavior の scale。11月22日） */
+    private static final EntityDataAccessor<Float> DATA_SCALE = SynchedEntityData.defineId(AmemaruMob.class, EntityDataSerializers.FLOAT);
 
     /** 倒れてから消えるまで（死ぬアニメーションの長さ）。 */
     private static final int DEATH_TICKS = 30;
@@ -122,6 +126,10 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
     private final Map<String, Long> cooldowns = new HashMap<>();
     /** 塔の階の湧く所やボスの部屋が出した敵（保存しない。人が離れて区画が閉じたら消え、また人が来たら出し直す。Phase 5）。 */
     private boolean transientMob;
+    /** 石柱の守り手なら、その階と名前（11月22日）。 */
+    private int guardianFloor;
+    @Nullable
+    private String guardianId;
     /** HPの倍率（ボスの人数補正。Phase 5）。 */
     private double hpMultiplier = 1.0;
 
@@ -158,6 +166,8 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
         entityData.define(DATA_TELEGRAPH_SIZE, 0.0F);
         entityData.define(DATA_TELEGRAPH_ARG, 0.0F);
         entityData.define(DATA_RETURNING, false);
+        entityData.define(DATA_VARIANT, "");
+        entityData.define(DATA_SCALE, 1.0F);
     }
 
     // ---------------------------------------------------------------- 定義と数値
@@ -227,6 +237,48 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
         entityData.set(DATA_HP, (float) Math.max(1.0, max * Math.max(0.0, Math.min(1.0, ratio))));
         getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(def.moveSpeed());
         getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(def.followRange());
+        entityData.set(DATA_VARIANT, variant == null ? "" : variant.toString());
+        entityData.set(DATA_SCALE, (float) Math.max(0.3, Math.min(4.0, def.behavior().getOrDefault("scale", 1.0))));
+    }
+
+    /** 同じ見た目の別の定義のID（なければ null。クライアントでも読める）。 */
+    @Nullable
+    public ResourceLocation variantId() {
+        String value = entityData.get(DATA_VARIANT);
+        return value.isEmpty() ? null : ResourceLocation.tryParse(value);
+    }
+
+    /** 見た目と当たりの大きさ（1 がふつう）。 */
+    public float modelScale() {
+        return entityData.get(DATA_SCALE);
+    }
+
+    @Override
+    public net.minecraft.world.entity.EntityDimensions getDimensions(net.minecraft.world.entity.Pose pose) {
+        return super.getDimensions(pose).scale(modelScale());
+    }
+
+    /** 石柱の守り手にする（11月22日）。 */
+    public void setGuardian(int floor, String id) {
+        guardianFloor = floor;
+        guardianId = id;
+    }
+
+    public int guardianFloor() {
+        return guardianFloor;
+    }
+
+    @Nullable
+    public String guardianId() {
+        return guardianId;
+    }
+
+    @Override
+    public void die(DamageSource source) {
+        super.die(source);
+        if (!level().isClientSide() && guardianId != null) {
+            jp.amemaru.lostconnection.tower.TowerService.onGuardianDied(this);
+        }
     }
 
     /** HPの倍率（ボスの人数補正）を変える。HPの割合は保つ。 */
@@ -567,6 +619,9 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
         super.onSyncedDataUpdated(key);
         if (DATA_TELEGRAPH.equals(key) && level().isClientSide()) {
             telegraphStartClient = level().getGameTime();
+        }
+        if (DATA_SCALE.equals(key)) {
+            refreshDimensions();
         }
     }
 
