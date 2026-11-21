@@ -31,7 +31,7 @@
     },
     "kick": {
       "power": 1.0,
-      "windup": 0.5,
+      "windup": 0.7,
       "cooldown": 6.0,
       "range": 4.5,
       "angle": 140,

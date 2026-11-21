@@ -118,7 +118,7 @@ public class Veldhorn extends AmemaruBoss {
     }
 
     private EnemyDef.Skill kickSkill() {
-        return skill("kick", 1.0, 0.5, 6.0, 4.5);
+        return skill("kick", 1.0, 0.7, 6.0, 4.5);
     }
 
     private EnemyDef.Skill chargeSkill() {

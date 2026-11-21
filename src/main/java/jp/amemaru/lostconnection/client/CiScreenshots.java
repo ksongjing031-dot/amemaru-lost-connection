@@ -584,7 +584,7 @@ public final class CiScreenshots {
             {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
             {"cmd", null, "2", "execute in amemaru:tower run tp @e[type=amemaru:veldhorn,limit=1] {f1:192.5,15,51.5} 0 0"},
             {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,47.5} 0 22"},
-            // 後ろ蹴りの予兆は0.5秒（10 tick）。すぐ撮る
+            // 後ろ蹴りの予兆は0.7秒（14 tick）。すぐ撮る
             {"cmd", null, "1", "amemaru admin boss skill 1 kick"},
             {"snap", null, "0", "phase5_boss_kick"},
             // 大跳躍の降りる円（12南。円は立っている所に出るので、下を向いて前の半分とボスを写す）
