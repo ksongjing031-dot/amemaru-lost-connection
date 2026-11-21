@@ -179,7 +179,7 @@ public final class StoryHud {
         int y = 28;
         for (ClientStory.ShownAnnouncement shown : list) {
             long age = Util.getMillis() - shown.start();
-            float a = Mth.clamp(Math.min(age / 300.0F, (7000 - age) / 800.0F), 0.0F, 1.0F);
+            float a = Mth.clamp(Math.min(age / 300.0F, (ClientStory.ANNOUNCE_MILLIS - age) / 800.0F), 0.0F, 1.0F);
             if (a <= 0.02F) {
                 continue;
             }

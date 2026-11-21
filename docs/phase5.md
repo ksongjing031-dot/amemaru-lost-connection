@@ -63,6 +63,7 @@ Phase 0-B 13章の「Phase 5で作るもの」（縦切り版：コネリア、1
 | ボスのHP | 1人のとき 3600。部屋に入った人数で1人増えるごとに +60%。部屋に入れる人数は決めていない（定義の目安は8人） |
 | また現れるまで | 倒してから2分 |
 | 初撃破 | 倒れたときに戦っている人がいれば、その人たちの名前で記録して全員に知らせる。戦っている人がいないまま倒れたとき（コマンドで消したなど）は記録しない |
+| 演出の間の知らせ | 演出の間はHUDを隠すので、その間に届いた知らせ（倒した人の初撃破の知らせなど）は、演出が終わってから7秒出す |
 | 戻る | 戻りの円・出口の円に2秒立つ（動くとやり直し） |
 | 家 | 2階＋屋根裏、平入りと妻入り。軒10か11（中央広場を囲む最初の1列は軒9・煙突なし・棟18まで）。1階は灰色の石、2階は木組みと漆喰、赤い瓦。窓に花箱と雨戸。入口の横に壁のランタン |
 | 城壁の上 | 見張りの通路で、プレイヤーは上がらない（上がる階段を作らない）。通路は灯りで照らす |
@@ -137,7 +138,7 @@ Phase 0-B 13章の「Phase 5で作るもの」（縦切り版：コネリア、1
 ## 6. 自動の確認
 
 - 自動テスト（GameTest）に7つ足しました（全部で80）：Phase 5 の定義（NPC5・会話11・ストーリーイベント4・手引き・進行日・1階）、1階の形（広さ・入口・石柱・湧く所・石板・ボスと出口の円は部屋の中・湧く所と石柱は部屋の外・封印の幅）、進行日と階の解放・予告・初撃破・加護と保存、本人の物語の記録（石柱・訪問・撃破・既読・演出・手引き）、条件（フラグ・オープニングの進み・進行日・職業）、**その人ごとのオープニング**（準備を待つ → 演出 → 目覚め → 会話 → 名簿 → 職業の画面。遅れて始めた人の演出は別で、ほかの人の知らせで終わらない。会話を閉じた人は2度目の目覚め）、石柱と封印。直しの書き出しの通しのテスト（`CityEditsGameTests`）は、街並みも入れて確かめます。
-- CIの写真（街の写真の後）：`city_houses`・`city_gate_south`・`city_warehouses`・`city_wall`（と夜の `city_houses_night`・`city_gate_south_night`）、`phase5_npc_guild`・`phase5_npc_bard`、オープニング `phase5_opening_wait`・`phase5_opening_voice`・`phase5_opening_awake`・`phase5_opening_lilia`、会話 `phase5_dialogue`・`phase5_dialogue_choices`・`phase5_dialogue_roster`、`phase5_job_screen`、`phase5_announce`、塔の門 `phase5_tower_gate`・`phase5_floor_select`、1階 `phase5_floor1_arrival`・`phase5_floor1_entrance`・`phase5_floor1_bridge`・`phase5_pillar_text`・`phase5_pillar_lit`・`phase5_boss_gate_sealed`・`phase5_boss_gate_open`・`phase5_tablet`、ボス `phase5_boss_fight`・`phase5_boss_telegraph`・`phase5_boss_first_kill`・`phase5_boss_title`、`phase5_return_gate`、`phase5_replay`、`phase5_floor1_aerial`。
+- CIの写真（街の写真の後）：`city_houses`・`city_gate_south`・`city_warehouses`・`city_wall`（と夜の `city_houses_night`・`city_gate_south_night`）、`phase5_npc_guild`・`phase5_npc_bard`、オープニング `phase5_opening_wait`・`phase5_opening_voice`・`phase5_opening_awake`・`phase5_opening_lilia`、会話 `phase5_dialogue`・`phase5_dialogue_choices`・`phase5_dialogue_roster`、`phase5_job_screen`、`phase5_announce`、塔の門 `phase5_tower_gate`・`phase5_floor_select`、1階 `phase5_floor1_arrival`・`phase5_floor1_entrance`・`phase5_floor1_bridge`・`phase5_pillar_text`・`phase5_pillar_lit`・`phase5_boss_gate_sealed`・`phase5_boss_gate_open`・`phase5_tablet`、ボス `phase5_boss_fight`・`phase5_boss_telegraph`・`phase5_boss_defeated`（倒した直後）・`phase5_boss_title`（初撃破の場面）・`phase5_boss_first_kill`（場面の後の初撃破の知らせ）、`phase5_return_gate`、`phase5_replay`、`phase5_floor1_aerial`。
 - 写真の途中で何もない画面になると、自動テストが先に始まって、終わるとゲームが閉じます。Phase 5 の写真の間は、画面が閉じたら何も描かない画面を開き直します（`keep_hold`）。
 - 2人でしか確かめられないこと（2人が同時・遅れてログインしたオープニング、石柱をパーティの仲間の分も数える、2人でのボス戦とHP）は、LANの2人の確かめでします。
 

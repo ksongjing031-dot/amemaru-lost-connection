@@ -40,9 +40,15 @@ public final class ClientStory {
         }
     }
 
-    /** 知らせ（帯）。 */
+    /**
+     * 知らせ（帯）。{@code start} は初めて画面に出た時刻（まだ出ていなければ −1）。演出の間はHUDを隠すので、演出の間に届いた知らせ
+     * （ボスを倒した人の、初撃破の知らせなど）は、演出が終わって画面に出たときから数える。
+     */
     public record ShownAnnouncement(AnnouncementS2C.Kind kind, String text, long start) {
     }
+
+    /** 知らせを出しておく長さ */
+    public static final long ANNOUNCE_MILLIS = 7000L;
 
     private static final Deque<ShownText> TEXTS = new ArrayDeque<>();
     private static final Deque<ShownAnnouncement> ANNOUNCEMENTS = new ArrayDeque<>();
@@ -91,7 +97,7 @@ public final class ClientStory {
     }
 
     public static void announce(AnnouncementS2C message) {
-        ANNOUNCEMENTS.add(new ShownAnnouncement(message.kind(), message.text(), Util.getMillis()));
+        ANNOUNCEMENTS.add(new ShownAnnouncement(message.kind(), message.text(), -1L));
         while (ANNOUNCEMENTS.size() > 3) {
             ANNOUNCEMENTS.pollFirst();
         }
@@ -152,9 +158,19 @@ public final class ClientStory {
         return new ArrayList<>(TEXTS);
     }
 
+    /** 画面に出す知らせ。HUDを描くときだけ呼ぶ（まだ出ていなかった知らせは、ここで出た時刻を入れる）。 */
     public static List<ShownAnnouncement> announcements() {
-        ANNOUNCEMENTS.removeIf(a -> Util.getMillis() - a.start() > 7000L);
-        return new ArrayList<>(ANNOUNCEMENTS);
+        long now = Util.getMillis();
+        List<ShownAnnouncement> list = new ArrayList<>();
+        for (ShownAnnouncement shown : ANNOUNCEMENTS) {
+            ShownAnnouncement started = shown.start() < 0 ? new ShownAnnouncement(shown.kind(), shown.text(), now) : shown;
+            if (now - started.start() <= ANNOUNCE_MILLIS) {
+                list.add(started);
+            }
+        }
+        ANNOUNCEMENTS.clear();
+        ANNOUNCEMENTS.addAll(list);
+        return list;
     }
 
     /** ワールドを出たとき：本人の物語の様子を消す（次に入るワールドで混ざらないように）。 */

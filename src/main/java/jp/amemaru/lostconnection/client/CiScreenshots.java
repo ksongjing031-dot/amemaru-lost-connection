@@ -551,12 +551,13 @@ public final class CiScreenshots {
             {"await_telegraph", null, "0"},
             {"snap", null, "4", "phase5_boss_telegraph"},
             // 戦っている人のまま（アドベンチャー。クリエイティブにすると戦いから外れる）倒す。
-            // 倒してすぐ：ボスの名前の大きな字（下に出口の円の知らせ）・初撃破の知らせ・チャット。そのあと初撃破の場面（50 tick 待って白く光り、125〜215 tick に
-            // 「始まりの草原　踏破」、215〜295 tick に字幕）
+            // 倒してすぐ：ボスの名前の大きな字（下に出口の円の知らせ）。初撃破の場面がHUDを隠す（50 tick 待って白く光り、125〜215 tick に
+            // 「始まりの草原　踏破」、215〜295 tick に字幕）。場面が終わると、初撃破の知らせの帯が出る（演出の間に届いた知らせは、演出の後に出す）
             {"cmd", null, "5", "kill @e[type=amemaru:veldhorn]"},
-            {"snap_keep", null, "30", "phase5_boss_first_kill"},
+            {"snap_keep", null, "30", "phase5_boss_defeated"},
             {"snap_keep", null, "120", "phase5_boss_title"},
             {"await_idle", null, "0"},
+            {"snap_keep", null, "15", "phase5_boss_first_kill"},
             {"cmd", null, "10", "execute in amemaru:tower run tp @p {f1:192.5,15,38.5} 180 10"},
             {"snap", null, "70", "phase5_return_gate"},
             {"p5_replay", null, "20"},
