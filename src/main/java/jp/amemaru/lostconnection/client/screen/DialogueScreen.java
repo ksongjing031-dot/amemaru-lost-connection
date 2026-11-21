@@ -404,7 +404,10 @@ public class DialogueScreen extends Screen {
         }
         int scale = Mth.clamp(height / 4, 46, 76);
         int x = box[0] + 44;
-        int y = box[1] + (int) (scale * 1.35F);
+        // 枠の下のふちに来る高さ（NPCの定義の portrait_y。立体のモデルは人ごとに頭の高さが違うので、あごの少し下で切る）
+        jp.amemaru.lostconnection.npc.NpcDef def = NpcDefs.client(portrait.npcId());
+        float cut = def != null ? def.portraitY() : 1.35F;
+        int y = box[1] + (int) (scale * cut);
         Quaternionf pose = new Quaternionf().rotateZ((float) Math.PI);
         Quaternionf camera = new Quaternionf().rotateX(-4.0F * ((float) Math.PI / 180F));
         pose.mul(camera);

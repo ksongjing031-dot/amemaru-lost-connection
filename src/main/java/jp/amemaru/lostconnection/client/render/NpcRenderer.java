@@ -17,7 +17,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * NPCの見た目（Phase 0-B 12章「NPC：プレイヤーと同じ形のスキン」）。腕の細いスキンと太いスキンの2つの形を持ち、NPCの定義で選ぶ。
+ * NPCの見た目。定義に立体のモデル（{@code model}）があれば GeckoLib のモデルで描く（11月22日のご指示「キャラクターに凹凸をつけて
+ * 立体的にする」。{@link NpcGeoModel}）。なければ、プレイヤーと同じ形のスキン（Phase 0-B 12章。腕の細いスキンと太いスキン）。
  * 頭の上に、名前と肩書き（「冒険者ギルドの受付」など）を出す。表情（{@link NpcEntity#expression()}）で顔の絵を差し替える。
  */
 public class NpcRenderer extends EntityRenderer<NpcEntity> {
@@ -25,11 +26,13 @@ public class NpcRenderer extends EntityRenderer<NpcEntity> {
 
     private final Inner wide;
     private final Inner slim;
+    private final Geo geo;
 
     public NpcRenderer(EntityRendererProvider.Context context) {
         super(context);
         wide = new Inner(context, false);
         slim = new Inner(context, true);
+        geo = new Geo(context);
         shadowRadius = 0.5F;
     }
 
@@ -40,7 +43,22 @@ public class NpcRenderer extends EntityRenderer<NpcEntity> {
 
     @Override
     public void render(NpcEntity entity, float yaw, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        NpcDef def = NpcDefs.client(entity.npcId());
+        if (def != null && def.model() != null) {
+            float s = def.modelScale();
+            poseStack.pushPose();
+            poseStack.scale(s, s, s);
+            geo.render(entity, yaw, partialTick, poseStack, buffer, packedLight);
+            poseStack.popPose();
+            return;
+        }
         inner(entity).render(entity, yaw, partialTick, poseStack, buffer, packedLight);
+    }
+
+    /** 名前を出すか（役者と、遠いNPCには出さない）。 */
+    static boolean showName(NpcEntity entity) {
+        return entity.getId() >= 0 && NpcDefs.client(entity.npcId()) != null
+                && entity.distanceToSqr(Minecraft.getInstance().gameRenderer.getMainCamera().getPosition()) < 20 * 20;
     }
 
     @Override
@@ -54,6 +72,37 @@ public class NpcRenderer extends EntityRenderer<NpcEntity> {
             return FALLBACK;
         }
         return def.skinFor(entity.expression());
+    }
+
+    /** 立体のモデルの描き手（GeckoLib）。名前と肩書きは、スキンのときと同じに出す。 */
+    private static final class Geo extends software.bernie.geckolib.renderer.GeoEntityRenderer<NpcEntity> {
+        Geo(EntityRendererProvider.Context context) {
+            super(context, new NpcGeoModel());
+            shadowRadius = 0.5F;
+        }
+
+        @Override
+        public boolean shouldShowName(NpcEntity entity) {
+            return showName(entity);
+        }
+
+        @Override
+        protected void renderNameTag(NpcEntity entity, Component name, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+            NpcDef def = NpcDefs.client(entity.npcId());
+            if (def == null) {
+                return;
+            }
+            // モデルは大きさを変えて描いているので、名前は元の大きさに戻してから出す
+            float s = 1.0F / Math.max(0.25F, def.modelScale());
+            poseStack.pushPose();
+            poseStack.scale(s, s, s);
+            super.renderNameTag(entity, Component.literal(def.name()).withStyle(ChatFormatting.WHITE), poseStack, buffer, packedLight);
+            if (!def.title().isEmpty()) {
+                poseStack.translate(0.0, 0.26, 0.0);
+                super.renderNameTag(entity, Component.literal(def.title()).withStyle(ChatFormatting.AQUA), poseStack, buffer, packedLight);
+            }
+            poseStack.popPose();
+        }
     }
 
     /** 形（腕の太さ）ごとの描き手。 */
@@ -70,8 +119,7 @@ public class NpcRenderer extends EntityRenderer<NpcEntity> {
         @Override
         protected boolean shouldShowName(NpcEntity entity) {
             // 役者（クライアントだけのNPC）と、遠いNPCには名前を出さない
-            return entity.getId() >= 0 && NpcDefs.client(entity.npcId()) != null
-                    && entity.distanceToSqr(Minecraft.getInstance().gameRenderer.getMainCamera().getPosition()) < 20 * 20;
+            return showName(entity);
         }
 
         @Override

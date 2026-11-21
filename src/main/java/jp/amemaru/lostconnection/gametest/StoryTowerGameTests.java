@@ -416,6 +416,44 @@ public final class StoryTowerGameTests {
         });
     }
 
+    /**
+     * 11月22日：街のNPCは凹凸のある立体のモデル。5人とも、モデル・動き（idle と walk）・絵（表情の差分も）がjarに入っていて、
+     * モデルに頭とまぶたの骨がある（頭は見ている人を向き、まぶたでまばたきする）。
+     */
+    @GameTest(template = EMPTY)
+    public static void npcModelsPresent(GameTestHelper helper) {
+        for (jp.amemaru.lostconnection.npc.NpcDef def : NpcDefs.all().values()) {
+            check(helper, def.model() != null, def.name() + " に立体のモデル（model）がありません");
+            String ns = def.model().getNamespace();
+            String path = def.model().getPath();
+            String name = path.substring(path.lastIndexOf('/') + 1);
+            String geo = read("/assets/" + ns + "/geo/entity/" + path + ".geo.json");
+            check(helper, geo != null && geo.contains("\"name\": \"head\"") && geo.contains("\"name\": \"eyelids\""),
+                    def.name() + " のモデルがないか、頭・まぶたの骨がありません");
+            String anim = read("/assets/" + ns + "/animations/entity/" + path + ".animation.json");
+            check(helper, anim != null && anim.contains("animation.npc_" + name + ".idle") && anim.contains("animation.npc_" + name + ".walk"),
+                    def.name() + " の動き（idle・walk）がありません");
+            check(helper, read("/assets/" + def.skin().getNamespace() + "/" + def.skin().getPath()) != null, def.name() + " の絵がありません");
+            for (String expression : def.expressions()) {
+                ResourceLocation tex = def.skinFor(expression);
+                check(helper, read("/assets/" + tex.getNamespace() + "/" + tex.getPath()) != null,
+                        def.name() + " の表情「" + expression + "」の絵がありません");
+            }
+            check(helper, def.modelScale() > 0.5F && def.modelScale() < 1.5F && def.portraitY() > 0.8F && def.portraitY() < 1.8F,
+                    def.name() + " のモデルの大きさか、会話の顔の高さがおかしいです");
+        }
+        helper.succeed();
+    }
+
+    @javax.annotation.Nullable
+    private static String read(String resource) {
+        try (java.io.InputStream in = StoryTowerGameTests.class.getResourceAsStream(resource)) {
+            return in == null ? null : new String(in.readAllBytes(), StandardCharsets.UTF_8);
+        } catch (java.io.IOException e) {
+            return null;
+        }
+    }
+
     // ---------------------------------------------------------------- 小物
 
     private record BlockPosBox(net.minecraft.core.BlockPos min, net.minecraft.core.BlockPos max) {

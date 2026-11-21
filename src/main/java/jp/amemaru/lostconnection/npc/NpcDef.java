@@ -20,13 +20,19 @@ import java.util.List;
  *   <li>{@code skin}：見た目（プレイヤーと同じ形のスキン。{@code textures/entity/npc/<名前>.png}。Phase 0-B 12章）。
  *       表情の差分は同じ名前の後ろに {@code _<表情>} を付けた絵（{@code lilia_smile.png} など）</li>
  *   <li>{@code slim}：腕の細いスキンか</li>
+ *   <li>{@code model}：立体のモデル（11月22日のご指示「キャラクターに凹凸をつけて立体的にする」）。{@code amemaru:npc/lilia} なら
+ *       {@code geo/entity/npc/lilia.geo.json} と {@code animations/entity/npc/lilia.animation.json}。絵は {@code skin}（表情の差分も同じ）。
+ *       ないときは、プレイヤーと同じ形のスキンで描く</li>
+ *   <li>{@code model_scale}：モデルの大きさ（初期値 0.9375。プレイヤーと同じ）・{@code portrait_y}：会話の顔の枠の下のふちに来る高さ
+ *       （ブロック。初期値 1.35）</li>
  *   <li>{@code home}：立つ所。{@code place} が {@code conelia} なら、中央広場の真ん中（大結晶の場所。道の高さ）からの位置。
  *       街を建てたときに、ここに置く</li>
  *   <li>{@code roles}：役割（{@code job_registration}＝職業の登録の窓口、{@code tower_gate}＝塔の門番 など）</li>
  * </ul>
  */
 public record NpcDef(ResourceLocation id, String name, String title, ResourceLocation skin, boolean slim, List<String> expressions,
-                     @Nullable Home home, List<String> roles, double talkRange) {
+                     @Nullable Home home, List<String> roles, double talkRange, @Nullable ResourceLocation model, float modelScale,
+                     float portraitY) {
     /** 立つ所。 */
     public record Home(String place, Vec3 pos, float yaw) {
     }
@@ -73,8 +79,12 @@ public record NpcDef(ResourceLocation id, String name, String title, ResourceLoc
         for (int i = 0; i < roleArray.size(); i++) {
             roles.add(Json.asString(roleArray.get(i), "roles"));
         }
+        String modelText = Json.optionalString(json, "model", "");
+        ResourceLocation model = modelText.isEmpty() ? null : Json.parseId(modelText, "model");
         return new NpcDef(id, name, title, skin, slim, List.copyOf(expressions), home, List.copyOf(roles),
-                Json.optionalDouble(json, "talk_range", 5.0, 1.0, 32.0));
+                Json.optionalDouble(json, "talk_range", 5.0, 1.0, 32.0), model,
+                (float) Json.optionalDouble(json, "model_scale", 0.9375, 0.25, 4.0),
+                (float) Json.optionalDouble(json, "portrait_y", 1.35, 0.0, 4.0));
     }
 
     // ---------------------------------------------------------------- クライアントへ（見た目に要る分だけ）
@@ -89,6 +99,12 @@ public record NpcDef(ResourceLocation id, String name, String title, ResourceLoc
         for (String e : expressions) {
             buf.writeUtf(e, 32);
         }
+        buf.writeBoolean(model != null);
+        if (model != null) {
+            buf.writeResourceLocation(model);
+        }
+        buf.writeFloat(modelScale);
+        buf.writeFloat(portraitY);
     }
 
     public static NpcDef read(FriendlyByteBuf buf) {
@@ -102,6 +118,9 @@ public record NpcDef(ResourceLocation id, String name, String title, ResourceLoc
         for (int i = 0; i < n; i++) {
             expressions.add(buf.readUtf(32));
         }
-        return new NpcDef(id, name, title, skin, slim, List.copyOf(expressions), null, List.of(), 5.0);
+        ResourceLocation model = buf.readBoolean() ? buf.readResourceLocation() : null;
+        float modelScale = buf.readFloat();
+        float portraitY = buf.readFloat();
+        return new NpcDef(id, name, title, skin, slim, List.copyOf(expressions), null, List.of(), 5.0, model, modelScale, portraitY);
     }
 }

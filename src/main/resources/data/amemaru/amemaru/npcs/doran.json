@@ -1,9 +1,12 @@
 {
-  "_comment": "ドラン・ベルク（Phase 0-A 8章）。武器職人。立つ所は武器工房の店のカウンターの奥（赤い敷物の先。入口を向く）",
+  "_comment": "ドラン・ベルク（Phase 0-A 8章）。武器職人。立つ所は武器工房の店のカウンターの奥（赤い敷物の先。入口を向く）。11月22日から、凹凸のある立体のモデル（model）で描く（tools/artgen/make_npc_models.py）",
   "name": "ドラン",
   "title": "武器工房の親方",
   "skin": "amemaru:textures/entity/npc/doran.png",
   "slim": false,
+  "model": "amemaru:npc/doran",
+  "model_scale": 1.0,
+  "portrait_y": 1.32,
   "expressions": ["grin"],
   "home": {
     "place": "conelia",

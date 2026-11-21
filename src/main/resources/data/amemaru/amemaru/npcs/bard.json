@@ -1,9 +1,12 @@
 {
-  "_comment": "門番バルド（Phase 0-A 8章）。塔の門番。第七次遠征の数少ない生き残りで、ガルドの元部下。無口。立つ所は塔の入口の広間、書見台の東（転移の円の台を向く）",
+  "_comment": "門番バルド（Phase 0-A 8章）。塔の門番。第七次遠征の数少ない生き残りで、ガルドの元部下。無口。立つ所は塔の入口の広間、書見台の東（転移の円の台を向く）。11月22日から、凹凸のある立体のモデル（model）で描く（tools/artgen/make_npc_models.py）",
   "name": "バルド",
   "title": "塔の門番",
   "skin": "amemaru:textures/entity/npc/bard.png",
   "slim": false,
+  "model": "amemaru:npc/bard",
+  "model_scale": 0.9375,
+  "portrait_y": 1.29,
   "expressions": [],
   "home": {
     "place": "conelia",

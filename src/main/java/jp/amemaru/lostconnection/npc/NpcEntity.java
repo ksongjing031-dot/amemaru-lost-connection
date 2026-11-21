@@ -24,6 +24,15 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 
+import software.bernie.geckolib.animatable.GeoEntity;
+import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
+import software.bernie.geckolib.core.animation.AnimatableManager;
+import software.bernie.geckolib.core.animation.AnimationController;
+import software.bernie.geckolib.core.animation.AnimationState;
+import software.bernie.geckolib.core.animation.RawAnimation;
+import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.GeckoLibUtil;
+
 import javax.annotation.Nullable;
 
 /**
@@ -32,11 +41,12 @@ import javax.annotation.Nullable;
  * <ul>
  *   <li>右クリックで話す（{@link DialogueManager}）。話している間は、話している人の方を向く</li>
  *   <li>ダメージを受けない（{@code /kill} だけは効く）。押されない。重力がなく、立つ所から動かない</li>
- *   <li>見た目はプレイヤーと同じ形のスキン（{@link NpcDef#skin()}）。表情（{@code expression}）で顔の絵を差し替える</li>
+ *   <li>見た目は、凹凸のある立体のモデル（{@link NpcDef#model()}。GeckoLib。11月22日から）か、プレイヤーと同じ形のスキン
+ *       （{@link NpcDef#skin()}）。表情（{@code expression}）で顔の絵を差し替える。モデルは息・まばたき・髪とマントの揺れ・歩く動き</li>
  *   <li>オープニングなど、本人の画面だけの演出では、クライアントだけにいる「役者」として同じクラスを使う</li>
  * </ul>
  */
-public class NpcEntity extends PathfinderMob {
+public class NpcEntity extends PathfinderMob implements GeoEntity {
     private static final EntityDataAccessor<String> DATA_NPC = SynchedEntityData.defineId(NpcEntity.class, EntityDataSerializers.STRING);
     private static final EntityDataAccessor<String> DATA_EXPRESSION = SynchedEntityData.defineId(NpcEntity.class,
             EntityDataSerializers.STRING);
@@ -48,6 +58,14 @@ public class NpcEntity extends PathfinderMob {
     @Nullable
     private Vec3 home;
     private float homeYaw;
+    private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
+    /** モデルの動き（モデルの名前ごと。最初に使うときに作る） */
+    @Nullable
+    private String animName;
+    @Nullable
+    private RawAnimation animIdle;
+    @Nullable
+    private RawAnimation animWalk;
 
     public NpcEntity(EntityType<? extends NpcEntity> type, Level level) {
         super(type, level);
@@ -229,5 +247,32 @@ public class NpcEntity extends PathfinderMob {
             home = new Vec3(own.getDouble("hx"), own.getDouble("hy"), own.getDouble("hz"));
             homeYaw = own.getFloat("hyaw");
         }
+    }
+
+    // ---------------------------------------------------------------- 立体のモデルの動き（GeckoLib。クライアントで使う）
+
+    @Override
+    public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
+        controllers.add(new AnimationController<>(this, "main", 5, this::mainAnimation));
+    }
+
+    private PlayState mainAnimation(AnimationState<NpcEntity> state) {
+        NpcDef def = NpcDefs.client(npcId());
+        if (def == null || def.model() == null) {
+            return PlayState.STOP;
+        }
+        String path = def.model().getPath();
+        String name = path.substring(path.lastIndexOf('/') + 1);
+        if (!name.equals(animName)) {
+            animName = name;
+            animIdle = RawAnimation.begin().thenLoop("animation.npc_" + name + ".idle");
+            animWalk = RawAnimation.begin().thenLoop("animation.npc_" + name + ".walk");
+        }
+        return state.setAndContinue(state.isMoving() ? animWalk : animIdle);
+    }
+
+    @Override
+    public AnimatableInstanceCache getAnimatableInstanceCache() {
+        return geoCache;
     }
 }

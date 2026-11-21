@@ -500,6 +500,11 @@ public final class CiScreenshots {
             {"snap", null, "40", "phase5_npc_guild"},
             {"cmd", null, "80", "tp @p {at:7.5,4,-164.5} -90 4"},
             {"snap", null, "40", "phase5_npc_bard"},
+            // 11月22日：立体のモデルになったNPC（教会のセレナ・武器工房のドラン）
+            {"cmd", null, "80", "tp @p {at:-95.0,4,0.5} 90 4"},
+            {"snap", null, "40", "phase5_npc_serena"},
+            {"cmd", null, "80", "tp @p {at:88.5,2,-12.5} 180 6"},
+            {"snap", null, "40", "phase5_npc_doran"},
             {"cmd", null, "10", "gamemode adventure @p"},
             {"cmd", null, "1", "amemaru admin story opening start @p"},
             // 準備を待っている間（真っ暗に「……」）。まわりが届いてから30 tick 待って始まるので、その間に撮る

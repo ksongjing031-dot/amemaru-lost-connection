@@ -1,5 +1,9 @@
 """AMEMARU: LOST CONNECTION の Phase 5 のNPCの見た目（プレイヤーと同じ形の 64×64 のスキン）を作る。
 
+※ 11月22日から、5人のNPCは凹凸のある立体のモデル（tools/artgen/make_npc_models.py）で描く。このスクリプトは同じ名前の絵
+  （textures/entity/npc/<名前>.png）を書くので、そのまま動かすと立体のモデルの絵が消える。プレイヤーと同じ形のスキンの作り方の
+  見本として残している（使うときは、出す所を変えること）。
+
 使い方: python3 tools/artgen/make_npc_skins.py [assets/amemaru のフォルダ] [--preview 出力.png]
 
 作るもの：textures/entity/npc/<名前>.png と、表情の差分 <名前>_<表情>.png（顔の正面だけが違う）
