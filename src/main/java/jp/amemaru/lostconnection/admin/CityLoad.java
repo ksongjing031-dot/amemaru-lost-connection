@@ -1,6 +1,7 @@
 package jp.amemaru.lostconnection.admin;
 
 import jp.amemaru.lostconnection.AmemaruMod;
+import net.minecraft.Util;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -29,6 +30,12 @@ public final class CityLoad {
     /** 範囲を読み込んだままにする札（30秒。建てたあとの光の計算の間も読み込んだままにする） */
     static final TicketType<ChunkPos> TICKET = TicketType.create("amemaru_city", Comparator.comparingLong(ChunkPos::toLong), 20 * 30);
     private static final int MAX_WAIT_TICKS = 20 * 30;
+    /**
+     * あきらめるまでの、時計の上の時間の下限。自動テストのサーバーは、待つものがないと1秒に20 tick より速く進むので、tick だけで
+     * 数えると「もの」の読み込み（別のスレッド）が間に合わないうちにあきらめてしまう（CIで1度あった）。ふつうのサーバーは
+     * 600 tick がちょうど30秒なので、これまでと変わらない。
+     */
+    private static final long MIN_WAIT_MILLIS = 30_000L;
     private static final List<Job> JOBS = new ArrayList<>();
 
     private static final class Job {
@@ -36,6 +43,7 @@ public final class CityLoad {
         final List<BlockPos> origins;
         final CommandSourceStack source;
         final Runnable run;
+        final long started = Util.getMillis();
         int waited;
 
         Job(ServerLevel level, List<BlockPos> origins, CommandSourceStack source, Runnable run) {
@@ -98,7 +106,7 @@ public final class CityLoad {
                 it.remove();
                 ready.add(job);
                 AmemaruMod.LOGGER.info("[amemaru][city] city chunks and entities loaded after {} ticks", job.waited);
-            } else if (++job.waited > MAX_WAIT_TICKS) {
+            } else if (++job.waited > MAX_WAIT_TICKS && Util.getMillis() - job.started > MIN_WAIT_MILLIS) {
                 it.remove();
                 AmemaruMod.LOGGER.warn("[amemaru][city] city chunks or entities not loaded after {} ticks", MAX_WAIT_TICKS);
                 job.source.sendFailure(Component.translatable("commands.amemaru.city.load_timeout"));
