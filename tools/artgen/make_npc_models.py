@@ -37,8 +37,16 @@ def vshade(ctx, c, top=0.05, bottom=0.10):
     return shade(c, 1.0 + top * (1 - t) - bottom * t)
 
 
+def name_seed(name):
+    """部品の名前から決まる数（FNV-1a）。何度作り直しても同じ絵になるように、メモリの番地（id）は使わない。"""
+    h = 2166136261
+    for byte in str(name).encode("utf-8"):
+        h = ((h ^ byte) * 16777619) & 0xFFFFFFFF
+    return h & 0xFFFF
+
+
 def grain(ctx, c, amount=0.05, salt=0):
-    n = hash01(ctx.i, ctx.j, id(ctx.el) & 0xFFFF, salt) - 0.5
+    n = hash01(ctx.i, ctx.j, name_seed(ctx.el.name), salt) - 0.5
     return shade(c, 1.0 + n * 2 * amount)
 
 
@@ -78,7 +86,7 @@ LILIA_PAL = {
 
 LILIA_FACE_PAL = {
     "L": hexc("3B2418"), "H": hexc("FFFFFF"), "a": hexc("2F6E45"), "b": hexc("4E9A5E"), "c": hexc("8CCB7E"),
-    "p": hexc("17301F"), "w": hexc("FDFDFB"), "B": hexc("8E5534"), "m": hexc("B45E62"), "M": hexc("E08B8E"),
+    "p": hexc("17301F"), "w": hexc("FDFDFB"), "B": hexc("A86A42"), "m": hexc("B45E62"), "M": hexc("E08B8E"),
 }
 
 LILIA_EYES = {
@@ -194,7 +202,7 @@ def lilia():
 
     P = LILIA_PAL
     face = FaceDesign(18, 18, P["skin"], LILIA_FACE_PAL, eye_row=9, eye_col=3, eyes=LILIA_EYES, mouths=LILIA_MOUTHS,
-                      brows=LILIA_BROWS, mouth_row=15, brow_row=7, blush=(P["blush"], 14, (2, 3)))
+                      brows=LILIA_BROWS, mouth_row=15, brow_row=6, blush=(P["blush"], 14, (2, 3)))
 
     def painter(expr):
         def paint(ctx):
@@ -203,7 +211,7 @@ def lilia():
             y = ctx.p[1]
             if m == "head":
                 if d == "front":
-                    if ctx.j <= 6:
+                    if ctx.j <= 5:
                         return rgba(hair_color(ctx, P, 3))
                     c = face.pixel(ctx.i, ctx.j, expr)
                     return rgba(c if c is not None else vshade(ctx, P["skin"], 0.0, 0.06))
@@ -457,7 +465,7 @@ def serena():
 
     P = SERENA_PAL
     face = FaceDesign(18, 18, P["skin"], SERENA_FACE_PAL, eye_row=9, eye_col=3, eyes=SERENA_EYES, mouths=SERENA_MOUTHS,
-                      brows=SERENA_BROWS, mouth_row=15, brow_row=7, blush=(P["blush"], 14, (2,)))
+                      brows=SERENA_BROWS, mouth_row=15, brow_row=6, blush=(P["blush"], 14, (2,)))
 
     def painter(expr):
         def paint(ctx):

@@ -43,6 +43,11 @@ Phase 0-B 13章の「Phase 5で作るもの」（縦切り版：コネリア、1
 | 民間の家は内装を作らない（入れない） | 11月21日のご指示 |
 | オープニングは一人ひとりの画面で、遅れて入っても弊害がないように | 11月21日のご指示 |
 | 塔の灯り（ひらいた階だけ灯る）と札 | 建築の文書 PHASE 11（11月20日に決定） |
+| ダウン中のリタイア（決めたキーを何秒か押し続けると、30秒待たずに教会で復活） | 11月22日のご指示 |
+| 雑魚の湧きを増やす | 11月22日のご指示 |
+| ボスの通常攻撃にも当たる所を出す・突進を速く・攻撃の種類を増やす | 11月22日のご指示 |
+| NPCを凹凸のある立体のモデルに（女性はかわいらしく、男性はかっこよく。既存のModのキャラクターを資料にする） | 11月22日のご指示 |
+| ボス戦でダウンすると、ボスが増える（不具合） | 11月22日のご報告 |
 
 ## 2. このPhaseで決めた細かいこと（【補完】）
 
@@ -69,6 +74,64 @@ Phase 0-B 13章の「Phase 5で作るもの」（縦切り版：コネリア、1
 | 城壁の上 | 見張りの通路で、プレイヤーは上がらない（上がる階段を作らない）。通路は灯りで照らす |
 | 裏庭 | 木（オーク・シラカバ・トウヒ）、花の咲いたツツジ、花の畑（2種類の花とシダ）。作物は植えない（時間で育つ・消えることがあり、直しの確かめに出るため） |
 
+### 11月22日の改善で決めたこと
+
+**不具合：ボス戦でダウンするとボスが増える（直しました）**
+
+- わけ：塔の敵とボスは「保存しない」（`shouldBeSaved` が false）にしていました。バニラは、保存しない「もの」を区画を降ろすときに捨てずに隠しておき、区画がまた読み込まれると戻します。そのため、ボス戦でダウンして教会へ戻る（部屋の区画が降りる）→ また来る、で古いボスが戻り、部屋が新しいボスを出して2体になっていました。
+- 直し：「保存はするが、中身を書かない」（`save`・`saveAsPassenger` が false）にして、区画を降ろすと消えるようにしました。さらに、部屋が持っていないボス（古いボス）は見つけたらすぐ消し、部屋がボスを出すときは、まわり80ブロックの同じ部屋のボスを先に消します。自動テスト `transientEnemiesAndStaleBoss`。
+
+**ダウン中のリタイア【補完】**
+
+| 項目 | 決めたこと |
+| --- | --- |
+| キー | ［H］（操作の設定の「リタイア（ダウン中に長押し）」で変えられる） |
+| 長さ | 3秒押し続ける。ダウンの表示の下に「［H］を3秒押し続けると、リタイアして教会へ戻ります」と、押している間の帯が出る |
+| 代価 | 30秒の時間切れで教会へ戻るときと同じ（所持金の5%、HPとMPは全快、衰弱） |
+| 押し違いを防ぐ | ダウンする前から押していたキーは数えない（ダウンしてから押し直す）。会話やメニューの画面を開いている間は数えない |
+| 起こされている途中 | リタイアできる |
+| まわりへの知らせ | 起こそうとしていたパーティの外の人には「◯◯ はリタイアして、教会に戻りました」。パーティの仲間には、これまでどおり教会に戻った知らせ |
+
+**雑魚の湧き【補完】**（1階。最大の数・湧き直すまでの秒・1度に湧く数・近づくと湧き始める距離）
+
+| 場所 | 敵 | 最大 | 湧き直し | 1度に | 湧き始める距離 |
+| --- | --- | --- | --- | --- | --- |
+| 草原の南・東 | ツノモフ | 7 → 10 | 40秒 → 28秒 | 3〜5 → 3〜6 | 56 → 64 |
+| 草原の西 | ツノモフ | 6 → 9 | 40秒 → 28秒 | 3〜4 → 3〜5 | 56 → 64 |
+| 草原の北 | ツノモフ | 6 → 9 | 45秒 → 32秒 | 3〜4 → 3〜5 | 56 → 64 |
+| 古代の道の南・北 | イシクレ兵 | 2 → 3 | 50秒 → 35秒 | 1 | 64 → 72 |
+| 東の遺跡 | イシクレ兵 | 2 → 3 | 60秒 → 40秒 | 1 | 56 → 64 |
+| 結晶の東・西 | 結晶バチ | 4 → 6 | 45秒 → 30秒 | 1〜2 → 2〜3 | 56 → 64 |
+| 結晶の北 | 結晶バチ | 3 → 5 | 50秒 → 35秒 | 1〜2 → 2〜3 | 56 → 64 |
+| ロストの西・北 | カケキバ狼 | 3 → 4 | 60秒 → 45秒 | 1〜2 | 56 → 64 |
+
+**ボス（ヴェルドホーン）の技【補完】**
+
+どの技も、予兆の間に当たる所が地面に赤く出て、だんだん濃くなります（離れた所に出る円は「予兆の印」という「もの」で描く）。予兆が出たあとは、ボスは向きも狙う所も変えないので、印の外へ出ればよけられます。
+
+| 技 | いつ | 当たる所の印 | 数値（予兆・威力・待ち時間） |
+| --- | --- | --- | --- |
+| 薙ぎ払い | 近くの相手に | 前の扇（120°・5.5） | 0.8秒・1.2・3.5秒 |
+| 角の突き上げ（新） | 前の相手に | 前の帯（幅2.6・長さ7）。当たると浮き上がる | 0.6秒・1.3・5秒 |
+| 後ろ蹴り（新） | 後ろに0.8秒いる人がいると | 後ろの扇（140°・4.5）。当たると押し出される | 0.5秒・1.0・6秒 |
+| 突進 | 6〜22ブロックの相手に | 通り道の線（幅1.6） | **1.4秒 → 1.0秒**（HP50%以下は×0.78）・2.2・9秒。速さ **1.0 → 1.5**、終わりの隙 1.0秒 → 0.8秒。HP50%以下は3回に1回2連続、HP20%以下は2〜3連続 |
+| 踏みつけ | 2人以上が近いと先に（1人でも出る） | まわりの円（6） | 1.2秒・1.4・12秒 |
+| 大跳躍（新） | 6〜20ブロックの相手に | 降りる所の円（半径4） | 1.1秒・1.8・11秒。空中0.8秒・高さ6、着地の隙0.7秒。HP20%以下で出やすい |
+| 根の牙（新） | HP50%以下から | 24ブロック以内の人みなの足もとの円（半径2.2）。当たると浮き上がる | 1.0秒・1.0・13秒。HP20%以下は0.8秒あけて2回 |
+| 呼び声 | HP50%で1度 | — | ツノモフを呼ぶ（これまでどおり） |
+
+- 待ち時間は、HP50%以下で×0.85、HP20%以下で×0.7。
+- 後ろ蹴り・大跳躍・根の牙は、その戦いで初めて出したときに、手引きの一言が出ます（戦いごとに1度）。
+- 確かめ用に、戦っている間のボスに技を出させるコマンドを足しました（`/amemaru admin boss skill <階> <技>`）。
+
+**NPCのモデル【補完】**
+
+- 街の5人（リリア・ガルド・セレナ・ドラン・バルド）を、凹凸のある立体の GeckoLib のモデルにしました。モデル・絵・動きは `tools/artgen/make_npc_models.py` で作ります（絵は2倍の細かさの 256×256）。
+- 表情：リリア4（ふつう・笑顔・驚き・心配）、セレナ2（ふつう・笑顔）、ガルド2（ふつう・厳しい顔）、ドラン2（ふつう・にやり）、バルド1。会話の表情に合わせて替わります。
+- 動き：待機（4秒。息・まばたき・頭のかたむき・髪やマントの揺れ・持ち物）と歩き（1秒）。頭は見ている人の方を向きます。
+- NPCの定義に `model`・`model_scale`（大きさ）・`portrait_y`（会話の画面の顔の高さ）を足しました。
+- デザインの考え方と、参考にした既存のMod（名前と作り方だけ。デザインはまねない）は、建築の文書の「NPCのデザイン（11月22日）」のタブにまとめました。
+
 ## 3. 遊び方
 
 ### オープニング
@@ -93,7 +156,8 @@ Phase 0-B 13章の「Phase 5で作るもの」（縦切り版：コネリア、1
 
 - 3本の石柱（西の丘・東の遺跡・北西の林）の前の台にある「古代の石柱の核」を右クリックすると起動します。3本そろうと、広間の南の門の光の幕を通れます。
 - 門の前の広場の「道標の石板・一」は、近づくか右クリックで読めます。
-- 広間に入り、ヴェルドホーンに近づくと戦いが始まります。突進の前は、通り道が地面に光の線で出ます。誰かが倒れたら、しゃがんで起こします（Phase 4）。
+- 広間に入り、ヴェルドホーンに近づくと戦いが始まります。技の前は、当たる所が地面に赤く出ます（前の扇・前の帯・後ろの扇・通り道の線・まわりの円・降りる所の円・足もとの円）。誰かが倒れたら、しゃがんで起こします（Phase 4）。
+- 自分が倒れたら、起こしてもらうのを待つか、［H］を3秒押し続けてリタイアし、教会へ戻ります（30秒たつと自動で戻ります）。
 - 倒すと、広間の南の出口の円が開きます。円に2秒立つと塔の門へ戻ります。入口の台の戻りの円からも戻れます。
 
 ### 記憶の再生
@@ -115,6 +179,7 @@ Phase 0-B 13章の「Phase 5で作るもの」（縦切り版：コネリア、1
 | `/amemaru admin map build floor <階>` | 塔のディメンションに階を建てる（1階は数十秒） |
 | `/amemaru admin pillars reset\|complete <階> <人>` | 石柱を起動していない形に戻す・すべて起動した形にする |
 | `/amemaru admin boss respawn <階>` | ボスをすぐ出し直す |
+| `/amemaru admin boss skill <階> <技>` | 戦っている間のボスに技を出させる（確かめ用。技：sweep・upthrust・kick・charge・stomp・leap・roots・roar） |
 | `/amemaru admin blessing <階>`・`blessing up <階>`・`blessing set <階> <0〜4>` | 結晶の加護を見る・1段上げる・決める |
 | `/amemaru admin announce <分> <文>` | カウントダウンのあとに全員に知らせる |
 | `/amemaru admin schedule list`・`schedule cancel <番号>` | 予告の一覧・取り消し |
@@ -138,7 +203,8 @@ Phase 0-B 13章の「Phase 5で作るもの」（縦切り版：コネリア、1
 ## 6. 自動の確認
 
 - 自動テスト（GameTest）に7つ足しました（全部で80）：Phase 5 の定義（NPC5・会話11・ストーリーイベント4・手引き・進行日・1階）、1階の形（広さ・入口・石柱・湧く所・石板・ボスと出口の円は部屋の中・湧く所と石柱は部屋の外・封印の幅）、進行日と階の解放・予告・初撃破・加護と保存、本人の物語の記録（石柱・訪問・撃破・既読・演出・手引き）、条件（フラグ・オープニングの進み・進行日・職業）、**その人ごとのオープニング**（準備を待つ → 演出 → 目覚め → 会話 → 名簿 → 職業の画面。遅れて始めた人の演出は別で、ほかの人の知らせで終わらない。会話を閉じた人は2度目の目覚め）、石柱と封印。直しの書き出しの通しのテスト（`CityEditsGameTests`）は、街並みも入れて確かめます。
-- CIの写真（街の写真の後）：`city_houses`・`city_gate_south`・`city_warehouses`・`city_wall`（と夜の `city_houses_night`・`city_gate_south_night`）、`phase5_npc_guild`・`phase5_npc_bard`、オープニング `phase5_opening_wait`・`phase5_opening_voice`・`phase5_opening_awake`・`phase5_opening_lilia`、会話 `phase5_dialogue`・`phase5_dialogue_choices`・`phase5_dialogue_roster`、`phase5_job_screen`、`phase5_announce`、塔の門 `phase5_tower_gate`・`phase5_floor_select`、1階 `phase5_floor1_arrival`・`phase5_floor1_entrance`・`phase5_floor1_bridge`・`phase5_pillar_text`・`phase5_pillar_lit`・`phase5_boss_gate_sealed`・`phase5_boss_gate_open`・`phase5_tablet`、ボス `phase5_boss_fight`・`phase5_boss_telegraph`・技の当たる所 `phase5_boss_sweep`・`phase5_boss_upthrust`・`phase5_boss_leap`・`phase5_boss_roots`・`phase5_boss_defeated`（倒した直後）・`phase5_boss_title`（初撃破の場面）・`phase5_boss_first_kill`（場面の後の初撃破の知らせ）、`phase5_return_gate`、`phase5_replay`、`phase5_floor1_aerial`。
+- 11月22日に3つ足しました（全部で83）：保存しない敵と古いボス（`transientEnemiesAndStaleBoss`。保存しない敵は中身を書かない・部屋が持っていないボスは消える）、ダウン中のリタイア（`retireWhileDown`。ダウンしていなければ何もしない・代価・教会・衰弱・2度目はしない）、NPCのモデル（`npcModelsPresent`。5人のモデル・まぶた・待機と歩きの動き・表情の絵・大きさ）。
+- CIの写真（街の写真の後）：`city_houses`・`city_gate_south`・`city_warehouses`・`city_wall`（と夜の `city_houses_night`・`city_gate_south_night`）、`phase5_npc_guild`・`phase5_npc_bard`・`phase5_npc_serena`・`phase5_npc_doran`（11月22日から立体のモデル）、オープニング `phase5_opening_wait`・`phase5_opening_voice`・`phase5_opening_awake`・`phase5_opening_lilia`、会話 `phase5_dialogue`・`phase5_dialogue_choices`・`phase5_dialogue_roster`、`phase5_job_screen`、`phase5_announce`、塔の門 `phase5_tower_gate`・`phase5_floor_select`、1階 `phase5_floor1_arrival`・`phase5_floor1_entrance`・`phase5_floor1_bridge`・`phase5_pillar_text`・`phase5_pillar_lit`・`phase5_boss_gate_sealed`・`phase5_boss_gate_open`・`phase5_tablet`、ボス `phase5_boss_fight`・`phase5_boss_telegraph`・技の当たる所 `phase5_boss_sweep`・`phase5_boss_upthrust`・`phase5_boss_leap`・`phase5_boss_roots`・`phase5_boss_defeated`（倒した直後）・`phase5_boss_title`（初撃破の場面）・`phase5_boss_first_kill`（場面の後の初撃破の知らせ）、`phase5_return_gate`、`phase5_replay`、`phase5_floor1_aerial`。
 - 写真の途中で何もない画面になると、自動テストが先に始まって、終わるとゲームが閉じます。Phase 5 の写真の間は、画面が閉じたら何も描かない画面を開き直します（`keep_hold`）。
 - 2人でしか確かめられないこと（2人が同時・遅れてログインしたオープニング、石柱をパーティの仲間の分も数える、2人でのボス戦とHP）は、LANの2人の確かめでします。
 
@@ -174,3 +240,7 @@ Phase 0-B 13章の「Phase 5で作るもの」（縦切り版：コネリア、1
 | `data/amemaru/structures/map/floor1/`・`map/conelia/town/` | 1階と街並みの構造物 |
 | `tools/mapgen/build_floor1.py`・`build_city.py`・`floor_figures.py` | 1階と街並みの設計データ |
 | `gametest/StoryTowerGameTests.java` | 自動テスト |
+| `network/c2s/RetireC2S.java`・`player/DownHandler.java`・`client/DownClientEvents.java`・`client/DownHud.java`・`client/KeyBindings.java` | ダウン中のリタイア（11月22日） |
+| `entity/GroundMarker.java`・`client/render/GroundMarkerRenderer.java`・`client/render/TelegraphDraw.java` | 予兆の印（離れた所の円）と、当たる所の形の描き方（11月22日） |
+| `client/render/NpcGeoModel.java`・`NpcRenderer.java`・`assets/amemaru/geo|animations|textures/entity/npc/` | NPCの立体のモデル（11月22日） |
+| `tools/artgen/npcgen.py`・`make_npc_models.py`・`npc_anims.py` | NPCのモデル・絵・動きを作る（11月22日） |
