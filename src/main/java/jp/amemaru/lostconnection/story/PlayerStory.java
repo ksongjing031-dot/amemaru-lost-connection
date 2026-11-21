@@ -107,6 +107,11 @@ public final class PlayerStory {
         return readDialogues.contains(dialogue);
     }
 
+    /** 最後まで読んだ会話（読んだ順）。 */
+    public Set<ResourceLocation> readDialogues() {
+        return Collections.unmodifiableSet(readDialogues);
+    }
+
     public void markRead(ResourceLocation dialogue) {
         if (readDialogues.add(dialogue)) {
             onChange.run();

@@ -49,7 +49,9 @@ import java.util.UUID;
  *   <li>数値は敵の定義（データパックの {@code enemies/}）から読む。HPと攻撃には config の倍率がかかる</li>
  *   <li>独自のHPを持つ。バニラの体力は「独自のHPの割合」を写したもの（0になるとバニラのとおりに倒れる）</li>
  *   <li>ヘイトの表を持つ：与えたダメージの分だけ敵視が増え、一番高い人を狙う。ナイトの「呼び声」は表の一番上に置く</li>
- *   <li>生まれた場所から離れすぎると、追うのをやめて戻り、HPが満タンになる（戻る間は攻撃が当たらない）</li>
+ *   <li>戦い始めた所から離れすぎて、しばらく戦っていない（打たれも打ちもしない）と、追うのをやめて戻る。着くとHPが満タンに
+ *       なる。戻る間も攻撃は当たり、打たれると戻るのをやめて戦い直す（HPはそのまま）。ノックバックで離れただけでは戻らない
+ *       （11月22日のご指示。前は生まれた場所から28ブロックで、戻る間は攻撃が当たらなかった）</li>
  *   <li>攻撃の前には必ず予兆を出す（{@link #setTelegraph}。クライアントが地面の線や円・光で見せる）</li>
  *   <li>倒されると、攻撃を当てた人それぞれにドロップと経験値を配る（{@link DropService}）</li>
  * </ul>
@@ -86,6 +88,14 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
     private static final int DEATH_TICKS = 30;
     /** 敵視の表から外すまで、攻撃されていない時間。 */
     private static final int FORGET_TICKS = 20 * 20;
+    /** 離れすぎても、この間戦っていなければ戻らない（戦っている間は、押し出されても戻らない）。 */
+    private static final int LEASH_QUIET_TICKS = 20 * 5;
+    /** 離れすぎがその2倍を超えたときは、これだけ戦っていなければ戻る。 */
+    private static final int LEASH_FAR_QUIET_TICKS = 20 * 2;
+    /** 相手を見失って（追う相手がいない）から、戻り始めるまで。 */
+    private static final int LOST_QUIET_TICKS = 20 * 3;
+    /** 戻る道がふさがっていても、これだけたったら、その場で戻り終える。 */
+    private static final int RETURN_GIVE_UP_TICKS = 20 * 20;
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private RawAnimation animIdle;
@@ -98,6 +108,12 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
     private int appliedGeneration = -1;
     @Nullable
     private BlockPos home;
+    /** 戦い始めた所（追い始めた所。戻るときはここへ。巡回の敵は、生まれた場所ではなく、巡回の途中のここへ戻る）。 */
+    @Nullable
+    private Vec3 combatAnchor;
+    /** 最後に戦った時（打たれた・打った。ゲームの時間）。 */
+    private long lastCombatTime = Long.MIN_VALUE / 4;
+    private int returnTicks;
     private final Map<UUID, Double> threat = new LinkedHashMap<>();
     private final Map<UUID, Double> contributions = new HashMap<>();
     private long lastHurtTick = Long.MIN_VALUE / 4;
@@ -305,10 +321,20 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
 
     // ---------------------------------------------------------------- 敵視（ヘイトの表）
 
-    /** ダメージを受けたとき（プレイヤーなら、敵視と貢献を足す）。 */
+    /** ダメージを受けたとき（プレイヤーなら、敵視と貢献を足す。戻っている途中なら、戻るのをやめて戦い直す）。 */
     public void onDamagedBy(@Nullable Entity attacker, double amount) {
         lastHurtTick = level().getGameTime();
         if (attacker instanceof ServerPlayer player && !player.isCreative() && !player.isSpectator()) {
+            noteCombat();
+            if (isReturning()) {
+                // HPは満タンにせず、その場から戦い直す。戻る先はそのまま（次に離れすぎたときも、同じ所から数える）
+                setReturning(false);
+                returnTicks = 0;
+                getNavigation().stop();
+            }
+            if (combatAnchor == null) {
+                combatAnchor = position();
+            }
             threat.merge(player.getUUID(), Math.max(1.0, amount), Double::sum);
             contributions.merge(player.getUUID(), Math.max(0.0, amount), Double::sum);
             if (getTarget() == null) {
@@ -570,36 +596,84 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
         }
     }
 
-    /** 生まれた場所から離れすぎたら、追うのをやめて戻る。 */
+    /**
+     * 追うのをやめて戻るか（11月22日に作り直し）：戦い始めた所から離れすぎて、しばらく戦っていない（打たれも打ちもしない）とき、
+     * または追う相手を見失ったとき。戦っている間は、ノックバックで押し出されても戻らない。
+     */
     private void checkLeash() {
-        if (isReturning()) {
+        if (isReturning() || combatAnchor == null || !usesLeash()) {
             return;
         }
-        double leash = leashRange();
-        if (home().distToCenterSqr(position()) > leash * leash) {
-            setReturning(true);
-            threat.clear();
-            setTarget(null);
-            clearTelegraph();
-            clearBusy();
+        long quiet = level().getGameTime() - lastCombatTime;
+        switch (leashDecision(combatAnchor.distanceToSqr(position()), leashRange(), quiet, getTarget() != null)) {
+            case LEASH_RETURN -> startReturn();
+            // 戦い始めた所のそばで見失った：歩いて戻らずに、その場で戻り終える
+            case LEASH_FINISH_HERE -> finishReturn();
+            default -> {
+            }
         }
     }
 
-    /** 生まれた場所から、追うのをやめて戻る距離（ボスは部屋が決める）。 */
+    public static final int LEASH_STAY = 0;
+    public static final int LEASH_RETURN = 1;
+    public static final int LEASH_FINISH_HERE = 2;
+
+    /**
+     * 戻るかの決まり。{@code farSqr} は戦い始めた所からの距離の2乗、{@code quiet} は最後に戦って（打たれて・打って）からの tick。
+     * 離れすぎ（{@code leash} より遠く）で5秒、ひどく離れすぎ（2倍より遠く）で2秒、相手を見失って3秒、戦っていなければ戻る。
+     */
+    public static int leashDecision(double farSqr, double leash, long quiet, boolean hasTarget) {
+        boolean tooFar = farSqr > leash * leash && quiet > LEASH_QUIET_TICKS;
+        boolean wayTooFar = farSqr > 4.0 * leash * leash && quiet > LEASH_FAR_QUIET_TICKS;
+        boolean lost = !hasTarget && quiet > LOST_QUIET_TICKS;
+        if (!tooFar && !wayTooFar && !lost) {
+            return LEASH_STAY;
+        }
+        return !tooFar && !wayTooFar && farSqr < 9.0 ? LEASH_FINISH_HERE : LEASH_RETURN;
+    }
+
+    /** 追うのをやめて、戦い始めた所へ戻り始める（戻る間も攻撃は当たる）。 */
+    public void startReturn() {
+        setReturning(true);
+        returnTicks = 0;
+        threat.clear();
+        setTarget(null);
+        clearTelegraph();
+        clearBusy();
+    }
+
+    /** 追うのをやめて戻る距離（戦い始めた所から。config の {@code enemyLeashRange}）。 */
     protected double leashRange() {
         return ServerConfig.ENEMY_LEASH_RANGE.get();
     }
 
+    /** 戻る仕組みを使うか（ボスは使わない。部屋が戦いを終わらせる）。 */
+    protected boolean usesLeash() {
+        return true;
+    }
+
+    /** 戦った（打たれた・打った）。押し出されても、戦っている間は戻らない。 */
+    public void noteCombat() {
+        lastCombatTime = level().getGameTime();
+    }
+
     private void tickReturn() {
-        BlockPos pos = home();
-        getNavigation().moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 1.4);
-        setEnemyHp(getEnemyHp() + getEnemyMaxHp() * 0.05);
-        if (pos.distToCenterSqr(position()) < 4.0 || tickCount % 200 == 0 && pos.distToCenterSqr(position()) < 16.0) {
-            setReturning(false);
-            setEnemyHp(getEnemyMaxHp());
-            contributions.clear();
-            getNavigation().stop();
+        Vec3 to = combatAnchor != null ? combatAnchor : Vec3.atBottomCenterOf(home());
+        getNavigation().moveTo(to.x, to.y, to.z, 1.4);
+        if (to.distanceToSqr(position()) < 4.0 || ++returnTicks > RETURN_GIVE_UP_TICKS) {
+            finishReturn();
         }
+    }
+
+    /** 戻り終えた：HPを満タンにして、戦いの記録を消す（打たれずに戻れたときだけ）。 */
+    private void finishReturn() {
+        setReturning(false);
+        setEnemyHp(getEnemyMaxHp());
+        contributions.clear();
+        threat.clear();
+        combatAnchor = null;
+        returnTicks = 0;
+        getNavigation().stop();
     }
 
     @Override
@@ -607,16 +681,10 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
         if (isReturning() && target != null) {
             return;
         }
-        super.setTarget(target);
-    }
-
-    @Override
-    public boolean isInvulnerableTo(DamageSource source) {
-        // 戻っている途中は、プレイヤーの攻撃が当たらない（/kill は効く）
-        if (isReturning() && source.getEntity() instanceof Player) {
-            return true;
+        if (target != null && combatAnchor == null && !level().isClientSide()) {
+            combatAnchor = position();
         }
-        return super.isInvulnerableTo(source);
+        super.setTarget(target);
     }
 
     // ---------------------------------------------------------------- 倒れたとき

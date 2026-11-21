@@ -48,7 +48,8 @@
     },
     {
       "type": "amemaru:open_dialogue",
-      "npc": "amemaru:lilia"
+      "npc": "amemaru:lilia",
+      "replay_dialogues": ["amemaru:lilia/opening", "amemaru:lilia/opening_late", "amemaru:lilia/opening_called"]
     }
   ]
 }

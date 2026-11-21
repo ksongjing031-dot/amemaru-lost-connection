@@ -562,31 +562,31 @@ public final class CiScreenshots {
             {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
             {"cmd", null, "2", "execute in amemaru:tower run tp @e[type=amemaru:veldhorn,limit=1] {f1:192.5,15,51.5} 0 0"},
             {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,65.5} 180 10"},
-            {"cmd", null, "10", "amemaru admin boss skill 1 charge"},
-            {"snap", null, "0", "phase5_boss_telegraph"},
+            {"cmd", null, "0", "amemaru admin boss skill 1 charge"},
+            {"await_mark", null, "2", "phase5_boss_telegraph"},
             // 薙ぎ払いの扇（5南。届く長さ5.5）
             {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
             {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
             {"cmd", null, "2", "execute in amemaru:tower run tp @e[type=amemaru:veldhorn,limit=1] {f1:192.5,15,51.5} 0 0"},
             {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,56.5} 180 20"},
-            {"cmd", null, "8", "amemaru admin boss skill 1 sweep"},
-            {"snap", null, "0", "phase5_boss_sweep"},
+            {"cmd", null, "0", "amemaru admin boss skill 1 sweep"},
+            {"await_mark", null, "5", "phase5_boss_sweep"},
             // 角の突き上げの帯（9南。帯は長さ7）
             {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
             {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
             {"cmd", null, "2", "execute in amemaru:tower run tp @e[type=amemaru:veldhorn,limit=1] {f1:192.5,15,51.5} 0 0"},
             {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,60.5} 180 14"},
-            // 突き上げの予兆は0.6秒（12 tick）。撮るまでに、待ちのほかに6 tick ほどかかるので、すぐ撮る
-            {"cmd", null, "1", "amemaru admin boss skill 1 upthrust"},
-            {"snap", null, "0", "phase5_boss_upthrust"},
+            // 突き上げの予兆は0.6秒。CIの機械では1行に1秒ほどかかることがあるので、帯が見えたらすぐ撮る
+            {"cmd", null, "0", "amemaru admin boss skill 1 upthrust"},
+            {"await_mark", null, "2", "phase5_boss_upthrust"},
             // 後ろ蹴りの後ろの扇（ボスの後ろ＝4北に立ち、南のボスを見る）
             {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
             {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
             {"cmd", null, "2", "execute in amemaru:tower run tp @e[type=amemaru:veldhorn,limit=1] {f1:192.5,15,51.5} 0 0"},
             {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,47.5} 0 22"},
-            // 後ろ蹴りの予兆は0.7秒（14 tick）。すぐ撮る
-            {"cmd", null, "1", "amemaru admin boss skill 1 kick"},
-            {"snap", null, "0", "phase5_boss_kick"},
+            // 後ろ蹴りの予兆は0.7秒。扇が見えたらすぐ撮る
+            {"cmd", null, "0", "amemaru admin boss skill 1 kick"},
+            {"await_mark", null, "5", "phase5_boss_kick"},
             // 大跳躍の降りる円（12南。円は立っている所に出るので、下を向いて前の半分とボスを写す）
             {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
             {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
@@ -614,6 +614,12 @@ public final class CiScreenshots {
             {"snap", null, "70", "phase5_return_gate"},
             {"p5_replay", null, "20"},
             {"snap", null, "10", "phase5_replay"},
+            {"screen", null, "10", "hold"},
+            // 11月22日：「目覚め」を見返すと、そのときのリリアの会話が開く（直す前は、ギルドでのあいさつになっていた）
+            {"cmd", null, "10", "amemaru admin story replay amemaru:ch1/opening @p"},
+            {"await_dialogue", null, "0"},
+            {"snap", null, "40", "phase5_replay_opening"},
+            {"dialogue_finish", null, "10"},
             {"screen", null, "10", "hold"},
             {"cmd", null, "10", "gamemode spectator @p"},
             {"cmd", null, "10", "execute in amemaru:tower run tp @p {f1:192.5,70,392.5} 180 22"},
@@ -1830,17 +1836,26 @@ public final class CiScreenshots {
                 next(stage + 1, 2);
             }
         } else if (shot[0].startsWith("await_")) {
-            // 待つ：まだなら同じ行をもう一度（5 tick ごと。長く待っても来なければ、あきらめて次へ）
+            // 待つ：まだなら同じ行をもう一度（5 tick ごと。長く待っても来なければ、あきらめて次へ）。
+            // await_mark は、予兆の形（行の3つ目の数）が出たらすぐ撮る（毎 tick 見る。短い予兆を逃さない。11月22日）
+            boolean mark = "await_mark".equals(shot[0]);
             if (first) {
                 if (!awaitReady(minecraft, shot) && awaitTicks < awaitLimit(shot[0])) {
-                    awaitTicks += 5;
-                    next(stage, 5);
+                    int step = mark ? 1 : 5;
+                    awaitTicks += step;
+                    next(stage, step);
                 } else {
                     if (awaitTicks >= awaitLimit(shot[0])) {
                         AmemaruMod.LOGGER.warn("[amemaru] CI: gave up waiting ({})", shot[0]);
                     }
                     awaitTicks = 0;
-                    next(stage + 2, 0);
+                    if (mark && shot.length > 3) {
+                        clean(minecraft);
+                        pendingShot = shot[3];
+                        next(stage + 2, 2);
+                    } else {
+                        next(stage + 2, 0);
+                    }
                 }
             }
         } else if (phase5Action(minecraft, shot, first)) {
@@ -1901,6 +1916,8 @@ public final class CiScreenshots {
             case "await_dialogue" -> minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.DialogueScreen;
             case "await_screen" -> minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.FloorSelectScreen;
             case "await_telegraph" -> CiPhase3.anyTelegraph(minecraft);
+            // 行の3つ目の数が予兆の形（2 線・3 円・5 扇）
+            case "await_mark" -> CiPhase3.anyTelegraphOf(minecraft, Integer.parseInt(shot[2]));
             // オープニングの準備待ち（場面が始まる前の真っ暗な間）
             case "await_pending" -> ClientStory.openingPending() && !ScenePlayer.isActive();
             // 場面の字幕が出ている

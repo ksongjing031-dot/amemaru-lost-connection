@@ -480,6 +480,46 @@ public final class StoryTowerGameTests {
         return Conditions.parse(JsonParser.parseString(json).getAsJsonObject());
     }
 
+    /**
+     * 記憶の再生：オープニングが終わった人が「目覚め」を見返すと、そのときのリリアの会話が開く（ギルドでのあいさつにならない。
+     * 11月22日）。読んだ記録がなければ1日目の会話、遅れて来た人の会話を読んでいればそれ。進めても名簿や職業の画面の処理はしない。
+     */
+    @GameTest(template = EMPTY)
+    public static void replayOpensTheOriginalDialogue(GameTestHelper helper) {
+        FakePlayer player = fake(helper, "replay_p");
+        PlayerStory story = data(helper, player).getStory();
+        ResourceLocation opening = AmemaruMod.id("lilia/opening");
+        ResourceLocation late = AmemaruMod.id("lilia/opening_late");
+        try {
+            story.setOpening(PlayerStory.OPENING_DONE);
+            story.markSeen(OpeningService.OPENING);
+            // 今の状態で選ぶと、オープニングの会話にはならない（直す前は、これが開いていた）
+            DialogueDef now = DialogueDefs.choose(player, OpeningService.LILIA);
+            check(helper, now == null || !OpeningService.isOpeningDialogue(now.id()), "オープニングの後なのに、目覚めの会話が選ばれます");
+            // 読んだ記録がない：1日目の会話
+            check(helper, StoryEventManager.play(player, OpeningService.OPENING, true), "目覚めを見返せません");
+            StoryEventManager.onSceneDone(player, StoryEventManager.sceneOf(player));
+            check(helper, opening.equals(DialogueManager.dialogueOf(player)),
+                    "見返した目覚めの会話が違います：" + DialogueManager.dialogueOf(player));
+            DialogueManager.onChoice(player, DialogueManager.sessionOf(player), 0);
+            DialogueManager.onChoice(player, DialogueManager.sessionOf(player), -1);
+            check(helper, !DialogueManager.isTalking(player) && story.opening() == PlayerStory.OPENING_DONE && !story.read(opening),
+                    "見返した会話で、オープニングの処理か既読の記録をしました");
+            // 遅れて来た人の会話を読んでいた：それを開く
+            story.markRead(late);
+            StoryEventManager.play(player, OpeningService.OPENING, true);
+            StoryEventManager.onSceneDone(player, StoryEventManager.sceneOf(player));
+            check(helper, late.equals(DialogueManager.dialogueOf(player)),
+                    "読んだ会話（遅れて来た人）を見返せません：" + DialogueManager.dialogueOf(player));
+        } finally {
+            int session = DialogueManager.sessionOf(player);
+            if (session >= 0) {
+                DialogueManager.onChoice(player, session, -2);
+            }
+        }
+        helper.succeed();
+    }
+
     private static FakePlayer fake(GameTestHelper helper, String name) {
         ServerLevel level = helper.getLevel();
         String full = "amt_" + name;

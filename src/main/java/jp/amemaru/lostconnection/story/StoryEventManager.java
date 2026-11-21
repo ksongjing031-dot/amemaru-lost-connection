@@ -155,7 +155,11 @@ public final class StoryEventManager {
                 case "amemaru:open_dialogue" -> {
                     ResourceLocation npc = Json.optionalId(json, "npc");
                     if (npc != null) {
-                        DialogueManager.open(player, npc, Json.optionalId(json, "dialogue"), playing.replay());
+                        ResourceLocation dialogue = Json.optionalId(json, "dialogue");
+                        if (playing.replay() && dialogue == null) {
+                            dialogue = replayDialogue(player, json);
+                        }
+                        DialogueManager.open(player, npc, dialogue, playing.replay());
                     }
                 }
                 default -> {
@@ -164,6 +168,36 @@ public final class StoryEventManager {
             }
         }
         OpeningService.onSceneFinished(player, def.id(), playing.replay());
+    }
+
+    /**
+     * 記憶の再生で開く会話。手順の {@code replay_dialogues}（そのときに出た会話の候補）のうち、本人が最後まで読んだもの
+     * （いちばん後に読んだもの）。読んだ記録がなければ1つ目。候補がなければ null（今の状態で選ぶ）。
+     * <p>会話の多くは「オープニングがまだ」などの条件で選ばれるので、終わったあとに今の状態で選ぶと、ほかの会話になる
+     * （「目覚め」を見返すと、リリアの会話がギルドでのあいさつになっていた。11月22日）。
+     */
+    @Nullable
+    static ResourceLocation replayDialogue(ServerPlayer player, JsonObject step) {
+        List<ResourceLocation> candidates = new ArrayList<>();
+        for (JsonElement element : Json.optionalArray(step, "replay_dialogues")) {
+            ResourceLocation id = element.isJsonPrimitive() ? ResourceLocation.tryParse(element.getAsString()) : null;
+            if (id != null) {
+                candidates.add(id);
+            }
+        }
+        if (candidates.isEmpty()) {
+            return null;
+        }
+        ResourceLocation chosen = null;
+        PlayerData data = PlayerDataCapability.get(player).orElse(null);
+        if (data != null) {
+            for (ResourceLocation read : data.getStory().readDialogues()) {
+                if (candidates.contains(read)) {
+                    chosen = read;
+                }
+            }
+        }
+        return chosen != null ? chosen : candidates.get(0);
     }
 
     @SubscribeEvent

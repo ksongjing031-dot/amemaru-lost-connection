@@ -43,7 +43,12 @@ public final class EnemyCombat {
         pendingPower = raw;
         try {
             player.invulnerableTime = 0;
-            return player.hurt(source, 1.0F);
+            boolean hit = player.hurt(source, 1.0F);
+            if (hit) {
+                // 打った：戦っている間は、離れても戻らない（11月22日）
+                mob.noteCombat();
+            }
+            return hit;
         } finally {
             pendingPlayer = previousPlayer;
             pendingPower = previousPower;

@@ -190,7 +190,7 @@ public final class ServerConfig {
                 .comment("このModの敵の攻撃にかける倍率")
                 .defineInRange("enemyAttackMultiplier", 1.0, 0.0, 1000.0);
         ENEMY_LEASH_RANGE = b
-                .comment("このModの敵が、生まれた場所から何ブロック離れると追うのをやめて戻るか（戻るとHPが満タンになる）")
+                .comment("このModの敵が、戦い始めた所から何ブロック離れて、5秒戦わなかったら（打たれも打ちもしない）追うのをやめて戻るか（打たれずに戻れたらHPが満タンになる。戻る間も攻撃は当たる）")
                 .defineInRange("enemyLeashRange", 28.0, 8.0, 256.0);
         b.pop();
 

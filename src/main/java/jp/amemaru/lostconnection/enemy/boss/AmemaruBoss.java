@@ -169,6 +169,12 @@ public abstract class AmemaruBoss extends AmemaruMob {
     }
 
     @Override
+    protected boolean usesLeash() {
+        // 戻る・HPが満タンになるのは、部屋が決める（参加者がみな部屋からいなくなったとき）
+        return false;
+    }
+
+    @Override
     public void die(DamageSource source) {
         super.die(source);
         if (level() instanceof ServerLevel && room != null) {
