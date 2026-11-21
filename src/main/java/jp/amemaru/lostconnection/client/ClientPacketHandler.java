@@ -81,4 +81,18 @@ public final class ClientPacketHandler {
     public static void handleSpecialMoment(SpecialMomentS2C message) {
         SpecialMomentFx.show(message.kind(), message.stack());
     }
+
+    // ---------------------------------------------------------------- Phase 4：ダウン・パーティ・所持金
+
+    public static void handleDownState(jp.amemaru.lostconnection.network.s2c.DownStateS2C message) {
+        ClientDown.apply(message);
+    }
+
+    public static void handlePartyState(jp.amemaru.lostconnection.network.s2c.PartyStateS2C message) {
+        ClientParty.apply(message);
+    }
+
+    public static void handleWallet(jp.amemaru.lostconnection.network.s2c.SyncWalletS2C message) {
+        ClientPlayerState.get().setKnots(message.knots());
+    }
 }

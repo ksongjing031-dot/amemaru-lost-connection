@@ -31,6 +31,14 @@ public final class KeyBindings {
             GLFW.GLFW_KEY_J,
             CATEGORY);
 
+    /** パーティの画面を開く（初期値：U。Phase 4。バニラのPはソーシャル操作の画面なので使わない）。 */
+    public static final KeyMapping OPEN_PARTY = new KeyMapping(
+            "key.amemaru.party",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_U,
+            CATEGORY);
+
     private static final int[] SKILL_DEFAULTS = {
             GLFW.GLFW_KEY_R, GLFW.GLFW_KEY_G, GLFW.GLFW_KEY_V, GLFW.GLFW_KEY_Z, GLFW.GLFW_KEY_X, GLFW.GLFW_KEY_C};
 

@@ -23,7 +23,8 @@ import java.util.Set;
  *
  * <p>Phase 1で「成長」（レベル・経験値・振り分けたステータス）と「戦闘」のうちHPとMPを持ち、Phase 2で「職業」
  * （戦闘職・上位職）と「スキル」（習得したスキルと段階・スキル枠6つ・専用ゲージ）を足した（版2）。
- * 所持金・物語などのまとまりは、使い始めるPhaseで足し、{@link #DATA_VERSION} を上げて古い保存データを読み替える。</p>
+ * 所持金・物語などのまとまりは、使い始めるPhaseで足し、{@link #DATA_VERSION} を上げて古い保存データを読み替える。
+ * Phase 4で「所持金」（ノット）と「ダウン」（ダウン中か）・記録（ダウン・起こした・教会に戻った回数）を足した（版4）。</p>
  *
  * <p>クールダウン・詠唱・専用ゲージ・強化は保存しない（ログアウトすると消える。ゲージは戦闘が終わると0）。</p>
  *
@@ -32,7 +33,7 @@ import java.util.Set;
  */
 public final class PlayerData {
     /** 保存データの版。項目を増やしたら上げ、{@link #load} で古い版を読み替える。 */
-    public static final int DATA_VERSION = 3;
+    public static final int DATA_VERSION = 4;
     /** スキル枠の数。 */
     public static final int LOADOUT_SIZE = 6;
 
@@ -54,9 +55,11 @@ public final class PlayerData {
     public static final int SYNC_CAST = 1 << 7;
     /** 同期するまとまり：冒険の記録（結晶果・生産職と熟練度・図鑑・アクセサリーの表示。Phase 3）。別のパケットで送る。 */
     public static final int SYNC_ADVENTURE = 1 << 8;
+    /** 同期するまとまり：所持金（Phase 4）。別のパケットで送る。 */
+    public static final int SYNC_WALLET = 1 << 9;
     /** すべてのまとまり。 */
     public static final int SYNC_ALL = SYNC_GROWTH | SYNC_STATS | SYNC_VITALS | SYNC_JOB | SYNC_SKILLS | SYNC_GAUGE
-            | SYNC_COOLDOWNS | SYNC_CAST | SYNC_ADVENTURE;
+            | SYNC_COOLDOWNS | SYNC_CAST | SYNC_ADVENTURE | SYNC_WALLET;
 
     // ---- 保存する項目
     private int level = 1;
@@ -99,6 +102,14 @@ public final class PlayerData {
 
     // ---- 冒険の記録（保存する。Phase 3）
     private final AdventureData adventure = new AdventureData(() -> markDirty(SYNC_ADVENTURE));
+    /** 所持金（ノット。Phase 4：デスペナルティ。出し入れは {@code economy.Wallet} を通す） */
+    private long knots;
+    /** ダウン（Phase 4。ダウン中かだけ保存し、残り時間・起こしている人は保存しない） */
+    private final DownState down = new DownState();
+    /** 記録（Phase 4）：ダウンした・仲間を起こした・教会に戻った回数（称号・ランキングは後のPhase） */
+    private int downCount;
+    private int reviveCount;
+    private int churchCount;
 
     // ---- 保存しない項目
     private final StatBlock stats = new StatBlock();
@@ -525,6 +536,49 @@ public final class PlayerData {
         return adventure;
     }
 
+    // ---------------------------------------------------------------- 所持金・ダウン・記録（Phase 4）
+
+    public long getKnots() {
+        return knots;
+    }
+
+    /** 所持金を決める（0より下にはならない）。ふつうは {@code economy.Wallet} から呼ぶ。 */
+    public void setKnots(long value) {
+        long clamped = Math.max(0L, value);
+        if (clamped != knots) {
+            knots = clamped;
+            dirty |= SYNC_WALLET;
+        }
+    }
+
+    public DownState down() {
+        return down;
+    }
+
+    public int getDownCount() {
+        return downCount;
+    }
+
+    public void countDown() {
+        downCount++;
+    }
+
+    public int getReviveCount() {
+        return reviveCount;
+    }
+
+    public void countRevive() {
+        reviveCount++;
+    }
+
+    public int getChurchCount() {
+        return churchCount;
+    }
+
+    public void countChurch() {
+        churchCount++;
+    }
+
     // ---------------------------------------------------------------- 同期の印
 
     public void markDirty(int sections) {
@@ -611,6 +665,16 @@ public final class PlayerData {
         tag.put("skills", skills);
 
         tag.put("adventure", adventure.save());
+
+        tag.putLong("knots", knots);
+        CompoundTag downTag = new CompoundTag();
+        downTag.putBoolean("down", down.isDown());
+        tag.put("down", downTag);
+        CompoundTag records = new CompoundTag();
+        records.putInt("downs", downCount);
+        records.putInt("revives", reviveCount);
+        records.putInt("church", churchCount);
+        tag.put("records", records);
         return tag;
     }
 
@@ -622,6 +686,7 @@ public final class PlayerData {
         }
         // 版1 → 版2：職業とスキルのまとまりが増えた。版1のデータには無いので、職業なし・スキルなしで始まる
         // 版2 → 版3：冒険の記録（結晶果・生産職・図鑑など）が増えた。版2のデータには無いので、空で始まる
+        // 版3 → 版4：所持金・ダウン・記録が増えた。版3のデータには無いので、0で始まる
 
         CompoundTag growth = tag.getCompound("growth");
         level = growth.contains("level") ? Math.max(1, growth.getInt("level")) : 1;
@@ -677,6 +742,15 @@ public final class PlayerData {
             }
         }
         adventure.load(tag.getCompound("adventure"));
+
+        knots = Math.max(0L, tag.getLong("knots"));
+        down.clear();
+        // ダウン中に抜けた（またはサーバーが止まった）：入り直したときに、教会へ戻す（DownHandler）
+        down.setLeftWhileDown(tag.getCompound("down").getBoolean("down"));
+        CompoundTag records = tag.getCompound("records");
+        downCount = Math.max(0, records.getInt("downs"));
+        reviveCount = Math.max(0, records.getInt("revives"));
+        churchCount = Math.max(0, records.getInt("church"));
         resetTransient();
     }
 
@@ -702,6 +776,13 @@ public final class PlayerData {
         cooldowns.clear();
         cooldowns.putAll(other.cooldowns);
         adventure.copyFrom(other.adventure);
+        knots = other.knots;
+        downCount = other.downCount;
+        reviveCount = other.reviveCount;
+        churchCount = other.churchCount;
+        // バニラの死亡（奈落・/kill）のあとは、リスポーンで教会へ戻す（DownHandler）。ダウンそのものは引き継がない
+        down.clear();
+        down.setDiedForReal(other.down.diedForReal() || other.down.isDown());
         resetTransient();
     }
 }

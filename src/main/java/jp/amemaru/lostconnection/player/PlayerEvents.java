@@ -62,6 +62,8 @@ public final class PlayerEvents {
                 LevelService.recompute(player, data);
                 // 追いつき補正の中央値に入れる（Phase 3）
                 LevelService.recordLevel(player, data);
+                // ダウン中に抜けていたら、教会へ戻す（Phase 4）
+                DownHandler.onLoggedIn(player, data);
                 PlayerSync.syncAll(player, data);
             });
         }
@@ -72,8 +74,8 @@ public final class PlayerEvents {
         if (event.getEntity() instanceof ServerPlayer player) {
             PlayerDataCapability.get(player).ifPresent(data -> {
                 LevelService.recompute(player, data);
-                if (!event.isEndConquered()) {
-                    // Phase 1では、死亡からの復活はHPとMPが全快。Phase 4で教会での復活とデスペナルティに置き換える
+                // バニラの死亡（奈落・/kill）からのリスポーン：教会の呼び戻しの円へ（代価と衰弱。Phase 4）
+                if (!event.isEndConquered() && !DownHandler.onRespawn(player, data)) {
                     data.setHp(data.getStats().maxHp());
                     data.setMp(data.getStats().maxMp());
                     VitalsService.pushVanillaHealth(player, data);
@@ -100,6 +102,8 @@ public final class PlayerEvents {
                 VitalsService.tick(player, data);
                 SkillService.tick(player, data);
                 jp.amemaru.lostconnection.equipment.GearEffects.tick(player, data);
+                // ダウン中：起こす人を探し、時間切れなら教会へ（Phase 4）
+                DownHandler.tick(player, data);
                 PlayerSync.flush(player, data);
             });
         }

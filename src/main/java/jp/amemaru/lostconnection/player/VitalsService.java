@@ -15,7 +15,7 @@ import net.minecraft.world.food.FoodData;
  *   <li>自然回復はバニラではなく、ここで行う（ゲームルール naturalRegeneration は止める）。</li>
  * </ul>
  *
- * <p>Phase 1では、HPが0になるとバニラの死亡になる。Phase 4で「ダウン→蘇生待ち→教会で復活」に置き換える。</p>
+ * <p>HPが0になると、バニラの死亡の代わりに「ダウン→蘇生待ち→教会で復活」になる（Phase 4。{@link DownHandler}）。</p>
  */
 public final class VitalsService {
     private static final float EPSILON = 1.0E-3F;
@@ -33,6 +33,12 @@ public final class VitalsService {
         if (player.isDeadOrDying()) {
             // 死亡画面の間は、HUDのHPも0にしておく
             data.setHp(0);
+            return;
+        }
+        if (data.down().isDown()) {
+            // ダウンの間（Phase 4）：HPは0のまま、回復しない。バニラの体力は死なない最小の値
+            data.setHp(0);
+            pushVanillaHealth(player, data);
             return;
         }
         absorbVanillaChanges(player, data);

@@ -87,6 +87,14 @@ public final class SkillInput {
             minecraft.setScreen(new SkillTreeScreen());
             return;
         }
+        if (ClientDown.localDown()) {
+            // ダウンの間はスキルを使えない（Phase 4。サーバーでも断る）。押したキーは捨てる
+            if (chargingSlot >= 0) {
+                clearCharge();
+            }
+            drain();
+            return;
+        }
         boolean altMode = ClientConfig.skillControl() == ClientConfig.SkillControl.HOTBAR_ALT;
         for (int slot = 0; slot < KeyBindings.SKILLS.length; slot++) {
             while (KeyBindings.SKILLS[slot].consumeClick()) {

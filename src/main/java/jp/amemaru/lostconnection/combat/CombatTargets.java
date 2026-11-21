@@ -14,7 +14,8 @@ import net.minecraft.world.entity.player.Player;
  * <ul>
  *   <li>敵：魔物（{@link Enemy}）と訓練人形。プレイヤー・動物・村人には当たらない（協力のゲームのため）。
  *       Phase 3でこのModの敵（AmemaruMob）を足す。</li>
- *   <li>味方：ほかのプレイヤー（観戦モードを除く）。Phase 4のパーティができたら、範囲の強化はパーティを優先する。</li>
+ *   <li>味方：ほかのプレイヤー（観戦モードを除く）。Phase 4：ダウンしている人は、回復や強化の相手にならない（起こすのは
+ *       しゃがんで手を取る）。範囲の強化・回復は、パーティのメンバーを先にする（{@code SkillTargeting#around}）。</li>
  * </ul>
  */
 public final class CombatTargets {
@@ -32,7 +33,8 @@ public final class CombatTargets {
     }
 
     public static boolean isAlly(ServerPlayer caster, Entity entity, boolean includeSelf) {
-        if (!(entity instanceof ServerPlayer player) || !player.isAlive() || player.isSpectator()) {
+        if (!(entity instanceof ServerPlayer player) || !player.isAlive() || player.isSpectator()
+                || jp.amemaru.lostconnection.player.DownHandler.isDown(player)) {
             return false;
         }
         return includeSelf || player != caster;

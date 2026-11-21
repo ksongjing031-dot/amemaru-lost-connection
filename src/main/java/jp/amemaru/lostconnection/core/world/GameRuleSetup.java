@@ -32,6 +32,8 @@ public final class GameRuleSetup {
         DESIRED.put("mobGriefing", false);
         // 死亡で持ち物を失わない（デスペナルティは所持金。Phase 4）
         DESIRED.put("keepInventory", true);
+        // 奈落と /kill のバニラの死亡でも、死亡画面を出さずにすぐ教会へ戻す（Phase 4。ふだんはダウンになる）
+        DESIRED.put("doImmediateRespawn", true);
     }
 
     private GameRuleSetup() {

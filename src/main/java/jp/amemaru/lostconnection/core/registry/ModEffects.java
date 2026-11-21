@@ -94,6 +94,18 @@ public final class ModEffects {
                     .addAttributeModifier(Attributes.MOVEMENT_SPEED, "e3b0c442-98fc-4c14-9afb-f4c8996fb924", -0.5,
                             AttributeModifier.Operation.MULTIPLY_TOTAL));
 
+    /**
+     * 衰弱（Phase 4）：教会の呼び戻しの儀で戻った後、しばらくステータスが下がる（Phase 0-A 20章：60秒・−10%。
+     * 下がる量は {@code DownHandler}）。牛乳では消えない。
+     */
+    public static final RegistryObject<MobEffect> WEAKENED = EFFECTS.register("weakened", () ->
+            new AmemaruEffect(MobEffectCategory.HARMFUL, 0x8C90B0, false) {
+                @Override
+                public java.util.List<net.minecraft.world.item.ItemStack> getCurativeItems() {
+                    return new java.util.ArrayList<>();
+                }
+            });
+
     private ModEffects() {
     }
 }
