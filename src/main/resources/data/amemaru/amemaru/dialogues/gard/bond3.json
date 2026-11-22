@@ -1,0 +1,63 @@
+{
+  "_comment": "親密度3「信頼」：過去の話（Phase 0-A 12章の明かしてよい時期に合わせて、日で区切る）と、個人的な依頼②（一度だけ。台詞は【提案】）。騎士団の話は4日目の遺品の後から",
+  "npc": "amemaru:gard",
+  "priority": 15,
+  "conditions": {
+    "opening": 2,
+    "has_job": true,
+    "affinity_min": 3,
+    "flags_none": [
+      "amemaru:bond/gard_talk3"
+    ],
+    "day_min": 4
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "……昔、俺は騎士団にいた",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "仲間を置いて、帰ってきたことがある",
+      "next": "s3"
+    },
+    "s3": {
+      "text": "だから、お前たちには言う。生きて戻れ。それが命令だ",
+      "expression": "stern",
+      "next": "offer"
+    },
+    "offer": {
+      "text": "……もうひとつ、頼みがある",
+      "choices": [
+        {
+          "text": "引き受ける",
+          "next": "yes",
+          "actions": [
+            {
+              "type": "amemaru:start_quest",
+              "quest": "amemaru:gard_2"
+            }
+          ]
+        },
+        {
+          "text": "また今度",
+          "next": "no"
+        }
+      ]
+    },
+    "yes": {
+      "text": "……助かる"
+    },
+    "no": {
+      "text": "……気にするな"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:bond/gard_talk3"
+      ]
+    }
+  ]
+}

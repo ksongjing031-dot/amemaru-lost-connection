@@ -1,0 +1,92 @@
+{
+  "name": "街めぐり",
+  "kind": "town_tour",
+  "giver": "amemaru:lilia",
+  "report": "amemaru:lilia",
+  "board": true,
+  "description": "{player}さん、まずはコネリアの施設を一通り回ってみてください。工房・商店街・教会・倉庫・釣り堀。どこも、これからお世話になる所ですよ！",
+  "requires": {
+    "has_job": true
+  },
+  "objectives": [
+    {
+      "type": "talk",
+      "npc": "amemaru:doran",
+      "label": "武器工房"
+    },
+    {
+      "type": "visit",
+      "place": "conelia",
+      "pos": [
+        71.5,
+        1,
+        -3.5
+      ],
+      "radius": 10,
+      "label": "防具工房"
+    },
+    {
+      "type": "visit",
+      "place": "conelia",
+      "pos": [
+        31.5,
+        1,
+        0.5
+      ],
+      "radius": 10,
+      "label": "装飾工房"
+    },
+    {
+      "type": "visit",
+      "place": "conelia",
+      "pos": [
+        0.5,
+        1,
+        34.5
+      ],
+      "radius": 10,
+      "label": "商店街"
+    },
+    {
+      "type": "talk",
+      "npc": "amemaru:serena",
+      "label": "結びの教会"
+    },
+    {
+      "type": "visit",
+      "place": "conelia",
+      "pos": [
+        30.5,
+        1,
+        -62.5
+      ],
+      "radius": 8,
+      "label": "個人倉庫"
+    },
+    {
+      "type": "visit",
+      "place": "conelia",
+      "pos": [
+        -62.5,
+        1,
+        56.5
+      ],
+      "radius": 10,
+      "label": "釣り堀"
+    }
+  ],
+  "rewards": {
+    "knots": 300,
+    "exp": 150,
+    "items": [
+      {
+        "item": "amemaru:healing_potion_small",
+        "count": 3
+      }
+    ],
+    "affinity": {
+      "amemaru:lilia": 10
+    }
+  },
+  "order": 0
+}

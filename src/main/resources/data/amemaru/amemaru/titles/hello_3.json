@@ -1,0 +1,15 @@
+{
+  "name": "コネリアの縁結び",
+  "field": "social",
+  "kind": "normal",
+  "series": "hello",
+  "tier": 3,
+  "tiers": 3,
+  "condition": {
+    "type": "counter",
+    "counter": "partners",
+    "at_least": 20
+  },
+  "description": "20人とパーティを組んだ（25人のとき）",
+  "order": 280
+}

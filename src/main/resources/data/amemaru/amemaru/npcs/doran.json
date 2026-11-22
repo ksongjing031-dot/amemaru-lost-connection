@@ -7,12 +7,43 @@
   "model": "amemaru:npc/doran",
   "model_scale": 1.0,
   "portrait_y": 1.32,
-  "expressions": ["grin"],
+  "expressions": [
+    "grin"
+  ],
   "home": {
     "place": "conelia",
-    "pos": [88.5, 2, -16.5],
+    "pos": [
+      88.5,
+      2,
+      -16.5
+    ],
     "yaw": 0
   },
-  "roles": ["weapon_workshop"],
-  "talk_range": 5
+  "roles": [
+    "weapon_workshop"
+  ],
+  "talk_range": 5,
+  "bond": {
+    "loved": [
+      "amemaru:ancient_stone",
+      "amemaru:crystal_shard",
+      "amemaru:ishikure_core"
+    ],
+    "liked": [
+      "amemaru:moss_iron",
+      "amemaru:chipped_fang",
+      "minecraft:iron_ingot",
+      "minecraft:cooked_beef"
+    ],
+    "reactions": {
+      "loved": "おいおい、こいつは上物じゃねぇか！ 礼は鉄で返すぜ",
+      "liked": "おう、悪くねぇ",
+      "normal": "なんだ、くれんのか。もらっとくぜ",
+      "full": "今日はもう十分だ。腕を磨いてこい",
+      "frozen": "……あ？ 知らねぇ顔だな"
+    },
+    "gift": "amemaru:moss_iron",
+    "gift_count": 8,
+    "keepsake": "amemaru:keepsake_doran"
+  }
 }

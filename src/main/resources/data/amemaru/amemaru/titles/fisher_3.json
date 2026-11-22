@@ -1,0 +1,19 @@
+{
+  "name": "湖を知る者",
+  "field": "leisure",
+  "kind": "normal",
+  "series": "fisher",
+  "tier": 3,
+  "tiers": 3,
+  "condition": {
+    "type": "counter",
+    "counter": "fish_percent",
+    "at_least": 100
+  },
+  "description": "魚図鑑をすべてうめた",
+  "effect": {
+    "type": "fishing_gauge",
+    "amount": 20
+  },
+  "order": 340
+}

@@ -76,6 +76,9 @@ public final class DialogueManager {
         }
         npc.startTalking(player);
         start(player, dialogue, npc.getUUID(), false);
+        // 親密度：会った・今日はじめて話した（Phase 6 その3）。クエストの「話す」の目標も進める
+        jp.amemaru.lostconnection.guild.BondService.onTalk(player, npcId);
+        jp.amemaru.lostconnection.guild.QuestService.onTalk(player, npcId);
     }
 
     /** NPCのエンティティなしで会話を始める（オープニングの役者・大結晶の記憶の再生）。 */
@@ -118,7 +121,7 @@ public final class DialogueManager {
             if (node.hasChoices()) {
                 for (int i = 0; i < node.choices().size(); i++) {
                     DialogueDef.Choice choice = node.choices().get(i);
-                    if (choice.conditions().test(player)) {
+                    if (choice.conditions().test(player, dialogue.npc())) {
                         choices.add(new DialogueS2C.ChoiceView(i, fill(player, choice.text())));
                     }
                 }
@@ -204,7 +207,7 @@ public final class DialogueManager {
             }
         }
         DialogueDef.Choice picked = node.choices().get(choice);
-        if (!picked.conditions().test(player)) {
+        if (!picked.conditions().test(player, session.npc())) {
             return;
         }
         boolean close = false;

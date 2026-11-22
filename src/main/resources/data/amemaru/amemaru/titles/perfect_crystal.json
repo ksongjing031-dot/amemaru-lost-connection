@@ -1,0 +1,11 @@
+{
+  "name": "完璧の結晶",
+  "field": "craft",
+  "kind": "rare",
+  "condition": {
+    "type": "event",
+    "event": "perfect_accessory"
+  },
+  "description": "完璧なアクセサリーを手に入れた",
+  "order": 180
+}

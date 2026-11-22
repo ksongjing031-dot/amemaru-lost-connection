@@ -1,0 +1,11 @@
+{
+  "name": "最後の砦",
+  "field": "combat",
+  "kind": "rare",
+  "condition": {
+    "type": "boss_guard",
+    "chapter_boss": true
+  },
+  "description": "章ボス戦で、一番多く攻撃を受け止めて勝った",
+  "order": 100
+}

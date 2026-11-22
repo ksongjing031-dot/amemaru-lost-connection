@@ -1,0 +1,11 @@
+{
+  "name": "凍てを解きし者",
+  "field": "combat",
+  "kind": "limited",
+  "condition": {
+    "type": "first",
+    "event": "first_boss_floor10"
+  },
+  "description": "忘却の女王を、サーバーで最初に倒した",
+  "order": 580
+}

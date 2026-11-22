@@ -1,0 +1,11 @@
+{
+  "name": "倒れぬ心",
+  "field": "combat",
+  "kind": "rare",
+  "condition": {
+    "type": "boss_no_down",
+    "chapter_boss": true
+  },
+  "description": "一度もダウンせずに、章ボスを倒した",
+  "order": 90
+}

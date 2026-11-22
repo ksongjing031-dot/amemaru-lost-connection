@@ -1,0 +1,20 @@
+{
+  "name": "道標の石板",
+  "kind": "guild",
+  "description": "草原の主の広間の奥に、古代の石板があるそうです。読んで、記録に残してきてください。",
+  "requires": {
+    "has_job": true
+  },
+  "objectives": [
+    {
+      "type": "record",
+      "count": 1,
+      "floor": 1
+    }
+  ],
+  "rewards": {
+    "knots": 150,
+    "exp": 100
+  },
+  "order": 130
+}

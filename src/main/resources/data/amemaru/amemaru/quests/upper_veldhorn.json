@@ -1,0 +1,21 @@
+{
+  "name": "草原の主、ふたたび",
+  "kind": "upper",
+  "description": "草原の主ヴェルドホーンが、また広間に戻っています。三度倒して、新人の道を開けてください。",
+  "requires": {
+    "day_min": 5,
+    "has_job": true
+  },
+  "objectives": [
+    {
+      "type": "boss",
+      "count": 3,
+      "floor": 1
+    }
+  ],
+  "rewards": {
+    "knots": 1200,
+    "exp": 800
+  },
+  "order": 210
+}

@@ -1,0 +1,19 @@
+{
+  "name": "コネリアの大商人",
+  "field": "trade",
+  "kind": "normal",
+  "series": "trader",
+  "tier": 3,
+  "tiers": 3,
+  "condition": {
+    "type": "counter",
+    "counter": "trades",
+    "at_least": 500
+  },
+  "description": "フリーマーケットで500回取引した",
+  "effect": {
+    "type": "listing_bonus",
+    "amount": 5
+  },
+  "order": 210
+}

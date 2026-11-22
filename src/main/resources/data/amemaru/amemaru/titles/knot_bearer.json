@@ -1,0 +1,11 @@
+{
+  "name": "結び手",
+  "field": "story",
+  "kind": "normal",
+  "condition": {
+    "type": "event",
+    "event": "truth_witnessed"
+  },
+  "description": "15日目の真相を見届けた（見逃した人は、記憶の再生で）",
+  "order": 470
+}

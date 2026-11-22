@@ -1,0 +1,12 @@
+{
+  "name": "ガルドの信頼",
+  "field": "story",
+  "kind": "normal",
+  "condition": {
+    "type": "affinity",
+    "npc": "amemaru:gard",
+    "stage": 5
+  },
+  "description": "ガルドと「かけがえのない人」になった",
+  "order": 420
+}

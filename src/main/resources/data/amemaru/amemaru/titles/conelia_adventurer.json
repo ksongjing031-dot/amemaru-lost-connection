@@ -1,0 +1,11 @@
+{
+  "name": "コネリアの冒険者",
+  "field": "story",
+  "kind": "normal",
+  "condition": {
+    "type": "event",
+    "event": "promotion_ceremony"
+  },
+  "description": "5日目の昇格式に立ち会った（あとから来た人は、ガルドと話す）",
+  "order": 460
+}

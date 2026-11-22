@@ -1,0 +1,57 @@
+{
+  "name": "灯りの見回り",
+  "kind": "personal",
+  "giver": "amemaru:serena",
+  "board": true,
+  "description": "夕べの祈りの前に、街の灯りを見てきていただけますか。中央広場と、塔前広場と、釣り堀の灯りを。",
+  "requires": {
+    "affinity_min": 2,
+    "has_job": true
+  },
+  "objectives": [
+    {
+      "type": "visit",
+      "place": "conelia",
+      "pos": [
+        0.5,
+        1,
+        12.5
+      ],
+      "radius": 8,
+      "label": "中央広場"
+    },
+    {
+      "type": "visit",
+      "place": "conelia",
+      "pos": [
+        0.5,
+        3,
+        -130.5
+      ],
+      "radius": 10,
+      "label": "塔前広場"
+    },
+    {
+      "type": "visit",
+      "place": "conelia",
+      "pos": [
+        -62.5,
+        1,
+        56.5
+      ],
+      "radius": 10,
+      "label": "釣り堀"
+    }
+  ],
+  "rewards": {
+    "knots": 150,
+    "exp": 80,
+    "affinity": {
+      "amemaru:serena": 15
+    },
+    "flags": [
+      "amemaru:bond/serena_1_done"
+    ]
+  },
+  "order": 422
+}

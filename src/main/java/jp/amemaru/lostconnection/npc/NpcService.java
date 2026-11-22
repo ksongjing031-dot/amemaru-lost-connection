@@ -28,6 +28,11 @@ public final class NpcService {
         int count = 0;
         for (NpcDef def : NpcDefs.all().values()) {
             if (def.home() != null && "conelia".equals(def.home().place())) {
+                // 決まった日・物語フラグから現れるNPC（ノア・エルネスト。Phase 6 その3）は、まだなら置かない
+                if (def.appears() != null && !def.appears().testServer(level.getServer())) {
+                    remove(level, cityOrigin, def.id());
+                    continue;
+                }
                 if (spawn(level, cityOrigin, def) != null) {
                     count++;
                 }

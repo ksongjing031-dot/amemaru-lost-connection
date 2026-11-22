@@ -1,0 +1,12 @@
+{
+  "name": "ゼロからの一歩",
+  "field": "trade",
+  "kind": "hidden",
+  "condition": {
+    "type": "zero_earn",
+    "amount": 10000
+  },
+  "description": "手持ちが0ノットになってから、1万ノットを稼いだ",
+  "hint": "すっからかんから立ち直った人の噂話",
+  "order": 530
+}

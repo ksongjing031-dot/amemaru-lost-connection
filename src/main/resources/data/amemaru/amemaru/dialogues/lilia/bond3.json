@@ -1,0 +1,67 @@
+{
+  "_comment": "親密度3「信頼」：過去の話（Phase 0-A 12章の明かしてよい時期に合わせて、日で区切る）と、個人的な依頼②（一度だけ。台詞は【提案】）。父のことは4日目の遺品の後から",
+  "npc": "amemaru:lilia",
+  "priority": 15,
+  "conditions": {
+    "opening": 2,
+    "has_job": true,
+    "affinity_min": 3,
+    "flags_none": [
+      "amemaru:bond/lilia_talk3"
+    ],
+    "day_min": 4
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "ねえ、{player}さん。少しだけ、昔の話をしてもいいですか",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "わたしの父も、このギルドの……結晶騎士団の騎士だったんです",
+      "next": "s3"
+    },
+    "s3": {
+      "text": "わたしを育ててくれたのは、ガルドさんなんですよ。ああ見えて、すごく心配性で",
+      "expression": "smile",
+      "next": "s4"
+    },
+    "s4": {
+      "text": "だから、ここで迷い人さんの名前を書くのが、わたしの仕事なんです。誰の名前も、なくさないように",
+      "next": "offer"
+    },
+    "offer": {
+      "text": "そうだ、お願いがもうひとつ……",
+      "choices": [
+        {
+          "text": "引き受ける",
+          "next": "yes",
+          "actions": [
+            {
+              "type": "amemaru:start_quest",
+              "quest": "amemaru:lilia_2"
+            }
+          ]
+        },
+        {
+          "text": "また今度",
+          "next": "no"
+        }
+      ]
+    },
+    "yes": {
+      "text": "受付に飾ったら、きっとみんな元気が出ますね！"
+    },
+    "no": {
+      "text": "気にしないでください。掲示板に貼っておきます"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:bond/lilia_talk3"
+      ]
+    }
+  ]
+}

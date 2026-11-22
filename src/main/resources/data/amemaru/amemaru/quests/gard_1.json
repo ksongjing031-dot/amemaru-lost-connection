@@ -1,0 +1,36 @@
+{
+  "name": "見回り",
+  "kind": "personal",
+  "giver": "amemaru:gard",
+  "board": true,
+  "description": "草原の見回りだ。ツノモフを10、石くれ兵を5。……無理はするな。",
+  "requires": {
+    "affinity_min": 2,
+    "has_job": true
+  },
+  "objectives": [
+    {
+      "type": "kill",
+      "enemy": "amemaru:tsunomofu",
+      "count": 10,
+      "floor": 1
+    },
+    {
+      "type": "kill",
+      "enemy": "amemaru:ishikure_soldier",
+      "count": 5,
+      "floor": 1
+    }
+  ],
+  "rewards": {
+    "knots": 250,
+    "exp": 150,
+    "affinity": {
+      "amemaru:gard": 15
+    },
+    "flags": [
+      "amemaru:bond/gard_1_done"
+    ]
+  },
+  "order": 418
+}

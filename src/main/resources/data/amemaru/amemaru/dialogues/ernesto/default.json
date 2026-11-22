@@ -1,0 +1,62 @@
+{
+  "_comment": "ふだんのエルネスト。見つけた記録を解読する・記録帳を開く・なくした記録帳をもう一冊（中身は本人の記録なので消えない）",
+  "npc": "amemaru:ernesto",
+  "priority": 10,
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "おお、{player}。何か見つけたかの？",
+      "choices": [
+        {
+          "text": "記録を読んでほしい",
+          "next": "d1",
+          "actions": [
+            {
+              "type": "amemaru:decipher_records"
+            }
+          ]
+        },
+        {
+          "text": "記録帳を開く",
+          "next": "end",
+          "actions": [
+            {
+              "type": "amemaru:open_record_book"
+            }
+          ]
+        },
+        {
+          "text": "記録帳をなくした",
+          "next": "b1",
+          "actions": [
+            {
+              "type": "amemaru:give_record_book"
+            }
+          ]
+        },
+        {
+          "text": "塔のことを聞きたい",
+          "next": "t1"
+        },
+        {
+          "text": "なんでもない",
+          "next": "end"
+        }
+      ]
+    },
+    "d1": {
+      "text": "どれどれ……ふむふむ。読めたものは、記録帳に書いておいたぞ"
+    },
+    "b1": {
+      "text": "ほれ、もう一冊。中身はおぬしの記録じゃから、なくしても消えはせん"
+    },
+    "t1": {
+      "text": "この塔は、古代の記録そのものじゃ……と、わしは四十年言い続けておる",
+      "next": "t2"
+    },
+    "t2": {
+      "expression": "excited",
+      "text": "石板も、柱も、敵の姿でさえ、何かを書き残しておる。実に、実に興味深い！"
+    }
+  }
+}

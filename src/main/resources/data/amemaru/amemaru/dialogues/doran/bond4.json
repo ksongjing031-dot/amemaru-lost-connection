@@ -1,0 +1,32 @@
+{
+  "_comment": "親密度4「親友」：特別な会話。ゆかりの小物（見た目だけ）は、段階が上がったときに渡している（一度だけ。台詞は【提案】）",
+  "npc": "amemaru:doran",
+  "priority": 15,
+  "conditions": {
+    "opening": 2,
+    "has_job": true,
+    "affinity_min": 4,
+    "flags_none": [
+      "amemaru:bond/doran_talk4"
+    ]
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "さっきのは、オレのお守りの、小せぇ写しだ",
+      "expression": "grin",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "金槌ってのはな、二人で振ると、音が変わるんだぜ"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:bond/doran_talk4"
+      ]
+    }
+  ]
+}

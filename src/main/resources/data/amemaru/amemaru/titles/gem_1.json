@@ -1,0 +1,15 @@
+{
+  "name": "宝石研ぎ",
+  "field": "craft",
+  "kind": "normal",
+  "series": "gem",
+  "tier": 1,
+  "tiers": 3,
+  "condition": {
+    "type": "counter",
+    "counter": "rerolls",
+    "at_least": 50
+  },
+  "description": "アクセサリーの厳選を50回した",
+  "order": 140
+}

@@ -1,0 +1,50 @@
+{
+  "_comment": "エルネスト（Phase 0-A 8章）。古代文明研究者。3日目、3階の記録を持ち帰ると現れ、記録帳を渡す（3階ができるまでは、3日目からギルドの2階の資料室にいる。Phase 8 で3階の記録の持ち帰りに替える）。見つけた古代記録を解読し、記録帳に載せる。立体のモデルは tools/artgen/make_npc_models.py",
+  "name": "エルネスト",
+  "title": "古代文明研究者",
+  "skin": "amemaru:textures/entity/npc/ernesto.png",
+  "slim": false,
+  "model": "amemaru:npc/ernesto",
+  "model_scale": 0.95,
+  "portrait_y": 1.23,
+  "expressions": [
+    "excited",
+    "worried"
+  ],
+  "home": {
+    "place": "conelia",
+    "pos": [
+      34.5,
+      10,
+      -66.5
+    ],
+    "yaw": 90
+  },
+  "roles": [],
+  "talk_range": 5,
+  "appears": {
+    "day_min": 3
+  },
+  "bond": {
+    "loved": [
+      "amemaru:echo_fragment",
+      "amemaru:ancient_stone"
+    ],
+    "liked": [
+      "minecraft:honey_bottle",
+      "minecraft:paper",
+      "minecraft:book",
+      "amemaru:ishikure_core"
+    ],
+    "reactions": {
+      "loved": "これは……実に、実に興味深い！ どこで見つけたのじゃ！",
+      "liked": "ほう、ありがたい。研究がはかどるわい",
+      "normal": "わしにか？ ふぉっふぉっ、すまんのう",
+      "full": "今日はもう十分じゃ。それより、記録の話をせんか",
+      "frozen": "はて、どこかで会ったかのう……"
+    },
+    "gift": "amemaru:mana_water_small",
+    "gift_count": 2,
+    "keepsake": "amemaru:keepsake_ernesto"
+  }
+}

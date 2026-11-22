@@ -1,0 +1,35 @@
+{
+  "name": "こだまの欠片",
+  "kind": "personal",
+  "giver": "amemaru:serena",
+  "board": true,
+  "description": "塔で拾える「こだまの欠片」を、5つ調べさせてください。祈りの声に、よく似た響きがするのです。",
+  "requires": {
+    "affinity_min": 3,
+    "has_job": true
+  },
+  "objectives": [
+    {
+      "type": "collect",
+      "item": "amemaru:echo_fragment",
+      "count": 5,
+      "consume": true
+    }
+  ],
+  "rewards": {
+    "knots": 250,
+    "items": [
+      {
+        "item": "amemaru:mana_water_small",
+        "count": 2
+      }
+    ],
+    "affinity": {
+      "amemaru:serena": 20
+    },
+    "flags": [
+      "amemaru:bond/serena_2_done"
+    ]
+  },
+  "order": 423
+}

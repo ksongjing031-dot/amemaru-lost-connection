@@ -1,0 +1,15 @@
+{
+  "name": "千の結び",
+  "field": "combat",
+  "kind": "normal",
+  "series": "link",
+  "tier": 3,
+  "tiers": 3,
+  "condition": {
+    "type": "counter",
+    "counter": "link_combos",
+    "at_least": 2000
+  },
+  "description": "連携技を2,000回成功させた",
+  "order": 50
+}

@@ -1,0 +1,52 @@
+{
+  "_comment": "エルネストに初めて会ったとき（一度だけ）。記録帳を渡す（Phase 0-A 11章の3日目。3階ができるまでは、3日目からギルドの2階の資料室にいる）。口ぐせ「実に、実に興味深い！」",
+  "npc": "amemaru:ernesto",
+  "priority": 20,
+  "conditions": {
+    "flags_none": [
+      "amemaru:story/ernesto_met"
+    ]
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "expression": "excited",
+      "text": "おお、おお！ おぬしが塔に登っておる迷い人か！",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "わしはエルネスト。古代の記録を読むのが仕事……いや、生きがいじゃ",
+      "next": "s3"
+    },
+    "s3": {
+      "text": "塔で石板や文書を見つけたら、わしのところへ持ってくるのじゃ。読めぬものは、わしが読む",
+      "next": "s4"
+    },
+    "s4": {
+      "text": "これを渡しておこう。記録帳じゃ。見つけた記録は、ここに残る",
+      "next": "s5",
+      "actions": [
+        {
+          "type": "amemaru:give_record_book"
+        }
+      ]
+    },
+    "s5": {
+      "expression": "excited",
+      "text": "もう何か見つけておるなら、今すぐ読んでやろう。……実に、実に興味深い！",
+      "actions": [
+        {
+          "type": "amemaru:decipher_records"
+        }
+      ]
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/ernesto_met"
+      ]
+    }
+  ]
+}

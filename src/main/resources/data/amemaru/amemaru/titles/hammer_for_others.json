@@ -1,0 +1,12 @@
+{
+  "name": "誰かのための槌",
+  "field": "craft",
+  "kind": "normal",
+  "condition": {
+    "type": "counter",
+    "counter": "helped",
+    "at_least": 30
+  },
+  "description": "ほかの人のための制作・修理・厳選を、合わせて30回した",
+  "order": 170
+}

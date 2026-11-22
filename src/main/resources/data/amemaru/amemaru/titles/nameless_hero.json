@@ -1,0 +1,12 @@
+{
+  "name": "名もなき英雄",
+  "field": "combat",
+  "kind": "hidden",
+  "condition": {
+    "type": "event",
+    "event": "nameless_hero"
+  },
+  "description": "称号を表示しないまま、章ボスを3体倒した",
+  "hint": "名を名乗らずに戦った者たちの昔話",
+  "order": 510
+}

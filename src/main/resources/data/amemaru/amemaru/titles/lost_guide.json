@@ -1,0 +1,12 @@
+{
+  "name": "迷子の案内人",
+  "field": "social",
+  "kind": "hidden",
+  "condition": {
+    "type": "event",
+    "event": "guided_lost_party"
+  },
+  "description": "2階で道に迷っているほかのパーティを、出口まで連れていった",
+  "hint": "森で迷った者を見かけたら、出口まで",
+  "order": 500
+}

@@ -1,0 +1,12 @@
+{
+  "name": "セレナの灯",
+  "field": "story",
+  "kind": "normal",
+  "condition": {
+    "type": "affinity",
+    "npc": "amemaru:serena",
+    "stage": 5
+  },
+  "description": "セレナと「かけがえのない人」になった",
+  "order": 440
+}

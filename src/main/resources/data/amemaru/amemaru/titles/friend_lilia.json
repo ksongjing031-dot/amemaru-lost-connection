@@ -1,0 +1,12 @@
+{
+  "name": "リリアの友",
+  "field": "story",
+  "kind": "normal",
+  "condition": {
+    "type": "affinity",
+    "npc": "amemaru:lilia",
+    "stage": 5
+  },
+  "description": "リリアと「かけがえのない人」になった",
+  "order": 410
+}

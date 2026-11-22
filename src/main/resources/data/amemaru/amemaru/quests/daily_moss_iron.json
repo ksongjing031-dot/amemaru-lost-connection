@@ -1,0 +1,19 @@
+{
+  "name": "苔鉄の納品",
+  "kind": "daily",
+  "pool": "floor1",
+  "description": "金物屋から、苔鉄の注文です。",
+  "objectives": [
+    {
+      "type": "collect",
+      "item": "amemaru:moss_iron",
+      "count": 5,
+      "consume": true
+    }
+  ],
+  "rewards": {
+    "knots": 160,
+    "exp": 110
+  },
+  "order": 70
+}

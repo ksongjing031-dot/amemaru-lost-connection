@@ -1,0 +1,22 @@
+{
+  "name": "群れの長",
+  "kind": "upper",
+  "description": "ツノモフの群れを率いる長が見つかりました。群れごと相手にすることになります。",
+  "requires": {
+    "day_min": 5,
+    "has_job": true
+  },
+  "objectives": [
+    {
+      "type": "kill",
+      "enemy": "amemaru:tsunomofu_alpha",
+      "count": 1,
+      "floor": 1
+    }
+  ],
+  "rewards": {
+    "knots": 800,
+    "exp": 500
+  },
+  "order": 200
+}

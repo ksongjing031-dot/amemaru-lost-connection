@@ -1,0 +1,54 @@
+{
+  "_comment": "親密度2「知り合い」になって最初に話したとき（一度だけ）。個人的な依頼①を頼む。依頼はギルドの掲示板にも出る（Phase 6 その3。台詞は【提案】）",
+  "npc": "amemaru:gard",
+  "priority": 15,
+  "conditions": {
+    "opening": 2,
+    "has_job": true,
+    "affinity_min": 2,
+    "flags_none": [
+      "amemaru:bond/gard_talk2"
+    ]
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "……お前か",
+      "expression": "stern",
+      "next": "offer"
+    },
+    "offer": {
+      "text": "見回りを頼みたい。新人が増える前にな",
+      "choices": [
+        {
+          "text": "引き受ける",
+          "next": "yes",
+          "actions": [
+            {
+              "type": "amemaru:start_quest",
+              "quest": "amemaru:gard_1"
+            }
+          ]
+        },
+        {
+          "text": "また今度",
+          "next": "no"
+        }
+      ]
+    },
+    "yes": {
+      "text": "……頼んだ。無理はするな"
+    },
+    "no": {
+      "text": "……そうか。掲示板にも出しておく"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:bond/gard_talk2"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "name": "受付の花",
+  "kind": "personal",
+  "giver": "amemaru:lilia",
+  "board": true,
+  "description": "受付に、青い花を飾りたいんです。花と種の店の矢車菊を、3本お願いできますか？",
+  "requires": {
+    "affinity_min": 3,
+    "has_job": true
+  },
+  "objectives": [
+    {
+      "type": "collect",
+      "item": "minecraft:cornflower",
+      "count": 3,
+      "consume": true
+    }
+  ],
+  "rewards": {
+    "knots": 100,
+    "items": [
+      {
+        "item": "minecraft:cookie",
+        "count": 6
+      }
+    ],
+    "affinity": {
+      "amemaru:lilia": 20
+    },
+    "flags": [
+      "amemaru:bond/lilia_2_done"
+    ]
+  },
+  "order": 417
+}

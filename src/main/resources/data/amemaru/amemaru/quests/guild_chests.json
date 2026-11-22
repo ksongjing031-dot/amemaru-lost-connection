@@ -1,0 +1,20 @@
+{
+  "name": "古代の宝箱",
+  "kind": "guild",
+  "description": "1階のどこかに、古代の宝箱が眠っています。3つ見つけて開けてください。",
+  "requires": {
+    "has_job": true
+  },
+  "objectives": [
+    {
+      "type": "chest",
+      "count": 3,
+      "floor": 1
+    }
+  ],
+  "rewards": {
+    "knots": 250,
+    "exp": 150
+  },
+  "order": 120
+}

@@ -1,0 +1,19 @@
+{
+  "name": "欠け牙の狼",
+  "kind": "daily",
+  "pool": "floor1",
+  "description": "体の一部が白く欠けた狼が出ています。突進に気をつけて。",
+  "objectives": [
+    {
+      "type": "kill",
+      "enemy": "amemaru:kakekiba_wolf",
+      "count": 5,
+      "floor": 1
+    }
+  ],
+  "rewards": {
+    "knots": 200,
+    "exp": 160
+  },
+  "order": 30
+}

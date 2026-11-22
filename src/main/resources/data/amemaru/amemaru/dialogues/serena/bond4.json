@@ -1,0 +1,32 @@
+{
+  "_comment": "親密度4「親友」：特別な会話。ゆかりの小物（見た目だけ）は、段階が上がったときに渡している（一度だけ。台詞は【提案】）",
+  "npc": "amemaru:serena",
+  "priority": 15,
+  "conditions": {
+    "opening": 2,
+    "has_job": true,
+    "affinity_min": 4,
+    "flags_none": [
+      "amemaru:bond/serena_talk4"
+    ]
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "さきほどの鈴は、わたくしの鈴と同じ音がするのです",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "道に迷ったら、鳴らしてください。灯りは、きっとそこにあります",
+      "expression": "smile"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:bond/serena_talk4"
+      ]
+    }
+  ]
+}

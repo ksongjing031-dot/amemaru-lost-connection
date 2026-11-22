@@ -216,12 +216,9 @@ public final class AccessoryService {
         ModNetwork.sendTo(player, new SpecialMomentS2C(SpecialMomentS2C.Kind.PERFECT_ACCESSORY, stack.copy()));
         player.server.getPlayerList().broadcastSystemMessage(Component.translatable("message.amemaru.accessory.perfect_announce",
                 player.getDisplayName(), stack.getDisplayName()).withStyle(ChatFormatting.LIGHT_PURPLE), false);
-        PlayerDataCapability.get(player).ifPresent(data -> {
-            if (data.getAdventure().addPendingTitle(PERFECT_TITLE)) {
-                player.displayClientMessage(Component.translatable("message.amemaru.title.pending",
-                        Component.translatable("title.amemaru.perfect_crystal")).withStyle(ChatFormatting.GOLD), false);
-            }
-        });
+        // Phase 6 その3：称号「完璧の結晶」と、限定称号「最初の完璧」（預かりの印も残す。前の版のデータとの互換のため）
+        PlayerDataCapability.get(player).ifPresent(data -> data.getAdventure().addPendingTitle(PERFECT_TITLE));
+        jp.amemaru.lostconnection.guild.GuildHooks.onPerfectAccessory(player);
     }
 
     /** 本人の手に入ったアクセサリー（作った・拾った）を確かめる。 */

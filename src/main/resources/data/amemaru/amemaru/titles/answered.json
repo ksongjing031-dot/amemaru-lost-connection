@@ -1,0 +1,12 @@
+{
+  "name": "答えた人",
+  "field": "story",
+  "kind": "hidden",
+  "condition": {
+    "type": "event",
+    "event": "final_question_answered"
+  },
+  "description": "最終決戦の問いに、自分の言葉で答えた",
+  "hint": "問いかけの像は、答えを待っている",
+  "order": 550
+}

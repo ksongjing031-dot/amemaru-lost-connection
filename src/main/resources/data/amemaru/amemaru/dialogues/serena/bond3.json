@@ -1,0 +1,63 @@
+{
+  "_comment": "親密度3「信頼」：過去の話（Phase 0-A 12章の明かしてよい時期に合わせて、日で区切る）と、個人的な依頼②（一度だけ。台詞は【提案】）。家のことは8日目（ロストの仕組みを伝えた後）から。秘蹟のことは言わない",
+  "npc": "amemaru:serena",
+  "priority": 15,
+  "conditions": {
+    "opening": 2,
+    "has_job": true,
+    "affinity_min": 3,
+    "flags_none": [
+      "amemaru:bond/serena_talk3"
+    ],
+    "day_min": 8
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "わたくしの家は、代々、人の記憶を見守る家でした",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "だから、わたくしは忘れることが、少しこわいのです",
+      "next": "s3"
+    },
+    "s3": {
+      "text": "……ふふ。司祭がこんなことを言ってはいけませんね",
+      "expression": "smile",
+      "next": "offer"
+    },
+    "offer": {
+      "text": "もうひとつ、お願いしてもよろしいですか",
+      "choices": [
+        {
+          "text": "引き受ける",
+          "next": "yes",
+          "actions": [
+            {
+              "type": "amemaru:start_quest",
+              "quest": "amemaru:serena_2"
+            }
+          ]
+        },
+        {
+          "text": "また今度",
+          "next": "no"
+        }
+      ]
+    },
+    "yes": {
+      "text": "ありがとうございます。響きを、確かめてみますね"
+    },
+    "no": {
+      "text": "ええ、いつでも構いませんよ"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:bond/serena_talk3"
+      ]
+    }
+  ]
+}

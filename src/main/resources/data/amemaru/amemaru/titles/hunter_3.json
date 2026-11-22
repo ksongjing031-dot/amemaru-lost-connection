@@ -1,0 +1,15 @@
+{
+  "name": "達人討伐者",
+  "field": "combat",
+  "kind": "normal",
+  "series": "hunter",
+  "tier": 3,
+  "tiers": 3,
+  "condition": {
+    "type": "counter",
+    "counter": "kills",
+    "at_least": 10000
+  },
+  "description": "敵を10,000体倒した",
+  "order": 20
+}

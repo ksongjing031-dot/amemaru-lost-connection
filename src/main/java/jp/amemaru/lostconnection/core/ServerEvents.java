@@ -60,6 +60,10 @@ public final class ServerEvents {
         event.addListener(jp.amemaru.lostconnection.economy.MarketPrices.loader());
         event.addListener(jp.amemaru.lostconnection.economy.ShopDefs.loader());
         event.addListener(jp.amemaru.lostconnection.item.ConsumableDefs.loader());
+        // Phase 6 その3：称号・古代記録・クエスト
+        event.addListener(jp.amemaru.lostconnection.guild.TitleDefs.loader());
+        event.addListener(jp.amemaru.lostconnection.guild.RecordDefs.loader());
+        event.addListener(jp.amemaru.lostconnection.guild.QuestDefs.loader());
     }
 
     @SubscribeEvent
@@ -91,6 +95,8 @@ public final class ServerEvents {
             DataReport.notifyAdmins(List.of(joining));
             return;
         }
+        // Phase 6 その3：称号の一覧（/reload の後）
+        jp.amemaru.lostconnection.guild.GuildService.sendCatalogToAll(event.getPlayerList().getServer());
         List<ServerPlayer> players = event.getPlayerList().getPlayers();
         for (ServerPlayer player : players) {
             ModNetwork.sendTo(player, definitions);

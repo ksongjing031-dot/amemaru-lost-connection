@@ -31,6 +31,7 @@ public final class Wallet {
         long change = data.getKnots() - before;
         log(player, reason, change, data.getKnots());
         record(player.server, EconomyLog.Flow.ISSUE, reason, "", name(player), change);
+        jp.amemaru.lostconnection.guild.GuildHooks.onKnotsChanged(player, data, before, data.getKnots());
     }
 
     /** 取る（持っている分まで）。取れた量を返す。世界からノットが消える（回収）。 */
@@ -43,6 +44,7 @@ public final class Wallet {
         data.setKnots(before - taken);
         log(player, reason, -taken, data.getKnots());
         record(player.server, EconomyLog.Flow.COLLECT, reason, name(player), "", taken);
+        jp.amemaru.lostconnection.guild.GuildHooks.onKnotsChanged(player, data, before, data.getKnots());
         return taken;
     }
 
@@ -68,6 +70,7 @@ public final class Wallet {
         } else if (change < 0) {
             record(player.server, EconomyLog.Flow.COLLECT, reason, name(player), "", -change);
         }
+        jp.amemaru.lostconnection.guild.GuildHooks.onKnotsChanged(player, data, before, data.getKnots());
     }
 
     /**
@@ -79,11 +82,15 @@ public final class Wallet {
         if (amount <= 0 || from.getUUID().equals(to.getUUID()) || fromData == toData || fromData.getKnots() < amount) {
             return false;
         }
+        long fromBefore = fromData.getKnots();
+        long toBefore = toData.getKnots();
         fromData.setKnots(fromData.getKnots() - amount);
         toData.setKnots(saturatedAdd(toData.getKnots(), amount));
         log(from, reason + " -> " + name(to), -amount, fromData.getKnots());
         log(to, reason + " <- " + name(from), amount, toData.getKnots());
         record(from.server, EconomyLog.Flow.MOVE, reason, name(from), name(to), amount);
+        jp.amemaru.lostconnection.guild.GuildHooks.onKnotsChanged(from, fromData, fromBefore, fromData.getKnots());
+        jp.amemaru.lostconnection.guild.GuildHooks.onKnotsChanged(to, toData, toBefore, toData.getKnots());
         return true;
     }
 
@@ -95,8 +102,10 @@ public final class Wallet {
         if (total <= 0 || fee < 0 || fee > total || data.getKnots() < total) {
             return false;
         }
+        long before = data.getKnots();
         data.setKnots(data.getKnots() - total);
         log(buyer, reason + " -> " + sellerName, -total, data.getKnots());
+        jp.amemaru.lostconnection.guild.GuildHooks.onKnotsChanged(buyer, data, before, data.getKnots());
         record(buyer.server, EconomyLog.Flow.COLLECT, reason + " fee", name(buyer), "", fee);
         record(buyer.server, EconomyLog.Flow.MOVE, reason, name(buyer), sellerName, total - fee);
         return true;
@@ -110,6 +119,7 @@ public final class Wallet {
         long before = data.getKnots();
         data.setKnots(saturatedAdd(before, amount));
         log(player, reason, data.getKnots() - before, data.getKnots());
+        jp.amemaru.lostconnection.guild.GuildHooks.onKnotsChanged(player, data, before, data.getKnots());
     }
 
     /** 所持金の何%か（切り捨て）。デスペナルティで失う量。 */

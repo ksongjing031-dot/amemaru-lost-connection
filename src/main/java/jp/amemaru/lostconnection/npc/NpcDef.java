@@ -10,7 +10,9 @@ import net.minecraft.world.phys.Vec3;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * NPCの定義（データパックの {@code npcs/}。Phase 0-B 4.4「NPC（NpcEntity）：倒せない、押されない、その場から動かない。
@@ -32,9 +34,38 @@ import java.util.List;
  */
 public record NpcDef(ResourceLocation id, String name, String title, ResourceLocation skin, boolean slim, List<String> expressions,
                      @Nullable Home home, List<String> roles, double talkRange, @Nullable ResourceLocation model, float modelScale,
-                     float portraitY) {
+                     float portraitY, @Nullable jp.amemaru.lostconnection.story.Conditions appears, @Nullable Bond bond) {
     /** 立つ所。 */
     public record Home(String place, Vec3 pos, float yaw) {
+    }
+
+    /**
+     * 親密度（Phase 0-A 14章「NPCとの親密度」。Phase 6 その3）。主要NPCだけが持つ。
+     *
+     * <ul>
+     *   <li>{@code loved}・{@code liked}：好きな物（贈ると親密度が大きく上がる）。それ以外の品でも少し上がる</li>
+     *   <li>{@code reactions}：贈られたときの一言（{@code loved}・{@code liked}・{@code normal}・{@code full}＝今日はもうもらった、
+     *       {@code frozen}＝記憶喪失中。Phase 8）</li>
+     *   <li>{@code gift}・{@code gift_count}：段階3「信頼」で渡す小さな贈り物。{@code keepsake}：段階4「親友」で渡すゆかりの小物（見た目だけ）</li>
+     * </ul>
+     */
+    public record Bond(List<ResourceLocation> loved, List<ResourceLocation> liked, Map<String, String> reactions,
+                       @Nullable ResourceLocation gift, int giftCount, @Nullable ResourceLocation keepsake) {
+        public String reaction(String key) {
+            return reactions.getOrDefault(key, "");
+        }
+
+        static Bond parse(JsonObject json) {
+            Map<String, String> reactions = new LinkedHashMap<>();
+            JsonObject r = Json.optionalObject(json, "reactions");
+            if (r != null) {
+                for (String key : r.keySet()) {
+                    reactions.put(key, Json.asString(r.get(key), "reactions." + key));
+                }
+            }
+            return new Bond(Json.idList(json, "loved"), Json.idList(json, "liked"), Map.copyOf(reactions), Json.optionalId(json, "gift"),
+                    Json.optionalInt(json, "gift_count", 1, 1, 64), Json.optionalId(json, "keepsake"));
+        }
     }
 
     public boolean hasRole(String role) {
@@ -81,10 +112,14 @@ public record NpcDef(ResourceLocation id, String name, String title, ResourceLoc
         }
         String modelText = Json.optionalString(json, "model", "");
         ResourceLocation model = modelText.isEmpty() ? null : Json.parseId(modelText, "model");
+        JsonObject appearsJson = Json.optionalObject(json, "appears");
+        JsonObject bondJson = Json.optionalObject(json, "bond");
         return new NpcDef(id, name, title, skin, slim, List.copyOf(expressions), home, List.copyOf(roles),
                 Json.optionalDouble(json, "talk_range", 5.0, 1.0, 32.0), model,
                 (float) Json.optionalDouble(json, "model_scale", 0.9375, 0.25, 4.0),
-                (float) Json.optionalDouble(json, "portrait_y", 1.35, 0.0, 4.0));
+                (float) Json.optionalDouble(json, "portrait_y", 1.35, 0.0, 4.0),
+                appearsJson == null ? null : jp.amemaru.lostconnection.story.Conditions.parse(appearsJson),
+                bondJson == null ? null : Bond.parse(bondJson));
     }
 
     // ---------------------------------------------------------------- クライアントへ（見た目に要る分だけ）
@@ -121,6 +156,7 @@ public record NpcDef(ResourceLocation id, String name, String title, ResourceLoc
         ResourceLocation model = buf.readBoolean() ? buf.readResourceLocation() : null;
         float modelScale = buf.readFloat();
         float portraitY = buf.readFloat();
-        return new NpcDef(id, name, title, skin, slim, List.copyOf(expressions), null, List.of(), 5.0, model, modelScale, portraitY);
+        return new NpcDef(id, name, title, skin, slim, List.copyOf(expressions), null, List.of(), 5.0, model, modelScale, portraitY, null,
+                null);
     }
 }

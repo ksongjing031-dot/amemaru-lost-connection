@@ -113,6 +113,15 @@ public class StatusScreen extends Screen {
                 });
         give.setTooltip(Tooltip.create(Component.translatable("screen.amemaru.status.give_knots_tooltip")));
         addRenderableWidget(give);
+        // Phase 6 その3：称号の一覧（右上の角。持っている称号から一つ選んで表示する）
+        CrystalButton titles = new CrystalButton(left + PANEL_WIDTH - 46, top + 5, 36, 11, Component.translatable("screen.amemaru.status.titles"),
+                pressed -> {
+                    if (minecraft != null) {
+                        minecraft.setScreen(new TitleListScreen(this));
+                    }
+                });
+        titles.setTooltip(Tooltip.create(Component.translatable("screen.amemaru.status.titles_tooltip")));
+        addRenderableWidget(titles);
         updateButtons();
     }
 

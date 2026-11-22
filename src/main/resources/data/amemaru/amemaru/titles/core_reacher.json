@@ -1,0 +1,11 @@
+{
+  "name": "中枢に至りし者",
+  "field": "story",
+  "kind": "normal",
+  "condition": {
+    "type": "event",
+    "event": "final_battle_joined"
+  },
+  "description": "最終決戦に加わった",
+  "order": 480
+}

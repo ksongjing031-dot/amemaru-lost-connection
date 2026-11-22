@@ -1,0 +1,15 @@
+{
+  "name": "輝きの探求者",
+  "field": "craft",
+  "kind": "normal",
+  "series": "gem",
+  "tier": 3,
+  "tiers": 3,
+  "condition": {
+    "type": "counter",
+    "counter": "rerolls",
+    "at_least": 1000
+  },
+  "description": "アクセサリーの厳選を1,000回した",
+  "order": 160
+}

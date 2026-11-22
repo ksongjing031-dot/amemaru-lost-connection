@@ -1,0 +1,30 @@
+{
+  "name": "石くれ兵の核",
+  "kind": "personal",
+  "giver": "amemaru:ernesto",
+  "board": true,
+  "description": "石くれ兵の核を2つ。見張りが何を見張っておったのか、核に書いてあるはずじゃ。",
+  "requires": {
+    "affinity_min": 3,
+    "has_job": true
+  },
+  "objectives": [
+    {
+      "type": "collect",
+      "item": "amemaru:ishikure_core",
+      "count": 2,
+      "consume": true
+    }
+  ],
+  "rewards": {
+    "knots": 300,
+    "exp": 120,
+    "affinity": {
+      "amemaru:ernesto": 20
+    },
+    "flags": [
+      "amemaru:bond/ernesto_2_done"
+    ]
+  },
+  "order": 425
+}

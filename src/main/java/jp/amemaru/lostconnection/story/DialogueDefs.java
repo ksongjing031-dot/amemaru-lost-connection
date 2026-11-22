@@ -35,7 +35,7 @@ public final class DialogueDefs {
     public static DialogueDef choose(ServerPlayer player, ResourceLocation npc) {
         DialogueDef best = null;
         for (DialogueDef def : LOADER.all().values()) {
-            if (!def.npc().equals(npc) || !def.conditions().test(player)) {
+            if (!def.npc().equals(npc) || !def.conditions().test(player, npc)) {
                 continue;
             }
             if (best == null || def.priority() >= best.priority()) {

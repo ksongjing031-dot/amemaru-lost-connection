@@ -1,0 +1,54 @@
+{
+  "_comment": "親密度2「知り合い」になって最初に話したとき（一度だけ）。個人的な依頼①を頼む。依頼はギルドの掲示板にも出る（Phase 6 その3。台詞は【提案】）",
+  "npc": "amemaru:lilia",
+  "priority": 15,
+  "conditions": {
+    "opening": 2,
+    "has_job": true,
+    "affinity_min": 2,
+    "flags_none": [
+      "amemaru:bond/lilia_talk2"
+    ]
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "{player}さん、最近よく顔を見せてくれますね！ うれしいです",
+      "expression": "smile",
+      "next": "offer"
+    },
+    "offer": {
+      "text": "あの……ひとつ、お願いしてもいいですか？",
+      "choices": [
+        {
+          "text": "引き受ける",
+          "next": "yes",
+          "actions": [
+            {
+              "type": "amemaru:start_quest",
+              "quest": "amemaru:lilia_1"
+            }
+          ]
+        },
+        {
+          "text": "また今度",
+          "next": "no"
+        }
+      ]
+    },
+    "yes": {
+      "text": "ありがとうございます！ 名簿の写しを、ガルドさんと門番のバルドさんにお願いしますね"
+    },
+    "no": {
+      "text": "はい、いつでも。掲示板にも貼っておきますね"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:bond/lilia_talk2"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "name": "名簿の届け物",
+  "kind": "personal",
+  "giver": "amemaru:lilia",
+  "board": true,
+  "description": "冒険者名簿の写しを、ガルドさんと門番のバルドさんに届けてもらえますか？ わたし、受付を離れられなくて。",
+  "requires": {
+    "affinity_min": 2,
+    "has_job": true
+  },
+  "objectives": [
+    {
+      "type": "talk",
+      "npc": "amemaru:gard"
+    },
+    {
+      "type": "talk",
+      "npc": "amemaru:bard"
+    }
+  ],
+  "rewards": {
+    "knots": 150,
+    "exp": 80,
+    "affinity": {
+      "amemaru:lilia": 15
+    },
+    "flags": [
+      "amemaru:bond/lilia_1_done"
+    ]
+  },
+  "order": 416
+}

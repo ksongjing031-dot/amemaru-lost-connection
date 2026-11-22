@@ -1,0 +1,30 @@
+{
+  "name": "古い石を持ってこい",
+  "kind": "personal",
+  "giver": "amemaru:doran",
+  "board": true,
+  "description": "塔の古い石を5つだ。叩けば、昔の職人の腕がわかる。",
+  "requires": {
+    "affinity_min": 2,
+    "has_job": true
+  },
+  "objectives": [
+    {
+      "type": "collect",
+      "item": "amemaru:ancient_stone",
+      "count": 5,
+      "consume": true
+    }
+  ],
+  "rewards": {
+    "knots": 200,
+    "exp": 80,
+    "affinity": {
+      "amemaru:doran": 15
+    },
+    "flags": [
+      "amemaru:bond/doran_1_done"
+    ]
+  },
+  "order": 420
+}

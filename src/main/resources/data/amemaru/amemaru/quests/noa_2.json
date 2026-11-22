@@ -1,0 +1,29 @@
+{
+  "name": "甘いもの",
+  "kind": "personal",
+  "giver": "amemaru:noa",
+  "board": true,
+  "description": "パン屋のクッキー、3つ。……甘いものは、覚えておきたいから。",
+  "requires": {
+    "affinity_min": 3,
+    "has_job": true
+  },
+  "objectives": [
+    {
+      "type": "collect",
+      "item": "minecraft:cookie",
+      "count": 3,
+      "consume": true
+    }
+  ],
+  "rewards": {
+    "knots": 100,
+    "affinity": {
+      "amemaru:noa": 20
+    },
+    "flags": [
+      "amemaru:bond/noa_2_done"
+    ]
+  },
+  "order": 427
+}

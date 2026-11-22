@@ -1,0 +1,33 @@
+{
+  "_comment": "親密度4「親友」：特別な会話。ゆかりの小物（見た目だけ）は、段階が上がったときに渡している（一度だけ。台詞は【提案】）",
+  "npc": "amemaru:noa",
+  "priority": 15,
+  "conditions": {
+    "opening": 2,
+    "has_job": true,
+    "affinity_min": 4,
+    "flags_none": [
+      "amemaru:bond/noa_talk4"
+    ],
+    "day_min": 4
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "さっきのひも、結び目があるでしょ",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "リ・ネ。……ありがとう、っていう意味",
+      "expression": "smile"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:bond/noa_talk4"
+      ]
+    }
+  ]
+}

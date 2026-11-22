@@ -1,0 +1,54 @@
+{
+  "_comment": "親密度2「知り合い」になって最初に話したとき（一度だけ）。個人的な依頼①を頼む。依頼はギルドの掲示板にも出る（Phase 6 その3。台詞は【提案】）",
+  "npc": "amemaru:doran",
+  "priority": 15,
+  "conditions": {
+    "opening": 2,
+    "has_job": true,
+    "affinity_min": 2,
+    "flags_none": [
+      "amemaru:bond/doran_talk2"
+    ]
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "おう、てめぇか。いい面構えになってきたじゃねぇか",
+      "expression": "grin",
+      "next": "offer"
+    },
+    "offer": {
+      "text": "頼みがある。塔の古い石を持ってこい",
+      "choices": [
+        {
+          "text": "引き受ける",
+          "next": "yes",
+          "actions": [
+            {
+              "type": "amemaru:start_quest",
+              "quest": "amemaru:doran_1"
+            }
+          ]
+        },
+        {
+          "text": "また今度",
+          "next": "no"
+        }
+      ]
+    },
+    "yes": {
+      "text": "よし、待ってるぜ"
+    },
+    "no": {
+      "text": "ちっ、まあいい。掲示板に貼っとくからな"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:bond/doran_talk2"
+      ]
+    }
+  ]
+}

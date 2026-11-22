@@ -1,0 +1,15 @@
+{
+  "name": "結晶細工師",
+  "field": "craft",
+  "kind": "normal",
+  "series": "gem",
+  "tier": 2,
+  "tiers": 3,
+  "condition": {
+    "type": "counter",
+    "counter": "rerolls",
+    "at_least": 300
+  },
+  "description": "アクセサリーの厳選を300回した",
+  "order": 150
+}

@@ -1,0 +1,61 @@
+{
+  "_comment": "親密度3「信頼」：過去の話（Phase 0-A 12章の明かしてよい時期に合わせて、日で区切る）と、個人的な依頼②（一度だけ。台詞は【提案】）。金槌の二つの名前の、もう片方は11日目まで言わない",
+  "npc": "amemaru:doran",
+  "priority": 15,
+  "conditions": {
+    "opening": 2,
+    "has_job": true,
+    "affinity_min": 3,
+    "flags_none": [
+      "amemaru:bond/doran_talk3"
+    ]
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "この金槌か？ ……二つ、名前が彫ってあるだろ",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "片方は、オレの名前だ。もう片方は……まあ、いつか話す",
+      "next": "s3"
+    },
+    "s3": {
+      "text": "鉄は嘘をつかねぇ。だから、打つ奴が嘘をついちゃいけねぇんだ",
+      "next": "offer"
+    },
+    "offer": {
+      "text": "でだ。もうひとつ、頼まれてくれ",
+      "choices": [
+        {
+          "text": "引き受ける",
+          "next": "yes",
+          "actions": [
+            {
+              "type": "amemaru:start_quest",
+              "quest": "amemaru:doran_2"
+            }
+          ]
+        },
+        {
+          "text": "また今度",
+          "next": "no"
+        }
+      ]
+    },
+    "yes": {
+      "text": "へっ、話が早ぇ。頼んだぜ"
+    },
+    "no": {
+      "text": "おう、気が向いたらでいい"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:bond/doran_talk3"
+      ]
+    }
+  ]
+}

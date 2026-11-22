@@ -1,0 +1,20 @@
+{
+  "name": "はじめての草原",
+  "kind": "guild",
+  "description": "1階「始まりの草原」の奥にいる草原の主を倒してください。仲間と一緒に、が条件です。",
+  "requires": {
+    "has_job": true
+  },
+  "objectives": [
+    {
+      "type": "boss",
+      "count": 1,
+      "floor": 1
+    }
+  ],
+  "rewards": {
+    "knots": 500,
+    "exp": 300
+  },
+  "order": 100
+}

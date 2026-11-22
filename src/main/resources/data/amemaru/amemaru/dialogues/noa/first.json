@@ -1,0 +1,38 @@
+{
+  "_comment": "4日目から、初めてノアと話したとき（一度だけ）。名前を一度で覚える【補完】",
+  "npc": "amemaru:noa",
+  "priority": 20,
+  "conditions": {
+    "day_min": 4,
+    "flags_none": [
+      "amemaru:story/noa_met"
+    ]
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "……あなた、迷い人？",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "わたしはノア。……名前、教えて",
+      "next": "s3"
+    },
+    "s3": {
+      "expression": "smile",
+      "text": "{player}。……うん、覚えた",
+      "next": "s4"
+    },
+    "s4": {
+      "text": "わたしは、忘れないよ"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/noa_met"
+      ]
+    }
+  ]
+}

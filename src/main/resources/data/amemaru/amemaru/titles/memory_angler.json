@@ -1,0 +1,11 @@
+{
+  "name": "記憶を釣り上げた者",
+  "field": "leisure",
+  "kind": "normal",
+  "condition": {
+    "type": "event",
+    "event": "memory_fish_complete"
+  },
+  "description": "記憶魚を全種類釣った",
+  "order": 350
+}

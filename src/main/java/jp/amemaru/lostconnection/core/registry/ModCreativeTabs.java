@@ -35,6 +35,13 @@ public final class ModCreativeTabs {
                 output.accept(ModItems.BLANK_OATH.get());
                 output.accept(ModItems.JOB_CHANGE_TOKEN.get());
                 output.accept(ModItems.MARKET_NOTEBOOK.get());
+                output.accept(ModItems.RECORD_BOOK.get());
+                output.accept(ModItems.KEEPSAKE_LILIA.get());
+                output.accept(ModItems.KEEPSAKE_GARD.get());
+                output.accept(ModItems.KEEPSAKE_DORAN.get());
+                output.accept(ModItems.KEEPSAKE_SERENA.get());
+                output.accept(ModItems.KEEPSAKE_ERNESTO.get());
+                output.accept(ModItems.KEEPSAKE_NOA.get());
                 output.accept(ModItems.TSUNOMOFU_SPAWN_EGG.get());
                 output.accept(ModItems.ISHIKURE_SOLDIER_SPAWN_EGG.get());
                 output.accept(ModItems.CRYSTAL_BEE_SPAWN_EGG.get());
