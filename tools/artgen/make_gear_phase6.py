@@ -8,7 +8,10 @@
 防具（GeckoLib）：古代石シリーズ（軽装）＝ 額当て・胴着・脚絆・短靴（アーチャー・ローグ・モンク）。
   1階の道標の石の小さな板を、苔で染めた毛と革の旅装に縫い付けた、動きやすい装備。
 
-双短剣は1つのアイテムで、手には右の1本だけが見える（左手の1本は、持ち物の絵にだけ描く）【補完】。
+双短剣は1つのアイテムで、空いているもう片方の手にも同じ1本を描く（11月23日に決定。client/render/TwinWeapons.java・
+TwinHandLayer.java）。11月23日に、双短剣を大きくし（長さ1.25倍・持つ大きさ0.7→0.8）、弓の弦を両端の弭（ゆはず）に
+つなぎ（弦は自分の側・握りが前）、籠手を「腕の座標」で作り直して両手にはめるようにした（確認画像：
+tools/artgen/make_twin_hold_sheet.py → docs/gear/twin_hold_sheet.png）。
 同じ名前・同じ大きさで描き直したファイルを置けば、コードを変えずに差し替えられる。
 """
 import os
@@ -85,8 +88,13 @@ def build_ancient_bell_staff():
 
 # ================================================================ 弓（アーチャー）
 
+# 弓の弦の x（11月23日：弦を両端の弭につなぐ。腕は握りから上下へ +x の側へ反り、弦はその先の +x の側を通る）。
+# 持ち方（[0, −90, 0]）では、モデルの +x が腕の付け根の側に来るので、射る構え（腕を前へのばす）で弦が自分の側・握りが前になる
+BOW_STRING_X = (10.75, 11.0)
+
+
 def _bow_limbs(m, mat, edge_mat, prefix=""):
-    """弓の腕：握りから上下へ、前（+x）へ反ってのびる。弦は後ろ（−x）。"""
+    """弓の腕：握りから上下へ、+x の側へ反ってのびる。弦は両端の弭（+x の側）をまっすぐつなぐ。"""
     # 上の腕
     segs = ((5, 9, 8.0), (9, 13, 8.6), (13, 16.5, 9.4), (16.5, 19, 10.3))
     for k, (y0, y1, x) in enumerate(segs):
@@ -94,13 +102,16 @@ def _bow_limbs(m, mat, edge_mat, prefix=""):
         m.box(f"{prefix}lower_{k}", (x - 0.6, -y1 + 5, 7.4), (x + 0.6, -y0 + 5, 8.6), mat, tags={"grain": "y"})
     m.box(f"{prefix}tip_top", (10.0, 19, 7.6), (11.2, 20.2, 8.4), edge_mat)
     m.box(f"{prefix}tip_bottom", (10.0, -15.2, 7.6), (11.2, -14, 8.4), edge_mat)
+    # 弦：上の弭から下の弭まで（弭の中を通して、両端が見えるように結ぶ）
+    m.box(f"{prefix}string", (BOW_STRING_X[0], -14.9, 7.88), (BOW_STRING_X[1], 19.9, 8.12), "wool")
+    m.box(f"{prefix}nock_top", (10.6, 18.6, 7.7), (11.15, 19.0, 8.3), "cord")
+    m.box(f"{prefix}nock_bottom", (10.6, -14.0, 7.7), (11.15, -13.6, 8.3), "cord")
 
 
 def build_apprentice_bow():
     m = JavaModel("apprentice_bow", 64, 64)
     m.box("grip", (7.0, 0, 7.2), (8.8, 5, 8.8), "leather", tags={"wrap": True})
     _bow_limbs(m, "ash", "darksteel")
-    m.box("string", (6.2, -14.6, 7.9), (6.4, 19.6, 8.1), "wool")
     m.box("arrow_rest", (8.8, 4.2, 7.6), (9.4, 4.8, 8.4), "darksteel")
     m.box("cord_band", (6.8, 4.9, 7.0), (9.0, 5.6, 9.0), "cord", tags={"twist": True})
     cord_tail(m, "cord_tail", (7.2, 4.9, 8.0), 2.4, -22.5)
@@ -114,7 +125,6 @@ def build_ancient_bow():
     m.box("grip_plate", (8.8, 0.5, 7.0), (9.6, 4.5, 9.0), "stone", tags={"grooves": [2.5]})
     m.box("shard", (9.6, 2.0, 7.5), (10.2, 3.0, 8.5), "crystal_dim")
     _bow_limbs(m, "iron", "stone")
-    m.box("string", (6.2, -14.6, 7.9), (6.4, 19.6, 8.1), "wool")
     for k, y in enumerate((9.0, -4.0)):
         m.box(f"band_{k}", (8.0, y, 7.2), (10.0, y + 1.2, 8.8), "stone")
     return m
@@ -123,56 +133,69 @@ def build_ancient_bow():
 # ================================================================ 双短剣（ローグ）
 
 def build_apprentice_daggers():
+    # 11月23日：刃を長く・広くした（柄頭から切っ先まで 16.8 → 21）
     m = JavaModel("apprentice_daggers", 64, 64)
-    m.box("pommel", (7.25, -2, 7.25), (8.75, -0.75, 8.75), "darksteel")
-    m.box("grip", (7.4, -0.75, 7.4), (8.6, 4, 8.6), "leather", tags={"wrap": True})
-    m.box("guard", (5.5, 4, 7.25), (10.5, 5, 8.75), "darksteel")
-    m.box("blade", (7.0, 5, 7.6), (9.0, 12.5, 8.4), "steel", tags={"edge": True})
-    m.box("blade_tip", (7.5, 12.5, 7.7), (8.5, 14, 8.3), "steel", tags={"edge": True})
-    m.box("cord_knot", (7.3, -2.8, 7.3), (8.7, -2.0, 8.7), "cord", tags={"twist": True})
-    cord_tail(m, "cord_tail", (8.0, -2.8, 8.0), 2.0, 22.5)
+    m.box("pommel", (7.2, -2.6, 7.2), (8.8, -1.2, 8.8), "darksteel")
+    m.box("grip", (7.35, -1.2, 7.35), (8.65, 4, 8.65), "leather", tags={"wrap": True})
+    m.box("guard", (5.0, 4, 7.2), (11.0, 5.2, 8.8), "darksteel")
+    m.box("guard_end_l", (4.6, 4.2, 7.4), (5.0, 5.4, 8.6), "darksteel")
+    m.box("guard_end_r", (11.0, 4.2, 7.4), (11.4, 5.4, 8.6), "darksteel")
+    m.box("blade", (6.8, 5.2, 7.6), (9.2, 14.5, 8.4), "steel", tags={"edge": True})
+    m.box("fuller", (7.8, 5.6, 7.5), (8.2, 13.0, 8.5), "darksteel")
+    m.box("blade_mid", (7.3, 14.5, 7.68), (8.7, 16.3, 8.32), "steel", tags={"edge": True})
+    m.box("blade_tip", (7.7, 16.3, 7.76), (8.3, 17.6, 8.24), "steel", tags={"edge": True})
+    m.box("cord_knot", (7.2, -3.4, 7.2), (8.8, -2.6, 8.8), "cord", tags={"twist": True})
+    cord_tail(m, "cord_tail", (8.0, -3.4, 8.0), 2.2, 22.5)
     return m
 
 
 def build_ancient_daggers():
+    # 11月23日：刃を長く・広くした（柄頭から切っ先まで 16.5 → 20.6）
     m = JavaModel("ancient_stone_daggers", 64, 64)
-    m.box("pommel", (7.25, -2, 7.25), (8.75, -0.75, 8.75), "stone")
-    m.box("grip", (7.4, -0.75, 7.4), (8.6, 4, 8.6), "wool", tags={"wrap": True})
-    m.box("guard", (5.75, 4, 7.25), (10.25, 5, 8.75), "stone", tags={"grooves": [4.5]})
-    m.box("core", (7.6, 5, 7.6), (8.4, 13.5, 8.4), "iron", tags={"edge_iron": True})
-    m.box("slab_l", (6.9, 5, 7.65), (7.6, 12, 8.35), "stone", tags={"chisel": True})
-    m.box("slab_r", (8.4, 5, 7.65), (9.1, 12, 8.35), "stone", tags={"chisel": True})
-    m.box("tip", (7.7, 13.5, 7.7), (8.3, 14.5, 8.3), "iron")
-    m.box("shard", (7.6, 4.1, 6.9), (8.4, 4.9, 7.25), "crystal_dim")
+    m.box("pommel", (7.2, -2.6, 7.2), (8.8, -1.2, 8.8), "stone")
+    m.box("grip", (7.35, -1.2, 7.35), (8.65, 4, 8.65), "wool", tags={"wrap": True})
+    m.box("guard", (5.25, 4, 7.2), (10.75, 5.2, 8.8), "stone", tags={"grooves": [4.6]})
+    m.box("core", (7.55, 5.2, 7.6), (8.45, 16.0, 8.4), "iron", tags={"edge_iron": True})
+    m.box("slab_l", (6.7, 5.2, 7.65), (7.55, 14.6, 8.35), "stone", tags={"chisel": True})
+    m.box("slab_r", (8.45, 5.2, 7.65), (9.3, 14.6, 8.35), "stone", tags={"chisel": True})
+    m.box("tip", (7.7, 16.0, 7.7), (8.3, 17.6, 8.3), "iron")
+    m.box("shard", (7.55, 4.2, 6.85), (8.45, 5.0, 7.2), "crystal_dim")
+    m.box("shard_b", (7.55, 4.2, 8.8), (8.45, 5.0, 9.15), "crystal_dim")
     return m
 
 
 # ================================================================ 籠手（モンク）
 
+# 11月23日：籠手は両手に「はめる」。モデルは腕の座標で作る（腕の付け根が (9, 0, 8)。腕は x 6〜10・y −2〜10・z 6〜10、
+# y は手の先へ、−z が前）。持ち方 [−90, 180, 0]・[0, −2, 2]・1 で、三人称の手の所に合う（一人称は TwinWeapons が腕に描く）。
+# 左右どちらの手にも同じモデルを使うので、左右（x）は対称に作る。
 def build_apprentice_gauntlets():
     m = JavaModel("apprentice_gauntlets", 64, 64)
-    # 手（握り）を包む：手首の革の筒・甲の鉄板・指の節の板
-    m.box("cuff", (5.25, -2, 5.25), (10.75, 2, 10.75), "leather", tags={"stitch": True})
-    m.box("cuff_band", (5.0, 1.5, 5.0), (11.0, 2.25, 11.0), "darksteel")
-    m.box("back_plate", (5.5, 2.25, 4.75), (10.5, 6.5, 6.0), "darksteel")
-    m.box("palm", (5.5, 2.25, 6.0), (10.5, 6.5, 10.5), "leather")
-    m.box("knuckles", (5.25, 6.5, 4.5), (10.75, 7.75, 10.75), "darksteel")
-    for k, x in enumerate((5.75, 7.25, 8.75)):
-        m.box(f"knuckle_{k}", (x, 7.75, 4.75), (x + 1.25, 8.25, 6.0), "steel")
-    m.box("cord_band", (5.0, -1.0, 5.0), (11.0, -0.25, 11.0), "cord", tags={"twist": True})
-    rental_tag(m, "tag", (10.6, -0.3), z=6.0, w=1.4, h=1.8)
+    # 前腕の革の筒・筒の口の鉄の輪・手の甲と手のひら・甲の板（外と内）・拳の先の板と、前の拳の鋲
+    m.box("cuff", (5.55, 4.6, 5.55), (10.45, 7.6, 10.45), "leather", tags={"stitch": True})
+    m.box("cuff_band", (5.3, 4.2, 5.3), (10.7, 5.0, 10.7), "darksteel")
+    m.box("cord_band", (5.4, 6.4, 5.4), (10.6, 7.0, 10.6), "cord", tags={"twist": True})
+    m.box("hand", (5.6, 7.6, 5.6), (10.4, 10.3, 10.4), "leather")
+    m.box("back_out", (5.25, 7.8, 6.1), (5.6, 10.1, 9.9), "darksteel")
+    m.box("back_in", (10.4, 7.8, 6.1), (10.75, 10.1, 9.9), "darksteel")
+    m.box("knuckles", (5.4, 10.3, 5.4), (10.6, 11.1, 10.6), "darksteel")
+    for k, x in enumerate((5.9, 7.4, 8.9)):
+        m.box(f"knuckle_{k}", (x, 9.7, 4.95), (x + 1.2, 11.0, 5.4), "steel")
+    rental_tag(m, "tag", (8.0, 6.4), z=5.2, w=1.4, h=1.6)
     return m
 
 
 def build_ancient_gauntlets():
     m = JavaModel("ancient_stone_gauntlets", 64, 64)
-    m.box("cuff", (5.25, -2, 5.25), (10.75, 2, 10.75), "wool", tags={"wrap": True})
-    m.box("cuff_ring", (5.0, 1.5, 5.0), (11.0, 2.5, 11.0), "iron")
-    m.box("back_plate", (5.5, 2.5, 4.5), (10.5, 6.5, 6.0), "stone", tags={"grooves": [4.5]})
-    m.box("palm", (5.5, 2.5, 6.0), (10.5, 6.5, 10.5), "leather")
-    m.box("shard", (7.4, 3.9, 4.1), (8.6, 5.1, 4.5), "crystal_dim")
-    m.box("knuckles", (5.25, 6.5, 4.25), (10.75, 8.0, 10.75), "stone")
-    m.box("knuckle_band", (5.0, 6.75, 4.0), (11.0, 7.5, 6.0), "iron")
+    m.box("cuff", (5.55, 4.4, 5.55), (10.45, 7.6, 10.45), "wool", tags={"wrap": True})
+    m.box("cuff_ring", (5.3, 4.0, 5.3), (10.7, 5.0, 10.7), "iron")
+    m.box("hand", (5.6, 7.6, 5.6), (10.4, 10.3, 10.4), "leather")
+    m.box("back_out", (5.2, 7.7, 6.0), (5.6, 10.2, 10.0), "stone", tags={"grooves": [9.0]})
+    m.box("back_in", (10.4, 7.7, 6.0), (10.8, 10.2, 10.0), "stone", tags={"grooves": [9.0]})
+    m.box("knuckles", (5.35, 10.3, 5.35), (10.65, 11.2, 10.65), "stone")
+    m.box("knuckle_band", (5.15, 9.6, 5.0), (10.85, 10.4, 5.6), "iron")
+    m.box("shard", (7.4, 8.2, 4.9), (8.6, 9.4, 5.6), "crystal_dim")
+    m.box("wrist_ring", (5.45, 7.4, 5.45), (10.55, 7.9, 10.55), "iron")
     return m
 
 
@@ -360,9 +383,18 @@ def display(kind):
         # 弓：握りを手に。腕を前へのばすと（射る構え）、弓が縦に立ち、反りが前・弦が自分の側に来る
         rot, tr, fs, ts, ty = [0, -90, 10], [1.5, 2.0, 1.13], 0.5, 0.8, 1.5
     elif kind == "daggers":
-        rot, tr, fs, ts, ty = [0, -75, 5], [1.13, 2.5, 1.13], 0.55, 0.7, 2.5
-    else:  # gauntlets：握った手を包む
-        rot, tr, fs, ts, ty = [0, -90, 0], [1.13, 3.0, 0.5], 0.6, 0.85, 1.0
+        # 11月23日：大きく（三人称 0.7 → 0.8・一人称 0.55 → 0.65）。握りが手の同じ所に来るよう、上へずらす
+        rot, tr, fs, ts, ty = [0, -75, 5], [1.13, 3.2, 1.13], 0.65, 0.8, 3.3
+    else:  # gauntlets：腕の座標で作ったモデルを、手首から拳にはめる（11月23日）
+        worn = {"rotation": [-90, 180, 0], "translation": [0, -2, 2], "scale": [1, 1, 1]}
+        return {
+            "thirdperson_righthand": worn,
+            "thirdperson_lefthand": {"rotation": [-90, -180, 0], "translation": [0, -2, 2], "scale": [1, 1, 1]},
+            # 一人称は TwinWeapons が腕を描いてはめる。ほかの描き方で使われたときのために、拳を右下に置く
+            "firstperson_righthand": {"rotation": [-60, 160, 10], "translation": [2.5, -2.0, -1.0], "scale": [0.9, 0.9, 0.9]},
+            "firstperson_lefthand": {"rotation": [-60, -160, -10], "translation": [2.5, -2.0, -1.0], "scale": [0.9, 0.9, 0.9]},
+            "head": {"rotation": [0, 180, 0], "translation": [0, 13, 7], "scale": [1, 1, 1]},
+        }
     return {
         "thirdperson_righthand": {"rotation": [0, -90, 0], "translation": [0, ty, 0.5], "scale": [ts] * 3},
         "thirdperson_lefthand": {"rotation": [0, 90, 0], "translation": [0, ty, 0.5], "scale": [ts] * 3},

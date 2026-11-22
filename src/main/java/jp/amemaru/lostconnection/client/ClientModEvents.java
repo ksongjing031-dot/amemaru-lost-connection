@@ -145,6 +145,21 @@ public final class ClientModEvents {
                 jp.amemaru.lostconnection.client.render.FloorSealRenderer::new);
     }
 
+    /**
+     * 11月23日に決定：両手で使う武器（籠手・二刀の短剣）を、空いているもう片方の手にも描く層を、プレイヤーの見た目
+     * （ふつうの腕・細い腕）に足す。
+     */
+    @SubscribeEvent
+    public static void onAddLayers(EntityRenderersEvent.AddLayers event) {
+        for (String skin : event.getSkins()) {
+            net.minecraft.client.renderer.entity.player.PlayerRenderer renderer = event.getSkin(skin);
+            if (renderer != null) {
+                renderer.addLayer(new jp.amemaru.lostconnection.client.render.TwinHandLayer(renderer,
+                        event.getContext().getItemInHandRenderer()));
+            }
+        }
+    }
+
     /** 持ち物のアイコンの飾り（★5のアクセサリーのきらめき・強化+7と+10の星）。 */
     /** リソースパックを読み直したら、光る部分の絵があるかを確かめ直す。 */
     @SubscribeEvent
