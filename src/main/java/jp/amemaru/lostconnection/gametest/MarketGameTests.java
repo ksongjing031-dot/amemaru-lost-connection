@@ -153,13 +153,19 @@ public final class MarketGameTests {
             check(helper, MarketService.list(owner, EXCHANGE, 0, 4, 40, "amemaru:moss_iron") == MarketService.Result.LIMIT,
                     "20件を超えて出品できました");
 
+            // 空いている区画を2つ（ほかの人が借りている区画があっても確かめられるように。CIの写真の世界では区画2が借りられている）
             int free = 0;
-            for (int n = 1; n <= 12 && free == 0; n++) {
+            int free2 = 0;
+            for (int n = 1; n <= 12 && free2 == 0; n++) {
                 if (market.stall(n) == null) {
-                    free = n;
+                    if (free == 0) {
+                        free = n;
+                    } else {
+                        free2 = n;
+                    }
                 }
             }
-            check(helper, free > 0, "空いている区画がありません");
+            check(helper, free > 0 && free2 > 0, "空いている区画が2つありません");
             check(helper, MarketService.rent(owner, EXCHANGE, free, "x") == MarketService.Result.TOO_FAR, "小屋でないのに借りられました");
             check(helper, MarketService.rent(owner, BOOTH, 13, "x") == MarketService.Result.STALL_CLOSED, "寄付で開く区画を借りられました");
             check(helper, MarketService.rent(owner, BOOTH, free, "テスト§c屋") == MarketService.Result.OK, "露店を借りられません");
@@ -167,7 +173,7 @@ public final class MarketGameTests {
             check(helper, rent != null && rent.owner.equals(owner.getUUID()) && "テストc屋".equals(rent.name)
                     && rent.lastDay == day + ServerConfig.MARKET_STALL_DAYS.get() - 1, "借りた露店の記録が違います");
             check(helper, od.getKnots() == 5000 - ServerConfig.MARKET_STALL_RENT.get(), "借りる代金を払っていません");
-            check(helper, MarketService.rent(owner, BOOTH, free == 1 ? 2 : 1, "y") == MarketService.Result.HAS_STALL, "露店を2つ借りられました");
+            check(helper, MarketService.rent(owner, BOOTH, free2, "y") == MarketService.Result.HAS_STALL, "露店を2つ借りられました");
             check(helper, MarketService.rent(other, BOOTH, free, "z") == MarketService.Result.STALL_TAKEN, "借りられている区画を借りられました");
             check(helper, MarketService.extend(owner, BOOTH) == MarketService.Result.NOT_YET, "残りが1回分あるのに延ばせました");
             check(helper, MarketService.limit(server, owner.getUUID()) == 30, "露店を借りても出品の上限が30になりません");
@@ -176,7 +182,7 @@ public final class MarketGameTests {
             MarketData.Listing listing = market.listingsOf(owner.getUUID()).get(market.listingsOf(owner.getUUID()).size() - 1);
 
             MarketService.Access atStall = new MarketService.Access(true, false, free);
-            MarketService.Access otherStall = new MarketService.Access(true, false, free == 1 ? 2 : 1);
+            MarketService.Access otherStall = new MarketService.Access(true, false, free2);
             check(helper, MarketService.buy(other, otherStall, listing.id, 40, free) == MarketService.Result.TOO_FAR,
                     "その露店にいないのに、露店で買えました");
             check(helper, MarketService.buy(other, atStall, listing.id, 40, free) == MarketService.Result.OK, "露店で買えません");

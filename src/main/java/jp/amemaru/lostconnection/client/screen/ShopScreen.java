@@ -31,12 +31,13 @@ import java.util.Locale;
  */
 public class ShopScreen extends Screen {
     private static final int PANEL_WIDTH = 288;
-    private static final int PANEL_HEIGHT = 250;
+    /** 画面の高さ（GUIの倍率2で、高さ480の窓（240）に収める） */
+    private static final int PANEL_HEIGHT = 234;
     private static final int ROW = 20;
     private static final int PER_PAGE = 6;
-    private static final int LIST_TOP = 50;
+    private static final int LIST_TOP = 46;
     /** 数の行（−10・−1・数・+1・+10・最大。右に合計） */
-    private static final int COUNT_Y = PANEL_HEIGHT - 58;
+    private static final int COUNT_Y = PANEL_HEIGHT - 52;
     /** 「買う」「売る」と「閉じる」の行 */
     private static final int BUTTON_Y = PANEL_HEIGHT - 26;
 
@@ -85,9 +86,9 @@ public class ShopScreen extends Screen {
     protected void init() {
         left = (width - PANEL_WIDTH) / 2;
         top = (height - PANEL_HEIGHT) / 2;
-        buyTab = addRenderableWidget(new CrystalButton(left + 14, top + 32, 56, 14, Component.translatable("screen.amemaru.shop.buy_tab"),
+        buyTab = addRenderableWidget(new CrystalButton(left + 14, top + 27, 56, 14, Component.translatable("screen.amemaru.shop.buy_tab"),
                 b -> switchTab(false)));
-        sellTab = addRenderableWidget(new CrystalButton(left + 74, top + 32, 56, 14, Component.translatable("screen.amemaru.shop.sell_tab"),
+        sellTab = addRenderableWidget(new CrystalButton(left + 74, top + 27, 56, 14, Component.translatable("screen.amemaru.shop.sell_tab"),
                 b -> switchTab(true)));
 
         int arrowsY = top + LIST_TOP + PER_PAGE * ROW + 1;
@@ -274,7 +275,7 @@ public class ShopScreen extends Screen {
         UiStyle.divider(graphics, left + 12, left + PANEL_WIDTH - 12, top + 19);
         long balance = ClientPlayerState.get().knots();
         Component wallet = Component.translatable("screen.amemaru.transfer.balance", knots(balance));
-        graphics.drawString(font, wallet, left + PANEL_WIDTH - 14 - font.width(wallet), top + 35, UiStyle.TEXT_GOLD, true);
+        graphics.drawString(font, wallet, left + PANEL_WIDTH - 14 - font.width(wallet), top + 30, UiStyle.TEXT_GOLD, true);
 
         List<ShopDef.Entry> list = entries();
         Inventory inventory = minecraft == null || minecraft.player == null ? null : minecraft.player.getInventory();

@@ -61,8 +61,8 @@ public final class MarketService {
     private MarketService() {
     }
 
-    /** 1ページの行の数 */
-    public static final int PAGE_SIZE = 8;
+    /** 1ページの行の数（取引所の画面に収まる数） */
+    public static final int PAGE_SIZE = 7;
     /** 検索で送れる品のIDの数の上限 */
     public static final int MAX_SEARCH_IDS = 1024;
 

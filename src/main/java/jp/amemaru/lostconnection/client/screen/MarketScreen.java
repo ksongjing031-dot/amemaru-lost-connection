@@ -43,14 +43,16 @@ import java.util.UUID;
  */
 public class MarketScreen extends Screen {
     private static final int PANEL_WIDTH = 324;
-    private static final int PANEL_HEIGHT = 252;
+    /** 画面の高さ（GUIの倍率2で、高さ480の窓（240）に収める） */
+    private static final int PANEL_HEIGHT = 238;
     private static final int ROW = 18;
-    private static final int ROWS = 8;
-    private static final int LIST_TOP = 62;
+    /** 1ページの行の数（サーバーの {@link MarketService#PAGE_SIZE} と同じ） */
+    private static final int ROWS = MarketService.PAGE_SIZE;
+    private static final int LIST_TOP = 58;
     private static final int BUTTON_Y = PANEL_HEIGHT - 24;
     private static final int STATUS_Y = PANEL_HEIGHT - 38;
     /** 出品する：持ち物の枠の上の端 */
-    private static final int GRID_Y = 52;
+    private static final int GRID_Y = 50;
 
     private enum Tab { BROWSE, SELL, MINE, HISTORY, STALLS }
 
@@ -162,7 +164,7 @@ public class MarketScreen extends Screen {
             int x = left + 12;
             for (Tab t : tabs) {
                 int w = t == Tab.HISTORY ? 66 : 52;
-                Button button = addRenderableWidget(new CrystalButton(x, top + 24, w, 14,
+                Button button = addRenderableWidget(new CrystalButton(x, top + 22, w, 14,
                         Component.translatable("screen.amemaru.market.tab." + t.name().toLowerCase(Locale.ROOT)), b -> switchTab(t)));
                 button.active = tab != t;
                 tabButtons.add(button);
@@ -233,7 +235,7 @@ public class MarketScreen extends Screen {
     }
 
     private void initBrowse() {
-        int y = top + 44;
+        int y = top + 40;
         if (mode != MarketService.Mode.STALL) {
             search = new EditBox(font, left + 12, y, 150, 14, Component.translatable("screen.amemaru.market.search"));
             search.setMaxLength(32);
@@ -329,7 +331,7 @@ public class MarketScreen extends Screen {
     }
 
     private void initHistory() {
-        actionButton = addRenderableWidget(new CrystalButton(left + PANEL_WIDTH - 92, top + 44, 80, 14,
+        actionButton = addRenderableWidget(new CrystalButton(left + PANEL_WIDTH - 92, top + 40, 80, 14,
                 Component.translatable("screen.amemaru.market.history.collect"),
                 b -> ModNetwork.sendToServer(MarketActionC2S.of(MarketActionC2S.Action.COLLECT))));
         int arrowsY = top + LIST_TOP + ROWS * ROW + 2;
@@ -348,7 +350,7 @@ public class MarketScreen extends Screen {
         if (mode != MarketService.Mode.BOOTH) {
             return;
         }
-        nameBox = new EditBox(font, left + 12, top + 44, 120, 14, Component.translatable("screen.amemaru.market.stalls.name"));
+        nameBox = new EditBox(font, left + 12, top + 40, 120, 14, Component.translatable("screen.amemaru.market.stalls.name"));
         nameBox.setMaxLength(16);
         nameBox.setValue(stallName);
         nameBox.setResponder(text -> stallName = text);
@@ -360,11 +362,11 @@ public class MarketScreen extends Screen {
                         ModNetwork.sendToServer(new MarketActionC2S(MarketActionC2S.Action.RENT, 0, stallSelected, 0, 0, 0, stallName, List.of()));
                     }
                 }));
-        secondButton = addRenderableWidget(new CrystalButton(left + 136, top + 44, 54, 14, Component.translatable("screen.amemaru.market.stalls.rename"),
+        secondButton = addRenderableWidget(new CrystalButton(left + 136, top + 40, 54, 14, Component.translatable("screen.amemaru.market.stalls.rename"),
                 b -> ModNetwork.sendToServer(new MarketActionC2S(MarketActionC2S.Action.RENAME, 0, 0, 0, 0, 0, stallName, List.of()))));
-        thirdButton = addRenderableWidget(new CrystalButton(left + 194, top + 44, 54, 14, Component.translatable("screen.amemaru.market.stalls.extend"),
+        thirdButton = addRenderableWidget(new CrystalButton(left + 194, top + 40, 54, 14, Component.translatable("screen.amemaru.market.stalls.extend"),
                 b -> ModNetwork.sendToServer(MarketActionC2S.of(MarketActionC2S.Action.EXTEND))));
-        fourthButton = addRenderableWidget(new CrystalButton(left + 252, top + 44, 60, 14, Component.translatable("screen.amemaru.market.stalls.release"),
+        fourthButton = addRenderableWidget(new CrystalButton(left + 252, top + 40, 60, 14, Component.translatable("screen.amemaru.market.stalls.release"),
                 b -> ModNetwork.sendToServer(MarketActionC2S.of(MarketActionC2S.Action.RELEASE))));
     }
 
@@ -682,7 +684,7 @@ public class MarketScreen extends Screen {
         graphics.drawCenteredString(font, heading(), width / 2, top + 7, UiStyle.TEXT_HEADER);
         UiStyle.divider(graphics, left + 12, left + PANEL_WIDTH - 12, top + 19);
         Component wallet = Component.translatable("screen.amemaru.transfer.balance", knots(ClientPlayerState.get().knots()));
-        int walletY = mode == MarketService.Mode.STALL ? top + 26 : top + 8;
+        int walletY = mode == MarketService.Mode.STALL ? top + 24 : top + 8;
         graphics.drawString(font, wallet, left + PANEL_WIDTH - 14 - font.width(wallet), walletY, UiStyle.TEXT_GOLD, true);
 
         ItemStack hovered = ItemStack.EMPTY;
@@ -729,7 +731,7 @@ public class MarketScreen extends Screen {
             String note = view == null || view.owner() == null ? Component.translatable("screen.amemaru.market.stall.empty").getString()
                     : own ? Component.translatable("screen.amemaru.market.stall.owner_note").getString()
                     : Component.translatable("screen.amemaru.market.stall.half").getString();
-            graphics.drawString(font, UiStyle.clip(font, note, PANEL_WIDTH - 130), left + 14, top + 26, UiStyle.TEXT_DIM, true);
+            graphics.drawString(font, UiStyle.clip(font, note, PANEL_WIDTH - 130), left + 14, top + 24, UiStyle.TEXT_DIM, true);
         }
         MarketPageS2C data = ClientMarket.page();
         int x0 = left + 12;
@@ -743,7 +745,6 @@ public class MarketScreen extends Screen {
                 boolean hover = over(mouseX, mouseY, x0, y, x1 - x0, ROW - 2);
                 UiStyle.card(graphics, x0, y, x1, y + ROW - 2, chosen ? 0xFFFFD36A : 0xFF8FD3FF, chosen || hover);
                 graphics.renderItem(row.item(), x0 + 1, y);
-                graphics.renderItemDecorations(font, row.item(), x0 + 1, y);
                 String name = row.item().getHoverName().getString() + (row.item().getCount() > 1 ? " ×" + row.item().getCount() : "");
                 graphics.drawString(font, UiStyle.clip(font, name, 118), x0 + 21, y + 4, chosen ? UiStyle.TEXT_GOLD : UiStyle.TEXT, true);
                 String unit = Component.translatable("screen.amemaru.market.unit", knots(row.unitPrice())).getString();
@@ -796,7 +797,7 @@ public class MarketScreen extends Screen {
         ItemStack hovered = ItemStack.EMPTY;
         int gx = left + 12;
         int gy = top + GRID_Y;
-        graphics.drawString(font, Component.translatable("screen.amemaru.market.sell.pick"), gx, top + 41, UiStyle.TEXT_DIM, true);
+        graphics.drawString(font, Component.translatable("screen.amemaru.market.sell.pick"), gx, top + 40, UiStyle.TEXT_DIM, true);
         for (int i = 0; i < 36; i++) {
             int[] at = slotXY(i, gx, gy);
             boolean chosen = i == sellSlot;
@@ -877,7 +878,7 @@ public class MarketScreen extends Screen {
             graphics.drawString(font, Component.translatable("screen.amemaru.market.loading"), x0 + 4, top + LIST_TOP + 4, UiStyle.TEXT_DIM, true);
             return hovered;
         }
-        graphics.drawString(font, Component.translatable("screen.amemaru.market.mine.count", mine.listings().size(), mine.limit()), x0, top + 46,
+        graphics.drawString(font, Component.translatable("screen.amemaru.market.mine.count", mine.listings().size(), mine.limit()), x0, top + 43,
                 UiStyle.TEXT_HEADER, true);
         int y = top + LIST_TOP;
         if (mine.listings().isEmpty()) {
@@ -917,7 +918,7 @@ public class MarketScreen extends Screen {
             graphics.drawString(font, Component.translatable("screen.amemaru.market.loading"), x0 + 4, top + LIST_TOP + 4, UiStyle.TEXT_DIM, true);
             return hovered;
         }
-        graphics.drawString(font, Component.translatable("screen.amemaru.market.history.proceeds", knots(mine.proceeds())), x0, top + 47,
+        graphics.drawString(font, Component.translatable("screen.amemaru.market.history.proceeds", knots(mine.proceeds())), x0, top + 43,
                 mine.proceeds() > 0 ? UiStyle.TEXT_GOLD : UiStyle.TEXT_DIM, true);
         int y = top + LIST_TOP;
         if (mine.history().isEmpty()) {
@@ -973,7 +974,7 @@ public class MarketScreen extends Screen {
         String mineText = mine == null ? Component.translatable("screen.amemaru.market.stalls.none_mine").getString()
                 : Component.translatable("screen.amemaru.market.stalls.mine", mine.num(), mine.name(), mine.lastDay()).getString();
         if (mode != MarketService.Mode.BOOTH) {
-            graphics.drawString(font, UiStyle.clip(font, mineText, PANEL_WIDTH - 24), x0, top + 47, mine == null ? UiStyle.TEXT_DIM : UiStyle.TEXT_GOLD,
+            graphics.drawString(font, UiStyle.clip(font, mineText, PANEL_WIDTH - 24), x0, top + 43, mine == null ? UiStyle.TEXT_DIM : UiStyle.TEXT_GOLD,
                     true);
         }
         int y = top + LIST_TOP;

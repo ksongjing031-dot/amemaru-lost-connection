@@ -92,7 +92,7 @@ public final class MarketClientEvents {
                 pose.pushPose();
                 pose.translate(at.x - cam.x, at.y - cam.y + Math.sin((time + i * 20) / 20.0) * 0.04, at.z - cam.z);
                 pose.mulPose(Axis.YP.rotationDegrees((time * 1.5F + i * 120F) % 360F));
-                pose.scale(0.55F, 0.55F, 0.55F);
+                pose.scale(1.1F, 1.1F, 1.1F);
                 int light = LevelRenderer.getLightColor(minecraft.level, BlockPos.containing(at));
                 minecraft.getItemRenderer().renderStatic(stack, ItemDisplayContext.GROUND, light, OverlayTexture.NO_OVERLAY, pose, buffers,
                         minecraft.level, i);
