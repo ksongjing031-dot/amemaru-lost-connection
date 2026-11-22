@@ -165,15 +165,16 @@ def paving(t):
                 st = block("grass_block", snowy=False)
                 t.surface[(x, z)] = "lot"
             elif r >= R_WALL_OUT + 0.5 and gate_road(x, z):
-                st = block("dirt_path") if rng.random() < 0.7 else block("coarse_dirt")
-                t.surface[(x, z)] = "outroad"
+                # 11月22日に決定：東門と南門は閉じる（外へ続く土の道は作らない）。ほかの所の石の選び方が変わらないよう、
+                # 乱数は引いたままにする
+                rng.random()
             if st is not None:
                 t.put(x, 0, z, st)
     corner_cuts(t)
 
 
 def gate_road(x, z):
-    """東門・南門の外へ続く土の道"""
+    """東門・南門の外へ続いていた土の道（11月22日に決定：門を閉じたので作らない）"""
     return (abs(z) <= 3 and x > 0) or (abs(x) <= 3 and z > 0)
 
 
@@ -340,6 +341,8 @@ def wall_and_gates(t):
                 t.put(x, y, z, block("polished_diorite") if y == 0 else block("stone"))
             for y in range(1, WALL_TOP + 1):
                 if gate and y <= 8:
+                    if gate in CLOSED_GATES and r >= R_WALL_OUT - 1.0:
+                        t.put(x, y, z, closed_gate_leaf(gate, x, y, z))
                     continue      # 門の口（高さ8）
                 if gate and y == 9:
                     st = block("chiseled_quartz_block") if abs(x if gate in ("north", "south") else z) == 0 else block("polished_diorite")
@@ -364,12 +367,43 @@ def wall_and_gates(t):
     # 門のまわりの道：門の口の床（白い石畳）
     for g in GATES:
         towers_of_gate(t, g)
+    closed_gate_lights(t)
     for a in (45, 135, 222, 315):
         diag_tower(t, a)
 
 
 def gate_axis(g):
     return {"north": (0, -1), "east": (1, 0), "south": (0, 1)}[g]
+
+
+# 11月22日に決定：東門と南門は閉じる（この先に作る場所がないため。門の建物と塔は残す。確定設定の「東の草原」などの外の地は、
+# 物語の中でだけ語る）。門の口の外の面に、ダークオークの閉じた門扉（枠・合わせ目・横木）をはめ、内は奥行き3のくぼみ
+CLOSED_GATES = ("east", "south")
+
+
+def closed_gate_leaf(g, x, y, z):
+    """閉じた門扉の1マス：両端と上は皮をはいたダークオークの丸太の枠、真ん中は合わせ目の丸太、高さ3と6に横木、ほかは板"""
+    along = z if g == "east" else x
+    lay = "z" if g == "east" else "x"           # 門扉の面に沿う向き
+    if abs(along) == GATE_HALF[g]:
+        return log("dark_oak", "y", stripped=True)
+    if y == 8:
+        return log("dark_oak", lay, stripped=True)
+    if along == 0:
+        return log("dark_oak", "y")
+    if y in (3, 6):
+        return log("dark_oak", lay, stripped=True)
+    return block("dark_oak_planks")
+
+
+def closed_gate_lights(t):
+    """閉じた門の口の、内のくぼみに吊るすランタン（天井の白い帯から）。くぼみを暗くしない"""
+    for g in CLOSED_GATES:
+        for side in (-2, 2):
+            if g == "east":
+                t.put(113, 8, side, lantern(True))
+            else:
+                t.put(side, 8, 113, lantern(True))
 
 
 def tower(t, cx, cz, half=3, top=22, roof=True, stair_side=None):
@@ -443,6 +477,55 @@ def diag_tower(t, a):
     cx = int(round(math.sin(math.radians(a)) * r))
     cz = int(round(-math.cos(math.radians(a)) * r))
     tower(t, cx, cz, half=3, top=18)
+
+
+# 11月22日に決定：北門を出た塔前広場と塔の入口のまわりは城壁の外なので、両わきと裏に塀を立てて、野原へ出られないようにする。
+# 塔前広場（x −23〜23、z −147〜−116）の両わきは x ±24、塔の入口（x −22〜22、z −177〜−148）の両わきは x ±23（建物にそわせ、
+# すき間の細い路地を作らない）、裏は z −178。城壁の外の面（半径116）から立てる。高さは塔前広場のいちばん高い段（+3）から
+# 跳び越えられない +8（城壁の下の段と同じ白い古代の石、上の2段は灰色の石、いちばん上は石レンガの塀）。8ごとに付け柱と、
+# 塀の上にランタン【補完】
+TOWER_WALL_TOP = 8
+
+
+def tower_wall_cells():
+    """塀を立てる (x, z) の並び（重なりなし）"""
+    cells = []
+    for s in (-1, 1):
+        for z in range(-178, -112):
+            if z >= -147:
+                x = 24 * s
+            else:
+                x = 23 * s
+            if math.hypot(x, z) >= R_WALL_OUT:
+                cells.append((x, z))
+        cells.append((24 * s, -148))                # 段の角（広場の x ±24 と、入口の x ±23 をつなぐ）
+    for x in range(-22, 23):
+        cells.append((x, -178))
+    return sorted(set(cells))
+
+
+def tower_walls(t):
+    rw = random.Random(2211)                    # 街のほかの所の乱数を変えない
+    cells = tower_wall_cells()
+    for i, (x, z) in enumerate(cells):
+        along = z if abs(x) >= 23 and z != -178 else x
+        pilaster = along % 8 == 0
+        for y in range(-2, 1):
+            t.put(x, y, z, block("polished_diorite") if y == 0 else block("stone"))
+        for y in range(1, TOWER_WALL_TOP):
+            if pilaster:
+                st = block("polished_andesite") if y % 2 else block("stone_bricks")
+            elif y <= 5:
+                st = block("polished_diorite") if rw.random() < 0.72 else block("diorite")
+            else:
+                r = rw.random()
+                st = block("stone_bricks" if r < 0.82 else "cracked_stone_bricks" if r < 0.92 else "mossy_stone_bricks"
+                           if r < 0.97 else "andesite")
+            t.put(x, y, z, st)
+        t.put(x, TOWER_WALL_TOP, z, wall("stone_brick"))
+        if pilaster:
+            t.put(x, TOWER_WALL_TOP + 1, z, lantern(False))
+        t.used.add((x, z))
 
 
 def facing_of(dx, dz):
@@ -1207,6 +1290,7 @@ def build():
         small_plaza(t, cx, cz)
     street_lamps(t)
     yards(t)
+    tower_walls(t)
     t.finalize()
     filled = fill_dark(t)
     return t, houses, wh, filled
