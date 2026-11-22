@@ -91,6 +91,8 @@ public final class AdminCommands {
                         .then(StoryCommands.npcCommand())
                         .then(StoryCommands.pillarsCommand())
                         .then(StoryCommands.chestsCommand())
+                        // Phase 6：経済
+                        .then(EconomyCommands.economyCommand())
                         .then(debugCommand())));
     }
 

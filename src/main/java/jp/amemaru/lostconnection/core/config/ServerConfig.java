@@ -80,6 +80,11 @@ public final class ServerConfig {
     public static final ForgeConfigSpec.DoubleValue PARTY_EXP_BONUS;
     public static final ForgeConfigSpec.IntValue PARTY_INVITE_SECONDS;
 
+    // ---- 経済（Phase 6。Phase 0-B 7章）
+    public static final ForgeConfigSpec.BooleanValue TRANSFER_ENABLED;
+    public static final ForgeConfigSpec.LongValue TRANSFER_MAX;
+    public static final ForgeConfigSpec.DoubleValue TRANSFER_COOLDOWN_SECONDS;
+
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
 
@@ -279,6 +284,18 @@ public final class ServerConfig {
                 .comment("初めてログインした人に、召喚から始まるオープニング（大結晶のそばで目覚め、リリアと出会う）を流す。",
                         "オープニングは一人ひとりの画面で、その人の準備ができてから流す（ラグで入るのが遅れても弊害がないように）")
                 .define("openingOnFirstLogin", true);
+        b.pop();
+
+        b.comment("経済（Phase 6）").push("economy");
+        TRANSFER_ENABLED = b
+                .comment("プレイヤー同士で、ノットを受け渡しできるようにする（11月22日に決定。ステータスの画面の「渡す」か、しゃがんで相手を右クリック）")
+                .define("transferEnabled", true);
+        TRANSFER_MAX = b
+                .comment("1回に渡せるノットの上限（0なら上限なし。持っている分まで）")
+                .defineInRange("transferMax", 0L, 0L, Long.MAX_VALUE);
+        TRANSFER_COOLDOWN_SECONDS = b
+                .comment("受け渡しのあと、次に渡せるまでの秒数（押しすぎを防ぐ）")
+                .defineInRange("transferCooldownSeconds", 1.0, 0.0, 60.0);
         b.pop();
 
         SPEC = b.build();

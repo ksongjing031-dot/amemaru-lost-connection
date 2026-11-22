@@ -243,6 +243,12 @@ public final class ModNetwork {
                 .decoder(jp.amemaru.lostconnection.network.c2s.RetireC2S::decode)
                 .consumerMainThread(jp.amemaru.lostconnection.network.c2s.RetireC2S::handle)
                 .add();
+        // Phase 6：経済（ノットの受け渡し）
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.c2s.TransferKnotsC2S.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(jp.amemaru.lostconnection.network.c2s.TransferKnotsC2S::encode)
+                .decoder(jp.amemaru.lostconnection.network.c2s.TransferKnotsC2S::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.c2s.TransferKnotsC2S::handle)
+                .add();
     }
 
     /** 1人のプレイヤーに送る。 */

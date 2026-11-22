@@ -104,6 +104,15 @@ public class StatusScreen extends Screen {
                 }));
         addRenderableWidget(new CrystalButton(left + PANEL_WIDTH - 54, buttonY, 42, 16,
                 Component.translatable("screen.amemaru.status.close"), pressed -> onClose()));
+        // Phase 6：ノットを渡す（11月22日に決定。所持金の行の右）
+        CrystalButton give = new CrystalButton(left + PANEL_WIDTH - 54, top + SUB_TOP + 23, 42, 11,
+                Component.translatable("screen.amemaru.status.give_knots"), pressed -> {
+                    if (minecraft != null) {
+                        minecraft.setScreen(new TransferScreen(null, null));
+                    }
+                });
+        give.setTooltip(Tooltip.create(Component.translatable("screen.amemaru.status.give_knots_tooltip")));
+        addRenderableWidget(give);
         updateButtons();
     }
 
