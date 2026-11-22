@@ -2,6 +2,7 @@ package jp.amemaru.lostconnection.gametest;
 
 import com.mojang.authlib.GameProfile;
 import jp.amemaru.lostconnection.AmemaruMod;
+import jp.amemaru.lostconnection.admin.EventCommands;
 import jp.amemaru.lostconnection.connection.ConnectionCategory;
 import jp.amemaru.lostconnection.connection.ConnectionService;
 import jp.amemaru.lostconnection.economy.MarketPrices;
@@ -13,6 +14,8 @@ import jp.amemaru.lostconnection.fishing.FishingData;
 import jp.amemaru.lostconnection.fishing.FishingRules;
 import jp.amemaru.lostconnection.fishing.FishingService;
 import jp.amemaru.lostconnection.fishing.FishingTournament;
+import jp.amemaru.lostconnection.guild.GuildHooks;
+import jp.amemaru.lostconnection.guild.GuildState;
 import jp.amemaru.lostconnection.guild.RecordDefs;
 import jp.amemaru.lostconnection.player.PlayerData;
 import jp.amemaru.lostconnection.player.PlayerDataCapability;
@@ -34,6 +37,7 @@ import net.minecraftforge.gametest.PrefixGameTestTemplate;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -59,11 +63,13 @@ public final class FishingGameTests {
         int memories = 0;
         int lords = 0;
         Map<Integer, Integer> chapters = new HashMap<>();
+        Map<Integer, Integer> memoryChapters = new HashMap<>();
         for (FishDef def : FishDefs.all().values()) {
             Item item = FishingService.itemOf(def);
             check(helper, item instanceof FishItem fish && fish.stars() == def.rarity(), def.id() + " のアイテムがないか、★が合いません");
             if (def.isMemory()) {
                 memories++;
+                memoryChapters.merge(def.chapter(), 1, Integer::sum);
                 check(helper, RecordDefs.get(def.memory()) != null && RecordDefs.get(def.memory()).floor() == 0,
                         def.id() + " の記憶の記録（塔の外）がありません");
             }
@@ -75,8 +81,12 @@ public final class FishingGameTests {
             }
         }
         check(helper, memories == 4 && lords == 1, "記憶魚が4種・湖の主が1種ではありません（" + memories + "・" + lords + "）");
+        // 全40種（Phase 0-A 15章）：章ごとに9〜10種（第1〜3章は10種、第4章は9種）と、湖の主（湖畔の釣り場ができた第1章から）。
+        // 記憶魚は章ごとに1種（tools/datagen/build_fishing.py の確かめと同じ）
         for (int chapter = 1; chapter <= 4; chapter++) {
-            check(helper, chapters.getOrDefault(chapter, 0) == 10, "第" + chapter + "章の魚が10種ではありません：" + chapters);
+            int n = chapters.getOrDefault(chapter, 0);
+            check(helper, n >= 9 && n <= 10 && memoryChapters.getOrDefault(chapter, 0) == 1,
+                    "第" + chapter + "章の魚の数か、記憶魚の数がおかしいです：" + chapters + "・記憶魚 " + memoryChapters);
         }
         helper.succeed();
     }
@@ -118,9 +128,13 @@ public final class FishingGameTests {
         MinecraftServer server = helper.getLevel().getServer();
         ConnectionService.setClockForTest(() -> LocalDateTime.of(2026, 11, 23, 9, 0));
         FakePlayer a = fake(helper, "fish_catch_a");
+        GuildState state = GuildState.get(server);
+        ResourceLocation firstBig = AmemaruMod.id("first_big_catch");
+        List<GuildState.Holder> before = List.copyOf(state.holders(firstBig));
         try {
             ConnectionService.adminReset(server);
             FishingService.resetLord(server);
+            state.clearHolders(firstBig);
             PlayerData data = data(helper, a);
             data.getFishing().clear();
             FishDef dace = FishDefs.get(AmemaruMod.id("pebble_dace"));
@@ -143,11 +157,18 @@ public final class FishingGameTests {
                 }
             }
             check(helper, data.getGuild().hasTitle(AmemaruMod.id("memory_angler")), "記憶魚をそろえても、称号がつきません");
-            // 湖の主：最初の一人を覚え、限定称号「最初の大物」
+            // 湖の主：最初の一人を覚え、限定称号「最初の大物」（自動テストの人はサーバーの一覧にいないので、次に入ったときに渡る）
             FishDef lord = FishDefs.get(AmemaruMod.id("memory_lord"));
             FishingService.catchFish(a, lord, 250.0, "lake", false);
-            check(helper, FishingData.get(server).lord() != null && a.getUUID().equals(FishingData.get(server).lord().who())
-                    && data.getGuild().hasTitle(AmemaruMod.id("first_big_catch")), "湖の主の最初の一人を覚えていないか、限定称号がつきません");
+            check(helper, FishingData.get(server).lord() != null && a.getUUID().equals(FishingData.get(server).lord().who()),
+                    "湖の主の最初の一人を覚えていません");
+            check(helper, state.limitedTaken(firstBig) && state.holders(firstBig).stream().anyMatch(h -> h.uuid().equals(a.getUUID())),
+                    "湖の主を最初に釣った人が、限定称号「最初の大物」を取った人になっていません");
+            GuildHooks.applyPending(a, data);
+            check(helper, data.getGuild().hasTitle(firstBig), "限定称号「最初の大物」が渡りません");
+            FishingService.catchFish(a, lord, 260.0, "lake", false);
+            check(helper, state.holders(firstBig).size() == 1 && FishingData.get(server).lord().size() == 250.0,
+                    "2匹目の湖の主で、最初の一人が変わりました");
             // 図鑑をすべて埋めると、釣り見習い・釣り名人・湖を知る者
             for (FishDef def : FishDefs.ordered()) {
                 data.getFishing().record(def.id(), def.sizeMin(), 1);
@@ -159,6 +180,11 @@ public final class FishingGameTests {
             FishingService.resetLord(server);
             ConnectionService.setClockForTest(null);
             ConnectionService.adminReset(server);
+            state.clearHolders(firstBig);
+            if (!before.isEmpty()) {
+                state.setHolders(firstBig, before);
+            }
+            state.takePending(a.getUUID());
         }
         helper.succeed();
     }
@@ -249,6 +275,14 @@ public final class FishingGameTests {
                     && fd.best(a.getUUID()).catches() == 2, "いちばんの一匹で数えていないか、会場の外の一匹を数えました");
             FishingTournament.finish(server, true);
             check(helper, !fd.tournamentOn(), "大会が終わりません");
+            // 管理者の「催し」のコマンド（Phase 0-B 10章 event start・stop）からも始めて終えられる
+            check(helper, EventCommands.ids().contains("fishing_tournament"), "催しに釣り大会がありません");
+            check(helper, !EventCommands.stop(server, "fishing_tournament"), "やっていない大会を終えられました");
+            check(helper, EventCommands.start(server, "fishing_tournament", 1) && fd.tournamentOn()
+                    && EventCommands.running(server, "fishing_tournament") && !EventCommands.start(server, "fishing_tournament", 1),
+                    "催しのコマンドで大会が始まりません");
+            check(helper, EventCommands.stop(server, "fishing_tournament") && !fd.tournamentOn(), "催しのコマンドで大会が終わりません");
+            check(helper, !EventCommands.start(server, "no_such_event", 1), "ない催しが始まりました");
         } finally {
             FishingTournament.finish(server, false);
         }

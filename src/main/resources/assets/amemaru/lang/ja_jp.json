@@ -1886,5 +1886,16 @@
   "command.amemaru.fishing.lord_none": "まだ、湖の主を釣った人はいない",
   "command.amemaru.fishing.lord": "湖の主を最初に釣った人：%1$s（%2$s日目・%3$scm）",
   "command.amemaru.fishing.minigame": "%1$s に %2$s をかけた（糸の張りのミニゲーム）",
-  "command.amemaru.fishing.lake": "湖畔の釣り場：%s"
+  "command.amemaru.fishing.lake": "湖畔の釣り場：%s",
+  "event.amemaru.fishing_tournament": "釣り大会",
+  "command.amemaru.event.list": "催し（/amemaru admin event start・stop <催し>）：",
+  "command.amemaru.event.line": "・%s（%s）：%s",
+  "command.amemaru.event.state_on": "開催中",
+  "command.amemaru.event.state_off": "なし",
+  "command.amemaru.event.unknown": "その催しはありません：%s",
+  "command.amemaru.event.already": "%sは、もう開催中です",
+  "command.amemaru.event.failed": "%sを始められませんでした",
+  "command.amemaru.event.started": "%sを始めました",
+  "command.amemaru.event.not_running": "%sは、今やっていません",
+  "command.amemaru.event.stopped": "%sを終えました"
 }

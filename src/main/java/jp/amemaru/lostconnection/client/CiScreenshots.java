@@ -982,7 +982,7 @@ public final class CiScreenshots {
             {"cmd", null, "10", "amemaru admin fishing open @p tournament"},
             {"snap", null, "20", "phase7f_tournament_tab"},
             {"screen", null, "10", "hold"},
-            {"cmd", null, "10", "amemaru admin fishing tournament stop"},
+            {"cmd", null, "10", "amemaru admin event stop fishing_tournament"},
             {"snap_keep", null, "40", "phase7f_tournament_end"},
             {"cmd", null, "10", "gamemode spectator @p"},
             {"hud", null, "5", "off"}};
