@@ -2692,6 +2692,14 @@ public final class CiScreenshots {
         }
     }
 
+    /**
+     * 何も描かない画面にする（Phase 6 その4 の段取りから）。画面が空（null）になると、mc-runtime-test がその間に自動テストを
+     * 始めて、サーバーが遅れる（run 163 で、依頼を出す前に「出した依頼」を撮ってしまった）。画面を閉じたら、同じ tick でこれにする。
+     */
+    static void hold(Minecraft minecraft) {
+        minecraft.setScreen(new HoldScreen());
+    }
+
     /** サーバーとしてコマンドを打つ（Phase 6 その4 の段取りから）。 */
     static void runCommand(Minecraft minecraft, String command) {
         command(minecraft, command);

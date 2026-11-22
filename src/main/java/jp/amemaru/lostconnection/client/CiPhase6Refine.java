@@ -67,7 +67,9 @@ final class CiPhase6Refine {
             }
             case "p6r_commission" -> {
                 if (minecraft.screen instanceof WorkshopScreen workshop) {
+                    // 工房の画面を閉じてから依頼台を開く。閉じた画面が空のままにならないよう、すぐ何も描かない画面にする
                     workshop.openCommissionBoard();
+                    CiScreenshots.hold(minecraft);
                 } else if (bench != null) {
                     CompoundTag args = new CompoundTag();
                     args.putLong("pos", bench.asLong());
