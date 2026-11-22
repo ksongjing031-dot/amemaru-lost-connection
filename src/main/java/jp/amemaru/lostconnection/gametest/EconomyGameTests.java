@@ -103,13 +103,12 @@ public final class EconomyGameTests {
         check(helper, KnotTransfer.transfer(a, b, 100) == KnotTransfer.Result.TOO_FAST, "すぐ続けて渡せました（押しすぎを防いでいません）");
         KnotTransfer.resetCooldown(a.getUUID());
 
-        long before = ServerConfig.TRANSFER_MAX.get();
         try {
-            ServerConfig.TRANSFER_MAX.set(500L);
+            ServerConfig.overrideForTest(ServerConfig.TRANSFER_MAX, 500L);
             check(helper, KnotTransfer.transfer(a, b, 600) == KnotTransfer.Result.OVER_LIMIT, "1回の上限をこえて渡せました");
             check(helper, KnotTransfer.transfer(a, b, 500) == KnotTransfer.Result.OK, "上限ちょうどを渡せません");
         } finally {
-            ServerConfig.TRANSFER_MAX.set(before);
+            ServerConfig.overrideForTest(ServerConfig.TRANSFER_MAX, null);
         }
         check(helper, da.getKnots() == 200 && db.getKnots() == 800, "上限まで渡したあとの所持金が違います");
 
@@ -166,9 +165,8 @@ public final class EconomyGameTests {
                 && box.received().get(0).getCount() == 5, "ページを減らしたときに、外に出た品が受け取り箱に移りません");
 
         // 受け取り箱に届ける（上限まで）
-        int before = ServerConfig.STORAGE_RECEIVED_MAX.get();
         try {
-            ServerConfig.STORAGE_RECEIVED_MAX.set(27);
+            ServerConfig.overrideForTest(ServerConfig.STORAGE_RECEIVED_MAX, 27);
             boolean all = true;
             for (int i = 0; i < 26; i++) {
                 all &= StorageService.deliver(server, p.getUUID(), "amt_store_a", new ItemStack(Items.APPLE));
@@ -178,7 +176,7 @@ public final class EconomyGameTests {
                     "いっぱいの受け取り箱に届きました");
             check(helper, StorageService.receivedRoom(server, p.getUUID()) == 0, "受け取り箱の空きの数が違います");
         } finally {
-            ServerConfig.STORAGE_RECEIVED_MAX.set(before);
+            ServerConfig.overrideForTest(ServerConfig.STORAGE_RECEIVED_MAX, null);
         }
 
         // 保存して読み直す

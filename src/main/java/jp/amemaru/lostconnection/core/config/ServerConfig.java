@@ -2,6 +2,10 @@ package jp.amemaru.lostconnection.core.config;
 
 import net.minecraftforge.common.ForgeConfigSpec;
 
+import javax.annotation.Nullable;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 /**
  * サーバーの設定（ワールドごと。{@code serverconfig/amemaru-server.toml}）。
  *
@@ -469,6 +473,31 @@ public final class ServerConfig {
         b.pop();
 
         SPEC = b.build();
+    }
+
+    // ---------------------------------------------------------------- GameTest で値を変える
+
+    /**
+     * GameTest で変えた値（11月23日）。{@code ConfigValue.set} は config のファイルを書き、Forge のファイルの見張りが別のスレッドで
+     * それを読み直すと、読み直しが書く前の中身で値を戻してしまうことがある（run 161 の marketListBuyCollect で、取引所の開く日が
+     * テストの途中で戻った）。テストはここで値を変え、ファイルは書かない。
+     */
+    private static final Map<ForgeConfigSpec.ConfigValue<?>, Object> TEST_OVERRIDES = new ConcurrentHashMap<>();
+
+    /** 値（GameTest で変えていれば、その値）。テストで変える設定は、これで読む。 */
+    @SuppressWarnings("unchecked")
+    public static <T> T value(ForgeConfigSpec.ConfigValue<T> config) {
+        Object override = TEST_OVERRIDES.get(config);
+        return override != null ? (T) override : config.get();
+    }
+
+    /** GameTest 用：値を変える（null で、もとの config の値に戻す）。 */
+    public static <T> void overrideForTest(ForgeConfigSpec.ConfigValue<T> config, @Nullable T value) {
+        if (value == null) {
+            TEST_OVERRIDES.remove(config);
+        } else {
+            TEST_OVERRIDES.put(config, value);
+        }
     }
 
     private ServerConfig() {

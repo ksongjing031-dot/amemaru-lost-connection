@@ -115,7 +115,7 @@ public final class MarketService {
     }
 
     public static boolean isOpen(MinecraftServer server) {
-        return today(server) >= ServerConfig.MARKET_OPEN_DAY.get();
+        return today(server) >= ServerConfig.value(ServerConfig.MARKET_OPEN_DAY);
     }
 
     public static boolean hasNotebook(ServerPlayer player) {
@@ -242,7 +242,7 @@ public final class MarketService {
     public static void open(ServerPlayer player, Mode mode, int stall) {
         MinecraftServer server = player.server;
         ModNetwork.sendTo(player, MarketStallsS2C.current(server));
-        ModNetwork.sendTo(player, new OpenMarketS2C(mode, stall, isOpen(server), ServerConfig.MARKET_OPEN_DAY.get(), today(server)));
+        ModNetwork.sendTo(player, new OpenMarketS2C(mode, stall, isOpen(server), ServerConfig.value(ServerConfig.MARKET_OPEN_DAY), today(server)));
         if (mode == Mode.STALL && stall > 0) {
             MarketData data = MarketData.get(server);
             MarketData.StallRent rent = data.stall(stall);

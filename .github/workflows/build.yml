@@ -62,14 +62,6 @@ jobs:
           # 11月22日：公開リポジトリにしたので、ログインした人なら誰でもダウンロードできる。古い jar が残らないよう7日にした
           retention-days: 7
 
-      # 11月23日：GameTest には、config の値を変えて最後に戻すテストがある（取引所の開く日など）。Forge の config のファイルの
-      # 見張りが、起動のときに書いたファイルを別のスレッドで読み直すと、テストの途中で値が戻ることがあった（run 161 の
-      # marketListBuyCollect）。GameTest のサーバーでは、ファイルの見張りを止める
-      - name: GameTest の間は config のファイルの見張りを止める
-        run: |
-          mkdir -p run/config
-          printf 'disableConfigWatcher = true\n' > run/config/fml.toml
-
       # 自動テスト（GameTest）を専用のサーバーで動かす。1つでも失敗したら、このステップを失敗にする。
       - name: 自動テスト（GameTest）を動かす
         timeout-minutes: 10

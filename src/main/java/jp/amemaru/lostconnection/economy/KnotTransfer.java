@@ -80,7 +80,7 @@ public final class KnotTransfer {
         if (amount <= 0) {
             return Result.INVALID_AMOUNT;
         }
-        long max = ServerConfig.TRANSFER_MAX.get();
+        long max = ServerConfig.value(ServerConfig.TRANSFER_MAX);
         if (max > 0 && amount > max) {
             return Result.OVER_LIMIT;
         }
@@ -110,7 +110,7 @@ public final class KnotTransfer {
             case OFFLINE -> Component.translatable("message.amemaru.transfer.offline");
             case SELF -> Component.translatable("message.amemaru.transfer.self");
             case INVALID_AMOUNT -> Component.translatable("message.amemaru.transfer.invalid");
-            case OVER_LIMIT -> Component.translatable("message.amemaru.transfer.over_limit", format(ServerConfig.TRANSFER_MAX.get()));
+            case OVER_LIMIT -> Component.translatable("message.amemaru.transfer.over_limit", format(ServerConfig.value(ServerConfig.TRANSFER_MAX)));
             case NOT_ENOUGH -> Component.translatable("message.amemaru.transfer.not_enough", format(amount));
             case TOO_FAST -> Component.translatable("message.amemaru.transfer.too_fast");
             default -> Component.empty();

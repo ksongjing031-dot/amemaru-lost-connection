@@ -237,7 +237,7 @@ public final class TitleService {
     public static long required(TitleDef def) {
         TitleDef.Condition c = def.condition();
         if ("counter".equals(c.type()) && GuildCounters.PARTNERS.equals(c.key())) {
-            int participants = jp.amemaru.lostconnection.core.config.ServerConfig.GUILD_PARTICIPANTS.get();
+            int participants = jp.amemaru.lostconnection.core.config.ServerConfig.value(jp.amemaru.lostconnection.core.config.ServerConfig.GUILD_PARTICIPANTS);
             long scaled = Math.max(1L, (long) Math.ceil(c.amount() * participants / 25.0));
             return Math.min(Math.max(1L, participants - 1L), scaled);
         }
