@@ -66,23 +66,32 @@ public final class Phase6JobGameTests {
 
     // ================================================================ ヒーラー
 
-    /** 癒しの鈴：味方のHPが戻る。結び手当てのほどき：悪い状態（鈍足）が消える。 */
+    /**
+     * 癒しの鈴：使った人のHPが戻る（狙える味方がいなければ自分）。味方への回復：HPが戻る。ほどき：悪い状態（鈍足）が消える。
+     * 偽のプレイヤーは世界にもプレイヤー一覧にもいないため、味方を狙うところは回復の処理を直接呼んで確かめる。
+     */
     @GameTest(template = EMPTY)
     public static void healerHealsAndCleanses(GameTestHelper helper) {
         FakePlayer healer = fake(helper, "healer");
         PlayerData data = setup(healer, "healer", "apprentice_bell_staff");
+        SkillDef bell = skill("healer/bell_heal");
+        SkillTreeService.forceRank(healer, data, bell, 1);
+        int slot = data.loadoutSlotOf(bell.id());
+        check(helper, slot >= 0, "癒しの鈴がスキル枠に入っていません");
+        data.setHp(data.getStats().maxHp() * 0.3);
+        double self = data.getHp();
+        SkillService.Result result = SkillService.tryUse(healer, data, slot, -1, null);
+        check(helper, result.ok(), "癒しの鈴を使えません：" + result.failure());
+        check(helper, data.getHp() > self + 1.0, "狙える味方がいないときに、自分のHPが戻っていません：" + self + " → " + data.getHp());
+
         FakePlayer ally = fake(helper, "heal_ally");
         PlayerData allyData = setup(ally, "knight", "apprentice_sword");
         placeInFront(ally, healer, 2.0);
         allyData.setHp(allyData.getStats().maxHp() * 0.3);
         double before = allyData.getHp();
-        SkillDef bell = skill("healer/bell_heal");
-        SkillTreeService.forceRank(healer, data, bell, 1);
-        int slot = data.loadoutSlotOf(bell.id());
-        check(helper, slot >= 0, "癒しの鈴がスキル枠に入っていません");
-        SkillService.Result result = SkillService.tryUse(healer, data, slot, ally.getId(), null);
-        check(helper, result.ok(), "癒しの鈴を使えません：" + result.failure());
-        check(helper, allyData.getHp() > before + 1.0, "癒しの鈴で、味方のHPが戻っていません：" + before + " → " + allyData.getHp());
+        double base = data.getStats().get(jp.amemaru.lostconnection.player.StatType.MAGIC) * 3.0;
+        double healed = HealService.healBySkill(healer, ally, base);
+        check(helper, healed > 1.0 && allyData.getHp() > before + 1.0, "味方のHPが戻っていません：" + before + " → " + allyData.getHp());
         check(helper, HealService.healMultiplier(healer, data) >= 1.0, "回復の倍率が1より小さいです");
 
         ally.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 200, 1));
@@ -214,7 +223,10 @@ public final class Phase6JobGameTests {
         helper.succeed();
     }
 
-    /** 気配：スキルを当てるとたまり、最大は5。 */
+    /**
+     * 気配：当てるたびに1たまり、最大は5。乱れ刃は気配を1ためる技（定義）。
+     * 偽のプレイヤーはプレイヤー一覧にいないため、スキルの「使った人」へのゲージは、ためる処理を直接呼んで確かめる。
+     */
     @GameTest(template = EMPTY)
     public static void roguePresenceGauge(GameTestHelper helper) {
         FakePlayer player = fake(helper, "presence");
@@ -222,19 +234,18 @@ public final class Phase6JobGameTests {
         check(helper, GaugeService.PRESENCE.equals(GaugeService.typeOf(data)), "ローグのゲージが気配ではありません");
         check(helper, GaugeService.max(data) == 5, "気配の最大が5ではありません：" + GaugeService.max(data));
         SkillDef flurry = skill("rogue/flurry");
-        SkillTreeService.forceRank(player, data, flurry, 1);
-        Zombie target = toughZombieInFront(helper, player, 1.6);
-        try {
-            data.markCombat(helper.getLevel().getGameTime());
-            use(helper, player, data, flurry, target);
-            check(helper, data.getGauge() >= 1.0 - EPSILON, "乱れ刃で気配がたまっていません：" + data.getGauge());
-            for (int i = 0; i < 6; i++) {
-                GaugeService.onHit(player, data, helper.getLevel().getGameTime(), true);
-            }
-            check(helper, data.getGauge() <= 5.0 + EPSILON, "気配が最大の5を超えました：" + data.getGauge());
-        } finally {
-            target.discard();
+        check(helper, flurry.effects().stream().anyMatch(effect -> effect.type() == jp.amemaru.lostconnection.job.def.EffectDef.Type.GAUGE
+                && effect.value("amount", 1) >= 1.0), "乱れ刃に、気配をためる効果がありません");
+        long now = helper.getLevel().getGameTime();
+        data.markCombat(now);
+        GaugeService.onHit(player, data, now, true);
+        check(helper, Math.abs(data.getGauge() - 1.0) < EPSILON, "当てて、気配が1たまっていません：" + data.getGauge());
+        GaugeService.onHit(player, data, now, false);
+        check(helper, Math.abs(data.getGauge() - 1.0) < EPSILON, "同じスキルの2回目の当たりで、気配がたまりました：" + data.getGauge());
+        for (int i = 0; i < 6; i++) {
+            GaugeService.onHit(player, data, now, true);
         }
+        check(helper, Math.abs(data.getGauge() - 5.0) < EPSILON, "気配が最大の5で止まっていません：" + data.getGauge());
         helper.succeed();
     }
 
