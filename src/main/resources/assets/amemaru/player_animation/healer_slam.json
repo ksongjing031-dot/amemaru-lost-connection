@@ -1,0 +1,135 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "healer_slam": {
+      "animation_length": 0.699,
+      "bones": {
+        "right_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -15,
+                0,
+                0
+              ],
+              "easing": "easeOutQuad"
+            },
+            "0.151": {
+              "vector": [
+                -165,
+                0,
+                -5
+              ],
+              "easing": "easeInQuad"
+            },
+            "0.301": {
+              "vector": [
+                -45,
+                0,
+                0
+              ]
+            },
+            "0.501": {
+              "vector": [
+                -45,
+                0,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.701": {
+              "vector": [
+                -15,
+                0,
+                0
+              ]
+            }
+          }
+        },
+        "left_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                0,
+                0,
+                0
+              ],
+              "easing": "easeOutQuad"
+            },
+            "0.151": {
+              "vector": [
+                -60,
+                0,
+                -20
+              ]
+            },
+            "0.301": {
+              "vector": [
+                -40,
+                0,
+                -10
+              ]
+            },
+            "0.501": {
+              "vector": [
+                -40,
+                0,
+                -10
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.701": {
+              "vector": [
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        },
+        "body": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                0,
+                0,
+                0
+              ],
+              "easing": "easeOutQuad"
+            },
+            "0.151": {
+              "vector": [
+                -6,
+                0,
+                0
+              ],
+              "easing": "easeInQuad"
+            },
+            "0.301": {
+              "vector": [
+                16,
+                0,
+                0
+              ]
+            },
+            "0.501": {
+              "vector": [
+                16,
+                0,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.701": {
+              "vector": [
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

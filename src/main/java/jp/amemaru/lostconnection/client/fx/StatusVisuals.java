@@ -3,6 +3,7 @@ package jp.amemaru.lostconnection.client.fx;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import jp.amemaru.lostconnection.core.registry.ModParticles;
 import jp.amemaru.lostconnection.network.s2c.StatusFxS2C;
+import jp.amemaru.lostconnection.particle.FxParticleOptions;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.util.Mth;
@@ -24,6 +25,10 @@ import java.util.Map;
  *   <li>感電：体のまわりを走る小さな稲妻。星痕：頭の上を回る星（数だけ）。防御崩し：ひびの入った盾の印。よろめき：頭のまわりの星。</li>
  *   <li>プレイヤー：光の帳（光の球）・誓いの円陣（足もとの紋）・受け流しの構え・城壁の構え（前の光の壁）・不屈の誓い（金のオーラ）・
  *       不落の城（白い光）・盾結び（頭の上の盾）。</li>
+ *   <li>Phase 6 その2：毒（緑の泡）・標（頭の上の赤い印）・縫い止め（足もとの糸の紋）・戒め（頭の上の鈴の印）・煙（頭のまわりの煙）。
+ *       味方の強化：加護（金の輪）・守り（淡い膜）・鋭い目・疾さ（風）・結びの力（胸の灯）・狙撃の構え・命の糸（胸の金の輪）・
+ *       身代わりの鈴（頭の上の鈴）・星の環（回る星）・影分身（紫の影）・毒塗り（したたる毒）・弓舞（舞う羽根）・影走り・天地流転・
+ *       癒し続け（花びら）・潜伏（立ちのぼる影）。</li>
  * </ul>
  * <p>自分の体の見た目は、一人称のときは描かない（目の前をふさがないため）。</p>
  */
@@ -41,6 +46,16 @@ public final class StatusVisuals {
     private static final int SPARK = 0xFFF2A0;
     private static final int EMBER = 0xFF8C40;
     private static final int KNIGHT = 0x8FD3FF;
+    private static final int VENOM = 0x9CF060;
+    private static final int MARK_RED = 0xFF5A4A;
+    private static final int BELL = 0xFFE7A0;
+    private static final int LIFE = 0xB8FF9C;
+    private static final int WIND = 0xA8F0C8;
+    private static final int SHADOW = 0x8A6CFF;
+    private static final int DUSK = 0x3A2E5A;
+    private static final int FIST = 0xFFB46E;
+    private static final int KI = 0x9FDCFF;
+    private static final int MARK_SHADE_RED = 0x6A1010;
     /** 頭の上の印の影（明るい空の前でも形が見えるように、光の下に敷く濃い色）。 */
     private static final int MARK_SHADE_FROST = 0x1F5F9A;
     private static final int MARK_SHADE_GOLD = 0x8A5200;
@@ -59,7 +74,8 @@ public final class StatusVisuals {
         }
         int rows = 0;
         for (StatusFxS2C.Kind kind : new StatusFxS2C.Kind[]{StatusFxS2C.Kind.CHILL, StatusFxS2C.Kind.BRAND,
-                StatusFxS2C.Kind.ARMOR_BREAK, StatusFxS2C.Kind.SHIELD_BOND}) {
+                StatusFxS2C.Kind.ARMOR_BREAK, StatusFxS2C.Kind.SHIELD_BOND, StatusFxS2C.Kind.MARK, StatusFxS2C.Kind.ADMONISHED,
+                StatusFxS2C.Kind.GUARDIAN_BELL}) {
             if (state.kinds.containsKey(kind)) {
                 rows++;
             }
@@ -134,6 +150,38 @@ public final class StatusVisuals {
                 Fx.burst(level, ModParticles.SHARD.get(), center, 30, GOLD, 0.3F, 26, 0.45);
                 FxWorld.add(new FxWorld.Shockwave(entity.position(), 0.5F, 2.4F, 10, GOLD, 1.0F, 0.8F));
             }
+            case CLEANSED -> {
+                Fx.burst(level, ModParticles.STAR.get(), center, 14, 0xFFFFFF, 0.22F, 18, 0.3);
+                FxWorld.add(new FxWorld.Shockwave(entity.position(), 0.3F, 1.6F, 10, 0xFFFFFF, 0.6F, 0.6F));
+            }
+            case GUARDIAN_SAVED -> {
+                FxWorld.add(new FxWorld.Flare(FxWorld.Anchor.at(center), size * 3.0F + 1.5F, BELL, 12, FxTextures.STAR, 0.2F, 2));
+                FxWorld.add(new FxWorld.Shockwave(entity.position(), 0.5F, 3.5F, 16, BELL, 1.4F, 1.0F));
+                FxWorld.add(new FxWorld.Pillar(FxWorld.Anchor.entity(entity.getId(), Vec3.ZERO), 0.8F, 6.0F, BELL, 20));
+                Fx.burst(level, ModParticles.STAR.get(), center, 30, BELL, 0.3F, 26, 0.5);
+                FxWorld.shake(center, 6, 0.6F);
+            }
+            case THREAD_BURST -> {
+                Fx.burst(level, ModParticles.PETAL.get(), center, 20, GOLD, 0.22F, 30, 0.3);
+                FxWorld.add(new FxWorld.Flare(FxWorld.Anchor.at(center), 2.4F, GOLD, 10, FxTextures.GLOW, 0.0F, 2));
+            }
+            case POISON_BURST -> {
+                Fx.burst(level, ModParticles.BUBBLE.get(), center, 24, VENOM, 0.18F, 24, 0.4);
+                FxWorld.add(new FxWorld.Shockwave(entity.position(), 0.3F, 2.4F, 10, VENOM, 0.7F, 0.8F));
+            }
+            case MARKED -> FxWorld.add(new FxWorld.Flare(FxWorld.Anchor.center(entity.getId(), Vec3.ZERO), size * 2.0F + 0.8F, MARK_RED, 8,
+                    FxTextures.RING, 0.0F, 2));
+            case REVIVED -> {
+                FxWorld.add(new FxWorld.Pillar(FxWorld.Anchor.entity(entity.getId(), Vec3.ZERO), 0.9F, 8.0F, LIFE, 26));
+                Fx.fountain(level, ModParticles.PETAL.get(), entity.position(), 30, LIFE, 0.22F, 40, 0.3, 0.15);
+                FxWorld.add(new FxWorld.Shockwave(entity.position(), 0.4F, 3.0F, 16, LIFE, 1.0F, 0.9F));
+            }
+            case COUNTERED -> {
+                Vec3 front = center.add(entity.getLookAngle().scale(0.8));
+                FxWorld.add(new FxWorld.Flare(FxWorld.Anchor.at(front), 2.2F, KI, 8, FxTextures.STAR, 0.4F, 1));
+                Fx.burst(level, ModParticles.GLOW.get(), front, 16, KI, 0.3F, 12, 0.5);
+                FxWorld.shake(center, 3, 0.4F);
+            }
             case NONE -> {
             }
         }
@@ -173,6 +221,54 @@ public final class StatusVisuals {
             if (state.kinds.containsKey(StatusFxS2C.Kind.ARMOR_BREAK) && random.nextInt(6) == 0) {
                 Fx.burst(level, ModParticles.SPARK.get(), feet.add(0.0, height * 0.6, 0.0), 1, EMBER, 0.06F, 10, 0.12);
             }
+            tickPhase6(level, random, state, entity, feet, width, height);
+        }
+    }
+
+    /** Phase 6 その2 の状態の、続く粒。 */
+    private static void tickPhase6(ClientLevel level, RandomSource random, State state, Entity entity, Vec3 feet, float width, float height) {
+        long[] poison = state.kinds.get(StatusFxS2C.Kind.POISON);
+        if (poison != null && random.nextInt(Math.max(1, 6 - (int) poison[0])) == 0) {
+            Fx.scatter(level, ModParticles.BUBBLE.get(), feet.add(0.0, height * 0.2, 0.0), width * 0.6, 1, VENOM, 0.12F, 20, height * 0.7,
+                    new Vec3(0.0, 0.02, 0.0));
+        }
+        if (state.kinds.containsKey(StatusFxS2C.Kind.ROOTED) && random.nextInt(4) == 0) {
+            Fx.ring(level, ModParticles.RUNE.get(), feet.add(0.0, 0.05, 0.0), width * 0.6 + 0.3, 1, 0xD8D0FF, 0.18F, 16, 0.0, 0.01);
+        }
+        if (state.kinds.containsKey(StatusFxS2C.Kind.BLINDED) && random.nextInt(3) == 0) {
+            Fx.scatter(level, ModParticles.SMOKE.get(), feet.add(0.0, height * 0.85, 0.0), width * 0.5, 1, 0x8C8A9A, 0.35F, 24, 0.3,
+                    new Vec3(0.0, 0.01, 0.0));
+        }
+        if (state.kinds.containsKey(StatusFxS2C.Kind.KEEN) && random.nextInt(8) == 0) {
+            Fx.burst(level, ModParticles.STAR.get(), feet.add(0.0, height + 0.1, 0.0), 1, 0xFFE27A, 0.15F, 14, 0.08);
+        }
+        if ((state.kinds.containsKey(StatusFxS2C.Kind.SWIFT) || state.kinds.containsKey(StatusFxS2C.Kind.EVADE))
+                && random.nextInt(3) == 0 && entity.getDeltaMovement().horizontalDistanceSqr() > 0.002) {
+            boolean shadow = state.kinds.containsKey(StatusFxS2C.Kind.EVADE);
+            Fx.add(level, shadow ? FxParticleOptions.of(ModParticles.SMOKE.get(), DUSK, 0.35F, 18) : Fx.glow(WIND, 0.2F, 12),
+                    feet.add((random.nextDouble() - 0.5) * width, 0.2 + random.nextDouble() * height * 0.6, (random.nextDouble() - 0.5) * width),
+                    Vec3.ZERO);
+        }
+        if (state.kinds.containsKey(StatusFxS2C.Kind.VENOM_COAT) && random.nextInt(5) == 0) {
+            Fx.add(level, FxParticleOptions.of(ModParticles.BUBBLE.get(), VENOM, 0.1F, 18),
+                    feet.add((random.nextDouble() - 0.5) * width * 1.4, height * 0.45, (random.nextDouble() - 0.5) * width * 1.4),
+                    new Vec3(0.0, -0.03, 0.0));
+        }
+        if (state.kinds.containsKey(StatusFxS2C.Kind.BOW_DANCE) && random.nextInt(4) == 0) {
+            Fx.ring(level, ModParticles.FEATHER.get(), feet.add(0.0, 0.3 + random.nextDouble() * height, 0.0), width * 0.8 + 0.4, 1, 0xE8FFF0,
+                    0.12F, 18, 0.02, 0.03);
+        }
+        if (state.kinds.containsKey(StatusFxS2C.Kind.RENEWAL) && random.nextInt(5) == 0) {
+            Fx.scatter(level, ModParticles.PETAL.get(), feet.add(0.0, 0.1, 0.0), width * 0.7, 1, LIFE, 0.16F, 30, 0.2, new Vec3(0.0, 0.05, 0.0));
+        }
+        if (state.kinds.containsKey(StatusFxS2C.Kind.HIDDEN) && random.nextInt(3) == 0) {
+            Fx.scatter(level, ModParticles.SMOKE.get(), feet, width * 0.6, 1, DUSK, 0.3F, 26, height, new Vec3(0.0, 0.03, 0.0));
+        }
+        if (state.kinds.containsKey(StatusFxS2C.Kind.SHADOW_CLONE) && random.nextInt(6) == 0) {
+            Fx.scatter(level, ModParticles.SMOKE.get(), feet, width * 0.8, 1, SHADOW, 0.25F, 20, height, Vec3.ZERO);
+        }
+        if (state.kinds.containsKey(StatusFxS2C.Kind.BLESSING) && random.nextInt(6) == 0) {
+            Fx.scatter(level, ModParticles.GLOW.get(), feet, width * 0.6, 1, GOLD, 0.2F, 20, 0.3, new Vec3(0.0, 0.05, 0.0));
         }
     }
 
@@ -290,7 +386,77 @@ public final class StatusVisuals {
             }
             if ((value = state.kinds.get(StatusFxS2C.Kind.SHIELD_BOND)) != null && !firstPersonSelf) {
                 draw.billboard(draw.glow(FxTextures.SHIELD), head.add(0.0, row + 0.05, 0.0), 0.38F, 0.0F, KNIGHT, 0.85F);
+                row += MARK_ROW;
             }
+            renderPhase6(draw, state, entity, feet, head, width, height, time, row, firstPersonSelf);
+        }
+    }
+
+    /** Phase 6 その2 の状態の見た目。{@code row} は頭の上の印の、次の段の高さ。 */
+    private static void renderPhase6(FxDraw draw, State state, Entity entity, Vec3 feet, Vec3 head, float width, float height, float time,
+                                     float row, boolean firstPersonSelf) {
+        long[] value;
+        // 頭の上の印（標・戒め・身代わりの鈴）
+        if ((value = state.kinds.get(StatusFxS2C.Kind.MARK)) != null && !firstPersonSelf) {
+            Vec3 at = head.add(0.0, row + 0.05, 0.0);
+            draw.billboard(draw.translucent(FxTextures.RING), at, 0.5F, 0.0F, MARK_SHADE_RED, 0.6F);
+            draw.billboard(draw.glow(FxTextures.RING), at, 0.46F, 0.0F, MARK_RED, 0.8F);
+            draw.billboard(draw.glow(FxTextures.STAR), at, 0.3F, time * 0.08F, MARK_RED, 0.9F);
+            row += MARK_ROW;
+        }
+        if ((value = state.kinds.get(StatusFxS2C.Kind.ADMONISHED)) != null && !firstPersonSelf) {
+            Vec3 at = head.add(0.0, row + 0.05, 0.0);
+            draw.billboard(draw.translucent(FxTextures.CRACK), at, 0.4F, 0.0F, MARK_SHADE_GOLD, 0.6F);
+            draw.billboard(draw.glow(FxTextures.CRACK), at, 0.36F, 0.0F, BELL, 0.7F);
+            row += MARK_ROW;
+        }
+        if ((value = state.kinds.get(StatusFxS2C.Kind.GUARDIAN_BELL)) != null && !firstPersonSelf) {
+            Vec3 at = head.add(0.0, row + 0.08 + Mth.sin(time * 0.15F) * 0.05, 0.0);
+            draw.billboard(draw.translucent(FxTextures.STAR), at, 0.44F, time * 0.03F, MARK_SHADE_GOLD, 0.6F);
+            draw.billboard(draw.glow(FxTextures.STAR), at, 0.4F, time * 0.03F, BELL, 0.85F);
+            row += MARK_ROW;
+        }
+        // 足もと・体
+        if ((value = state.kinds.get(StatusFxS2C.Kind.POISON)) != null) {
+            draw.ground(draw.glow(FxTextures.RING), feet.add(0.0, 0.04, 0.0), width * 0.8F + 0.2F, 0.0F, VENOM, 0.1F + 0.05F * value[0]);
+        }
+        if ((value = state.kinds.get(StatusFxS2C.Kind.ROOTED)) != null) {
+            draw.ground(draw.glow(FxTextures.SIGIL_ARCANE), feet.add(0.0, 0.05, 0.0), width * 0.9F + 0.4F, time * 0.01F, 0xD8D0FF, 0.45F);
+        }
+        if ((value = state.kinds.get(StatusFxS2C.Kind.BLESSING)) != null) {
+            draw.ground(draw.glow(FxTextures.RING), feet.add(0.0, 0.05, 0.0), width * 0.9F + 0.4F, 0.0F, GOLD,
+                    0.35F + 0.1F * Mth.sin(time * 0.15F));
+        }
+        if ((value = state.kinds.get(StatusFxS2C.Kind.PROTECTED)) != null && !firstPersonSelf) {
+            draw.sphere(draw.glow(FxTextures.DOME), feet.add(0.0, height * 0.5, 0.0), Math.max(width, height) * 0.6F + 0.15F, 8, 20, false,
+                    time * 0.002F, 0xE8F4FF, 0.18F);
+        }
+        if ((value = state.kinds.get(StatusFxS2C.Kind.EMPOWERED)) != null && !firstPersonSelf) {
+            draw.billboard(draw.glow(FxTextures.GLOW), feet.add(0.0, height * 0.6, 0.0), 0.9F + 0.1F * Mth.sin(time * 0.3F), 0.0F, FIST, 0.45F);
+        }
+        if ((value = state.kinds.get(StatusFxS2C.Kind.AIMING)) != null) {
+            draw.ground(draw.glow(FxTextures.SIGIL_STAR), feet.add(0.0, 0.05, 0.0), 0.9F, time * 0.02F, WIND, 0.5F);
+        }
+        if ((value = state.kinds.get(StatusFxS2C.Kind.LIFE_THREAD)) != null) {
+            draw.ground(draw.glow(FxTextures.RING), feet.add(0.0, height * 0.55, 0.0), width * 0.8F + 0.35F, time * 0.05F, GOLD, 0.5F);
+        }
+        if ((value = state.kinds.get(StatusFxS2C.Kind.STAR_RING)) != null && !firstPersonSelf) {
+            VertexConsumer vc = draw.glow(FxTextures.STAR);
+            for (int i = 0; i < 5; i++) {
+                float angle = time * 0.15F + i * Mth.TWO_PI / 5.0F;
+                float r = width * 0.5F + 0.8F;
+                Vec3 at = feet.add(Mth.cos(angle) * r, height * 0.55 + Mth.sin(time * 0.2F + i) * 0.1, Mth.sin(angle) * r);
+                draw.billboard(vc, at, 0.32F, time * 0.1F, GOLD, 0.9F);
+            }
+        }
+        if ((value = state.kinds.get(StatusFxS2C.Kind.SHADOW_CLONE)) != null && !firstPersonSelf) {
+            float yaw = entity.getYRot() * Mth.DEG_TO_RAD;
+            Vec3 behind = feet.add(Mth.sin(yaw) * 0.6, height * 0.5, -Mth.cos(yaw) * 0.6);
+            draw.billboard(draw.glow(FxTextures.GLOW), behind, height * 0.9F, 0.0F, SHADOW, 0.25F + 0.1F * Mth.sin(time * 0.4F));
+        }
+        if ((value = state.kinds.get(StatusFxS2C.Kind.ENDLESS_FLOW)) != null) {
+            draw.ground(draw.glow(FxTextures.SIGIL_OATH), feet.add(0.0, 0.05, 0.0), 1.4F, time * 0.04F, FIST, 0.5F);
+            draw.ground(draw.glow(FxTextures.SIGIL_FROST), feet.add(0.0, 0.06, 0.0), 1.0F, -time * 0.06F, KI, 0.5F);
         }
     }
 

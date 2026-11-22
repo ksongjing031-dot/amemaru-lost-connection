@@ -1,0 +1,85 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "rogue_snap": {
+      "animation_length": 0.499,
+      "bones": {
+        "right_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -15,
+                0,
+                0
+              ],
+              "easing": "easeOutQuad"
+            },
+            "0.151": {
+              "vector": [
+                -100,
+                -20,
+                0
+              ]
+            },
+            "0.201": {
+              "vector": [
+                -110,
+                -20,
+                0
+              ]
+            },
+            "0.351": {
+              "vector": [
+                -100,
+                -20,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.501": {
+              "vector": [
+                -15,
+                0,
+                0
+              ]
+            }
+          }
+        },
+        "head": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                0,
+                0,
+                0
+              ],
+              "easing": "easeOutQuad"
+            },
+            "0.151": {
+              "vector": [
+                5,
+                0,
+                0
+              ]
+            },
+            "0.351": {
+              "vector": [
+                5,
+                0,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.501": {
+              "vector": [
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

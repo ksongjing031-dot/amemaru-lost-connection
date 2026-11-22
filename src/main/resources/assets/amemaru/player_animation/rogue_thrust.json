@@ -1,0 +1,196 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "rogue_thrust": {
+      "animation_length": 0.499,
+      "bones": {
+        "right_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -15,
+                0,
+                0
+              ],
+              "easing": "easeOutQuad"
+            },
+            "0.101": {
+              "vector": [
+                -60,
+                0,
+                10
+              ],
+              "easing": "easeInQuad"
+            },
+            "0.201": {
+              "vector": [
+                -95,
+                -5,
+                0
+              ]
+            },
+            "0.351": {
+              "vector": [
+                -95,
+                -5,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.501": {
+              "vector": [
+                -15,
+                0,
+                0
+              ]
+            }
+          }
+        },
+        "left_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                0,
+                0,
+                0
+              ],
+              "easing": "easeOutQuad"
+            },
+            "0.101": {
+              "vector": [
+                -30,
+                0,
+                -30
+              ]
+            },
+            "0.351": {
+              "vector": [
+                20,
+                0,
+                -20
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.501": {
+              "vector": [
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        },
+        "body": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                0,
+                0,
+                0
+              ],
+              "easing": "easeOutQuad"
+            },
+            "0.101": {
+              "vector": [
+                10,
+                15,
+                0
+              ],
+              "easing": "easeInQuad"
+            },
+            "0.201": {
+              "vector": [
+                22,
+                -10,
+                0
+              ]
+            },
+            "0.351": {
+              "vector": [
+                22,
+                -10,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.501": {
+              "vector": [
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        },
+        "right_leg": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                0,
+                0,
+                0
+              ],
+              "easing": "easeOutQuad"
+            },
+            "0.201": {
+              "vector": [
+                -35,
+                0,
+                0
+              ]
+            },
+            "0.351": {
+              "vector": [
+                -35,
+                0,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.501": {
+              "vector": [
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        },
+        "left_leg": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                0,
+                0,
+                0
+              ],
+              "easing": "easeOutQuad"
+            },
+            "0.201": {
+              "vector": [
+                25,
+                0,
+                0
+              ]
+            },
+            "0.351": {
+              "vector": [
+                25,
+                0,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.501": {
+              "vector": [
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -642,15 +642,18 @@ public final class JobSkillGameTests {
     public static void skillDefinitionsAreValid(GameTestHelper helper) {
         SkillRegistry.Snapshot snapshot = SkillRegistry.get();
         check(helper, snapshot.problems().isEmpty(), "職業・スキルの定義に問題があります：" + snapshot.problems());
-        for (String name : new String[]{"knight", "wizard"}) {
+        // Phase 6 その2：戦闘職は6つ（ナイト・ウィザード・ヒーラー・アーチャー・ローグ・モンク）
+        check(helper, snapshot.jobs().size() == 6, "戦闘職が6つではありません：" + snapshot.jobs().size());
+        for (String name : new String[]{"knight", "wizard", "healer", "archer", "rogue", "monk"}) {
             JobDef job = job(name);
             List<SkillDef> skills = snapshot.skillsOf(job.id());
             long actives = skills.stream().filter(skill -> skill.isActive() && !skill.isUltimate()).count();
             long passives = skills.stream().filter(skill -> skill.kind() == SkillKind.PASSIVE).count();
             long ultimates = skills.stream().filter(SkillDef::isUltimate).count();
-            // 仕様S2は4〜6個。11月17日のご指示（スキルが単調）で、流派ごとに6つ（計12）に増やした（Phase 0-A 19章）
-            check(helper, actives == 12, name + " のアクティブスキルが12個ではありません：" + actives);
-            check(helper, passives == 6, name + " のパッシブスキルが6個ではありません：" + passives);
+            // 仕様S2は4〜6個。11月17日のご指示（スキルが単調）で流派ごとに6つ（計12）、11月22日のご指示（スキルとパッシブを
+            // 増やして多様なビルドに）で流派ごとにアクティブ8・パッシブ5（計16・10）にした（Phase 0-A 19章）
+            check(helper, actives == 16, name + " のアクティブスキルが16個ではありません：" + actives);
+            check(helper, passives == 10, name + " のパッシブスキルが10個ではありません：" + passives);
             // 奥義は流派ごとに1つ（計2つ）から1つを選ぶ（11月17日のご指示。Phase 0-A 19章）
             check(helper, ultimates == 2, name + " の奥義が2つではありません：" + ultimates);
             check(helper, job.startingSkills().size() == 2, name + " の最初のスキルが2つではありません");

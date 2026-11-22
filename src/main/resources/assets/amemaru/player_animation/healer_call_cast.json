@@ -1,0 +1,92 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "healer_call_cast": {
+      "animation_length": 0.999,
+      "bones": {
+        "right_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -60,
+                20,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.501": {
+              "vector": [
+                -64,
+                22,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "1.001": {
+              "vector": [
+                -60,
+                20,
+                0
+              ]
+            }
+          }
+        },
+        "left_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -85,
+                10,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.501": {
+              "vector": [
+                -95,
+                10,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "1.001": {
+              "vector": [
+                -85,
+                10,
+                0
+              ]
+            }
+          }
+        },
+        "body": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                12,
+                0,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.501": {
+              "vector": [
+                14,
+                0,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "1.001": {
+              "vector": [
+                12,
+                0,
+                0
+              ]
+            }
+          }
+        }
+      },
+      "loop": true
+    }
+  }
+}

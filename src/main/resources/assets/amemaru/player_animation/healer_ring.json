@@ -1,0 +1,99 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "healer_ring": {
+      "animation_length": 0.599,
+      "bones": {
+        "right_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -15,
+                0,
+                0
+              ],
+              "easing": "easeOutQuad"
+            },
+            "0.101": {
+              "vector": [
+                -115,
+                0,
+                0
+              ]
+            },
+            "0.201": {
+              "vector": [
+                -115,
+                0,
+                12
+              ]
+            },
+            "0.301": {
+              "vector": [
+                -115,
+                0,
+                -8
+              ]
+            },
+            "0.401": {
+              "vector": [
+                -115,
+                0,
+                6
+              ]
+            },
+            "0.451": {
+              "vector": [
+                -110,
+                0,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.601": {
+              "vector": [
+                -15,
+                0,
+                0
+              ]
+            }
+          }
+        },
+        "left_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                0,
+                0,
+                0
+              ],
+              "easing": "easeOutQuad"
+            },
+            "0.151": {
+              "vector": [
+                -20,
+                0,
+                -15
+              ]
+            },
+            "0.451": {
+              "vector": [
+                -20,
+                0,
+                -15
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.601": {
+              "vector": [
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

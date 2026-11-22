@@ -115,7 +115,8 @@ public final class EquipmentGameTests {
         check(helper, SkillRegistry.get().problems().isEmpty(), "職業の定義に問題があります：" + SkillRegistry.get().problems());
 
         EquipmentDefs.Snapshot gear = EquipmentDefs.server();
-        check(helper, gear.equipment().size() == 20, "装備の定義が20ではありません：" + gear.equipment().size());
+        // Phase 6 その2 で、4職業の見習い・古代石の武器（8）と、古代石シリーズ（軽装）の防具（4）が増えた
+        check(helper, gear.equipment().size() == 32, "装備の定義が32ではありません：" + gear.equipment().size());
         for (ItemManifest.Category category : new ItemManifest.Category[]{
                 ItemManifest.Category.WEAPON, ItemManifest.Category.SHIELD, ItemManifest.Category.ARMOR}) {
             for (RegistryObject<Item> item : ModItems.MANIFEST.category(category)) {
