@@ -761,10 +761,11 @@ public final class CiScreenshots {
             {"cmd", null, "5", "item replace entity @a armor.chest with amemaru:ancient_stone_jerkin"},
             {"cmd", null, "5", "item replace entity @a armor.legs with amemaru:ancient_stone_breeches"},
             {"cmd", null, "5", "item replace entity @a armor.feet with amemaru:ancient_stone_shoes"},
+            // 正面のカメラと自分の間に的が入らないよう、先に的を片づける
+            {"cmd", null, "5", "kill @e[type=amemaru:training_dummy]"},
             {"p6_front", null, "10"},
             {"snap", null, "20", "phase6_light_armor"},
             {"view", null, "5", "first"},
-            {"cmd", null, "5", "kill @e[type=amemaru:training_dummy]"},
             {"cmd", null, "10", "gamemode spectator @p"},
             {"hud", null, "5", "off"}};
 
