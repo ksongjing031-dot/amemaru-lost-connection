@@ -94,10 +94,16 @@ public final class ProjectService {
         return testStage != null ? testStage : ConnectionService.stage(server);
     }
 
-    /** 完成した次の朝が来たか（完成したゲームの日より、今のゲームの日が進んだ）。 */
-    public static boolean morningCame(long completedGameDay, long today) {
-        return completedGameDay >= 0 && today > completedGameDay;
+    /**
+     * 朝（ゲームの時刻の6時。時刻 0）を回ったか：1日の中の時刻（0〜23999）が前に見たときより小さくなった。
+     * 時が進んで 24000 を越えたときも、管理者が {@code /time set day} で朝にしたときも、朝を回ったことになる。
+     */
+    public static boolean morningPassed(long lastTimeOfDay, long timeOfDay) {
+        return lastTimeOfDay >= 0 && timeOfDay < lastTimeOfDay;
     }
+
+    /** 前に見た1日の中の時刻（サーバーを開いてから。-1 ＝ まだ見ていない）。 */
+    private static long lastTimeOfDay = -1;
 
     // ================================================================ 状態
 
@@ -366,6 +372,10 @@ public final class ProjectService {
         StoryState.get(server).add(def.flag());
         // 自動テストの間（進行日を決めているとき）は、街に形を重ねない（街を建てるテストと重ならないように）
         boolean placed = testDay == null && !def.overlay().isEmpty() && CityCommands.placeOverlay(server.overworld(), def.overlay());
+        // 物語の印で現れるNPC（料理屋のペトラ・ポム）を、立つ所に置く（育ったあとの形を重ねたあと）
+        if (testDay == null) {
+            CityCommands.builtOrigin(server.overworld()).ifPresent(o -> jp.amemaru.lostconnection.npc.NpcService.spawnAll(server.overworld(), o));
+        }
         broadcast(server, Component.translatable("project.amemaru.built", def.shortName(), def.result()).withStyle(ChatFormatting.GOLD));
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             player.connection.send(new ClientboundSetTitlesAnimationPacket(10, 70, 20));
@@ -409,14 +419,19 @@ public final class ProjectService {
         }
         MinecraftServer server = event.getServer();
         TownData town = TownData.get(server);
-        long today = gameDay(server);
         if (server.getTickCount() % 40 == 7) {
             sparkleStand(server);
+        }
+        long timeOfDay = server.overworld().getDayTime() % 24000L;
+        boolean morning = morningPassed(lastTimeOfDay, timeOfDay);
+        lastTimeOfDay = timeOfDay;
+        if (!morning) {
+            return;
         }
         for (ProjectDef def : ProjectDefs.ordered()) {
             TownData.Project p = town.project(def.id());
             // 完成した次の朝（ゲームの時刻の6時）に、施設が変わる
-            if (p.completed() && !p.built() && morningCame(p.completedGameDay, today)) {
+            if (p.completed() && !p.built()) {
                 build(server, def);
             }
         }

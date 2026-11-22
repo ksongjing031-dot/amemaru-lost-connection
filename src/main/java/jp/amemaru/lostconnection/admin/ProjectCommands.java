@@ -24,7 +24,8 @@ import java.util.Locale;
  *
  * <ul>
  *   <li>{@code project}：7つの共同事業の状態（寄付・目標・輝き段階・受付の日）</li>
- *   <li>{@code project open <人> [共同事業]}：寄付台の画面を開く（距離を見ない）</li>
+ *   <li>{@code project open <人> [共同事業]}：寄付台の画面を開く（距離を見ない）。{@code project restaurant <人>}：料理屋の画面を開く
+ *       （③の前でも開く）</li>
  *   <li>{@code project add <共同事業> <額>}：寄付があったことにする（管理者の寄付。ノットは減らない）</li>
  *   <li>{@code project complete <共同事業>}：完成にする（次の朝に施設が変わる）。{@code project build <共同事業>}：今すぐ施設を変える</li>
  *   <li>{@code project reset <共同事業>}：初めに戻す（寄付と物語の印を消す。重ねた形は、街を建て直すと消える）</li>
@@ -52,6 +53,12 @@ public final class ProjectCommands {
                                                     ResourceLocationArgument.getId(c, "project").toString(), true);
                                             return 1;
                                         }))))
+                .then(Commands.literal("restaurant")
+                        .then(Commands.argument("target", EntityArgument.player())
+                                .executes(c -> {
+                                    jp.amemaru.lostconnection.town.RestaurantService.open(EntityArgument.getPlayer(c, "target"), true);
+                                    return 1;
+                                })))
                 .then(Commands.literal("add")
                         .then(Commands.argument("project", ResourceLocationArgument.id()).suggests(PROJECTS)
                                 .then(Commands.argument("amount", LongArgumentType.longArg(1, 1_000_000_000_000L))

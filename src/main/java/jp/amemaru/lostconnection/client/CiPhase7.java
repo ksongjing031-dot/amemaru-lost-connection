@@ -34,7 +34,7 @@ final class CiPhase7 {
     static boolean action(Minecraft minecraft, String[] shot, boolean first) {
         String kind = shot[0];
         if (!List.of("p7_stone", "p7_glow", "p7_glow_tab", "p7_book", "p7_thanks", "p7f_tab", "p7f_select", "p7f_auto",
-                "p7c_use", "p7c_tab", "p7c_chip", "p7c_bet", "p7c_enter", "p7p_use", "p7p_select", "p7p_donate").contains(kind)) {
+                "p7c_use", "p7c_tab", "p7c_chip", "p7c_bet", "p7c_enter", "p7p_use", "p7p_select", "p7p_donate", "p7p_cook").contains(kind)) {
             return false;
         }
         if (!first) {
@@ -106,6 +106,11 @@ final class CiPhase7 {
             case "p7p_donate" -> {
                 if (minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.ProjectScreen screen) {
                     screen.ciDonate(Long.parseLong(shot[3]));
+                }
+            }
+            case "p7p_cook" -> {
+                if (minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.RestaurantScreen screen) {
+                    screen.ciCook(Integer.parseInt(shot[3]));
                 }
             }
             case "p7c_enter" -> {

@@ -7,14 +7,20 @@ import jp.amemaru.lostconnection.casino.CasinoRules;
 import jp.amemaru.lostconnection.connection.ConnectionCategory;
 import jp.amemaru.lostconnection.connection.ConnectionService;
 import jp.amemaru.lostconnection.economy.Wallet;
+import jp.amemaru.lostconnection.fishing.FishDefs;
 import jp.amemaru.lostconnection.fishing.FishingRules;
 import jp.amemaru.lostconnection.fishing.FishingService;
+import jp.amemaru.lostconnection.player.LevelService;
 import jp.amemaru.lostconnection.player.PlayerData;
 import jp.amemaru.lostconnection.player.PlayerDataCapability;
+import jp.amemaru.lostconnection.player.StatType;
 import jp.amemaru.lostconnection.story.StoryState;
 import jp.amemaru.lostconnection.town.ProjectDef;
 import jp.amemaru.lostconnection.town.ProjectDefs;
+import jp.amemaru.lostconnection.town.DishItem;
 import jp.amemaru.lostconnection.town.ProjectService;
+import jp.amemaru.lostconnection.town.RestaurantRules;
+import jp.amemaru.lostconnection.town.RestaurantService;
 import jp.amemaru.lostconnection.town.TownData;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestHelper;
@@ -22,6 +28,8 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.gametest.GameTestHolder;
@@ -107,8 +115,8 @@ public final class ProjectGameTests {
             ProjectService.setForTest(4, 3);
             ProjectService.checkAll(server);
             check(helper, p.completed() && !p.built() && "complete".equals(ProjectService.status(server, lake)), "目標と輝き段階がそろっても完成しません");
-            check(helper, !ProjectService.morningCame(5, 5) && ProjectService.morningCame(5, 6) && !ProjectService.morningCame(-1, 6),
-                    "次の朝の見分けがちがいます");
+            check(helper, ProjectService.morningPassed(23_980, 0) && ProjectService.morningPassed(18_000, 1_000)
+                    && !ProjectService.morningPassed(1_000, 1_020) && !ProjectService.morningPassed(-1, 0), "朝を回ったかの見分けがちがいます");
             check(helper, ProjectService.build(server, lake) && p.built() && story.has(lake.flag()) && FishingService.lakeOpen(server)
                     && !ProjectService.build(server, lake), "施設が変わらないか、湖畔の釣り場が開きません");
             check(helper, ProjectService.builtOverlays(server).contains("fishing_lakeside"), "建て直しても、湖畔の釣り場の形が重なりません");
@@ -148,6 +156,68 @@ public final class ProjectGameTests {
             if (hadFlag) {
                 story.add(crystal.flag());
             }
+        }
+        helper.succeed();
+    }
+
+    /**
+     * 料理屋（③のあと）：材料（★の魚・野菜）と代金で料理を作ってもらう。魚は安い★1から使い、記憶魚は使わない。食べると攻撃が上がる。
+     * 新しく食べると入れかわる（強化は1つだけ）。
+     */
+    @GameTest(template = EMPTY)
+    public static void restaurantCookAndEat(GameTestHelper helper) {
+        FakePlayer a = fake(helper, "proj_cook");
+        PlayerData data = data(helper, a);
+        try {
+            check(helper, RestaurantRules.loader().errors().isEmpty() && RestaurantRules.current().dishes().size() == 6,
+                    "料理屋の決まりが読めません：" + RestaurantRules.loader().errors());
+            for (RestaurantRules.Dish dish : RestaurantRules.current().dishes()) {
+                check(helper, !RestaurantService.dishStack(dish, 20).isEmpty(), "料理のアイテムがありません：" + dish.item());
+            }
+            RestaurantService.clearForTest(a);
+            a.getInventory().clearContent();
+            Wallet.take(a, data, Wallet.balance(data), "gametest");
+            Wallet.give(a, data, 1000, "gametest");
+            Item dace = FishingService.itemOf(FishDefs.get(AmemaruMod.id("pebble_dace")));
+            Item memory = FishingService.itemOf(FishDefs.get(AmemaruMod.id("memory_dawn")));
+            a.getInventory().add(new ItemStack(memory, 1));
+            a.getInventory().add(new ItemStack(dace, 2));
+            RestaurantRules.Dish grilled = RestaurantRules.current().dish(AmemaruMod.id("dish_grilled_fish"));
+            check(helper, "restaurant.amemaru.error.ingredients".equals(RestaurantService.cook(a, grilled)),
+                    "魚が足りない（記憶魚は数えない）のに、作れました");
+            a.getInventory().add(new ItemStack(dace, 2));
+            check(helper, RestaurantService.cook(a, grilled) == null && a.getInventory().countItem(dace) == 1
+                    && a.getInventory().countItem(memory) == 1 && Wallet.balance(data) == 1000 - grilled.fee(),
+                    "材料と代金が出ないか、記憶魚を使いました");
+            ItemStack dish = ItemStack.EMPTY;
+            for (ItemStack s : a.getInventory().items) {
+                if (s.getItem() instanceof DishItem) {
+                    dish = s;
+                }
+            }
+            check(helper, !dish.isEmpty() && dish.getTagElement(DishItem.TAG) != null, "料理が渡らないか、強化の中身が書かれていません");
+            // 攻撃は整数に切り捨てるので、レベルを上げて、5%が見えるだけの攻撃にする
+            data.setLevel(60);
+            LevelService.recompute(a, data);
+            double attack = data.getStats().get(StatType.ATTACK);
+            double lost = data.getStats().get(StatType.LOST_RESIST);
+            RestaurantService.eat(a, dish);
+            LevelService.recompute(a, data);
+            double up = data.getStats().get(StatType.ATTACK);
+            check(helper, RestaurantService.active(a) != null && up > attack && Math.abs(up / attack - 1.0 - grilled.amount() / 100.0) < 0.03,
+                    "料理を食べても攻撃が上がりません（" + attack + " → " + up + "）");
+            RestaurantRules.Dish feast = RestaurantRules.current().dish(AmemaruMod.id("dish_lake_feast"));
+            RestaurantService.eat(a, RestaurantService.dishStack(feast, 20));
+            LevelService.recompute(a, data);
+            check(helper, Math.abs(data.getStats().get(StatType.ATTACK) - attack) < 1e-6
+                    && Math.abs(data.getStats().get(StatType.LOST_RESIST) - (lost + feast.amount())) < 1e-6,
+                    "新しく食べても、前の料理の強化が残っているか、ごちそうのロスト耐性が上がりません");
+        } finally {
+            RestaurantService.clearForTest(a);
+            a.getInventory().clearContent();
+            Wallet.take(a, data, Wallet.balance(data), "gametest");
+            data.setLevel(1);
+            LevelService.recompute(a, data);
         }
         helper.succeed();
     }

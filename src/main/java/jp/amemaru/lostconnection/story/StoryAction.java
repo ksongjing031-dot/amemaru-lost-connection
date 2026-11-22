@@ -42,6 +42,7 @@ import java.util.Set;
  *   <li>Phase 7 その2：{@code amemaru:open_fishing}（ポッカ爺の釣り具屋の画面。{@code tab}：dex・sell・trade・tournament）・
  *       {@code amemaru:rent_rod}（竿を借りる）</li>
  *   <li>Phase 7 その3：{@code amemaru:open_casino}（カジノの画面。{@code tab}：roulette・highlow・fishrace・cashier・prizes）</li>
+ *   <li>Phase 7 その4：{@code amemaru:open_restaurant}（ペトラ・ポムの料理屋の画面）</li>
  * </ul>
  * 大結晶の「記憶の再生」で見返すときは、処理を行わない（見るだけ）。
  */
@@ -51,7 +52,7 @@ public record StoryAction(String type, JsonObject params) {
             "amemaru:open_guild", "amemaru:start_quest", "amemaru:report_quest", "amemaru:bond", "amemaru:give_record_book",
             "amemaru:decipher_records", "amemaru:grant_title", "amemaru:open_titles", "amemaru:open_record_book",
             "amemaru:open_connections", "amemaru:open_donation", "amemaru:open_fishing", "amemaru:rent_rod",
-            "amemaru:open_casino");
+            "amemaru:open_casino", "amemaru:open_restaurant");
 
     public static List<StoryAction> parseList(JsonArray array) {
         List<StoryAction> list = new ArrayList<>();
@@ -160,6 +161,7 @@ public record StoryAction(String type, JsonObject params) {
             case "amemaru:rent_rod" -> jp.amemaru.lostconnection.fishing.FishingService.rentRod(player);
             case "amemaru:open_casino" -> jp.amemaru.lostconnection.casino.CasinoService.open(player,
                     Json.optionalString(params, "tab", "roulette"), false);
+            case "amemaru:open_restaurant" -> jp.amemaru.lostconnection.town.RestaurantService.open(player, false);
             default -> {
                 // close は会話の側で扱う
             }

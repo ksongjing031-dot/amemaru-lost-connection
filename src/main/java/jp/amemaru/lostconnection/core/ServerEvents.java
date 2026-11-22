@@ -74,6 +74,7 @@ public final class ServerEvents {
         event.addListener(jp.amemaru.lostconnection.casino.CasinoRules.loader());
         // Phase 7 その4：共同事業
         event.addListener(jp.amemaru.lostconnection.town.ProjectDefs.loader());
+        event.addListener(jp.amemaru.lostconnection.town.RestaurantRules.loader());
     }
 
     @SubscribeEvent

@@ -9,7 +9,7 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 /**
- * 寄付台の操作（Phase 7 その4）：共同事業に寄付する。
+ * 寄付台の操作（Phase 7 その4）：共同事業に寄付する（donate）・ペトラ・ポムの料理屋で料理を作ってもらう（cook）。
  * クライアントが送るのは「何をしたいか」だけで、できるかどうかはサーバーで確かめる（{@link ProjectService#onAction}）。
  */
 public record ProjectC2S(String action, CompoundTag args) {
@@ -32,7 +32,12 @@ public record ProjectC2S(String action, CompoundTag args) {
     public void handle(Supplier<NetworkEvent.Context> context) {
         ServerPlayer player = context.get().getSender();
         if (player != null) {
-            ProjectService.onAction(player, action, args);
+            if ("cook".equals(action)) {
+                // ペトラ・ポムの料理屋（共同事業③のあと）
+                jp.amemaru.lostconnection.town.RestaurantService.onAction(player, args);
+            } else {
+                ProjectService.onAction(player, action, args);
+            }
         }
     }
 }

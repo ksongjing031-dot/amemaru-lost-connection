@@ -121,6 +121,12 @@ public final class ItemManifest {
             int stars = entry.has("rarity") ? entry.get("rarity").getAsInt() : 1;
             manifest.add(register, Category.FISH, id, () -> new jp.amemaru.lostconnection.fishing.FishItem(stars, new Item.Properties()));
         }
+        // Phase 7 その4：ペトラ・ポムの料理屋の料理（食べると、しばらく強くなる）
+        for (JsonObject entry : objects(json, "dishes")) {
+            String id = string(entry, "id");
+            manifest.add(register, Category.CONSUMABLE, id, () -> new jp.amemaru.lostconnection.town.DishItem(new Item.Properties().stacksTo(16)
+                    .food(new net.minecraft.world.food.FoodProperties.Builder().nutrition(6).saturationMod(0.6F).alwaysEat().build())));
+        }
         AmemaruMod.LOGGER.info("[amemaru] Registered {} item type(s) from {}", manifest.items.size(), PATH);
         return manifest;
     }

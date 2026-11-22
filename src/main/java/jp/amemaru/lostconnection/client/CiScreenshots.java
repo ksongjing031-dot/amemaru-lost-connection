@@ -1055,6 +1055,23 @@ public final class CiScreenshots {
             {"cmd", null, "20", "amemaru admin project open @p amemaru:highlow"},
             {"snap", null, "20", "phase7p_screen_after"},
             {"screen", null, "10", "hold"},
+            // ③料理屋の開店：中央広場の西の角の料理屋が開き、ペトラ・ポムが現れる。魚と野菜でスープを作ってもらう
+            {"cmd", null, "100", "tp @p {at:2.5,1,28.5} 90 -5"},
+            {"cmd", null, "40", "amemaru admin project build amemaru:restaurant"},
+            {"snap_keep", null, "50", "phase7p_restaurant"},
+            {"cmd", null, "40", "tp @p {at:-6.5,2,28.5} 90 5"},
+            {"p6g_talk", null, "20", "petra"},
+            {"await_dialogue", null, "0"},
+            {"snap", null, "30", "phase7p_petra"},
+            {"dialogue_finish", null, "10"},
+            {"screen", null, "10", "hold"},
+            {"cmd", null, "5", "give @p minecraft:potato 2"},
+            {"cmd", null, "5", "give @p minecraft:carrot 2"},
+            {"cmd", null, "20", "amemaru admin project restaurant @p"},
+            {"snap", null, "20", "phase7p_menu"},
+            {"p7p_cook", null, "20", "1"},
+            {"snap", null, "20", "phase7p_cooked"},
+            {"screen", null, "10", "hold"},
             {"cmd", null, "10", "gamemode spectator @p"},
             {"hud", null, "5", "off"}};
 
