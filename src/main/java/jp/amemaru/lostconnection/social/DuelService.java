@@ -157,6 +157,9 @@ public final class DuelService {
     /** テストでは、決闘場へ移さずにその場で戦う。 */
     private static boolean testMode;
     private static final Map<UUID, ServerPlayer> TEST_PLAYERS = new HashMap<>();
+    /** 決闘の間だけバニラの pvp を入れたときの、もとの値（入れていなければ null）。 */
+    @Nullable
+    private static Boolean vanillaPvp;
 
     private DuelService() {
     }
@@ -342,6 +345,24 @@ public final class DuelService {
         return -1;
     }
 
+    /**
+     * サーバーのバニラの pvp（server.properties の {@code pvp}）が切ってあると、プレイヤーどうしの攻撃はバニラが止めてしまい、
+     * 決闘ができない。決闘があるあいだだけ入れ、決闘がなくなったら、もとに戻す【補完】。プレイヤーどうしの攻撃は、このModの
+     * {@code allowPvp}（初期値 false）と決闘の決まり（{@code CombatService.pvpBlocked}）で止めるので、ほかの人どうしでは届かない。
+     */
+    static void updateVanillaPvp(MinecraftServer server) {
+        if (!DUELS.isEmpty()) {
+            if (vanillaPvp == null && !server.isPvpAllowed()) {
+                vanillaPvp = Boolean.FALSE;
+                server.setPvpAllowed(true);
+                AmemaruMod.LOGGER.info("[amemaru][duel] vanilla pvp is off; turned it on while duels run (player attacks stay gated by allowPvp)");
+            }
+        } else if (vanillaPvp != null) {
+            server.setPvpAllowed(vanillaPvp);
+            vanillaPvp = null;
+        }
+    }
+
     /** 決闘を始める（二人を決闘場へ移し、HPとMPを満タンにして、3秒数える）。 */
     static boolean start(MinecraftServer server, ServerPlayer a, ServerPlayer b) {
         int arena = freeArena();
@@ -380,6 +401,7 @@ public final class DuelService {
             BY_FIGHTER.put(player.getUUID(), duel);
         }
         DUELS.put(duel.id, duel);
+        updateVanillaPvp(server);
         CHALLENGES.removeIf(c -> c.from.equals(a.getUUID()) || c.to.equals(a.getUUID()) || c.from.equals(b.getUUID())
                 || c.to.equals(b.getUUID()));
         for (ServerPlayer player : players) {
@@ -663,6 +685,7 @@ public final class DuelService {
     /** 戻す：二人と観客を、もとの場所へ。 */
     static void finish(MinecraftServer server, Duel duel) {
         DUELS.remove(duel.id);
+        updateVanillaPvp(server);
         for (Fighter fighter : duel.fighters) {
             BY_FIGHTER.remove(fighter.uuid);
             ServerPlayer player = online(server, fighter.uuid);
@@ -720,6 +743,7 @@ public final class DuelService {
 
     @SubscribeEvent
     public static void onServerStopped(ServerStoppedEvent event) {
+        vanillaPvp = null;
         CHALLENGES.clear();
         DUELS.clear();
         BY_FIGHTER.clear();

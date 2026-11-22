@@ -213,6 +213,24 @@ public final class CombatService {
 
     // ---------------------------------------------------------------- イベント
 
+    /**
+     * プレイヤーどうしの攻撃を止めるか。決闘（Phase 6 その4）の相手どうしは届く。決闘している人（と観客）には、戦っている相手の
+     * 攻撃のほかは届かず、決闘している人も相手のほかは攻撃しない。ほかは config の allowPvp（初期値 false）で決める。
+     */
+    public static boolean pvpBlocked(@Nullable Entity attackerEntity, LivingEntity victim, DamageSource source) {
+        if (attackerEntity instanceof ServerPlayer hitter && victim instanceof ServerPlayer hit
+                && jp.amemaru.lostconnection.social.DuelService.canHurt(hitter, hit)) {
+            return false;
+        }
+        if (!source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)
+                && ((victim instanceof ServerPlayer duelVictim && jp.amemaru.lostconnection.social.DuelService.isolated(duelVictim))
+                || (attackerEntity instanceof ServerPlayer duelAttacker && attackerEntity != victim
+                && jp.amemaru.lostconnection.social.DuelService.isolated(duelAttacker)))) {
+            return true;
+        }
+        return !ServerConfig.ALLOW_PVP.get() && victim instanceof Player && attackerEntity instanceof Player attacker && attacker != victim;
+    }
+
     /** 攻撃そのものを止める：プレイヤーどうし（configで許していなければ）・凍結した魔物・受け流された攻撃。 */
     @SubscribeEvent
     public static void onLivingAttack(LivingAttackEvent event) {
@@ -227,17 +245,7 @@ public final class CombatService {
             event.setCanceled(true);
             return;
         }
-        // 決闘（Phase 6 その4）：決闘している人には、戦っている相手の攻撃のほかは届かない。決闘している人も、相手のほかは攻撃しない
-        boolean duelHit = attackerEntity instanceof ServerPlayer hitter && victim instanceof ServerPlayer hit
-                && jp.amemaru.lostconnection.social.DuelService.canHurt(hitter, hit);
-        if (!duelHit && !source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)
-                && ((victim instanceof ServerPlayer duelVictim && jp.amemaru.lostconnection.social.DuelService.isolated(duelVictim))
-                || (attackerEntity instanceof ServerPlayer duelAttacker && attackerEntity != victim
-                && jp.amemaru.lostconnection.social.DuelService.isolated(duelAttacker)))) {
-            event.setCanceled(true);
-            return;
-        }
-        if (!duelHit && !ServerConfig.ALLOW_PVP.get() && victim instanceof Player && attackerEntity instanceof Player attacker && attacker != victim) {
+        if (pvpBlocked(attackerEntity, victim, source)) {
             event.setCanceled(true);
             return;
         }

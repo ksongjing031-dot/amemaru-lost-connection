@@ -326,7 +326,11 @@ public final class RefineDuelGameTests {
 
     // ================================================================ 決闘
 
-    /** 決闘：相手どうしだけ攻撃が届き、ほかの人とは届かない。耐久が減らない。倒れる一撃はHPを1残して決着（ダウンしない）。 */
+    /**
+     * 決闘：相手どうしだけ攻撃が届き、ほかの人とは届かない。耐久が減らない。倒れる一撃はHPを1残して決着（ダウンしない）。
+     * テストの仮のプレイヤー（FakePlayer）は {@code hurt} で傷を受けないので、攻撃を止める決まり（{@code CombatService.pvpBlocked}）と、
+     * 倒れる一撃の決着（{@code DuelService.clampLethal}）をそのまま確かめる。バニラの pvp は、決闘のあいだだけ入る。
+     */
     @GameTest(template = EMPTY)
     public static void duelRules(GameTestHelper helper) {
         MinecraftServer server = helper.getLevel().getServer();
@@ -338,6 +342,7 @@ public final class RefineDuelGameTests {
         knight(c, 10);
         DuelService.setTestMode(true);
         DuelService.testPlayers(a, b, c);
+        boolean vanillaPvp = server.isPvpAllowed();
         try {
             check(helper, DuelService.challenge(a, b), "申し込めません");
             check(helper, DuelService.accept(b, a.getUUID()), "申し込みを受けられません");
@@ -353,7 +358,12 @@ public final class RefineDuelGameTests {
             check(helper, CombatTargets.isEnemyOf(a, b) && !CombatTargets.isEnemyOf(c, b) && !CombatTargets.isEnemy(b),
                     "決闘の相手だけが敵になっていません");
             check(helper, !CombatTargets.isAlly(c, b, false) && !CombatTargets.isAlly(b, c, false), "決闘している人に、回復・強化が届きます");
-            check(helper, !b.hurt(helper.getLevel().damageSources().playerAttack(c), 4.0F), "決闘していない人の攻撃が届きました");
+            check(helper, !CombatService.pvpBlocked(a, b, helper.getLevel().damageSources().playerAttack(a))
+                    && !CombatService.pvpBlocked(b, a, ModDamageTypes.skill(helper.getLevel(), b, b)), "決闘の相手の攻撃が止められます");
+            check(helper, CombatService.pvpBlocked(c, b, helper.getLevel().damageSources().playerAttack(c))
+                    && CombatService.pvpBlocked(b, c, helper.getLevel().damageSources().playerAttack(b)),
+                    "決闘している人と、ほかの人の間で攻撃が届きます");
+            check(helper, server.isPvpAllowed(), "決闘のあいだ、バニラの pvp が入っていません");
             // 耐久が減らない
             EquipmentDef swordDef = EquipmentDefs.server().get(AmemaruMod.id("ancient_stone_sword"));
             ItemStack sword = new ItemStack(item("ancient_stone_sword"));
@@ -361,16 +371,19 @@ public final class RefineDuelGameTests {
             int durability = GearData.durability(sword, swordDef);
             GearService.wearWeapon(a, false);
             check(helper, GearData.durability(a.getMainHandItem(), swordDef) == durability, "決闘の間に武器の耐久が減りました");
-            // 倒れるほどの一撃：HPを1残して決着
-            double dealt = -1;
-            for (int i = 0; i < 40 && dealt < 0 && duel.phase() == DuelService.Phase.FIGHT; i++) {
-                dealt = CombatService.applyDamage(b, bData.getStats().maxHp() * 10.0, false, ModDamageTypes.skill(helper.getLevel(), a, a));
-            }
+            // 倒れないほどの一撃はそのまま、倒れるほどの一撃は HP を1残して決着
+            double hp = bData.getHp();
+            check(helper, Math.abs(DuelService.clampLethal(b, bData, hp * 0.5) - hp * 0.5) < EPSILON
+                    && duel.phase() == DuelService.Phase.FIGHT, "倒れない一撃で決着しました");
+            double dealt = DuelService.clampLethal(b, bData, hp * 10.0);
+            check(helper, Math.abs(dealt - (hp - 1.0)) < EPSILON, "倒れる一撃が、HPを1残す値になりません：" + dealt);
+            bData.setHp(hp - dealt);
             check(helper, duel.phase() == DuelService.Phase.END && a.getUUID().equals(duel.winner()), "倒れる一撃で決着しません："
                     + duel.phase());
             check(helper, b.isAlive() && !DownHandler.isDown(b), "決闘で負けた人が倒れました");
             DuelService.finishForTest(server, duel);
             check(helper, !DuelService.isolated(a) && !DuelService.isolated(b), "決闘のあとも、決闘している扱いのままです");
+            check(helper, server.isPvpAllowed() == vanillaPvp, "決闘のあと、バニラの pvp がもとに戻りません");
             check(helper, Math.abs(bData.getHp() - bData.getStats().maxHp()) < EPSILON, "決闘の前のHP（満タン）に戻りません");
             check(helper, bData.getGuild().counter("duel_losses") >= 1 && data(a).getGuild().counter("duel_wins") >= 1, "戦績が残りません");
         } finally {
