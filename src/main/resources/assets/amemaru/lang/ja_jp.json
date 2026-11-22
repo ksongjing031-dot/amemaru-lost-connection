@@ -1263,7 +1263,7 @@
   "message.amemaru.donation.done": "露店の区画の寄付は、もう目標に届いている",
   "message.amemaru.donation.reached": "フリーマーケットの区画を増やす寄付が、目標に届いた！ 次の朝、露店の区画が増える",
   "message.amemaru.donation.expanded": "フリーマーケットの露店の区画が、12から20に増えた！",
-  "chronicle.amemaru.first_kill": "%1$sが、%2$sの%3$sを初めて倒した",
+  "chronicle.amemaru.first_kill": "%1$sが、%2$sで%3$sを初めて倒した",
   "chronicle.amemaru.limited_title": "%1$sが、限定称号【%2$s】を手に入れた",
   "chronicle.amemaru.stall_donation": "フリーマーケットの区画を増やす寄付が、目標に届いた（寄付した人 %s人）",
   "chronicle.amemaru.stall_expanded": "フリーマーケットの露店の区画が、12から20に増えた",
@@ -1441,5 +1441,9 @@
   "command.amemaru.quest.reset": "クエストの記録を %s件 消した",
   "command.amemaru.quest.daily": "今日のデイリー：%1$s回・掲示板 %2$s",
   "command.amemaru.donation.status": "露店の区画の寄付：%1$s / %2$s ノット（%3$s人）・目標に届いた日 %4$s・区画が増えた %5$s",
-  "screen.amemaru.guild.quest.more": "…ほか %s"
+  "screen.amemaru.guild.quest.more": "…ほか %s",
+  "screen.amemaru.guild.bonds.gift_hint": "贈り物：渡す物を手に持って、しゃがんでNPCを右クリック（1人に1日1回）",
+  "hud.amemaru.quest.more": "…ほか %s",
+  "hud.amemaru.quest.more_done": "…ほか %1$s（済み %2$s）",
+  "hud.amemaru.quest.done_count": "済んだ目標 %s"
 }

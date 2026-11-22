@@ -688,6 +688,12 @@ public class GuildScreen extends Screen {
                 y += BOND_ROW;
             }
         }
+        // 贈り物の仕方（下の注意書きに入りきらないので、札の下に）
+        if (!bonds.isEmpty()) {
+            int hintY = (column > 0 ? y + BOND_ROW : y) + 4;
+            graphics.drawString(font, UiStyle.clip(font, Component.translatable("screen.amemaru.guild.bonds.gift_hint").getString(), W - 32), x,
+                    hintY, UiStyle.TEXT_DIM, false);
+        }
         int noteW = W - 152;
         graphics.drawString(font, UiStyle.clip(font, Component.translatable("screen.amemaru.guild.bonds.note").getString(), noteW), left + 140,
                 top + H - 22, UiStyle.TEXT_DIM, false);

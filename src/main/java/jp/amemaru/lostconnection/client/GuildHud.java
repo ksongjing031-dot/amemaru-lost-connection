@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraftforge.client.gui.overlay.ForgeGui;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,6 +21,8 @@ public final class GuildHud {
     public static final IGuiOverlay OVERLAY = GuildHud::render;
     private static final int WIDTH = 150;
     private static final int MAX_QUESTS = 3;
+    /** 1つのクエストに出す目標の行の数。これより多いときは、まだの目標を先に（元の順で）出して、残りを1行にまとめる。 */
+    private static final int MAX_LINES = 5;
 
     private GuildHud() {
     }
@@ -43,24 +46,49 @@ public final class GuildHud {
             if (shown++ >= MAX_QUESTS) {
                 break;
             }
-            List<Tag> objectives = quest.getList("objectives", Tag.TAG_COMPOUND);
+            List<CompoundTag> objectives = new ArrayList<>();
+            for (Tag tag : quest.getList("objectives", Tag.TAG_COMPOUND)) {
+                objectives.add((CompoundTag) tag);
+            }
+            int moreLeft = 0;
+            int moreDone = 0;
+            if (objectives.size() > MAX_LINES) {
+                List<CompoundTag> visible = new ArrayList<>();
+                for (CompoundTag o : objectives) {
+                    if (complete(o)) {
+                        moreDone++;
+                    } else if (visible.size() < MAX_LINES - 1) {
+                        visible.add(o);
+                    } else {
+                        moreLeft++;
+                    }
+                }
+                objectives = visible;
+            }
+            boolean summary = moreLeft + moreDone > 0;
             boolean done = quest.getBoolean("done");
-            int h = 15 + objectives.size() * 10 + (done ? 10 : 0);
+            int h = 15 + (objectives.size() + (summary ? 1 : 0)) * 10 + (done ? 10 : 0);
             graphics.fill(x, y, x + WIDTH, y + h, 0x900B1022);
             graphics.fill(x, y, x + 1, y + h, done ? 0xFF9CFFB0 : 0xFFE8C15A);
             graphics.drawString(font, UiStyle.clip(font, quest.getString("name"), WIDTH - 10), x + 6, y + 4,
                     done ? 0xFF9CFFB0 : 0xFFFFF2A8, false);
             int line = y + 15;
-            for (Tag tag : objectives) {
-                CompoundTag o = (CompoundTag) tag;
+            for (CompoundTag o : objectives) {
                 int count = o.getInt("count");
                 int max = o.getInt("max");
-                boolean complete = count >= max;
+                boolean complete = complete(o);
                 Component text = objectiveText(o);
                 String progress = max > 1 ? " " + Math.min(count, max) + "/" + max : complete ? " ✓" : "";
                 String body = UiStyle.clip(font, text.getString(), WIDTH - 12 - font.width(progress));
                 graphics.drawString(font, (complete ? "◆ " : "◇ ") + body, x + 6, line, complete ? 0xFF9CFFB0 : 0xFFFFFFFF, false);
                 graphics.drawString(font, progress, x + WIDTH - 4 - font.width(progress), line, complete ? 0xFF9CFFB0 : 0xFFBFEFFF, false);
+                line += 10;
+            }
+            if (summary) {
+                Component more = moreLeft > 0 && moreDone > 0 ? Component.translatable("hud.amemaru.quest.more_done", moreLeft, moreDone)
+                        : moreLeft > 0 ? Component.translatable("hud.amemaru.quest.more", moreLeft)
+                        : Component.translatable("hud.amemaru.quest.done_count", moreDone);
+                graphics.drawString(font, UiStyle.clip(font, more.getString(), WIDTH - 10), x + 6, line, UiStyle.TEXT_DIM, false);
                 line += 10;
             }
             if (done) {
@@ -71,6 +99,10 @@ public final class GuildHud {
             }
             y += h + 3;
         }
+    }
+
+    private static boolean complete(CompoundTag objective) {
+        return objective.getInt("count") >= objective.getInt("max");
     }
 
     /** 目標の文（サーバーで作った文を、JSON から戻す）。 */
