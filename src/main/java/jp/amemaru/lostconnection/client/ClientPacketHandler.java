@@ -173,6 +173,38 @@ public final class ClientPacketHandler {
         }
     }
 
+    // ---------------------------------------------------------------- Phase 6：フリーマーケット
+
+    public static void handleOpenMarket(jp.amemaru.lostconnection.network.s2c.OpenMarketS2C message) {
+        net.minecraft.client.Minecraft minecraft = net.minecraft.client.Minecraft.getInstance();
+        if (minecraft.player != null) {
+            ClientMarket.resetViews();
+            minecraft.setScreen(new jp.amemaru.lostconnection.client.screen.MarketScreen(message));
+        }
+    }
+
+    public static void handleMarketPage(jp.amemaru.lostconnection.network.s2c.MarketPageS2C message) {
+        ClientMarket.setPage(message);
+    }
+
+    public static void handleMarketPrice(jp.amemaru.lostconnection.network.s2c.MarketPriceS2C message) {
+        ClientMarket.setPrice(message);
+    }
+
+    public static void handleMarketMine(jp.amemaru.lostconnection.network.s2c.MarketMineS2C message) {
+        ClientMarket.setMine(message);
+    }
+
+    public static void handleMarketStalls(jp.amemaru.lostconnection.network.s2c.MarketStallsS2C message) {
+        ClientMarket.setStalls(message);
+    }
+
+    public static void handleMarketResult(jp.amemaru.lostconnection.network.s2c.MarketResultS2C message) {
+        if (net.minecraft.client.Minecraft.getInstance().screen instanceof jp.amemaru.lostconnection.client.screen.MarketScreen screen) {
+            screen.showResult(message.message(), message.ok());
+        }
+    }
+
     public static void handleShopResult(jp.amemaru.lostconnection.network.s2c.ShopResultS2C message) {
         if (net.minecraft.client.Minecraft.getInstance().screen instanceof jp.amemaru.lostconnection.client.screen.ShopScreen screen) {
             screen.showResult(message.message(), message.ok());

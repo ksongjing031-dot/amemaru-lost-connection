@@ -23,6 +23,7 @@ import java.util.Locale;
  *   <li>{@code /amemaru admin economy days}：記録のある日ごとの発行・回収・移動</li>
  *   <li>{@code /amemaru admin economy recent [件数]}：直近の出し入れ（初期値10件、50件まで）</li>
  *   <li>{@code /amemaru admin shop list}・{@code shop set <場所> <店>}：店の一覧と、呼び鈴への店の割り当て</li>
+ *   <li>{@code /amemaru admin market …}：フリーマーケットの台帳・出品・露店・相場の変動（{@link #marketCommand()}）</li>
  * </ul>
  */
 public final class EconomyCommands {
@@ -100,6 +101,165 @@ public final class EconomyCommands {
         counter.setShop(shop);
         source.sendSuccess(() -> Component.translatable("commands.amemaru.shop.set", pos.toShortString(), shop.toString()), true);
         return 1;
+    }
+
+    /**
+     * フリーマーケット（Phase 6）：{@code market} 台帳のまとめ、{@code market listings [名前]} 出品の一覧、{@code market remove <番号>}
+     * 出品を下げる（品は出品者の受け取り箱へ）、{@code market stall list|free <区画>|hide <区画>|show <区画>}、
+     * {@code market expand on|off}（寄付で露店の区画が20に増えたか。寄付の仕組みができるまでは手で）、{@code market factors [reset]}（相場の変動）。
+     */
+    public static LiteralArgumentBuilder<CommandSourceStack> marketCommand() {
+        return Commands.literal("market")
+                .executes(context -> marketSummary(context.getSource()))
+                .then(Commands.literal("listings")
+                        .executes(context -> marketListings(context.getSource(), null))
+                        .then(Commands.argument("name", com.mojang.brigadier.arguments.StringArgumentType.word())
+                                .executes(context -> marketListings(context.getSource(),
+                                        com.mojang.brigadier.arguments.StringArgumentType.getString(context, "name")))))
+                .then(Commands.literal("remove")
+                        .then(Commands.argument("id", com.mojang.brigadier.arguments.LongArgumentType.longArg(1))
+                                .executes(context -> marketRemove(context.getSource(),
+                                        com.mojang.brigadier.arguments.LongArgumentType.getLong(context, "id")))))
+                .then(Commands.literal("stall")
+                        .then(Commands.literal("list").executes(context -> stallList(context.getSource())))
+                        .then(Commands.literal("free").then(Commands.argument("num", IntegerArgumentType.integer(1, 99))
+                                .executes(context -> stallFree(context.getSource(), IntegerArgumentType.getInteger(context, "num")))))
+                        .then(Commands.literal("hide").then(Commands.argument("num", IntegerArgumentType.integer(1, 99))
+                                .executes(context -> stallHide(context.getSource(), IntegerArgumentType.getInteger(context, "num"), true))))
+                        .then(Commands.literal("show").then(Commands.argument("num", IntegerArgumentType.integer(1, 99))
+                                .executes(context -> stallHide(context.getSource(), IntegerArgumentType.getInteger(context, "num"), false)))))
+                .then(Commands.literal("expand")
+                        .then(Commands.literal("on").executes(context -> marketExpand(context.getSource(), true)))
+                        .then(Commands.literal("off").executes(context -> marketExpand(context.getSource(), false))))
+                .then(Commands.literal("factors")
+                        .executes(context -> marketFactors(context.getSource(), false))
+                        .then(Commands.literal("reset").executes(context -> marketFactors(context.getSource(), true))));
+    }
+
+    private static int marketSummary(CommandSourceStack source) {
+        MinecraftServer server = source.getServer();
+        jp.amemaru.lostconnection.economy.MarketData data = jp.amemaru.lostconnection.economy.MarketData.get(server);
+        int rented = data.stalls().size();
+        source.sendSuccess(() -> Component.translatable("commands.amemaru.market.summary",
+                jp.amemaru.lostconnection.economy.MarketService.isOpen(server)
+                        ? Component.translatable("commands.amemaru.market.open") : Component.translatable("commands.amemaru.market.not_open"),
+                data.listings().size(), KnotTransfer.format(data.pendingProceeds()), rented,
+                data.expanded() ? 20 : 12, jp.amemaru.lostconnection.core.config.ServerConfig.MARKET_PRICE_DRIFT.get()
+                        ? Component.translatable("commands.amemaru.market.drift_on") : Component.translatable("commands.amemaru.market.drift_off")),
+                false);
+        return data.listings().size();
+    }
+
+    private static int marketListings(CommandSourceStack source, @javax.annotation.Nullable String name) {
+        jp.amemaru.lostconnection.economy.MarketData data = jp.amemaru.lostconnection.economy.MarketData.get(source.getServer());
+        int shown = 0;
+        for (jp.amemaru.lostconnection.economy.MarketData.Listing listing : data.listings()) {
+            if (name != null && !listing.sellerName.equalsIgnoreCase(name)) {
+                continue;
+            }
+            shown++;
+            if (shown > 50) {
+                continue;
+            }
+            source.sendSuccess(() -> Component.translatable("commands.amemaru.market.listing", listing.id, listing.sellerName,
+                    listing.item.getHoverName(), listing.item.getCount(), KnotTransfer.format(listing.unitPrice),
+                    listing.expiresDay), false);
+        }
+        int total = shown;
+        if (total == 0) {
+            source.sendSuccess(() -> Component.translatable("commands.amemaru.market.no_listings"), false);
+        } else if (total > 50) {
+            source.sendSuccess(() -> Component.translatable("commands.amemaru.market.more", total - 50), false);
+        }
+        return total;
+    }
+
+    private static int marketRemove(CommandSourceStack source, long id) {
+        MinecraftServer server = source.getServer();
+        jp.amemaru.lostconnection.economy.MarketData data = jp.amemaru.lostconnection.economy.MarketData.get(server);
+        jp.amemaru.lostconnection.economy.MarketData.Listing listing = data.listing(id);
+        if (listing == null) {
+            source.sendFailure(Component.translatable("commands.amemaru.market.no_listing", id));
+            return 0;
+        }
+        if (!jp.amemaru.lostconnection.economy.StorageService.deliver(server, listing.seller, listing.sellerName, listing.item.copy())) {
+            source.sendFailure(Component.translatable("commands.amemaru.market.box_full", listing.sellerName));
+            return 0;
+        }
+        data.remove(id);
+        jp.amemaru.lostconnection.economy.MarketService.broadcastStalls(server);
+        source.sendSuccess(() -> Component.translatable("commands.amemaru.market.removed", id, listing.sellerName), true);
+        return 1;
+    }
+
+    private static int stallList(CommandSourceStack source) {
+        MinecraftServer server = source.getServer();
+        jp.amemaru.lostconnection.economy.MarketData data = jp.amemaru.lostconnection.economy.MarketData.get(server);
+        for (jp.amemaru.lostconnection.economy.MarketStalls.Stall stall : jp.amemaru.lostconnection.economy.MarketStalls.all()) {
+            jp.amemaru.lostconnection.economy.MarketData.StallRent rent = data.stall(stall.num());
+            boolean active = jp.amemaru.lostconnection.economy.MarketService.stallActive(server, stall);
+            source.sendSuccess(() -> rent == null
+                    ? Component.translatable(active ? "commands.amemaru.market.stall_vacant" : "commands.amemaru.market.stall_closed",
+                    stall.num(), stall.title())
+                    : Component.translatable("commands.amemaru.market.stall_rented", stall.num(), rent.name, rent.ownerName, rent.lastDay,
+                    rent.visitors, rent.hidden ? Component.translatable("commands.amemaru.market.hidden") : Component.empty()), false);
+        }
+        return data.stalls().size();
+    }
+
+    private static int stallFree(CommandSourceStack source, int num) {
+        jp.amemaru.lostconnection.economy.MarketData data = jp.amemaru.lostconnection.economy.MarketData.get(source.getServer());
+        if (data.stall(num) == null) {
+            source.sendFailure(Component.translatable("commands.amemaru.market.stall_none", num));
+            return 0;
+        }
+        data.setStall(num, null);
+        jp.amemaru.lostconnection.economy.MarketService.broadcastStalls(source.getServer());
+        source.sendSuccess(() -> Component.translatable("commands.amemaru.market.stall_freed", num), true);
+        return 1;
+    }
+
+    private static int stallHide(CommandSourceStack source, int num, boolean hide) {
+        jp.amemaru.lostconnection.economy.MarketData data = jp.amemaru.lostconnection.economy.MarketData.get(source.getServer());
+        jp.amemaru.lostconnection.economy.MarketData.StallRent rent = data.stall(num);
+        if (rent == null) {
+            source.sendFailure(Component.translatable("commands.amemaru.market.stall_none", num));
+            return 0;
+        }
+        rent.hidden = hide;
+        data.setDirty();
+        jp.amemaru.lostconnection.economy.MarketService.broadcastStalls(source.getServer());
+        source.sendSuccess(() -> Component.translatable(hide ? "commands.amemaru.market.stall_hidden" : "commands.amemaru.market.stall_shown", num),
+                true);
+        return 1;
+    }
+
+    private static int marketExpand(CommandSourceStack source, boolean on) {
+        jp.amemaru.lostconnection.economy.MarketData data = jp.amemaru.lostconnection.economy.MarketData.get(source.getServer());
+        data.setExpanded(on);
+        jp.amemaru.lostconnection.economy.MarketService.broadcastStalls(source.getServer());
+        source.sendSuccess(() -> Component.translatable(on ? "commands.amemaru.market.expanded" : "commands.amemaru.market.unexpanded"), true);
+        return 1;
+    }
+
+    private static int marketFactors(CommandSourceStack source, boolean reset) {
+        jp.amemaru.lostconnection.economy.MarketData data = jp.amemaru.lostconnection.economy.MarketData.get(source.getServer());
+        java.util.Map<String, Double> factors = new java.util.TreeMap<>(data.factors());
+        if (reset) {
+            for (String key : factors.keySet()) {
+                data.setFactor(key, 1.0);
+            }
+            source.sendSuccess(() -> Component.translatable("commands.amemaru.market.factors_reset", factors.size()), true);
+            return factors.size();
+        }
+        if (factors.isEmpty()) {
+            source.sendSuccess(() -> Component.translatable("commands.amemaru.market.factors_none"), false);
+        }
+        for (java.util.Map.Entry<String, Double> entry : factors.entrySet()) {
+            source.sendSuccess(() -> Component.translatable("commands.amemaru.market.factor", entry.getKey(),
+                    String.format(Locale.ROOT, "%.0f", entry.getValue() * 100.0)), false);
+        }
+        return factors.size();
     }
 
     @javax.annotation.Nullable

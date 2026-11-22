@@ -36,13 +36,14 @@ import java.util.Map;
  *   <li>表にない物：レアリティごとの基準額（{@code rarity_base}）×（1＋0.08×装備レベル（{@code level_step}））</li>
  * </ul>
  *
- * <p>フリーマーケットの値段の幅（基準価格の50〜200%）と、店の買い取り値（{@code ratio}）に使う。
+ * <p>フリーマーケットの値段の幅（基準価格の50〜200%）と、店の買い取り値（{@code ratio}）に使う。{@code untradeable} は
+ * フリーマーケットに出せない品（クエストの品など）。
  * ファイルが複数あるときは、名前の順にあとのファイルが上書きする。</p>
  */
 public final class MarketPrices {
     /** 1つのファイル */
     public record Table(Map<ResourceLocation, Long> prices, Map<String, Long> rarityBase, @Nullable List<Double> quality,
-                        double levelStep) {
+                        double levelStep, List<ResourceLocation> untradeable) {
     }
 
     /** アクセサリーの品質（★1〜5）の倍率の初期値（Phase 0-A 20章） */
@@ -94,7 +95,8 @@ public final class MarketPrices {
             }
         }
         double step = Json.optionalDouble(json, "level_step", -1.0, -1.0, 10.0);
-        return new Table(prices, rarity, quality == null ? null : List.copyOf(quality), step);
+        List<ResourceLocation> untradeable = Json.idList(json, "untradeable");
+        return new Table(prices, rarity, quality == null ? null : List.copyOf(quality), step, List.copyOf(untradeable));
     }
 
     /** 品の基準価格（表になければ0）。 */
@@ -140,6 +142,16 @@ public final class MarketPrices {
             }
         }
         return Math.max(1L, Math.round(price));
+    }
+
+    /** フリーマーケットに出せない品か（クエストの品など。{@code untradeable}）。 */
+    public static boolean untradeable(ResourceLocation item) {
+        for (Table table : LOADER.all().values()) {
+            if (table.untradeable().contains(item)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** アクセサリーの品質の倍率（★1〜5）。 */

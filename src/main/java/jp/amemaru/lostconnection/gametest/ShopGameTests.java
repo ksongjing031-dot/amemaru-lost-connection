@@ -107,7 +107,7 @@ public final class ShopGameTests {
                 + MarketPrices.base(new ItemStack(item("ancient_stone_sword"))));
         check(helper, MarketPrices.base(new ItemStack(item("grassland_horn"))) == 2050, "草原の角笛の基準価格が2,050ではありません");
         check(helper, MarketPrices.base(new ItemStack(item("healing_potion_small"))) == 80, "回復薬（小）の基準価格が、売値の80%ではありません");
-        // 表にない装備：大門の鍵盾（エピック・装備レベル7）は 1,600 ×（1＋0.08×7）＝ 2,496
+        // 表にない装備：水門の鍵盾（エピック・装備レベル7）は 1,600 ×（1＋0.08×7）＝ 2,496
         long shield = MarketPrices.base(new ItemStack(item("floodgate_key_shield")));
         check(helper, shield == 2496, "表にない装備の基準価格が、レアリティの基準額 ×（1＋0.08×装備レベル）ではありません：" + shield);
         // アクセサリーの品質：★5 は×3.0、★1 は×0.6

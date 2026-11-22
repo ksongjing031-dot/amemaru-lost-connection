@@ -1,5 +1,5 @@
 {
-  "_comment": "相場の基準価格（ノット。Phase 0-A 20章の考え方【提案】。数は tools/datagen/build_shops.py で計算した【補完】）。フリーマーケットの値段の幅（基準価格の50〜200%）と、店の買い取り値に使う。表にない物は、rarity_base ×（1＋level_step×装備レベル）。アクセサリーは、さらに品質の倍率（★1〜5）をかける",
+  "_comment": "相場の基準価格（ノット。Phase 0-A 20章の考え方【提案】。数は tools/datagen/build_shops.py で計算した【補完】）。フリーマーケットの値段の幅（基準価格の50〜200%）と、店の買い取り値に使う。表にない物は、rarity_base ×（1＋level_step×装備レベル）。アクセサリーは、さらに品質の倍率（★1〜5）をかける。untradeable はフリーマーケットに出せない品（クエストの品）",
   "prices": {
     "amemaru:ancient_stone": 10,
     "amemaru:ancient_stone_boots": 60,
@@ -101,5 +101,8 @@
     1.6,
     3.0
   ],
-  "level_step": 0.08
+  "level_step": 0.08,
+  "untradeable": [
+    "amemaru:light_shard"
+  ]
 }

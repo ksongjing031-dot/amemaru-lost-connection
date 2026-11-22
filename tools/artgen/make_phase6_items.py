@@ -5,7 +5,8 @@
 作るもの：
   textures/item/healing_potion_small.png   回復薬（小）：小瓶に赤い薬、コルクの栓、白い札に赤い十字
   textures/item/mana_water_small.png       マナ水（小）：同じ小瓶に青い水と、中の小さな光の粒、札に青い星（真ん中が白い）
-  models/item/healing_potion_small.json・mana_water_small.json
+  textures/item/market_notebook.png        市場の手帳：革の表紙に金の硬貨の紋、紙の小口、赤いしおり
+  models/item/healing_potion_small.json・mana_water_small.json・market_notebook.json
 忘却の水（丸いフラスコに水色）と見分けやすいよう、角ばった小瓶で、色を濃くする【補完】。
 """
 import json
@@ -74,7 +75,49 @@ def draw(kind):
     return img
 
 
+# 市場の手帳：革の表紙の小さな手帳（左に背）、表に金の硬貨の紋、右と下に紙の小口、赤いしおりのひも【補完】
+NOTEBOOK = [
+    "................",
+    "..ooooooooooo...",
+    ".oSScccccccccoo.",
+    ".oSScCCCCCCCcPo.",
+    ".oSScCCCGGCCcPo.",
+    ".oSScCCGggGCcPo.",
+    ".oSScCCGgYGCcPo.",
+    ".oSScCCGggGCcPo.",
+    ".oSScCCCGGCCcPo.",
+    ".oSScCCCCCCCcPo.",
+    ".oSScCCCCCCCcPo.",
+    ".oSSDDDDDDDDDPo.",
+    ".oSSPPPPPPPPPPo.",
+    "..oooooooRoooo..",
+    ".........R......",
+    ".........r......",
+]
+NOTEBOOK_COLORS = {
+    "o": "#2A2520", "S": "#5A3418", "c": "#A8743A", "C": "#8B5A2B", "D": "#6E4420", "P": "#F2E6C8",
+    "G": "#B08A2E", "g": "#E8C25A", "Y": "#FFF2A8", "R": "#C8303A", "r": "#8E1B26",
+}
+
+
+def draw_notebook():
+    img = Image.new("RGBA", (16, 16), (0, 0, 0, 0))
+    for y, row in enumerate(NOTEBOOK):
+        assert len(row) == 16, (y, row)
+        for x, ch in enumerate(row):
+            if ch != ".":
+                img.putpixel((x, y), rgba(NOTEBOOK_COLORS[ch]))
+    return img
+
+
 def main():
+    path = os.path.join(ROOT, "textures", "item", "market_notebook.png")
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    draw_notebook().save(path)
+    with open(os.path.join(ROOT, "models", "item", "market_notebook.json"), "w", encoding="utf-8") as f:
+        json.dump({"parent": "minecraft:item/generated", "textures": {"layer0": "amemaru:item/market_notebook"}}, f, indent=2)
+        f.write("\n")
+    print("作りました:", path)
     for kind in KINDS:
         path = os.path.join(ROOT, "textures", "item", kind + ".png")
         os.makedirs(os.path.dirname(path), exist_ok=True)

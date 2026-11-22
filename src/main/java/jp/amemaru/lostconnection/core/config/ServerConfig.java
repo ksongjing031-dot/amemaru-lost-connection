@@ -90,6 +90,24 @@ public final class ServerConfig {
     public static final ForgeConfigSpec.IntValue STORAGE_MAX_PAGES;
     public static final ForgeConfigSpec.DoubleValue STORAGE_REACH;
     public static final ForgeConfigSpec.IntValue STORAGE_RECEIVED_MAX;
+    public static final ForgeConfigSpec.IntValue MARKET_OPEN_DAY;
+    public static final ForgeConfigSpec.IntValue MARKET_PRICE_MIN_PERCENT;
+    public static final ForgeConfigSpec.IntValue MARKET_PRICE_MAX_PERCENT;
+    public static final ForgeConfigSpec.DoubleValue MARKET_LISTING_FEE_PERCENT;
+    public static final ForgeConfigSpec.DoubleValue MARKET_SALE_FEE_PERCENT;
+    public static final ForgeConfigSpec.DoubleValue MARKET_STALL_FEE_FACTOR;
+    public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends Integer>> MARKET_FREE_LISTING_DAYS;
+    public static final ForgeConfigSpec.IntValue MARKET_LISTING_LIMIT;
+    public static final ForgeConfigSpec.IntValue MARKET_STALL_LISTING_LIMIT;
+    public static final ForgeConfigSpec.IntValue MARKET_LISTING_DAYS;
+    public static final ForgeConfigSpec.LongValue MARKET_STALL_RENT;
+    public static final ForgeConfigSpec.IntValue MARKET_STALL_DAYS;
+    public static final ForgeConfigSpec.IntValue MARKET_STALL_NAME_MAX;
+    public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends String>> MARKET_NG_WORDS;
+    public static final ForgeConfigSpec.BooleanValue MARKET_PRICE_DRIFT;
+    public static final ForgeConfigSpec.DoubleValue MARKET_DRIFT_MAX_PERCENT;
+    public static final ForgeConfigSpec.IntValue MARKET_DRIFT_MIN_TRADES;
+    public static final ForgeConfigSpec.DoubleValue MARKET_REACH;
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
@@ -323,6 +341,64 @@ public final class ServerConfig {
         STORAGE_RECEIVED_MAX = b
                 .comment("受け取り箱に入る品の数（市場で買った品などが届く）。いっぱいのときは、届く品を受け付けない")
                 .defineInRange("receivedMax", 270, 27, 2700);
+        b.pop();
+
+        b.comment("フリーマーケット（Phase 6。Phase 0-A 20章。【確定】は値段の幅をconfigで変えられること、相場の変動をオン・オフできること）")
+                .push("market");
+        MARKET_OPEN_DAY = b
+                .comment("フリーマーケットが開く進行日（Phase 0-A 11章：2日目に開場）。この日より前は、出品も購入もできない")
+                .defineInRange("openDay", 2, 1, 20);
+        MARKET_PRICE_MIN_PERCENT = b
+                .comment("出品の値段の下限（1個あたり、相場の何%か。Phase 0-A 20章：50%）")
+                .defineInRange("priceMinPercent", 50, 1, 100);
+        MARKET_PRICE_MAX_PERCENT = b
+                .comment("出品の値段の上限（1個あたり、相場の何%か。Phase 0-A 20章：200%）")
+                .defineInRange("priceMaxPercent", 200, 100, 10_000);
+        MARKET_LISTING_FEE_PERCENT = b
+                .comment("出品の手数料（値段の合計の何%か。出品したときに払い、取り消しても戻らない。Phase 0-A 20章：2%）")
+                .defineInRange("listingFeePercent", 2.0, 0.0, 50.0);
+        MARKET_SALE_FEE_PERCENT = b
+                .comment("売れたときの手数料（値段の合計の何%か。売上から引く。Phase 0-A 20章：5%）")
+                .defineInRange("saleFeePercent", 5.0, 0.0, 50.0);
+        MARKET_STALL_FEE_FACTOR = b
+                .comment("露店で直接買ったときの、売れたときの手数料の倍率（Phase 0-A 20章：半分）")
+                .defineInRange("stallFeeFactor", 0.5, 0.0, 1.0);
+        MARKET_FREE_LISTING_DAYS = b
+                .comment("出品の手数料がかからない進行日（Phase 0-A 11章：2日目の露店開き）")
+                .defineList("freeListingDays", java.util.List.of(2), o -> o instanceof Integer);
+        MARKET_LISTING_LIMIT = b
+                .comment("1人が出品できる数（Phase 0-A 20章：20件）")
+                .defineInRange("listingLimit", 20, 1, 500);
+        MARKET_STALL_LISTING_LIMIT = b
+                .comment("露店を借りている人が出品できる数（Phase 0-A 20章：30件）")
+                .defineInRange("stallListingLimit", 30, 1, 500);
+        MARKET_LISTING_DAYS = b
+                .comment("出品が並ぶ日数（進行日）。出品した日から数えて、この日数が過ぎた朝に下がり、品は倉庫の受け取り箱へ戻る（0なら下げない）【補完】")
+                .defineInRange("listingDays", 3, 0, 60);
+        MARKET_STALL_RENT = b
+                .comment("露店の区画を借りる値段（1回分）【補完】")
+                .defineInRange("stallRent", 1_000L, 0L, Long.MAX_VALUE);
+        MARKET_STALL_DAYS = b
+                .comment("露店を1回で借りられる日数（進行日。借りた日を含む）。延ばせるのは、残りがこの日数より少ないとき【補完】")
+                .defineInRange("stallDays", 3, 1, 30);
+        MARKET_STALL_NAME_MAX = b
+                .comment("露店の店名の長さの上限（文字）")
+                .defineInRange("stallNameMax", 12, 2, 32);
+        MARKET_NG_WORDS = b
+                .comment("露店の店名で伏せる言葉（Phase 0-B 不正対策：NGワードは＊で伏せる。管理者は /amemaru admin market stall hide でも隠せる）")
+                .defineList("ngWords", java.util.List.of(), o -> o instanceof String);
+        MARKET_PRICE_DRIFT = b
+                .comment("相場の変動（Phase 0-A 20章【確定】：オン・オフを切り替えられる）。日が変わるとき、その日の取引の中央値に向けて相場を動かす")
+                .define("priceDrift", true);
+        MARKET_DRIFT_MAX_PERCENT = b
+                .comment("相場が1日に動ける幅（%。Phase 0-A 20章：±10%）。上限まで動いた品は、管理者に知らせる")
+                .defineInRange("driftMaxPercent", 10.0, 0.0, 100.0);
+        MARKET_DRIFT_MIN_TRADES = b
+                .comment("相場を動かすのに要る、1日の取引の数（Phase 0-A 20章：5件未満の品は動かさない）")
+                .defineInRange("driftMinTrades", 5, 1, 1000);
+        MARKET_REACH = b
+                .comment("市場監督の小屋・露店から何ブロック以内で、借りる・露店で買うができるか")
+                .defineInRange("reach", 8.0, 2.0, 64.0);
         b.pop();
 
         SPEC = b.build();

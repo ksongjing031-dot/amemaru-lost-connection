@@ -87,6 +87,31 @@ public final class Wallet {
         return true;
     }
 
+    /**
+     * フリーマーケットで買う（Phase 6）：買い手からちょうど total を取り、手数料 fee は回収、残り（売り手の売上）は売り手への移動として
+     * 記録する（売上は台帳に預かり、売り手が受け取るときは {@link #receive} で記録しない）。足りなければ何もしないで false。
+     */
+    public static boolean payToSeller(ServerPlayer buyer, PlayerData data, long total, long fee, String sellerName, String reason) {
+        if (total <= 0 || fee < 0 || fee > total || data.getKnots() < total) {
+            return false;
+        }
+        data.setKnots(data.getKnots() - total);
+        log(buyer, reason + " -> " + sellerName, -total, data.getKnots());
+        record(buyer.server, EconomyLog.Flow.COLLECT, reason + " fee", name(buyer), "", fee);
+        record(buyer.server, EconomyLog.Flow.MOVE, reason, name(buyer), sellerName, total - fee);
+        return true;
+    }
+
+    /** 預かっていた売上を渡す（Phase 6。売れたときに「移動」として記録済みなので、ここでは記録しない）。 */
+    public static void receive(ServerPlayer player, PlayerData data, long amount, String reason) {
+        if (amount <= 0) {
+            return;
+        }
+        long before = data.getKnots();
+        data.setKnots(saturatedAdd(before, amount));
+        log(player, reason, data.getKnots() - before, data.getKnots());
+    }
+
     /** 所持金の何%か（切り捨て）。デスペナルティで失う量。 */
     public static long percentOf(long balance, double percent) {
         if (balance <= 0 || percent <= 0) {
@@ -106,6 +131,14 @@ public final class Wallet {
     static long saturatedAdd(long a, long b) {
         long sum = a + b;
         return ((a ^ sum) & (b ^ sum)) < 0 ? Long.MAX_VALUE : sum;
+    }
+
+    /** かけ算（あふれたら Long.MAX_VALUE。0以上どうし）。 */
+    public static long saturatedMultiply(long a, long b) {
+        if (a <= 0 || b <= 0) {
+            return 0;
+        }
+        return a > Long.MAX_VALUE / b ? Long.MAX_VALUE : a * b;
     }
 
     private static String name(ServerPlayer player) {

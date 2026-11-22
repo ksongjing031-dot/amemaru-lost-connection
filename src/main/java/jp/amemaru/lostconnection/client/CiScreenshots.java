@@ -660,6 +660,48 @@ public final class CiScreenshots {
             {"snap", null, "200", "phase5_floor1_aerial"},
             {"cmd", null, "10", "execute in amemaru:tower run tp @p {f1:318.5,46,244.5} 180 46"},
             {"snap", null, "160", "phase5_floor1_ruins_aerial"},
+            // Phase 6（11月22日）：街へ戻る（世界をまたぐテレポートは向きが反映されないので、同じ世界の中でもう一度）。
+            // 雑貨屋（マルタ・ポム）の呼び鈴の前で、店の画面を開き、回復薬（小）を2つ買う
+            {"cmd", null, "5", "gamemode adventure @p"},
+            {"hud", null, "5", "on"},
+            {"cmd", null, "100", "execute in minecraft:overworld run tp @p {at:7.5,2,28.5} -90 12"},
+            {"cmd", null, "10", "tp @p {at:7.5,2,28.5} -90 12"},
+            {"snap", null, "40", "phase6_general_store"},
+            {"cmd", null, "5", "amemaru admin money @p set 5000"},
+            {"p6_shop", null, "20"},
+            {"snap", null, "20", "phase6_shop"},
+            {"p6_shop_buy", null, "20"},
+            {"snap", null, "10", "phase6_shop_bought"},
+            {"screen", null, "10", "hold"},
+            // フリーマーケット：2日目に開く。市場の手帳を持ち、見本の出品と露店を置いて、取引所を開く
+            {"cmd", null, "20", "amemaru admin day set 2"},
+            {"cmd", null, "5", "give @p amemaru:market_notebook"},
+            {"p6_market_seed", null, "20"},
+            {"p6_market", null, "20", "NOTEBOOK"},
+            {"snap", null, "30", "phase6_market_browse"},
+            {"p6_market_tab", null, "20", "3"},
+            {"snap", null, "20", "phase6_market_history"},
+            {"screen", null, "10", "hold"},
+            {"p6_market", null, "20", "BOOTH"},
+            {"p6_market_tab", null, "20", "4"},
+            {"snap", null, "20", "phase6_market_stalls"},
+            {"screen", null, "10", "hold"},
+            {"p6_market", null, "20", "STALL", "2"},
+            {"snap", null, "30", "phase6_market_stall_screen"},
+            {"screen", null, "10", "hold"},
+            // 露店（区画2「蒼の小物屋」）を、通路の上から：屋根の上に店名、台の上に出品した品が浮かぶ
+            {"cmd", null, "5", "gamemode spectator @p"},
+            {"cmd", null, "60", "tp @p {at:-23.5,5,74.5} 0 18"},
+            {"snap", null, "40", "phase6_stall"},
+            // 閉じた南門と東門（城壁の内から）。11月22日に決定
+            {"cmd", null, "60", "tp @p {at:0.5,3,99.5} 0 4"},
+            {"snap", null, "60", "phase6_south_gate"},
+            {"cmd", null, "60", "tp @p {at:99.5,3,0.5} -90 4"},
+            {"snap", null, "60", "phase6_east_gate"},
+            // 塔前広場と塔の入口のまわりの塀（上から）。11月22日に決定
+            {"hud", null, "5", "off"},
+            {"cmd", null, "80", "tp @p {at:44.5,46,-104.5} 140 38"},
+            {"snap", null, "120", "phase6_tower_walls"},
             {"cmd", null, "10", "gamemode spectator @p"},
             {"hud", null, "5", "off"}};
 
@@ -1893,6 +1935,8 @@ public final class CiScreenshots {
                     }
                 }
             }
+        } else if (CiPhase6.action(minecraft, shot, first)) {
+            next(stage + 1, first ? waitTicks : 0);
         } else if (phase5Action(minecraft, shot, first)) {
             next(stage + 1, first ? waitTicks : 0);
         } else if (phase4Action(minecraft, shot, first)) {

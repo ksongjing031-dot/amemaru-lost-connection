@@ -69,6 +69,9 @@ public final class ModItems {
             new BlockItem(ModBlocks.STORAGE_ACCESS.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> SHOP_COUNTER = ITEMS.register("shop_counter", () ->
             new BlockItem(ModBlocks.SHOP_COUNTER.get(), new Item.Properties().rarity(Rarity.RARE)));
+    /** 市場の手帳（Phase 6）：右クリックで、街のどこからでも取引所の画面を開く。ギルドの受付（リリア）でもらえる */
+    public static final RegistryObject<Item> MARKET_NOTEBOOK = ITEMS.register("market_notebook", () ->
+            new jp.amemaru.lostconnection.item.MarketNotebookItem(new Item.Properties().stacksTo(1)));
     public static final RegistryObject<Item> LOST_BLANK = ITEMS.register("lost_blank", () ->
             new BlockItem(ModBlocks.LOST_BLANK.get(), new Item.Properties()));
     public static final RegistryObject<Item> MEMORY_STONE = ITEMS.register("memory_stone", () ->

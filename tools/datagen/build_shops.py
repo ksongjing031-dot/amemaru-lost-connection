@@ -84,6 +84,8 @@ SHOPS = [
     ("tea", "茶と香辛料", "", [("cocoa_beans", 6), ("sweet_berries", 4), ("sugar", 4), ("honey_bottle", 24)], None),
 ]
 BUY_RATIO = 0.5
+# フリーマーケットに出せない品（クエストの品）【補完】。結晶果・見習い装備・装備したボスのレア装備は、ゲームの中の決まりで出せない
+UNTRADEABLE = ["amemaru:light_shard"]
 
 
 def full(item):
@@ -158,11 +160,14 @@ def main():
     table = {
         "_comment": "相場の基準価格（ノット。Phase 0-A 20章の考え方【提案】。数は tools/datagen/build_shops.py で計算した【補完】）。"
                     "フリーマーケットの値段の幅（基準価格の50〜200%）と、店の買い取り値に使う。表にない物は、"
-                    "rarity_base ×（1＋level_step×装備レベル）。アクセサリーは、さらに品質の倍率（★1〜5）をかける",
+                    "rarity_base ×（1＋level_step×装備レベル）。アクセサリーは、さらに品質の倍率（★1〜5）をかける。"
+                    "untradeable はフリーマーケットに出せない品（クエストの品）",
         "prices": dict(sorted(prices.items())),
         "rarity_base": RARITY_BASE,
         "accessory_quality": [0.6, 0.8, 1.0, 1.6, 3.0],
         "level_step": 0.08,
+        # クエストの品（Phase 0-A 20章：取引できない）。光のかけらは1階の石柱の核に使う
+        "untradeable": UNTRADEABLE,
     }
     with open(os.path.join(OUT, "market_prices", "default.json"), "w", encoding="utf-8") as f:
         json.dump(table, f, ensure_ascii=False, indent=2)

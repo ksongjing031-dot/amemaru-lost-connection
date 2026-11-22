@@ -95,6 +95,7 @@ public final class AdminCommands {
                         .then(EconomyCommands.economyCommand())
                         .then(EconomyCommands.storageCommand())
                         .then(EconomyCommands.shopCommand())
+                        .then(EconomyCommands.marketCommand())
                         .then(debugCommand())));
     }
 

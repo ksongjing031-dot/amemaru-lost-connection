@@ -34,6 +34,7 @@ public final class ModCreativeTabs {
                 output.accept(ModItems.FORGET_WATER.get());
                 output.accept(ModItems.BLANK_OATH.get());
                 output.accept(ModItems.JOB_CHANGE_TOKEN.get());
+                output.accept(ModItems.MARKET_NOTEBOOK.get());
                 output.accept(ModItems.TSUNOMOFU_SPAWN_EGG.get());
                 output.accept(ModItems.ISHIKURE_SOLDIER_SPAWN_EGG.get());
                 output.accept(ModItems.CRYSTAL_BEE_SPAWN_EGG.get());

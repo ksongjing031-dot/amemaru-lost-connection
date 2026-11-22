@@ -117,6 +117,8 @@ public final class ProgressionService {
             broadcast(server, announce.isBlank() ? Component.translatable("message.amemaru.day.banner", now) : Component.literal(announce),
                     AnnouncementS2C.Kind.DAY);
         }
+        // Phase 6：フリーマーケットの相場の変動・出品と露店の期限
+        jp.amemaru.lostconnection.economy.MarketService.onDayChanged(server, before, now);
         broadcastWorldState(server);
         TowerHall.update(server);
         return now;

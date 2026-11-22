@@ -86,12 +86,14 @@ public final class CityCommands {
             new Placement("town/t1_4", "town", -96, -7, 8, false),
             new Placement("town/t1_5", "town", -96, -7, 56, false),
             new Placement("town/t1_6", "town", -96, -7, 104, false),
+            new Placement("town/t2_0", "town", -48, -7, -184, false),            // 11月22日：塔のまわりの塀（裏）
             new Placement("town/t2_1", "town", -48, -7, -136, false),
             new Placement("town/t2_2", "town", -48, -7, -88, false),
             new Placement("town/t2_3", "town", -48, -7, -40, false),
             new Placement("town/t2_4", "town", -48, -7, 8, false),
             new Placement("town/t2_5", "town", -48, -7, 56, false),
             new Placement("town/t2_6", "town", -48, -7, 104, false),
+            new Placement("town/t3_0", "town", 0, -7, -184, false),            // 11月22日：塔のまわりの塀（裏）
             new Placement("town/t3_1", "town", 0, -7, -136, false),
             new Placement("town/t3_2", "town", 0, -7, -88, false),
             new Placement("town/t3_3", "town", 0, -7, -40, false),
@@ -353,6 +355,8 @@ public final class CityCommands {
         // Phase 5：街のNPCを立つ所に置き、塔の入口の「塔の灯り」と札を、今の解放に合わせる
         int npcs = jp.amemaru.lostconnection.npc.NpcService.spawnAll(level, origin);
         jp.amemaru.lostconnection.tower.TowerHall.update(level.getServer());
+        // Phase 6：フリーマーケットの露店の位置は街の真ん中から決まるので、全員に送り直す
+        jp.amemaru.lostconnection.economy.MarketService.broadcastStalls(level.getServer());
         builds++;
         long millis = System.currentTimeMillis() - started;
         AdminCommands.log(source, "city build " + origin.toShortString() + (grown ? " grown" : "") + " (" + changed + " ground blocks, "
