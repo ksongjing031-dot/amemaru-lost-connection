@@ -64,12 +64,12 @@ public final class GuildGameTests {
     private GuildGameTests() {
     }
 
-    /** 定義：称号63・古代記録30・クエスト28が、問題なく読める。ノアとエルネストがいて、親密度と現れる日がある。会話も読める。 */
+    /** 定義：称号63・古代記録34（塔の中30・記憶魚4）・クエスト28が、問題なく読める。ノアとエルネストがいて、親密度と現れる日がある。会話も読める。 */
     @GameTest(template = EMPTY)
     public static void guildDefinitionsLoad(GameTestHelper helper) {
         check(helper, TitleDefs.loader().errors().isEmpty() && TitleDefs.all().size() == 63,
                 "称号の定義が読めません（" + TitleDefs.all().size() + "）：" + TitleDefs.loader().errors());
-        check(helper, RecordDefs.loader().errors().isEmpty() && RecordDefs.all().size() == 30,
+        check(helper, RecordDefs.loader().errors().isEmpty() && RecordDefs.all().size() == 34,
                 "古代記録の定義が読めません（" + RecordDefs.all().size() + "）：" + RecordDefs.loader().errors());
         check(helper, QuestDefs.loader().errors().isEmpty() && QuestDefs.all().size() == 28,
                 "クエストの定義が読めません（" + QuestDefs.all().size() + "）：" + QuestDefs.loader().errors());

@@ -68,10 +68,10 @@ public final class StoryTowerGameTests {
         check(helper, GuideService.loader().errors().isEmpty(), "手引きの定義に問題があります：" + GuideService.loader().errors());
         check(helper, DaySchedule.loader().errors().isEmpty(), "進行日の定義に問題があります：" + DaySchedule.loader().errors());
         check(helper, FloorDefs.loader().errors().isEmpty(), "階の定義に問題があります：" + FloorDefs.loader().errors());
-        // 街の7人（リリア・ガルド・セレナ・ドラン・バルド、Phase 6 その3のノア・エルネスト）・会話40（Phase 5 の11と、その3の親密度・
-        // ノア・エルネストの29）・ストーリーイベント4（目覚め・2度目の目覚め・1階に入る・初撃破）
-        check(helper, NpcDefs.all().size() == 7, "NPCの数が7ではありません：" + NpcDefs.all().keySet());
-        check(helper, DialogueDefs.all().size() == 40, "会話の数が40ではありません：" + DialogueDefs.all().size() + " " + DialogueDefs.all().keySet());
+        // 街の8人（リリア・ガルド・セレナ・ドラン・バルド、Phase 6 その3のノア・エルネスト、Phase 7 その2のポッカ爺）・会話41
+        // （Phase 5 の11と、その3の親密度・ノア・エルネストの29、ポッカ爺の1）・ストーリーイベント4（目覚め・2度目の目覚め・1階に入る・初撃破）
+        check(helper, NpcDefs.all().size() == 8, "NPCの数が8ではありません：" + NpcDefs.all().keySet());
+        check(helper, DialogueDefs.all().size() == 41, "会話の数が41ではありません：" + DialogueDefs.all().size() + " " + DialogueDefs.all().keySet());
         check(helper, StoryEventManager.all().size() == 4, "ストーリーイベントの数が4ではありません");
         for (DialogueDef dialogue : DialogueDefs.all().values()) {
             check(helper, NpcDefs.get(dialogue.npc()) != null, "会話 " + dialogue.id() + " のNPC " + dialogue.npc() + " の定義がありません");
@@ -462,13 +462,23 @@ public final class StoryTowerGameTests {
     }
 
     /**
-     * 11月22日：街のNPCは凹凸のある立体のモデル。5人とも、モデル・動き（idle と walk）・絵（表情の差分も）がjarに入っていて、
+     * 11月22日：街のNPCは凹凸のある立体のモデル。モデルのあるNPCは、モデル・動き（idle と walk）・絵（表情の差分も）がjarに入っていて、
+     * （11月23日に決定：重要なNPCでも立体的なモデルでなくてよい。モデルのないNPCは、スキンと表情の絵があること）
      * モデルに頭とまぶたの骨がある（頭は見ている人を向き、まぶたでまばたきする）。
      */
     @GameTest(template = EMPTY)
     public static void npcModelsPresent(GameTestHelper helper) {
         for (jp.amemaru.lostconnection.npc.NpcDef def : NpcDefs.all().values()) {
-            check(helper, def.model() != null, def.name() + " に立体のモデル（model）がありません");
+            if (def.model() == null) {
+                // 11月23日に決定：重要なNPCでも、立体的なモデルでなくてよい（人の形のスキンと顔の絵。Phase 7 のポッカ爺など）
+                check(helper, read("/assets/" + def.skin().getNamespace() + "/" + def.skin().getPath()) != null, def.name() + " の絵がありません");
+                for (String expression : def.expressions()) {
+                    ResourceLocation tex = def.skinFor(expression);
+                    check(helper, read("/assets/" + tex.getNamespace() + "/" + tex.getPath()) != null,
+                            def.name() + " の表情「" + expression + "」の絵がありません");
+                }
+                continue;
+            }
             String ns = def.model().getNamespace();
             String path = def.model().getPath();
             String name = path.substring(path.lastIndexOf('/') + 1);
