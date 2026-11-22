@@ -192,8 +192,9 @@ public final class WorkshopService {
             return false;
         }
         if (type == WorkshopType.ACCESSORY || stack.getItem() instanceof AccessoryItem) {
-            fail(player, "message.amemaru.workshop.accessory_later");
-            return false;
+            // アクセサリーの強化は、厳選の一つ（Phase 6 その4。誰でもできる。装飾師は値引き）
+            return jp.amemaru.lostconnection.accessory.RefineService.enhance(player, stack)
+                    == jp.amemaru.lostconnection.accessory.RefineService.Outcome.DONE;
         }
         EquipmentDefs.Snapshot snapshot = EquipmentDefs.server();
         EquipmentDef def = snapshot.get(stack);
@@ -316,7 +317,7 @@ public final class WorkshopService {
         return true;
     }
 
-    private static void consumeAll(Player player, List<EquipmentDef.Cost> costs, double multiplier) {
+    public static void consumeAll(Player player, List<EquipmentDef.Cost> costs, double multiplier) {
         if (player.getAbilities().instabuild) {
             return;
         }

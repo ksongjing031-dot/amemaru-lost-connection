@@ -303,7 +303,9 @@ public final class SkillInput {
         double limit = block.getType() == HitResult.Type.MISS ? range : block.getLocation().distanceTo(eye) + 0.5;
         Predicate<Entity> filter = allies
                 ? entity -> entity instanceof Player other && other != player && other.isAlive() && !other.isSpectator()
-                : entity -> entity instanceof LivingEntity living && living.isAlive() && (entity instanceof Enemy || entity instanceof TrainingDummy);
+                : entity -> entity instanceof LivingEntity living && living.isAlive() && (entity instanceof Enemy || entity instanceof TrainingDummy
+                        // 決闘の相手（Phase 6 その4）
+                        || entity.getId() == ClientSocial.opponentId());
         AABB box = player.getBoundingBox().expandTowards(look.scale(range)).inflate(2.0);
         Entity best = null;
         double bestDistance = Double.MAX_VALUE;

@@ -59,6 +59,11 @@ public final class GuildState extends SavedData {
     private final List<TitleLog> titleLog = new ArrayList<>();
     private final List<ChronicleEntry> chronicle = new ArrayList<>();
     private final Map<UUID, List<CompoundTag>> pending = new LinkedHashMap<>();
+    /**
+     * 称号のない「サーバーで最初」のできごと（偉業。Phase 6 その4）。ユニーク装備（Phase 8）を渡すときに使う。
+     * 例：{@code first_commission_perfect}（他人からの依頼で、完璧なアクセサリーを最初に仕上げた装飾師＝真眼の拡大鏡。Phase 0-A 23章）。
+     */
+    private final Map<String, Holder> feats = new LinkedHashMap<>();
 
     // ---- 露店の区画を増やす寄付
     private long stallDonated;
@@ -70,6 +75,23 @@ public final class GuildState extends SavedData {
 
     public static GuildState get(MinecraftServer server) {
         return server.overworld().getDataStorage().computeIfAbsent(GuildState::load, GuildState::new, NAME);
+    }
+
+    // ================================================================ 偉業（Phase 6 その4）
+
+    /** まだ誰も成していなければ記録して true。 */
+    public boolean markFeat(String event, Holder holder) {
+        if (feats.containsKey(event)) {
+            return false;
+        }
+        feats.put(event, holder);
+        setDirty();
+        return true;
+    }
+
+    @Nullable
+    public Holder feat(String event) {
+        return feats.get(event);
     }
 
     // ================================================================ 限定称号
@@ -303,12 +325,28 @@ public final class GuildState extends SavedData {
         }
         state.stallReachedDay = stall.getInt("reachedDay");
         state.stallExpanded = stall.getBoolean("expanded");
+        CompoundTag featTag = tag.getCompound("feats");
+        for (String event : featTag.getAllKeys()) {
+            CompoundTag one = featTag.getCompound(event);
+            if (one.hasUUID("uuid")) {
+                state.feats.put(event, new Holder(one.getUUID("uuid"), one.getString("name"), one.getInt("day")));
+            }
+        }
         return state;
     }
 
     @Override
     public CompoundTag save(CompoundTag tag) {
         tag.putInt("version", 1);
+        CompoundTag featTag = new CompoundTag();
+        feats.forEach((event, holder) -> {
+            CompoundTag one = new CompoundTag();
+            one.putUUID("uuid", holder.uuid());
+            one.putString("name", holder.name());
+            one.putInt("day", holder.day());
+            featTag.put(event, one);
+        });
+        tag.put("feats", featTag);
         CompoundTag limitedTag = new CompoundTag();
         limited.forEach((id, holders) -> {
             ListTag list = new ListTag();

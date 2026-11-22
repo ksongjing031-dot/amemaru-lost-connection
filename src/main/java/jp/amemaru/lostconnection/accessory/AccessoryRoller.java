@@ -81,17 +81,62 @@ public final class AccessoryRoller {
     private static AccessoryData.StatLine rollLine(StatType type, double cap, double minRatio, RandomSource random) {
         double max = roundCap(type, cap);
         double min = Math.min(max, roundCap(type, max * minRatio));
-        double value;
+        return new AccessoryData.StatLine(type, draw(type, min, max, random), min, max, false);
+    }
+
+    /** 下限〜上限から1つ引く（%は小数1けた、ほかは整数）。 */
+    private static double draw(StatType type, double min, double max, RandomSource random) {
         if (type.isPercent()) {
             int lo = (int) Math.round(min * 10.0);
             int hi = (int) Math.round(max * 10.0);
-            value = (lo + random.nextInt(Math.max(1, hi - lo + 1))) / 10.0;
-        } else {
-            int lo = (int) Math.round(min);
-            int hi = (int) Math.round(max);
-            value = lo + random.nextInt(Math.max(1, hi - lo + 1));
+            return (lo + random.nextInt(Math.max(1, hi - lo + 1))) / 10.0;
         }
-        return new AccessoryData.StatLine(type, value, min, max, false);
+        int lo = (int) Math.round(min);
+        int hi = (int) Math.round(max);
+        return lo + random.nextInt(Math.max(1, hi - lo + 1));
+    }
+
+    // ---------------------------------------------------------------- 厳選（Phase 6 その4）
+
+    /**
+     * サブの1行を新しく引く（{@code rolls} 回分。下限と上限も {@code rolls} 倍）。厳選の「種類ごと振り直す」と、強化でサブが増えるとき。
+     */
+    public static AccessoryData.StatLine rollSub(StatType type, AccessoryRules rules, int generation, int rolls, RandomSource random) {
+        int count = Math.max(1, rolls);
+        double max = roundCap(type, rules.subCap(type, generation));
+        double min = Math.min(max, roundCap(type, max * rules.subMinRatio()));
+        double value = 0.0;
+        for (int i = 0; i < count; i++) {
+            value += draw(type, min, max, random);
+        }
+        return new AccessoryData.StatLine(type, round(type, value), round(type, min * count), round(type, max * count), false, count);
+    }
+
+    /** 同じ種類・同じ回数分のまま、数値だけ引き直す（「数値だけ振り直す」）。 */
+    public static double rerollValue(AccessoryData.StatLine line, RandomSource random) {
+        int count = Math.max(1, line.rolls());
+        double min = line.minPerRoll();
+        double max = line.maxPerRoll();
+        double value = 0.0;
+        for (int i = 0; i < count; i++) {
+            value += draw(line.type(), min, max, random);
+        }
+        return round(line.type(), value);
+    }
+
+    /** 「1回分」伸ばす（強化の +3・+6・+9・+12 で、サブが4つあるとき）。 */
+    public static AccessoryData.StatLine growOnce(AccessoryData.StatLine line, RandomSource random) {
+        double min = line.minPerRoll();
+        double max = line.maxPerRoll();
+        double add = draw(line.type(), min, max, random);
+        return new AccessoryData.StatLine(line.type(), round(line.type(), line.value() + add), round(line.type(), line.min() + min),
+                round(line.type(), line.max() + max), line.locked(), line.rolls() + 1);
+    }
+
+    /** サブの種類を出やすさの重みで選ぶ（{@code used} にある種類は出ない。選べなければ null）。 */
+    @Nullable
+    public static StatType pickSubType(AccessoryRules rules, List<StatType> used, RandomSource random) {
+        return pickSub(rules, used, random);
     }
 
     /** 上限と下限の丸め（%は小数1けたで0.1以上、ほかは整数で1以上）。 */

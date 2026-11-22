@@ -115,7 +115,8 @@ public final class GearService {
     /** 武器の耐久を減らす（攻撃が当たったとき・スキルを使ったとき）。動く武器は「使った」のアニメーションも流す。 */
     public static void wearWeapon(ServerPlayer player, boolean skill) {
         GeoWeaponItem.playUse(player);
-        if (player.getAbilities().instabuild) {
+        // 決闘の間は、武器の耐久は減らない（11月22日に決定。Phase 6 その4）
+        if (player.getAbilities().instabuild || jp.amemaru.lostconnection.social.DuelService.isolated(player)) {
             return;
         }
         ItemStack main = player.getMainHandItem();
@@ -135,7 +136,8 @@ public final class GearService {
 
     /** 防具と盾の耐久を減らす（敵の攻撃を受けたとき）。 */
     public static void wearArmor(ServerPlayer player) {
-        if (player.getAbilities().instabuild) {
+        // 決闘の間は、防具と盾の耐久は減らない（11月22日に決定。Phase 6 その4）
+        if (player.getAbilities().instabuild || jp.amemaru.lostconnection.social.DuelService.isolated(player)) {
             return;
         }
         EquipmentDefs.Snapshot snapshot = EquipmentDefs.server();

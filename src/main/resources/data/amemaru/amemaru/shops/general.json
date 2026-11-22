@@ -75,6 +75,14 @@
     {
       "item": "amemaru:ishikure_core",
       "ratio": 0.5
+    },
+    {
+      "item": "amemaru:polishing_powder",
+      "ratio": 0.5
+    },
+    {
+      "item": "amemaru:wavering_crystal",
+      "ratio": 0.5
     }
   ]
 }

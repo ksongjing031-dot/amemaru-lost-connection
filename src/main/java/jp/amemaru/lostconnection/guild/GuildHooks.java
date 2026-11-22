@@ -220,6 +220,18 @@ public final class GuildHooks {
                         TitleService.grant(player, id, "pending");
                     }
                 }
+                // いない間に起きたできごと（依頼で完璧なアクセサリーが仕上がった など。Phase 6 その4）
+                case "event" -> TitleService.onEvent(player, event.getString("event"));
+                // 縁帳（依頼台の依頼・決闘。Phase 6 その4）
+                case "connection" -> {
+                    if (event.hasUUID("with")) {
+                        GuildData.ConnectionKind kind = GuildData.ConnectionKind.byName(event.getString("kind"));
+                        if (kind != null) {
+                            data.getGuild().addConnection(event.getUUID("with"), event.getString("name"), kind, event.getInt("day"));
+                        }
+                    }
+                }
+                case "counter" -> data.getGuild().addCounter(event.getString("key"), Math.max(0L, event.getLong("amount")));
                 default -> AmemaruMod.LOGGER.warn("[amemaru] Unknown pending guild event {}", event.getString("type"));
             }
         }

@@ -552,6 +552,10 @@ public final class GuildData {
         int trades;
         int revived;
         int revivedBy;
+        /** 依頼台の依頼を頼んだ・受けた回数（Phase 6 その4）。 */
+        int commissions;
+        /** 決闘した回数（Phase 6 その4）。 */
+        int duels;
         int firstDay;
         int lastDay;
 
@@ -579,6 +583,16 @@ public final class GuildData {
             return revivedBy;
         }
 
+        /** 依頼台の依頼を頼んだ・受けた回数。 */
+        public int commissions() {
+            return commissions;
+        }
+
+        /** 決闘した回数。 */
+        public int duels() {
+            return duels;
+        }
+
         public int firstDay() {
             return firstDay;
         }
@@ -594,6 +608,8 @@ public final class GuildData {
             tag.putInt("trades", trades);
             tag.putInt("revived", revived);
             tag.putInt("revivedBy", revivedBy);
+            tag.putInt("commissions", commissions);
+            tag.putInt("duels", duels);
             tag.putInt("first", firstDay);
             tag.putInt("last", lastDay);
             return tag;
@@ -606,6 +622,8 @@ public final class GuildData {
             c.trades = Math.max(0, tag.getInt("trades"));
             c.revived = Math.max(0, tag.getInt("revived"));
             c.revivedBy = Math.max(0, tag.getInt("revivedBy"));
+            c.commissions = Math.max(0, tag.getInt("commissions"));
+            c.duels = Math.max(0, tag.getInt("duels"));
             c.firstDay = tag.getInt("first");
             c.lastDay = tag.getInt("last");
             return c;
@@ -618,15 +636,27 @@ public final class GuildData {
             c.trades = trades;
             c.revived = revived;
             c.revivedBy = revivedBy;
+            c.commissions = commissions;
+            c.duels = duels;
             c.firstDay = firstDay;
             c.lastDay = lastDay;
             return c;
         }
     }
 
-    /** 縁帳のどの数を足すか。 */
+    /** 縁帳のどの数を足すか（COMMISSION・DUEL は Phase 6 その4）。 */
     public enum ConnectionKind {
-        PARTY, TRADE, REVIVED, REVIVED_BY
+        PARTY, TRADE, REVIVED, REVIVED_BY, COMMISSION, DUEL;
+
+        @Nullable
+        public static ConnectionKind byName(String name) {
+            for (ConnectionKind kind : values()) {
+                if (kind.name().equalsIgnoreCase(name)) {
+                    return kind;
+                }
+            }
+            return null;
+        }
     }
 
     public Map<UUID, Connection> connections() {
@@ -660,6 +690,8 @@ public final class GuildData {
             case TRADE -> c.trades++;
             case REVIVED -> c.revived++;
             case REVIVED_BY -> c.revivedBy++;
+            case COMMISSION -> c.commissions++;
+            case DUEL -> c.duels++;
         }
         changed();
         return first;

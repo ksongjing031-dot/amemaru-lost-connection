@@ -105,6 +105,8 @@ public final class ClientModEvents {
         event.registerAboveAll("story", StoryHud.OVERLAY);
         // Phase 6 その3：受けているクエスト（右上。はじめの手引きの下。手引きの高さを使うので、そのあとに描く）
         event.registerAboveAll("guild_quests", GuildHud.OVERLAY);
+        // Phase 6 その4：決闘の残り時間と二人のHP
+        event.registerAboveAll("duel", DuelHud.OVERLAY);
     }
 
     @SubscribeEvent

@@ -7,14 +7,17 @@ import jp.amemaru.lostconnection.AmemaruMod;
 import jp.amemaru.lostconnection.core.data.DefinitionException;
 import jp.amemaru.lostconnection.core.data.DefinitionLoader;
 import jp.amemaru.lostconnection.core.data.Json;
+import jp.amemaru.lostconnection.equipment.EquipmentDef;
 import jp.amemaru.lostconnection.equipment.GearRules;
 import jp.amemaru.lostconnection.player.StatType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.profiling.ProfilerFiller;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,6 +40,175 @@ public final class AccessoryRules {
     public record SubEntry(StatType type, int weight, double max) {
     }
 
+    /** 厳選の1つの操作の費用（素材とノット。ノットは第3章の目安で、章の倍率をかける）。 */
+    public record OpCost(long knots, List<EquipmentDef.Cost> items) {
+    }
+
+    /**
+     * 厳選の決まり（Phase 6 その4。Phase 0-A 21章「厳選の操作とコスト」【提案】と、その4で決めた細かいこと【補完】）。
+     *
+     * @param knotsChapter    ノットにかける章ごとの倍率（第1章〜第4章。表のノットは第3章の目安）
+     * @param rerollValues    数値だけ振り直す（残響の欠片×3・2,000ノット）
+     * @param rerollTypes     種類ごと振り直す（残響の欠片×6・揺らぎの結晶×1・4,000ノット）
+     * @param lockItem        固定に使う素材（留め糸）
+     * @param lockCounts      固定1つ・2つ・3つの素材の数（1・2・4）
+     * @param lockKnots       固定1つ・2つ・3つのときの、振り直しのノットの倍率（1.5・2.5・4）
+     * @param escalationStep  振り直すたびの上乗せ（%。10）
+     * @param escalationMax   上乗せの上限（%。200）
+     * @param enhanceItem     強化の素材（研磨粉）
+     * @param enhanceItems    強化の素材の数（段階の数 × これ）
+     * @param enhanceKnots    強化のノット（段階の数 × これ。第3章の目安）
+     * @param mainPercent     強化1段ごとのメインの伸び（%。5）
+     * @param milestones      サブが増える・伸びる強化値（3・6・9・12）
+     * @param dismantleEchoBase      分解で戻る残響の欠片（★にかかわらず）
+     * @param dismantleEchoPerStar   分解で戻る残響の欠片（★1つごと）
+     * @param dismantleEnhancePerEcho 強化値いくつごとに、残響の欠片が1つ増えるか
+     * @param dismantlePowderPercent 強化に使った研磨粉の何%が戻るか
+     * @param dismantleClearEcho     ★ごとの澄んだ残響の数（★0〜★5。★4以上で出る）
+     * @param dismantleClearPerfect  完璧なアクセサリーなら、澄んだ残響がいくつ増えるか
+     * @param clearEchoItem    澄んだ残響
+     * @param echoItem         残響の欠片
+     * @param discountPerMastery 装飾師の熟練度1ごとの値引き（%。2）
+     * @param discountMax        値引きの上限（%。20）
+     */
+    public record Refine(double[] knotsChapter, OpCost rerollValues, OpCost rerollTypes, ResourceLocation lockItem, int[] lockCounts,
+                         double[] lockKnots, int escalationStep, int escalationMax, ResourceLocation enhanceItem, int enhanceItems,
+                         long enhanceKnots, double mainPercent, int[] milestones, int dismantleEchoBase, int dismantleEchoPerStar,
+                         int dismantleEnhancePerEcho, int dismantlePowderPercent, int[] dismantleClearEcho, int dismantleClearPerfect,
+                         ResourceLocation clearEchoItem, ResourceLocation echoItem, int discountPerMastery, int discountMax) {
+
+        /** 章（世代）のノットの倍率。 */
+        public double knotsFactor(int generation) {
+            int index = Math.max(0, Math.min(knotsChapter.length - 1, generation - 1));
+            return knotsChapter[index];
+        }
+
+        /** 固定できる最大の数（表のとおり3つ）。 */
+        public int maxLocks() {
+            return Math.min(lockCounts.length, lockKnots.length);
+        }
+
+        /** その強化値で、サブが増える・伸びるか。 */
+        public boolean isMilestone(int level) {
+            for (int milestone : milestones) {
+                if (milestone == level) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /** 次にサブが増える・伸びる強化値（もうなければ -1）。 */
+        public int nextMilestone(int level) {
+            int best = -1;
+            for (int milestone : milestones) {
+                if (milestone > level && (best < 0 || milestone < best)) {
+                    best = milestone;
+                }
+            }
+            return best;
+        }
+
+        static Refine parse(JsonObject json) {
+            Refine base = defaults();
+            double[] chapter = base.knotsChapter;
+            JsonArray chapterArray = Json.optionalArray(json, "knots_chapter_factor");
+            if (chapterArray.size() > 0) {
+                chapter = new double[chapterArray.size()];
+                for (int i = 0; i < chapterArray.size(); i++) {
+                    chapter[i] = Json.asNumber(chapterArray.get(i), "refine.knots_chapter_factor");
+                }
+            }
+            OpCost values = opCost(json, "reroll_values", base.rerollValues);
+            OpCost types = opCost(json, "reroll_types", base.rerollTypes);
+            JsonObject lock = section(json, "lock");
+            ResourceLocation lockItem = lock.has("item") ? Json.id(lock, "item") : base.lockItem;
+            int[] lockCounts = lock.has("counts") ? ints(Json.array(lock, "counts"), "refine.lock.counts") : base.lockCounts;
+            double[] lockKnots = lock.has("knots_multiplier") ? doubles(Json.array(lock, "knots_multiplier"), "refine.lock.knots_multiplier")
+                    : base.lockKnots;
+            if (lockCounts.length != lockKnots.length || lockCounts.length < 1 || lockCounts.length > 3) {
+                throw new DefinitionException("「refine.lock」の counts と knots_multiplier は、同じ数（1〜3。固定1つ・2つ・3つ）にしてください");
+            }
+            JsonObject escalation = section(json, "escalation");
+            int step = Json.optionalInt(escalation, "step", base.escalationStep, 0, 1000);
+            int max = Json.optionalInt(escalation, "max", base.escalationMax, 0, 10000);
+            JsonObject enhance = section(json, "enhance");
+            ResourceLocation enhanceItem = enhance.has("item") ? Json.id(enhance, "item") : base.enhanceItem;
+            int enhanceItems = Json.optionalInt(enhance, "items_per_level", base.enhanceItems, 0, 999);
+            long enhanceKnots = (long) Json.optionalDouble(enhance, "knots_per_level", base.enhanceKnots, 0, 1.0E9);
+            double mainPercent = Json.optionalDouble(enhance, "main_percent", base.mainPercent, 0, 1000);
+            int[] milestones = enhance.has("milestones") ? ints(Json.array(enhance, "milestones"), "refine.enhance.milestones") : base.milestones;
+            JsonObject dismantle = section(json, "dismantle");
+            int echoBase = Json.optionalInt(dismantle, "echo_base", base.dismantleEchoBase, 0, 999);
+            int echoPerStar = Json.optionalInt(dismantle, "echo_per_star", base.dismantleEchoPerStar, 0, 999);
+            int enhancePerEcho = Json.optionalInt(dismantle, "enhance_per_echo", base.dismantleEnhancePerEcho, 0, 100);
+            int powderPercent = Json.optionalInt(dismantle, "powder_return_percent", base.dismantlePowderPercent, 0, 100);
+            int[] clear = base.dismantleClearEcho;
+            if (dismantle.has("clear_echo_by_star")) {
+                int[] read = ints(Json.array(dismantle, "clear_echo_by_star"), "refine.dismantle.clear_echo_by_star");
+                if (read.length != 6) {
+                    throw new DefinitionException("「refine.dismantle.clear_echo_by_star」は6つ（★0〜★5）にしてください");
+                }
+                clear = read;
+            }
+            int clearPerfect = Json.optionalInt(dismantle, "clear_echo_perfect_bonus", base.dismantleClearPerfect, 0, 999);
+            ResourceLocation clearItem = dismantle.has("clear_echo_item") ? Json.id(dismantle, "clear_echo_item") : base.clearEchoItem;
+            ResourceLocation echoItem = dismantle.has("echo_item") ? Json.id(dismantle, "echo_item") : base.echoItem;
+            JsonObject discount = section(json, "crafter_discount");
+            int perMastery = Json.optionalInt(discount, "per_mastery", base.discountPerMastery, 0, 100);
+            int discountMax = Json.optionalInt(discount, "max", base.discountMax, 0, 100);
+            return new Refine(chapter, values, types, lockItem, lockCounts, lockKnots, step, max, enhanceItem, enhanceItems, enhanceKnots,
+                    mainPercent, milestones, echoBase, echoPerStar, enhancePerEcho, powderPercent, clear, clearPerfect, clearItem, echoItem,
+                    perMastery, discountMax);
+        }
+
+        private static OpCost opCost(JsonObject parent, String key, OpCost fallback) {
+            if (!parent.has(key)) {
+                return fallback;
+            }
+            JsonObject json = Json.object(parent, key);
+            long knots = (long) Json.optionalDouble(json, "knots", fallback.knots(), 0, 1.0E9);
+            List<EquipmentDef.Cost> items = new ArrayList<>();
+            JsonArray array = Json.optionalArray(json, "items");
+            for (int i = 0; i < array.size(); i++) {
+                String where = "refine." + key + ".items[" + i + "]";
+                items.add(EquipmentDef.Cost.parse(Json.asObject(array.get(i), where), where));
+            }
+            return new OpCost(knots, List.copyOf(items));
+        }
+
+        private static JsonObject section(JsonObject parent, String key) {
+            JsonObject found = Json.optionalObject(parent, key);
+            return found == null ? new JsonObject() : found;
+        }
+
+        private static int[] ints(JsonArray array, String where) {
+            int[] out = new int[array.size()];
+            for (int i = 0; i < array.size(); i++) {
+                out[i] = (int) Json.asNumber(array.get(i), where);
+            }
+            return out;
+        }
+
+        private static double[] doubles(JsonArray array, String where) {
+            double[] out = new double[array.size()];
+            for (int i = 0; i < array.size(); i++) {
+                out[i] = Json.asNumber(array.get(i), where);
+            }
+            return out;
+        }
+
+        static Refine defaults() {
+            ResourceLocation echo = AmemaruMod.id("echo_fragment");
+            return new Refine(new double[]{0.4, 0.7, 1.0, 1.3},
+                    new OpCost(2000, List.of(new EquipmentDef.Cost(echo, 3))),
+                    new OpCost(4000, List.of(new EquipmentDef.Cost(echo, 6), new EquipmentDef.Cost(AmemaruMod.id("wavering_crystal"), 1))),
+                    AmemaruMod.id("binding_thread"), new int[]{1, 2, 4}, new double[]{1.5, 2.5, 4.0}, 10, 200,
+                    AmemaruMod.id("polishing_powder"), 1, 500, 5.0, new int[]{3, 6, 9, 12},
+                    1, 1, 2, 50, new int[]{0, 0, 0, 0, 1, 2}, 1, AmemaruMod.id("clear_echo"), echo, 2, 20);
+        }
+    }
+
     private final double[] flatFactor;
     private final double[] percentFactor;
     private final double mainMinRatio;
@@ -48,10 +220,11 @@ public final class AccessoryRules {
     private final int perfectSubs;
     private final double perfectRatio;
     private final int maxEnhance;
+    private final Refine refine;
 
     private AccessoryRules(double[] flatFactor, double[] percentFactor, double mainMinRatio, Map<StatType, Double> mainCaps,
                            int[] subCountWeights, double subMinRatio, Map<StatType, SubEntry> subs, int[] qualityThresholds,
-                           int perfectSubs, double perfectRatio, int maxEnhance) {
+                           int perfectSubs, double perfectRatio, int maxEnhance, Refine refine) {
         this.flatFactor = flatFactor;
         this.percentFactor = percentFactor;
         this.mainMinRatio = mainMinRatio;
@@ -63,6 +236,12 @@ public final class AccessoryRules {
         this.perfectSubs = perfectSubs;
         this.perfectRatio = perfectRatio;
         this.maxEnhance = maxEnhance;
+        this.refine = refine;
+    }
+
+    /** 厳選の決まり（Phase 6 その4）。 */
+    public Refine refine() {
+        return refine;
     }
 
     /** その世代（章）の倍率。 */
@@ -194,8 +373,9 @@ public final class AccessoryRules {
         int perfectSubs = Json.intInRange(perfect, "subs", 1, 4);
         double perfectRatio = Json.doubleInRange(perfect, "min_ratio", 1.0, 100.0) / 100.0;
         int maxEnhance = Json.optionalInt(json, "max_enhance", 12, 0, 100);
+        Refine refine = json.has("refine") ? Refine.parse(Json.object(json, "refine")) : Refine.defaults();
         return new AccessoryRules(flat, percent, mainMin, caps, counts, subMin, subs, quality, perfectSubs, perfectRatio,
-                maxEnhance);
+                maxEnhance, refine);
     }
 
     private static AccessoryRules fallback() {
@@ -224,7 +404,7 @@ public final class AccessoryRules {
         subs.put(StatType.HEAL_POWER, new SubEntry(StatType.HEAL_POWER, 6, 4));
         subs.put(StatType.COOLDOWN_REDUCTION, new SubEntry(StatType.COOLDOWN_REDUCTION, 5, 2));
         return new AccessoryRules(new double[]{0.4, 0.7, 1.0, 1.3}, new double[]{0.6, 0.8, 1.0, 1.2}, 0.7, caps,
-                new int[]{30, 40, 25, 5}, 0.5, subs, new int[]{60, 70, 80, 90}, 4, 0.95, 12);
+                new int[]{30, 40, 25, 5}, 0.5, subs, new int[]{60, 70, 80, 90}, 4, 0.95, 12, Refine.defaults());
     }
 
     @Override

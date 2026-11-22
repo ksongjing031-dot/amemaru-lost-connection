@@ -22,6 +22,17 @@ public final class CombatTargets {
     private CombatTargets() {
     }
 
+    /**
+     * {@code caster} から見て敵か（Phase 6 その4：決闘の相手のプレイヤーは、相手どうしでだけ敵になる。決闘の間だけ）。
+     */
+    public static boolean isEnemyOf(@javax.annotation.Nullable Entity caster, Entity entity) {
+        if (isEnemy(entity)) {
+            return true;
+        }
+        return caster instanceof ServerPlayer a && entity instanceof ServerPlayer b && a != b && b.isAlive()
+                && jp.amemaru.lostconnection.social.DuelService.areOpponents(a, b);
+    }
+
     public static boolean isEnemy(Entity entity) {
         if (!(entity instanceof LivingEntity living) || !living.isAlive() || entity instanceof Player || entity instanceof ArmorStand) {
             return false;
@@ -40,6 +51,11 @@ public final class CombatTargets {
     public static boolean isAlly(ServerPlayer caster, Entity entity, boolean includeSelf) {
         if (!(entity instanceof ServerPlayer player) || !player.isAlive() || player.isSpectator()
                 || jp.amemaru.lostconnection.player.DownHandler.isDown(player)) {
+            return false;
+        }
+        // 決闘の間は、決闘している人と、ほかの人の間で回復や強化が届かない（Phase 6 その4。自分には届く）
+        if (player != caster && (jp.amemaru.lostconnection.social.DuelService.isolated(caster)
+                || jp.amemaru.lostconnection.social.DuelService.isolated(player))) {
             return false;
         }
         return includeSelf || player != caster;

@@ -202,7 +202,7 @@ public final class SkillExecutor {
                 Vec3 far = start.add(look.scale(delivery.range(rank)));
                 BlockHitResult block = level.clip(new ClipContext(start, far, ClipContext.Block.COLLIDER, ClipContext.Fluid.NONE, caster));
                 Vec3 end = block.getType() == HitResult.Type.MISS ? far : block.getLocation();
-                List<LivingEntity> targets = SkillTargeting.alongLine(level, start, end, delivery.width(rank));
+                List<LivingEntity> targets = SkillTargeting.alongLine(caster, level, start, end, delivery.width(rank));
                 if (delivery.flat()) {
                     // 演出は足もとの高さで（地面を走る斬撃）
                     fx(ctx, SkillFxS2C.Phase.RELEASE, caster.position(), end.subtract(0.0, FLAT_LINE_HEIGHT, 0.0), (float) delivery.width(rank), 0,
@@ -297,7 +297,7 @@ public final class SkillExecutor {
 
     /** 地点に着弾する（流星群など）。回復などの味方の効果があれば、そこにいる味方にも効く。 */
     private static void impact(SkillContext ctx, Vec3 center, double radius) {
-        List<LivingEntity> targets = new ArrayList<>(SkillTargeting.enemiesNear(ctx.level, center, radius));
+        List<LivingEntity> targets = new ArrayList<>(SkillTargeting.enemiesNear(ctx.caster(), ctx.level, center, radius));
         if (hasAllyEffect(ctx.skill)) {
             targets.addAll(SkillTargeting.alliesNear(ctx.level, center, radius));
         }
@@ -320,7 +320,7 @@ public final class SkillExecutor {
     public static void projectileHit(SkillContext ctx, LivingEntity target, Entity projectile, double explode) {
         Vec3 at = target.getBoundingBox().getCenter();
         if (explode > 0) {
-            List<LivingEntity> targets = SkillTargeting.enemiesNear(ctx.level, at, explode);
+            List<LivingEntity> targets = SkillTargeting.enemiesNear(ctx.caster(), ctx.level, at, explode);
             if (!targets.contains(target)) {
                 targets.add(0, target);
             }
@@ -336,7 +336,7 @@ public final class SkillExecutor {
 
     /** 弾ける弾が、壁や地面で弾けたとき。 */
     public static void projectileBurst(SkillContext ctx, Vec3 at, Entity projectile, double explode) {
-        List<LivingEntity> targets = SkillTargeting.enemiesNear(ctx.level, at, explode);
+        List<LivingEntity> targets = SkillTargeting.enemiesNear(ctx.caster(), ctx.level, at, explode);
         fx(ctx, SkillFxS2C.Phase.IMPACT, projectile.position(), at, (float) explode, 0, ids(targets), fxPower(ctx));
         playSound(ctx.level, at, ctx.skill.impactSound(), 1.0F);
         apply(ctx, targets, null, at, projectile);
@@ -389,7 +389,7 @@ public final class SkillExecutor {
     static void leapLanded(SkillContext ctx, ServerPlayer caster, double radius) {
         Vec3 center = caster.position();
         caster.fallDistance = 0.0F;
-        List<LivingEntity> targets = SkillTargeting.enemiesNear(ctx.level, center, radius);
+        List<LivingEntity> targets = SkillTargeting.enemiesNear(ctx.caster(), ctx.level, center, radius);
         fx(ctx, SkillFxS2C.Phase.IMPACT, center, center, radius, 0, ids(targets), fxPower(ctx));
         playSound(ctx.level, center, ctx.skill.impactSound(), 1.0F);
         apply(ctx, targets, null, center, null);
@@ -457,7 +457,7 @@ public final class SkillExecutor {
         int enemies = 0;
         for (int i = 0; i < targets.size(); i++) {
             LivingEntity target = targets.get(i);
-            boolean enemy = CombatTargets.isEnemy(target);
+            boolean enemy = CombatTargets.isEnemyOf(caster, target);
             double multiplier = ctx.multiplier * (falloff != null && i < falloff.length ? falloff[i] : 1.0);
             if (enemy) {
                 enemies++;
@@ -567,7 +567,7 @@ public final class SkillExecutor {
     private static void applyToTarget(SkillContext ctx, EffectDef effect, LivingEntity target, double multiplier, Vec3 center,
                                       @Nullable Entity direct, @Nullable ServerPlayer caster, long now) {
         int rank = ctx.rank;
-        boolean enemy = CombatTargets.isEnemy(target);
+        boolean enemy = CombatTargets.isEnemyOf(caster, target);
         switch (effect.type()) {
             case DAMAGE -> {
                 if (enemy) {
@@ -871,7 +871,7 @@ public final class SkillExecutor {
         victims.add(target);
         double radius = effect.value("radius", rank);
         if (radius > 0) {
-            for (LivingEntity near : SkillTargeting.enemiesNear(ctx.level, target.position(), radius)) {
+            for (LivingEntity near : SkillTargeting.enemiesNear(ctx.caster(), ctx.level, target.position(), radius)) {
                 if (near != target) {
                     victims.add(near);
                 }
@@ -917,7 +917,7 @@ public final class SkillExecutor {
             return;
         }
         double power = ctx.stat(StatType.MAGIC) * coefficient;
-        for (LivingEntity near : SkillTargeting.enemiesNear(ctx.level, shattered.position(), 3.5)) {
+        for (LivingEntity near : SkillTargeting.enemiesNear(ctx.caster(), ctx.level, shattered.position(), 3.5)) {
             if (near == shattered) {
                 continue;
             }
@@ -994,7 +994,7 @@ public final class SkillExecutor {
         long now = ctx.level.getGameTime();
         switch (effect.type()) {
             case DAMAGE -> {
-                if (CombatTargets.isEnemy(attacker)) {
+                if (CombatTargets.isEnemyOf(owner, attacker)) {
                     damage(ctx, effect, attacker, ctx.multiplier, null, owner);
                 }
             }
@@ -1379,7 +1379,7 @@ public final class SkillExecutor {
             LivingEntity from = last;
             AABB box = from.getBoundingBox().inflate(jumpRange);
             LivingEntity next = ctx.level.getEntitiesOfClass(LivingEntity.class, box, entity ->
-                            CombatTargets.isEnemy(entity) && !chain.contains(entity)
+                            CombatTargets.isEnemyOf(ctx.caster(), entity) && !chain.contains(entity)
                                     && entity.distanceToSqr(from) <= jumpRange * jumpRange && from.hasLineOfSight(entity))
                     .stream()
                     .min((a, b) -> Double.compare(a.distanceToSqr(from), b.distanceToSqr(from)))
@@ -1424,7 +1424,7 @@ public final class SkillExecutor {
         AABB box = player.getBoundingBox().expandTowards(path).inflate(width);
         LivingEntity best = null;
         double bestAlong = Double.MAX_VALUE;
-        for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, box, CombatTargets::isEnemy)) {
+        for (LivingEntity entity : player.level().getEntitiesOfClass(LivingEntity.class, box, e -> CombatTargets.isEnemyOf(player, e))) {
             Vec3 rel = entity.position().subtract(from);
             double along = rel.dot(direction);
             if (along < -0.5 || along > length + 1.0) {

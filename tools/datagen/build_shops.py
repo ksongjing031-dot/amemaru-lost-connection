@@ -35,6 +35,11 @@ MATERIALS = {
     "amemaru:echo_fragment": None,      # 1階の雑魚から3〜5%（平均4%）
     "amemaru:soft_horn": None,          # ツノモフから2%（レア）
     "amemaru:ishikure_core": None,      # イシクレ兵から1.5%（レア）
+    # 厳選の素材（Phase 6 その4。Phase 0-A 21章「厳選素材」）【補完】
+    "amemaru:polishing_powder": None,   # イシクレ兵から20%で1〜2個（採掘はまだないので、石の体を削った粉として）
+    "amemaru:wavering_crystal": 280,    # 1階のボスから60%（1回5分 → 8.3分 × 33）。フリマでも
+    "amemaru:binding_thread": 500,      # NPCの依頼のお礼だけ（釣り・カジノの景品は Phase 7）。少ないので高め
+    "amemaru:clear_echo": 1500,         # ★4以上の分解と章のボスだけ
 }
 DROPS = {
     "amemaru:ancient_stone": 0.7 * 1.5,
@@ -44,6 +49,7 @@ DROPS = {
     "amemaru:echo_fragment": 0.04,
     "amemaru:soft_horn": 0.02,
     "amemaru:ishikure_core": 0.015,
+    "amemaru:polishing_powder": 0.2 * 1.5,
 }
 # レアの装備（落ちる確率から。素材と同じ計算）
 RARE_GEAR = {
@@ -59,7 +65,7 @@ RARITY_BASE = {"common": 30, "uncommon": 100, "rare": 400, "epic": 1600, "legend
 
 TOWER_MATERIALS = ["amemaru:ancient_stone", "amemaru:moss_iron", "amemaru:crystal_shard", "amemaru:tsunomofu_fluff",
                    "amemaru:bee_stinger", "amemaru:chipped_fang", "amemaru:echo_fragment", "amemaru:soft_horn",
-                   "amemaru:ishikure_core"]
+                   "amemaru:ishikure_core", "amemaru:polishing_powder", "amemaru:wavering_crystal"]
 
 # 店：(ファイルの名前, 名前, 店主, 売る品 [(品, 値段)], 買い取る品（None は売る品を買い戻す）)
 SHOPS = [

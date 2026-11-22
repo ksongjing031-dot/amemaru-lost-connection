@@ -252,10 +252,26 @@ public final class GearTooltips {
         }
         AccessoryData.StatLine main = AccessoryData.main(stack);
         if (main != null) {
-            lines.add(statLine("tooltip.amemaru.accessory.main", main).withStyle(ChatFormatting.BLUE));
+            MutableComponent mainLine = statLine("tooltip.amemaru.accessory.main", main).withStyle(ChatFormatting.BLUE);
+            if (AccessoryData.enhance(stack) > 0) {
+                // 強化でメインが伸びた分（Phase 6 その4）
+                StatType type = main.type();
+                mainLine.append(Component.translatable("tooltip.amemaru.accessory.main_enhanced",
+                        type.format(AccessoryData.effectiveMain(stack, main)),
+                        String.format(Locale.ROOT, "%.0f", AccessoryData.enhance(stack) * AccessoryData.mainPercent(stack)))
+                        .withStyle(ChatFormatting.AQUA));
+            }
+            lines.add(mainLine);
         }
         for (AccessoryData.StatLine sub : AccessoryData.subs(stack)) {
-            lines.add(statLine("tooltip.amemaru.accessory.sub", sub).withStyle(ChatFormatting.DARK_AQUA));
+            MutableComponent subLine = statLine("tooltip.amemaru.accessory.sub", sub).withStyle(ChatFormatting.DARK_AQUA);
+            if (sub.rolls() > 1) {
+                subLine.append(Component.translatable("tooltip.amemaru.accessory.rolls", sub.rolls()).withStyle(ChatFormatting.LIGHT_PURPLE));
+            }
+            if (sub.locked()) {
+                subLine.append(Component.translatable("tooltip.amemaru.accessory.locked").withStyle(ChatFormatting.GOLD));
+            }
+            lines.add(subLine);
         }
         lines.add(Component.translatable("tooltip.amemaru.accessory.enhance", AccessoryData.enhance(stack),
                 AccessoryData.rerolls(stack)).withStyle(ChatFormatting.DARK_GRAY));
@@ -318,7 +334,11 @@ public final class GearTooltips {
 
     private static Map<StatType, Double> totals(ItemStack stack) {
         Map<StatType, Double> map = new EnumMap<>(StatType.class);
-        for (AccessoryData.StatLine line : AccessoryData.allLines(stack)) {
+        AccessoryData.StatLine main = AccessoryData.main(stack);
+        if (main != null) {
+            map.merge(main.type(), AccessoryData.effectiveMain(stack, main), Double::sum);
+        }
+        for (AccessoryData.StatLine line : AccessoryData.subs(stack)) {
             map.merge(line.type(), line.value(), Double::sum);
         }
         return map;

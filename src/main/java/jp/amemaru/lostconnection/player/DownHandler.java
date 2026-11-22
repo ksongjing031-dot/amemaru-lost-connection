@@ -95,6 +95,11 @@ public final class DownHandler {
         }
         PlayerData data = found.get();
         DamageSource source = event.getSource();
+        // 決闘の間は、倒れずに決闘が終わる（Phase 6 その4。ダウン・デスペナルティはない）
+        if (!source.is(DamageTypeTags.BYPASSES_INVULNERABILITY) && jp.amemaru.lostconnection.social.DuelService.interceptDeath(player)) {
+            event.setCanceled(true);
+            return;
+        }
         if (source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)) {
             // 奈落・/kill：バニラの死亡。リスポーンしたら教会へ戻す（onRespawn）
             data.down().setDiedForReal(true);

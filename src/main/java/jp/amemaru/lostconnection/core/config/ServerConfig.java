@@ -113,6 +113,17 @@ public final class ServerConfig {
     public static final ForgeConfigSpec.IntValue GUILD_PARTICIPANTS;
     public static final ForgeConfigSpec.LongValue GUILD_STALL_DONATION_GOAL;
     public static final ForgeConfigSpec.BooleanValue GUILD_SHOW_TITLES;
+    // Phase 6 その4：厳選と決闘
+    public static final ForgeConfigSpec.DoubleValue REFINE_COST_MULTIPLIER;
+    public static final ForgeConfigSpec.IntValue COMMISSION_EXPIRE_DAYS;
+    public static final ForgeConfigSpec.IntValue COMMISSION_MAX_ATTEMPTS;
+    public static final ForgeConfigSpec.IntValue COMMISSION_MAX_OPEN;
+    public static final ForgeConfigSpec.BooleanValue DUEL_ENABLED;
+    public static final ForgeConfigSpec.IntValue DUEL_SECONDS;
+    public static final ForgeConfigSpec.IntValue DUEL_CHALLENGE_SECONDS;
+    public static final ForgeConfigSpec.IntValue DUEL_ARENAS;
+    public static final ForgeConfigSpec.BooleanValue DUEL_ANNOUNCE;
+    public static final ForgeConfigSpec.BooleanValue DUEL_ALLOW_POTIONS;
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
@@ -417,6 +428,44 @@ public final class ServerConfig {
         GUILD_SHOW_TITLES = b
                 .comment("表示している称号を、頭の上・チャット・Tabの一覧の名前の前に出す（Phase 0-A 22章【確定】）")
                 .define("showTitles", true);
+        b.pop();
+
+        b.comment("アクセサリーの厳選と、装飾師への厳選の依頼（Phase 6 その4。Phase 0-A 21章）").push("refine");
+        REFINE_COST_MULTIPLIER = b
+                .comment("厳選の費用の倍率（Phase 0-B 7章：1.0）。振り直し・固定・強化の素材とノットの両方にかける（素材は切り上げ）。",
+                        "費用の表そのものは data/amemaru/amemaru/accessory_rules/default.json の refine")
+                .defineInRange("costMultiplier", 1.0, 0.0, 100.0);
+        COMMISSION_EXPIRE_DAYS = b
+                .comment("依頼台の依頼が、誰も受けないまま何日（進行日）で取り下げになるか。預けた品・素材・ノットは持ち主に戻る【補完】")
+                .defineInRange("commissionExpireDays", 3, 1, 365);
+        COMMISSION_MAX_ATTEMPTS = b
+                .comment("依頼で決められる「回数の上限」の最大（振り直しの回数）【補完】")
+                .defineInRange("commissionMaxAttempts", 50, 1, 1000);
+        COMMISSION_MAX_OPEN = b
+                .comment("1人が同時に出せる依頼の数【補完】")
+                .defineInRange("commissionMaxOpen", 3, 1, 50);
+        b.pop();
+
+        b.comment("決闘（Phase 6 その4。11月22日に決定：ほかのプレイヤーに決闘を申し込み、相手が受けると1対1で戦う。",
+                "街の中では戦わず、決闘場で戦う。ほかのプレイヤーは観戦できる。決闘の間は、武器や防具などの耐久は減らない）").push("duel");
+        DUEL_ENABLED = b
+                .comment("決闘を申し込めるようにする")
+                .define("enabled", true);
+        DUEL_SECONDS = b
+                .comment("決闘の時間（秒）。時間切れのときは、HPの割合が多い方の勝ち（同じなら引き分け）【補完】")
+                .defineInRange("seconds", 180, 30, 3600);
+        DUEL_CHALLENGE_SECONDS = b
+                .comment("申し込みが、何秒で消えるか")
+                .defineInRange("challengeSeconds", 60, 10, 3600);
+        DUEL_ARENAS = b
+                .comment("同時に使える決闘場の数（塔の空間の、どの階とも離れた所に建てる）【補完】")
+                .defineInRange("arenas", 4, 1, 16);
+        DUEL_ANNOUNCE = b
+                .comment("決闘が始まったことを、サーバー全体に知らせる（［観戦する］のボタンつき）")
+                .define("announce", true);
+        DUEL_ALLOW_POTIONS = b
+                .comment("決闘の間に、回復薬・マナ水を使えるようにする（初期は使えない。腕前の勝負にするため）【補完】")
+                .define("allowPotions", false);
         b.pop();
 
         SPEC = b.build();

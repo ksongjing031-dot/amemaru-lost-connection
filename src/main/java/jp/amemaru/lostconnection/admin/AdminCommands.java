@@ -61,6 +61,9 @@ public final class AdminCommands {
         dispatcher.register(Commands.literal("amemaru")
                 // だれでも使える：パーティ（Phase 4）
                 .then(jp.amemaru.lostconnection.party.PartyCommands.partyCommand())
+                // だれでも使える：決闘・依頼台（Phase 6 その4）
+                .then(jp.amemaru.lostconnection.social.SocialCommands.duelCommand())
+                .then(jp.amemaru.lostconnection.social.SocialCommands.commissionCommand())
                 .then(Commands.literal("admin")
                         .requires(source -> source.hasPermission(2))
                         .then(levelCommand())
@@ -103,6 +106,9 @@ public final class AdminCommands {
                         .then(GuildCommands.questCommand())
                         .then(GuildCommands.donationCommand())
                         .then(GuildCommands.chronicleCommand())
+                        // Phase 6 その4：決闘・依頼台
+                        .then(jp.amemaru.lostconnection.social.SocialCommands.adminDuelCommand())
+                        .then(jp.amemaru.lostconnection.social.SocialCommands.adminCommissionCommand())
                         .then(debugCommand())));
     }
 
