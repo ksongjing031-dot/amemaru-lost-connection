@@ -59,7 +59,8 @@ jobs:
           name: amemaru-mod-${{ github.run_number }}
           path: build/dist/*.jar
           if-no-files-found: error
-          retention-days: 30
+          # 11月22日：公開リポジトリにしたので、ログインした人なら誰でもダウンロードできる。古い jar が残らないよう7日にした
+          retention-days: 7
 
       # 自動テスト（GameTest）を専用のサーバーで動かす。1つでも失敗したら、このステップを失敗にする。
       - name: 自動テスト（GameTest）を動かす
@@ -186,4 +187,4 @@ jobs:
           name: screenshots-${{ github.run_number }}
           path: screenshots/*.png
           if-no-files-found: warn
-          retention-days: 30
+          retention-days: 7
