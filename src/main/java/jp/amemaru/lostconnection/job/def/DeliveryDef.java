@@ -23,7 +23,18 @@ import jp.amemaru.lostconnection.core.data.Json;
  *       <td>range, width, flat</td></tr>
  *   <tr><td>cone</td><td>前の扇の中の敵すべて</td><td>radius, angle（片側の角度）</td></tr>
  *   <tr><td>branded</td><td>まわりの、星痕のある敵すべて</td><td>range</td></tr>
+ *   <tr><td>behind</td><td>狙った敵の背後へ回り込み、その敵（Phase 6：影討ち・縮地）</td><td>range</td></tr>
+ *   <tr><td>backstep</td><td>後ろへ跳びながら、前へ弾を撃つ（Phase 6：後跳び）</td><td>distance, range, speed, count, spread, kind</td></tr>
  * </table>
+ *
+ * <p>Phase 6 その2で足したもの：</p>
+ * <ul>
+ *   <li>projectile・backstep の {@code kind}：弾の見た目（lamp・arrow・needle・ki・comet）。{@code explode}：当たった所のまわり（半径）の敵すべてに効く。
+ *       {@code burst}・{@code burst_interval}：続けて何回撃つか（三連矢）と、その間（tick）。</li>
+ *   <li>target の {@code smart}：狙った先に味方がいなければ、まわりでいちばん傷ついた味方（いなければ自分）を選ぶ（ヒーラーの回復）。
+ *       {@code downed}：ダウンしている味方だけを狙う（呼び戻し）。</li>
+ *   <li>around の {@code include_downed}：ダウンしている味方も含める（大いなる呼び声）。</li>
+ * </ul>
  */
 public final class DeliveryDef {
     public enum Type {
@@ -38,7 +49,9 @@ public final class DeliveryDef {
         LEAP("leap"),
         LINE("line"),
         CONE("cone"),
-        BRANDED("branded");
+        BRANDED("branded"),
+        BEHIND("behind"),
+        BACKSTEP("backstep");
 
         private final String id;
 
@@ -56,8 +69,8 @@ public final class DeliveryDef {
                     return type;
                 }
             }
-            throw new DefinitionException("「delivery.type」は self・around・target・point・projectile・dash・chain・blink・leap・line・cone・branded "
-                    + "のどれかにしてください（今は " + id + "）");
+            throw new DefinitionException("「delivery.type」は self・around・target・point・projectile・dash・chain・blink・leap・line・cone・branded・"
+                    + "behind・backstep のどれかにしてください（今は " + id + "）");
         }
 
         public static Type byIndex(int index) {
@@ -88,6 +101,13 @@ public final class DeliveryDef {
     private final Ranked spread;
     private final Ranked shockedJumps;
     private final Ranked shockedMultiplier;
+    private final String kind;
+    private final Ranked explode;
+    private final Ranked burst;
+    private final int burstInterval;
+    private final boolean smart;
+    private final boolean downed;
+    private final boolean includeDowned;
 
     private DeliveryDef(Builder b) {
         this.type = b.type;
@@ -110,6 +130,13 @@ public final class DeliveryDef {
         this.spread = b.spread;
         this.shockedJumps = b.shockedJumps;
         this.shockedMultiplier = b.shockedMultiplier;
+        this.kind = b.kind;
+        this.explode = b.explode;
+        this.burst = b.burst;
+        this.burstInterval = b.burstInterval;
+        this.smart = b.smart;
+        this.downed = b.downed;
+        this.includeDowned = b.includeDowned;
     }
 
     /** 届け方のない定義（パッシブ）。 */
@@ -131,6 +158,15 @@ public final class DeliveryDef {
         if (b.flat && type != Type.LINE) {
             throw new DefinitionException("「flat」は line のときだけ使えます");
         }
+        b.smart = Json.optionalBoolean(json, "smart", false);
+        b.downed = Json.optionalBoolean(json, "downed", false);
+        if ((b.smart || b.downed) && (type != Type.TARGET || affects != Affects.ALLIES)) {
+            throw new DefinitionException("「smart」「downed」は、味方を狙う target のときだけ使えます");
+        }
+        b.includeDowned = Json.optionalBoolean(json, "include_downed", false);
+        if (b.includeDowned && (type != Type.AROUND || affects != Affects.ALLIES)) {
+            throw new DefinitionException("「include_downed」は、味方に効く around のときだけ使えます");
+        }
         switch (type) {
             case SELF -> {
             }
@@ -141,14 +177,25 @@ public final class DeliveryDef {
                 b.radius = Ranked.read(json, "radius", 0.5, MAX_DISTANCE);
                 b.impactDelay = Ranked.readOptional(json, "impact_delay", 0.0, 0.0, 10.0);
             }
-            case PROJECTILE -> {
+            case PROJECTILE, BACKSTEP -> {
                 b.range = Ranked.read(json, "range", 1.0, MAX_DISTANCE);
                 b.speed = Ranked.readOptional(json, "speed", 1.5, 0.2, 5.0);
                 b.radius = Ranked.readOptional(json, "radius", 0.0, 0.0, 8.0);
                 b.count = Ranked.readOptional(json, "count", 1.0, 1.0, 12.0);
                 b.countCharged = Ranked.readOptional(json, "count_charged", 0.0, 0.0, 12.0);
                 b.spread = Ranked.readOptional(json, "spread", 0.0, 0.0, 90.0);
+                b.kind = Json.optionalString(json, "kind", "lamp");
+                if (!b.kind.matches("lamp|arrow|needle|ki|comet")) {
+                    throw new DefinitionException("弾の「kind」は lamp・arrow・needle・ki・comet のどれかにしてください（今は " + b.kind + "）");
+                }
+                b.explode = Ranked.readOptional(json, "explode", 0.0, 0.0, 12.0);
+                b.burst = Ranked.readOptional(json, "burst", 1.0, 1.0, 8.0);
+                b.burstInterval = Json.optionalInt(json, "burst_interval", 4, 1, 40);
+                if (type == Type.BACKSTEP) {
+                    b.distance = Ranked.read(json, "distance", 0.5, 16.0);
+                }
             }
+            case BEHIND -> b.range = Ranked.read(json, "range", 1.0, 32.0);
             case DASH -> {
                 b.distance = Ranked.read(json, "distance", 0.5, 16.0);
                 b.width = Ranked.readOptional(json, "width", 1.2, 0.2, 6.0);
@@ -184,6 +231,8 @@ public final class DeliveryDef {
         def.count.checkRange("delivery.count", maxRank, 0.0, 12.0);
         def.countCharged.checkRange("delivery.count_charged", maxRank, 0.0, 12.0);
         def.angle.checkRange("delivery.angle", maxRank, 0.0, 180.0);
+        def.explode.checkRange("delivery.explode", maxRank, 0.0, 12.0);
+        def.burst.checkRange("delivery.burst", maxRank, 1.0, 8.0);
         return def;
     }
 
@@ -277,9 +326,44 @@ public final class DeliveryDef {
         return Math.max(1.0, shockedMultiplier.at(rank));
     }
 
+    /** 弾の見た目（lamp・arrow・needle・ki・comet）。 */
+    public String kind() {
+        return kind;
+    }
+
+    /** 当たった所で弾ける半径（0なら弾けない）。 */
+    public double explode(int rank) {
+        return explode.at(rank);
+    }
+
+    /** 続けて撃つ回数（1なら1回）。 */
+    public int burst(int rank) {
+        return Math.max(1, burst.intAt(rank));
+    }
+
+    /** 続けて撃つときの間（tick）。 */
+    public int burstInterval() {
+        return burstInterval;
+    }
+
+    /** 狙った先に味方がいなければ、いちばん傷ついた味方を選ぶか。 */
+    public boolean smart() {
+        return smart;
+    }
+
+    /** ダウンしている味方だけを狙うか（呼び戻し）。 */
+    public boolean downed() {
+        return downed;
+    }
+
+    /** まわりの味方に、ダウンしている人も含めるか（大いなる呼び声）。 */
+    public boolean includeDowned() {
+        return includeDowned;
+    }
+
     /** クライアントが「狙った相手」を送る届け方か。 */
     public boolean aimsAtEntity() {
-        return type == Type.TARGET || type == Type.CHAIN;
+        return type == Type.TARGET || type == Type.CHAIN || type == Type.BEHIND;
     }
 
     /** クライアントが「狙った地点」を送る届け方か。 */
@@ -290,7 +374,7 @@ public final class DeliveryDef {
     /** 狙うときの最大の距離（狙わない届け方では0）。 */
     public double aimRange(int rank) {
         return switch (type) {
-            case TARGET, POINT, CHAIN, PROJECTILE, LEAP, LINE, BRANDED -> range.at(rank);
+            case TARGET, POINT, CHAIN, PROJECTILE, LEAP, LINE, BRANDED, BEHIND, BACKSTEP -> range.at(rank);
             case DASH, BLINK -> distance.at(rank);
             case CONE -> radius.at(rank);
             default -> 0.0;
@@ -318,6 +402,13 @@ public final class DeliveryDef {
         Ranked spread = Ranked.ZERO;
         Ranked shockedJumps = Ranked.ZERO;
         Ranked shockedMultiplier = Ranked.of(1.0);
+        String kind = "lamp";
+        Ranked explode = Ranked.ZERO;
+        Ranked burst = Ranked.of(1.0);
+        int burstInterval = 4;
+        boolean smart;
+        boolean downed;
+        boolean includeDowned;
 
         Builder(Type type, Affects affects, boolean includeSelf) {
             this.type = type;

@@ -1,0 +1,63 @@
+{
+  "kind": "combat",
+  "order": 50,
+  "name": "ローグ",
+  "role": "高火力・機動力",
+  "description": "影を渡り、二本の短剣で急所を断つ者。攻撃を当てるたびに「気配」を研ぎ、締めの一撃で一気に放つ。毒で敵をじわじわと弱らせる。",
+  "color": "#B58CFF",
+  "icon": "amemaru:textures/gui/job/rogue.png",
+  "weapons": "amemaru:weapons/rogue",
+  "weapon_text": "二刀の短剣",
+  "tags": [
+    "melee",
+    "rogue"
+  ],
+  "stats": {
+    "percent": {
+      "attack": 20,
+      "speed": 15,
+      "hp": -10,
+      "defense": -15,
+      "magic": -20
+    },
+    "flat": {
+      "crit": 5
+    }
+  },
+  "gauge": {
+    "type": "presence",
+    "name": "気配",
+    "description": "攻撃を当てるたびに1ずつたまる（最大5）。急所突き・影葬・毒爆などの締めの技で、残らず使って威力を上げる。戦闘が終わると0に戻る。",
+    "max": 5,
+    "color": "#B58CFF"
+  },
+  "schools": [
+    {
+      "id": "shadow",
+      "name": "影",
+      "description": "影を渡って背後を取る流派。素早い連撃で気配を研ぎ、影から急所をひと突きにする。",
+      "color": "#B58CFF"
+    },
+    {
+      "id": "venom",
+      "name": "毒",
+      "description": "毒と罠で敵を弱らせる流派。毒を重ね、煙と糸で敵を惑わせ、最後に毒ごと弾けさせる。",
+      "color": "#8CE65A"
+    }
+  ],
+  "starting_skills": [
+    "rogue/flurry",
+    "rogue/venom_blade"
+  ],
+  "starter_kit": [
+    {
+      "item": "amemaru:apprentice_daggers"
+    }
+  ],
+  "upper": {
+    "name": "影結び",
+    "description": "影と影を結んで渡り歩く者。奥義（影の「千の刃」か、毒の「毒華」）と、各スキルの第3段が開く。",
+    "min_level": 30,
+    "min_day": 11
+  }
+}

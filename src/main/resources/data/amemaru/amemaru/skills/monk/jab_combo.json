@@ -1,0 +1,41 @@
+{
+  "job": "monk",
+  "school": "hard",
+  "row": 0,
+  "column": 0,
+  "type": "active",
+  "name": "連打",
+  "description": "左右の拳で三段の連撃を打ちこむ。【起】連撃の始まりにも、つなぎにもなる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 1,
+  "cost": {
+    "mp": 6
+  },
+  "cooldown": 3,
+  "link": "starter",
+  "delivery": {
+    "type": "target",
+    "range": 4.5
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 0.5,
+      "coefficient_per_rank": 0.1,
+      "hits": 3,
+      "hit_interval": 4
+    }
+  ],
+  "tags": [
+    "fist"
+  ],
+  "combo": "opener",
+  "animation": "monk_jab",
+  "sound": "amemaru:skill.monk.jab_combo"
+}

@@ -1,0 +1,27 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "古代石シリーズ",
+  "rarity": "common",
+  "required_level": 5,
+  "jobs": [
+    "amemaru:monk"
+  ],
+  "stats": {
+    "attack": 13,
+    "hp": 40
+  },
+  "durability": 400,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:moss_iron",
+      "count": 1
+    },
+    {
+      "item": "amemaru:ancient_stone",
+      "count": 1
+    }
+  ],
+  "description": "拳の甲に古代石の板を重ねた籠手。打つたびに、石が低く鳴る。"
+}

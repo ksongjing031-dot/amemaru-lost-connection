@@ -1,0 +1,59 @@
+{
+  "job": "monk",
+  "school": "soft",
+  "row": 4,
+  "column": 0,
+  "type": "active",
+  "ultimate": true,
+  "name": "天地流転",
+  "description": "拳聖の奥義。天と地の流れに身をゆだね、8秒の間、どの向きからの攻撃も受け流して打ち返す。打ち返すたびに連撃がつながり、その間は【極】の技を使っても連撃が消えない。",
+  "max_rank": 1,
+  "rank_costs": [
+    5
+  ],
+  "upper_rank": 1,
+  "min_level": 30,
+  "requires": [
+    {
+      "skill": "monk/flowing_stance",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 45
+  },
+  "cooldown": 100,
+  "delivery": {
+    "type": "self"
+  },
+  "effects": [
+    {
+      "type": "buff",
+      "buff": "parry",
+      "duration": 8,
+      "counters": 99,
+      "all_directions": 1,
+      "on_success": [
+        {
+          "type": "damage",
+          "stat": "attack",
+          "coefficient": 1.2
+        },
+        {
+          "type": "gauge",
+          "amount": 10
+        },
+        {
+          "type": "combo_step"
+        }
+      ]
+    },
+    {
+      "type": "buff",
+      "buff": "endless_flow",
+      "duration": 8
+    }
+  ],
+  "animation": "monk_heaven",
+  "sound": "amemaru:skill.monk.heaven_earth"
+}

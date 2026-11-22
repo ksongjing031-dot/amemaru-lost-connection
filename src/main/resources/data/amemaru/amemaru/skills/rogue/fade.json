@@ -1,0 +1,27 @@
+{
+  "job": "rogue",
+  "school": "shadow",
+  "row": 3,
+  "column": 2,
+  "type": "passive",
+  "name": "気配消し",
+  "description": "息をひそめると、敵は見失う。3秒攻撃しないでいると敵に狙われにくくなり、次の一撃のダメージが上がる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "rogue/nimble",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "fade",
+    "value": 15,
+    "value_per_rank": 5
+  }
+}

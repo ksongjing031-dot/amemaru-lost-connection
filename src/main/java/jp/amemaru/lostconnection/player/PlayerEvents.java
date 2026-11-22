@@ -130,6 +130,11 @@ public final class PlayerEvents {
             PlayerDataCapability.get(player).ifPresent(data -> SkillService.cancelCast(player, data, false));
             PassiveService.forget(player.getUUID());
             jp.amemaru.lostconnection.job.ReactiveSkills.forget(player.getUUID());
+            jp.amemaru.lostconnection.job.GaugeService.forget(player.getUUID());
+            jp.amemaru.lostconnection.job.ComboService.forget(player.getUUID());
+            jp.amemaru.lostconnection.job.HitHooks.forget(player.getUUID());
+            jp.amemaru.lostconnection.job.StarRingService.forget(player.getUUID());
+            jp.amemaru.lostconnection.combat.BasicShotService.forget(player.getUUID());
         }
     }
 }

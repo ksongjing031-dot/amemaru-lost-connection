@@ -1,0 +1,27 @@
+{
+  "job": "healer",
+  "school": "healing",
+  "row": 5,
+  "column": 2,
+  "type": "passive",
+  "name": "満ちる心",
+  "description": "仲間が癒えると、自分の心も満ちる。ほかの仲間を癒すと、癒した量の一部だけMPが戻る。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 25,
+  "requires": [
+    {
+      "skill": "healer/overflowing_heal",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "heal_mp",
+    "value": 4,
+    "value_per_rank": 2
+  }
+}

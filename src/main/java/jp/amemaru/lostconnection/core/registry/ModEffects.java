@@ -106,6 +106,83 @@ public final class ModEffects {
                 }
             });
 
+    // ---------------------------------------------------------------- Phase 6 その2：敵にかかる状態
+
+    /** 毒：重なった数だけ、毎秒ダメージを受ける（数は {@code StatusService}）。 */
+    public static final RegistryObject<MobEffect> POISON = EFFECTS.register("poison", () ->
+            new AmemaruEffect(MobEffectCategory.HARMFUL, 0x8CE65A, false));
+    /** 標：プレイヤーから受けるダメージが上がる。 */
+    public static final RegistryObject<MobEffect> HUNTER_MARK = EFFECTS.register("hunter_mark", () ->
+            new AmemaruEffect(MobEffectCategory.HARMFUL, 0x9FD8FF, false));
+    /** 縫い止め・絡め糸：その場から動けない（攻撃はできる）。 */
+    public static final RegistryObject<MobEffect> ROOTED = EFFECTS.register("rooted", () ->
+            new AmemaruEffect(MobEffectCategory.HARMFUL, 0xC8B4FF, true)
+                    .addAttributeModifier(Attributes.MOVEMENT_SPEED, "3f0c7a52-9e14-4b6d-8a2f-5c1d7e9b0a36", -1.0,
+                            AttributeModifier.Operation.MULTIPLY_TOTAL));
+    /** 戒め：攻撃が弱まる（割合は {@code StatusService}）。 */
+    public static final RegistryObject<MobEffect> ADMONISHED = EFFECTS.register("admonished", () ->
+            new AmemaruEffect(MobEffectCategory.HARMFUL, 0xFFE08A, false));
+    /** 煙：攻撃が外れやすい（割合は {@code StatusService}）。 */
+    public static final RegistryObject<MobEffect> BLINDED = EFFECTS.register("blinded", () ->
+            new AmemaruEffect(MobEffectCategory.HARMFUL, 0x9AA0A8, false));
+
+    // ---------------------------------------------------------------- Phase 6 その2：プレイヤーの強化（アイコンと残り時間）
+
+    /** 加護の灯：防御が上がる。 */
+    public static final RegistryObject<MobEffect> BLESSING = EFFECTS.register("blessing", () ->
+            new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0xFFE08A, false));
+    /** 守り：受けるダメージが減る。 */
+    public static final RegistryObject<MobEffect> PROTECTED = EFFECTS.register("protected", () ->
+            new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0xF4F0C8, false));
+    /** 鷹の眼差し・気功：会心が上がる。 */
+    public static final RegistryObject<MobEffect> KEEN = EFFECTS.register("keen", () ->
+            new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0xFFD27A, false));
+    /** 足が速くなる（強さ1つにつき +5%）。 */
+    public static final RegistryObject<MobEffect> SWIFT = EFFECTS.register("swift", () ->
+            new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0xB8F0FF, false)
+                    .addAttributeModifier(Attributes.MOVEMENT_SPEED, "6b2e9d14-7c3a-4f58-b1e6-2a9c0d4e7f81", 0.05,
+                            AttributeModifier.Operation.MULTIPLY_TOTAL));
+    /** 百烈・結：次のスキルが強くなる。 */
+    public static final RegistryObject<MobEffect> EMPOWERED = EFFECTS.register("empowered", () ->
+            new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0xFFB46E, false));
+    /** 狙撃の構え：次の矢が強くなる。足は遅くなる。 */
+    public static final RegistryObject<MobEffect> AIMING = EFFECTS.register("aiming", () ->
+            new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0x9FD8FF, false)
+                    .addAttributeModifier(Attributes.MOVEMENT_SPEED, "1d8f3b6a-2e4c-4a7d-9f05-8b3c6e1a2d94", -0.5,
+                            AttributeModifier.Operation.MULTIPLY_TOTAL));
+    /** 命の糸：つながっている。 */
+    public static final RegistryObject<MobEffect> LIFE_THREAD = EFFECTS.register("life_thread", () ->
+            new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0x8CF0B4, false));
+    /** 身代わりの鈴：倒れるほどの攻撃を一度だけ防ぐ。 */
+    public static final RegistryObject<MobEffect> GUARDIAN_BELL = EFFECTS.register("guardian_bell", () ->
+            new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0xFFF0A0, false));
+    /** 星の環：星が巡っている。 */
+    public static final RegistryObject<MobEffect> STAR_RING = EFFECTS.register("star_ring", () ->
+            new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0xFFD27A, false));
+    /** 影分身：影が共に斬る。 */
+    public static final RegistryObject<MobEffect> SHADOW_CLONE = EFFECTS.register("shadow_clone", () ->
+            new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0x7A5CC8, false));
+    /** 毒塗り：攻撃が毒を重ねる。 */
+    public static final RegistryObject<MobEffect> VENOM_COAT = EFFECTS.register("venom_coat", () ->
+            new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0x8CE65A, false));
+    /** 疾風の弓舞：足が速くなる（強さ1つにつき +5%）。 */
+    public static final RegistryObject<MobEffect> BOW_DANCE = EFFECTS.register("bow_dance", () ->
+            new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0xB8FFD8, false)
+                    .addAttributeModifier(Attributes.MOVEMENT_SPEED, "a4c1e7f2-5b3d-4e69-8c0a-3f7b2d9e1c58", 0.05,
+                            AttributeModifier.Operation.MULTIPLY_TOTAL));
+    /** 影走り：敵の攻撃をすり抜ける。 */
+    public static final RegistryObject<MobEffect> EVADE = EFFECTS.register("evade", () ->
+            new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0x5A4A8C, false));
+    /** 天地流転：連撃が消えない。 */
+    public static final RegistryObject<MobEffect> ENDLESS_FLOW = EFFECTS.register("endless_flow", () ->
+            new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0x7FD6FF, false));
+    /** 余韻など：HPが戻り続ける。 */
+    public static final RegistryObject<MobEffect> RENEWAL = EFFECTS.register("renewal", () ->
+            new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0x8CF0B4, false));
+    /** 潜伏：敵に見失われている。 */
+    public static final RegistryObject<MobEffect> HIDDEN = EFFECTS.register("hidden", () ->
+            new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0x50506A, false));
+
     private ModEffects() {
     }
 }

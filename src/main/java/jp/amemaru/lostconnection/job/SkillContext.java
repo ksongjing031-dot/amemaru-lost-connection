@@ -43,6 +43,18 @@ public final class SkillContext {
     boolean prepared;
     /** 感電した敵から始まった雷鎖など、強まった1回か（演出に使う）。 */
     public boolean empowered;
+    /** 気配を、このスキルでもうためたか（1回のスキルで1回だけ。Phase 6 その2）。 */
+    public boolean presenceCounted;
+    /** 影分身の「もう一度斬る」のダメージか（影分身をくり返さないため）。 */
+    public boolean echo;
+    /** 必ず会心にするか（極めの一撃で、連撃が最大のとき）。 */
+    public boolean forceCrit;
+    /** いま与えているダメージが無視する防御の割合（%。ダメージの効果ごとに決める）。 */
+    public double currentPierce;
+    /** 連ね斬り：このスキルの倍率をもう決めたか（1回のスキルで1回だけ）。 */
+    boolean bladeChecked;
+    /** ゲージ・陣・使った人にかける効果を、もう出したか（弾が何発当たっても1回だけ）。 */
+    boolean selfApplied;
 
     // 使った瞬間のパッシブ
     /** 砕きの心得：よろめき・防御崩しの敵へのダメージの上がり幅（%）。 */

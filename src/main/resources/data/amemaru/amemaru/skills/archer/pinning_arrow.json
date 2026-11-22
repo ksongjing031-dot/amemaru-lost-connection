@@ -1,0 +1,52 @@
+{
+  "job": "archer",
+  "school": "sniping",
+  "row": 2,
+  "column": 0,
+  "type": "active",
+  "name": "縫い止め",
+  "description": "敵の影を地面に縫いとめる矢。当たった敵は、しばらくその場から動けなくなる（攻撃はしてくる）。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 10,
+  "requires": [
+    {
+      "skill": "archer/piercing_shot",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 12
+  },
+  "cooldown": 12,
+  "link": "starter",
+  "delivery": {
+    "type": "projectile",
+    "kind": "arrow",
+    "range": 30,
+    "speed": 2.6,
+    "radius": 0.25
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 0.9,
+      "coefficient_per_rank": 0.15
+    },
+    {
+      "type": "root",
+      "duration": 2.0,
+      "duration_per_rank": 0.5
+    }
+  ],
+  "tags": [
+    "arrow"
+  ],
+  "animation": "archer_shot",
+  "sound": "amemaru:skill.archer.pinning_arrow"
+}

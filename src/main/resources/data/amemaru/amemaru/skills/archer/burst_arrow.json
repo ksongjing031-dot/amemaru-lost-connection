@@ -1,0 +1,54 @@
+{
+  "job": "archer",
+  "school": "rapid",
+  "row": 3,
+  "column": 0,
+  "type": "active",
+  "name": "爆ぜ矢",
+  "description": "結晶の火薬を仕込んだ矢。当たった所で弾け、まわりの敵をまとめて吹き飛ばす。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "archer/arrow_rain",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 18
+  },
+  "cooldown": 10,
+  "link": "finisher",
+  "delivery": {
+    "type": "projectile",
+    "kind": "arrow",
+    "range": 30,
+    "speed": 2.6,
+    "radius": 0.25,
+    "explode": 3,
+    "explode_per_rank": 0.5
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 1.6,
+      "coefficient_per_rank": 0.25
+    },
+    {
+      "type": "knockback",
+      "strength": 0.5
+    }
+  ],
+  "tags": [
+    "arrow"
+  ],
+  "animation": "archer_shot",
+  "sound": "amemaru:skill.archer.burst_arrow",
+  "impact_sound": "amemaru:skill.archer.burst_arrow_impact"
+}

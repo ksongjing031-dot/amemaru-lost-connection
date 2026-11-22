@@ -1,0 +1,23 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "weapon",
+  "mastery": 1,
+  "mastery_exp": 10,
+  "ingredients": [
+    {
+      "item": "amemaru:moss_iron",
+      "count": 3
+    },
+    {
+      "item": "amemaru:bee_stinger",
+      "count": 4
+    },
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 2
+    }
+  ],
+  "result": {
+    "item": "amemaru:ancient_stone_bow"
+  }
+}

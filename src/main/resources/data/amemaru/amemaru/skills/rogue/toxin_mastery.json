@@ -1,0 +1,27 @@
+{
+  "job": "rogue",
+  "school": "venom",
+  "row": 1,
+  "column": 2,
+  "type": "passive",
+  "name": "毒の心得",
+  "description": "毒の調合を知り尽くしている。毒のダメージが上がる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "requires": [
+    {
+      "skill": "rogue/venom_blade",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "toxin_power",
+    "value": 10,
+    "value_per_rank": 5
+  }
+}

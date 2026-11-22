@@ -1,0 +1,59 @@
+{
+  "job": "monk",
+  "school": "hard",
+  "row": 4,
+  "column": 0,
+  "type": "active",
+  "ultimate": true,
+  "name": "百烈・結",
+  "description": "拳聖の奥義。百の拳で敵を打ちすえ、最後に結びの一撃を放つ。打ち終えると、まわりの仲間全員の次のスキルが強くなる。【極】",
+  "max_rank": 1,
+  "rank_costs": [
+    5
+  ],
+  "upper_rank": 1,
+  "min_level": 30,
+  "requires": [
+    {
+      "skill": "monk/hakkei",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 50
+  },
+  "cooldown": 90,
+  "link": "finisher",
+  "delivery": {
+    "type": "target",
+    "range": 4.5
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 0.35,
+      "hits": 20,
+      "hit_interval": 2
+    },
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 2.0,
+      "delay": 42
+    },
+    {
+      "type": "buff",
+      "buff": "empower_next",
+      "duration": 6,
+      "value": 30,
+      "area": 10
+    }
+  ],
+  "tags": [
+    "fist"
+  ],
+  "combo": "finisher",
+  "animation": "monk_hundred",
+  "sound": "amemaru:skill.monk.hundred_bond"
+}

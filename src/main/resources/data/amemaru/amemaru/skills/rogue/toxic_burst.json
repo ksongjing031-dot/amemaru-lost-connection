@@ -1,0 +1,51 @@
+{
+  "job": "rogue",
+  "school": "venom",
+  "row": 3,
+  "column": 0,
+  "type": "active",
+  "name": "毒爆",
+  "description": "毒に合図を送り、敵の体の中で一気に弾けさせる。狙った敵とまわりの敵の毒を消すかわりに、毒の数だけ大きなダメージを与える。気配が残っていれば、それも込める。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "rogue/poison_mist",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 16
+  },
+  "cooldown": 10,
+  "link": "finisher",
+  "delivery": {
+    "type": "target",
+    "range": 16
+  },
+  "effects": [
+    {
+      "type": "gauge_burst",
+      "per_gauge": 0.25
+    },
+    {
+      "type": "detonate_poison",
+      "stat": "attack",
+      "base": 0.6,
+      "per_stack": 0.6,
+      "per_stack_per_rank": 0.1,
+      "radius": 4
+    }
+  ],
+  "tags": [
+    "poison"
+  ],
+  "animation": "rogue_snap",
+  "sound": "amemaru:skill.rogue.toxic_burst",
+  "impact_sound": "amemaru:skill.rogue.toxic_burst_impact"
+}

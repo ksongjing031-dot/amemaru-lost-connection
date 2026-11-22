@@ -1,0 +1,27 @@
+{
+  "job": "monk",
+  "school": "hard",
+  "row": 4,
+  "column": 2,
+  "type": "passive",
+  "name": "気の巡り",
+  "description": "連撃を締めくくると、巡った気が体を癒す。【極】の技で連撃を使うと、連撃1つにつき最大HPの一部が戻る。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 20,
+  "requires": [
+    {
+      "skill": "monk/battle_aura",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "flowing_ki",
+    "value": 2,
+    "value_per_rank": 1
+  }
+}

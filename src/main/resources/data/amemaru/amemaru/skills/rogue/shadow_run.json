@@ -1,0 +1,46 @@
+{
+  "job": "rogue",
+  "school": "shadow",
+  "row": 1,
+  "column": 0,
+  "type": "active",
+  "name": "影走り",
+  "description": "影の中を走り抜け、向いている方へ一気に駆ける。走っている間は、敵の攻撃をすり抜ける。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "requires": [
+    {
+      "skill": "rogue/flurry",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 8
+  },
+  "cooldown": 8,
+  "cooldown_per_rank": -1,
+  "delivery": {
+    "type": "dash",
+    "distance": 8,
+    "distance_per_rank": 1,
+    "width": 1.2
+  },
+  "effects": [
+    {
+      "type": "buff",
+      "buff": "evade",
+      "duration": 0.8,
+      "self": true
+    }
+  ],
+  "tags": [
+    "move"
+  ],
+  "animation": "rogue_dash",
+  "sound": "amemaru:skill.rogue.shadow_run"
+}

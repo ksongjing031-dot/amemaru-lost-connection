@@ -1,0 +1,66 @@
+{
+  "job": "healer",
+  "school": "blessing",
+  "row": 4,
+  "column": 0,
+  "type": "active",
+  "ultimate": true,
+  "name": "結びの聖域",
+  "description": "鈴守の奥義。鈴の音で結ばれた聖域を開く（10秒）。聖域の中の仲間は受けるダメージが減って少しずつ癒え、中の敵は攻撃が弱まる。",
+  "max_rank": 1,
+  "rank_costs": [
+    5
+  ],
+  "upper_rank": 1,
+  "min_level": 30,
+  "requires": [
+    {
+      "skill": "healer/guardian_bell",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 70
+  },
+  "cooldown": 240,
+  "delivery": {
+    "type": "around",
+    "radius": 8,
+    "affects": "allies",
+    "include_self": true
+  },
+  "effects": [
+    {
+      "type": "zone",
+      "radius": 8,
+      "duration": 10,
+      "interval": 1.0,
+      "effects": [
+        {
+          "type": "buff",
+          "buff": "protect",
+          "duration": 1.2,
+          "value": 25,
+          "to": "allies"
+        },
+        {
+          "type": "heal",
+          "stat": "magic",
+          "coefficient": 0.4,
+          "to": "allies"
+        },
+        {
+          "type": "weaken",
+          "value": 20,
+          "duration": 1.2
+        }
+      ]
+    }
+  ],
+  "tags": [
+    "bell",
+    "heal"
+  ],
+  "animation": "healer_sanctuary",
+  "sound": "amemaru:skill.healer.bond_sanctuary"
+}

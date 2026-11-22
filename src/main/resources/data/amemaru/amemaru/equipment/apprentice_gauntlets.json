@@ -1,0 +1,18 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "見習い装備",
+  "rarity": "common",
+  "required_level": 1,
+  "jobs": [
+    "amemaru:monk"
+  ],
+  "stats": {
+    "attack": 6,
+    "hp": 20
+  },
+  "fixed": true,
+  "durability": 0,
+  "binding": "bound",
+  "description": "ギルドが新しい冒険者に貸す、革に鉄の鋲を打った籠手。"
+}

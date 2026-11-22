@@ -1,0 +1,26 @@
+{
+  "slot": "feet",
+  "generation": 1,
+  "series": "古代石シリーズ（軽装）",
+  "rarity": "common",
+  "required_level": 5,
+  "jobs": [
+    "amemaru:archer",
+    "amemaru:rogue",
+    "amemaru:monk"
+  ],
+  "stats": {
+    "defense": 2,
+    "hp": 10,
+    "speed": 2
+  },
+  "durability": 280,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 1
+    }
+  ],
+  "description": "底に古代石の薄板を仕込んだ、柔らかい短靴。"
+}

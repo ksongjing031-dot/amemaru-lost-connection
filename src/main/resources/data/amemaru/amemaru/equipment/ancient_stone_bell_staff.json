@@ -1,0 +1,28 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "古代石シリーズ",
+  "rarity": "common",
+  "required_level": 5,
+  "jobs": [
+    "amemaru:healer"
+  ],
+  "stats": {
+    "magic": 16,
+    "mp": 40,
+    "heal_power": 3
+  },
+  "durability": 400,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:moss_iron",
+      "count": 1
+    },
+    {
+      "item": "amemaru:crystal_shard",
+      "count": 1
+    }
+  ],
+  "description": "古代石の輪に、結晶の鈴を下げた杖。鳴らすと、澄んだ音が長く残る。"
+}

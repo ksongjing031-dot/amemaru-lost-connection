@@ -1,0 +1,27 @@
+{
+  "job": "archer",
+  "school": "rapid",
+  "row": 1,
+  "column": 2,
+  "type": "passive",
+  "name": "身軽な射手",
+  "description": "軽い装いで、戦場を駆ける。弓を持っていると、移動が速くなる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "requires": [
+    {
+      "skill": "archer/spread_arrows",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "nimble_archer",
+    "value": 4,
+    "value_per_rank": 3
+  }
+}

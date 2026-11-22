@@ -1,0 +1,19 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "weapon",
+  "mastery": 1,
+  "mastery_exp": 10,
+  "ingredients": [
+    {
+      "item": "amemaru:moss_iron",
+      "count": 4
+    },
+    {
+      "item": "amemaru:chipped_fang",
+      "count": 3
+    }
+  ],
+  "result": {
+    "item": "amemaru:ancient_stone_daggers"
+  }
+}

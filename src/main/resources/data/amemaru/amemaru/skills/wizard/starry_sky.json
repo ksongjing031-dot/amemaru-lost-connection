@@ -1,0 +1,27 @@
+{
+  "job": "wizard",
+  "school": "starlight",
+  "row": 5,
+  "column": 2,
+  "type": "passive",
+  "name": "満天",
+  "description": "星が弾けるたび、次の星が近づく。星痕を弾けさせると、星痕1つにつき、星灯の流派のスキルのクールダウンが縮む。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 25,
+  "requires": [
+    {
+      "skill": "wizard/star_guide",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "starry_sky",
+    "value": 0.3,
+    "value_per_rank": 0.15
+  }
+}

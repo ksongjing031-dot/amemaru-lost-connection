@@ -1,0 +1,54 @@
+{
+  "job": "monk",
+  "school": "soft",
+  "row": 1,
+  "column": 0,
+  "type": "active",
+  "name": "流水の構え",
+  "description": "水のように構え、しばらくの間、どの向きからの攻撃も受け流して打ち返す。打ち返すたびに気がたまる。【継】",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "requires": [
+    {
+      "skill": "monk/palm_strike",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 10
+  },
+  "cooldown": 14,
+  "delivery": {
+    "type": "self"
+  },
+  "effects": [
+    {
+      "type": "buff",
+      "buff": "parry",
+      "duration": 3,
+      "duration_per_rank": 0.5,
+      "counters": 99,
+      "all_directions": 1,
+      "on_success": [
+        {
+          "type": "damage",
+          "stat": "attack",
+          "coefficient": 1.0,
+          "coefficient_per_rank": 0.2
+        },
+        {
+          "type": "gauge",
+          "amount": 10
+        }
+      ]
+    }
+  ],
+  "combo": "link",
+  "animation": "monk_stance",
+  "sound": "amemaru:skill.monk.flowing_stance"
+}

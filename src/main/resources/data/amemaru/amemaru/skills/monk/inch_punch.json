@@ -1,0 +1,53 @@
+{
+  "job": "monk",
+  "school": "soft",
+  "row": 5,
+  "column": 0,
+  "type": "active",
+  "name": "寸勁",
+  "description": "拳を敵に当てたまま、一寸の間合いから気を打ちこむ。打った後、しばらく自分を気の膜が包む。【極】",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 25,
+  "requires": [
+    {
+      "skill": "monk/ki_vortex",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 18
+  },
+  "cooldown": 12,
+  "link": "finisher",
+  "delivery": {
+    "type": "target",
+    "range": 3.5
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 2.0,
+      "coefficient_per_rank": 0.3
+    },
+    {
+      "type": "barrier",
+      "stat": "attack",
+      "coefficient": 1.0,
+      "coefficient_per_rank": 0.2,
+      "duration": 6,
+      "self": true
+    }
+  ],
+  "tags": [
+    "fist"
+  ],
+  "combo": "finisher",
+  "animation": "monk_inch",
+  "sound": "amemaru:skill.monk.inch_punch"
+}

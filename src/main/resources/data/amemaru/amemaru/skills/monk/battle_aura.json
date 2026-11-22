@@ -1,0 +1,27 @@
+{
+  "job": "monk",
+  "school": "hard",
+  "row": 3,
+  "column": 2,
+  "type": "passive",
+  "name": "闘気",
+  "description": "気が満ちると、拳にも力がみなぎる。気が50以上ある間、攻撃が上がる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "monk/iron_body",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "battle_aura",
+    "value": 5,
+    "value_per_rank": 3
+  }
+}

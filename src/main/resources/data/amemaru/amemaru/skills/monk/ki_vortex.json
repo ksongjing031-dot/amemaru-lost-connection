@@ -1,0 +1,56 @@
+{
+  "job": "monk",
+  "school": "soft",
+  "row": 4,
+  "column": 0,
+  "type": "active",
+  "name": "気の渦",
+  "description": "気の渦を起こし、まわりの敵を自分のそばへ引き寄せて打つ。引き寄せられた敵は足が鈍る。【継】",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 20,
+  "requires": [
+    {
+      "skill": "monk/ki_bullet",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 16
+  },
+  "cooldown": 14,
+  "delivery": {
+    "type": "around",
+    "radius": 6,
+    "radius_per_rank": 0.5
+  },
+  "effects": [
+    {
+      "type": "pull",
+      "strength": 1.0,
+      "stop": 1.5
+    },
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 1.0,
+      "coefficient_per_rank": 0.18
+    },
+    {
+      "type": "status",
+      "effect": "minecraft:slowness",
+      "duration": 2,
+      "level": 2
+    }
+  ],
+  "tags": [
+    "ki"
+  ],
+  "combo": "link",
+  "animation": "monk_vortex",
+  "sound": "amemaru:skill.monk.ki_vortex"
+}

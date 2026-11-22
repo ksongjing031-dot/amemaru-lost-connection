@@ -1,0 +1,27 @@
+{
+  "job": "wizard",
+  "school": "starlight",
+  "row": 4,
+  "column": 2,
+  "type": "passive",
+  "name": "星の導き",
+  "description": "星痕は、仲間の攻撃も導く。星痕のある敵は、星痕1つにつき、誰から受けるダメージも上がる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 20,
+  "requires": [
+    {
+      "skill": "wizard/star_afterglow",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "star_guide",
+    "value": 2,
+    "value_per_rank": 1
+  }
+}

@@ -46,7 +46,17 @@ public final class CombatTextS2C {
         /** 凍結！ */
         FROZEN,
         /** 回避！（素早さで敵の攻撃をかわした） */
-        DODGE;
+        DODGE,
+        /** 外れた（煙・影走りで、敵の攻撃が外れた） */
+        MISS,
+        /** 毒のダメージ。 */
+        POISON,
+        /** 連撃（モンク。amount が連撃の数）。 */
+        CHAIN,
+        /** 起き上がった（呼び戻し）。 */
+        REVIVE,
+        /** 身代わりの鈴が砕けた。 */
+        SAVED;
 
         private static final Kind[] VALUES = values();
 

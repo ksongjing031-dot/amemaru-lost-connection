@@ -1,0 +1,46 @@
+{
+  "job": "healer",
+  "school": "healing",
+  "row": 1,
+  "column": 0,
+  "type": "active",
+  "name": "祈りの輪",
+  "description": "鈴を高く掲げて祈り、自分のまわりに癒しの輪を広げる。輪の中の仲間（自分も）の傷がふさがる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "requires": [
+    {
+      "skill": "healer/bell_heal",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 20
+  },
+  "cooldown": 10,
+  "delivery": {
+    "type": "around",
+    "radius": 7,
+    "radius_per_rank": 1,
+    "affects": "allies",
+    "include_self": true
+  },
+  "effects": [
+    {
+      "type": "heal",
+      "stat": "magic",
+      "coefficient": 1.8,
+      "coefficient_per_rank": 0.3
+    }
+  ],
+  "tags": [
+    "heal"
+  ],
+  "animation": "healer_pray",
+  "sound": "amemaru:skill.healer.prayer_circle"
+}

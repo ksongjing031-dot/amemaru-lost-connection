@@ -1,0 +1,45 @@
+{
+  "job": "archer",
+  "school": "sniping",
+  "row": 4,
+  "column": 0,
+  "type": "active",
+  "name": "狙撃の構え",
+  "description": "片ひざをつき、狙いを定める。しばらく足が遅くなるかわりに、次に放つ矢3本（スキルと通常の射撃）の威力が上がり、集中が10たまる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 20,
+  "requires": [
+    {
+      "skill": "archer/hawks_gaze",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 16
+  },
+  "cooldown": 20,
+  "delivery": {
+    "type": "self"
+  },
+  "effects": [
+    {
+      "type": "buff",
+      "buff": "aim",
+      "duration": 8,
+      "value": 40,
+      "value_per_rank": 10,
+      "count": 3
+    },
+    {
+      "type": "gauge",
+      "amount": 10
+    }
+  ],
+  "animation": "archer_kneel",
+  "sound": "amemaru:skill.archer.sniper_stance"
+}

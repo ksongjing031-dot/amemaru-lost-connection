@@ -1,0 +1,27 @@
+{
+  "job": "knight",
+  "school": "greatsword",
+  "row": 4,
+  "column": 2,
+  "type": "passive",
+  "name": "剛剣の極意",
+  "description": "剛剣の型を極めた。剛剣の流派のスキルのダメージが上がる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 20,
+  "requires": [
+    {
+      "skill": "knight/fighting_spirit",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "school_power",
+    "value": 5,
+    "value_per_rank": 3
+  }
+}

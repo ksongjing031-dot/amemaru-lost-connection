@@ -1,0 +1,23 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "armor",
+  "mastery": 2,
+  "mastery_exp": 14,
+  "ingredients": [
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 5
+    },
+    {
+      "item": "amemaru:chipped_fang",
+      "count": 3
+    },
+    {
+      "item": "amemaru:moss_iron",
+      "count": 2
+    }
+  ],
+  "result": {
+    "item": "amemaru:ancient_stone_jerkin"
+  }
+}

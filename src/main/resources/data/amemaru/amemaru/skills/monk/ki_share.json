@@ -1,0 +1,51 @@
+{
+  "job": "monk",
+  "school": "soft",
+  "row": 2,
+  "column": 0,
+  "type": "active",
+  "name": "気功・分け与え",
+  "description": "自分の気を手のひらに集め、仲間に分け与える。気を30使って仲間を癒し、しばらく会心を上げる（気が30以上ないと使えない）。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 10,
+  "requires": [
+    {
+      "skill": "monk/flowing_stance",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 10,
+    "gauge": 30
+  },
+  "cooldown": 15,
+  "link": "support",
+  "delivery": {
+    "type": "target",
+    "range": 16,
+    "affects": "allies",
+    "fallback_self": true,
+    "smart": true
+  },
+  "effects": [
+    {
+      "type": "heal",
+      "stat": "attack",
+      "coefficient": 1.5,
+      "coefficient_per_rank": 0.3
+    },
+    {
+      "type": "buff",
+      "buff": "crit_up",
+      "duration": 8,
+      "value": 10
+    }
+  ],
+  "animation": "monk_ki_give",
+  "sound": "amemaru:skill.monk.ki_share"
+}

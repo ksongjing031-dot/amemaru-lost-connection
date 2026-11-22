@@ -1,0 +1,27 @@
+{
+  "job": "monk",
+  "school": "soft",
+  "row": 3,
+  "column": 2,
+  "type": "passive",
+  "name": "柔の理",
+  "description": "力に力で逆らわない。回避が上がり、かわすたびに気がたまる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "monk/receiving_art",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "soft_way",
+    "value": 5,
+    "value_per_rank": 2.5
+  }
+}

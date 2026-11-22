@@ -1,0 +1,56 @@
+{
+  "job": "healer",
+  "school": "healing",
+  "row": 2,
+  "column": 1,
+  "type": "active",
+  "name": "癒しの雨",
+  "description": "狙った地点に、やわらかな光の雨を降らせる。雨の中にいる仲間は、少しずつ傷が癒えていく。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 10,
+  "requires": [
+    {
+      "skill": "healer/prayer_circle",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 28
+  },
+  "cooldown": 16,
+  "cooldown_per_rank": -1,
+  "delivery": {
+    "type": "point",
+    "range": 20,
+    "radius": 4,
+    "radius_per_rank": 0.5
+  },
+  "effects": [
+    {
+      "type": "zone",
+      "radius": 4,
+      "radius_per_rank": 0.5,
+      "duration": 6,
+      "interval": 1.0,
+      "effects": [
+        {
+          "type": "heal",
+          "stat": "magic",
+          "coefficient": 0.5,
+          "coefficient_per_rank": 0.08,
+          "to": "allies"
+        }
+      ]
+    }
+  ],
+  "tags": [
+    "heal"
+  ],
+  "animation": "healer_raise",
+  "sound": "amemaru:skill.healer.healing_rain"
+}

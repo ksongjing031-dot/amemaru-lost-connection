@@ -59,7 +59,8 @@ public final class SpeedService {
 
     /** 敵の攻撃をかわすか（サーバーで抽選）。 */
     public static boolean dodges(ServerPlayer player, PlayerData data) {
-        double chance = dodgeChance(data, GrowthRules.current());
+        // 身軽（ローグ）・柔の理（モンク）の分を足す（Phase 6 その2）
+        double chance = dodgeChance(data, GrowthRules.current()) + jp.amemaru.lostconnection.job.PassiveService.dodgeBonus(data);
         return chance > 0 && player.getRandom().nextDouble() * 100.0 < chance;
     }
 

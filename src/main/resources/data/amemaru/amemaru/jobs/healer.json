@@ -1,0 +1,53 @@
+{
+  "kind": "combat",
+  "order": 30,
+  "name": "ヒーラー",
+  "role": "回復・支援",
+  "description": "結びの教会の鈴を手に、仲間の傷をつなぎ直す癒し手。鈴の音で傷をふさぎ、倒れた仲間を呼び戻し、加護の灯で仲間を守る。",
+  "color": "#8CF0B4",
+  "icon": "amemaru:textures/gui/job/healer.png",
+  "weapons": "amemaru:weapons/healer",
+  "weapon_text": "鈴杖",
+  "tags": [
+    "magic",
+    "support",
+    "healer"
+  ],
+  "stats": {
+    "percent": {
+      "mp": 40,
+      "magic": 15,
+      "defense": 5,
+      "attack": -20
+    }
+  },
+  "schools": [
+    {
+      "id": "healing",
+      "name": "癒し",
+      "description": "仲間の傷を癒し、倒れた仲間を呼び戻す流派。ひとりを大きく癒す鈴、みんなを包む輪と雨、命の糸。",
+      "color": "#8CF0B4"
+    },
+    {
+      "id": "blessing",
+      "name": "加護",
+      "description": "鈴の音で仲間を守り、敵を戒める流派。加護の灯と祝福の盾で守り、清めの鈴音と天鈴で敵を打つ。",
+      "color": "#FFE08A"
+    }
+  ],
+  "starting_skills": [
+    "healer/bell_heal",
+    "healer/purifying_chime"
+  ],
+  "starter_kit": [
+    {
+      "item": "amemaru:apprentice_bell_staff"
+    }
+  ],
+  "upper": {
+    "name": "鈴守",
+    "description": "結びの鈴を守り継ぐ者。奥義（癒しの「大いなる呼び声」か、加護の「結びの聖域」）と、各スキルの第3段が開く。",
+    "min_level": 30,
+    "min_day": 11
+  }
+}

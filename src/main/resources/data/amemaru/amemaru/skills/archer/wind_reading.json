@@ -1,0 +1,27 @@
+{
+  "job": "archer",
+  "school": "rapid",
+  "row": 4,
+  "column": 2,
+  "type": "passive",
+  "name": "風読み",
+  "description": "風を読み、矢の軌道を整える。矢のスキルのダメージが上がり、矢が速く遠くまで飛ぶ。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 20,
+  "requires": [
+    {
+      "skill": "archer/chained_arrows",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "wind_reading",
+    "value": 5,
+    "value_per_rank": 2.5
+  }
+}

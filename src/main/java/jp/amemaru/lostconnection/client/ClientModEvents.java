@@ -113,6 +113,10 @@ public final class ClientModEvents {
         event.registerSpriteSet(ModParticles.STAR.get(), sprites -> new FxParticle.Provider(sprites, FxParticle.Style.STAR));
         event.registerSpriteSet(ModParticles.RUNE.get(), sprites -> new FxParticle.Provider(sprites, FxParticle.Style.RUNE));
         event.registerSpriteSet(ModParticles.SNOW.get(), sprites -> new FxParticle.Provider(sprites, FxParticle.Style.SNOW));
+        event.registerSpriteSet(ModParticles.FEATHER.get(), sprites -> new FxParticle.Provider(sprites, FxParticle.Style.FEATHER));
+        event.registerSpriteSet(ModParticles.PETAL.get(), sprites -> new FxParticle.Provider(sprites, FxParticle.Style.PETAL));
+        event.registerSpriteSet(ModParticles.SMOKE.get(), sprites -> new FxParticle.Provider(sprites, FxParticle.Style.SMOKE));
+        event.registerSpriteSet(ModParticles.BUBBLE.get(), sprites -> new FxParticle.Provider(sprites, FxParticle.Style.BUBBLE));
     }
 
     @SubscribeEvent

@@ -40,6 +40,9 @@ public final class ClientPlayerState {
     private final int[] loadout = new int[PlayerData.LOADOUT_SIZE];
     private float gauge;
     private int gaugeMax;
+    /** モンクの連撃の数と、消える時刻（Phase 6 その2）。 */
+    private int combo;
+    private long comboUntil;
     /** スキルの番号 → {使えるようになるゲーム内の時刻, クールダウンの長さ}。 */
     private final Map<Integer, long[]> cooldowns = new HashMap<>();
     private int castSkill = -1;
@@ -108,6 +111,8 @@ public final class ClientPlayerState {
         if ((sections & PlayerData.SYNC_GAUGE) != 0) {
             gauge = message.gauge();
             gaugeMax = message.gaugeMax();
+            combo = message.combo();
+            comboUntil = message.combo() > 0 ? now + message.comboRemaining() : 0L;
         }
         if ((sections & PlayerData.SYNC_COOLDOWNS) != 0) {
             cooldowns.clear();
@@ -279,6 +284,16 @@ public final class ClientPlayerState {
 
     public float gauge() {
         return gauge;
+    }
+
+    /** 連撃の数（消えていれば0）。 */
+    public int combo() {
+        return combo > 0 && gameTime() < comboUntil ? combo : 0;
+    }
+
+    /** 連撃が消えるまでの tick。 */
+    public int comboRemaining() {
+        return combo() > 0 ? (int) Math.max(0L, comboUntil - gameTime()) : 0;
     }
 
     public int gaugeMax() {

@@ -1,0 +1,42 @@
+{
+  "job": "rogue",
+  "school": "shadow",
+  "row": 3,
+  "column": 0,
+  "type": "active",
+  "name": "影縫い",
+  "description": "味方の影に飛び込み、その人のそばへ移る。守りに行くときにも、逃げるときにも使える。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "rogue/vital_strike",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 12
+  },
+  "cooldown": 15,
+  "link": "support",
+  "delivery": {
+    "type": "target",
+    "range": 24,
+    "affects": "allies"
+  },
+  "effects": [
+    {
+      "type": "teleport_to"
+    }
+  ],
+  "tags": [
+    "move"
+  ],
+  "animation": "rogue_dash",
+  "sound": "amemaru:skill.rogue.shadow_stitch"
+}
