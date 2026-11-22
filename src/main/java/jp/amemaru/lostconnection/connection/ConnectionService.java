@@ -555,13 +555,13 @@ public final class ConnectionService {
                         0.25, 0.01);
             }
         }
-        // 段階2：結界が塔前広場まで広がる（広場のふちに、立ちのぼる光の幕）
+        // 段階2：結界が塔前広場まで広がる（広場のふちに、3ブロックおきに立ちのぼる光の幕）
         if (plazaInBarrier(server)) {
             int w = PLAZA_MAX_X - PLAZA_MIN_X;
             int d = PLAZA_MAX_Z - PLAZA_MIN_Z;
             int perimeter = 2 * (w + d);
-            for (int i = 0; i < 20; i++) {
-                int t = level.random.nextInt(perimeter);
+            int phase = level.random.nextInt(3);
+            for (int t = phase; t < perimeter; t += 3) {
                 int x;
                 int z;
                 if (t < w) {
@@ -578,8 +578,8 @@ public final class ConnectionService {
                     z = PLAZA_MAX_Z - (t - 2 * w - d);
                 }
                 // 広場の段（+0〜+3）より上に、腰から頭の高さの幕
-                particles(level, ParticleTypes.END_ROD, origin.getX() + x + 0.5, origin.getY() + 4.0, origin.getZ() + z + 0.5, 2, 0.1, 1.0,
-                        0.1, 0.005);
+                particles(level, ParticleTypes.END_ROD, origin.getX() + x + 0.5, origin.getY() + 4.0, origin.getZ() + z + 0.5, 1, 0.05, 1.0,
+                        0.05, 0.004);
             }
         }
     }

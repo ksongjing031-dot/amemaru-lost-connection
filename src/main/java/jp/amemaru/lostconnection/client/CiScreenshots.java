@@ -911,9 +911,11 @@ public final class CiScreenshots {
             {"cmd", null, "5", "time set 18000"},
             {"cmd", null, "5", "gamemode spectator @p"},
             {"hud", null, "5", "off"},
-            {"cmd", null, "40", "tp @p {at:-24.5,7,10.5} -112 -18"},
+            // 中央広場の中（半径22.5）の西南西から、大結晶を見上げる
+            {"cmd", null, "40", "tp @p {at:-16.5,3,7.5} -114 -28"},
             {"snap", null, "80", "phase7_crystal_glow"},
-            {"cmd", null, "60", "tp @p {at:0.5,17,-103.5} 180 30"},
+            // 北門の内の空から、北の塔前広場を見下ろす（城壁と門の塔より高く）
+            {"cmd", null, "60", "tp @p {at:0.5,30,-96.5} 180 40"},
             {"snap", null, "100", "phase7_plaza_barrier"},
             {"cmd", null, "5", "time set noon"},
             // 縁帳から結び札を贈る（見本の縁を3人。いない人へは、次に入ったときに届く）
