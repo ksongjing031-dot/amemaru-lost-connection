@@ -24,6 +24,7 @@
       "speed": 2
     }
   },
+  "skill_mp_per_level": 0.05,
   "gauge": {
     "type": "ki",
     "name": "気",

@@ -107,6 +107,8 @@ public final class SkillRegistry {
             checkSound(skill.sound(), where, problems);
             checkSound(skill.castSound(), where, problems);
             checkSound(skill.impactSound(), where, problems);
+            // 近接職：覚えられるレベルが高いスキルほど、消費MPを増やす（11月23日）
+            skill.setMpScale(1.0 + job.skillMpPerLevel() * Math.max(0, skill.minLevel() - 1));
             candidates.put(skill.id(), skill);
         }
 

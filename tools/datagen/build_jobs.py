@@ -231,7 +231,9 @@ def table(all_skills):
     lines = ["# スキルの一覧（全職業）", "",
              "`tools/datagen/build_jobs.py` が書き出す表です（数値はデータパックの JSON と同じ。段は Lv1・5・10・15・20・25、奥義は上位職・Lv30）。",
              "【新】は11月22日のご指示（スキルとパッシブを増やす）で足したもの、それ以外は Phase 0-A 19章の設計のとおりです。",
-             "連携は、起点・追撃・支援（Phase 0-A 13章）。モンクの【起】【継】【極】は連撃（Phase 6 その2）。", ""]
+             "連携は、起点・追撃・支援（Phase 0-A 13章）。モンクの【起】【継】【極】は連撃（Phase 6 その2）。",
+             "MPは、ゲームの中で使う値。近接職（ナイト・ローグ・モンク）は、覚えられるレベルが高いスキルほど消費MPを増やす"
+             "（11月23日。職業の `skill_mp_per_level`、1レベルにつき +5%）。", ""]
     original = original_names()
     for job in ["knight", "wizard", "healer", "archer", "rogue", "monk"]:
         lines.append(f"## {JOB_NAMES[job]}")
@@ -258,7 +260,7 @@ def table(all_skills):
                 link = ""
                 if s.get("type", "active") == "active":
                     c = s.get("cost", {})
-                    cost = str(c.get("mp", 0))
+                    cost = mp_text(c.get("mp", 0), job, 30 if s.get("ultimate") else s.get("min_level", 1))
                     if c.get("gauge"):
                         cost += f"・ゲージ{c['gauge']}"
                     cd = f"{s.get('cooldown')}秒"
@@ -272,6 +274,26 @@ def table(all_skills):
                 lines.append(f"| {level} | {kind} | {s['name']}{new} | {desc} | {cost} | {cd} | {link} |")
             lines.append("")
     return "\n".join(lines) + "\n"
+
+
+def mp_scale(job, min_level):
+    """ゲームの中の消費MPの倍率（SkillRegistry と同じ：1 ＋ 職業の skill_mp_per_level ×（覚えられるレベル − 1））。"""
+    path = os.path.join(DATA, "jobs", job + ".json")
+    per = 0.0
+    if os.path.exists(path):
+        with open(path, encoding="utf-8") as f:
+            per = json.load(f).get("skill_mp_per_level", 0.0)
+    if job in NEW_JOBS:
+        per = NEW_JOBS[job].get("skill_mp_per_level", per)
+    return 1.0 + per * max(0, min_level - 1)
+
+
+def mp_text(mp, job, min_level):
+    """表に出す消費MP（段ごとに違うときは「a→b」）。"""
+    scale = mp_scale(job, min_level)
+    values = mp if isinstance(mp, list) else [mp]
+    shown = [int(round(max(0.0, v) * scale)) for v in values]
+    return "→".join(str(v) for v in shown) if len(set(shown)) > 1 else str(shown[0])
 
 
 def original_names():

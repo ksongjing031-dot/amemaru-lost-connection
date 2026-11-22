@@ -24,6 +24,7 @@
       "crit": 5
     }
   },
+  "skill_mp_per_level": 0.05,
   "gauge": {
     "type": "presence",
     "name": "気配",

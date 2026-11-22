@@ -21,6 +21,8 @@ JOB = {
     "weapon_text": "籠手",
     "tags": ["melee", "monk"],
     "stats": {"percent": {"attack": 10, "hp": 10, "defense": 5, "mp": -10, "magic": -20}, "flat": {"speed": 2}},
+    # 11月23日：近接職は、覚えられるレベルが高いスキルほど消費MPを増やす（1レベルにつき +5%。Lv10 で ×1.45、Lv30 で ×2.45）
+    "skill_mp_per_level": 0.05,
     "gauge": {
         "type": "ki",
         "name": "気",

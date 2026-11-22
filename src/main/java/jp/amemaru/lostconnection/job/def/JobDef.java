@@ -109,6 +109,11 @@ public final class JobDef {
     private final UpperDef upper;
     /** 生産職の工房（weapon・armor・accessory。戦闘職は空）。 */
     private String workshop = "";
+    /**
+     * スキルの消費MPを、覚えられるレベルに合わせて増やす割合（1レベルにつき。11月23日のご指示「近接職のスキルの消費MPが、使える
+     * ようになるレベルに対して少ない。レベルが上がるとMP切れが起こらない」）。消費MP ×（1 ＋ この値 ×（覚えられるレベル − 1））。
+     */
+    private double skillMpPerLevel;
     /** 連撃（ない職業は null）。 */
     @Nullable
     private ComboDef combo;
@@ -227,6 +232,7 @@ public final class JobDef {
                 Collections.unmodifiableSet(tags), statPercent, statFlat, gauge, Collections.unmodifiableList(schools),
                 Collections.unmodifiableList(startingSkills), Collections.unmodifiableList(kit), upper);
         def.workshop = Json.optionalString(json, "workshop", "");
+        def.skillMpPerLevel = Json.optionalDouble(json, "skill_mp_per_level", 0.0, 0.0, 1.0);
         JsonObject comboJson = Json.optionalObject(json, "combo");
         if (comboJson != null) {
             def.combo = new ComboDef(
@@ -350,6 +356,11 @@ public final class JobDef {
     /** 生産職の工房（weapon・armor・accessory。戦闘職は空）。 */
     public String workshop() {
         return workshop;
+    }
+
+    /** スキルの消費MPを、覚えられるレベルに合わせて増やす割合（1レベルにつき）。 */
+    public double skillMpPerLevel() {
+        return skillMpPerLevel;
     }
 
     @Nullable

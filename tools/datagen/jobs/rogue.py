@@ -15,6 +15,8 @@ JOB = {
     "weapon_text": "二刀の短剣",
     "tags": ["melee", "rogue"],
     "stats": {"percent": {"attack": 20, "speed": 15, "hp": -10, "defense": -15, "magic": -20}, "flat": {"crit": 5}},
+    # 11月23日：近接職は、覚えられるレベルが高いスキルほど消費MPを増やす（1レベルにつき +5%。Lv10 で ×1.45、Lv30 で ×2.45）
+    "skill_mp_per_level": 0.05,
     "gauge": {
         "type": "presence",
         "name": "気配",
