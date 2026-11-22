@@ -114,6 +114,8 @@ public final class AdminCommands {
                         // Phase 7 その2：釣り。催し（Phase 0-B 10章の event start・stop。釣り大会から）
                         .then(FishingCommands.fishingCommand())
                         .then(EventCommands.eventCommand())
+                        // Phase 7 その3：カジノ
+                        .then(CasinoCommands.casinoCommand())
                         .then(debugCommand())));
     }
 

@@ -70,6 +70,8 @@ public final class ServerEvents {
         // Phase 7 その2：魚の表と釣りの決まり
         event.addListener(jp.amemaru.lostconnection.fishing.FishDefs.loader());
         event.addListener(jp.amemaru.lostconnection.fishing.FishingRules.loader());
+        // Phase 7 その3：カジノの倍率と上限・景品
+        event.addListener(jp.amemaru.lostconnection.casino.CasinoRules.loader());
     }
 
     @SubscribeEvent
