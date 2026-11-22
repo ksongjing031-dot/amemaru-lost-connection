@@ -766,6 +766,16 @@ public final class CiScreenshots {
             {"p6_front", null, "10"},
             {"snap", null, "20", "phase6_light_armor"},
             {"view", null, "5", "first"},
+            // 11月23日：籠手は両手にはめる・双短剣は両手に持つ（一人称と正面）。弓は弦が自分の側（一人称と正面）
+            {"snap", null, "10", "phase6_monk_first"},
+            {"cmd", null, "5", "item replace entity @a weapon.mainhand with amemaru:apprentice_daggers"},
+            {"snap", null, "15", "phase6_rogue_first"},
+            {"p6_front", null, "10"},
+            {"snap", null, "15", "phase6_rogue_front"},
+            {"cmd", null, "5", "item replace entity @a weapon.mainhand with amemaru:apprentice_bow"},
+            {"snap", null, "15", "phase6_archer_front"},
+            {"view", null, "5", "first"},
+            {"snap", null, "15", "phase6_archer_first"},
             // Phase 6 その3（11月22日）：ギルド。4日目にして（ノアが話す・エルネストがいる）、NPCを置き直す
             {"cmd", null, "10", "amemaru admin day set 4"},
             {"cmd", null, "20", "amemaru admin npc place"},
@@ -836,6 +846,9 @@ public final class CiScreenshots {
             {"p6r_bench", null, "10"},
             {"screen", null, "5", "hold"},
             {"p6r_open", null, "15"},
+            // 11月23日：作るタブ（作る品の一覧・台・説明の文が重ならない）。台に置く前に撮る
+            {"p6r_tab", null, "10", "0"},
+            {"snap", null, "15", "phase6r_craft"},
             {"p6r_place", null, "10"},
             {"p6r_tab", null, "15", "1"},
             {"snap", null, "15", "phase6r_refine"},

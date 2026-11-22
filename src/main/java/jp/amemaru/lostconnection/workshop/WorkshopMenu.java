@@ -16,11 +16,14 @@ import net.minecraft.world.item.ItemStack;
  * 画面を閉じると、台の品は持ち物に戻る。作る・強化・修理の操作は {@code WorkshopActionC2S} で頼む。
  */
 public class WorkshopMenu extends AbstractContainerMenu {
-    /** 台の場所（画面の中の座標。画面の絵と合わせる）。 */
+    /**
+     * 台の場所（画面の中の座標。画面の絵と合わせる）。11月23日：画面を広げ、台を左の列の上（タブのすぐ下）へ、持ち物を
+     * 右の札の下へ動かした（作る品の一覧・説明の文が、台や持ち物と重ならないように）。
+     */
     public static final int WORK_X = 26;
-    public static final int WORK_Y = 108;
-    public static final int INVENTORY_X = 92;
-    public static final int INVENTORY_Y = 140;
+    public static final int WORK_Y = 52;
+    public static final int INVENTORY_X = 170;
+    public static final int INVENTORY_Y = 152;
 
     private final WorkshopType type;
     private final BlockPos pos;

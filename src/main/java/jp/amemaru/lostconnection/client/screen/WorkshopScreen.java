@@ -63,16 +63,27 @@ import java.util.Locale;
  * 厳選の費用は、サーバーが計算した見積もり（{@link ClientRefine}）を出す。</p>
  */
 public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
+    // 11月23日：画面の並びを見直した（340×234）。上：題・生産職の行・タブ。左の列（幅114）：台 → 作る品の一覧・厳選の
+    // ボタンと費用・説明。右：札（品の情報。右下に操作のボタン）→ その下に持ち物。文字が台・持ち物・ボタンと重ならない
+    private static final int WIDTH = 340;
+    private static final int HEIGHT = 234;
     private static final int ROWS = 4;
     private static final int ROW_HEIGHT = 18;
     private static final int LIST_X = 8;
-    private static final int LIST_Y = 50;
-    private static final int LIST_W = 80;
-    private static final int RIGHT_X = 94;
+    private static final int LIST_Y = 74;
+    private static final int LIST_W = 114;
+    /** 左の列の幅（右の札の横）。札より下（持ち物の左）は INVENTORY_X − 14 まで使える。 */
+    private static final int LEFT_W = 114;
+    private static final int RIGHT_X = 134;
     private static final int RIGHT_Y = 50;
+    /** 右の札の下の端（持ち物の見出しより上）。 */
+    private static final int CARD_BOTTOM = 138;
+    /** 操作のボタン（札の右下）。 */
+    private static final int ACTION_X = WIDTH - 74;
+    private static final int ACTION_Y = 120;
     /** 厳選のサブの行（固定の錠の位置）。 */
     private static final int LINES_Y = 82;
-    private static final int LOCK_X = 243;
+    private static final int LOCK_X = WIDTH - 21;
     /** 分解の確かめ（2回目を押せる時間）。 */
     private static final long CONFIRM_MILLIS = 4000L;
 
@@ -99,8 +110,8 @@ public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
 
     public WorkshopScreen(WorkshopMenu menu, Inventory inventory, Component title) {
         super(menu, inventory, title);
-        imageWidth = 262;
-        imageHeight = 224;
+        imageWidth = WIDTH;
+        imageHeight = HEIGHT;
         inventoryLabelX = WorkshopMenu.INVENTORY_X;
         inventoryLabelY = WorkshopMenu.INVENTORY_Y - 11;
         tabs = menu.type() == WorkshopType.ACCESSORY
@@ -119,7 +130,7 @@ public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
         tabButtons.clear();
         for (int i = 0; i < tabs.size(); i++) {
             Tab target = tabs.get(i);
-            CrystalButton button = new CrystalButton(leftPos + 8 + i * 50, topPos + 30, 46, 14,
+            CrystalButton button = new CrystalButton(leftPos + 8 + i * 64, topPos + 30, 60, 14,
                     Component.translatable("screen.amemaru.workshop.tab." + target.name().toLowerCase(Locale.ROOT)), pressed -> {
                         tab = target;
                         confirmUntil = 0;
@@ -127,18 +138,18 @@ public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
                     });
             tabButtons.add(addRenderableWidget(button));
         }
-        actionButton = addRenderableWidget(new CrystalButton(leftPos + imageWidth - 72, topPos + 112, 64, 16,
+        actionButton = addRenderableWidget(new CrystalButton(leftPos + ACTION_X, topPos + ACTION_Y, 66, 16,
                 Component.translatable("screen.amemaru.workshop.craft"), pressed -> act()));
-        joinButton = addRenderableWidget(new CrystalButton(leftPos + RIGHT_X, topPos + 112, 120, 16,
+        joinButton = addRenderableWidget(new CrystalButton(leftPos + RIGHT_X, topPos + ACTION_Y, 120, 16,
                 Component.translatable("screen.amemaru.workshop.join"), pressed ->
                 ModNetwork.sendToServer(WorkshopActionC2S.of(WorkshopActionC2S.Action.JOIN))));
-        valuesButton = addRenderableWidget(new CrystalButton(leftPos + 8, topPos + 50, 80, 14,
+        valuesButton = addRenderableWidget(new CrystalButton(leftPos + 8, topPos + LIST_Y, LEFT_W, 14,
                 Component.translatable("screen.amemaru.refine.values"), pressed ->
                 ModNetwork.sendToServer(new AccessoryOperationC2S(AccessoryOperationC2S.Action.REROLL_VALUES, 0))));
-        typesButton = addRenderableWidget(new CrystalButton(leftPos + 8, topPos + 67, 80, 14,
+        typesButton = addRenderableWidget(new CrystalButton(leftPos + 8, topPos + LIST_Y + 17, LEFT_W, 14,
                 Component.translatable("screen.amemaru.refine.types"), pressed ->
                 ModNetwork.sendToServer(new AccessoryOperationC2S(AccessoryOperationC2S.Action.REROLL_TYPES, 0))));
-        commissionButton = addRenderableWidget(new CrystalButton(leftPos + RIGHT_X + 4, topPos + 112, 150, 16,
+        commissionButton = addRenderableWidget(new CrystalButton(leftPos + RIGHT_X + 4, topPos + ACTION_Y, 150, 16,
                 Component.translatable("screen.amemaru.commission.open"), pressed -> openCommissionBoard()));
         if (accessory()) {
             ModNetwork.sendToServer(new AccessoryOperationC2S(AccessoryOperationC2S.Action.QUOTE, 0));
@@ -319,7 +330,7 @@ public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
     protected void renderBg(GuiGraphics graphics, float partialTick, int mouseX, int mouseY) {
         UiStyle.panel(graphics, leftPos, topPos, leftPos + imageWidth, topPos + imageHeight);
         UiStyle.divider(graphics, leftPos + 8, leftPos + imageWidth - 8, topPos + 46);
-        UiStyle.card(graphics, leftPos + RIGHT_X - 2, topPos + RIGHT_Y - 2, leftPos + imageWidth - 6, topPos + 132, 0x8FD3FF, false);
+        UiStyle.card(graphics, leftPos + RIGHT_X - 2, topPos + RIGHT_Y - 2, leftPos + imageWidth - 6, topPos + CARD_BOTTOM, 0x8FD3FF, false);
         // 台
         slotFrame(graphics, leftPos + WorkshopMenu.WORK_X - 1, topPos + WorkshopMenu.WORK_Y - 1);
         // 持ち物
@@ -414,8 +425,9 @@ public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
             graphics.drawString(font, UiStyle.clip(font, result.getHoverName().getString(), LIST_W - 20), LIST_X + 18, y + 4, color, true);
         }
         if (recipes.size() > ROWS) {
-            graphics.drawString(font, (scroll + 1) + "-" + Math.min(recipes.size(), scroll + ROWS) + "/" + recipes.size(),
-                    LIST_X, LIST_Y + ROWS * ROW_HEIGHT, UiStyle.TEXT_DIM, false);
+            graphics.drawString(font, Component.translatable("screen.amemaru.workshop.list_page", scroll + 1,
+                            Math.min(recipes.size(), scroll + ROWS), recipes.size()),
+                    LIST_X, LIST_Y + ROWS * ROW_HEIGHT + 2, UiStyle.TEXT_DIM, false);
         }
         if (!isMyJob()) {
             return;
@@ -430,8 +442,9 @@ public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
         y += 11;
         y = renderCosts(graphics, recipe.ingredients(), RIGHT_X, y);
         double chance = ProductionRules.client().greatChance(mastery, recipe.mastery());
-        graphics.drawString(font, Component.translatable("screen.amemaru.workshop.great_chance",
-                String.format(Locale.ROOT, "%.0f", chance)), RIGHT_X, Math.max(y + 2, 100), UiStyle.TEXT_GOLD, true);
+        int chanceY = Math.max(y + 2, 100);
+        graphics.drawString(font, UiStyle.clip(font, Component.translatable("screen.amemaru.workshop.great_chance",
+                String.format(Locale.ROOT, "%.0f", chance)).getString(), textWidth(RIGHT_X, chanceY)), RIGHT_X, chanceY, UiStyle.TEXT_GOLD, true);
     }
 
     private void renderEnhance(GuiGraphics graphics) {
@@ -531,8 +544,8 @@ public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
     private void renderRefine(GuiGraphics graphics, int mouseX, int mouseY) {
         boolean has = accessoryHeader(graphics, "screen.amemaru.refine.put");
         if (!has) {
-            UiStyle.wrapped(graphics, font, Component.translatable("screen.amemaru.refine.help").getString(), 8, WorkshopMenu.WORK_Y + 24,
-                    WorkshopMenu.INVENTORY_X - 14, UiStyle.TEXT_DIM, 9);
+            UiStyle.wrapped(graphics, font, Component.translatable("screen.amemaru.refine.help").getString(), 8, LIST_Y + 36,
+                    LEFT_W, UiStyle.TEXT_DIM, 11);
             return;
         }
         ItemStack stack = menu.workStack();
@@ -558,21 +571,21 @@ public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
         int maxLocks = quote.getInt("maxLocks");
         Component lockLine = maxLocks <= 0 ? Component.translatable("screen.amemaru.refine.lock_none")
                 : Component.translatable("screen.amemaru.refine.lock_count", locks, maxLocks);
-        graphics.drawString(font, lockLine, RIGHT_X, LINES_Y + 4 * 10 + 1, UiStyle.TEXT_DIM, true);
+        graphics.drawString(font, lockLine, RIGHT_X, LINES_Y + 4 * 10 + 2, UiStyle.TEXT_DIM, true);
         int up = quote.getInt("costUp");
         if (up > 0) {
             Component upLine = Component.translatable("screen.amemaru.refine.cost_up", up);
-            graphics.drawString(font, upLine, imageWidth - 8 - font.width(upLine), LINES_Y + 4 * 10 + 1, 0xFFFFB37A, true);
+            graphics.drawString(font, upLine, imageWidth - 10 - font.width(upLine), LINES_Y + 4 * 10 + 2, 0xFFFFB37A, true);
         }
-        // 左：費用（数値だけ・種類ごと）
-        int cy = WorkshopMenu.WORK_Y + 22;
-        cy = costBlock(graphics, "screen.amemaru.refine.cost_values", quote.getCompound("values"), 8, cy);
-        costBlock(graphics, "screen.amemaru.refine.cost_types", quote.getCompound("types"), 8, cy + 2);
+        // 左：割引と費用（数値だけ・種類ごと）。ボタン2つの下から
+        int cy = LIST_Y + 36;
         int discount = quote.getInt("discount");
         if (discount > 0) {
-            graphics.drawString(font, Component.translatable("screen.amemaru.refine.discount", discount), 8, WorkshopMenu.WORK_Y - 22,
-                    UiStyle.TEXT_GOOD, true);
+            graphics.drawString(font, Component.translatable("screen.amemaru.refine.discount", discount), 8, cy, UiStyle.TEXT_GOOD, true);
+            cy += 12;
         }
+        cy = costBlock(graphics, "screen.amemaru.refine.cost_values", quote.getCompound("values"), 8, cy);
+        costBlock(graphics, "screen.amemaru.refine.cost_types", quote.getCompound("types"), 8, cy + 2);
     }
 
     /** 1行の文（メイン：種類・値（強化の伸び）・割合。サブ：種類・値・幅・割合・回数分）。 */
@@ -635,7 +648,8 @@ public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
             graphics.pose().popPose();
             Component line = compact ? Component.translatable("screen.amemaru.refine.item_short", need, have)
                     : Component.translatable("screen.amemaru.workshop.cost", new ItemStack(item).getHoverName(), need, have);
-            graphics.drawString(font, line, x + 12, y, have >= need ? UiStyle.TEXT_GOOD : UiStyle.TEXT_BAD, true);
+            graphics.drawString(font, UiStyle.clip(font, line.getString(), textWidth(x + 12, y)), x + 12, y,
+                    have >= need ? UiStyle.TEXT_GOOD : UiStyle.TEXT_BAD, true);
             y += 10;
         }
         return y;
@@ -694,7 +708,7 @@ public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
             String key = milestone == enhance + 1
                     ? (AccessoryData.subs(stack).size() < 4 ? "screen.amemaru.refine.milestone_add_now" : "screen.amemaru.refine.milestone_grow_now")
                     : (AccessoryData.subs(stack).size() < 4 ? "screen.amemaru.refine.milestone_add" : "screen.amemaru.refine.milestone_grow");
-            graphics.drawString(font, UiStyle.clip(font, Component.translatable(key, milestone).getString(), imageWidth - RIGHT_X - 12),
+            graphics.drawString(font, UiStyle.clip(font, Component.translatable(key, milestone).getString(), textWidth(RIGHT_X, y)),
                     RIGHT_X, y, 0xFFD98CFF, true);
             y += 10;
         }
@@ -734,8 +748,8 @@ public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
         }
         boolean confirming = Util.getMillis() < confirmUntil;
         UiStyle.wrapped(graphics, font, Component.translatable(confirming ? "screen.amemaru.refine.dismantle_warn_now"
-                : "screen.amemaru.refine.dismantle_warn").getString(), RIGHT_X, Math.max(y + 2, 96), 92,
-                confirming ? UiStyle.TEXT_BAD : UiStyle.TEXT_DIM, 3);
+                : "screen.amemaru.refine.dismantle_warn").getString(), RIGHT_X, Math.max(y + 2, 96), ACTION_X - RIGHT_X - 6,
+                confirming ? UiStyle.TEXT_BAD : UiStyle.TEXT_DIM, 4);
     }
 
     /** 依頼：依頼台の説明と、開くボタン（依頼台の画面で、出す・受ける・振り直す）。 */
@@ -758,7 +772,8 @@ public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
             graphics.renderItem(new ItemStack(item), 0, 0);
             graphics.pose().popPose();
             Component line = Component.translatable("screen.amemaru.workshop.cost", new ItemStack(item).getHoverName(), cost.count(), have);
-            graphics.drawString(font, line, x + 12, y, have >= cost.count() ? UiStyle.TEXT_GOOD : UiStyle.TEXT_BAD, true);
+            graphics.drawString(font, UiStyle.clip(font, line.getString(), textWidth(x + 12, y)), x + 12, y,
+                    have >= cost.count() ? UiStyle.TEXT_GOOD : UiStyle.TEXT_BAD, true);
             y += 10;
         }
         return y;
@@ -773,8 +788,26 @@ public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
             case COMMISSION -> "screen.amemaru.commission.help";
             case REFINE -> "screen.amemaru.refine.help";
         };
-        UiStyle.wrapped(graphics, font, Component.translatable(key, Component.translatable(menu.type().translationKey())).getString(),
-                8, WorkshopMenu.WORK_Y + 24, WorkshopMenu.INVENTORY_X - 14, UiStyle.TEXT_DIM, 9);
+        String text = Component.translatable(key, Component.translatable(menu.type().translationKey())).getString();
+        if (tab == Tab.CRAFT) {
+            // 作る：一覧（と「1-4/7」）の下。持ち物の左まで使える
+            int y = LIST_Y + ROWS * ROW_HEIGHT + 14;
+            UiStyle.wrapped(graphics, font, text, 8, y, WorkshopMenu.INVENTORY_X - 14, UiStyle.TEXT_DIM, (HEIGHT - 6 - y) / 10);
+        } else {
+            UiStyle.wrapped(graphics, font, text, 8, LIST_Y, LEFT_W, UiStyle.TEXT_DIM, (HEIGHT - 6 - LIST_Y) / 10);
+        }
+    }
+
+    /**
+     * 右の札の中で、(x, y) から書ける文字の幅。操作のボタン（札の右下）の高さにかかる行は、ボタンの手前まで。
+     * 左の列（x が札より左）は、札の横なら LEFT_W、札より下なら持ち物の左まで。
+     */
+    private int textWidth(int x, int y) {
+        if (x < RIGHT_X - 2) {
+            return (y >= CARD_BOTTOM ? WorkshopMenu.INVENTORY_X - 6 : LIST_X + LEFT_W) - x;
+        }
+        boolean underButton = y + 9 > ACTION_Y && (actionButton.visible || joinButton.visible || commissionButton.visible);
+        return (underButton ? ACTION_X - 4 : imageWidth - 10) - x;
     }
 
     @Override
