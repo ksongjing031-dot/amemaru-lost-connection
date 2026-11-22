@@ -144,6 +144,16 @@ public class JobSelectScreen extends Screen {
                     renderCard(graphics, jobs.get(index), cardX(i), top + 38, mouseX, mouseY);
                 }
             }
+            // ページの印（Phase 6 その2：戦闘職が6つになり、3ページになった）
+            int pages = Math.max(1, (jobs.size() + PER_PAGE - 1) / PER_PAGE);
+            if (pages > 1) {
+                int dotsY = top + 38 + CARD_HEIGHT + 6;
+                int dotsX = width / 2 - (pages * 10 - 4) / 2;
+                for (int p = 0; p < pages; p++) {
+                    int color = p == page ? 0xFFFFF2A8 : 0xFF3E5274;
+                    graphics.fill(dotsX + p * 10, dotsY, dotsX + p * 10 + 6, dotsY + 6, color);
+                }
+            }
         }
         super.render(graphics, mouseX, mouseY, partialTick);
     }

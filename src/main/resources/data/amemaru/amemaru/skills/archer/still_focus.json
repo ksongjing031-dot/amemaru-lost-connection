@@ -21,7 +21,7 @@
   ],
   "passive": {
     "type": "still_focus",
-    "value": 50,
-    "value_per_rank": 25
+    "value": 40,
+    "value_per_rank": 20
   }
 }

@@ -26,7 +26,8 @@ import java.util.Locale;
 /**
  * スキルツリーの画面（初期値：Jキー。Phase 0-A 19章・S3「職業ごとのスキルツリー（GUI）」）。
  *
- * <p>左に、流派のつまみ（流派2つと奥義）と、選んだ流派の木（4段×3列。左の2列がアクティブ、右の列がパッシブ。段の左に覚えられるレベル）。
+ * <p>左に、流派のつまみ（流派2つと奥義）と、選んだ流派の木（6段×3列。左の2列がアクティブ、右の列がパッシブ。段の左に覚えられるレベル）。
+ * 木は4段分が見え、マウスのホイール（か、右の▲▼）で上下に動かす（Phase 6 その2：Lv20・Lv25 の段を足した）。
  * 右に、選んだスキルの説明・段階のつまみ（1段〜3段。押すとその段階の数値と効果を見せる）・習得のボタン・スキル枠（6つ）。
  * スキル枠は、アクティブスキルを選んでから枠をクリックすると入る（右クリックで空にする）。
  * 習得と枠の入れかえはサーバーが確かめてから反映し、結果は同期で返ってくる。</p>
@@ -52,8 +53,12 @@ public class SkillTreeScreen extends Screen {
     private static final int GRID_Y = 51;
     private static final int COL_STEP = 54;
     private static final int ROW_STEP = 40;
-    private static final int ROWS = 4;
+    private static final int ROWS = 6;
     private static final int COLUMNS = 3;
+    /** 木の見える高さ（4段分）。これより下の段は、上下に動かして見る。 */
+    private static final int VIEW_H = 3 * ROW_STEP + NODE;
+    /** 動かす1回分（ホイール1目盛り・▲▼1回）。 */
+    private static final int SCROLL_STEP = ROW_STEP;
     private static final int DETAIL_X = 214;
     private static final int DETAIL_W = PANEL_WIDTH - DETAIL_X - 12;
     private static final int DETAIL_TOP = 34;
@@ -87,6 +92,8 @@ public class SkillTreeScreen extends Screen {
     private boolean upperHover;
     /** 効果の行が入りきらなかったか（入りきらなければ、ツールチップで全部を見せる）。 */
     private boolean detailOverflow;
+    /** 木を上下に動かした量（ピクセル）。 */
+    private int scroll;
 
     public SkillTreeScreen() {
         super(Component.translatable("screen.amemaru.skill_tree.title"));
@@ -107,6 +114,7 @@ public class SkillTreeScreen extends Screen {
             }
         }
         showTabOf(ClientDefinitions.get().skill(selected));
+        scrollTo(ClientDefinitions.get().skill(selected));
         resetShownRank();
         updateButton();
     }
@@ -302,8 +310,51 @@ public class SkillTreeScreen extends Screen {
             return new int[]{center - NODE / 2, top + GRID_Y + ULTIMATE_NODE_DY};
         }
         int x = left + GRID_X + Math.min(COLUMNS - 1, Math.max(0, skill.column())) * COL_STEP;
-        int y = top + GRID_Y + Math.min(ROWS - 1, Math.max(0, skill.row())) * ROW_STEP;
+        int y = top + GRID_Y + Math.min(ROWS - 1, Math.max(0, skill.row())) * ROW_STEP - scroll;
         return new int[]{x, y};
+    }
+
+    /** いちばん下の段（今の流派のつまみ）。 */
+    private int lastRow() {
+        int last = 0;
+        for (SyncDefinitionsS2C.SkillInfo skill : ClientDefinitions.get().skillsOf(ClientPlayerState.get().jobIndex())) {
+            if (visible(skill) && !skill.ultimate()) {
+                last = Math.max(last, Math.min(ROWS - 1, skill.row()));
+            }
+        }
+        return last;
+    }
+
+    /** 上下に動かせる量の上限。 */
+    private int maxScroll() {
+        if (tab == ULTIMATE_TAB) {
+            return 0;
+        }
+        return Math.max(0, lastRow() * ROW_STEP + NODE - VIEW_H);
+    }
+
+    /** 木が見える範囲（スキルの節はこの中だけ描き、押せる）。 */
+    private boolean inView(int y) {
+        return tab == ULTIMATE_TAB || (y + NODE > top + GRID_Y && y < top + GRID_Y + VIEW_H);
+    }
+
+    private void scrollBy(int amount) {
+        scroll = Math.max(0, Math.min(maxScroll(), scroll + amount));
+    }
+
+    /** 選んだスキルが見えるように動かす。 */
+    private void scrollTo(@Nullable SyncDefinitionsS2C.SkillInfo skill) {
+        if (skill == null || skill.ultimate() || tab == ULTIMATE_TAB) {
+            scroll = 0;
+            return;
+        }
+        int y = skill.row() * ROW_STEP;
+        if (y < scroll) {
+            scroll = y;
+        } else if (y + NODE > scroll + VIEW_H) {
+            scroll = y + NODE - VIEW_H;
+        }
+        scroll = Math.max(0, Math.min(maxScroll(), scroll));
     }
 
     /** つまみの左端（i 番目。奥義は流派の後ろ）。 */
@@ -338,15 +389,29 @@ public class SkillTreeScreen extends Screen {
                 skills.add(skill);
             }
         }
+        scroll = Math.max(0, Math.min(maxScroll(), scroll));
         renderSchools(graphics, state, job, mouseX, mouseY);
+        boolean clip = tab != ULTIMATE_TAB;
+        if (clip) {
+            graphics.enableScissor(left + TREE_X, top + GRID_Y - 2, left + TREE_X + TREE_W, top + GRID_Y + VIEW_H + 2);
+        }
         renderConnectors(graphics, state, skills);
         SyncDefinitionsS2C.SkillInfo hovered = null;
         for (SyncDefinitionsS2C.SkillInfo skill : skills) {
             int[] at = nodePosition(skill);
+            if (!inView(at[1])) {
+                continue;
+            }
             renderNode(graphics, state, skill, at[0], at[1]);
-            if (mouseX >= at[0] && mouseX < at[0] + NODE && mouseY >= at[1] && mouseY < at[1] + NODE) {
+            if (mouseX >= at[0] && mouseX < at[0] + NODE && mouseY >= at[1] && mouseY < at[1] + NODE
+                    && mouseY >= top + GRID_Y && mouseY < top + GRID_Y + VIEW_H) {
                 hovered = skill;
             }
+        }
+        if (clip) {
+            renderRowLevels(graphics, state, job);
+            graphics.disableScissor();
+            renderScrollBar(graphics, mouseX, mouseY);
         }
         renderDetails(graphics, state, job);
         int hoveredSlot = renderLoadout(graphics, state, mouseX, mouseY);
@@ -465,25 +530,8 @@ public class SkillTreeScreen extends Screen {
             UiStyle.wrapped(graphics, font, job.upperDescription(), left + TREE_X + 6, headY + 12, TREE_W - 12, UiStyle.TEXT_DIM,
                     Math.max(1, (top + PANEL_HEIGHT - 18 - (headY + 12)) / 10));
         } else {
-            // 段の左に、覚えられるレベル
-            int[] levels = new int[ROWS];
-            for (SyncDefinitionsS2C.SkillInfo skill : ClientDefinitions.get().skillsOf(job.index())) {
-                if (visible(skill) && skill.row() >= 0 && skill.row() < ROWS) {
-                    int row = skill.row();
-                    levels[row] = levels[row] == 0 ? skill.minLevel() : Math.min(levels[row], skill.minLevel());
-                }
-            }
-            for (int row = 0; row < ROWS; row++) {
-                if (levels[row] <= 0) {
-                    continue;
-                }
-                String text = "Lv" + levels[row];
-                int y = top + GRID_Y + row * ROW_STEP + (NODE - 8) / 2;
-                graphics.drawString(font, text, left + TREE_X, y, state.level() >= levels[row] ? UiStyle.TEXT_HEADER : UiStyle.TEXT_DIM,
-                        false);
-            }
-            // 列の見出し（下）
-            int labelY = top + GRID_Y + (ROWS - 1) * ROW_STEP + NODE + 3;
+            // 列の見出し（下。木を動かしても、ここは動かない）
+            int labelY = top + GRID_Y + VIEW_H + 3;
             String active = Component.translatable("screen.amemaru.skill_tree.active").getString();
             String passive = Component.translatable("screen.amemaru.skill_tree.passive").getString();
             graphics.drawCenteredString(font, active, left + GRID_X + (COL_STEP + NODE) / 2, labelY, UiStyle.TEXT_DIM);
@@ -491,6 +539,45 @@ public class SkillTreeScreen extends Screen {
         }
         // 木と説明の間の縦の線
         graphics.fill(left + DETAIL_X - 8, top + DETAIL_TOP, left + DETAIL_X - 7, top + PANEL_HEIGHT - 8, 0x408FD3FF);
+    }
+
+    /** 段の左に、覚えられるレベル（木と一緒に動く）。 */
+    private void renderRowLevels(GuiGraphics graphics, ClientPlayerState state, SyncDefinitionsS2C.JobInfo job) {
+        int[] levels = new int[ROWS];
+        for (SyncDefinitionsS2C.SkillInfo skill : ClientDefinitions.get().skillsOf(job.index())) {
+            if (visible(skill) && skill.row() >= 0 && skill.row() < ROWS) {
+                int row = skill.row();
+                levels[row] = levels[row] == 0 ? skill.minLevel() : Math.min(levels[row], skill.minLevel());
+            }
+        }
+        for (int row = 0; row < ROWS; row++) {
+            if (levels[row] <= 0) {
+                continue;
+            }
+            String text = "Lv" + levels[row];
+            int y = top + GRID_Y + row * ROW_STEP - scroll + (NODE - 8) / 2;
+            graphics.drawString(font, text, left + TREE_X, y, state.level() >= levels[row] ? UiStyle.TEXT_HEADER : UiStyle.TEXT_DIM, false);
+        }
+    }
+
+    /** 木の右の、上下に動かす印（▲▼と、いまの位置の帯）。動かせないときは出さない。 */
+    private void renderScrollBar(GuiGraphics graphics, int mouseX, int mouseY) {
+        int max = maxScroll();
+        if (max <= 0) {
+            return;
+        }
+        int x = left + TREE_X + TREE_W - 7;
+        int y0 = top + GRID_Y;
+        int y1 = top + GRID_Y + VIEW_H;
+        graphics.fill(x + 2, y0 + 10, x + 4, y1 - 10, 0x402C3A58);
+        int span = (y1 - 10) - (y0 + 10);
+        int barH = Math.max(10, span * VIEW_H / (VIEW_H + max));
+        int barY = y0 + 10 + (span - barH) * scroll / max;
+        graphics.fill(x + 1, barY, x + 5, barY + barH, 0xFF8FD3FF);
+        boolean upHover = mouseX >= x - 2 && mouseX < x + 8 && mouseY >= y0 && mouseY < y0 + 9;
+        boolean downHover = mouseX >= x - 2 && mouseX < x + 8 && mouseY >= y1 - 9 && mouseY < y1;
+        graphics.drawString(font, "▲", x, y0, scroll > 0 ? (upHover ? 0xFFFFF2A8 : 0xFF8FD3FF) : 0xFF2C3A58, false);
+        graphics.drawString(font, "▼", x, y1 - 8, scroll < max ? (downHover ? 0xFFFFF2A8 : 0xFF8FD3FF) : 0xFF2C3A58, false);
     }
 
     /** 前提のスキルとのつながり（糸）。覚えていれば明るく光る。同じつまみに見えているスキルどうしだけ。 */
@@ -585,6 +672,9 @@ public class SkillTreeScreen extends Screen {
         String kind = Component.translatable(skill.passive() ? "screen.amemaru.skill_tree.passive" : "screen.amemaru.skill_tree.active").getString();
         String link = LinkType.byIndex(skill.link()).label();
         String sub = school + "・" + kind + (link.isEmpty() ? "" : "・" + Component.translatable("screen.amemaru.skill_tree.link", link).getString());
+        if (!skill.comboLabel().isEmpty()) {
+            sub += "・【" + skill.comboLabel() + "】";
+        }
         graphics.drawString(font, UiStyle.clip(font, sub, DETAIL_W - 28), x + 28, top + DETAIL_TOP + 12, UiStyle.TEXT_DIM, false);
 
         UiStyle.wrapped(graphics, font, skill.description(), x, top + DESC_Y, DETAIL_W, UiStyle.TEXT, DESC_LINES);
@@ -731,8 +821,21 @@ public class SkillTreeScreen extends Screen {
                 int x = schoolTabX(i);
                 if (mouseX >= x && mouseX < x + SCHOOL_TAB_W) {
                     tab = i == count ? ULTIMATE_TAB : i;
+                    scroll = 0;
                     return true;
                 }
+            }
+        }
+        // 木を動かす▲▼
+        if (tab != ULTIMATE_TAB && maxScroll() > 0) {
+            int x = left + TREE_X + TREE_W - 7;
+            if (mouseX >= x - 2 && mouseX < x + 8 && mouseY >= top + GRID_Y && mouseY < top + GRID_Y + 9) {
+                scrollBy(-SCROLL_STEP);
+                return true;
+            }
+            if (mouseX >= x - 2 && mouseX < x + 8 && mouseY >= top + GRID_Y + VIEW_H - 9 && mouseY < top + GRID_Y + VIEW_H) {
+                scrollBy(SCROLL_STEP);
+                return true;
             }
         }
         // 木の節
@@ -741,6 +844,9 @@ public class SkillTreeScreen extends Screen {
                 continue;
             }
             int[] at = nodePosition(skill);
+            if (tab != ULTIMATE_TAB && (mouseY < top + GRID_Y || mouseY >= top + GRID_Y + VIEW_H)) {
+                continue;
+            }
             if (mouseX >= at[0] && mouseX < at[0] + NODE && mouseY >= at[1] && mouseY < at[1] + NODE) {
                 selected = skill.index();
                 resetShownRank();
@@ -779,6 +885,16 @@ public class SkillTreeScreen extends Screen {
     }
 
     @Override
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
+        if (tab != ULTIMATE_TAB && mouseX >= left + TREE_X && mouseX < left + TREE_X + TREE_W && mouseY >= top + GRID_Y - 4
+                && mouseY < top + GRID_Y + VIEW_H + 4) {
+            scrollBy(delta > 0 ? -SCROLL_STEP : SCROLL_STEP);
+            return true;
+        }
+        return super.mouseScrolled(mouseX, mouseY, delta);
+    }
+
+    @Override
     public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
         if (KeyBindings.OPEN_SKILL_TREE.matches(keyCode, scanCode)) {
             onClose();
@@ -796,6 +912,7 @@ public class SkillTreeScreen extends Screen {
     public void select(int skillIndex) {
         selected = skillIndex;
         showTabOf(ClientDefinitions.get().skill(skillIndex));
+        scrollTo(ClientDefinitions.get().skill(skillIndex));
         resetShownRank();
         updateButton();
     }

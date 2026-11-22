@@ -311,6 +311,11 @@ def main():
     for s in common.SKILLS:
         count[s["job"]] = count.get(s["job"], 0) + 1
     print("書き出したスキル:", count, "合計", len(common.SKILLS), "（既存", len(all_skills) - len(common.SKILLS), "）")
+    # 書き出した定義を、Mod の読み込みと同じ決まりで確かめる（tools/datagen/validate_defs.py）
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import validate_defs
+    if validate_defs.Validator().run() != 0:
+        sys.exit(1)
 
 
 if __name__ == "__main__":

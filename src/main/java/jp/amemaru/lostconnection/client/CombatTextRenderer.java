@@ -121,6 +121,31 @@ public final class CombatTextRenderer {
                 addWord(entity, Component.translatable("combat.amemaru.dodge").getString(), 0xE8F4FF, 0x1A2A3A, 1.2F, now);
                 return;
             }
+            case MISS -> {
+                addWord(entity, Component.translatable("combat.amemaru.miss").getString(), 0xC8C8D8, 0x1A1A2A, 1.1F, now);
+                return;
+            }
+            case CHAIN -> {
+                // 連撃（モンク）：本人の画面に大きく
+                int count = (int) Math.round(message.amount());
+                String word = Component.translatable("combat.amemaru.chain", count).getString();
+                if (entity == minecraft.player) {
+                    banner = new Banner(word, count >= 5 ? 0xFFE066 : 0xFFB46E, count >= 5 ? 2.8F : 1.8F, now);
+                }
+                addWord(entity, word, 0xFFB46E, 0x4A1600, 1.2F + 0.08F * count, now);
+                return;
+            }
+            case REVIVE -> {
+                addWord(entity, Component.translatable("combat.amemaru.revive").getString(), 0xB8FFD0, 0x003A1A, 1.5F, now);
+                return;
+            }
+            case SAVED -> {
+                if (entity == minecraft.player) {
+                    banner = new Banner(Component.translatable("combat.amemaru.saved").getString(), 0xFFF0A0, 2.4F, now);
+                }
+                addWord(entity, Component.translatable("combat.amemaru.saved").getString(), 0xFFF0A0, 0x3A2A00, 1.5F, now);
+                return;
+            }
             default -> {
             }
         }
@@ -137,6 +162,7 @@ public final class CombatTextRenderer {
                     0x9FE6FF, 0x0A2A3A, 0.9F, now);
             case ABSORBED -> addAbove(entity, amount + " " + Component.translatable("combat.amemaru.absorbed").getString(),
                     0xFFF2A8, 0x3A2A00, 0.9F, now);
+            case POISON -> addAbove(entity, amount, 0x9CF060, 0x143A00, 0.9F, now);
             default -> {
             }
         }

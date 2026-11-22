@@ -24,8 +24,8 @@ import java.util.Set;
  * 管理者に知らせる。</p>
  */
 public final class SkillRegistry {
-    /** 今わかっている専用ゲージの働き。 */
-    public static final Set<String> KNOWN_GAUGES = Set.of("oath");
+    /** 今わかっている専用ゲージの働き（誓気・集中・気配・気。働きは {@link jp.amemaru.lostconnection.job.GaugeService}）。 */
+    public static final Set<String> KNOWN_GAUGES = Set.of("oath", "focus", "presence", "ki");
 
     private static final DefinitionLoader<JobDef> JOBS = new DefinitionLoader<>("jobs", JobDef::parse);
     private static final DefinitionLoader<SkillDef> SKILLS = new DefinitionLoader<>("skills", SkillDef::parse);

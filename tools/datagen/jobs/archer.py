@@ -69,7 +69,7 @@ active(J, "full_draw", "sniping", 2, 1, "引き絞り",
        full=[armor_break(6)], tags=["arrow"], anim="archer_release", charge_anim="archer_draw",
        requires="archer/piercing_shot")
 passive(J, "still_focus", "sniping", 2, "静止集中",
-        "足を止めると、心が研ぎ澄まされる。立ち止まっている間の集中のたまり方が上がる。", "still_focus", (50, 25),
+        "足を止めると、心が研ぎ澄まされる。立ち止まっている間の集中のたまり方が上がる。", "still_focus", (40, 20),
         requires="archer/hawk_eye")
 active(J, "hawks_gaze", "sniping", 3, 0, "鷹の眼差し",
        "鷹の目で戦場を見渡す。しばらく会心が大きく上がり、集中が20たまる。",

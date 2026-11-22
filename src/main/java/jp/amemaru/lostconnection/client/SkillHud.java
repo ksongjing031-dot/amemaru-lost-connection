@@ -174,17 +174,60 @@ public final class SkillHud {
         int x = baseX;
         int y = baseY - 9;
         blend();
-        graphics.blit(TEXTURE, x, y, 0, SkillHudArt.V_GAUGE_FRAME, SkillHudArt.GAUGE_W, SkillHudArt.GAUGE_H, TEX, TEX);
-        float ratio = Mth.clamp(state.gauge() / state.gaugeMax(), 0.0F, 1.0F);
-        int fill = Math.round(ratio * SkillHudArt.GAUGE_INNER);
-        if (fill > 0) {
-            int color = job.gaugeColor();
-            RenderSystem.setShaderColor(((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F, (color & 0xFF) / 255.0F, 1.0F);
-            graphics.blit(TEXTURE, x, y, 0, SkillHudArt.V_GAUGE_FILL, 1 + fill, SkillHudArt.GAUGE_H, TEX, TEX);
-            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        if ("presence".equals(job.gaugeType()) && state.gaugeMax() <= 10) {
+            // 気配（ローグ）：数がわかるように、粒で描く（Phase 6 その2）
+            drawPips(graphics, state, job, x, y);
+        } else {
+            graphics.blit(TEXTURE, x, y, 0, SkillHudArt.V_GAUGE_FRAME, SkillHudArt.GAUGE_W, SkillHudArt.GAUGE_H, TEX, TEX);
+            float ratio = Mth.clamp(state.gauge() / state.gaugeMax(), 0.0F, 1.0F);
+            int fill = Math.round(ratio * SkillHudArt.GAUGE_INNER);
+            if (fill > 0) {
+                int color = job.gaugeColor();
+                RenderSystem.setShaderColor(((color >> 16) & 0xFF) / 255.0F, ((color >> 8) & 0xFF) / 255.0F, (color & 0xFF) / 255.0F, 1.0F);
+                graphics.blit(TEXTURE, x, y, 0, SkillHudArt.V_GAUGE_FILL, 1 + fill, SkillHudArt.GAUGE_H, TEX, TEX);
+                RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+            }
         }
         String label = job.gaugeName() + " " + (int) Math.floor(state.gauge());
         graphics.drawString(font, label, x, y - 9, 0xFFFFE6A8, true);
+        if (job.hasCombo()) {
+            drawCombo(graphics, font, state, job, x + font.width(label) + 8, y - 9);
+        }
+    }
+
+    /** 気配の粒（最大の数だけ並べ、たまった分を光らせる）。 */
+    private static void drawPips(GuiGraphics graphics, ClientPlayerState state, SyncDefinitionsS2C.JobInfo job, int x, int y) {
+        int count = state.gaugeMax();
+        int filled = (int) Math.floor(state.gauge() + 1.0E-4);
+        int color = 0xFF000000 | job.gaugeColor();
+        int size = 6;
+        int gap = 3;
+        for (int i = 0; i < count; i++) {
+            int px = x + i * (size + gap);
+            graphics.fill(px, y, px + size, y + size, 0xFF1A1E2E);
+            graphics.fill(px + 1, y + 1, px + size - 1, y + size - 1, i < filled ? color : 0xFF2C3A58);
+            if (i < filled) {
+                graphics.fill(px + 1, y + 1, px + 3, y + 3, 0xFFFFFFFF);
+            }
+        }
+    }
+
+    /** 連撃（モンク）：「連撃 3」と、消えるまでの細い帯。 */
+    private static void drawCombo(GuiGraphics graphics, Font font, ClientPlayerState state, SyncDefinitionsS2C.JobInfo job, int x, int y) {
+        int combo = state.combo();
+        if (combo <= 0) {
+            return;
+        }
+        boolean max = combo >= job.comboMax();
+        String text = net.minecraft.network.chat.Component.translatable("hud.amemaru.combo", combo).getString();
+        float pulse = max ? 0.7F + 0.3F * Mth.sin(Util.getMillis() / 80.0F) : 1.0F;
+        int r = (int) (255 * pulse);
+        int color = max ? (0xFF000000 | (r << 16) | ((int) (230 * pulse) << 8) | 0x60) : 0xFFFFB46E;
+        graphics.drawString(font, text, x, y, color, true);
+        int width = font.width(text);
+        float left = Mth.clamp(state.comboRemaining() / 60.0F, 0.0F, 1.0F);
+        graphics.fill(x, y + 10, x + width, y + 11, 0xFF2C3A58);
+        graphics.fill(x, y + 10, x + Math.round(width * left), y + 11, 0xFFFFB46E);
     }
 
     /** 詠唱のバー（画面の中央の少し下）。 */
