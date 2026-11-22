@@ -119,6 +119,8 @@ public final class ProgressionService {
         }
         // Phase 6：フリーマーケットの相場の変動・出品と露店の期限
         jp.amemaru.lostconnection.economy.MarketService.onDayChanged(server, before, now);
+        // Phase 7 その4：共同事業の受付の始まりと、完成していた共同事業の施設が変わる（次の朝）
+        jp.amemaru.lostconnection.town.ProjectService.onDayChanged(server, before, now);
         broadcastWorldState(server);
         TowerHall.update(server);
         return now;

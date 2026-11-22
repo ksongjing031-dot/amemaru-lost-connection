@@ -1,5 +1,6 @@
 package jp.amemaru.lostconnection.admin;
 
+import jp.amemaru.lostconnection.AmemaruMod;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
@@ -29,6 +30,7 @@ import net.minecraft.world.phys.AABB;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import javax.annotation.Nullable;
 
 /**
  * 確かめ用のコマンド {@code /amemaru admin city …}（11月21日）：コネリアの街の11施設の構造物を、地図を組むときの位置と順番で
@@ -270,8 +272,10 @@ public final class CityCommands {
         List<CompoundTag> tags = new ArrayList<>();
         List<StructureTemplate> templates = new ArrayList<>();
         List<String> edited = new ArrayList<>();
+        // Phase 7 その4：完成した共同事業の「育ったあと」の形は、建て直しても重ねる
+        java.util.Set<String> overlays = jp.amemaru.lostconnection.town.ProjectService.builtOverlays(level.getServer());
         for (Placement placement : PLACEMENTS) {
-            if (placement.grown() && !grown) {
+            if (placement.grown() && !grown && !overlays.contains(placement.name())) {
                 tags.add(null);
                 templates.add(null);
                 continue;
@@ -351,6 +355,8 @@ public final class CityCommands {
         data.origin = origin.immutable();
         data.grown = grown;
         data.built = true;
+        data.overlays.clear();
+        data.overlays.addAll(overlays);
         data.setDirty();
         // Phase 5：街のNPCを立つ所に置き、塔の入口の「塔の灯り」と札を、今の解放に合わせる
         int npcs = jp.amemaru.lostconnection.npc.NpcService.spawnAll(level, origin);
@@ -386,6 +392,52 @@ public final class CityCommands {
     public static java.util.Optional<BlockPos> builtOrigin(ServerLevel level) {
         CityData data = CityData.get(level);
         return data.built ? java.util.Optional.of(data.origin) : java.util.Optional.empty();
+    }
+
+    /**
+     * Phase 7 その4：育ったあとの形をひとつ、今の街に重ねる（共同事業が完成した次の朝。11月20日に決定「完成した次の朝（ゲームの時刻の
+     * 6時）に、同じ所に重ねる。重ねる仕組みは Mod の側で作る」）。街を建てていない・もう重ねてある・形がないときは false。
+     * 重ねた形は建てた形の控えにも入れるので、あとの直しの書き出しで、施設の直しとまちがえない。
+     */
+    public static boolean placeOverlay(ServerLevel level, String name) {
+        CityData data = CityData.get(level);
+        Placement placement = findGrown(name);
+        if (placement == null || !data.built || data.includes(placement)) {
+            return false;
+        }
+        CompoundTag tag;
+        try {
+            tag = CityEdits.buildTag(level, placement);
+        } catch (CityEdits.EditsException e) {
+            AmemaruMod.LOGGER.error("[amemaru][city] cannot place {}: {}", name, e.getMessage());
+            return false;
+        }
+        if (tag == null) {
+            return false;
+        }
+        BlockPos at = data.origin.offset(placement.x(), placement.y(), placement.z());
+        StructureTemplate template = level.getStructureManager().readStructure(CityEdits.placementTag(tag, at));
+        template.placeInWorld(level, at, at, new StructurePlaceSettings(), level.getRandom(), Block.UPDATE_CLIENTS);
+        CityEdits.saveBuiltOne(level, placement, tag);
+        data.overlays.add(name);
+        data.setDirty();
+        AmemaruMod.LOGGER.info("[amemaru][city] placed the grown form {} at {}", name, at.toShortString());
+        return true;
+    }
+
+    @Nullable
+    private static Placement findGrown(String name) {
+        for (Placement p : PLACEMENTS) {
+            if (p.grown() && p.name().equals(name)) {
+                return p;
+            }
+        }
+        return null;
+    }
+
+    /** 育ったあとの形の名前（共同事業の定義の確かめ）。 */
+    public static boolean isGrownForm(String name) {
+        return findGrown(name) != null;
     }
 
     // ---------------------------------------------------------------- 11月23日：新しいワールドを開いたら、街が建っている
@@ -585,6 +637,8 @@ public final class CityCommands {
         boolean built;
         /** 11月23日：初めて開いたときに、街を自動で建てるかを決めたか（決めたら、次からは決めない） */
         boolean autoChecked;
+        /** Phase 7 その4：ひとつずつ重ねた「育ったあと」の形（完成した共同事業。構造物の名前） */
+        final java.util.Set<String> overlays = new java.util.LinkedHashSet<>();
 
         static CityData load(CompoundTag tag) {
             CityData data = new CityData();
@@ -594,7 +648,15 @@ public final class CityCommands {
             }
             data.grown = tag.getBoolean("grown");
             data.autoChecked = tag.getBoolean("autoChecked");
+            for (net.minecraft.nbt.Tag t : tag.getList("overlays", net.minecraft.nbt.Tag.TAG_STRING)) {
+                data.overlays.add(t.getAsString());
+            }
             return data;
+        }
+
+        /** その形が、今の街に置いてあるか（ふつうの形・育ったあとの形をまとめて建てた・ひとつずつ重ねた）。 */
+        boolean includes(Placement placement) {
+            return !placement.grown() || grown || overlays.contains(placement.name());
         }
 
         @Override
@@ -605,6 +667,11 @@ public final class CityCommands {
             tag.putBoolean("grown", grown);
             tag.putBoolean("built", built);
             tag.putBoolean("autoChecked", autoChecked);
+            net.minecraft.nbt.ListTag list = new net.minecraft.nbt.ListTag();
+            for (String name : overlays) {
+                list.add(net.minecraft.nbt.StringTag.valueOf(name));
+            }
+            tag.put("overlays", list);
             return tag;
         }
 

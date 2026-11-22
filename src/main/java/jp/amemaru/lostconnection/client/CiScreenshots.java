@@ -1034,6 +1034,27 @@ public final class CiScreenshots {
             {"cmd", null, "10", "amemaru admin event start casino_night 5"},
             {"snap_keep", null, "30", "phase7c_night"},
             {"cmd", null, "10", "amemaru admin event stop casino_night"},
+            // Phase 7 その4（11月23日）：寄付と共同事業。中央広場の南東の寄付の台座（進行日は4日目なので、①湖畔の釣り場の受付中）
+            {"cmd", null, "5", "amemaru admin money @p set 50000"},
+            {"cmd", null, "100", "tp @p {at:12.5,1,12.5} -45 30"},
+            {"snap", null, "60", "phase7p_stand"},
+            {"p7p_use", null, "30"},
+            {"snap", null, "20", "phase7p_screen"},
+            {"p7p_donate", null, "20", "1000"},
+            {"snap", null, "20", "phase7p_donated"},
+            {"screen", null, "10", "hold"},
+            // ①が完成して、湖畔の釣り場ができる（管理者が完成にして、すぐ施設を変える。ふつうは完成した次の朝）
+            {"cmd", null, "100", "tp @p {at:-99.5,1,88.5} 140 15"},
+            {"cmd", null, "40", "amemaru admin project complete amemaru:lakeside"},
+            {"cmd", null, "5", "amemaru admin project build amemaru:lakeside"},
+            {"snap_keep", null, "50", "phase7p_lakeside"},
+            // ②ハイ＆ロー：カジノの南の側廊のカードの卓
+            {"cmd", null, "100", "tp @p {at:22.5,3,92.5} 0 20"},
+            {"cmd", null, "40", "amemaru admin project build amemaru:highlow"},
+            {"snap_keep", null, "50", "phase7p_highlow"},
+            {"cmd", null, "20", "amemaru admin project open @p amemaru:highlow"},
+            {"snap", null, "20", "phase7p_screen_after"},
+            {"screen", null, "10", "hold"},
             {"cmd", null, "10", "gamemode spectator @p"},
             {"hud", null, "5", "off"}};
 

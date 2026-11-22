@@ -375,6 +375,17 @@ public final class ModNetwork {
                 .decoder(jp.amemaru.lostconnection.network.c2s.CasinoC2S::decode)
                 .consumerMainThread(jp.amemaru.lostconnection.network.c2s.CasinoC2S::handle)
                 .add();
+        // Phase 7 その4：寄付と共同事業
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.ProjectS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.ProjectS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.ProjectS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.ProjectS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.c2s.ProjectC2S.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(jp.amemaru.lostconnection.network.c2s.ProjectC2S::encode)
+                .decoder(jp.amemaru.lostconnection.network.c2s.ProjectC2S::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.c2s.ProjectC2S::handle)
+                .add();
     }
 
     /** 1人のプレイヤーに送る。 */
