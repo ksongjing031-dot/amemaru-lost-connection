@@ -84,6 +84,11 @@ public final class ServerConfig {
     public static final ForgeConfigSpec.BooleanValue TRANSFER_ENABLED;
     public static final ForgeConfigSpec.LongValue TRANSFER_MAX;
     public static final ForgeConfigSpec.DoubleValue TRANSFER_COOLDOWN_SECONDS;
+    public static final ForgeConfigSpec.LongValue STORAGE_CONTRACT_PRICE;
+    public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends Number>> STORAGE_PAGE_PRICES;
+    public static final ForgeConfigSpec.IntValue STORAGE_MAX_PAGES;
+    public static final ForgeConfigSpec.DoubleValue STORAGE_REACH;
+    public static final ForgeConfigSpec.IntValue STORAGE_RECEIVED_MAX;
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
@@ -296,6 +301,24 @@ public final class ServerConfig {
         TRANSFER_COOLDOWN_SECONDS = b
                 .comment("受け渡しのあと、次に渡せるまでの秒数（押しすぎを防ぐ）")
                 .defineInRange("transferCooldownSeconds", 1.0, 0.0, 60.0);
+        b.pop();
+
+        b.comment("個人倉庫（Phase 6。Phase 0-A 20章：契約は買い切り、1ページ＝27枠）").push("storage");
+        STORAGE_CONTRACT_PRICE = b
+                .comment("契約の値段（1ページ目）")
+                .defineInRange("contractPrice", 500L, 0L, Long.MAX_VALUE);
+        STORAGE_PAGE_PRICES = b
+                .comment("2ページ目から順に、ページを増やす値段（Phase 0-A 20章：5,000／20,000／60,000／150,000）")
+                .defineList("pagePrices", java.util.List.<Number>of(5_000L, 20_000L, 60_000L, 150_000L), o -> o instanceof Number n && n.longValue() >= 0);
+        STORAGE_MAX_PAGES = b
+                .comment("ページ数の上限（Phase 0-A 20章：5ページ＝135枠）。増やす値段の数＋1までしか増やせない")
+                .defineInRange("maxPages", 5, 1, 20);
+        STORAGE_REACH = b
+                .comment("倉庫の窓口（封印箱・カウンター）から何ブロック以内で使えるか")
+                .defineInRange("reach", 6.0, 2.0, 32.0);
+        STORAGE_RECEIVED_MAX = b
+                .comment("受け取り箱に入る品の数（市場で買った品などが届く）。いっぱいのときは、届く品を受け付けない")
+                .defineInRange("receivedMax", 270, 27, 2700);
         b.pop();
 
         SPEC = b.build();

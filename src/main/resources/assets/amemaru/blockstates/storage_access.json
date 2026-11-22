@@ -1,0 +1,46 @@
+{
+  "variants": {
+    "facing=north,mode=box": {
+      "model": "amemaru:block/storage_seal_box"
+    },
+    "facing=east,mode=box": {
+      "model": "amemaru:block/storage_seal_box"
+    },
+    "facing=south,mode=box": {
+      "model": "amemaru:block/storage_seal_box"
+    },
+    "facing=west,mode=box": {
+      "model": "amemaru:block/storage_seal_box"
+    },
+    "facing=north,mode=contract": {
+      "model": "amemaru:block/storage_counter_bell"
+    },
+    "facing=east,mode=contract": {
+      "model": "amemaru:block/storage_counter_bell",
+      "y": 90
+    },
+    "facing=south,mode=contract": {
+      "model": "amemaru:block/storage_counter_bell",
+      "y": 180
+    },
+    "facing=west,mode=contract": {
+      "model": "amemaru:block/storage_counter_bell",
+      "y": 270
+    },
+    "facing=north,mode=receive": {
+      "model": "amemaru:block/storage_counter_parcel"
+    },
+    "facing=east,mode=receive": {
+      "model": "amemaru:block/storage_counter_parcel",
+      "y": 90
+    },
+    "facing=south,mode=receive": {
+      "model": "amemaru:block/storage_counter_parcel",
+      "y": 180
+    },
+    "facing=west,mode=receive": {
+      "model": "amemaru:block/storage_counter_parcel",
+      "y": 270
+    }
+  }
+}

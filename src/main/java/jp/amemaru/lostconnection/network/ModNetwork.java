@@ -249,6 +249,11 @@ public final class ModNetwork {
                 .decoder(jp.amemaru.lostconnection.network.c2s.TransferKnotsC2S::decode)
                 .consumerMainThread(jp.amemaru.lostconnection.network.c2s.TransferKnotsC2S::handle)
                 .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.StorageContentsS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.StorageContentsS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.StorageContentsS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.StorageContentsS2C::handle)
+                .add();
     }
 
     /** 1人のプレイヤーに送る。 */

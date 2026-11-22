@@ -158,4 +158,10 @@ public final class ClientPacketHandler {
     public static void handleNpcs(jp.amemaru.lostconnection.network.s2c.SyncNpcsS2C message) {
         jp.amemaru.lostconnection.npc.NpcDefs.setClient(message.npcs());
     }
+
+    // ---------------------------------------------------------------- Phase 6：経済
+
+    public static void handleStorageContents(jp.amemaru.lostconnection.network.s2c.StorageContentsS2C message) {
+        ClientStorage.set(message.containerId(), message.items(), message.received(), message.nextPrice(), message.maxPages());
+    }
 }

@@ -38,6 +38,77 @@ public final class EconomyCommands {
                                 .executes(context -> recent(context.getSource(), IntegerArgumentType.getInteger(context, "count")))));
     }
 
+    /**
+     * 個人倉庫の確認と容量の変更（Phase 0-B 10章「倉庫の確認・復旧・容量の変更」）。オフラインの人も、名前で探す
+     * （倉庫を一度でも開いた人）。
+     */
+    public static LiteralArgumentBuilder<CommandSourceStack> storageCommand() {
+        return Commands.literal("storage")
+                .then(Commands.literal("list")
+                        .then(Commands.argument("name", com.mojang.brigadier.arguments.StringArgumentType.word())
+                                .executes(context -> storageList(context.getSource(),
+                                        com.mojang.brigadier.arguments.StringArgumentType.getString(context, "name")))))
+                .then(Commands.literal("pages")
+                        .then(Commands.argument("name", com.mojang.brigadier.arguments.StringArgumentType.word())
+                                .then(Commands.argument("pages", IntegerArgumentType.integer(0, 20))
+                                        .executes(context -> storagePages(context.getSource(),
+                                                com.mojang.brigadier.arguments.StringArgumentType.getString(context, "name"),
+                                                IntegerArgumentType.getInteger(context, "pages"))))));
+    }
+
+    @javax.annotation.Nullable
+    private static java.util.UUID ownerByName(CommandSourceStack source, String name) {
+        net.minecraft.server.level.ServerPlayer online = source.getServer().getPlayerList().getPlayerByName(name);
+        if (online != null) {
+            return online.getUUID();
+        }
+        return jp.amemaru.lostconnection.economy.StorageData.get(source.getServer()).findByName(name);
+    }
+
+    private static int storageList(CommandSourceStack source, String name) {
+        java.util.UUID owner = ownerByName(source, name);
+        jp.amemaru.lostconnection.economy.StorageData.Box box = owner == null ? null
+                : jp.amemaru.lostconnection.economy.StorageData.get(source.getServer()).peek(owner);
+        if (box == null) {
+            source.sendFailure(Component.translatable("commands.amemaru.storage.none", name));
+            return 0;
+        }
+        source.sendSuccess(() -> Component.translatable("commands.amemaru.storage.summary", name, box.pages(), box.usedSlots(),
+                box.capacity(), box.receivedCount()), false);
+        java.util.List<net.minecraft.world.item.ItemStack> items = box.items();
+        for (int i = 0; i < items.size(); i++) {
+            net.minecraft.world.item.ItemStack stack = items.get(i);
+            if (!stack.isEmpty()) {
+                int slot = i;
+                source.sendSuccess(() -> Component.translatable("commands.amemaru.storage.item", slot / 27 + 1, slot % 27 + 1,
+                        stack.getHoverName(), stack.getCount()), false);
+            }
+        }
+        for (net.minecraft.world.item.ItemStack stack : box.received()) {
+            if (!stack.isEmpty()) {
+                source.sendSuccess(() -> Component.translatable("commands.amemaru.storage.received", stack.getHoverName(), stack.getCount()), false);
+            }
+        }
+        return box.usedSlots();
+    }
+
+    private static int storagePages(CommandSourceStack source, String name, int pages) {
+        java.util.UUID owner = ownerByName(source, name);
+        if (owner == null) {
+            source.sendFailure(Component.translatable("commands.amemaru.storage.none", name));
+            return 0;
+        }
+        jp.amemaru.lostconnection.economy.StorageData storage = jp.amemaru.lostconnection.economy.StorageData.get(source.getServer());
+        jp.amemaru.lostconnection.economy.StorageData.Box box = storage.box(owner);
+        if (box.name().isEmpty()) {
+            box.setName(name);
+        }
+        box.setPages(pages);
+        storage.setDirty();
+        source.sendSuccess(() -> Component.translatable("commands.amemaru.storage.pages", name, box.pages(), box.capacity()), true);
+        return box.pages();
+    }
+
     private static int summary(CommandSourceStack source) {
         MinecraftServer server = source.getServer();
         EconomyLog log = EconomyLog.get(server);
