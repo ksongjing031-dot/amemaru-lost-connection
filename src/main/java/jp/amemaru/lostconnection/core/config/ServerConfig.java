@@ -129,6 +129,23 @@ public final class ServerConfig {
     public static final ForgeConfigSpec.IntValue DUEL_ARENAS;
     public static final ForgeConfigSpec.BooleanValue DUEL_ANNOUNCE;
     public static final ForgeConfigSpec.BooleanValue DUEL_ALLOW_POTIONS;
+    // Phase 7 その1：コネクション量と輝き段階
+    public static final ForgeConfigSpec.BooleanValue CONNECTION_ENABLED;
+    public static final ForgeConfigSpec.DoubleValue CONNECTION_MULTIPLIER;
+    public static final ForgeConfigSpec.IntValue CONNECTION_DAILY_TOTAL;
+    public static final ForgeConfigSpec.IntValue CONNECTION_DAILY_CATEGORY;
+    public static final ForgeConfigSpec.IntValue CONNECTION_BASE_PLAYERS;
+    public static final ForgeConfigSpec.DoubleValue CONNECTION_SCALE_MIN;
+    public static final ForgeConfigSpec.DoubleValue CONNECTION_SCALE_MAX;
+    public static final ForgeConfigSpec.IntValue CONNECTION_ACTIVE_DAYS;
+    public static final ForgeConfigSpec.IntValue CONNECTION_RESET_HOUR;
+    public static final ForgeConfigSpec.IntValue FIRST_MEET_STEP;
+    public static final ForgeConfigSpec.IntValue FIRST_MEET_MAX;
+    public static final ForgeConfigSpec.IntValue FIRST_MEET_DAILY;
+    public static final ForgeConfigSpec.IntValue LEAD_LEVEL_GAP;
+    public static final ForgeConfigSpec.BooleanValue PARTNER_ENABLED;
+    public static final ForgeConfigSpec.IntValue PARTNER_GOAL;
+    public static final ForgeConfigSpec.IntValue PARTNER_KNOTS;
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
@@ -476,6 +493,60 @@ public final class ServerConfig {
         DUEL_ALLOW_POTIONS = b
                 .comment("決闘の間に、回復薬・マナ水を使えるようにする（初期は使えない。腕前の勝負にするため）【補完】")
                 .define("allowPotions", false);
+        b.pop();
+
+        b.comment("コネクション量と輝き段階（Phase 7 その1。Phase 0-A 13章・Phase 0-B 7章）。増える行動と量はデータパックの connection_actions/、",
+                "段階のしきい値と効果は connection_rules/default.json").push("connection");
+        CONNECTION_ENABLED = b
+                .comment("コネクション量（CP）を数える")
+                .define("enabled", true);
+        CONNECTION_MULTIPLIER = b
+                .comment("増えるCPの倍率（Phase 0-B 7章：1.0）")
+                .defineInRange("multiplier", 1.0, 0.0, 10.0);
+        CONNECTION_DAILY_TOTAL = b
+                .comment("1人1日に増やせるCPの合計の上限（Phase 0-A 13章：600）")
+                .defineInRange("dailyTotal", 600, 1, 100_000);
+        CONNECTION_DAILY_CATEGORY = b
+                .comment("1人1日に増やせるCPの、分野ごとの上限（Phase 0-A 13章：150。7分野＝戦闘・生産・商売・交流・娯楽・街・物語）")
+                .defineInRange("dailyCategory", 150, 1, 100_000);
+        CONNECTION_BASE_PLAYERS = b
+                .comment("輝き段階のしきい値の基準の人数（Phase 0-A 13章：25人）。しきい値は「直近の平均アクティブ人数 ÷ この人数」倍になる")
+                .defineInRange("basePlayers", 25, 1, 1000);
+        CONNECTION_SCALE_MIN = b
+                .comment("人数補正の倍率の下限（Phase 0-A 13章：0.4）")
+                .defineInRange("scaleMin", 0.4, 0.01, 10.0);
+        CONNECTION_SCALE_MAX = b
+                .comment("人数補正の倍率の上限（Phase 0-A 13章：2.0）")
+                .defineInRange("scaleMax", 2.0, 0.01, 10.0);
+        CONNECTION_ACTIVE_DAYS = b
+                .comment("平均アクティブ人数を数える日数（Phase 0-A 13章：直近3日。今日を含む）")
+                .defineInRange("activeDays", 3, 1, 14);
+        CONNECTION_RESET_HOUR = b
+                .comment("1日の上限（CP・結び札など）を切り替える時刻（0〜23時。Phase 0-B 4.1：進行日ではなく、毎日決まった時刻。4時）")
+                .defineInRange("resetHour", 4, 0, 23);
+        FIRST_MEET_STEP = b
+                .comment("はじめましてボーナス：今のパーティにいる「今日初めて組んだ人」1人ごとに、経験値とドロップの判定が上がる割合（%。",
+                        "Phase 0-A 15章：その人数×10%）")
+                .defineInRange("firstMeetStep", 10, 0, 100);
+        FIRST_MEET_MAX = b
+                .comment("はじめましてボーナスの上限（%。Phase 0-A 15章：+30%）")
+                .defineInRange("firstMeetMax", 30, 0, 300);
+        FIRST_MEET_DAILY = b
+                .comment("はじめましてボーナスに数える「初めて組んだ人」の、1日の人数（Phase 0-A 15章：1日5人まで）")
+                .defineInRange("firstMeetDaily", 5, 0, 100);
+        LEAD_LEVEL_GAP = b
+                .comment("先導者：サーバーの中央値より、このレベル以上低い人と組むと、先導する側に報酬（Phase 0-A 15章：10レベル）。",
+                        "途中参加者（来てから3日のうち）と組んだときも同じ")
+                .defineInRange("leadLevelGap", 10, 1, 200);
+        PARTNER_ENABLED = b
+                .comment("今日の相棒（Phase 0-A 15章：毎日ログインしたときに、まだ組んだことのない人を1人「今日の相棒」として示す）")
+                .define("partnerEnabled", true);
+        PARTNER_GOAL = b
+                .comment("今日の相棒の依頼：相棒と同じパーティで倒す敵の数【補完】")
+                .defineInRange("partnerGoal", 10, 1, 1000);
+        PARTNER_KNOTS = b
+                .comment("今日の相棒の依頼を終えたときの、ひとりぶんのお礼（ノット）【補完】。コネクションは connection_actions/today_partner.json")
+                .defineInRange("partnerKnots", 150, 0, 1_000_000);
         b.pop();
 
         SPEC = b.build();

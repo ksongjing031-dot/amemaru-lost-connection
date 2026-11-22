@@ -139,5 +139,6 @@ public final class ClientForgeEvents {
         CombatTextRenderer.reset();
         ClientDown.reset();
         ClientParty.reset();
+        ClientConnection.clear();
     }
 }

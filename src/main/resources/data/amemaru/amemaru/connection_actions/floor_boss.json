@@ -1,0 +1,7 @@
+{
+  "_comment": "Phase 0-A 13章「増える行動と量」。同じボスは1日1回",
+  "name": "階層ボスを倒す（パーティ）",
+  "category": "combat",
+  "cp": 20,
+  "same_target_daily": 1
+}

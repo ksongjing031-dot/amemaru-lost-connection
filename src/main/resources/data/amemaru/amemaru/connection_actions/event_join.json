@@ -1,0 +1,7 @@
+{
+  "_comment": "Phase 0-A 13章「増える行動と量」。催しごと（釣り大会はPhase 7 その2、カジノナイトはその3で数え始める）",
+  "name": "釣り大会・カジノナイトに参加",
+  "category": "play",
+  "cp": 20,
+  "same_target_daily": 1
+}

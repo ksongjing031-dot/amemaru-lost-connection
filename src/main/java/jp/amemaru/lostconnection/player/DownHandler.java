@@ -116,7 +116,10 @@ public final class DownHandler {
     public static void goDown(ServerPlayer player, PlayerData data) {
         ServerLevel level = player.serverLevel();
         long now = level.getGameTime();
-        data.down().start(now, ServerConfig.DOWN_SECONDS.get() * 20);
+        // Phase 7 その1：大結晶の輝き段階6で、ダウン（蘇生待ち）の時間が5秒のびる
+        int downSeconds = ServerConfig.DOWN_SECONDS.get()
+                + jp.amemaru.lostconnection.connection.ConnectionService.downBonusSeconds(player.server);
+        data.down().start(now, downSeconds * 20);
         data.setHp(0);
         data.countDown();
         SkillService.cancelCast(player, data, false);

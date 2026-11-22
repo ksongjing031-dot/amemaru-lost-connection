@@ -107,6 +107,8 @@ public final class GearService {
     public static void onEquipmentChange(LivingEquipmentChangeEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             PlayerDataCapability.get(player).ifPresent(PlayerData::invalidateStats);
+            // Phase 7 その1：手渡し（作り手とちがう人が初めて身に着けた）
+            jp.amemaru.lostconnection.connection.ConnectionHandover.onEquip(player, event.getTo());
         }
     }
 
@@ -129,6 +131,8 @@ public final class GearService {
             return;
         }
         int amount = skill ? snapshot.rules().skillUseLoss() : snapshot.rules().weaponHitLoss();
+        // Phase 7 その1：使った人を持ち主として覚える（ほかの人が修理したら「他人の装備の修理」）
+        jp.amemaru.lostconnection.connection.ConnectionHandover.markUser(player, main);
         if (GearData.wear(main, def, amount)) {
             onBroken(player, main);
         }
@@ -147,7 +151,11 @@ public final class GearService {
                 continue;
             }
             EquipmentDef def = snapshot.get(stack);
-            if (def != null && GearData.wear(stack, def, amount)) {
+            if (def == null) {
+                continue;
+            }
+            jp.amemaru.lostconnection.connection.ConnectionHandover.markUser(player, stack);
+            if (GearData.wear(stack, def, amount)) {
                 onBroken(player, stack);
             }
         }

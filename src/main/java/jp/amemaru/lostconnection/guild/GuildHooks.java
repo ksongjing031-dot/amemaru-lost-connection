@@ -1,5 +1,7 @@
 package jp.amemaru.lostconnection.guild;
 
+import jp.amemaru.lostconnection.connection.ConnectionActions;
+import jp.amemaru.lostconnection.connection.ConnectionService;
 import jp.amemaru.lostconnection.AmemaruMod;
 import jp.amemaru.lostconnection.player.PlayerData;
 import jp.amemaru.lostconnection.player.PlayerDataCapability;
@@ -31,6 +33,11 @@ public final class GuildHooks {
     public static void onKill(ServerPlayer player, ResourceLocation enemy, int floor) {
         QuestService.onKill(player, enemy, floor);
         TitleService.check(player);
+        // Phase 7 その1：パーティ（2人以上）で敵を倒す（5体ごとに1CP）
+        jp.amemaru.lostconnection.party.Party party = jp.amemaru.lostconnection.party.PartyService.partyOf(player);
+        if (party != null && party.members().size() >= 2) {
+            ConnectionService.award(player, ConnectionActions.PARTY_KILL, null, 1);
+        }
     }
 
     /** 連携技が成立した（連携に加わった人。称号「連携の糸」の数）。 */
@@ -41,6 +48,8 @@ public final class GuildHooks {
             if (data != null) {
                 data.getGuild().addCounter(GuildCounters.LINK_COMBOS, 1);
                 TitleService.check(player);
+                // Phase 7 その1：連携技の成立（1日30回まで）
+                ConnectionService.award(player, ConnectionActions.LINK_COMBO);
             }
         }
     }
@@ -58,15 +67,33 @@ public final class GuildHooks {
         PlayerDataCapability.get(downed).ifPresent(data -> data.getGuild().addConnection(reviver.getUUID(),
                 reviver.getGameProfile().getName(), GuildData.ConnectionKind.REVIVED_BY, day));
         TitleService.check(reviver);
+        // Phase 7 その1：仲間の蘇生（同じ相手は1日3回）
+        ConnectionService.award(reviver, ConnectionActions.REVIVE, downed.getUUID());
     }
 
     /** パーティに入った（縁帳：入った人と、もういた仲間のそれぞれ。称号「はじめまして」の系統）。 */
     public static void onPartyJoined(ServerPlayer joined, List<ServerPlayer> members) {
         int day = day(joined.server);
         PlayerData mine = PlayerDataCapability.get(joined).orElse(null);
+        boolean joinedNew = jp.amemaru.lostconnection.connection.ConnectionSocial.isJunior(joined);
         for (ServerPlayer member : members) {
             if (member == joined || member.getUUID().equals(joined.getUUID())) {
                 continue;
+            }
+            // Phase 7 その1：初めての人とパーティを組む（お互いに。1日5人まで）。縁帳に足す前に確かめる
+            GuildData.Connection before = mine == null ? null : mine.getGuild().connection(member.getUUID());
+            if (before == null || before.party() == 0) {
+                ConnectionService.award(joined, ConnectionActions.FIRST_PARTY, member.getUUID());
+                ConnectionService.award(member, ConnectionActions.FIRST_PARTY, joined.getUUID());
+                // はじめましてボーナス（15章）：お互いの「今日初めて組んだ人」に足す
+                jp.amemaru.lostconnection.connection.ConnectionSocial.onFirstParty(joined, member);
+            }
+            // 先導者（15章）：途中参加者・中央値より10レベル以上低い人と組んだ先導する側（1日3回）。称号の「先導」の数
+            boolean memberNew = jp.amemaru.lostconnection.connection.ConnectionSocial.isJunior(member);
+            if (joinedNew && !memberNew) {
+                lead(member, joined);
+            } else if (memberNew && !joinedNew) {
+                lead(joined, member);
             }
             if (mine != null) {
                 mine.getGuild().addConnection(member.getUUID(), member.getGameProfile().getName(), GuildData.ConnectionKind.PARTY, day);
@@ -76,6 +103,29 @@ public final class GuildHooks {
             TitleService.check(member);
         }
         TitleService.check(joined);
+    }
+
+    /**
+     * 途中参加者・中央値より10レベル以上低い人と組んだ（先導者のCPと、称号の「先導」の数）。同じ相手は1日1回【補完】。
+     * CPが上限で0でも、先導の数は数える。
+     */
+    private static void lead(ServerPlayer leader, ServerPlayer newcomer) {
+        PlayerData data = PlayerDataCapability.get(leader).orElse(null);
+        if (data == null) {
+            return;
+        }
+        jp.amemaru.lostconnection.connection.ConnectionRecord record = data.getConnection();
+        record.rollover(ConnectionService.today());
+        if (record.targetToday(ConnectionActions.NEWCOMER_PARTY, newcomer.getUUID()) > 0) {
+            return;
+        }
+        int before = record.actionsToday(ConnectionActions.NEWCOMER_PARTY);
+        ConnectionService.award(leader, ConnectionActions.NEWCOMER_PARTY, newcomer.getUUID());
+        if (record.actionsToday(ConnectionActions.NEWCOMER_PARTY) == before) {
+            record.countOnly(ConnectionActions.NEWCOMER_PARTY, newcomer.getUUID());
+        }
+        data.getGuild().addCounter(GuildCounters.LEADS, 1);
+        TitleService.check(leader);
     }
 
     /**
@@ -89,6 +139,9 @@ public final class GuildHooks {
         int day = day(server);
         countTrade(server, buyer, seller, sellerName, day);
         countTrade(server, seller, buyer, buyerName, day);
+        // Phase 7 その1：フリマの取引（売り手・買い手それぞれ。同じ相手とは1日3回。いない人には次に入ったときに）
+        ConnectionService.awardLater(server, buyer, ConnectionActions.MARKET_TRADE, seller, 1);
+        ConnectionService.awardLater(server, seller, ConnectionActions.MARKET_TRADE, buyer, 1);
         // 限定称号：フリマで最初の取引を成立させた2人（売り手と買い手）。Phase 6 その1 で約束した分
         TitleService.onFirst(server, "first_market_trade", List.of(seller, buyer), List.of(sellerName, buyerName));
     }
@@ -130,6 +183,8 @@ public final class GuildHooks {
         if (data != null) {
             if (data.getGuild().countVisitor(day, visitor.getUUID())) {
                 TitleService.check(player);
+                // Phase 7 その1：露店への来客（1日に1人1回、10人ごとに5CP）
+                ConnectionService.award(player, ConnectionActions.STALL_VISITORS, null, 1);
             }
             return;
         }
@@ -152,6 +207,16 @@ public final class GuildHooks {
         }
         MinecraftServer server = winners.get(0).server;
         QuestService.onBoss(winners, floor);
+        // Phase 7 その1：階層ボス（パーティ）・章ボス（5・10・15・20階）。同じボスは1日1回
+        UUID bossKey = UUID.nameUUIDFromBytes(("amemaru-boss:" + boss).getBytes(java.nio.charset.StandardCharsets.UTF_8));
+        boolean chapterBoss = floor > 0 && floor % 5 == 0;
+        for (ServerPlayer player : winners) {
+            if (chapterBoss) {
+                ConnectionService.award(player, ConnectionActions.CHAPTER_BOSS, bossKey);
+            } else if (winners.size() >= 2 || jp.amemaru.lostconnection.party.PartyService.partyOf(player) != null) {
+                ConnectionService.award(player, ConnectionActions.FLOOR_BOSS, bossKey);
+            }
+        }
         // 章ボス（5・10・15・20階）の「倒れぬ心」「最後の砦」は、ボス戦の間のダウンと受け止めた量を数える Phase 8 で渡す。
         // それまでは章ボスとして扱わない（数えていないのに、ダウンしなかったことにしないため）
         TitleService.onBossKilled(winners, boss, false, new HashSet<>(), null);
@@ -210,8 +275,9 @@ public final class GuildHooks {
                     }
                 }
                 case "visitor" -> {
-                    if (event.hasUUID("who")) {
-                        data.getGuild().countVisitor(event.getInt("day"), event.getUUID("who"));
+                    if (event.hasUUID("who") && data.getGuild().countVisitor(event.getInt("day"), event.getUUID("who"))) {
+                        // Phase 7 その1：いない間の露店の来客も、CPに数える
+                        ConnectionService.award(player, ConnectionActions.STALL_VISITORS, null, 1);
                     }
                 }
                 case "title" -> {

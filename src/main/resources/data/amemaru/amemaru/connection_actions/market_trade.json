@@ -1,0 +1,7 @@
+{
+  "_comment": "Phase 0-A 13章「増える行動と量」。売り手・買い手それぞれ。同じ相手とは1日3回",
+  "name": "フリマの取引",
+  "category": "trade",
+  "cp": 5,
+  "same_target_daily": 3
+}

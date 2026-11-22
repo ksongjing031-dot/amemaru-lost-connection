@@ -1,0 +1,7 @@
+{
+  "_comment": "Phase 0-A 13章「増える行動と量」。同じ相手は1日3回",
+  "name": "仲間の蘇生",
+  "category": "social",
+  "cp": 10,
+  "same_target_daily": 3
+}

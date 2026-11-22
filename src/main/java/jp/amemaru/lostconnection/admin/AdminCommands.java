@@ -109,6 +109,8 @@ public final class AdminCommands {
                         // Phase 6 その4：決闘・依頼台
                         .then(jp.amemaru.lostconnection.social.SocialCommands.adminDuelCommand())
                         .then(jp.amemaru.lostconnection.social.SocialCommands.adminCommissionCommand())
+                        // Phase 7 その1：コネクション量と輝き段階
+                        .then(ConnectionCommands.connectionCommand())
                         .then(debugCommand())));
     }
 

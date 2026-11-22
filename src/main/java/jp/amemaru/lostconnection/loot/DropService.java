@@ -79,14 +79,18 @@ public final class DropService {
             // Phase 6 その3：クエストの目標と、称号の数（倒した数）
             jp.amemaru.lostconnection.guild.GuildHooks.onKill(player, def.id(), def.floor());
             int share = shares.getOrDefault(player.getUUID(), 0);
+            // Phase 7 その1：はじめましてボーナス（今のパーティにいる「今日初めて組んだ人」×10%、30%まで）。経験値とドロップの判定に
+            double meet = 1.0 + jp.amemaru.lostconnection.connection.ConnectionSocial.firstMeetBonus(player) / 100.0;
             if (share > 0) {
-                LevelService.addExp(player, data, share, LevelService.ExpSource.GAMEPLAY);
+                LevelService.addExp(player, data, Math.round(share * meet), LevelService.ExpSource.GAMEPLAY);
             }
-            dropNormal(mob, def, source, level, player, data);
-            dropRare(mob, def, level, player, data);
+            dropNormal(mob, def, source, level, player, data, meet);
+            dropRare(mob, def, level, player, data, meet);
             // 階の中だけのドロップ（1階の光のかけら。11月22日）
             jp.amemaru.lostconnection.tower.TowerService.extraDrops(mob, level, player, data);
         }
+        // Phase 7 その1：今日の相棒（相棒どうしが同じパーティで倒したら、ふたりの数を進める）
+        jp.amemaru.lostconnection.connection.ConnectionSocial.onEnemyKilled(receivers);
         if (mob.guardianId() != null) {
             // 石柱の守り手：倒した人（パーティを含む）の石柱の課題を終えた印をつける（11月22日）
             jp.amemaru.lostconnection.tower.TowerService.creditGuardian(mob, receivers);
@@ -138,7 +142,7 @@ public final class DropService {
     // ---------------------------------------------------------------- ふつうのドロップ
 
     private static void dropNormal(AmemaruMob mob, EnemyDef def, DamageSource source, ServerLevel level, ServerPlayer player,
-                                   PlayerData data) {
+                                   PlayerData data, double bonus) {
         if (def.lootTable() == null) {
             return;
         }
@@ -155,7 +159,7 @@ public final class DropService {
                 .withParameter(LootContextParams.LAST_DAMAGE_PLAYER, player)
                 .withLuck(player.getLuck())
                 .create(LootContextParamSets.ENTITY);
-        double multiplier = ServerConfig.DROP_RATE_MULTIPLIER.get();
+        double multiplier = ServerConfig.DROP_RATE_MULTIPLIER.get() * bonus;
         int rolls = (int) Math.floor(multiplier);
         if (level.random.nextDouble() < multiplier - rolls) {
             rolls++;
@@ -174,14 +178,14 @@ public final class DropService {
 
     // ---------------------------------------------------------------- レアドロップ
 
-    private static void dropRare(AmemaruMob mob, EnemyDef def, ServerLevel level, ServerPlayer player, PlayerData data) {
+    private static void dropRare(AmemaruMob mob, EnemyDef def, ServerLevel level, ServerPlayer player, PlayerData data, double bonus) {
         if (def.rare().isEmpty()) {
             return;
         }
         int misses = def.pity() ? data.getAdventure().pity(def.id()) : 0;
         boolean any = false;
         for (EnemyDef.RareDrop rare : def.rare()) {
-            double chance = rareChance(rare, rare.pity() ? misses : 0);
+            double chance = rareChance(rare, rare.pity() ? misses : 0) * bonus;
             if (level.random.nextDouble() * 100.0 >= chance) {
                 continue;
             }

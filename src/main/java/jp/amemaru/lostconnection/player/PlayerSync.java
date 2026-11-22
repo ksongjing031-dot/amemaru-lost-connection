@@ -35,6 +35,10 @@ public final class PlayerSync {
             jp.amemaru.lostconnection.guild.GuildService.syncSelf(player, data);
             sections &= ~PlayerData.SYNC_GUILD;
         }
+        if ((sections & PlayerData.SYNC_CONNECTION) != 0) {
+            jp.amemaru.lostconnection.connection.ConnectionService.syncSelf(player, data);
+            sections &= ~PlayerData.SYNC_CONNECTION;
+        }
         if (sections != 0 && data.isStatsReady()) {
             ModNetwork.sendTo(player, SyncPlayerDataS2C.of(data, GrowthRules.current(),
                     ProgressionData.currentLevelCap(player.server), sections, player.level().getGameTime()));

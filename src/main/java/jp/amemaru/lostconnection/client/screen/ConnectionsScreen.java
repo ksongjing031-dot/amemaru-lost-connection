@@ -15,6 +15,7 @@ import java.util.List;
 /**
  * 縁帳（Phase 6 その3。Phase 0-A 15章【提案】「組んだ人・取引した人・助けてくれた人の一覧を見られる。相手ごとに一緒にしたこと」）。
  * 最近会った順。フリマ・露店・人から人への受け渡しの取引も「取引」に数える（Phase 6 その1 で約束した、対面の取引のつながり）。
+ * Phase 7 その1：相手ごとの「結び札」のボタンで、ありがとうの札を贈る（1日3枚・同じ人へは1日1枚）。
  */
 public class ConnectionsScreen extends Screen {
     private static final int W = 340;
@@ -56,6 +57,47 @@ public class ConnectionsScreen extends Screen {
         return false;
     }
 
+    /** 結び札のボタン（その行の右下）。 */
+    private int[] thanksButton(int row) {
+        int y = top + 34 + row * ROW;
+        return new int[]{left + W - 16 - 54, y + 12, left + W - 16, y + 22};
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        if (button == 0) {
+            ListTag people = data.getList("people", Tag.TAG_COMPOUND);
+            for (int i = scroll; i < Math.min(people.size(), scroll + ROWS); i++) {
+                CompoundTag one = people.getCompound(i);
+                int[] b = thanksButton(i - scroll);
+                if (mouseX >= b[0] && mouseX < b[2] && mouseY >= b[1] && mouseY < b[3] && sendThanks(one)) {
+                    return true;
+                }
+            }
+        }
+        return super.mouseClicked(mouseX, mouseY, button);
+    }
+
+    /** 結び札を贈る（贈れる人なら、サーバーへ送って true）。 */
+    private boolean sendThanks(CompoundTag one) {
+        if (!one.hasUUID("id") || one.getBoolean("thanked") || data.getInt("thanksLeft") <= 0) {
+            return false;
+        }
+        CompoundTag args = new CompoundTag();
+        args.putUUID("to", one.getUUID("id"));
+        args.putBoolean("refresh", true);
+        jp.amemaru.lostconnection.network.ModNetwork.sendToServer(new jp.amemaru.lostconnection.network.c2s.ConnectionActionC2S("thanks", args));
+        return true;
+    }
+
+    /** 自動の確認の写真：一覧の index 番目の人に結び札を贈る（ボタンを押したのと同じ）。 */
+    public void ciThanks(int index) {
+        ListTag people = data.getList("people", Tag.TAG_COMPOUND);
+        if (index >= 0 && index < people.size()) {
+            sendThanks(people.getCompound(index));
+        }
+    }
+
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
         int size = data.getList("people", Tag.TAG_COMPOUND).size();
@@ -70,6 +112,10 @@ public class ConnectionsScreen extends Screen {
         graphics.drawCenteredString(font, title, left + W / 2, top + 7, UiStyle.TEXT_HEADER);
         graphics.drawString(font, Component.translatable("screen.amemaru.connections.total", data.getInt("total")), left + 14, top + 20,
                 UiStyle.TEXT_DIM, false);
+        if (data.contains("thanksLeft")) {
+            Component thanksText = Component.translatable("screen.amemaru.connections.thanks_left", data.getInt("thanksLeft"));
+            graphics.drawString(font, thanksText, left + W - 26 - font.width(thanksText), top + 20, 0xFFE3A6FF, false);
+        }
         ListTag people = data.getList("people", Tag.TAG_COMPOUND);
         int y = top + 34;
         if (people.isEmpty()) {
@@ -90,7 +136,16 @@ public class ConnectionsScreen extends Screen {
             add(together, "revived_by", one.getInt("revivedBy"));
             add(together, "commissions", one.getInt("commissions"));
             add(together, "duels", one.getInt("duels"));
-            graphics.drawString(font, UiStyle.clip(font, String.join("・", together), W - 36), left + 16, y + 13, UiStyle.TEXT_HEADER, false);
+            graphics.drawString(font, UiStyle.clip(font, String.join("・", together), W - 36 - 60), left + 16, y + 13, UiStyle.TEXT_HEADER, false);
+            if (one.hasUUID("id")) {
+                int[] b = thanksButton(i - scroll);
+                boolean done = one.getBoolean("thanked");
+                boolean can = !done && data.getInt("thanksLeft") > 0;
+                boolean hover = can && mouseX >= b[0] && mouseX < b[2] && mouseY >= b[1] && mouseY < b[3];
+                graphics.fill(b[0], b[1], b[2], b[3], hover ? 0xFF7A4FA8 : can ? 0xFF4E3570 : 0xFF2A2F40);
+                Component label = Component.translatable(done ? "screen.amemaru.connections.thanked" : "screen.amemaru.connections.thanks");
+                graphics.drawCenteredString(font, label, (b[0] + b[2]) / 2, b[1] + 1, can || done ? 0xFFF1E0FF : UiStyle.TEXT_DIM);
+            }
             y += ROW;
         }
         if (people.size() > ROWS) {

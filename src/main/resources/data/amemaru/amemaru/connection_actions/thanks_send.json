@@ -1,0 +1,7 @@
+{
+  "_comment": "Phase 0-A 13章「増える行動と量」。結び札は1日3枚まで贈れる",
+  "name": "結び札を贈る",
+  "category": "social",
+  "cp": 3,
+  "daily_limit": 3
+}

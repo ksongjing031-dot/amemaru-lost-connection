@@ -1,6 +1,5 @@
 package jp.amemaru.lostconnection.block;
 
-import jp.amemaru.lostconnection.story.StoryEventManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -23,7 +22,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * 大結晶の「記憶の石」（Phase 0-A 7章「大結晶：途中参加者が目覚める場所」、14章「大結晶の『記憶の再生』：見逃したストーリーイベントの
- * 演出を、自分の画面だけで再生する」）。大結晶の台座にはめた、結晶の板。右クリックで、見直せるイベントの一覧が開く。
+ * 演出を、自分の画面だけで再生する」）。大結晶の台座にはめた、結晶の板。右クリックで、大結晶の輝き（コネクション量と輝き段階。
+ * Phase 7 その1）の画面が開き、そこから見直せるイベントの一覧へ進める。
  */
 public class MemoryStoneBlock extends HorizontalDirectionalBlock {
     private static final VoxelShape SHAPE = Shapes.or(Block.box(1.0, 0.0, 1.0, 15.0, 3.0, 15.0), Block.box(3.0, 3.0, 3.0, 13.0, 12.0, 13.0));
@@ -56,7 +56,8 @@ public class MemoryStoneBlock extends HorizontalDirectionalBlock {
             return InteractionResult.PASS;
         }
         if (!level.isClientSide() && player instanceof ServerPlayer serverPlayer) {
-            StoryEventManager.openReplayList(serverPlayer);
+            // Phase 7 その1：まず大結晶の輝き（コネクション量と輝き段階）。「記憶の再生」は、その画面のボタンから
+            jp.amemaru.lostconnection.connection.ConnectionActionsHandler.open(serverPlayer);
         }
         return InteractionResult.sidedSuccess(level.isClientSide());
     }

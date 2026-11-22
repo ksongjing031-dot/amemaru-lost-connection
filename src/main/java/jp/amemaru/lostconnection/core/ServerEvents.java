@@ -64,6 +64,9 @@ public final class ServerEvents {
         event.addListener(jp.amemaru.lostconnection.guild.TitleDefs.loader());
         event.addListener(jp.amemaru.lostconnection.guild.RecordDefs.loader());
         event.addListener(jp.amemaru.lostconnection.guild.QuestDefs.loader());
+        // Phase 7 その1：コネクション量（増える行動と量・輝き段階の決まり）
+        event.addListener(jp.amemaru.lostconnection.connection.ConnectionActionDefs.loader());
+        event.addListener(jp.amemaru.lostconnection.connection.ConnectionRules.loader());
     }
 
     @SubscribeEvent
