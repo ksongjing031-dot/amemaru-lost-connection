@@ -1,0 +1,8 @@
+{
+  "_comment": "マナ水（小）（Phase 6）。右クリックで、最大MPの30%がすぐに戻る。使ったあと10秒は、MPを戻す薬（group mp）が使えない【補完】",
+  "restore": "mp",
+  "percent": 30,
+  "flat": 0,
+  "cooldown": 10,
+  "group": "mp"
+}

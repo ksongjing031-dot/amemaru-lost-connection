@@ -185,6 +185,18 @@ TRADES = {
 }
 
 
+# 店の呼び鈴（Phase 6。11月22日に決定：施設は右クリックでGUIを開いて使う）：店の人の前のカウンターの天板の上に、
+# amemaru:shop_counter（中身の shop が、data/amemaru/amemaru/shops/<店>.json の店）。料理屋は寄付で開くまで置かない。
+# 11月21日の直しでカウンターを1段低くした店は、直し（edits/market_*.json）の側で、天板の上のマスに slab=false を置いている。
+# 直しのない店は、ここで天板（下付きの半ブロック）ごと置く（slab=true）。
+SHOP_IDS = {"general", "bakery", "greengrocer", "apothecary", "tools", "lights", "cloth", "butcher", "books", "leather",
+            "flowers", "hardware", "tea"}
+
+
+def shop_bell_nbt(trade):
+    return Compound({"id": String("amemaru:shop_counter"), "shop": String("amemaru:" + trade)})
+
+
 # ---------------------------------------------------------------- 店
 class Shop:
     """1軒の店。side "W"（通りの西。正面は東）か "E"（通りの東。正面は西）。z0..z1 は通りに沿う範囲（間口 F）。奥行きは11。
@@ -589,6 +601,9 @@ class Shop:
             self.put(a, 4, Y1 + 1, log("dark_oak", "z", stripped=True))
             self.put(a, 4, Y1 + 2, slab("dark_oak", "bottom"))
         self.put(1, 4, Y1 + 1, block("spruce_fence_gate", facing=self.front, open=False, powered=False, in_wall=False))
+        if self.trade in SHOP_IDS:
+            # 店の人の前の天板を、呼び鈴の付いた天板に替える（Phase 6）
+            self.put(self.npc[0], 4, Y1 + 2, block("amemaru:shop_counter", slab="true"), shop_bell_nbt(self.trade))
 
     def shelf_rows(self, a):
         """売り場の棚の b。左の列は b=1..2（b=3 はカウンターの門への通り道）、右の列は b=2..3（b=1 は入口の前）。

@@ -94,6 +94,7 @@ public final class AdminCommands {
                         // Phase 6：経済
                         .then(EconomyCommands.economyCommand())
                         .then(EconomyCommands.storageCommand())
+                        .then(EconomyCommands.shopCommand())
                         .then(debugCommand())));
     }
 

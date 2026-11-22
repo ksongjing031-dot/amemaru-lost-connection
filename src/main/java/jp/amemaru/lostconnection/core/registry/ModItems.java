@@ -67,6 +67,8 @@ public final class ModItems {
             new BlockItem(ModBlocks.TOWER_CHEST.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> STORAGE_ACCESS = ITEMS.register("storage_access", () ->
             new BlockItem(ModBlocks.STORAGE_ACCESS.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> SHOP_COUNTER = ITEMS.register("shop_counter", () ->
+            new BlockItem(ModBlocks.SHOP_COUNTER.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> LOST_BLANK = ITEMS.register("lost_blank", () ->
             new BlockItem(ModBlocks.LOST_BLANK.get(), new Item.Properties()));
     public static final RegistryObject<Item> MEMORY_STONE = ITEMS.register("memory_stone", () ->

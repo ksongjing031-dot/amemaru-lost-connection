@@ -139,6 +139,15 @@ public final class ModBlocks {
                     .noOcclusion()
                     .pushReaction(PushReaction.BLOCK)));
 
+    /** 店のカウンターの呼び鈴（Phase 6）：右クリックで、その店の「買う・売る」の画面を開く。どの店かはブロックエンティティが持つ。 */
+    public static final RegistryObject<Block> SHOP_COUNTER = BLOCKS.register("shop_counter", () -> new jp.amemaru.lostconnection.block.ShopCounterBlock(
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .strength(-1.0F, 3600000.0F)
+                    .sound(SoundType.WOOD)
+                    .noOcclusion()
+                    .pushReaction(PushReaction.BLOCK)));
+
     /** 工房の作業台（サバイバル・アドベンチャーでは壊せない。街の施設のため）。 */
     private static BlockBehaviour.Properties workbench(MapColor color) {
         return BlockBehaviour.Properties.of()

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "slab=false": {
+      "model": "amemaru:block/storage_counter_bell"
+    },
+    "slab=true": {
+      "model": "amemaru:block/shop_counter"
+    }
+  }
+}

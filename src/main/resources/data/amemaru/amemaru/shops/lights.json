@@ -1,0 +1,39 @@
+{
+  "name": "ろうそくと灯り",
+  "sells": [
+    {
+      "item": "minecraft:lantern",
+      "price": 20
+    },
+    {
+      "item": "minecraft:torch",
+      "price": 4
+    },
+    {
+      "item": "minecraft:candle",
+      "price": 10
+    },
+    {
+      "item": "minecraft:honeycomb",
+      "price": 10
+    }
+  ],
+  "buys": [
+    {
+      "item": "minecraft:lantern",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:torch",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:candle",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:honeycomb",
+      "ratio": 0.5
+    }
+  ]
+}

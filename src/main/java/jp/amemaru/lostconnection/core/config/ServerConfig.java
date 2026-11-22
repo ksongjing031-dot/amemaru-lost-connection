@@ -84,6 +84,7 @@ public final class ServerConfig {
     public static final ForgeConfigSpec.BooleanValue TRANSFER_ENABLED;
     public static final ForgeConfigSpec.LongValue TRANSFER_MAX;
     public static final ForgeConfigSpec.DoubleValue TRANSFER_COOLDOWN_SECONDS;
+    public static final ForgeConfigSpec.DoubleValue SHOP_REACH;
     public static final ForgeConfigSpec.LongValue STORAGE_CONTRACT_PRICE;
     public static final ForgeConfigSpec.ConfigValue<java.util.List<? extends Number>> STORAGE_PAGE_PRICES;
     public static final ForgeConfigSpec.IntValue STORAGE_MAX_PAGES;
@@ -301,6 +302,9 @@ public final class ServerConfig {
         TRANSFER_COOLDOWN_SECONDS = b
                 .comment("受け渡しのあと、次に渡せるまでの秒数（押しすぎを防ぐ）")
                 .defineInRange("transferCooldownSeconds", 1.0, 0.0, 60.0);
+        SHOP_REACH = b
+                .comment("店のカウンターの呼び鈴から何ブロック以内で、買う・売るができるか")
+                .defineInRange("shopReach", 8.0, 2.0, 64.0);
         b.pop();
 
         b.comment("個人倉庫（Phase 6。Phase 0-A 20章：契約は買い切り、1ページ＝27枠）").push("storage");

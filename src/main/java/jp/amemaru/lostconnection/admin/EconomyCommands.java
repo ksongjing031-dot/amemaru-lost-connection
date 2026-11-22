@@ -22,6 +22,7 @@ import java.util.Locale;
  *   <li>{@code /amemaru admin economy}：世界にあるノットの合計と、今日（進行日）の発行・回収・移動</li>
  *   <li>{@code /amemaru admin economy days}：記録のある日ごとの発行・回収・移動</li>
  *   <li>{@code /amemaru admin economy recent [件数]}：直近の出し入れ（初期値10件、50件まで）</li>
+ *   <li>{@code /amemaru admin shop list}・{@code shop set <場所> <店>}：店の一覧と、呼び鈴への店の割り当て</li>
  * </ul>
  */
 public final class EconomyCommands {
@@ -54,6 +55,51 @@ public final class EconomyCommands {
                                         .executes(context -> storagePages(context.getSource(),
                                                 com.mojang.brigadier.arguments.StringArgumentType.getString(context, "name"),
                                                 IntegerArgumentType.getInteger(context, "pages"))))));
+    }
+
+    /**
+     * 店（Phase 6）：{@code shop list} で読み込んだ店の一覧、{@code shop set <場所> <店>} で、その場所の呼び鈴に店を割り当てる
+     * （ゲームの中で呼び鈴を置き直したときに使う。書き出しの直しにも、割り当てが入る）。
+     */
+    public static LiteralArgumentBuilder<CommandSourceStack> shopCommand() {
+        return Commands.literal("shop")
+                .then(Commands.literal("list").executes(context -> shopList(context.getSource())))
+                .then(Commands.literal("set")
+                        .then(Commands.argument("pos", net.minecraft.commands.arguments.coordinates.BlockPosArgument.blockPos())
+                                .then(Commands.argument("shop", net.minecraft.commands.arguments.ResourceLocationArgument.id())
+                                        .suggests((context, builder) -> net.minecraft.commands.SharedSuggestionProvider.suggestResource(
+                                                jp.amemaru.lostconnection.economy.ShopDefs.all().keySet(), builder))
+                                        .executes(context -> shopSet(context.getSource(),
+                                                net.minecraft.commands.arguments.coordinates.BlockPosArgument.getLoadedBlockPos(context, "pos"),
+                                                net.minecraft.commands.arguments.ResourceLocationArgument.getId(context, "shop"))))));
+    }
+
+    private static int shopList(CommandSourceStack source) {
+        java.util.Map<net.minecraft.resources.ResourceLocation, jp.amemaru.lostconnection.economy.ShopDef> shops =
+                jp.amemaru.lostconnection.economy.ShopDefs.all();
+        if (shops.isEmpty()) {
+            source.sendFailure(Component.translatable("commands.amemaru.shop.none"));
+            return 0;
+        }
+        for (jp.amemaru.lostconnection.economy.ShopDef def : shops.values()) {
+            source.sendSuccess(() -> Component.translatable("commands.amemaru.shop.entry", def.id().toString(), def.name(),
+                    def.sells().size(), def.buys().size()), false);
+        }
+        return shops.size();
+    }
+
+    private static int shopSet(CommandSourceStack source, net.minecraft.core.BlockPos pos, net.minecraft.resources.ResourceLocation shop) {
+        if (jp.amemaru.lostconnection.economy.ShopDefs.get(shop) == null) {
+            source.sendFailure(Component.translatable("commands.amemaru.shop.unknown", shop.toString()));
+            return 0;
+        }
+        if (!(source.getLevel().getBlockEntity(pos) instanceof jp.amemaru.lostconnection.block.ShopCounterBlockEntity counter)) {
+            source.sendFailure(Component.translatable("commands.amemaru.shop.not_counter", pos.toShortString()));
+            return 0;
+        }
+        counter.setShop(shop);
+        source.sendSuccess(() -> Component.translatable("commands.amemaru.shop.set", pos.toShortString(), shop.toString()), true);
+        return 1;
     }
 
     @javax.annotation.Nullable

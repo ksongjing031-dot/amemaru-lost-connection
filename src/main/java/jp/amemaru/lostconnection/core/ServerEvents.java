@@ -55,6 +55,10 @@ public final class ServerEvents {
         event.addListener(jp.amemaru.lostconnection.story.StoryEventManager.loader());
         event.addListener(jp.amemaru.lostconnection.story.GuideService.loader());
         event.addListener(jp.amemaru.lostconnection.progression.DaySchedule.loader());
+        // Phase 6：店・相場・消耗品
+        event.addListener(jp.amemaru.lostconnection.economy.MarketPrices.loader());
+        event.addListener(jp.amemaru.lostconnection.economy.ShopDefs.loader());
+        event.addListener(jp.amemaru.lostconnection.item.ConsumableDefs.loader());
     }
 
     @SubscribeEvent

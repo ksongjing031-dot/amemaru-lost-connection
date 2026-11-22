@@ -172,5 +172,9 @@
       "id": "crystal_fruit_violet",
       "stat": "mp"
     }
+  ],
+  "consumables": [
+    {"id": "healing_potion_small", "stack": 16},
+    {"id": "mana_water_small", "stack": 16}
   ]
 }
