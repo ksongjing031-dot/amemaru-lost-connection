@@ -1,9 +1,9 @@
 {
-  "name": "石くれ兵の核",
+  "name": "石くれの核",
   "kind": "personal",
   "giver": "amemaru:ernesto",
   "board": true,
-  "description": "石くれ兵の核を2つ。見張りが何を見張っておったのか、核に書いてあるはずじゃ。",
+  "description": "石くれの核を2つ。見張りが何を見張っておったのか、核に書いてあるはずじゃ。",
   "requires": {
     "affinity_min": 3,
     "has_job": true

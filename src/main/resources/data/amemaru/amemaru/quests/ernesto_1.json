@@ -3,7 +3,7 @@
   "kind": "personal",
   "giver": "amemaru:ernesto",
   "board": true,
-  "description": "こだまの欠片を3つ、持ってきてくれんか。古代の音が、まだ中に残っておるかもしれん。",
+  "description": "残響の欠片を3つ、持ってきてくれんか。古代の音が、まだ中に残っておるかもしれん。",
   "requires": {
     "affinity_min": 2,
     "has_job": true

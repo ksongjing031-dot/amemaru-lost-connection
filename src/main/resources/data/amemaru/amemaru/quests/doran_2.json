@@ -3,7 +3,7 @@
   "kind": "personal",
   "giver": "amemaru:doran",
   "board": true,
-  "description": "結晶のかけらを8つと、石くれ兵の核を1つ。古代の武器の秘密に、もう少しで手が届きそうなんだ。",
+  "description": "結晶の欠片を8つと、石くれの核を1つ。古代の武器の秘密に、もう少しで手が届きそうなんだ。",
   "requires": {
     "affinity_min": 3,
     "has_job": true
