@@ -31,8 +31,8 @@ public final class FishingData extends SavedData {
     public record LordCatch(UUID who, String name, int day, long millis, double size) {
     }
 
-    /** 大会で、その人のいちばんの一匹。 */
-    public record Best(UUID who, String name, String fish, double size, long score, int catches) {
+    /** 大会で、その人のいちばんの一匹（at：その一匹を釣った時刻。同じ点なら先に釣った人が上）。 */
+    public record Best(UUID who, String name, String fish, double size, long score, int catches, long at) {
     }
 
     @Nullable
@@ -105,9 +105,9 @@ public final class FishingData extends SavedData {
         Best old = scores.get(who);
         int catches = old == null ? 1 : old.catches() + 1;
         if (old == null || score > old.score()) {
-            scores.put(who, new Best(who, name, fish, size, score, catches));
+            scores.put(who, new Best(who, name, fish, size, score, catches, System.currentTimeMillis()));
         } else {
-            scores.put(who, new Best(who, old.name(), old.fish(), old.size(), old.score(), catches));
+            scores.put(who, new Best(who, old.name(), old.fish(), old.size(), old.score(), catches, old.at()));
         }
         setDirty();
     }
@@ -115,7 +115,7 @@ public final class FishingData extends SavedData {
     /** 順位（点の高い順。同じなら先に釣った人）。 */
     public List<Best> ranking() {
         List<Best> list = new ArrayList<>(scores.values());
-        list.sort(Comparator.comparingLong(Best::score).reversed());
+        list.sort(Comparator.comparingLong(Best::score).reversed().thenComparingLong(Best::at));
         return Collections.unmodifiableList(list);
     }
 
@@ -165,6 +165,7 @@ public final class FishingData extends SavedData {
             one.putDouble("size", b.size());
             one.putLong("score", b.score());
             one.putInt("catches", b.catches());
+            one.putLong("at", b.at());
             list.add(one);
         }
         tag.put("scores", list);
@@ -199,7 +200,7 @@ public final class FishingData extends SavedData {
             CompoundTag one = (CompoundTag) t;
             if (one.hasUUID("who")) {
                 data.scores.put(one.getUUID("who"), new Best(one.getUUID("who"), one.getString("name"), one.getString("fish"),
-                        one.getDouble("size"), one.getLong("score"), one.getInt("catches")));
+                        one.getDouble("size"), one.getLong("score"), one.getInt("catches"), one.getLong("at")));
             }
         }
         for (Tag t : tag.getList("prizes", Tag.TAG_COMPOUND)) {
