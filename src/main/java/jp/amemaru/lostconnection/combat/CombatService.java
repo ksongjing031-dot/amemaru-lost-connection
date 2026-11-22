@@ -240,6 +240,14 @@ public final class CombatService {
         }
         DamageSource source = event.getSource();
         Entity attackerEntity = source.getEntity();
+        // 11月23日：塔の中で壁に埋まった（ボスの突進などで押し込まれた）ら、息が詰まる傷を受けずに、近くの空いた所へ出る。
+        // 塔では、ブロックを置いたり壊したりできないので、埋まるのは押し込まれたときだけ
+        if (victim instanceof ServerPlayer stuck && source.is(DamageTypes.IN_WALL)
+                && stuck.level().dimension() == jp.amemaru.lostconnection.tower.FloorDefs.TOWER) {
+            event.setCanceled(true);
+            jp.amemaru.lostconnection.enemy.EnemyCombat.unstick(stuck);
+            return;
+        }
         // 凍結した魔物は、近くで殴れない
         if (attackerEntity instanceof LivingEntity attacker && source.getDirectEntity() == attacker && StatusService.frozen(attacker)) {
             event.setCanceled(true);

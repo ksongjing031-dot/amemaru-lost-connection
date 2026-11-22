@@ -132,6 +132,8 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
     private String guardianId;
     /** HPの倍率（ボスの人数補正。Phase 5）。 */
     private double hpMultiplier = 1.0;
+    /** 攻撃の倍率（ボスの人数補正と怒り。11月23日）。 */
+    private double attackMultiplier = 1.0;
 
     // ---- クライアントだけ
     private long telegraphStartClient;
@@ -203,7 +205,16 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
     /** 攻撃のステータス（config の倍率をかけたもの）。 */
     public double attackPower() {
         EnemyDef def = def();
-        return def == null ? 0.0 : def.attack() * ServerConfig.ENEMY_ATTACK_MULTIPLIER.get();
+        return def == null ? 0.0 : def.attack() * ServerConfig.ENEMY_ATTACK_MULTIPLIER.get() * attackMultiplier;
+    }
+
+    /** 攻撃の倍率（ボスの人数補正と怒り。11月23日）。 */
+    public void setAttackMultiplier(double multiplier) {
+        attackMultiplier = Math.max(0.1, multiplier);
+    }
+
+    public double attackMultiplier() {
+        return attackMultiplier;
     }
 
     /** 防御のステータス。 */

@@ -247,6 +247,9 @@ public final class BossRoom {
         double multiplier = 1.0 + def.hpPerExtraPlayer() * Math.max(0, inside.size() - 1);
         boss.setHpMultiplier(multiplier);
         boss.setEnemyHp(boss.getEnemyMaxHp());
+        // 11月23日：攻撃と技の間も人数で変え、長引くと怒る
+        FloorDef.Scaling scaling = def.scaling();
+        boss.setFightScaling(scaling.attackMultiplier(inside.size()), scaling.pace(inside.size()), scaling.enrageSeconds());
         setState(State.FIGHT, level);
         setSealed(level, true);
         boss.setParticipants(inside);
@@ -256,7 +259,8 @@ public final class BossRoom {
         }
         level.playSound(null, boss.getX(), boss.getY(), boss.getZ(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 2.0F, 0.6F);
         boss.onFightStarted(level, inside);
-        AmemaruMod.LOGGER.info("[amemaru] Boss fight started on floor {} ({} player(s), hp x{})", floor.number(), inside.size(), multiplier);
+        AmemaruMod.LOGGER.info("[amemaru] Boss fight started on floor {} ({} player(s), hp x{}, attack x{}, pace x{})", floor.number(),
+                inside.size(), multiplier, scaling.attackMultiplier(inside.size()), scaling.pace(inside.size()));
     }
 
     private void tickFight(ServerLevel level, List<ServerPlayer> onFloor, long now) {

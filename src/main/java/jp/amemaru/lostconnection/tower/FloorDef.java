@@ -135,10 +135,26 @@ public record FloorDef(
                             int groupMin, int groupMax, double activation, List<BlockPos> route) {
     }
 
+    /**
+     * ボスの人数補正（HPのほかの分）と怒り（11月23日）。参加者が1人増えるごとに、攻撃が {@code attackPerExtraPlayer}、
+     * 技の間が {@code pacePerExtraPlayer} の割合で変わる（技の間は 0.6 倍まで）。{@code enrageSeconds} 秒たつと怒る（0 なら怒らない）。
+     */
+    public record Scaling(double attackPerExtraPlayer, double pacePerExtraPlayer, int enrageSeconds) {
+        public static final Scaling NONE = new Scaling(0.0, 0.0, 0);
+
+        public double attackMultiplier(int players) {
+            return 1.0 + attackPerExtraPlayer * Math.max(0, players - 1);
+        }
+
+        public double pace(int players) {
+            return Math.max(0.6, 1.0 - pacePerExtraPlayer * Math.max(0, players - 1));
+        }
+    }
+
     /** ボスの部屋。{@code seal} は入口の封印のブロックの範囲（両端を含む）。 */
     public record BossRoomDef(ResourceLocation boss, Spot spawn, Vec3 arenaCenter, double arenaRadius, int arenaYMin,
                               int arenaYMax, BlockPos sealMin, BlockPos sealMax, double startRadius, int respawnSeconds,
-                              int maxPlayers, double hpPerExtraPlayer, Circle exit, String name) {
+                              int maxPlayers, double hpPerExtraPlayer, Circle exit, String name, Scaling scaling) {
         /** 戦いの間だけ、部屋の円のまわりに足すはば（門の通路のぶん）。 */
         public static final double FIGHT_MARGIN = 4.0;
 
@@ -358,7 +374,10 @@ public record FloorDef(
                 Json.intInRange(arena, "y_min", -64, 512), Json.intInRange(arena, "y_max", -64, 512), min, max,
                 Json.optionalDouble(json, "start_radius", 16.0, 1.0, 128.0), Json.optionalInt(json, "respawn_seconds", 60, 0, 86400),
                 Json.optionalInt(json, "max_players", 6, 1, 64), Json.optionalDouble(json, "hp_per_extra_player", 0.6, 0.0, 10.0),
-                circle(Json.object(json, "exit"), "boss_room.exit"), Json.optionalString(json, "name", ""));
+                circle(Json.object(json, "exit"), "boss_room.exit"), Json.optionalString(json, "name", ""),
+                new Scaling(Json.optionalDouble(json, "attack_per_extra_player", 0.0, 0.0, 5.0),
+                        Json.optionalDouble(json, "pace_per_extra_player", 0.0, 0.0, 0.5),
+                        Json.optionalInt(json, "enrage_seconds", 0, 0, 7200)));
     }
 
     private static Spot spot(JsonObject json, String name) {
