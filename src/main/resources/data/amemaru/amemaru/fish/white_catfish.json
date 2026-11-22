@@ -1,0 +1,17 @@
+{
+  "name": "白ナマズ",
+  "chapter": 2,
+  "rarity": 3,
+  "spots": [
+    "pond"
+  ],
+  "size": [
+    40,
+    80
+  ],
+  "price": 210,
+  "points": 5,
+  "difficulty": 0.6,
+  "comment": "氷の下の泥で、じっと春を待ってるんだ。ひげが長いほど年寄りだなぁ",
+  "order": 16
+}

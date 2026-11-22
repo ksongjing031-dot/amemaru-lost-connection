@@ -1,0 +1,17 @@
+{
+  "name": "灯りテナガエビ",
+  "chapter": 3,
+  "rarity": 2,
+  "spots": [
+    "pond"
+  ],
+  "size": [
+    5,
+    12
+  ],
+  "price": 60,
+  "points": 2,
+  "difficulty": 0.35,
+  "comment": "魚じゃないけど、図鑑には入れておくよ。手が長くて、体に灯りの点があるんだなぁ",
+  "order": 25
+}

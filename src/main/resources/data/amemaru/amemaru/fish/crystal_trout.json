@@ -1,0 +1,18 @@
+{
+  "name": "結晶ヤマメ",
+  "chapter": 1,
+  "rarity": 2,
+  "spots": [
+    "river",
+    "pond"
+  ],
+  "size": [
+    18,
+    32
+  ],
+  "price": 70,
+  "points": 2,
+  "difficulty": 0.4,
+  "comment": "ひれに小さな結晶がつく。水がきれいな所にしかいないんだなぁ",
+  "order": 4
+}

@@ -353,6 +353,17 @@ public final class ModNetwork {
                 .decoder(jp.amemaru.lostconnection.network.c2s.ConnectionActionC2S::decode)
                 .consumerMainThread(jp.amemaru.lostconnection.network.c2s.ConnectionActionC2S::handle)
                 .add();
+        // Phase 7 その2：釣り
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.FishingS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.FishingS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.FishingS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.FishingS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.c2s.FishingC2S.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(jp.amemaru.lostconnection.network.c2s.FishingC2S::encode)
+                .decoder(jp.amemaru.lostconnection.network.c2s.FishingC2S::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.c2s.FishingC2S::handle)
+                .add();
     }
 
     /** 1人のプレイヤーに送る。 */

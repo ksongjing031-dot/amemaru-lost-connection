@@ -1,0 +1,17 @@
+{
+  "name": "石くれドジョウ",
+  "chapter": 1,
+  "rarity": 2,
+  "spots": [
+    "pond"
+  ],
+  "size": [
+    10,
+    18
+  ],
+  "price": 55,
+  "points": 2,
+  "difficulty": 0.35,
+  "comment": "石のすき間にもぐって、石くれ兵の足もとでも平気な顔をしてるなぁ",
+  "order": 5
+}

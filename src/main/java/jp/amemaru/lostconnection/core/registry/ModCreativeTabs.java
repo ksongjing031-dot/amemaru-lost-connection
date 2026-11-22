@@ -69,7 +69,7 @@ public final class ModCreativeTabs {
             .withTabsBefore(GEAR.getKey())
             .displayItems((parameters, output) -> {
                 for (ItemManifest.Category category : new ItemManifest.Category[]{ItemManifest.Category.MATERIAL,
-                        ItemManifest.Category.FRUIT, ItemManifest.Category.CONSUMABLE}) {
+                        ItemManifest.Category.FRUIT, ItemManifest.Category.CONSUMABLE, ItemManifest.Category.FISH}) {
                     for (RegistryObject<Item> item : ModItems.MANIFEST.category(category)) {
                         output.accept(item.get());
                     }

@@ -1,0 +1,17 @@
+{
+  "name": "湖ヤリウオ",
+  "chapter": 1,
+  "rarity": 3,
+  "spots": [
+    "lake"
+  ],
+  "size": [
+    60,
+    110
+  ],
+  "price": 240,
+  "points": 5,
+  "difficulty": 0.65,
+  "comment": "湖のヤリウオは、口が槍みたいにとがってる。糸を切られんようになぁ",
+  "order": 8
+}

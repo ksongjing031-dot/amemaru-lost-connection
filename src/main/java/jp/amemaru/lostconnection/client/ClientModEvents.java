@@ -107,6 +107,8 @@ public final class ClientModEvents {
         event.registerAboveAll("guild_quests", GuildHud.OVERLAY);
         // Phase 6 その4：決闘の残り時間と二人のHP
         event.registerAboveAll("duel", DuelHud.OVERLAY);
+        // Phase 7 その2：釣りの糸の張り（画面の真ん中の下）と、釣り大会（上の真ん中）
+        event.registerAboveAll("fishing", ClientFishing.OVERLAY);
     }
 
     @SubscribeEvent

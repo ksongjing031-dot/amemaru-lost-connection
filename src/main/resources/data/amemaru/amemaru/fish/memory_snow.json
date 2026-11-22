@@ -1,0 +1,19 @@
+{
+  "name": "雪明かりの記憶魚",
+  "chapter": 2,
+  "rarity": 4,
+  "spots": [
+    "pond",
+    "lake"
+  ],
+  "size": [
+    20,
+    35
+  ],
+  "price": 500,
+  "points": 10,
+  "difficulty": 0.7,
+  "comment": "氷の下で、氷の上の声を聞いてた魚だなぁ。すべる足音を覚えてるらしい",
+  "order": 19,
+  "memory": "amemaru:fish_memory_snow"
+}

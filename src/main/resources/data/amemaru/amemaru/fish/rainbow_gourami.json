@@ -1,0 +1,17 @@
+{
+  "name": "虹鱗グラミー",
+  "chapter": 3,
+  "rarity": 3,
+  "spots": [
+    "pond"
+  ],
+  "size": [
+    10,
+    20
+  ],
+  "price": 200,
+  "points": 5,
+  "difficulty": 0.55,
+  "comment": "見る向きで、うろこの色が虹みたいに変わる。湧き水の口のそばにいるなぁ",
+  "order": 27
+}

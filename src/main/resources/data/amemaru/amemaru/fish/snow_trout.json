@@ -1,0 +1,18 @@
+{
+  "name": "雪マス",
+  "chapter": 2,
+  "rarity": 2,
+  "spots": [
+    "pond",
+    "lake"
+  ],
+  "size": [
+    25,
+    45
+  ],
+  "price": 75,
+  "points": 2,
+  "difficulty": 0.4,
+  "comment": "真っ白な体に、灰色のぽつぽつ。雪の上に置くと見えなくなるんだなぁ",
+  "order": 12
+}

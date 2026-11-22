@@ -67,6 +67,9 @@ public final class ServerEvents {
         // Phase 7 その1：コネクション量（増える行動と量・輝き段階の決まり）
         event.addListener(jp.amemaru.lostconnection.connection.ConnectionActionDefs.loader());
         event.addListener(jp.amemaru.lostconnection.connection.ConnectionRules.loader());
+        // Phase 7 その2：魚の表と釣りの決まり
+        event.addListener(jp.amemaru.lostconnection.fishing.FishDefs.loader());
+        event.addListener(jp.amemaru.lostconnection.fishing.FishingRules.loader());
     }
 
     @SubscribeEvent

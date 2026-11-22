@@ -1,0 +1,17 @@
+{
+  "name": "灯りメダカ",
+  "chapter": 1,
+  "rarity": 2,
+  "spots": [
+    "pond"
+  ],
+  "size": [
+    3,
+    5
+  ],
+  "price": 60,
+  "points": 2,
+  "difficulty": 0.3,
+  "comment": "腹がぽうっと光るんだ。夜に結晶灯のそばで、よく群れてるなぁ",
+  "order": 3
+}

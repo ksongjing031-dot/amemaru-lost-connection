@@ -77,7 +77,8 @@ public class GuildToast implements Toast {
                             Component.translatable("bond.amemaru.stage." + data.getInt("stage"))),
                     new ItemStack(Items.POPPY), "", 0, "", false, 0xFF9ACD);
             case "record" -> new GuildToast("record", Component.translatable("toast.amemaru.record.found"),
-                    Component.translatable("toast.amemaru.record.floor", data.getInt("floor")),
+                    data.getInt("floor") == 0 ? Component.translatable("toast.amemaru.record.outside")
+                            : Component.translatable("toast.amemaru.record.floor", data.getInt("floor")),
                     new ItemStack(ModItems.RECORD_BOOK.get()), "", 0, "", false, 0xBFEFFF);
             default -> null;
         };

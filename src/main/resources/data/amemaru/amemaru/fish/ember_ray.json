@@ -1,0 +1,17 @@
+{
+  "name": "熾火エイ",
+  "chapter": 3,
+  "rarity": 3,
+  "spots": [
+    "lake"
+  ],
+  "size": [
+    60,
+    120
+  ],
+  "price": 280,
+  "points": 5,
+  "difficulty": 0.7,
+  "comment": "背中に熾火みたいな点が光るエイだ。湖の温かい所の底にいるなぁ",
+  "order": 28
+}

@@ -1,0 +1,18 @@
+{
+  "name": "雷ナマズ",
+  "chapter": 4,
+  "rarity": 3,
+  "spots": [
+    "pond",
+    "lake"
+  ],
+  "size": [
+    50,
+    90
+  ],
+  "price": 280,
+  "points": 5,
+  "difficulty": 0.7,
+  "comment": "体に稲妻の模様。かかると、竿までびりっと来るんだなぁ",
+  "order": 36
+}

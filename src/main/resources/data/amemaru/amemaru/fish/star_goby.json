@@ -1,0 +1,17 @@
+{
+  "name": "星ハゼ",
+  "chapter": 4,
+  "rarity": 2,
+  "spots": [
+    "pond"
+  ],
+  "size": [
+    6,
+    12
+  ],
+  "price": 80,
+  "points": 2,
+  "difficulty": 0.4,
+  "comment": "紺色の体に白い点。夜の水面の星を食べてるって、子どもたちは言うなぁ",
+  "order": 33
+}

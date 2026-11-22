@@ -1,0 +1,18 @@
+{
+  "name": "風マス",
+  "chapter": 4,
+  "rarity": 2,
+  "spots": [
+    "lake",
+    "river"
+  ],
+  "size": [
+    25,
+    40
+  ],
+  "price": 90,
+  "points": 2,
+  "difficulty": 0.45,
+  "comment": "体に白い筋が流れてる。風が吹くと、水面すれすれを走るんだなぁ",
+  "order": 32
+}

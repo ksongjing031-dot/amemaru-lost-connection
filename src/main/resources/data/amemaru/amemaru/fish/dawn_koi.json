@@ -1,0 +1,17 @@
+{
+  "name": "暁ゴイ",
+  "chapter": 4,
+  "rarity": 3,
+  "spots": [
+    "lake"
+  ],
+  "size": [
+    50,
+    80
+  ],
+  "price": 300,
+  "points": 5,
+  "difficulty": 0.65,
+  "comment": "夜明けの空みたいに、頭から尾へ色が変わるコイだ。湖でしか見ないなぁ",
+  "order": 37
+}

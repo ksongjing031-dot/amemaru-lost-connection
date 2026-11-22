@@ -121,6 +121,10 @@ public final class MarketPrices {
         }
         ResourceLocation id = BuiltInRegistries.ITEM.getKey(stack.getItem());
         double price = base(id);
+        if (price <= 0 && stack.getItem() instanceof jp.amemaru.lostconnection.fishing.FishItem) {
+            // Phase 7 その2：魚は、ポッカ爺の買い取りの値（大物は高い）
+            price = jp.amemaru.lostconnection.fishing.FishingService.price(stack);
+        }
         if (price <= 0) {
             Long rarityBase = null;
             String rarity = rarityOf(stack).id();

@@ -1,0 +1,18 @@
+{
+  "name": "陽だまりパーチ",
+  "chapter": 3,
+  "rarity": 2,
+  "spots": [
+    "pond",
+    "lake"
+  ],
+  "size": [
+    15,
+    30
+  ],
+  "price": 70,
+  "points": 2,
+  "difficulty": 0.4,
+  "comment": "日なたの浅瀬が好きなんだ。縦の縞が、木もれ日みたいだなぁ",
+  "order": 24
+}

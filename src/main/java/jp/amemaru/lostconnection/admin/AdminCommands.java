@@ -111,6 +111,8 @@ public final class AdminCommands {
                         .then(jp.amemaru.lostconnection.social.SocialCommands.adminCommissionCommand())
                         // Phase 7 その1：コネクション量と輝き段階
                         .then(ConnectionCommands.connectionCommand())
+                        // Phase 7 その2：釣り
+                        .then(FishingCommands.fishingCommand())
                         .then(debugCommand())));
     }
 

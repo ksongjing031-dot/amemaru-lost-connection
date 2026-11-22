@@ -226,6 +226,8 @@ public final class TitleService {
             case GuildCounters.REVIVES -> data.getReviveCount();
             case GuildCounters.PARTNERS -> data.getGuild().partners();
             case GuildCounters.RECORDS_PERCENT -> RecordService.percent(data);
+            // Phase 7 その2：魚図鑑の埋まり具合（釣り見習い・釣り名人・湖を知る者）
+            case GuildCounters.FISH_PERCENT -> jp.amemaru.lostconnection.fishing.FishingService.percent(data);
             default -> data.getGuild().counter(key);
         };
     }
