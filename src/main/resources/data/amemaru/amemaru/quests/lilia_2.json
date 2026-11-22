@@ -22,6 +22,10 @@
       {
         "item": "minecraft:cookie",
         "count": 6
+      },
+      {
+        "item": "amemaru:binding_thread",
+        "count": 2
       }
     ],
     "affinity": {

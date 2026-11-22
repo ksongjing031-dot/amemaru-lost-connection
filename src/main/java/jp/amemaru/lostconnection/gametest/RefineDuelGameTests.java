@@ -22,7 +22,7 @@ import jp.amemaru.lostconnection.guild.GuildCounters;
 import jp.amemaru.lostconnection.guild.GuildData;
 import jp.amemaru.lostconnection.guild.GuildHooks;
 import jp.amemaru.lostconnection.job.JobService;
-import jp.amemaru.lostconnection.job.SkillRegistry;
+import jp.amemaru.lostconnection.job.def.SkillRegistry;
 import jp.amemaru.lostconnection.job.def.JobDef;
 import jp.amemaru.lostconnection.player.DownHandler;
 import jp.amemaru.lostconnection.player.LevelService;

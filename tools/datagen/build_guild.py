@@ -408,6 +408,15 @@ for qid, npc, stage, name, description, objectives, rewards in PERSONAL:
                    "requires": {"affinity_min": stage, "has_job": True}, "objectives": objectives, "rewards": r,
                    "order": 400 + len(QUESTS)}
 
+# ---- 留め糸（厳選の固定に使う素材）は、NPCの依頼のお礼（Phase 0-A 21章「厳選素材」：釣り・カジノの景品・NPCの依頼）。
+# 釣りとカジノは Phase 7 なので、それまでは依頼だけが入手先になる。デイリーは1本、個人的な依頼の②は2本【補完】（Phase 6 その4）
+BINDING_THREAD = "amemaru:binding_thread"
+for qid, q in QUESTS.items():
+    count = 1 if q["kind"] == "daily" else 2 if q["kind"] == "personal" and q["requires"].get("affinity_min") == 3 else 0
+    if count:
+        q["rewards"] = dict(q["rewards"])
+        q["rewards"]["items"] = list(q["rewards"].get("items", [])) + [{"item": BINDING_THREAD, "count": count}]
+
 
 # ================================================================ 書き出し
 

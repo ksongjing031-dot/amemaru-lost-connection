@@ -30,6 +30,12 @@
     },
     "flags": [
       "amemaru:bond/doran_2_done"
+    ],
+    "items": [
+      {
+        "item": "amemaru:binding_thread",
+        "count": 2
+      }
     ]
   },
   "order": 421

@@ -24,6 +24,12 @@
     },
     "flags": [
       "amemaru:bond/ernesto_2_done"
+    ],
+    "items": [
+      {
+        "item": "amemaru:binding_thread",
+        "count": 2
+      }
     ]
   },
   "order": 425
