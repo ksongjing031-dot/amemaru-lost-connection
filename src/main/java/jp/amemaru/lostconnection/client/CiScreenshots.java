@@ -844,6 +844,8 @@ public final class CiScreenshots {
             {"cmd", null, "5", "give @p amemaru:polishing_powder 30"},
             {"cmd", null, "5", "amemaru admin money @p set 60000"},
             {"p6r_bench", null, "10"},
+            // 11月23日：作業台の新しい見た目（カウンターの上の台を、上から）
+            {"snap", null, "20", "phase6r_bench"},
             {"screen", null, "5", "hold"},
             {"p6r_open", null, "15"},
             // 11月23日：作るタブ（作る品の一覧・台・説明の文が重ならない）。台に置く前に撮る
@@ -880,6 +882,62 @@ public final class CiScreenshots {
             {"snap", null, "40", "phase6r_arena"},
             {"cmd", null, "60", "execute as @p at @p run amemaru admin duel arena 0 above"},
             {"snap", null, "40", "phase6r_arena_above"},
+            // Phase 7 その1（11月23日）：コネクション量と大結晶の輝き。中央広場の大結晶の台の西、「記憶の石」の前で
+            // （決闘場から、別の世界をまたいで戻る。向きは同じ世界の中でもう一度テレポートして決める）
+            {"cmd", null, "5", "gamemode creative @p"},
+            {"hud", null, "5", "on"},
+            {"cmd", null, "5", "amemaru admin connection reset"},
+            {"cmd", null, "100", "execute in minecraft:overworld run tp @p {at:-11.5,1,0.5} -90 -6"},
+            {"cmd", null, "10", "tp @p {at:-11.5,1,0.5} -90 -6"},
+            // 今日のCPの見本（いくつかの行動をしたことにする）と、サーバー全体の累計
+            {"cmd", null, "5", "amemaru admin connection award @p amemaru:story_quest 2"},
+            {"cmd", null, "5", "amemaru admin connection award @p amemaru:link_combo 12"},
+            {"cmd", null, "5", "amemaru admin connection award @p amemaru:npc_request 3"},
+            {"cmd", null, "5", "amemaru admin connection award @p amemaru:market_trade 1"},
+            {"cmd", null, "5", "amemaru admin connection add 1200"},
+            {"snap", null, "30", "phase7_memory_stone"},
+            {"p7_stone", null, "20"},
+            {"snap", null, "20", "phase7_glow_mine"},
+            {"p7_glow_tab", null, "10", "everyone"},
+            {"snap", null, "10", "phase7_glow_everyone"},
+            {"screen", null, "10", "hold"},
+            // 段階が上がる：大結晶の一言（画面の真ん中）と、新しい効果の知らせ
+            {"cmd", null, "5", "amemaru admin connection stage 3"},
+            {"snap_keep", null, "30", "phase7_stage_up"},
+            {"p7_glow", null, "60"},
+            {"snap", null, "20", "phase7_glow_stage3"},
+            {"screen", null, "10", "hold"},
+            // 夜の大結晶（段階に合わせた光の粒）と、段階2から塔前広場のふちに立つ光の幕（結界が広がった）
+            {"cmd", null, "5", "time set 18000"},
+            {"cmd", null, "5", "gamemode spectator @p"},
+            {"hud", null, "5", "off"},
+            {"cmd", null, "40", "tp @p {at:-24.5,7,10.5} -112 -18"},
+            {"snap", null, "80", "phase7_crystal_glow"},
+            {"cmd", null, "60", "tp @p {at:0.5,17,-103.5} 180 30"},
+            {"snap", null, "100", "phase7_plaza_barrier"},
+            {"cmd", null, "5", "time set noon"},
+            // 縁帳から結び札を贈る（見本の縁を3人。いない人へは、次に入ったときに届く）
+            {"cmd", null, "5", "gamemode creative @p"},
+            {"hud", null, "5", "on"},
+            {"cmd", null, "5", "amemaru admin connection sample @p Ren"},
+            {"cmd", null, "5", "amemaru admin connection sample @p Mio"},
+            {"cmd", null, "5", "amemaru admin connection sample @p Kaito"},
+            {"p7_book", null, "20"},
+            {"snap", null, "20", "phase7_book_thanks"},
+            {"p7_thanks", null, "30", "0"},
+            {"snap", null, "20", "phase7_book_thanked"},
+            {"screen", null, "10", "hold"},
+            // 11月23日：3つの作業台の新しい見た目（空に置いて、斜め上から）と、ホットバーの作業台
+            {"cmd", null, "5", "execute positioned {origin} run fill ~-4 ~60 ~36 ~4 ~60 ~44 minecraft:smooth_stone"},
+            {"cmd", null, "5", "execute positioned {origin} run setblock ~-2 ~61 ~40 amemaru:weapon_workbench[facing=south]"},
+            {"cmd", null, "5", "execute positioned {origin} run setblock ~0 ~61 ~40 amemaru:armor_workbench[facing=south]"},
+            {"cmd", null, "5", "execute positioned {origin} run setblock ~2 ~61 ~40 amemaru:accessory_workbench[facing=south]"},
+            {"cmd", null, "5", "clear @p"},
+            {"cmd", null, "5", "item replace entity @p hotbar.0 with amemaru:weapon_workbench"},
+            {"cmd", null, "5", "item replace entity @p hotbar.1 with amemaru:armor_workbench"},
+            {"cmd", null, "5", "item replace entity @p hotbar.2 with amemaru:accessory_workbench"},
+            {"cmd", null, "40", "tp @p {at:0.5,61,44.5} 180 22"},
+            {"snap", null, "40", "phase7_workbenches"},
             {"cmd", null, "10", "gamemode spectator @p"},
             {"hud", null, "5", "off"}};
 
@@ -2114,7 +2172,7 @@ public final class CiScreenshots {
                 }
             }
         } else if (CiPhase6.action(minecraft, shot, first) || CiPhase6Guild.action(minecraft, shot, first)
-                || CiPhase6Refine.action(minecraft, shot, first)) {
+                || CiPhase6Refine.action(minecraft, shot, first) || CiPhase7.action(minecraft, shot, first)) {
             next(stage + 1, first ? waitTicks : 0);
         } else if (phase5Action(minecraft, shot, first)) {
             next(stage + 1, first ? waitTicks : 0);
@@ -2709,6 +2767,12 @@ public final class CiScreenshots {
      * 何も描かない画面にする（Phase 6 その4 の段取りから）。画面が空（null）になると、mc-runtime-test がその間に自動テストを
      * 始めて、サーバーが遅れる（run 163 で、依頼を出す前に「出した依頼」を撮ってしまった）。画面を閉じたら、同じ tick でこれにする。
      */
+    /** 街の真ん中（建てる前は null）。 */
+    @Nullable
+    static BlockPos cityOrigin() {
+        return cityOrigin;
+    }
+
     static void hold(Minecraft minecraft) {
         minecraft.setScreen(new HoldScreen());
     }
