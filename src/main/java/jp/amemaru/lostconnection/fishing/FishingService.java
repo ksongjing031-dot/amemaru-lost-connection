@@ -286,8 +286,8 @@ public final class FishingService {
         tag.putInt("escape", mg.escapeTicks());
         tag.putInt("limit", limit);
         tag.putLong("seed", player.getRandom().nextLong());
+        // 「かかった！」は画面の真ん中の下の糸の張りの札に出す（画面の下の一行は札と重なるので使わない）
         ModNetwork.sendTo(player, new FishingS2C("start", tag));
-        player.displayClientMessage(Component.translatable("fishing.amemaru.hooked").withStyle(ChatFormatting.AQUA), true);
         player.level().playSound(null, player.blockPosition(), SoundEvents.FISHING_BOBBER_RETRIEVE, SoundSource.PLAYERS, 0.8F, 0.7F);
     }
 
@@ -309,9 +309,8 @@ public final class FishingService {
                 && millis >= session.fastestMillis();
         LAST_ACTIVE.put(player.getUUID(), (long) player.server.getTickCount());
         if (!success) {
+            // 「糸が切れた」「逃げられた」は、糸の張りの札に出る（ClientFishing）
             boolean snapped = "snap".equals(args.getString("reason"));
-            player.displayClientMessage(Component.translatable(snapped ? "fishing.amemaru.snapped" : "fishing.amemaru.escaped")
-                    .withStyle(ChatFormatting.GRAY), true);
             player.level().playSound(null, player.blockPosition(), snapped ? SoundEvents.ITEM_BREAK : SoundEvents.FISH_SWIM,
                     SoundSource.PLAYERS, 0.6F, snapped ? 1.4F : 1.0F);
             return;
