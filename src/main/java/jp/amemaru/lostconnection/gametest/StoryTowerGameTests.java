@@ -429,6 +429,38 @@ public final class StoryTowerGameTests {
     }
 
     /**
+     * 11月22日：ボス戦で倒れて教会へ戻ると、ボスのHPバーが街でも出たままになり、また挑むとバーが2本になっていた。
+     * ボスが見えなくなった人からはバーを外し、区画が閉じてボスが消えたときもバーを外す。
+     */
+    @GameTest(template = EMPTY, timeoutTicks = 40)
+    public static void bossBarLeavesWithViewer(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        jp.amemaru.lostconnection.enemy.boss.Veldhorn boss = jp.amemaru.lostconnection.core.registry.ModEntities.VELDHORN.get().create(level);
+        check(helper, boss != null, "ヴェルドホーンを作れません");
+        Vec3 at = helper.absoluteVec(new Vec3(1.5, 2.0, 1.5));
+        boss.moveTo(at.x, at.y, at.z, 0.0F, 0.0F);
+        level.addFreshEntity(boss);
+        FakePlayer viewer = fake(helper, "bossbar");
+        boss.setParticipants(List.of(viewer));
+        check(helper, boss.barViewers() == 1, "戦いの参加者に、ボスバーが出ていません");
+        // 倒れて教会へ戻った（ほかの世界へ移り、ボスが見えなくなった）
+        boss.stopSeenByPlayer(viewer);
+        check(helper, boss.barViewers() == 0, "ボスが見えなくなった人に、ボスバーが残っています（街に戻ってもバーが出たまま）");
+        // 生き返った人は別のものになる：前のものが残っていても、同じ人なら外す
+        FakePlayer again = new FakePlayer(level, new GameProfile(viewer.getUUID(), "amt_bossbar2"));
+        check(helper, again != viewer, "生き返った人の代わりを作れません");
+        boss.setParticipants(List.of(viewer));
+        boss.stopSeenByPlayer(again);
+        check(helper, boss.barViewers() == 0, "生き返った人の前のボスバーが残っています");
+        // 区画が閉じてボスが消えた（remove は呼ばれない）
+        boss.setParticipants(List.of(viewer));
+        boss.onRemovedFromWorld();
+        check(helper, boss.barViewers() == 0, "区画が閉じて消えたボスのバーが残っています（出し直したボスのバーと2本になる）");
+        boss.discard();
+        helper.succeed();
+    }
+
+    /**
      * 11月22日：街のNPCは凹凸のある立体のモデル。5人とも、モデル・動き（idle と walk）・絵（表情の差分も）がjarに入っていて、
      * モデルに頭とまぶたの骨がある（頭は見ている人を向き、まぶたでまばたきする）。
      */

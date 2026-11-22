@@ -79,6 +79,36 @@ public abstract class AmemaruBoss extends AmemaruMob {
         bossEvent.removeAllPlayers();
     }
 
+    /** ボスバーを見ている人の数（自動テストで使う）。 */
+    public int barViewers() {
+        return bossEvent.getPlayers().size();
+    }
+
+    /**
+     * 11月22日：ボスが見えなくなった人（倒れて教会へ戻った・リタイアした・ほかの世界へ移った・抜けた）から、ボスバーを外す。
+     * 部屋はその階に人がいる間しか動かないので、参加者がみな教会へ戻ると部屋からは外されず、街に戻ってもバーが出たままだった。
+     * 生き返った人は別の {@link ServerPlayer} になるので、同じ人（UUID）の古いものも外す。部屋に戻れば、部屋がまた加える。
+     */
+    @Override
+    public void stopSeenByPlayer(ServerPlayer player) {
+        super.stopSeenByPlayer(player);
+        for (ServerPlayer viewer : new ArrayList<>(bossEvent.getPlayers())) {
+            if (viewer == player || viewer.getUUID().equals(player.getUUID())) {
+                bossEvent.removePlayer(viewer);
+            }
+        }
+    }
+
+    /**
+     * 11月22日：区画が閉じてボスが消えたとき（このときは {@link #remove} が呼ばれない）も、ボスバーを外す。外さないと、
+     * 部屋が出し直したボスのバーと2本になり、古いほうはいつまでも消えなかった。
+     */
+    @Override
+    public void onRemovedFromWorld() {
+        super.onRemovedFromWorld();
+        bossEvent.removeAllPlayers();
+    }
+
     /** 今の段階（1から）。 */
     public int phase() {
         return phase;
