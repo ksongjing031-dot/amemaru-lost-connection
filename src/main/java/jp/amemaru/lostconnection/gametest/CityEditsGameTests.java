@@ -126,6 +126,32 @@ public final class CityEditsGameTests {
         check(helper, unsaved.isEmpty(), when + "なのに、直した所に見える施設があります " + unsaved + "（違いの見本はログの [amemaru][city]）");
     }
 
+    /**
+     * 11月23日：新しいワールドを開いたら街が建っている。建てるかの決め方（新しいワールド・このModの平地・まだ決めていない）と、
+     * 自動テストのサーバーのワールドでは、建てないこと。
+     */
+    @GameTest(template = EMPTY)
+    public static void autoBuildDecision(GameTestHelper helper) {
+        java.util.OptionalInt flat64 = java.util.OptionalInt.of(64);
+        check(helper, CityCommands.decideAutoBuild(false, false, 0L, flat64, -64, 320) == CityCommands.AutoBuild.BUILD,
+                "新しいワールド（平地・地面64）に建てません");
+        check(helper, CityCommands.decideAutoBuild(true, false, 0L, flat64, -64, 320) == CityCommands.AutoBuild.DECIDED,
+                "もう建っている街を建て直します");
+        check(helper, CityCommands.decideAutoBuild(false, true, 0L, flat64, -64, 320) == CityCommands.AutoBuild.DECIDED,
+                "前に決めたワールドで、また建てます");
+        check(helper, CityCommands.decideAutoBuild(false, false, 72000L, flat64, -64, 320) == CityCommands.AutoBuild.OLD_WORLD,
+                "前から遊んでいるワールドに建てます");
+        check(helper, CityCommands.decideAutoBuild(false, false, 0L, java.util.OptionalInt.empty(), -64, 320)
+                == CityCommands.AutoBuild.NOT_FLAT, "平地でないワールドに建てます");
+        // ふつうのスーパーフラット（地面 −61）：下に13段の地面が作れない
+        check(helper, CityCommands.decideAutoBuild(false, false, 0L, java.util.OptionalInt.of(-61), -64, 320)
+                == CityCommands.AutoBuild.NOT_FLAT, "地面の低い平地に建てます");
+        // 自動テストのサーバーは、起動のときに建てるかを決めない（決めていれば、控えが残る）
+        check(helper, !CityCommands.autoChecked(helper.getLevel().getServer().overworld()),
+                "自動テストのサーバーで、起動のときに街を建てるかを決めました");
+        helper.succeed();
+    }
+
     private static void check(GameTestHelper helper, boolean ok, String message) {
         if (!ok) {
             throw new GameTestAssertException(message);

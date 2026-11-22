@@ -388,6 +388,93 @@ public final class CityCommands {
         return data.built ? java.util.Optional.of(data.origin) : java.util.Optional.empty();
     }
 
+    // ---------------------------------------------------------------- 11月23日：新しいワールドを開いたら、街が建っている
+
+    /** 自動で建てるかの答え。 */
+    public enum AutoBuild {
+        /** 建てる。 */
+        BUILD,
+        /** もう決めた・もう建っている。 */
+        DECIDED,
+        /** 前から遊んでいるワールド（建てない。コマンドで建てられる）。 */
+        OLD_WORLD,
+        /** このModの平地のワールドではない（地面の高さが合わない）。 */
+        NOT_FLAT
+    }
+
+    /**
+     * 初めて開いたときに街を建てるか（{@code WorldSetup} から呼ぶ。自動テストからも呼ぶ）。
+     *
+     * @param built      もう街が建っているか
+     * @param decided    前に決めたか
+     * @param gameTime   ワールドの時間（新しいワールドは 0）
+     * @param surface    平地のワールドの地面の高さ（平地でなければ空）
+     * @param minBuild   いちばん下の高さ
+     * @param maxBuild   いちばん上の高さ（含まない）
+     */
+    public static AutoBuild decideAutoBuild(boolean built, boolean decided, long gameTime, java.util.OptionalInt surface,
+                                            int minBuild, int maxBuild) {
+        if (built || decided) {
+            return AutoBuild.DECIDED;
+        }
+        if (gameTime > 200L) {
+            return AutoBuild.OLD_WORLD;
+        }
+        if (surface.isEmpty() || surface.getAsInt() - GROUND_DEPTH < minBuild || surface.getAsInt() + CLEAR_HEIGHT >= maxBuild) {
+            return AutoBuild.NOT_FLAT;
+        }
+        return AutoBuild.BUILD;
+    }
+
+    /** 起動のときに、街を自動で建てるかを決めたか（自動テスト用）。 */
+    public static boolean autoChecked(ServerLevel level) {
+        return CityData.get(level).autoChecked;
+    }
+
+    /** 平地のワールドなら、地面のいちばん上のブロックの高さ。 */
+    public static java.util.OptionalInt flatSurface(ServerLevel level) {
+        if (level.getChunkSource().getGenerator() instanceof net.minecraft.world.level.levelgen.FlatLevelSource flat) {
+            List<net.minecraft.world.level.block.state.BlockState> layers = flat.settings().getLayers();
+            for (int i = layers.size() - 1; i >= 0; i--) {
+                if (!layers.get(i).isAir()) {
+                    return java.util.OptionalInt.of(level.getMinBuildHeight() + i);
+                }
+            }
+        }
+        return java.util.OptionalInt.empty();
+    }
+
+    /**
+     * 初めて開いたワールドに、その場で街を建てる（サーバーの起動のすぐ後。だれかが入る前に建て終える）。
+     * 決めたことは控えて、次からは決めない（街を壊しても、勝手に建て直さない）。
+     *
+     * @return 決めたこと
+     */
+    public static AutoBuild autoBuild(net.minecraft.server.MinecraftServer server) {
+        ServerLevel level = server.overworld();
+        CityData data = CityData.get(level);
+        java.util.OptionalInt surface = flatSurface(level);
+        AutoBuild decision = decideAutoBuild(data.built, data.autoChecked, level.getGameTime(), surface,
+                level.getMinBuildHeight(), level.getMaxBuildHeight());
+        if (decision == AutoBuild.DECIDED) {
+            return decision;
+        }
+        data.autoChecked = true;
+        data.setDirty();
+        if (decision != AutoBuild.BUILD) {
+            jp.amemaru.lostconnection.AmemaruMod.LOGGER.info("[amemaru] The city was not built automatically ({}). Use /amemaru admin city build.",
+                    decision);
+            return decision;
+        }
+        BlockPos origin = new BlockPos(DEFAULT_ORIGIN.getX(), surface.getAsInt(), DEFAULT_ORIGIN.getZ());
+        CommandSourceStack source = server.createCommandSourceStack().withSuppressedOutput().withPermission(4).withLevel(level);
+        buildLoaded(source, level, origin, false, false);
+        // はじめの場所（死んだときに戻る所）：中央広場の大結晶の前（オープニングで目覚める所）
+        level.setDefaultSpawnPos(origin.offset(0, 1, 12), 180.0F);
+        jp.amemaru.lostconnection.AmemaruMod.LOGGER.info("[amemaru] Built the city of Conelia at {} for the new world", origin.toShortString());
+        return decision;
+    }
+
     /** その構造物（map/conelia/ の後ろの名前）に、書き出した直しのファイルがあるか（自動テスト用） */
     public static boolean hasEditFile(ServerLevel level, String structure) {
         return CityEdits.hasEdits(level, structure);
@@ -496,6 +583,8 @@ public final class CityCommands {
         boolean grown;
         /** このワールドに街を建てたか */
         boolean built;
+        /** 11月23日：初めて開いたときに、街を自動で建てるかを決めたか（決めたら、次からは決めない） */
+        boolean autoChecked;
 
         static CityData load(CompoundTag tag) {
             CityData data = new CityData();
@@ -504,6 +593,7 @@ public final class CityCommands {
                 data.built = !tag.contains("built") || tag.getBoolean("built");
             }
             data.grown = tag.getBoolean("grown");
+            data.autoChecked = tag.getBoolean("autoChecked");
             return data;
         }
 
@@ -514,6 +604,7 @@ public final class CityCommands {
             tag.putInt("z", origin.getZ());
             tag.putBoolean("grown", grown);
             tag.putBoolean("built", built);
+            tag.putBoolean("autoChecked", autoChecked);
             return tag;
         }
 

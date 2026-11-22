@@ -30,6 +30,7 @@ public final class ServerConfig {
     // ---- Phase 5：物語・塔
     public static final ForgeConfigSpec.BooleanValue OPENING_ON_FIRST_LOGIN;
     public static final ForgeConfigSpec.BooleanValue APPLY_GAME_RULES;
+    public static final ForgeConfigSpec.BooleanValue AUTO_BUILD_CITY;
     public static final ForgeConfigSpec.BooleanValue KEEP_FOOD_FULL;
 
     // 戦闘
@@ -167,6 +168,11 @@ public final class ServerConfig {
         KEEP_FOOD_FULL = b
                 .comment("満腹度が減らないようにする")
                 .define("keepFoodFull", true);
+        AUTO_BUILD_CITY = b
+                .comment("新しいワールドを初めて開いたとき、だれかが入る前にコネリアの街を建てておく（11月23日）。",
+                        "このModの平地のワールド（ワールドの種類「コネリアの街」）だけ。前から遊んでいるワールドには建てない",
+                        "（/amemaru admin city build で建てられる）。一度決めたら、街を壊しても勝手に建て直さない")
+                .define("autoBuildCity", true);
         b.pop();
 
         b.comment("戦闘（ダメージの計算と連携技）").push("combat");
