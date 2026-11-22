@@ -1,5 +1,5 @@
 {
-  "_comment": "ふだんのエルネスト。見つけた記録を解読する・記録帳を開く・なくした記録帳をもう一冊（中身は本人の記録なので消えない）",
+  "_comment": "ふだんのエルネスト。見つけた記録を解読する・なくした記録帳をもう一冊（中身は本人の記録なので消えない）。記録帳は右クリックで開く（会話の選択肢は4つまで）",
   "npc": "amemaru:ernesto",
   "priority": 10,
   "start": "s1",
@@ -13,15 +13,6 @@
           "actions": [
             {
               "type": "amemaru:decipher_records"
-            }
-          ]
-        },
-        {
-          "text": "記録帳を開く",
-          "next": "end",
-          "actions": [
-            {
-              "type": "amemaru:open_record_book"
             }
           ]
         },

@@ -67,13 +67,13 @@ public final class PartyBoard {
         return server.overworld().getGameTime();
     }
 
-    /** 古い募集・出した人がいない募集・いっぱいの募集を消す。 */
+    /** 古い募集・いっぱいの募集を消す（出した人が抜けたときは {@link #onLogout} で消す）。 */
     public static void prune(MinecraftServer server) {
         long now = now(server);
         int max = ServerConfig.PARTY_MAX_MEMBERS.get();
         PartyManager manager = PartyManager.get(server);
         POSTS.values().removeIf(post -> {
-            if (now - post.created > LIFETIME_TICKS || server.getPlayerList().getPlayer(post.owner) == null) {
+            if (now - post.created > LIFETIME_TICKS) {
                 return true;
             }
             Party party = manager.partyOf(post.owner);

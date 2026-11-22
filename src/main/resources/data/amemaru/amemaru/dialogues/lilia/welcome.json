@@ -27,10 +27,6 @@
           ]
         },
         {
-          "text": "塔のことを聞きたい",
-          "next": "t1"
-        },
-        {
           "text": "職業を変えたい",
           "next": "end",
           "actions": [
@@ -40,14 +36,8 @@
           ]
         },
         {
-          "text": "市場の手帳がほしい",
-          "next": "m1",
-          "actions": [
-            {
-              "type": "amemaru:give_item",
-              "item": "amemaru:market_notebook"
-            }
-          ]
+          "text": "ほかのこと",
+          "next": "o1"
         },
         {
           "text": "なんでもない",
@@ -74,6 +64,29 @@
     "t3": {
       "expression": "worried",
       "text": "……無理はしないでくださいね。待ってますから"
+    },
+    "o1": {
+      "text": "はい、なんでしょう？",
+      "choices": [
+        {
+          "text": "市場の手帳がほしい",
+          "next": "m1",
+          "actions": [
+            {
+              "type": "amemaru:give_item",
+              "item": "amemaru:market_notebook"
+            }
+          ]
+        },
+        {
+          "text": "塔のことを聞きたい",
+          "next": "t1"
+        },
+        {
+          "text": "やっぱりいい",
+          "next": "end"
+        }
+      ]
     }
   }
 }
