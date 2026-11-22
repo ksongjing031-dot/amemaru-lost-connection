@@ -798,7 +798,8 @@ public final class CiScreenshots {
             {"cmd", null, "5", "amemaru admin title grant @p amemaru:hunter_1"},
             {"cmd", null, "5", "amemaru admin title grant @p amemaru:trader_3"},
             {"cmd", null, "5", "amemaru admin title grant @p amemaru:first_step"},
-            {"snap", null, "20", "phase6g_title_toast"},
+            // 右上の札（称号の知らせ）を消さずに撮る
+            {"snap_keep", null, "20", "phase6g_title_toast"},
             {"cmd", null, "5", "amemaru admin title show @p amemaru:first_step"},
             {"p6g_titles", null, "20"},
             {"snap", null, "20", "phase6g_titles"},

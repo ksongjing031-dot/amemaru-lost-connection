@@ -1340,7 +1340,7 @@
   "screen.amemaru.guild.chronicle.none": "冒険日誌には、まだ何も書かれていない",
   "screen.amemaru.guild.bonds.none": "まだ、親しいNPCはいない",
   "screen.amemaru.guild.bonds.connections": "縁帳を開く",
-  "screen.amemaru.guild.bonds.note": "1日1回の会話・贈り物（しゃがんで右クリック）・依頼で深まる",
+  "screen.amemaru.guild.bonds.note": "1日1回の会話・贈り物・依頼で深まる",
   "screen.amemaru.guild.bonds.partners": "組んだことのある人 %1$s人・縁帳 %2$s人",
   "screen.amemaru.titles.title": "称号",
   "screen.amemaru.titles.count": "持っている %1$s / %2$s",
@@ -1440,5 +1440,6 @@
   "command.amemaru.quest.completed": "%2$s人の、クエスト %1$s を終えた",
   "command.amemaru.quest.reset": "クエストの記録を %s件 消した",
   "command.amemaru.quest.daily": "今日のデイリー：%1$s回・掲示板 %2$s",
-  "command.amemaru.donation.status": "露店の区画の寄付：%1$s / %2$s ノット（%3$s人）・目標に届いた日 %4$s・区画が増えた %5$s"
+  "command.amemaru.donation.status": "露店の区画の寄付：%1$s / %2$s ノット（%3$s人）・目標に届いた日 %4$s・区画が増えた %5$s",
+  "screen.amemaru.guild.quest.more": "…ほか %s"
 }

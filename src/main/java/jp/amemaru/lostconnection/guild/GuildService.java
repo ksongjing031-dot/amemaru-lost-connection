@@ -104,10 +104,7 @@ public final class GuildService {
         tag.putInt("recordsUnread", unread);
         // 親密度
         ListTag bonds = new ListTag();
-        for (NpcDef def : NpcDefs.all().values()) {
-            if (def.bond() == null) {
-                continue;
-            }
+        for (NpcDef def : bondNpcs()) {
             GuildData.Bond bond = guild.bond(def.id());
             CompoundTag one = new CompoundTag();
             one.putString("id", def.id().toString());
@@ -128,6 +125,22 @@ public final class GuildService {
         tag.putInt("connections", guild.connections().size());
         tag.putInt("partners", guild.partners());
         return tag;
+    }
+
+    /** 親密度のあるNPCを、主要NPCの紹介の順（8章：リリア・ガルド・ドラン・セレナ・ノア・エルネスト）で。ほかはIDの順で後ろに。 */
+    public static List<NpcDef> bondNpcs() {
+        List<String> order = List.of("lilia", "gard", "doran", "serena", "noa", "ernesto");
+        List<NpcDef> list = new ArrayList<>();
+        for (NpcDef def : NpcDefs.all().values()) {
+            if (def.bond() != null) {
+                list.add(def);
+            }
+        }
+        list.sort(Comparator.comparingInt((NpcDef def) -> {
+            int i = order.indexOf(def.id().getPath());
+            return i < 0 ? order.size() : i;
+        }).thenComparing(def -> def.id().toString()));
+        return list;
     }
 
     /** 称号の一覧（だれでも見られる分。隠し称号は名前を「？？？」にして、条件を送らない）。 */

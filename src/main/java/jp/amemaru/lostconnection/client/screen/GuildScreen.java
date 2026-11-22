@@ -427,11 +427,21 @@ public class GuildScreen extends Screen {
         }
         graphics.drawString(font, UiStyle.clip(font, sub.getString(), dw), dx, dy, UiStyle.TEXT_DIM, false);
         dy += 12;
-        dy += UiStyle.wrapped(graphics, font, quest.getString("description"), dx, dy, dw, UiStyle.TEXT, 4) * 10 + 3;
+        dy += UiStyle.wrapped(graphics, font, quest.getString("description"), dx, dy, dw, UiStyle.TEXT, 3) * 10 + 3;
         graphics.drawString(font, Component.translatable("screen.amemaru.guild.quest.objectives"), dx, dy, UiStyle.TEXT_HEADER, false);
         dy += 10;
         boolean showCounts = "active".equals(quest.getString("state"));
-        for (Tag tag : quest.getList("objectives", Tag.TAG_COMPOUND)) {
+        ListTag objectiveList = quest.getList("objectives", Tag.TAG_COMPOUND);
+        int drawn = 0;
+        for (Tag tag : objectiveList) {
+            // 報酬・知らせ・ボタンの場所を空けておく。入りきらない目標は「ほか N」（右上の一覧には、すべて出る）
+            if (dy > top + H - 79) {
+                graphics.drawString(font, Component.translatable("screen.amemaru.guild.quest.more", objectiveList.size() - drawn), dx, dy,
+                        UiStyle.TEXT_DIM, false);
+                dy += 10;
+                break;
+            }
+            drawn++;
             CompoundTag o = (CompoundTag) tag;
             int count = o.getInt("count");
             int max = o.getInt("max");
@@ -441,9 +451,6 @@ public class GuildScreen extends Screen {
             graphics.drawString(font, (complete ? "◆ " : "◇ ") + text, dx, dy, complete ? UiStyle.TEXT_GOOD : UiStyle.TEXT, false);
             graphics.drawString(font, progress, dx + dw - font.width(progress), dy, complete ? UiStyle.TEXT_GOOD : UiStyle.TEXT_DIM, false);
             dy += 10;
-            if (dy > top + H - 60) {
-                break;
-            }
         }
         dy += 3;
         graphics.drawString(font, Component.translatable("screen.amemaru.guild.quest.rewards"), dx, dy, UiStyle.TEXT_HEADER, false);
@@ -613,7 +620,8 @@ public class GuildScreen extends Screen {
             graphics.drawString(font, day, left + W - 20 - font.width(day), y, UiStyle.TEXT_DIM, false);
             y += 12;
         }
-        graphics.drawString(font, Component.translatable("screen.amemaru.guild.titles.note"), left + 140, top + H - 22, UiStyle.TEXT_DIM, false);
+        graphics.drawString(font, UiStyle.clip(font, Component.translatable("screen.amemaru.guild.titles.note").getString(), W - 152), left + 140,
+                top + H - 22, UiStyle.TEXT_DIM, false);
     }
 
     private void renderChronicle(GuiGraphics graphics) {
@@ -680,9 +688,11 @@ public class GuildScreen extends Screen {
                 y += BOND_ROW;
             }
         }
-        graphics.drawString(font, Component.translatable("screen.amemaru.guild.bonds.note"), left + 140, top + H - 22, UiStyle.TEXT_DIM, false);
-        graphics.drawString(font, Component.translatable("screen.amemaru.guild.bonds.partners", ClientGuild.self().getInt("partners"),
-                ClientGuild.self().getInt("connections")), left + 140, top + H - 12, UiStyle.TEXT_DIM, false);
+        int noteW = W - 152;
+        graphics.drawString(font, UiStyle.clip(font, Component.translatable("screen.amemaru.guild.bonds.note").getString(), noteW), left + 140,
+                top + H - 22, UiStyle.TEXT_DIM, false);
+        graphics.drawString(font, UiStyle.clip(font, Component.translatable("screen.amemaru.guild.bonds.partners", ClientGuild.self().getInt("partners"),
+                ClientGuild.self().getInt("connections")).getString(), noteW), left + 140, top + H - 12, UiStyle.TEXT_DIM, false);
     }
 
     /** 今の段階に入ってから貯めた点（段階の下の端からの点）。 */

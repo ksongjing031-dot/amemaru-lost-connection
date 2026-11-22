@@ -58,13 +58,15 @@ public class DonationScreen extends Screen {
         addRenderableWidget(amount);
         int bx = left + 110;
         for (long preset : new long[]{100, 1000, 10000}) {
-            Button button = addRenderableWidget(new CrystalButton(bx, y, 42, 14, Component.literal("+" + knots(preset)), b -> {
+            Component label = Component.literal("+" + knots(preset));
+            int w = font.width(label) + 12;
+            Button button = addRenderableWidget(new CrystalButton(bx, y, w, 14, label, b -> {
                 long now = parse(draft);
                 draft = String.valueOf(Math.min(999_999_999L, now + preset));
                 amount.setValue(draft);
             }));
             button.active = open;
-            bx += 46;
+            bx += w + 4;
         }
         Button donate = addRenderableWidget(new CrystalButton(left + 14, y + 20, 90, 16, Component.translatable("screen.amemaru.donation.donate"),
                 b -> {
