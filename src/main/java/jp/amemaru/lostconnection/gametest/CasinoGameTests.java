@@ -206,7 +206,8 @@ public final class CasinoGameTests {
             CasinoService.forceNext("roulette", 2);
             CasinoService.finishForTest(server, "roulette");
             long bonus = (long) Math.floor(100 * CasinoRules.current().nightBonus());
-            check(helper, data(helper, a).getCasino().chips() == before - 100 + 200 + bonus, "カジノナイトのおまけがちがいます："
+            // before は賭けたあとのチップ（賭けた100枚は引かれている）
+            check(helper, data(helper, a).getCasino().chips() == before + 200 + bonus, "カジノナイトのおまけがちがいます："
                     + (data(helper, a).getCasino().chips() - before));
             check(helper, data(helper, a).getConnection().today(ConnectionCategory.PLAY) == 2 + 20, "カジノナイトに参加のCPが入りません："
                     + data(helper, a).getConnection().today(ConnectionCategory.PLAY));
