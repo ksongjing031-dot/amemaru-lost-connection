@@ -11,7 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
- * 魚（データパックの {@code fish/<名前>.json}。Phase 7 その2。Phase 0-A 15章「魚図鑑：全40種【提案】」）。アイテムは
+ * 魚（データパックの {@code fishing/<名前>.json}。Phase 7 その2。Phase 0-A 15章「魚図鑑：全40種【提案】」）。アイテムは
  * {@code amemaru:fish_<名前>}（Modに同梱した {@code item_types.json} で起動時に登録する）。
  *
  * <pre>

@@ -11,9 +11,9 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
-/** 魚の定義の置き場（{@code data/<名前空間>/amemaru/fish/*.json}。Phase 7 その2）。 */
+/** 魚の定義の置き場（{@code data/<名前空間>/amemaru/fishing/*.json}。Phase 0-B 6章のフォルダの一覧「fishing/：魚の表」。Phase 7 その2）。 */
 public final class FishDefs {
-    private static final DefinitionLoader<FishDef> LOADER = new DefinitionLoader<>("fish", FishDef::parse);
+    private static final DefinitionLoader<FishDef> LOADER = new DefinitionLoader<>("fishing", FishDef::parse);
 
     private FishDefs() {
     }

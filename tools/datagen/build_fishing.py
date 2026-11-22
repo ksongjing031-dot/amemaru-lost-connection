@@ -4,7 +4,7 @@
         python3 tools/datagen/build_fishing.py --check  （書き出さずに、今のファイルを確かめるだけ）
 
 書き出すもの：
-  data/amemaru/amemaru/fish/<名前>.json           魚の表（Phase 0-A 15章「魚図鑑：全40種【提案】」。章ごとに10種）
+  data/amemaru/amemaru/fishing/<名前>.json        魚の表（Phase 0-A 15章「魚図鑑：全40種【提案】」。Phase 0-B 6章のフォルダ「fishing/」）
   data/amemaru/amemaru/fishing_rules/default.json  釣りの決まり（ミニゲーム・釣り場・記憶魚と湖の主の確率・大物・留め糸・大会）
   assets/amemaru/models/item/fish_<名前>.json      魚のアイテムのモデル（絵は tools/artgen/make_fish.py）
   amemaru/item_types.json の "fish"                魚のアイテムの種類（起動時に登録する）
@@ -230,7 +230,7 @@ def fish_json(f):
 
 
 def write_all():
-    folder = DATA / "fish"
+    folder = DATA / "fishing"
     folder.mkdir(parents=True, exist_ok=True)
     for old in folder.glob("*.json"):
         old.unlink()
@@ -288,7 +288,7 @@ def check():
             problems.append(f"{fid}：手ごたえは0〜1")
         if stars == 4 and len(f) < 14:
             problems.append(f"{fid}：記憶魚に記録がありません")
-    data_folder = DATA / "fish"
+    data_folder = DATA / "fishing"
     if data_folder.exists():
         for f in FISH:
             p = data_folder / (f[0] + ".json")

@@ -42,7 +42,7 @@ Phase 7 は Phase 0-B 13章の「**釣り、カジノ（右クリックでGUIを
 
 ## 2. このPhaseで決めた細かいこと（【補完】）
 
-設計書に書いていない所は、次のように決めました。変えたいときは教えてください。魚の表は `data/amemaru/amemaru/fish/`（`tools/datagen/build_fishing.py` から書き出す）、釣りの決まり（ミニゲーム・釣り場・確率・大物・留め糸・大会）は `fishing_rules/default.json` で変えられます。
+設計書に書いていない所は、次のように決めました。変えたいときは教えてください。魚の表は `data/amemaru/amemaru/fishing/`（Phase 0-B 6章のフォルダの一覧「fishing/：魚の表」。`tools/datagen/build_fishing.py` から書き出す）、釣りの決まり（ミニゲーム・釣り場・確率・大物・留め糸・大会）は `fishing_rules/default.json` で変えられます。
 
 ### 魚の表
 
@@ -139,7 +139,7 @@ Phase 7 は Phase 0-B 13章の「**釣り、カジノ（右クリックでGUIを
 | `client/ClientFishing.java` | ミニゲーム（糸の張り）と、大会の残り時間・順位 |
 | `client/screen/FishingScreen.java` | ポッカ爺の釣り具屋の画面 |
 | `network/s2c/FishingS2C.java`・`network/c2s/FishingC2S.java` | 通信 |
-| `data/amemaru/amemaru/fish/*.json`（40）・`fishing_rules/default.json`・`npcs/pokka.json`・`dialogues/pokka/default.json`・`records/fish_memory_*.json`（4） | 魚・決まり・ポッカ爺・記憶魚の記憶 |
+| `data/amemaru/amemaru/fishing/*.json`（40）・`fishing_rules/default.json`・`npcs/pokka.json`・`dialogues/pokka/default.json`・`records/fish_memory_*.json`（4） | 魚・決まり・ポッカ爺・記憶魚の記憶 |
 | `tools/datagen/build_fishing.py`・`tools/artgen/make_fish.py`・`tools/artgen/make_facility_npcs.py` | 魚の表・魚の絵・ポッカ爺のスキン |
 | `gametest/FishingGameTests.java`・`client/CiPhase7.java` | 自動の確かめ |
 
