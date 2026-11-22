@@ -860,9 +860,12 @@ public final class CiScreenshots {
             {"p6r_duel", null, "20"},
             {"snap", null, "10", "phase6r_duel_screen"},
             {"screen", null, "10", "hold"},
-            {"cmd", null, "80", "amemaru admin duel arena 0"},
+            // 決闘場へ行くコマンドは、プレイヤーとして打つ（サーバーとして打つと「プレイヤーが要る」で止まる）。別の世界をまたぐ
+            // テレポートでは向きが反映されないので、塔の空間に移ってから、もう一度同じ所へ移る
+            {"cmd", null, "80", "execute as @p at @p run amemaru admin duel arena 0"},
+            {"cmd", null, "40", "execute as @p at @p run amemaru admin duel arena 0"},
             {"snap", null, "40", "phase6r_arena"},
-            {"cmd", null, "60", "amemaru admin duel arena 0 above"},
+            {"cmd", null, "60", "execute as @p at @p run amemaru admin duel arena 0 above"},
             {"snap", null, "40", "phase6r_arena_above"},
             {"cmd", null, "10", "gamemode spectator @p"},
             {"hud", null, "5", "off"}};

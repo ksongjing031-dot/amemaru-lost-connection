@@ -41,7 +41,7 @@ public class DuelScreen extends Screen {
         CompoundTag data = ClientSocial.duel();
         addRenderableWidget(new CrystalButton(left + W - 20, top + 5, 14, 12, Component.literal("×"), b -> onClose()));
         // 届いた申し込み
-        int y = top + 44;
+        int y = top + 52;
         ListTag incoming = data.getList("incoming", Tag.TAG_COMPOUND);
         for (int i = 0; i < Math.min(2, incoming.size()); i++) {
             String name = incoming.getCompound(i).getString("name");
@@ -51,7 +51,7 @@ public class DuelScreen extends Screen {
                     b -> act("duel_decline", name)));
         }
         // 観戦できる決闘
-        y = top + 86;
+        y = top + 94;
         ListTag duels = data.getList("duels", Tag.TAG_COMPOUND);
         boolean free = !data.getBoolean("fighting") && !data.getBoolean("spectating");
         for (int i = 0; i < Math.min(2, duels.size()); i++) {
@@ -66,7 +66,7 @@ public class DuelScreen extends Screen {
             watch.active = free && !"END".equals(one.getString("phase"));
         }
         // 申し込む相手
-        y = top + 128;
+        y = top + 136;
         ListTag people = data.getList("people", Tag.TAG_COMPOUND);
         int pages = Math.max(1, (people.size() + PEOPLE_ROWS - 1) / PEOPLE_ROWS);
         page = Math.max(0, Math.min(pages - 1, page));
@@ -124,7 +124,7 @@ public class DuelScreen extends Screen {
         UiStyle.wrapped(graphics, font, Component.translatable("screen.amemaru.duel.help", data.getInt("seconds") / 60).getString(), left + 12,
                 top + 20, W - 24, UiStyle.TEXT_DIM, 2);
         // 届いた申し込み
-        int y = top + 44;
+        int y = top + 52;
         graphics.drawString(font, Component.translatable("screen.amemaru.duel.incoming"), left + 12, y - 11, UiStyle.TEXT_HEADER, true);
         ListTag incoming = data.getList("incoming", Tag.TAG_COMPOUND);
         ListTag outgoing = data.getList("outgoing", Tag.TAG_COMPOUND);
@@ -142,7 +142,7 @@ public class DuelScreen extends Screen {
                     left + 16, y + 1, UiStyle.TEXT_DIM, false);
         }
         // 観戦できる決闘
-        y = top + 86;
+        y = top + 94;
         graphics.drawString(font, Component.translatable("screen.amemaru.duel.duels"), left + 12, y - 11, UiStyle.TEXT_HEADER, true);
         ListTag duels = data.getList("duels", Tag.TAG_COMPOUND);
         if (duels.isEmpty()) {
@@ -160,7 +160,7 @@ public class DuelScreen extends Screen {
                     state, one.getInt("watchers")).getString(), W - 96), this.left + 16, y + i * ROW + 1, UiStyle.TEXT, false);
         }
         // 申し込む相手
-        y = top + 128;
+        y = top + 136;
         graphics.drawString(font, Component.translatable("screen.amemaru.duel.people"), left + 12, y - 11, UiStyle.TEXT_HEADER, true);
         String unavailable = data.getString("unavailable");
         if (!unavailable.isEmpty()) {

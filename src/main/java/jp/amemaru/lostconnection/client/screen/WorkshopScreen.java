@@ -700,10 +700,10 @@ public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
         }
         CompoundTag cost = quote.getCompound("enhance");
         y = itemCosts(graphics, cost.getList("items", Tag.TAG_COMPOUND), RIGHT_X, y + 1, false);
+        // ノット（足りなければ赤）。右下の「強化する」と重ならないよう、持っている額は出さない
         long knots = cost.getLong("knots");
-        graphics.drawString(font, Component.translatable("screen.amemaru.refine.knots_have",
-                        jp.amemaru.lostconnection.economy.KnotTransfer.format(knots),
-                        jp.amemaru.lostconnection.economy.KnotTransfer.format(ClientPlayerState.get().knots())), RIGHT_X, y,
+        graphics.drawString(font, Component.translatable("screen.amemaru.refine.knots",
+                        jp.amemaru.lostconnection.economy.KnotTransfer.format(knots)), RIGHT_X, y,
                 ClientPlayerState.get().knots() >= knots ? UiStyle.TEXT_GOOD : UiStyle.TEXT_BAD, true);
     }
 
