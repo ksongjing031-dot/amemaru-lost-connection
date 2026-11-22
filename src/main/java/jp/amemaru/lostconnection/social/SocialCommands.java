@@ -96,7 +96,8 @@ public final class SocialCommands {
         DuelArena.ensureBuilt(source.getServer(), index);
         net.minecraft.core.BlockPos center = DuelArena.center(index);
         if (above) {
-            player.teleportTo(DuelArena.level(source.getServer()), center.getX() + 0.5, center.getY() + 15.0, center.getZ() - 21.5, 0.0F, 38.0F);
+            // 戦う場の見えない天井の上（北の端）に立って、南を見下ろす。決闘場の外の宙に出すと、下の何もない所へ落ちる
+            player.teleportTo(DuelArena.level(source.getServer()), center.getX() + 0.5, center.getY() + 10.0, center.getZ() - 8.5, 0.0F, 52.0F);
         } else {
             net.minecraft.world.phys.Vec3 spot = DuelArena.spectatorSpot(index, 0);
             player.teleportTo(DuelArena.level(source.getServer()), spot.x, spot.y, spot.z, DuelArena.spectatorYaw(0), 12.0F);

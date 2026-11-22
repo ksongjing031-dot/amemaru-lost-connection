@@ -1599,7 +1599,7 @@
   "screen.amemaru.party.duel": "決闘",
   "screen.amemaru.duel.title": "決闘",
   "screen.amemaru.duel.record": "戦績 %s勝 %s敗 %s分",
-  "screen.amemaru.duel.help": "街から申し込み、相手が受けると決闘場で戦います（%s分）。負けてもダウン・デスペナルティはなく、耐久も減りません。終われば、もとの場所に戻ります。",
+  "screen.amemaru.duel.help": "相手が受けると決闘場で戦います（%s分）。負けても倒れず、耐久も減りません。終われば、もとの場所に戻ります。",
   "screen.amemaru.duel.incoming": "届いた申し込み",
   "screen.amemaru.duel.no_incoming": "申し込みは届いていません",
   "screen.amemaru.duel.from": "%sから（あと%s秒）",
