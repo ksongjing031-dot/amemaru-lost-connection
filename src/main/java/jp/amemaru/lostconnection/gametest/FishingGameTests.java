@@ -53,7 +53,7 @@ public final class FishingGameTests {
     private FishingGameTests() {
     }
 
-    /** 魚の表：40種（章ごとに10種・記憶魚4・湖の主1）が読める。アイテムがあり、★が合う。記憶魚の記録がある。 */
+    /** 魚の表：40種（第1〜3章は10種・第4章は9種と、湖の主。記憶魚4）が読める。アイテムがあり、★が合う。記憶魚の記録がある。 */
     @GameTest(template = EMPTY)
     public static void fishingDefinitionsLoad(GameTestHelper helper) {
         check(helper, FishDefs.loader().errors().isEmpty() && FishDefs.all().size() == 40,
