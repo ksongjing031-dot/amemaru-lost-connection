@@ -159,7 +159,8 @@ public final class EquipmentGameTests {
         // 工房のレシピ：できる品はその工房で扱う品、素材はすべてある
         List<WorkshopRecipe> recipes = helper.getLevel().getServer().getRecipeManager()
                 .getAllRecipesFor(ModRecipes.WORKSHOP_TYPE.get());
-        check(helper, recipes.size() == 17, "工房のレシピが17ではありません：" + recipes.size());
+        // Phase 6 その2 で、古代石の鈴杖・弓・双短剣・籠手と、古代石シリーズ（軽装）の4つ（計8）が増えた
+        check(helper, recipes.size() == 25, "工房のレシピが25ではありません：" + recipes.size());
         for (WorkshopRecipe recipe : recipes) {
             check(helper, recipe.workshop().accepts(recipe.result()), recipe.getId() + " の品が、その工房で扱う品ではありません");
             check(helper, !recipe.ingredients().isEmpty(), recipe.getId() + " に素材がありません");
