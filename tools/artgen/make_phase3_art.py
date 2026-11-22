@@ -527,6 +527,18 @@ def materials():
 
 
 def workbenches():
+    """11月23日：作業台のモデルと絵は tools/artgen/make_workbenches.py が作る（ここでは、置く向きとアイテムのモデルだけ書く）。"""
+    for name in ("weapon_workbench", "armor_workbench", "accessory_workbench"):
+        write_json(f"blockstates/{name}.json", {"variants": {
+            f"facing={facing}": {"model": f"amemaru:block/{name}", "y": rot}
+            for facing, rot in [("north", 0), ("east", 90), ("south", 180), ("west", 270)]}})
+        write_json(f"models/item/{name}.json", {"parent": f"amemaru:block/{name}"})
+    import make_workbenches
+    make_workbenches.main_for(os.path.abspath(os.path.join(ROOT, "..", "..", "..", "..", "..")))
+
+
+def workbenches_phase3():
+    """Phase 3 の、のっぺりした台（使わない。11月23日に make_workbenches.py に替えた。残すのは記録のため）。"""
     themes = {
         "weapon_workbench": ("#8A5A3A", "#C98A4A", "#9A978A", "anvil"),
         "armor_workbench": ("#6E5A44", "#8FA2B8", "#C9B27A", "plates"),
