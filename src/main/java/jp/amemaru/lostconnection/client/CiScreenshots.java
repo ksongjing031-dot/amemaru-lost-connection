@@ -1155,7 +1155,9 @@ public final class CiScreenshots {
             {"cmd", null, "10", "execute in amemaru:tower run tp @p {f2:216.5,19,68.5} 180 -14"},
             {"cmd", null, "20", "execute in amemaru:tower run kill @e[type=amemaru:old_ward_knot]"},
             {"snap", null, "30", "phase8_f2_boss_stun"},
-            {"cmd", null, "160", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "150", "amemaru admin debug vitals @a 100 100"},
+            // 暗い森：足もとの地面とボスの根もとが写るように、少し見下ろす（灯を持つと、まわりの地面が明るくなる）
+            {"cmd", null, "10", "execute in amemaru:tower run tp @p {f2:216.5,19,66.5} 180 16"},
             {"cmd", null, "10", "amemaru admin boss skill 2 dark"},
             {"snap", null, "40", "phase8_f2_boss_dark"},
             {"p8_hold", null, "40", "warden_light"},
