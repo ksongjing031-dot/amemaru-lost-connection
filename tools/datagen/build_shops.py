@@ -66,7 +66,6 @@ RARE_GEAR = {
 FIXED = {
     "amemaru:grassland_horn": 2050,          # Phase 0-A の計算例（1回5分のボスから8% → 62分 × 33）
     "amemaru:elder_branch_staff": 3300,      # 2階のボスから6%（1回6分 → 100分 × 33）【補完】
-    "amemaru:floodgate_key_shield": 8800,    # 3階のボスから6%（2人で1回16分 → 267分 × 33）【補完】
 }
 # 表にない物：レアリティごとの基準額（×（1＋0.08×装備レベル）はゲームの中で計算する）【補完】
 RARITY_BASE = {"common": 30, "uncommon": 100, "rare": 400, "epic": 1600, "legendary": 6000, "unique": 20000}
