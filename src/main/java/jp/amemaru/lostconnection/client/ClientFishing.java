@@ -236,7 +236,8 @@ public final class ClientFishing {
             graphics.drawCenteredString(font, endText, width / 2, y0 + 16, endColor);
             return;
         }
-        Component title = Component.translatable("fishing.amemaru.mini.title", "★".repeat(Math.max(1, stars)));
+        Component title = Component.translatable(age < 40 ? "fishing.amemaru.mini.title_hooked" : "fishing.amemaru.mini.title",
+                "★".repeat(Math.max(1, stars)));
         graphics.drawString(font, title, x0 + 6, y0 + 4, UiStyle.TEXT_HEADER, false);
         // 張りの帯
         int bx0 = x0 + 6;
@@ -272,19 +273,21 @@ public final class ClientFishing {
         long passed = System.currentTimeMillis() - tournamentAt;
         long startIn = Math.max(0, tournament.getLong("startIn") - passed);
         long endIn = Math.max(0, tournament.getLong("endIn") - passed);
-        int w = 168;
-        int x0 = (width - w) / 2;
-        int y0 = 18;
+        // 上の真ん中の「次の階がひらくまで」の札の下。左のパーティ（幅112）と右のクエストの札（幅150）に重ならないよう、
+        // 狭い画面では真ん中より左に寄せる
+        int w = 144;
+        int x0 = Math.max(124, Math.min((width - w) / 2, width - 150 - 10 - w));
+        int y0 = Math.max(6, StoryHud.guideBottom() + 4);
         var top = tournament.getList("top", Tag.TAG_COMPOUND);
         int lines = 1 + Math.max(1, top.size()) + 1;
         UiStyle.panel(graphics, x0, y0, x0 + w, y0 + 6 + lines * 10);
         Component head = startIn > 0
                 ? Component.translatable("fishing.amemaru.hud.soon", tournament.getInt("number"), clock(startIn))
                 : Component.translatable("fishing.amemaru.hud.left", tournament.getInt("number"), clock(endIn));
-        graphics.drawCenteredString(font, head, width / 2, y0 + 4, UiStyle.TEXT_GOLD);
+        graphics.drawCenteredString(font, head, x0 + w / 2, y0 + 4, UiStyle.TEXT_GOLD);
         int y = y0 + 14;
         if (top.isEmpty()) {
-            graphics.drawCenteredString(font, Component.translatable("fishing.amemaru.hud.none"), width / 2, y, UiStyle.TEXT_DIM);
+            graphics.drawCenteredString(font, Component.translatable("fishing.amemaru.hud.none"), x0 + w / 2, y, UiStyle.TEXT_DIM);
             y += 10;
         }
         for (int i = 0; i < top.size(); i++) {
