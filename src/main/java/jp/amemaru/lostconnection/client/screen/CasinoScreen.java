@@ -559,10 +559,12 @@ public class CasinoScreen extends Screen {
             graphics.drawCenteredString(font, label, (c[2] + c[4]) / 2, (c[3] + c[5]) / 2 - 4, 0xFFFFFF);
             long mine = myBet(kind, value);
             if (mine > 0) {
-                int mx = c[4] - 7;
-                int my = c[3] + 1;
-                graphics.fill(mx - 1, my, mx + 6, my + 7, 0xFFFFD866);
-                graphics.fill(mx, my + 1, mx + 5, my + 6, 0xFF7F3FB2);
+                // 賭けたマスは、紫の枠で囲む（隅の印は2けたの数に重なるので、枠にする）
+                int mark = 0xFFC77DFF;
+                graphics.fill(c[2], c[3], c[4], c[3] + 2, mark);
+                graphics.fill(c[2], c[5] - 2, c[4], c[5], mark);
+                graphics.fill(c[2], c[3], c[2] + 2, c[5], mark);
+                graphics.fill(c[4] - 2, c[3], c[4], c[5], mark);
             }
         }
     }
@@ -670,7 +672,14 @@ public class CasinoScreen extends Screen {
             graphics.renderItem(icon, fx, y + 5);
             long mine = myBet("lane", i);
             if (mine > 0) {
-                graphics.drawString(font, String.valueOf(mine), x0 + 186 - font.width(String.valueOf(mine)) - 4, y + 12, 0xFF9CF5, false);
+                // 賭けた枚数は走路の右上（ゴールの線の手前）に、走る魚より手前に出す
+                String text = String.valueOf(mine);
+                int tx = x0 + 174 - font.width(text);
+                graphics.pose().pushPose();
+                graphics.pose().translate(0, 0, 300);
+                graphics.fill(tx - 2, y + 1, x0 + 175, y + 10, 0xD0101830);
+                graphics.drawString(font, text, tx, y + 2, 0xFF9CF5, false);
+                graphics.pose().popPose();
             }
         }
         // 出す魚（勝った走路は、結果のあいだ金の縁）
