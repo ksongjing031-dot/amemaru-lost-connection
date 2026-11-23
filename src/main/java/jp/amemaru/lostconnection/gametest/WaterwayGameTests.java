@@ -308,10 +308,10 @@ public final class WaterwayGameTests {
         }
         boolean shield = hydram.rare().stream().anyMatch(r -> r.item().equals(AmemaruMod.id("floodgate_key_shield")) && r.chance() == 6.0);
         check(helper, shield && hydram.pity(), "大水門の番人のレアに、水門の鍵盾（6%）がありません");
-        for (String item : List.of("gnawed_cog", "murky_gel", "waterway_bronze", "catfish_whisker", "flow_crystal", "floodgate_valve")) {
-            check(helper, ModItems.MANIFEST.get(item) != null || "floodgate_valve".equals(item) && ModItems.FLOODGATE_VALVE.get() != null,
-                    "3階の品 " + item + " がありません");
+        for (String item : List.of("gnawed_cog", "murky_gel", "waterway_bronze", "catfish_whisker", "flow_crystal")) {
+            check(helper, ModItems.MANIFEST.get(item) != null, "3階の素材 " + item + " がありません");
         }
+        check(helper, ModItems.FLOODGATE_VALVE.get() != null, "水門のハンドルの品がありません");
         for (String id : List.of("floor3/enter", "floor3/first_kill", "floor3/white_flow")) {
             check(helper, StoryEventManager.get(AmemaruMod.id(id)) != null, "3階の物語 " + id + " がありません");
         }
