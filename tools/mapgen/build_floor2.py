@@ -771,7 +771,8 @@ def entrance(f):
     f.travel_stone = (tx, y + 1, tz)
 
 
-def waypoint(f, wid, name, x, z, facing_yaw):
+def waypoint(f, wid, name, x, z, facing_yaw, look_at=None):
+    """中継の灯。着く所は灯の facing_yaw の側に2マス。look_at（階の x, z）があれば、着いた人はそちらを向く"""
     f.walk[x - 3:x + 4, z - 3:z + 4] = True
     g = f.top(x, z)
     clear(f, x, g, z, 2, 4)
@@ -785,6 +786,15 @@ def waypoint(f, wid, name, x, z, facing_yaw):
     yaw = facing_yaw
     ax = x + (0 if yaw in (0, 180) else (2 if yaw == -90 else -2))
     az = z + (2 if yaw == 0 else -2 if yaw == 180 else 0)
+    # 着いた人の向く先（幅3・長さ10）に木を生やさない（11月23日：白い木立では、着くと目の前が木の幹だった）
+    fx, fz = {0: (0, 1), 180: (0, -1), 90: (-1, 0), -90: (1, 0)}[yaw]
+    for i in range(1, 11):
+        for w in (-1, 0, 1):
+            vx, vz = ax + fx * i + fz * w, az + fz * i + fx * w
+            if 0 <= vx < SIZE and 0 <= vz < SIZE:
+                f.reserved.add((vx, vz))
+    if look_at is not None:
+        yaw = round(math.degrees(math.atan2(-(look_at[0] - (ax + 0.5)), look_at[1] - (az + 0.5))), 1)
     f.waypoints.append({"id": wid, "name": name, "pos": [x, g + 1, z],
                         "arrive": {"pos": [ax + 0.5, f.top(ax, az) + 1, az + 0.5], "yaw": yaw}})
 
@@ -875,7 +885,7 @@ def hollow(f):
 def grove(f):
     """白い木立：台地の上。ロストの欠けの帯、ぐるぐる歩く狐の輪、葉隠れの長と宝箱、ノアの目撃の所"""
     cx, cz = GROVE
-    waypoint(f, "grove", "白い木立", cx + 10, cz + 30, 0)
+    waypoint(f, "grove", "白い木立", cx + 10, cz + 30, 180)
     # ロストの欠け（地面が白く抜けた帯）
     for x in range(cx - GROVE_R, cx + GROVE_R):
         for z in range(cz - GROVE_R, cz + GROVE_R):
@@ -897,6 +907,20 @@ def grove(f):
                 if 1.5 < d and R.at(x, z, 205) < 0.7:
                     f.put(x, f.top(x, z), z, block("amemaru:lost_blank"))
                     f.lost.add((x, z))
+    # ノアが見える空き地（11月23日、CIの写真で直した：手前の茂みと木で、霧の奥の少女が隠れていた）。物語の場所の箱
+    # （floor_json の story_zones の noa_sighting）と、そこからノアまでの間に、木・茂み・背の高い草を生やさない。
+    # ふちは少しぎざぎざにして、白い花を少し咲かせる
+    for x in range(nx - 14, nx + 15):
+        for z in range(nz - 2, nz + 25):
+            if not (0 <= x < SIZE and 0 <= z < SIZE) or not f.walk[x, z] or f.path[x, z]:
+                continue
+            edge = min(x - (nx - 14), (nx + 14) - x, z - (nz - 2), (nz + 24) - z)
+            if edge < 2 and R.at(x, z, 207) < 0.5:
+                continue
+            f.reserved.add((x, z))
+            g = f.top(x, z)
+            if (x, z) not in f.lost and R.at(x, z, 208) < 0.05 and f.get(x, g + 1, z) is None:
+                f.put(x, g + 1, z, block("lily_of_the_valley"))
     chest(f, cx - 14, cz - 18, "south", guardian="fox_chief")
     chest(f, cx + 26, cz - 6, "west")
     f.guardians.append({"id": "fox_chief", "enemy": "amemaru:hakage_kitsune", "variant": "amemaru:hakage_kitsune_chief",
@@ -966,7 +990,7 @@ def ravine(f):
     # 谷のふちの中継の灯（東の迷いの森から来た所）と、谷へ下りる根の坂（西の壁ぞいに、北へ下りる）
     wcx, wcz, wux, wuz = ravine_point(0.36)
     wnx, wnz = -wuz, wux
-    waypoint(f, "ravine", "管の谷", int(round(wcx - wnx * 14)), int(round(wcz - wnz * 14)), 90)
+    waypoint(f, "ravine", "管の谷", int(round(wcx - wnx * 14)), int(round(wcz - wnz * 14)), -90)
     a = ravine_point(RAMP_T0)
     b = ravine_point(RAMP_T1)
     ramp(f, (a[0] + a[3] * 12.5, a[1] - a[2] * 12.5), (b[0] + b[3] * 5.5, b[1] - b[2] * 5.5), BASE, RAVINE_FLOOR + 1)
@@ -1111,7 +1135,9 @@ def clearing(f):
                   Compound({"id": String("amemaru:floor_seal"), "floor": Int(FLOOR)}))
             seal.append((x, yy, SEAL_Z))
     f.seal_cells = seal
-    waypoint(f, "approach", "空き地の前", cx + 6, SEAL_Z + 8, 180)
+    # 灯は門へ上る道の東のへり。着いた人は道の上で、封印の門の方を向く（11月23日：前は道の東の茂みのそばに着き、
+    # 目の前が茂みだった）
+    waypoint(f, "approach", "空き地の前", cx + 3, SEAL_Z + 8, 90, look_at=(cx + 0.5, SEAL_Z + 0.5))
 
 
 def outer_chests(f):
@@ -1269,8 +1295,9 @@ def floor_json(f, woods_json):
         "waypoints": f.waypoints,
         "travel_stone": list(f.travel_stone),
         "seal_requires": "lost_woods",
-        "story_zones": [{"id": "noa_sighting", "box": [NOA[0] - 20, GROVE_TOP - 2, NOA[1] + 10, NOA[0] + 20, GROVE_TOP + 12,
-                                                        NOA[1] + 30]}],
+        # ノアから6〜22ブロック南（ノアが見える空き地の中。grove() の空き地と合わせる）
+        "story_zones": [{"id": "noa_sighting", "box": [NOA[0] - 12, GROVE_TOP - 2, NOA[1] + 6, NOA[0] + 12, GROVE_TOP + 12,
+                                                        NOA[1] + 22]}],
     }
     return data
 

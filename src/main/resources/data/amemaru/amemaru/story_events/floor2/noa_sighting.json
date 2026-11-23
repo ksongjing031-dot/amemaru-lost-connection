@@ -33,7 +33,8 @@
     {
       "type": "amemaru:camera",
       "actor": "noa",
-      "wait": false
+      "wait": false,
+      "look_height": 0.25
     },
     {
       "type": "amemaru:sound",

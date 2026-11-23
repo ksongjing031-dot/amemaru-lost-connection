@@ -114,6 +114,15 @@ public final class ClientForgeEvents {
         }
     }
 
+    /**
+     * ボスのHPの帯を描くたびに、帯の下の端を覚える。上の真ん中の「〇〇まで」の札を、その下に出す
+     * （11月23日：1階・2階のボスの名前が、「2階　忘れられた森がひらく　まで」の札に隠れていた）。
+     */
+    @SubscribeEvent
+    public static void onBossBar(CustomizeGuiOverlayEvent.BossEventProgress event) {
+        StoryHud.noteBossBar(event.getY() + 7);
+    }
+
     /** チャットを、HUD（結晶の冠）に重ならない高さまで上げる。 */
     @SubscribeEvent
     public static void onCustomizeChat(CustomizeGuiOverlayEvent.Chat event) {

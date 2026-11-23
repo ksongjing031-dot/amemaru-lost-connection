@@ -2194,7 +2194,7 @@
   "message.amemaru.guardian.defeated_named": "%sを倒した。守られていた宝箱が開けられるようになった",
   "message.amemaru.lost_woods.already": "%sの道は、もう結んである",
   "message.amemaru.lost_woods.lantern": "結び目の灯を受け取った。澄んだこだまが返った灯台に置こう",
-  "message.amemaru.lost_woods.rang": "%sの風鈴が鳴った。%s秒ほどで、正しい道からこだまが返る。鳴らした所から離れて、耳を澄まそう",
+  "message.amemaru.lost_woods.rang": "%sの風鈴が鳴った。%s秒ほどで、離れた人にこだまが聞こえる",
   "message.amemaru.lost_woods.too_close": "風鈴の近くでは、こだまが聞き分けられない。もっと離れて聞こう",
   "message.amemaru.lost_woods.echo_high": "澄んだこだまが、%sから返ってきた",
   "message.amemaru.lost_woods.echo_low": "低くにごったこだまが、%sから聞こえた……（にせのこだまかもしれない）",

@@ -1137,8 +1137,10 @@ public final class CiScreenshots {
             {"cmd", null, "60", "amemaru admin floor tp 2 boss @p"},
             {"snap", null, "40", "phase8_f2_gate"},
             {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
+            // 部屋に入ると戦いが始まる（真ん中から20ブロック）。始まったら12ブロックまで近づいて、少し見上げて撮る
             {"cmd", null, "60", "execute in amemaru:tower run tp @p {f2:216.5,19,74.5} 180 12"},
-            {"snap", null, "80", "phase8_f2_boss"},
+            {"cmd", null, "20", "execute in amemaru:tower run tp @p {f2:216.5,19,68.5} 180 -12"},
+            {"snap", null, "60", "phase8_f2_boss"},
             {"cmd", null, "2", "execute in amemaru:tower run tp @p {f2:216.5,19,70.5} 180 14"},
             // 地割れの線（予兆の形2：線）
             {"cmd", null, "0", "amemaru admin boss skill 2 crack"},
@@ -1148,7 +1150,9 @@ public final class CiScreenshots {
             // 根の檻（立っている人の足もとの円。地面の印が出たらすぐ撮る）
             {"cmd", null, "0", "amemaru admin boss skill 2 cage"},
             {"await_ground", null, "0", "phase8_f2_boss_cage"},
+            // 光る節を3つとも壊すと怯む（傾いた幹が写るように、少し見上げる）
             {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "10", "execute in amemaru:tower run tp @p {f2:216.5,19,68.5} 180 -14"},
             {"cmd", null, "20", "execute in amemaru:tower run kill @e[type=amemaru:old_ward_knot]"},
             {"snap", null, "30", "phase8_f2_boss_stun"},
             {"cmd", null, "160", "amemaru admin debug vitals @a 100 100"},
