@@ -371,11 +371,16 @@ public final class TowerService {
         if (def == null) {
             return true;
         }
-        // Phase 8 その1：2階は、迷いの森の区画がすべてつながったら（みんな）
-        if (FloorFeatures.SEAL_LOST_WOODS.equals(def.features().sealRequires())) {
-            return jp.amemaru.lostconnection.tower.forest.LostWoodsService.allTied(player.server, def);
+        // Phase 8 その1：2階は、迷いの森の区画がすべてつながったら（みんな）。11月24日：名のある魔物をすべて倒した印も（人ごと）
+        FloorFeatures features = def.features();
+        if (features.requires(FloorFeatures.SEAL_LOST_WOODS)
+                && !jp.amemaru.lostconnection.tower.forest.LostWoodsService.allTied(player.server, def)) {
+            return false;
         }
-        if (def.pillars().isEmpty()) {
+        if (features.requires(FloorFeatures.SEAL_GUARDIANS) && guardiansDefeated(player, def) < namedGuardians(def).size()) {
+            return false;
+        }
+        if (!features.requires(FloorFeatures.SEAL_PILLARS) || def.pillars().isEmpty()) {
             return true;
         }
         int all = (1 << def.pillars().size()) - 1;
@@ -554,6 +559,55 @@ public final class TowerService {
     }
 
     /** 名のある魔物（守り手）を倒した印の名前（Phase 8 その1）。 */
+    /** その階の名のある魔物（宝箱の守り手。石柱の守り手ではない）。封印の条件 guardians で数える。 */
+    public static List<FloorDef.Guardian> namedGuardians(FloorDef def) {
+        List<FloorDef.Guardian> list = new ArrayList<>();
+        for (FloorDef.Guardian guardian : def.extras().guardians()) {
+            if (guardian.pillar() < 0) {
+                list.add(guardian);
+            }
+        }
+        return list;
+    }
+
+    /** その人が倒した、その階の名のある魔物の数。 */
+    public static int guardiansDefeated(ServerPlayer player, FloorDef def) {
+        PlayerData data = PlayerDataCapability.get(player).orElse(null);
+        if (data == null) {
+            return 0;
+        }
+        int count = 0;
+        for (FloorDef.Guardian guardian : namedGuardians(def)) {
+            if (data.getStory().has(guardianFlag(def.number(), guardian.id()))) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /** 封印を通れないわけ（足りないもの）。通れるなら null。 */
+    @Nullable
+    public static Component sealLockedMessage(ServerPlayer player, FloorDef def) {
+        FloorFeatures features = def.features();
+        if (features.requires(FloorFeatures.SEAL_LOST_WOODS)
+                && !jp.amemaru.lostconnection.tower.forest.LostWoodsService.allTied(player.server, def)) {
+            int tied = Integer.bitCount(jp.amemaru.lostconnection.tower.forest.LostWoodsService.tieBits(player.server, def));
+            return Component.translatable("message.amemaru.seal.woods", tied, features.lostWoods().size());
+        }
+        if (features.requires(FloorFeatures.SEAL_GUARDIANS)) {
+            int done = guardiansDefeated(player, def);
+            int total = namedGuardians(def).size();
+            if (done < total) {
+                return Component.translatable("message.amemaru.seal.guardians", done, total);
+            }
+        }
+        if (!pillarsComplete(player, def.number())) {
+            int count = PlayerDataCapability.get(player).map(d -> Integer.bitCount(d.getStory().pillars(def.number()))).orElse(0);
+            return Component.translatable("message.amemaru.seal.locked", count, def.pillars().size());
+        }
+        return null;
+    }
+
     public static net.minecraft.resources.ResourceLocation guardianFlag(int floor, String id) {
         return AmemaruMod.id("guardian/floor" + floor + "/" + id);
     }

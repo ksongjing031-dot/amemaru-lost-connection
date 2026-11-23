@@ -4,14 +4,14 @@
   "level": 2,
   "description": "小さな角のある毛玉。草原をのんびり歩き、草を食む。ふだんはおとなしいが、一匹を叩くと、まわりの仲間が一斉に頭突きで向かってくる。",
   "stats": {
-    "hp": 140,
-    "attack": 16,
+    "hp": 520,
+    "attack": 26,
     "defense": 4,
     "move_speed": 0.23,
     "follow_range": 16,
     "aggro_range": 0
   },
-  "exp": 3,
+  "exp": 8,
   "skills": {
     "headbutt": {
       "power": 1.0,

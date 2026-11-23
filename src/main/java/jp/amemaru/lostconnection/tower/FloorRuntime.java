@@ -91,9 +91,11 @@ public final class FloorRuntime {
             if (bossRoom != null && bossRoom.fighting() && !bossRoom.inside(player.position())) {
                 message = Component.translatable("message.amemaru.seal.fighting").withStyle(ChatFormatting.RED);
             } else if (!FloorSealBlock.canPass(player, def.number())) {
-                int count = Integer.bitCount(player.isCreative() ? 0
-                        : jp.amemaru.lostconnection.player.PlayerDataCapability.get(player).map(d -> d.getStory().pillars(def.number())).orElse(0));
-                message = Component.translatable("message.amemaru.seal.locked", count, def.pillars().size()).withStyle(ChatFormatting.YELLOW);
+                // 11月24日：階ごとの条件（石柱・迷いの森・名のある魔物）に合わせて、足りないものを出す
+                Component locked = TowerService.sealLockedMessage(player, def);
+                if (locked != null) {
+                    message = locked.copy().withStyle(ChatFormatting.YELLOW);
+                }
             }
             if (message != null) {
                 player.displayClientMessage(message, true);

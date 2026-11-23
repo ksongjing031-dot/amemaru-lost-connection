@@ -20,9 +20,37 @@ import org.joml.Matrix4f;
 public final class TelegraphDraw {
     private static final ResourceLocation TEXTURE = AmemaruMod.id("textures/fx/telegraph.png");
     private static final int COLOR = 0xFF4A3A;
+    /** 青の印（みんなで集まって受ける所。11月24日）。 */
+    public static final int SHARE_COLOR = 0x48C8FF;
+    /** 今描く色（{@link #withColor} の間だけ変わる。描くのは描画のスレッドだけ）。 */
+    private static int color = COLOR;
     private static final int SEGMENTS = 32;
 
     private TelegraphDraw() {
+    }
+
+    /** その間だけ色を変えて描く。 */
+    public static void withColor(int rgb, Runnable draw) {
+        int before = color;
+        color = rgb;
+        try {
+            draw.run();
+        } finally {
+            color = before;
+        }
+    }
+
+    /** 青の印の内向きの矢じり（真ん中へ集まれ）。外の輪のすぐ内側に4つ、回りながら少しずつ真ん中へ寄る。 */
+    public static void gatherArrows(VertexConsumer consumer, PoseStack poseStack, float radius, float age, int alpha) {
+        float spin = age * 0.03F;
+        float pull = (age * 0.05F) % 1.0F;
+        for (int i = 0; i < 4; i++) {
+            float a = spin + (float) (i * Math.PI / 2.0);
+            float r1 = radius * (0.85F - 0.35F * pull);
+            float r0 = Math.max(0.2F, r1 - radius * 0.22F);
+            wedge(consumer, poseStack, a - 0.22F, a, r0, r1, alpha);
+            wedge(consumer, poseStack, a, a + 0.22F, r0, r1, alpha);
+        }
     }
 
     public static VertexConsumer consumer(MultiBufferSource buffer) {
@@ -32,7 +60,7 @@ public final class TelegraphDraw {
     /** 濃さ（0〜255）。打つときが近いほど濃く、少し脈打つ。 */
     public static int alpha(float progress, float age) {
         float pulse = 0.5F + 0.5F * Mth.sin(age * 0.6F);
-        return Math.round((0.25F + 0.55F * progress + 0.15F * pulse) * 255.0F);
+        return Math.round((0.38F + 0.45F * progress + 0.15F * pulse) * 255.0F);
     }
 
     /** まっすぐな帯（幅 {@code width}・長さ {@code length}。前へ）。明るい線が手前から奥へ進む。 */
@@ -103,7 +131,7 @@ public final class TelegraphDraw {
 
     private static void vertex(VertexConsumer consumer, Matrix4f matrix, Matrix3f normal, float x, float z, float u, float v, int alpha) {
         consumer.vertex(matrix, x, 0.0F, z)
-                .color((COLOR >> 16) & 0xFF, (COLOR >> 8) & 0xFF, COLOR & 0xFF, Mth.clamp(alpha, 0, 255))
+                .color((color >> 16) & 0xFF, (color >> 8) & 0xFF, color & 0xFF, Mth.clamp(alpha, 0, 255))
                 .uv(u, v)
                 .overlayCoords(OverlayTexture.NO_OVERLAY)
                 .uv2(0xF000F0)

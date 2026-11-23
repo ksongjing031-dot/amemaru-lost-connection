@@ -404,6 +404,7 @@ public class Veldhorn extends AmemaruBoss {
         setBusy(timer + 10);
         setTelegraph(TELEGRAPH_CONE, timer, getYRot(), (float) sweep.range(), (float) sweep.param("angle", 120.0));
         playAction("attack");
+        setCast("sweep", timer);
     }
 
     private void tickSweep(ServerLevel level) {

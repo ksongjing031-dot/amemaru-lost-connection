@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "amemaru:bond_share"
+    "amemaru:bond_share",
+    "amemaru:heavy_blow"
   ]
 }

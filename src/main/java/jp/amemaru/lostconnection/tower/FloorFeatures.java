@@ -32,6 +32,11 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
     public static final FloorFeatures NONE = new FloorFeatures(null, List.of(), List.of(), null, "pillars", List.of());
     public static final String SEAL_PILLARS = "pillars";
     public static final String SEAL_LOST_WOODS = "lost_woods";
+    /**
+     * 11月24日のご指示「時間が掛からない」【補完】：その階の名のある魔物（宝箱の守り手）をすべて倒した印（人ごと。日が変わっても
+     * 消えない）。{@code lost_woods+guardians} のように、{@code +} でつないで、いくつも求められる。
+     */
+    public static final String SEAL_GUARDIANS = "guardians";
 
     /** 霧（クライアントの見え方）。色は 0xRRGGBB（−1 は空の色のまま）。 */
     public record Environment(float fogStart, float fogEnd, int fogColor) {
@@ -65,6 +70,20 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
 
     /** 中継の灯。{@code arrive} は、道しるべの石から来たときに立つ所。 */
     public record Waypoint(int index, String id, String name, BlockPos pos, FloorDef.Spot arrive) {
+    }
+
+    /** 封印を通るのに、その条件（{@link #SEAL_PILLARS} など）が要るか。 */
+    public boolean requires(String token) {
+        return requires(sealRequires, token);
+    }
+
+    private static boolean requires(String seal, String token) {
+        for (String t : seal.split("\\+")) {
+            if (t.equals(token)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @Nullable
@@ -134,10 +153,13 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
         JsonArray stone = Json.optionalArray(json, "travel_stone");
         BlockPos travel = stone.size() == 3 ? FloorDef.blockPos(stone, "travel_stone") : null;
         String seal = Json.optionalString(json, "seal_requires", SEAL_PILLARS);
-        if (!seal.equals(SEAL_PILLARS) && !seal.equals(SEAL_LOST_WOODS)) {
-            throw new DefinitionException("「seal_requires」は pillars か lost_woods にしてください");
+        for (String token : seal.split("\\+")) {
+            if (!token.equals(SEAL_PILLARS) && !token.equals(SEAL_LOST_WOODS) && !token.equals(SEAL_GUARDIANS)) {
+                throw new DefinitionException("「seal_requires」は pillars・lost_woods・guardians を + でつないだものにしてください（今は "
+                        + seal + "）");
+            }
         }
-        if (seal.equals(SEAL_LOST_WOODS) && woods.isEmpty()) {
+        if (requires(seal, SEAL_LOST_WOODS) && woods.isEmpty()) {
             throw new DefinitionException("「seal_requires」が lost_woods なのに、「lost_woods」がありません");
         }
         List<StoryZone> zones = new ArrayList<>();

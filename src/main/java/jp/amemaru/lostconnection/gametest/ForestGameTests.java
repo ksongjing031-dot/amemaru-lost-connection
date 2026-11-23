@@ -86,7 +86,8 @@ public final class ForestGameTests {
         }
         FloorFeatures f = def.features();
         check(helper, f.environment() != null && f.environment().fogEnd() > f.environment().fogStart(), "2階に霧がありません");
-        check(helper, FloorFeatures.SEAL_LOST_WOODS.equals(f.sealRequires()), "2階の封印が迷いの森で開きません：" + f.sealRequires());
+        check(helper, f.requires(FloorFeatures.SEAL_LOST_WOODS) && f.requires(FloorFeatures.SEAL_GUARDIANS),
+                "2階の封印が、迷いの森と名のある魔物の両方で開くようになっていません：" + f.sealRequires());
         check(helper, f.lostWoods().size() == 3, "迷いの森が3つではありません：" + f.lostWoods().size());
         int exits = 0;
         int decoys = 0;
@@ -148,7 +149,23 @@ public final class ForestGameTests {
             check(helper, LostWoodsService.allTied(server, def) == last, "3つつなぐ前に封印が開く・3つつないでも開かない");
         }
         check(helper, LostWoodsService.tieBits(server, def) == 0b111, "つないだ印が3つ立っていません：" + LostWoodsService.tieBits(server, def));
-        check(helper, TowerService.pillarsComplete(player, 2), "3つともつないだのに、封印が開きません");
+        // 11月24日：名のある魔物を2体とも倒した印（人ごと）も要る
+        jp.amemaru.lostconnection.player.PlayerData data = jp.amemaru.lostconnection.player.PlayerDataCapability.get(player)
+                .orElseThrow(() -> new GameTestAssertException("プレイヤーデータが付いていません"));
+        List<FloorDef.Guardian> named = TowerService.namedGuardians(def);
+        check(helper, named.size() == 2, "2階の名のある魔物が2体ではありません：" + named.size());
+        for (FloorDef.Guardian guardian : named) {
+            data.getStory().remove(TowerService.guardianFlag(2, guardian.id()));
+        }
+        check(helper, !TowerService.pillarsComplete(player, 2), "名のある魔物を倒していないのに、封印が開きます");
+        net.minecraft.network.chat.Component locked = TowerService.sealLockedMessage(player, def);
+        check(helper, locked != null && locked.getContents() instanceof net.minecraft.network.chat.contents.TranslatableContents t
+                && t.getKey().equals("message.amemaru.seal.guardians"), "封印の知らせが「名のある魔物」になっていません");
+        data.getStory().add(TowerService.guardianFlag(2, named.get(0).id()));
+        check(helper, !TowerService.pillarsComplete(player, 2), "名のある魔物を1体だけ倒して、封印が開きました");
+        data.getStory().add(TowerService.guardianFlag(2, named.get(1).id()));
+        check(helper, TowerService.pillarsComplete(player, 2) && TowerService.sealLockedMessage(player, def) == null,
+                "迷いの森を3つともつなぎ、名のある魔物を2体とも倒したのに、封印が開きません");
         // 保存して読み直しても同じ
         LostWoodsService.Data copy = LostWoodsService.Data.load(LostWoodsService.Data.get(server).save(new net.minecraft.nbt.CompoundTag()));
         check(helper, copy.isTied(2, woods.get(0).id()), "保存して読み直すと、つないだ印が消えます");

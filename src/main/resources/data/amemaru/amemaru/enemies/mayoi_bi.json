@@ -6,14 +6,14 @@
   "lost": false,
   "description": "霧の中をふわふわ漂う光の玉。近づくと、つかず離れずに逃げて、道から外れた方へ誘う。打つと、まぶしく光って消え、少し離れた所にまた灯る。",
   "stats": {
-    "hp": 150,
-    "attack": 22,
+    "hp": 900,
+    "attack": 38,
     "defense": 3,
     "move_speed": 0.28,
     "follow_range": 24,
     "aggro_range": 14
   },
-  "exp": 7,
+  "exp": 18,
   "skills": {
     "spark": {
       "power": 0.8,

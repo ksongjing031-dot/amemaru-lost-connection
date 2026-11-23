@@ -5,14 +5,14 @@
   "lost": true,
   "description": "体の一部が白く欠けた狼。欠けた所からは、白い光の粒がこぼれ続けている。止まって地面をにらんだら、その先へまっすぐ突っ込んでくる。",
   "stats": {
-    "hp": 260,
-    "attack": 26,
+    "hp": 950,
+    "attack": 40,
     "defense": 6,
     "move_speed": 0.3,
     "follow_range": 24,
     "aggro_range": 14
   },
-  "exp": 7,
+  "exp": 18,
   "skills": {
     "bite": {
       "power": 1.0,

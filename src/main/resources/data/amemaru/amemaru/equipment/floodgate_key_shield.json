@@ -8,8 +8,8 @@
     "amemaru:knight"
   ],
   "stats": {
-    "defense": 11,
-    "hp": 50
+    "defense": 8,
+    "hp": 30
   },
   "durability": 600,
   "binding": "on_equip",

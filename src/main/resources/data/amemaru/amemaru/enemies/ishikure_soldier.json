@@ -4,14 +4,14 @@
   "level": 4,
   "description": "決まった道を巡回する、古代の見張り。目の前にあるものを見つけると、鐘のような音で仲間を呼び、石の腕を振り上げて地面ごと叩きつける。",
   "stats": {
-    "hp": 320,
-    "attack": 28,
+    "hp": 1250,
+    "attack": 44,
     "defense": 12,
     "move_speed": 0.2,
     "follow_range": 20,
     "aggro_range": 12
   },
-  "exp": 6,
+  "exp": 16,
   "skills": {
     "slam": {
       "power": 1.3,

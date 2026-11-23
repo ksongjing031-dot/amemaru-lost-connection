@@ -72,10 +72,10 @@
     "start_radius": 20,
     "respawn_seconds": 120,
     "max_players": 8,
-    "hp_per_extra_player": 1.0,
+    "hp_per_extra_player": 0.6,
     "attack_per_extra_player": 0.1,
     "pace_per_extra_player": 0.05,
-    "enrage_seconds": 720,
+    "enrage_seconds": 1320,
     "exit": {
       "center": [
         216.5,
@@ -83,7 +83,8 @@
         36.5
       ],
       "radius": 2.6
-    }
+    },
+    "hp_min_players": 2
   },
   "pillars": [],
   "pillars_done": "",
@@ -1141,7 +1142,7 @@
     18,
     397
   ],
-  "seal_requires": "lost_woods",
+  "seal_requires": "lost_woods+guardians",
   "story_zones": [
     {
       "id": "noa_sighting",

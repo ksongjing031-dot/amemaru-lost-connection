@@ -9,7 +9,7 @@
     "amemaru:healer"
   ],
   "stats": {
-    "defense": 2,
+    "defense": 1,
     "mp": 10,
     "speed": 1
   },

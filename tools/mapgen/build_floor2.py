@@ -1294,7 +1294,8 @@ def floor_json(f, woods_json):
         "lost_woods": woods_json,
         "waypoints": f.waypoints,
         "travel_stone": list(f.travel_stone),
-        "seal_requires": "lost_woods",
+        # 11月24日「時間が掛からない」：名のある魔物（白い木立・管の谷の宝箱の守り手）を2体とも倒した印も要る【補完】
+        "seal_requires": "lost_woods+guardians",
         # ノアから6〜22ブロック南（ノアが見える空き地の中。grove() の空き地と合わせる）
         "story_zones": [{"id": "noa_sighting", "box": [NOA[0] - 12, GROVE_TOP - 2, NOA[1] + 6, NOA[0] + 12, GROVE_TOP + 12,
                                                         NOA[1] + 22]}],

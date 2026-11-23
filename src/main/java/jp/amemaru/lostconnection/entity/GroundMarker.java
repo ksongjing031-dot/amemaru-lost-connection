@@ -25,6 +25,12 @@ import javax.annotation.Nullable;
 public class GroundMarker extends Entity {
     private static final EntityDataAccessor<Float> DATA_RADIUS = SynchedEntityData.defineId(GroundMarker.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Integer> DATA_TICKS = SynchedEntityData.defineId(GroundMarker.class, EntityDataSerializers.INT);
+    /** 印の種類（色）。11月24日 */
+    private static final EntityDataAccessor<Integer> DATA_KIND = SynchedEntityData.defineId(GroundMarker.class, EntityDataSerializers.INT);
+    /** 赤：よける所。 */
+    public static final int KIND_DANGER = 0;
+    /** 青：みんなで集まって受ける所（ボスの「みんなで受ける一撃」）。 */
+    public static final int KIND_SHARE = 1;
     /** 打ったあと、明るく見せておく長さ（tick） */
     private static final int AFTER_TICKS = 4;
 
@@ -40,6 +46,12 @@ public class GroundMarker extends Entity {
     /** 印を置く（{@code ticks} のあと技が当たる。その少しあとで消える）。 */
     @Nullable
     public static GroundMarker place(ServerLevel level, Vec3 at, float radius, int ticks) {
+        return place(level, at, radius, ticks, KIND_DANGER);
+    }
+
+    /** 種類（{@link #KIND_DANGER}・{@link #KIND_SHARE}）を決めて印を置く。 */
+    @Nullable
+    public static GroundMarker place(ServerLevel level, Vec3 at, float radius, int ticks, int kind) {
         GroundMarker marker = ModEntities.GROUND_MARKER.get().create(level);
         if (marker == null) {
             return null;
@@ -47,6 +59,7 @@ public class GroundMarker extends Entity {
         marker.moveTo(at.x, at.y, at.z, 0.0F, 0.0F);
         marker.entityData.set(DATA_RADIUS, radius);
         marker.entityData.set(DATA_TICKS, Math.max(1, ticks));
+        marker.entityData.set(DATA_KIND, kind);
         marker.life = Math.max(1, ticks) + AFTER_TICKS;
         level.addFreshEntity(marker);
         return marker;
@@ -56,6 +69,11 @@ public class GroundMarker extends Entity {
     protected void defineSynchedData() {
         entityData.define(DATA_RADIUS, 1.0F);
         entityData.define(DATA_TICKS, 20);
+        entityData.define(DATA_KIND, KIND_DANGER);
+    }
+
+    public int kind() {
+        return entityData.get(DATA_KIND);
     }
 
     public float radius() {

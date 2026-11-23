@@ -67,6 +67,7 @@ public final class StoryHud {
             return;
         }
         renderAnnouncements(graphics, font, width);
+        renderBossCast(graphics, font, width, partialTick);
         renderCountdowns(graphics, font, width);
         renderGuide(graphics, font, width, minecraft);
     }
@@ -207,9 +208,12 @@ public final class StoryHud {
     private static void renderCountdowns(GuiGraphics graphics, Font font, int width) {
         WorldStateS2C world = ClientStory.world();
         int y = 4;
-        // ボスのHPの帯が出ているときは、その下に出す
+        // ボスのHPの帯が出ているときは、その下に出す（ボスの技の名前が出ていれば、さらにその下）
         if (System.currentTimeMillis() - bossSeen < 250L) {
             y = Math.max(y, bossBottom + 2);
+        }
+        if (castBottom > 0) {
+            y = Math.max(y, castBottom + 2);
         }
         countdownBottom = 0;
         for (WorldStateS2C.Countdown countdown : world.countdowns()) {
@@ -223,6 +227,80 @@ public final class StoryHud {
             countdownBottom = y + 12;
             y += 14;
         }
+    }
+
+    /** ボスの技の名前の札の下の端（出していなければ 0）。 */
+    private static int castBottom;
+
+    /**
+     * ボスの技の名前（ボスのHPの帯の下。11月24日「ボスの攻撃がわかりづらい」）。いちばん近いボスが技を出し始めたら、
+     * 「▶ 枝の薙ぎ払い」のように出し、下の細い帯で、当たるまでの残りを見せる。赤はよける技、青はみんなで受ける一撃。
+     */
+    private static void renderBossCast(GuiGraphics graphics, Font font, int width, float partialTick) {
+        castBottom = 0;
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.level == null || minecraft.player == null) {
+            return;
+        }
+        jp.amemaru.lostconnection.enemy.boss.AmemaruBoss boss = null;
+        double best = 48.0 * 48.0;
+        for (net.minecraft.world.entity.Entity entity : minecraft.level.entitiesForRendering()) {
+            if (entity instanceof jp.amemaru.lostconnection.enemy.boss.AmemaruBoss candidate && candidate.isAlive()
+                    && !candidate.cast().isEmpty()) {
+                double d = candidate.distanceToSqr(minecraft.player);
+                if (d < best) {
+                    best = d;
+                    boss = candidate;
+                }
+            }
+        }
+        if (boss == null) {
+            return;
+        }
+        ResourceLocation id = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(boss.getType());
+        String key = "cast." + id.getNamespace() + "." + id.getPath() + "." + boss.cast();
+        if (!net.minecraft.client.resources.language.I18n.exists(key)) {
+            return;
+        }
+        boolean share = "share".equals(boss.cast());
+        int accent = share ? 0x48C8FF : 0xFF6A5A;
+        String text = "\u25B6 " + net.minecraft.client.resources.language.I18n.get(key);
+        int w = font.width(text) + 16;
+        int x = (width - w) / 2;
+        int y = System.currentTimeMillis() - bossSeen < 250L ? bossBottom + 2 : 4;
+        graphics.fill(x, y, x + w, y + 15, 0xC80B1022);
+        graphics.fill(x, y, x + 2, y + 15, 0xFF000000 | accent);
+        graphics.drawString(font, text, x + 8, y + 3, 0xFF000000 | (share ? 0xC8F0FF : 0xFFDCD4), false);
+        float progress = castProgress(minecraft, boss, share, partialTick);
+        if (progress >= 0.0F) {
+            int bar = Math.round((w - 4) * (1.0F - progress));
+            graphics.fill(x + 2, y + 13, x + 2 + bar, y + 15, 0xFF000000 | accent);
+        }
+        castBottom = y + 15;
+    }
+
+    /** 技が当たるまでの進み（0〜1。分からなければ -1）。地面の印か、ボスの予兆から。 */
+    private static float castProgress(Minecraft minecraft, jp.amemaru.lostconnection.enemy.boss.AmemaruBoss boss, boolean share,
+                                      float partialTick) {
+        if (share) {
+            jp.amemaru.lostconnection.entity.GroundMarker nearest = null;
+            double best = 48.0 * 48.0;
+            for (net.minecraft.world.entity.Entity entity : minecraft.level.entitiesForRendering()) {
+                if (entity instanceof jp.amemaru.lostconnection.entity.GroundMarker marker
+                        && marker.kind() == jp.amemaru.lostconnection.entity.GroundMarker.KIND_SHARE) {
+                    double d = marker.distanceToSqr(boss);
+                    if (d < best) {
+                        best = d;
+                        nearest = marker;
+                    }
+                }
+            }
+            return nearest == null ? -1.0F : nearest.progress(partialTick);
+        }
+        if (boss.telegraph() != jp.amemaru.lostconnection.enemy.AmemaruMob.TELEGRAPH_NONE && boss.telegraphTicks() > 0) {
+            return Mth.clamp(boss.telegraphAge(partialTick) / boss.telegraphTicks(), 0.0F, 1.0F);
+        }
+        return -1.0F;
     }
 
     /** ボスのHPの帯の下の端と、最後に描いた時刻（{@link ClientForgeEvents#onBossBar}）。 */
