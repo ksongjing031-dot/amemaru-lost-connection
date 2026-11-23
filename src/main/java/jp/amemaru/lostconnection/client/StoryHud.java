@@ -207,6 +207,7 @@ public final class StoryHud {
     private static void renderCountdowns(GuiGraphics graphics, Font font, int width) {
         WorldStateS2C world = ClientStory.world();
         int y = 4;
+        countdownBottom = 0;
         for (WorldStateS2C.Countdown countdown : world.countdowns()) {
             long left = ClientStory.remaining(countdown) / 1000L;
             String text = Component.translatable("hud.amemaru.story.countdown", countdown.text(),
@@ -215,8 +216,16 @@ public final class StoryHud {
             int x = (width - w) / 2;
             graphics.fill(x, y, x + w, y + 12, 0xB00B1022);
             graphics.drawString(font, text, x + 6, y + 2, 0xFFFFE9A8, false);
+            countdownBottom = y + 12;
             y += 14;
         }
+    }
+
+    /** 上の真ん中の「〇〇まで」の札の下の端（出していなければ 0。釣り大会の札を、その下に出すため。Phase 7 その2） */
+    private static int countdownBottom;
+
+    public static int countdownBottom() {
+        return countdownBottom;
     }
 
     /** はじめの手引きの下の端（出していなければ 0。ギルドのクエストの一覧を、その下に出すため。Phase 6 その3） */
