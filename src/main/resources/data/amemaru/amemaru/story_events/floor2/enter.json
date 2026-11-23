@@ -1,0 +1,28 @@
+{
+  "_comment": "初めて2階に入ったとき（本人だけ）。霧と、古代の管に巻きつく根（Phase 0-A 9章の2階の地形・環境）",
+  "title": "忘れられた森",
+  "trigger": {
+    "type": "amemaru:floor_enter",
+    "floor": 2
+  },
+  "scope": "player",
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:wait",
+      "ticks": 70
+    },
+    {
+      "type": "amemaru:sound",
+      "sound": "minecraft:block.amethyst_block.chime",
+      "volume": 0.8,
+      "pitch": 0.6
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "霧が濃い。木々の根が、古い金属の管に巻きついている……。どこかで、風鈴のような音がした。",
+      "ticks": 120,
+      "wait": false
+    }
+  ]
+}

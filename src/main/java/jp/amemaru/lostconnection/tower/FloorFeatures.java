@@ -1,6 +1,7 @@
 package jp.amemaru.lostconnection.tower;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import jp.amemaru.lostconnection.core.data.DefinitionException;
 import jp.amemaru.lostconnection.core.data.Json;
@@ -22,11 +23,13 @@ import java.util.List;
  *   <li>{@code waypoints}：中継の灯（広い階の途中から入れる所）と、入口の道しるべの石（{@code travel_stone}）</li>
  *   <li>{@code seal_requires}：ボスの部屋の封印を通れる条件（{@code pillars}：石柱をすべて起動した人。1階のまま／
  *       {@code lost_woods}：迷いの森の区画がすべてつながったら、みんな）</li>
+ *   <li>{@code story_zones}：物語のきっかけになる所（{@code id}・{@code box}）。人が入ると、ストーリーイベントの
+ *       きっかけ {@code floor_zone}（{@code zone} が同じもの）が起きる。2階の「霧の奥でノアが初めて目撃される」など</li>
  * </ul>
  */
 public record FloorFeatures(@Nullable Environment environment, List<LostWoods> lostWoods, List<Waypoint> waypoints,
-                            @Nullable BlockPos travelStone, String sealRequires) {
-    public static final FloorFeatures NONE = new FloorFeatures(null, List.of(), List.of(), null, "pillars");
+                            @Nullable BlockPos travelStone, String sealRequires, List<StoryZone> storyZones) {
+    public static final FloorFeatures NONE = new FloorFeatures(null, List.of(), List.of(), null, "pillars", List.of());
     public static final String SEAL_PILLARS = "pillars";
     public static final String SEAL_LOST_WOODS = "lost_woods";
 
@@ -54,6 +57,10 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
             }
             return null;
         }
+    }
+
+    /** 物語のきっかけになる所。 */
+    public record StoryZone(String id, AABB box) {
     }
 
     /** 中継の灯。{@code arrive} は、道しるべの石から来たときに立つ所。 */
@@ -133,7 +140,12 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
         if (seal.equals(SEAL_LOST_WOODS) && woods.isEmpty()) {
             throw new DefinitionException("「seal_requires」が lost_woods なのに、「lost_woods」がありません");
         }
-        return new FloorFeatures(env, List.copyOf(woods), List.copyOf(waypoints), travel, seal);
+        List<StoryZone> zones = new ArrayList<>();
+        for (JsonElement element : Json.optionalArray(json, "story_zones")) {
+            JsonObject z = Json.asObject(element, "story_zones");
+            zones.add(new StoryZone(Json.string(z, "id"), box(Json.array(z, "box"), "story_zones.box")));
+        }
+        return new FloorFeatures(env, List.copyOf(woods), List.copyOf(waypoints), travel, seal, List.copyOf(zones));
     }
 
     private static AABB box(JsonArray array, String name) {

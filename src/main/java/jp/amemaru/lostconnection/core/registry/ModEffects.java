@@ -53,13 +53,9 @@ public final class ModEffects {
             new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0xFFE066, false));
 
     /**
-     * 毒（Phase 8 その1。2階のポコダケの胞子など）：1秒ごとに最大HPの2%（段階1つにつき）が減る。毒ではダウンしない
-     * （HPは1で止まる）【補完】。{@link jp.amemaru.lostconnection.combat.PoisonService}
+     * 毒よけ（Phase 8 その1。薬屋の解毒薬）：しばらく毒にならない。プレイヤーがかかる毒（2階のポコダケの胞子）は、
+     * 敵にかける毒と同じ {@link #POISON} のアイコンを使い、減り方は {@link jp.amemaru.lostconnection.combat.PoisonService}。
      */
-    public static final RegistryObject<MobEffect> POISON = EFFECTS.register("poison", () ->
-            new AmemaruEffect(MobEffectCategory.HARMFUL, 0x8FBF3A, false));
-
-    /** 毒消し（Phase 8 その1。毒消しの薬）：しばらく毒にならない。 */
     public static final RegistryObject<MobEffect> ANTIDOTE = EFFECTS.register("antidote", () ->
             new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0xD8F0A0, false));
 

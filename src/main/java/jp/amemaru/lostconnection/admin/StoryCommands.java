@@ -69,6 +69,24 @@ public final class StoryCommands {
         for (String spot : List.of("entrance", "boss", "center", "pillar1", "pillar2", "pillar3", "top")) {
             builder.suggest(spot);
         }
+        // Phase 8 その1：迷いの森の入口（woods_<id>）と、中継の灯（waypoint<番号>）
+        for (FloorDef def : FloorDefs.all()) {
+            for (jp.amemaru.lostconnection.tower.FloorFeatures.LostWoods woods : def.features().lostWoods()) {
+                builder.suggest("woods_" + woods.id());
+            }
+            for (jp.amemaru.lostconnection.tower.FloorFeatures.Waypoint point : def.features().waypoints()) {
+                builder.suggest("waypoint" + (point.index() + 1));
+            }
+        }
+        return builder.buildFuture();
+    };
+    private static final SuggestionProvider<CommandSourceStack> WOODS = (context, builder) -> {
+        builder.suggest("all");
+        for (FloorDef def : FloorDefs.all()) {
+            for (jp.amemaru.lostconnection.tower.FloorFeatures.LostWoods woods : def.features().lostWoods()) {
+                builder.suggest(woods.id());
+            }
+        }
         return builder.buildFuture();
     };
 
@@ -120,7 +138,76 @@ public final class StoryCommands {
                                         TowerService.returnToGate(player);
                                     }
                                     return 1;
-                                })));
+                                })))
+                // Phase 8 その1：迷いの森をつなぐ・ほどき直す（確かめ用）
+                .then(Commands.literal("woods")
+                        .then(Commands.argument("floor", IntegerArgumentType.integer(1, 99)).suggests(FLOORS)
+                                .then(Commands.literal("tie")
+                                        .then(Commands.argument("woods", StringArgumentType.word()).suggests(WOODS)
+                                                .executes(ctx -> tieWoods(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"),
+                                                        StringArgumentType.getString(ctx, "woods")))))
+                                .then(Commands.literal("reset")
+                                        .executes(ctx -> {
+                                            jp.amemaru.lostconnection.tower.forest.LostWoodsService.onDayChanged(ctx.getSource().getServer());
+                                            ctx.getSource().sendSuccess(() -> Component.translatable("commands.amemaru.floor.woods_reset"), true);
+                                            return 1;
+                                        }))))
+                // Phase 8 その1：中継の灯をともす・消す（確かめ用）
+                .then(Commands.literal("waypoint")
+                        .then(Commands.argument("floor", IntegerArgumentType.integer(1, 99)).suggests(FLOORS)
+                                .then(Commands.literal("light")
+                                        .then(Commands.argument("index", IntegerArgumentType.integer(1, 64))
+                                                .then(Commands.argument("targets", EntityArgument.players())
+                                                        .executes(ctx -> lightWaypoint(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"),
+                                                                IntegerArgumentType.getInteger(ctx, "index") - 1, EntityArgument.getPlayers(ctx, "targets"))))))
+                                .then(Commands.literal("clear")
+                                        .then(Commands.argument("targets", EntityArgument.players())
+                                                .executes(ctx -> {
+                                                    for (ServerPlayer player : EntityArgument.getPlayers(ctx, "targets")) {
+                                                        jp.amemaru.lostconnection.tower.forest.WaypointService.Data.get(ctx.getSource().getServer())
+                                                                .clear(player.getUUID());
+                                                    }
+                                                    ctx.getSource().sendSuccess(() -> Component.translatable("commands.amemaru.floor.waypoints_cleared"), true);
+                                                    return 1;
+                                                })))));
+    }
+
+    private static int tieWoods(CommandSourceStack source, int floor, String woods) {
+        FloorDef def = FloorDefs.byNumber(floor);
+        if (def == null) {
+            source.sendFailure(Component.translatable("commands.amemaru.map.no_floor", floor));
+            return 0;
+        }
+        int tied = 0;
+        for (jp.amemaru.lostconnection.tower.FloorFeatures.LostWoods one : def.features().lostWoods()) {
+            if ((woods.equals("all") || woods.equals(one.id()))
+                    && jp.amemaru.lostconnection.tower.forest.LostWoodsService.adminTie(source.getServer(), floor, one.id())) {
+                tied++;
+            }
+        }
+        if (tied == 0) {
+            source.sendFailure(Component.translatable("commands.amemaru.floor.no_woods", woods));
+            return 0;
+        }
+        int count = tied;
+        source.sendSuccess(() -> Component.translatable("commands.amemaru.floor.woods_tied", count), true);
+        return tied;
+    }
+
+    private static int lightWaypoint(CommandSourceStack source, int floor, int index, Collection<ServerPlayer> players) {
+        FloorDef def = FloorDefs.byNumber(floor);
+        if (def == null || index < 0 || index >= def.features().waypoints().size()) {
+            source.sendFailure(Component.translatable("commands.amemaru.floor.no_waypoint", index + 1));
+            return 0;
+        }
+        jp.amemaru.lostconnection.tower.forest.WaypointService.Data data =
+                jp.amemaru.lostconnection.tower.forest.WaypointService.Data.get(source.getServer());
+        for (ServerPlayer player : players) {
+            data.add(player.getUUID(), floor, index);
+        }
+        String name = def.features().waypoints().get(index).name();
+        source.sendSuccess(() -> Component.translatable("commands.amemaru.floor.waypoint_lit", name, players.size()), true);
+        return players.size();
     }
 
     private static int listFloors(CommandSourceStack source) {
@@ -208,6 +295,29 @@ public final class StoryCommands {
                 pitch = 90.0F;
             }
             default -> {
+                jp.amemaru.lostconnection.tower.FloorFeatures features = def.features();
+                if (spot.startsWith("woods_") && features.lostWoods(spot.substring("woods_".length())) != null) {
+                    FloorDef.Spot entry = features.lostWoods(spot.substring("woods_".length())).entry();
+                    at = def.world(entry.pos());
+                    yaw = entry.yaw();
+                    break;
+                }
+                if (spot.startsWith("waypoint")) {
+                    int index;
+                    try {
+                        index = Integer.parseInt(spot.substring("waypoint".length())) - 1;
+                    } catch (NumberFormatException e) {
+                        index = -1;
+                    }
+                    if (index < 0 || index >= features.waypoints().size()) {
+                        source.sendFailure(Component.translatable("commands.amemaru.floor.no_spot", spot));
+                        return 0;
+                    }
+                    FloorDef.Spot arrive = features.waypoints().get(index).arrive();
+                    at = def.world(arrive.pos());
+                    yaw = arrive.yaw();
+                    break;
+                }
                 if (spot.startsWith("pillar")) {
                     int index;
                     try {

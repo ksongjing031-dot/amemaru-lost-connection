@@ -2225,5 +2225,11 @@
   "boss.amemaru.old_ward.tip.call": "迷い灯は、近づくと離れていく。遠くから狙うか、壁ぎわへ追い込もう",
   "boss.amemaru.old_ward.tip.dark": "森が暗くなった。落ちた「森番の灯」か手提げランタンを持つ人のそばに集まろう",
   "boss.amemaru.old_ward.tip.crack": "地面にまっすぐな線が出たら、根の割れ目が走る。線の外へよけよう",
-  "boss.amemaru.old_ward.tip.stun": "今が攻めどき！　光る節は、しばらくするとまた生えてくる"
+  "boss.amemaru.old_ward.tip.stun": "今が攻めどき！　光る節は、しばらくするとまた生えてくる",
+  "commands.amemaru.floor.woods_tied": "迷いの森を %s つ、つなぎました（灯台も灯しました）",
+  "commands.amemaru.floor.woods_reset": "迷いの森を、すべてほどき直しました（日が変わったときと同じ）",
+  "commands.amemaru.floor.no_woods": "迷いの森「%s」がありません",
+  "commands.amemaru.floor.no_waypoint": "%s 番目の中継の灯がありません",
+  "commands.amemaru.floor.waypoint_lit": "中継の灯「%s」を、%s 人のためにともしました",
+  "commands.amemaru.floor.waypoints_cleared": "ともした中継の灯を、消しました"
 }

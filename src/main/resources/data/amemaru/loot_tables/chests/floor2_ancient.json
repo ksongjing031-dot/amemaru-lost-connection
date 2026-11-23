@@ -1,0 +1,208 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "rolls": {
+        "type": "minecraft:uniform",
+        "min": 2,
+        "max": 4
+      },
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "amemaru:moss_iron",
+          "weight": 20,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 2,
+                "max": 4
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "amemaru:ancient_stone",
+          "weight": 18,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 2,
+                "max": 5
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "amemaru:crystal_shard",
+          "weight": 16,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1,
+                "max": 2
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "amemaru:echo_fragment",
+          "weight": 8
+        },
+        {
+          "type": "minecraft:item",
+          "name": "amemaru:antidote",
+          "weight": 10,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1,
+                "max": 2
+              }
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "amemaru:healing_potion_small",
+          "weight": 8
+        },
+        {
+          "type": "minecraft:item",
+          "name": "amemaru:lantern_vial",
+          "weight": 8,
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1,
+                "max": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "amemaru:ancient_stone_staff",
+          "weight": 3,
+          "functions": [
+            {
+              "function": "amemaru:roll_gear"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "amemaru:ancient_stone_greatsword",
+          "weight": 3,
+          "functions": [
+            {
+              "function": "amemaru:roll_gear"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "amemaru:ancient_stone_bow",
+          "weight": 3,
+          "functions": [
+            {
+              "function": "amemaru:roll_gear"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "amemaru:waystone_charm",
+          "weight": 3,
+          "functions": [
+            {
+              "function": "amemaru:roll_accessory"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "amemaru:moss_iron_wisdom_ring",
+          "weight": 2,
+          "functions": [
+            {
+              "function": "amemaru:roll_accessory"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:item",
+          "name": "amemaru:moss_iron_battle_ring",
+          "weight": 2,
+          "functions": [
+            {
+              "function": "amemaru:roll_accessory"
+            }
+          ]
+        },
+        {
+          "type": "minecraft:empty",
+          "weight": 34
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "amemaru:polishing_powder",
+          "functions": [
+            {
+              "function": "minecraft:set_count",
+              "count": {
+                "type": "minecraft:uniform",
+                "min": 1,
+                "max": 3
+              }
+            }
+          ]
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.5
+        }
+      ]
+    },
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "amemaru:wavering_crystal"
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance",
+          "chance": 0.15
+        }
+      ]
+    }
+  ]
+}

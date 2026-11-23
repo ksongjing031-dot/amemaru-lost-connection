@@ -1,0 +1,90 @@
+{
+  "_comment": "Phase 0-A 11章：2日目、霧の奥でノアが初めて目撃される（最初に到達したパーティにだけ姿が見え、全体に告知）。白い木立の北のはずれ（階の定義の story_zones の noa_sighting）に入ったパーティに一度だけ。正体は明かさない【確定】。ノアの立つ所は、階の原点から（白い木立の台地の北のふち）【補完】",
+  "title": "霧の奥の少女",
+  "trigger": {
+    "type": "amemaru:floor_zone",
+    "floor": 2,
+    "zone": "noa_sighting"
+  },
+  "scope": "party",
+  "once": true,
+  "replayable": true,
+  "announce": "霧の奥で、見知らぬ少女の姿を見たという知らせが広がった（2階　忘れられた森）",
+  "steps": [
+    {
+      "type": "amemaru:hud",
+      "hide": true
+    },
+    {
+      "type": "amemaru:actor",
+      "id": "noa",
+      "npc": "amemaru:noa",
+      "pos": {
+        "anchor": "floor",
+        "offset": [
+          84.5,
+          27,
+          56.5
+        ]
+      },
+      "yaw": 0,
+      "expression": "smile"
+    },
+    {
+      "type": "amemaru:camera",
+      "actor": "noa",
+      "wait": false
+    },
+    {
+      "type": "amemaru:sound",
+      "sound": "minecraft:block.amethyst_block.chime",
+      "volume": 1.0,
+      "pitch": 0.7
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "霧の向こうに、ひとりの少女が立っていた。",
+      "ticks": 80
+    },
+    {
+      "type": "amemaru:wait",
+      "ticks": 20
+    },
+    {
+      "type": "amemaru:actor_look",
+      "id": "noa",
+      "expression": "smile"
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "少女はこちらを見て、小さく首をかしげた。……そして、霧に溶けるように消えた。",
+      "ticks": 100
+    },
+    {
+      "type": "amemaru:particles",
+      "particle": "minecraft:end_rod",
+      "pos": {
+        "anchor": "floor",
+        "offset": [
+          84.5,
+          28,
+          56.5
+        ]
+      },
+      "count": 40,
+      "spread": 0.8
+    },
+    {
+      "type": "amemaru:actor_remove",
+      "id": "noa"
+    },
+    {
+      "type": "amemaru:wait",
+      "ticks": 30
+    },
+    {
+      "type": "amemaru:hud",
+      "hide": false
+    }
+  ]
+}

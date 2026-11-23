@@ -31,7 +31,12 @@ import java.util.EnumSet;
  *   <li>噛んだら、すぐに5〜7ブロック離れ、また回り込む（3秒で背中へ回れなければ、前から噛む）</li>
  * </ul>
  */
-public class HakageKitsune extends AmemaruMob {
+public class HakageKitsune extends AmemaruMob implements jp.amemaru.lostconnection.enemy.Patroller {
+    /**
+     * 歩く輪（2階の白い木立の「帰り道を忘れた獣」。Phase 0-A 9章のロストの侵食：同じ場所をぐるぐる歩く）。湧く所の
+     * {@code route} があるときだけ。なければ、ふつうにうろつく。
+     */
+    private final java.util.List<net.minecraft.core.BlockPos> loop = new java.util.ArrayList<>();
     public HakageKitsune(EntityType<? extends HakageKitsune> type, Level level) {
         super(type, level);
     }
@@ -45,9 +50,26 @@ public class HakageKitsune extends AmemaruMob {
     protected void registerGoals() {
         goalSelector.addGoal(0, new FloatGoal(this));
         goalSelector.addGoal(1, new FlankGoal(this));
-        goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.7));
+        goalSelector.addGoal(4, new jp.amemaru.lostconnection.enemy.ai.PatrolGoal(this, () -> loop, 0.7));
+        goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.7) {
+            @Override
+            public boolean canUse() {
+                return loop.isEmpty() && super.canUse();
+            }
+        });
         goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 8.0F));
         goalSelector.addGoal(7, new RandomLookAroundGoal(this));
+    }
+
+    @Override
+    public void setPatrol(java.util.List<net.minecraft.core.BlockPos> points) {
+        loop.clear();
+        loop.addAll(points);
+    }
+
+    /** 歩く輪（自動テスト用）。 */
+    public java.util.List<net.minecraft.core.BlockPos> loop() {
+        return loop;
     }
 
     /** 相手の背中の側にいるか（相手の向きから見て、真後ろ±60度ほど）。 */

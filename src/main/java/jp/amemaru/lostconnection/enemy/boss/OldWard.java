@@ -388,7 +388,9 @@ public class OldWard extends AmemaruBoss {
                 double dz = player.getZ() - spot.z;
                 if (dx * dx + dz * dz <= radius * radius && Math.abs(player.getY() - spot.y) < 3.0 && struck.add(player.getUUID())
                         && EnemyCombat.strike(this, player, cage.power(), null)) {
-                    player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, rootTicks, 3, false, true, true));
+                    jp.amemaru.lostconnection.combat.AfflictionService.root(player, rootTicks, this);
+                    player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.amemaru.enemy.rooted")
+                            .withStyle(net.minecraft.ChatFormatting.DARK_GREEN), true);
                 }
             }
             level.sendParticles(moss, spot.x, spot.y + 0.6, spot.z, 24, radius * 0.4, 0.6, radius * 0.4, 0.1);
@@ -471,10 +473,13 @@ public class OldWard extends AmemaruBoss {
         level.playSound(null, getX(), getY(), getZ(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.HOSTILE, 1.4F, 0.6F);
     }
 
-    /** 節の場所（幹のまわり。体の向きに合わせて回る）。 */
+    /**
+     * 節の場所（幹のまわり。体の向きに合わせて回る）。モデルの幹の受け口（{@code tools/artgen/make_forest_models.py} の
+     * KNOT_SOCKETS）に合わせる：表（顔の下、少し右）・裏の高い所・体の右の低い所。x は前を向いたときの横、z は前（+）・後ろ（−）、
+     * y は足もと（節の箱の下）。幹の面より少し外へ出す（中に埋まると、打ったときに幹のほうへ当たってしまう）。
+     */
     public Vec3 knotPosition(int index) {
-        // 幹（幅 2.6）の外へ少し出す。中に埋まると、打ったときに幹のほうへ当たってしまう
-        double[][] spots = {{0.0, 2.2, -1.65}, {-1.4, 3.4, 0.8}, {1.4, 1.4, 0.8}};
+        double[][] spots = {{-0.56, 1.5, 1.44}, {0.38, 3.0, -1.19}, {-1.5, 0.88, -0.25}};
         double[] s = spots[Math.max(0, Math.min(2, index))];
         Vec3 local = new Vec3(s[0], 0.0, s[2]).yRot((float) Math.toRadians(-yBodyRot));
         return new Vec3(getX() + local.x, getY() + s[1], getZ() + local.z);

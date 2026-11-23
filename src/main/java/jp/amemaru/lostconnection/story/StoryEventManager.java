@@ -259,6 +259,51 @@ public final class StoryEventManager {
         }
     }
 
+    /**
+     * 物語の場所に入った（Phase 8 その1。{@link jp.amemaru.lostconnection.tower.FloorEnvService} が1秒ごとに見る）。
+     * {@code floor_zone} のイベントのうち、場所の ID が合うものを流す。初めて起きたときは、{@code announce} を全員に知らせる。
+     * 流したら true。
+     */
+    public static boolean triggerZone(MinecraftServer server, int floor, String zone, List<ServerPlayer> players) {
+        StoryState state = StoryState.get(server);
+        boolean played = false;
+        for (StoryEventDef def : all()) {
+            if (!def.triggerType().equals("floor_zone") || !def.triggerZone().equals(zone)
+                    || (def.triggerFloor() != 0 && def.triggerFloor() != floor)) {
+                continue;
+            }
+            boolean first = !state.happened(def.id());
+            if (def.once() && !first) {
+                continue;
+            }
+            List<ServerPlayer> viewers = def.scope().equals("all") ? server.getPlayerList().getPlayers() : players;
+            for (ServerPlayer viewer : viewers) {
+                if (def.conditions().test(viewer) && !isPlaying(viewer)) {
+                    played |= play(viewer, def.id(), false);
+                }
+            }
+            state.markHappened(def.id());
+            if (first && !def.announce().isEmpty()) {
+                jp.amemaru.lostconnection.progression.ProgressionService.broadcast(server,
+                        net.minecraft.network.chat.Component.literal(def.announce()),
+                        jp.amemaru.lostconnection.network.s2c.AnnouncementS2C.Kind.STORY);
+            }
+        }
+        return played;
+    }
+
+    /** その場所の {@code floor_zone} のイベントが、まだ起きる（一度きりで、もう起きた物は起きない）か。 */
+    public static boolean zonePending(MinecraftServer server, int floor, String zone) {
+        StoryState state = StoryState.get(server);
+        for (StoryEventDef def : all()) {
+            if (def.triggerType().equals("floor_zone") && def.triggerZone().equals(zone)
+                    && (def.triggerFloor() == 0 || def.triggerFloor() == floor) && !(def.once() && state.happened(def.id()))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** 管理者が起こす（{@code /amemaru admin story trigger}）。 */
     public static int adminTrigger(ResourceLocation id, Collection<ServerPlayer> players, boolean replay) {
         int count = 0;

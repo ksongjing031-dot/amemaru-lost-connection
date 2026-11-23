@@ -28,15 +28,17 @@ ITEM_DIR = "src/main/resources/assets/amemaru/textures/item"
 # 3Dの武器の手に持つ絵（*_model）・光る所（*_glowmask）は16×16の持ち物の絵ではない
 SKIP_SUFFIX = ("_model", "_glowmask")
 # 絵のまま使う物（細かくしない）：GeckoLib の武器の絵（持ち物の絵は *_icon）など
-SKIP = {"bee_crystal_staff"}
+SKIP = {"bee_crystal_staff", "elder_branch_staff"}
 
 # 細くても Scale2x でなめらかにする絵
 THICK = set()
 # 太く見えても、そのまま2倍にする絵（先の小さな飾りが Scale2x でつぶれる杖・お守り）
 FORCE_THIN = {"apprentice_bell_staff", "ancient_stone_bell_staff", "apprentice_staff", "ancient_stone_staff",
-              "bee_crystal_staff_icon", "waystone_charm", "grassland_necklace", "keepsake_doran", "keepsake_ernesto"}
+              "bee_crystal_staff_icon", "waystone_charm", "grassland_necklace", "keepsake_doran", "keepsake_ernesto",
+              "elder_branch_staff_icon", "knot_lantern"}
 # 茶色の所を「木」として描く絵（ほかの茶色は革）
 WOODEN = {"training_dummy", "apprentice_staff", "apprentice_bell_staff", "apprentice_bow", "ancient_stone_bow",
+          "elder_branch_staff_icon",
           "apprentice_sword", "apprentice_greatsword", "keepsake_doran", "soft_horn", "market_notebook"}
 
 # 絵ごとの材質の上書き：{絵の名前: {"#rrggbb"（元の色）または "*": 材質}}

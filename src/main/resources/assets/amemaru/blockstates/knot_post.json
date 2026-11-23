@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "amemaru:block/knot_post"
+    },
+    "lit=true": {
+      "model": "amemaru:block/knot_post_lit"
+    }
+  }
+}

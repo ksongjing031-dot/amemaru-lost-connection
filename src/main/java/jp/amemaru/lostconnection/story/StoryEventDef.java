@@ -16,7 +16,9 @@ import java.util.Set;
  *
  * <ul>
  *   <li>{@code trigger.type}：{@code first_login}（初めてのログイン）・{@code floor_first_kill}（その階のボスの初撃破。{@code floor}）・
- *       {@code floor_enter}（その階に初めて入った）・{@code admin}（管理者が起こす）</li>
+ *       {@code floor_enter}（その階に初めて入った）・{@code floor_zone}（その階の物語の場所 {@code zone} に入った。
+ *       Phase 8 その1。階の定義の {@code story_zones}）・{@code admin}（管理者が起こす）</li>
+ *   <li>{@code announce}：初めて起きたとき、全員の画面に出す知らせ（Phase 8 その1。2階の「ノアの初目撃」の告知など）</li>
  *   <li>{@code scope}：見る人（{@code player}＝本人、{@code party}＝きっかけを作ったパーティ、{@code all}＝全員）。
  *       どの演出も、見る人それぞれの画面で、その人の速さで流す（同じ時刻にそろえない）</li>
  *   <li>{@code once}：一度だけ起きるか。{@code replayable}：大結晶の「記憶の再生」で見直せるか</li>
@@ -25,14 +27,14 @@ import java.util.Set;
  * </ul>
  */
 public record StoryEventDef(ResourceLocation id, String title, String triggerType, int triggerFloor, String scope, boolean once,
-                            boolean replayable, Conditions conditions, List<Step> steps) {
+                            boolean replayable, Conditions conditions, List<Step> steps, String triggerZone, String announce) {
     /** 画面の演出の手順（クライアントが流す）。 */
     public static final Set<String> CLIENT_STEPS = Set.of("amemaru:fade", "amemaru:wait", "amemaru:subtitle", "amemaru:title",
             "amemaru:sound", "amemaru:camera", "amemaru:actor", "amemaru:actor_move", "amemaru:actor_look", "amemaru:actor_remove",
             "amemaru:particles", "amemaru:hud");
     /** 物語の処理の手順（見終えたときにサーバーが行う）。 */
     public static final Set<String> SERVER_STEPS = Set.of("amemaru:set_flags", "amemaru:open_dialogue", "amemaru:guide");
-    private static final Set<String> TRIGGERS = Set.of("first_login", "floor_first_kill", "floor_enter", "admin");
+    private static final Set<String> TRIGGERS = Set.of("first_login", "floor_first_kill", "floor_enter", "floor_zone", "admin");
     private static final Set<String> SCOPES = Set.of("player", "party", "all");
 
     /** 手順1つ（{@code json} はそのまま。位置の「anchor」はサーバーが世界の座標に直してから送る）。 */
@@ -68,10 +70,14 @@ public record StoryEventDef(ResourceLocation id, String title, String triggerTyp
             }
             steps.add(new Step(stepType, step));
         }
+        String zone = Json.optionalString(trigger, "zone", "");
+        if (type.equals("floor_zone") && zone.isEmpty()) {
+            throw new DefinitionException("「trigger.type」が floor_zone のときは「trigger.zone」（物語の場所のID）が要ります");
+        }
         return new StoryEventDef(id, Json.optionalString(json, "title", id.getPath()), type,
                 Json.optionalInt(trigger, "floor", 0, 0, 99), scope, Json.optionalBoolean(json, "once", false),
                 Json.optionalBoolean(json, "replayable", true), Conditions.parse(Json.optionalObject(json, "conditions")),
-                List.copyOf(steps));
+                List.copyOf(steps), zone, Json.optionalString(json, "announce", ""));
     }
 
     /** 画面の演出の長さのめやす（tick。見終えた知らせが来ないときに、ここから待つ時間を決める）。 */

@@ -15,8 +15,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.ai.goal.FloatGoal;
 import net.minecraft.world.entity.ai.goal.LookAtPlayerGoal;
@@ -91,7 +89,8 @@ public class Juhihei extends AmemaruMob implements Patroller {
         if ("slam".equals(skill)) {
             EnemyDef def = def();
             int ticks = (int) Math.round((def == null ? 2.0 : def.behavior("root_seconds", 2.0)) * 20);
-            player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, ticks, 3, false, true, true));
+            // 縫い止め（Phase 6 その2 の、動けなくなる状態。足もとに根の演出が出る）
+            jp.amemaru.lostconnection.combat.AfflictionService.root(player, ticks, this);
             player.displayClientMessage(Component.translatable("message.amemaru.enemy.rooted").withStyle(ChatFormatting.DARK_GREEN), true);
             if (level() instanceof ServerLevel level) {
                 level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.ROOTED_DIRT.defaultBlockState()),

@@ -43,6 +43,9 @@ public final class FloorEnvService {
             if (player.level().dimension().equals(FloorDefs.TOWER)) {
                 FloorDef def = FloorDefs.floorAt(player.level(), player.position());
                 floor = def == null ? 0 : def.number();
+                if (def != null) {
+                    checkStoryZones(server, player, def);
+                }
             } else {
                 dropKnotLanterns(player);
             }
@@ -52,6 +55,29 @@ public final class FloorEnvService {
             }
             SENT.put(player.getUUID(), floor);
             ModNetwork.sendTo(player, new TowerS2C("env", envTag(floor)));
+        }
+    }
+
+    /** 物語の場所に入った人（とパーティ）に、その場所のイベントを流す（Phase 8 その1。2階の「霧の奥のノア」）。 */
+    private static void checkStoryZones(MinecraftServer server, ServerPlayer player, FloorDef def) {
+        if (player.isSpectator() || def.features().storyZones().isEmpty()) {
+            return;
+        }
+        for (FloorFeatures.StoryZone zone : def.features().storyZones()) {
+            if (!FloorFeatures.inside(zone.box(), player.position(), def.originVec())
+                    || !jp.amemaru.lostconnection.story.StoryEventManager.zonePending(server, def.number(), zone.id())) {
+                continue;
+            }
+            java.util.List<ServerPlayer> party = new java.util.ArrayList<>();
+            for (ServerPlayer mate : jp.amemaru.lostconnection.party.PartyService.onlineMembers(player)) {
+                if (mate.level() == player.level() && mate.distanceTo(player) < 64) {
+                    party.add(mate);
+                }
+            }
+            if (!party.contains(player)) {
+                party.add(player);
+            }
+            jp.amemaru.lostconnection.story.StoryEventManager.triggerZone(server, def.number(), zone.id(), party);
         }
     }
 
