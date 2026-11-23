@@ -169,7 +169,47 @@ public final class StoryCommands {
                                                     }
                                                     ctx.getSource().sendSuccess(() -> Component.translatable("commands.amemaru.floor.waypoints_cleared"), true);
                                                     return 1;
-                                                })))));
+                                                })))))
+                // 11月24日：名のある魔物を倒した印をつける・消す（封印の条件 guardians の確かめ用）
+                .then(Commands.literal("guardians")
+                        .then(Commands.argument("floor", IntegerArgumentType.integer(1, 99)).suggests(FLOORS)
+                                .then(Commands.literal("done")
+                                        .then(Commands.argument("targets", EntityArgument.players())
+                                                .executes(ctx -> setGuardians(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"),
+                                                        EntityArgument.getPlayers(ctx, "targets"), true))))
+                                .then(Commands.literal("reset")
+                                        .then(Commands.argument("targets", EntityArgument.players())
+                                                .executes(ctx -> setGuardians(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"),
+                                                        EntityArgument.getPlayers(ctx, "targets"), false))))));
+    }
+
+    private static int setGuardians(CommandSourceStack source, int floor, Collection<ServerPlayer> players, boolean done) {
+        FloorDef def = FloorDefs.byNumber(floor);
+        if (def == null) {
+            source.sendFailure(Component.translatable("commands.amemaru.map.no_floor", floor));
+            return 0;
+        }
+        List<FloorDef.Guardian> named = TowerService.namedGuardians(def);
+        for (ServerPlayer player : players) {
+            jp.amemaru.lostconnection.player.PlayerData data = jp.amemaru.lostconnection.player.PlayerDataCapability.get(player).orElse(null);
+            if (data == null) {
+                continue;
+            }
+            for (FloorDef.Guardian guardian : named) {
+                net.minecraft.resources.ResourceLocation flag = TowerService.guardianFlag(floor, guardian.id());
+                if (done) {
+                    data.getStory().add(flag);
+                } else {
+                    data.getStory().remove(flag);
+                }
+            }
+            data.markDirty(jp.amemaru.lostconnection.player.PlayerData.SYNC_STORY);
+        }
+        AdminCommands.log(source, "floor guardians " + floor + " " + (done ? "done" : "reset"));
+        int count = named.size();
+        source.sendSuccess(() -> Component.translatable(done ? "commands.amemaru.floor.guardians_done" : "commands.amemaru.floor.guardians_reset",
+                count, players.size()), true);
+        return players.size();
     }
 
     private static int tieWoods(CommandSourceStack source, int floor, String woods) {
@@ -369,7 +409,18 @@ public final class StoryCommands {
                                         .suggests((ctx, builder) -> net.minecraft.commands.SharedSuggestionProvider.suggest(
                                                 bossSkillNames(IntegerArgumentType.getInteger(ctx, "floor")), builder))
                                         .executes(ctx -> bossSkill(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"),
-                                                com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "name"))))));
+                                                com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "name"))))))
+                // 11月24日：みんなで受ける一撃を、印と演出だけにする（safe）・もとに戻す（normal）。ひとりでの確かめ・CIの写真に
+                .then(Commands.literal("share")
+                        .then(Commands.literal("safe").executes(ctx -> bossShare(ctx.getSource(), true)))
+                        .then(Commands.literal("normal").executes(ctx -> bossShare(ctx.getSource(), false))));
+    }
+
+    private static int bossShare(CommandSourceStack source, boolean safe) {
+        jp.amemaru.lostconnection.enemy.boss.AmemaruBoss.shareSafe = safe;
+        AdminCommands.log(source, "boss share " + (safe ? "safe" : "normal"));
+        source.sendSuccess(() -> Component.translatable(safe ? "commands.amemaru.boss.share_safe" : "commands.amemaru.boss.share_normal"), true);
+        return 1;
     }
 
     @javax.annotation.Nullable
@@ -380,7 +431,10 @@ public final class StoryCommands {
 
     private static java.util.List<String> bossSkillNames(int floor) {
         jp.amemaru.lostconnection.enemy.boss.AmemaruBoss boss = currentBoss(floor);
-        return boss != null ? boss.skillNames() : jp.amemaru.lostconnection.enemy.boss.Veldhorn.SKILLS;
+        java.util.List<String> names = new java.util.ArrayList<>(boss != null ? boss.skillNames()
+                : jp.amemaru.lostconnection.enemy.boss.Veldhorn.SKILLS);
+        names.add("share");
+        return names;
     }
 
     private static int bossSkill(CommandSourceStack source, int floor, String name) {
@@ -389,7 +443,8 @@ public final class StoryCommands {
             source.sendFailure(Component.translatable("commands.amemaru.boss.none", floor));
             return 0;
         }
-        if (!boss.forceSkill(name)) {
+        // 11月24日：みんなで受ける一撃（どのボスにもある。敵の定義の技 share）
+        if ("share".equals(name) ? !boss.forceShare() : !boss.forceSkill(name)) {
             source.sendFailure(Component.translatable("commands.amemaru.boss.skill_failed", floor, String.join("・", boss.skillNames())));
             return 0;
         }

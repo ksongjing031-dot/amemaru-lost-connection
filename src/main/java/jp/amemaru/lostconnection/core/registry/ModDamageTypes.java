@@ -18,6 +18,8 @@ public final class ModDamageTypes {
     public static final ResourceKey<DamageType> SKILL = ResourceKey.create(Registries.DAMAGE_TYPE, AmemaruMod.id("skill"));
     /** 盾結びで、仲間の代わりに受けたダメージ。 */
     public static final ResourceKey<DamageType> BOND_SHARE = ResourceKey.create(Registries.DAMAGE_TYPE, AmemaruMod.id("bond_share"));
+    /** ボスの「みんなで受ける一撃」（最大HPの割合。防御は効かない。11月24日）。 */
+    public static final ResourceKey<DamageType> HEAVY_BLOW = ResourceKey.create(Registries.DAMAGE_TYPE, AmemaruMod.id("heavy_blow"));
 
     private ModDamageTypes() {
     }
@@ -30,6 +32,11 @@ public final class ModDamageTypes {
      */
     public static DamageSource skill(Level level, @Nullable Entity direct, @Nullable Entity owner) {
         return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(SKILL), direct, owner);
+    }
+
+    /** みんなで受ける一撃の出どころ（敵を出どころにしない：敵の攻撃の計算（防御・回避）を通らず、最大HPの割合のまま受ける）。 */
+    public static DamageSource heavyBlow(Level level) {
+        return new DamageSource(level.registryAccess().registryOrThrow(Registries.DAMAGE_TYPE).getHolderOrThrow(HEAVY_BLOW));
     }
 
     /** 盾結びで肩代わりしたダメージの出どころ。 */

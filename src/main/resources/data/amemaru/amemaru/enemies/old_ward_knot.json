@@ -6,7 +6,7 @@
   "bestiary": false,
   "description": "森番の古樹の幹にふくらむ、光る節。硬い樹皮を内から支えている。",
   "stats": {
-    "hp": 320,
+    "hp": 2400,
     "attack": 0,
     "defense": 0,
     "move_speed": 0.0,

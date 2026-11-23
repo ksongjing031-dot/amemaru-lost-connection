@@ -143,8 +143,17 @@ public record FloorDef(
      * ボスの人数補正（HPのほかの分）と怒り（11月23日）。参加者が1人増えるごとに、攻撃が {@code attackPerExtraPlayer}、
      * 技の間が {@code pacePerExtraPlayer} の割合で変わる（技の間は 0.6 倍まで）。{@code enrageSeconds} 秒たつと怒る（0 なら怒らない）。
      */
-    public record Scaling(double attackPerExtraPlayer, double pacePerExtraPlayer, int enrageSeconds) {
-        public static final Scaling NONE = new Scaling(0.0, 0.0, 0);
+    /**
+     * 人数補正（11月23日）。{@code hpMinPlayers}：HPは、部屋の人がこの人数より少なくても、この人数ぶんにする
+     * （11月24日のご指示「ソロでは全然倒せない、パーティーで挑まないと絶対にクリアできないぐらいの難易度」【補完】）。
+     */
+    public record Scaling(double attackPerExtraPlayer, double pacePerExtraPlayer, int enrageSeconds, int hpMinPlayers) {
+        public static final Scaling NONE = new Scaling(0.0, 0.0, 0, 1);
+
+        /** HPの倍率（1人ぶんの何倍か）。 */
+        public double hpMultiplier(double hpPerExtraPlayer, int players) {
+            return 1.0 + hpPerExtraPlayer * Math.max(0, Math.max(players, hpMinPlayers) - 1);
+        }
 
         public double attackMultiplier(int players) {
             return 1.0 + attackPerExtraPlayer * Math.max(0, players - 1);
@@ -387,7 +396,8 @@ public record FloorDef(
                 circle(Json.object(json, "exit"), "boss_room.exit"), Json.optionalString(json, "name", ""),
                 new Scaling(Json.optionalDouble(json, "attack_per_extra_player", 0.0, 0.0, 5.0),
                         Json.optionalDouble(json, "pace_per_extra_player", 0.0, 0.0, 0.5),
-                        Json.optionalInt(json, "enrage_seconds", 0, 0, 7200)));
+                        Json.optionalInt(json, "enrage_seconds", 0, 0, 7200),
+                        Json.optionalInt(json, "hp_min_players", 1, 1, 64)));
     }
 
     private static Spot spot(JsonObject json, String name) {

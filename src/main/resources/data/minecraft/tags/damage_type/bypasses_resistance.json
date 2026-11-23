@@ -2,6 +2,7 @@
   "replace": false,
   "values": [
     "amemaru:skill",
-    "amemaru:bond_share"
+    "amemaru:bond_share",
+    "amemaru:heavy_blow"
   ]
 }

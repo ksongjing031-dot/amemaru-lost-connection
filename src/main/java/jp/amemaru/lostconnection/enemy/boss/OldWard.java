@@ -138,6 +138,7 @@ public class OldWard extends AmemaruBoss {
             action = Action.CALL;
             timer = 30;
             playAction("skill_call");
+            setTelegraph(TELEGRAPH_ALERT, timer, getYRot(), 0.0F, 0.0F);
             line("boss.amemaru.old_ward.line.call");
         }
         if (to >= 3 && from < 3) {
@@ -173,6 +174,7 @@ public class OldWard extends AmemaruBoss {
             return;
         }
         placeKnots(level);
+        tickCaged(level);
         if (dark && tickCount % 20 == 0) {
             darkness(level);
         }
@@ -276,6 +278,12 @@ public class OldWard extends AmemaruBoss {
         setBusy(timer + 10);
         playAction("skill_sweep");
         setTelegraph(TELEGRAPH_CONE, timer, lockedYaw, (float) sweep.range(), (float) sweep.param("angle", 120.0));
+        // 11月24日「ボスの攻撃がわかりづらい」：振りかぶる音（枝がきしむ）と、はじめの手引き
+        if (level() instanceof ServerLevel level) {
+            level.playSound(null, getX(), getY(), getZ(), SoundEvents.WOOD_HIT, SoundSource.HOSTILE, 2.0F, 0.5F);
+            level.playSound(null, getX(), getY(), getZ(), SoundEvents.PHANTOM_FLAP, SoundSource.HOSTILE, 1.6F, 0.5F);
+        }
+        tipOnce("sweep");
     }
 
     private void tickSweep(ServerLevel level) {
@@ -292,7 +300,21 @@ public class OldWard extends AmemaruBoss {
             }
         }
         level.playSound(null, getX(), getY(), getZ(), SoundEvents.WOOD_BREAK, SoundSource.HOSTILE, 1.6F, 0.6F);
-        level.sendParticles(ParticleTypes.SWEEP_ATTACK, getX(), getY() + 2.0, getZ(), 6, 2.0, 0.5, 2.0, 0.0);
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.PLAYER_ATTACK_SWEEP, SoundSource.HOSTILE, 2.0F, 0.5F);
+        // 扇いっぱいに、斬撃と散る葉（当たった所が見えるように。11月24日）
+        BlockParticleOption leaves = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.DARK_OAK_LEAVES.defaultBlockState());
+        double yawRad = Math.toRadians(lockedYaw);
+        for (int i = 0; i <= 8; i++) {
+            double a = yawRad + Math.toRadians(-half + half * 2.0 * i / 8.0);
+            for (double r = 2.0; r <= sweep.range(); r += 1.5) {
+                double px = getX() - Math.sin(a) * r;
+                double pz = getZ() + Math.cos(a) * r;
+                level.sendParticles(leaves, px, getY() + 0.8, pz, 3, 0.3, 0.4, 0.3, 0.05);
+                if (r + 1.5 > sweep.range()) {
+                    level.sendParticles(ParticleTypes.SWEEP_ATTACK, px, getY() + 1.0, pz, 1, 0.0, 0.0, 0.0, 0.0);
+                }
+            }
+        }
         startCooldown("sweep", cooldown(sweep));
         action = Action.RECOVER;
         timer = 10;
@@ -323,16 +345,32 @@ public class OldWard extends AmemaruBoss {
     private void tickCrack(ServerLevel level) {
         lock();
         if (--timer > 0) {
+            if (timer % 4 == 0) {
+                // ためる間：線の上で土がふるえる（11月24日）
+                BlockParticleOption shake = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.ROOTED_DIRT.defaultBlockState());
+                for (double t = 1.5; t <= crackLength; t += 2.0) {
+                    Vec3 at = position().add(crackDir.scale(t + random.nextDouble()));
+                    level.sendParticles(shake, at.x, getY() + 0.1, at.z, 2, 0.3, 0.05, 0.3, 0.05);
+                }
+                if (timer % 8 == 0) {
+                    level.playSound(null, getX(), getY(), getZ(), SoundEvents.ROOTED_DIRT_BREAK, SoundSource.HOSTILE, 1.0F, 0.5F);
+                }
+            }
             return;
         }
         clearTelegraph();
         EnemyDef.Skill crack = skill("crack", 1.4, 1.2, 6.0, 22.0);
         double half = crack.param("width", 2.4) / 2.0 + 0.4;
         BlockParticleOption dirt = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.ROOTED_DIRT.defaultBlockState());
+        BlockParticleOption root = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.DARK_OAK_LOG.defaultBlockState());
         for (double t = 1.5; t <= crackLength; t += 1.0) {
             Vec3 at = position().add(crackDir.scale(t));
             level.sendParticles(dirt, at.x, getY() + 0.3, at.z, 6, 0.4, 0.3, 0.4, 0.1);
+            // 突き上がる根（11月24日）：丸太の粒を高く
+            level.sendParticles(root, at.x, getY() + 1.2, at.z, 5, 0.2, 0.9, 0.2, 0.15);
         }
+        level.sendParticles(ParticleTypes.EXPLOSION, position().add(crackDir.scale(crackLength * 0.5)).x, getY() + 0.5,
+                position().add(crackDir.scale(crackLength * 0.5)).z, 2, crackLength * 0.3, 0.1, crackLength * 0.3, 0.0);
         for (ServerPlayer player : targets(level)) {
             Vec3 rel = player.position().subtract(position()).multiply(1.0, 0.0, 1.0);
             double along = rel.dot(crackDir);
@@ -352,6 +390,34 @@ public class OldWard extends AmemaruBoss {
 
     // ---- 根の牢（何人かの足もと）
 
+    /** 根の牢に捕まった人と、残りの tick（捕まっている間、まわりに根の檻を見せる。11月24日）。 */
+    private final java.util.Map<UUID, Integer> caged = new java.util.HashMap<>();
+
+    private void tickCaged(ServerLevel level) {
+        if (caged.isEmpty()) {
+            return;
+        }
+        BlockParticleOption bark = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.DARK_OAK_LOG.defaultBlockState());
+        java.util.Iterator<java.util.Map.Entry<UUID, Integer>> it = caged.entrySet().iterator();
+        while (it.hasNext()) {
+            java.util.Map.Entry<UUID, Integer> entry = it.next();
+            int left = entry.getValue() - 1;
+            ServerPlayer player = level.getServer().getPlayerList().getPlayer(entry.getKey());
+            if (left <= 0 || player == null || !player.isAlive()) {
+                it.remove();
+                continue;
+            }
+            entry.setValue(left);
+            if (left % 3 == 0) {
+                for (int i = 0; i < 6; i++) {
+                    double a = Math.PI * 2.0 * i / 6.0 + left * 0.1;
+                    level.sendParticles(bark, player.getX() + Math.cos(a) * 0.8, player.getY() + 0.6 + (i % 3) * 0.5,
+                            player.getZ() + Math.sin(a) * 0.8, 1, 0.02, 0.1, 0.02, 0.0);
+                }
+            }
+        }
+    }
+
     private void startCage(ServerLevel level, EnemyDef.Skill cage) {
         action = Action.CAGE;
         cageSpots.clear();
@@ -370,11 +436,19 @@ public class OldWard extends AmemaruBoss {
         }
         setBusy(timer + 16);
         playAction("skill_cage");
+        tipOnce("cage");
         level.playSound(null, getX(), getY(), getZ(), SoundEvents.ROOTED_DIRT_BREAK, SoundSource.HOSTILE, 1.4F, 0.7F);
     }
 
     private void tickCage(ServerLevel level) {
         if (--timer > 0) {
+            if (timer % 4 == 0) {
+                // ためる間：円の中で根がうごめく（11月24日）
+                BlockParticleOption soil = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.ROOTED_DIRT.defaultBlockState());
+                for (Vec3 spot : cageSpots) {
+                    level.sendParticles(soil, spot.x, spot.y + 0.1, spot.z, 4, 1.0, 0.05, 1.0, 0.05);
+                }
+            }
             return;
         }
         EnemyDef.Skill cage = skill("cage", 1.0, 1.4, 9.0, 24.0);
@@ -389,11 +463,19 @@ public class OldWard extends AmemaruBoss {
                 if (dx * dx + dz * dz <= radius * radius && Math.abs(player.getY() - spot.y) < 3.0 && struck.add(player.getUUID())
                         && EnemyCombat.strike(this, player, cage.power(), null)) {
                     jp.amemaru.lostconnection.combat.AfflictionService.root(player, rootTicks, this);
+                    caged.put(player.getUUID(), rootTicks);
                     player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.amemaru.enemy.rooted")
                             .withStyle(net.minecraft.ChatFormatting.DARK_GREEN), true);
                 }
             }
             level.sendParticles(moss, spot.x, spot.y + 0.6, spot.z, 24, radius * 0.4, 0.6, radius * 0.4, 0.1);
+            // 円のふちに、突き上がる根の柱（11月24日）
+            BlockParticleOption bark = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.DARK_OAK_LOG.defaultBlockState());
+            for (int i = 0; i < 10; i++) {
+                double a = Math.PI * 2.0 * i / 10.0;
+                level.sendParticles(bark, spot.x + Math.cos(a) * (radius - 0.4), spot.y + 1.0, spot.z + Math.sin(a) * (radius - 0.4), 4,
+                        0.1, 0.8, 0.1, 0.05);
+            }
             level.playSound(null, spot.x, spot.y, spot.z, SoundEvents.EVOKER_FANGS_ATTACK, SoundSource.HOSTILE, 1.0F, 0.8F);
         }
         cageSpots.clear();
@@ -408,6 +490,7 @@ public class OldWard extends AmemaruBoss {
         if (--timer > 0) {
             return;
         }
+        clearTelegraph();
         EnemyDef.Skill call = skill("call", 0.0, 0.0, 0.0, 12.0);
         BossRoom room = room();
         int participants = room == null ? 1 : room.participants().size();
@@ -546,6 +629,10 @@ public class OldWard extends AmemaruBoss {
 
     private void startDark(ServerLevel level) {
         dark = true;
+        setCast("dark", 40);
+        // 森の灯りを吸い込む：古樹のまわりから黒い霧が広がる（11月24日）
+        level.sendParticles(ParticleTypes.SQUID_INK, getX(), getY() + 3.0, getZ(), 80, 3.0, 2.0, 3.0, 0.15);
+        level.sendParticles(ParticleTypes.LARGE_SMOKE, getX(), getY() + 1.0, getZ(), 60, 6.0, 0.5, 6.0, 0.05);
         line("boss.amemaru.old_ward.line.dark");
         tip("boss.amemaru.old_ward.tip.dark");
         level.playSound(null, getX(), getY(), getZ(), SoundEvents.AMBIENT_CAVE.value(), SoundSource.HOSTILE, 2.0F, 0.6F);

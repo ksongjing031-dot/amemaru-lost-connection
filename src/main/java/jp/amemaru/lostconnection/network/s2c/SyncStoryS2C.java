@@ -14,6 +14,7 @@ import net.minecraftforge.network.NetworkEvent;
 
 import javax.annotation.Nullable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -29,10 +30,28 @@ public record SyncStoryS2C(int opening, boolean openingPending, Map<Integer, Int
         Map<Integer, Integer> totals = new HashMap<>();
         Map<Integer, Integer> pillars = new HashMap<>(data.getStory().allPillars());
         for (jp.amemaru.lostconnection.tower.FloorDef def : jp.amemaru.lostconnection.tower.FloorDefs.all()) {
-            if (jp.amemaru.lostconnection.tower.FloorFeatures.SEAL_LOST_WOODS.equals(def.features().sealRequires())) {
-                // Phase 8 その1：迷いの森の区画（みんなで同じ）を、石柱と同じ形で送る（封印の判定をクライアントでも同じにする）
-                totals.put(def.number(), def.features().lostWoods().size());
-                pillars.put(def.number(), jp.amemaru.lostconnection.tower.forest.LostWoodsService.tieBits(player.server, def));
+            jp.amemaru.lostconnection.tower.FloorFeatures features = def.features();
+            if (features.requires(jp.amemaru.lostconnection.tower.FloorFeatures.SEAL_LOST_WOODS)
+                    || features.requires(jp.amemaru.lostconnection.tower.FloorFeatures.SEAL_GUARDIANS)) {
+                // Phase 8 その1：迷いの森の区画（みんなで同じ）を、石柱と同じ形で送る（封印の判定をクライアントでも同じにする）。
+                // 11月24日：名のある魔物を倒した印（人ごと）も、その後ろのビットに足す
+                int bits = 0;
+                int total = 0;
+                if (features.requires(jp.amemaru.lostconnection.tower.FloorFeatures.SEAL_LOST_WOODS)) {
+                    bits = jp.amemaru.lostconnection.tower.forest.LostWoodsService.tieBits(player.server, def);
+                    total = features.lostWoods().size();
+                }
+                if (features.requires(jp.amemaru.lostconnection.tower.FloorFeatures.SEAL_GUARDIANS)) {
+                    List<jp.amemaru.lostconnection.tower.FloorDef.Guardian> named = jp.amemaru.lostconnection.tower.TowerService.namedGuardians(def);
+                    for (int k = 0; k < named.size(); k++) {
+                        if (data.getStory().has(jp.amemaru.lostconnection.tower.TowerService.guardianFlag(def.number(), named.get(k).id()))) {
+                            bits |= 1 << (total + k);
+                        }
+                    }
+                    total += named.size();
+                }
+                totals.put(def.number(), total);
+                pillars.put(def.number(), bits);
             } else {
                 totals.put(def.number(), def.pillars().size());
             }

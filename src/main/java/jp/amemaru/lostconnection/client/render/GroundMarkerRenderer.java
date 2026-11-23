@@ -21,7 +21,16 @@ public class GroundMarkerRenderer extends EntityRenderer<GroundMarker> {
         float progress = marker.progress(partialTick);
         poseStack.pushPose();
         poseStack.translate(0.0, 0.07, 0.0);
-        TelegraphDraw.circle(TelegraphDraw.consumer(buffer), poseStack, marker.radius(), progress, TelegraphDraw.alpha(progress, age));
+        if (marker.kind() == GroundMarker.KIND_SHARE) {
+            // 青の印：みんなで集まって受ける所。内向きの矢じりで「集まれ」を見せる（11月24日）
+            int alpha = Math.min(255, TelegraphDraw.alpha(progress, age) + 30);
+            TelegraphDraw.withColor(TelegraphDraw.SHARE_COLOR, () -> {
+                TelegraphDraw.circle(TelegraphDraw.consumer(buffer), poseStack, marker.radius(), progress, alpha);
+                TelegraphDraw.gatherArrows(TelegraphDraw.consumer(buffer), poseStack, marker.radius(), age, alpha);
+            });
+        } else {
+            TelegraphDraw.circle(TelegraphDraw.consumer(buffer), poseStack, marker.radius(), progress, TelegraphDraw.alpha(progress, age));
+        }
         poseStack.popPose();
     }
 

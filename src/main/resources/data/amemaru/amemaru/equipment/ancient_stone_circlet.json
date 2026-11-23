@@ -10,8 +10,8 @@
     "amemaru:monk"
   ],
   "stats": {
-    "defense": 3,
-    "hp": 15,
+    "defense": 2,
+    "hp": 10,
     "crit": 1
   },
   "durability": 280,

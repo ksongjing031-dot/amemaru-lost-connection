@@ -244,11 +244,11 @@ public final class BossRoom {
             boss.resetFight();
             return;
         }
-        double multiplier = 1.0 + def.hpPerExtraPlayer() * Math.max(0, inside.size() - 1);
+        // 11月23日：攻撃と技の間も人数で変え、長引くと怒る。11月24日：HPは hp_min_players 人より少なくても、その人数ぶん
+        FloorDef.Scaling scaling = def.scaling();
+        double multiplier = scaling.hpMultiplier(def.hpPerExtraPlayer(), inside.size());
         boss.setHpMultiplier(multiplier);
         boss.setEnemyHp(boss.getEnemyMaxHp());
-        // 11月23日：攻撃と技の間も人数で変え、長引くと怒る
-        FloorDef.Scaling scaling = def.scaling();
         boss.setFightScaling(scaling.attackMultiplier(inside.size()), scaling.pace(inside.size()), scaling.enrageSeconds());
         setState(State.FIGHT, level);
         setSealed(level, true);

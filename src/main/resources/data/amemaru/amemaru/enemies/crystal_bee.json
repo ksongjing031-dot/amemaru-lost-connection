@@ -4,14 +4,14 @@
   "level": 3,
   "description": "結晶の体を持つ、小さな古代の機械。相手から少し離れた高さに浮き、体の結晶が強く光ったら、結晶の針を撃ってくる。",
   "stats": {
-    "hp": 110,
-    "attack": 20,
+    "hp": 420,
+    "attack": 30,
     "defense": 2,
     "move_speed": 0.3,
     "follow_range": 20,
     "aggro_range": 14
   },
-  "exp": 4,
+  "exp": 10,
   "skills": {
     "needle": {
       "power": 1.0,

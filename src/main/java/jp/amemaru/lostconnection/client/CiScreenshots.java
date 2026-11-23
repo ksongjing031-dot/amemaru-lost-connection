@@ -494,6 +494,8 @@ public final class CiScreenshots {
             {"keep_hold", null, "5"},
             {"hud", null, "5", "on"},
             {"cmd", null, "10", "gamemode creative @p"},
+            // 11月24日：ボスの「みんなで受ける一撃」は、ひとりで受けると倒れる。CIはひとりなので、印と演出だけにする
+            {"cmd", null, "5", "amemaru admin boss share safe"},
             {"p5_build_floor", null, "20"},
             {"await_floor", null, "0"},
             {"cmd", null, "80", "tp @p {at:21.5,3,-78.5} -90 6"},
@@ -628,7 +630,12 @@ public final class CiScreenshots {
             {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,61.5} 180 55"},
             {"cmd", null, "10", "amemaru admin boss skill 1 roots"},
             {"snap", null, "0", "phase5_boss_roots"},
-            {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
+            // 11月24日：みんなで受ける一撃（青い円と、ボスのHPの帯の下の技の名前）
+            {"cmd", null, "50", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,60.5} 180 35"},
+            {"cmd", null, "0", "amemaru admin boss skill 1 share"},
+            {"await_ground", null, "0", "balance_f1_share"},
+            {"cmd", null, "80", "amemaru admin debug vitals @a 100 100"},
             // 戦っている人のまま（アドベンチャー。クリエイティブにすると戦いから外れる）倒す。
             // 倒してすぐ：ボスの名前の大きな字（下に出口の円の知らせ）。初撃破の場面がHUDを隠す（50 tick 待って白く光り、125〜215 tick に
             // 「始まりの草原　踏破」、215〜295 tick に字幕）。場面が終わると、初撃破の知らせの帯が出る（演出の間に届いた知らせは、演出の後に出す）
@@ -1120,6 +1127,8 @@ public final class CiScreenshots {
             {"p8_knot", null, "20", "north"},
             {"snap", null, "40", "phase8_f2_knot_lit"},
             {"cmd", null, "10", "amemaru admin floor woods 2 tie all"},
+            // 11月24日：封印の門は、名のある魔物を2体とも倒した印も要る
+            {"cmd", null, "10", "amemaru admin floor guardians 2 done @p"},
             // 胞子の窪地・白い木立・管の谷（中継の灯の番号：1 広場・2 窪地・3 木立・4 谷・5 空き地の前）
             {"cmd", null, "60", "amemaru admin floor tp 2 waypoint2 @p"},
             {"snap", null, "80", "phase8_f2_hollow"},
@@ -1150,6 +1159,11 @@ public final class CiScreenshots {
             // 根の檻（立っている人の足もとの円。地面の印が出たらすぐ撮る）
             {"cmd", null, "0", "amemaru admin boss skill 2 cage"},
             {"await_ground", null, "0", "phase8_f2_boss_cage"},
+            // 11月24日：みんなで受ける一撃（青い円）
+            {"cmd", null, "50", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f2:216.5,19,66.5} 180 35"},
+            {"cmd", null, "0", "amemaru admin boss skill 2 share"},
+            {"await_ground", null, "0", "balance_f2_share"},
             // 光る節を3つとも壊すと怯む（傾いた幹が写るように、少し見上げる）
             {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
             {"cmd", null, "10", "execute in amemaru:tower run tp @p {f2:216.5,19,68.5} 180 -14"},
