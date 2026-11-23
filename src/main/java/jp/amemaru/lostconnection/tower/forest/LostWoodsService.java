@@ -355,6 +355,28 @@ public final class LostWoodsService {
         resyncStory(server);
     }
 
+    /**
+     * 結び目の灯台の灯りを、今の結び目に合わせる（正しい出口の灯台で、その森が結ばれていれば灯る）。灯台が読み込まれたときに
+     * 呼ぶ（{@link jp.amemaru.lostconnection.tower.FloorThingBlockEntity#onLoad}）。結んだとき・日が変わったときは、
+     * 読み込まれている灯台だけを変えるので、読み込まれていなかった灯台は、ここで直る。
+     */
+    public static void syncPost(ServerLevel level, BlockPos pos) {
+        if (!level.isLoaded(pos) || !(level.getBlockEntity(pos) instanceof jp.amemaru.lostconnection.tower.FloorThingBlockEntity thing)) {
+            return;
+        }
+        BlockState state = level.getBlockState(pos);
+        if (!state.hasProperty(ForestBlocks.LIT)) {
+            return;
+        }
+        FloorDef def = FloorDefs.byNumber(thing.floor());
+        FloorFeatures.LostWoods woods = def == null ? null : def.features().lostWoods(thing.group());
+        boolean lit = woods != null && thing.index() >= 0 && thing.index() < woods.exits().size()
+                && woods.exits().get(thing.index()).correct() && isTied(level.getServer(), thing.floor(), woods.id());
+        if (state.getValue(ForestBlocks.LIT) != lit) {
+            level.setBlock(pos, state.setValue(ForestBlocks.LIT, lit), 3);
+        }
+    }
+
     private static void setPost(MinecraftServer server, FloorDef def, BlockPos rel, boolean lit) {
         ServerLevel tower = server.getLevel(FloorDefs.TOWER);
         if (tower == null) {

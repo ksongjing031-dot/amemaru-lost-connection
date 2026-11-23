@@ -57,6 +57,23 @@ public class FloorThingBlockEntity extends BlockEntity {
         tag.putString("group", group);
     }
 
+    /**
+     * Phase 8 その1：迷いの森の結び目の灯台は、読み込まれたあと、灯る・消えるを今の結び目に合わせる（読み込まれていない間に
+     * 結ばれた灯台や、日が変わってほどけた灯台が、前の見た目のまま残らないように）。読み込みの途中ではブロックを変えないで、
+     * 次の tick に回す。
+     */
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if (level instanceof net.minecraft.server.level.ServerLevel server
+                && getBlockState().getBlock() instanceof jp.amemaru.lostconnection.tower.forest.ForestBlocks.KnotPost) {
+            BlockPos pos = worldPosition;
+            net.minecraft.server.MinecraftServer owner = server.getServer();
+            owner.tell(new net.minecraft.server.TickTask(owner.getTickCount() + 1,
+                    () -> jp.amemaru.lostconnection.tower.forest.LostWoodsService.syncPost(server, pos)));
+        }
+    }
+
     @Override
     public CompoundTag getUpdateTag() {
         return saveWithoutMetadata();

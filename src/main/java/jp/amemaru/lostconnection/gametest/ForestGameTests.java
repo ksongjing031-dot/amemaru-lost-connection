@@ -153,6 +153,26 @@ public final class ForestGameTests {
         LostWoodsService.Data copy = LostWoodsService.Data.load(LostWoodsService.Data.get(server).save(new net.minecraft.nbt.CompoundTag()));
         check(helper, copy.isTied(2, woods.get(0).id()), "保存して読み直すと、つないだ印が消えます");
         check(helper, !LostWoodsService.adminTie(server, 2, "nowhere"), "ない迷いの森をつなげました");
+        // 結び目の灯台の見た目は、読み込まれたときに今の結び目に合わせる（読み込まれていない間に日が変わっても、灯ったまま残らない）
+        FloorFeatures.LostWoods north = def.features().lostWoods("north");
+        int correct = north.exits().indexOf(north.correctExit());
+        BlockPos rel = new BlockPos(1, 1, 1);
+        BlockPos at = helper.absolutePos(rel);
+        helper.setBlock(rel, jp.amemaru.lostconnection.core.registry.ModBlocks.KNOT_POST.get().defaultBlockState());
+        jp.amemaru.lostconnection.tower.FloorThingBlockEntity post =
+                (jp.amemaru.lostconnection.tower.FloorThingBlockEntity) helper.getLevel().getBlockEntity(at);
+        check(helper, post != null, "結び目の灯台に、仕掛けの中身がありません");
+        post.set(2, correct, "north");
+        LostWoodsService.syncPost(helper.getLevel(), at);
+        check(helper, helper.getBlockState(rel).getValue(jp.amemaru.lostconnection.tower.forest.ForestBlocks.LIT), "結ばれた森の正しい灯台が、読み込んでも灯りません");
+        post.set(2, (correct + 1) % north.exits().size(), "north");
+        LostWoodsService.syncPost(helper.getLevel(), at);
+        check(helper, !helper.getBlockState(rel).getValue(jp.amemaru.lostconnection.tower.forest.ForestBlocks.LIT), "間違いの出口の灯台が灯っています");
+        post.set(2, correct, "north");
+        LostWoodsService.syncPost(helper.getLevel(), at);
+        LostWoodsService.onDayChanged(server);
+        LostWoodsService.syncPost(helper.getLevel(), at);
+        check(helper, !helper.getBlockState(rel).getValue(jp.amemaru.lostconnection.tower.forest.ForestBlocks.LIT), "日が変わってほどけたのに、灯台が灯ったままです");
         LostWoodsService.onDayChanged(server);
         check(helper, LostWoodsService.tieBits(server, def) == 0, "日が変わっても、迷いの森がほどけません");
         // 方角：北が上、東が右（ことばの鍵）

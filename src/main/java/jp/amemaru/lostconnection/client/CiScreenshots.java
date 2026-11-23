@@ -1115,7 +1115,8 @@ public final class CiScreenshots {
             {"p8_bell", null, "10", "north"},
             {"snap", null, "10", "phase8_f2_bell"},
             {"p8_listen", null, "100", "north"},
-            {"snap", null, "10", "phase8_f2_echo"},
+            // こだまはチャットに出るので、チャットを消さずに撮る
+            {"snap_keep", null, "10", "phase8_f2_echo"},
             {"p8_knot", null, "20", "north"},
             {"snap", null, "40", "phase8_f2_knot_lit"},
             {"cmd", null, "10", "amemaru admin floor woods 2 tie all"},
@@ -2443,7 +2444,8 @@ public final class CiScreenshots {
 
     private static int awaitLimit(String kind) {
         return switch (kind) {
-            case "await_floor" -> 20 * 120;
+            // 2階（81区画）は1階より大きいので、5分まで待つ（Phase 8 その1）
+            case "await_floor" -> 20 * 300;
             case "await_scene" -> 20 * 60;
             case "await_dialogue" -> 20 * 40;
             case "await_telegraph" -> 20 * 25;
