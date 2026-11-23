@@ -277,7 +277,7 @@ public final class ClientFishing {
         // 狭い画面では真ん中より左に寄せる
         int w = 144;
         int x0 = Math.max(124, Math.min((width - w) / 2, width - 150 - 10 - w));
-        int y0 = Math.max(6, StoryHud.guideBottom() + 4);
+        int y0 = Math.max(6, StoryHud.countdownBottom() + 3);
         var top = tournament.getList("top", Tag.TAG_COMPOUND);
         int lines = 1 + Math.max(1, top.size()) + 1;
         UiStyle.panel(graphics, x0, y0, x0 + w, y0 + 6 + lines * 10);
