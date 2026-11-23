@@ -101,8 +101,9 @@ public class ProjectScreen extends Screen {
             long amount = AMOUNTS[i];
             Component label = amount == Long.MAX_VALUE ? Component.translatable("screen.amemaru.project.donate_rest")
                     : Component.translatable("screen.amemaru.project.donate", String.format(Locale.ROOT, "%,d", amount));
-            CrystalButton b = new CrystalButton(left + 150 + i * 61, top + 120, 58, 14, label, x -> donate(amount));
+            CrystalButton b = new CrystalButton(left + 150 + i * 61, top + 130, 58, 14, label, x -> donate(amount));
             b.active = open && data.getLong("knots") > 0;
+            b.visible = open;    // 受付中のときだけ出す
             addRenderableWidget(b);
         }
     }
@@ -138,6 +139,8 @@ public class ProjectScreen extends Screen {
         renderBackground(graphics);
         UiStyle.panel(graphics, left, top, left + W, top + H);
         graphics.drawCenteredString(font, title, left + W / 2, top + 7, UiStyle.TEXT_HEADER);
+        // 右の札は、寄付のボタンより先に描く（あとに描くとボタンの枠が隠れる）
+        UiStyle.card(graphics, left + 146, top + 20, left + W - 6, top + H - 8, 0xE0B040, false);
         super.render(graphics, mouseX, mouseY, partialTick);
         // 左の列の状態の印
         ListTag list = projects();
@@ -151,7 +154,6 @@ public class ProjectScreen extends Screen {
         int x0 = left + 150;
         int x1 = left + W - 8;
         int y = top + 22;
-        UiStyle.card(graphics, x0 - 4, y - 2, x1 + 2, top + H - 8, 0xE0B040, false);
         graphics.drawString(font, UiStyle.clip(font, circled(cur.getInt("order")) + " " + cur.getString("name"), x1 - x0),
                 x0, y + 2, UiStyle.TEXT_GOLD, false);
         String status = cur.getString("status");
@@ -165,11 +167,11 @@ public class ProjectScreen extends Screen {
         graphics.drawString(font, st, x0, y + 14, statusColor(status), false);
         graphics.drawString(font, UiStyle.clip(font, Component.translatable("screen.amemaru.project.result", cur.getString("result")).getString(),
                 x1 - x0), x0, y + 26, UiStyle.TEXT_HEADER, false);
-        UiStyle.wrapped(graphics, font, cur.getString("description"), x0, y + 38, x1 - x0, UiStyle.TEXT_DIM, 2);
+        UiStyle.wrapped(graphics, font, cur.getString("description"), x0, y + 38, x1 - x0, UiStyle.TEXT_DIM, 3);
         // 寄付の帯
         long goal = Math.max(1, cur.getLong("goal"));
         long donated = cur.getLong("donated");
-        int by = y + 62;
+        int by = y + 72;
         graphics.fill(x0, by, x1, by + 8, 0xFF0B1022);
         int fill = (int) Math.round((x1 - x0 - 2) * Math.min(1.0, donated / (double) goal));
         graphics.fill(x0 + 1, by + 1, x0 + 1 + fill, by + 7, donated >= goal ? 0xFFFFD866 : 0xFF6AC8E8);
@@ -177,12 +179,14 @@ public class ProjectScreen extends Screen {
                 String.format(Locale.ROOT, "%,d", goal), String.format(Locale.ROOT, "%,d", cur.getLong("baseGoal"))), x0, by + 11, UiStyle.TEXT, false);
         int stage = data.getInt("stage");
         int need = cur.getInt("needStage");
-        graphics.drawString(font, Component.translatable(stage >= need ? "screen.amemaru.project.stage_ok" : "screen.amemaru.project.stage_need",
-                need, stage), x0, by + 23, stage >= need ? UiStyle.TEXT_GOOD : 0xFFE38A, false);
+        if (!"built".equals(status)) {    // できあがったあとは、輝き段階の条件は出さない
+            graphics.drawString(font, Component.translatable(stage >= need ? "screen.amemaru.project.stage_ok" : "screen.amemaru.project.stage_need",
+                    need, stage), x0, by + 23, stage >= need ? UiStyle.TEXT_GOOD : 0xFFE38A, false);
+        }
         graphics.drawString(font, Component.translatable("screen.amemaru.project.knots", String.format(Locale.ROOT, "%,d", data.getLong("knots")),
-                String.format(Locale.ROOT, "%,d", cur.getLong("mine"))), x0, by + 52, UiStyle.TEXT_DIM, false);
+                String.format(Locale.ROOT, "%,d", cur.getLong("mine"))), x0, by + 54, UiStyle.TEXT_DIM, false);
         // 銘板
-        int py = by + 66;
+        int py = by + 67;
         graphics.drawString(font, Component.translatable("screen.amemaru.project.plate", cur.getInt("donors")), x0, py, UiStyle.TEXT_HEADER, false);
         ListTag plate = cur.getList("plate", Tag.TAG_COMPOUND);
         if (plate.isEmpty()) {
