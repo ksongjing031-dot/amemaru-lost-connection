@@ -199,7 +199,7 @@ public final class CasinoService {
         CompoundTag tag = screenTag(player);
         tag.putString("tab", tab);
         if (!table.isEmpty()) {
-            tag.put("state", TABLES.get(table).stateTag(player.getUUID(), player.getGameProfile().getName()));
+            tag.put("state", tableTag(player, TABLES.get(table)));
         }
         ModNetwork.sendTo(player, new CasinoS2C("screen", tag));
     }
@@ -397,7 +397,7 @@ public final class CasinoService {
                 watch(player, args.getString("table"));
                 CasinoTable t = TABLES.get(args.getString("table"));
                 if (t != null) {
-                    ModNetwork.sendTo(player, new CasinoS2C("table", t.stateTag(player.getUUID(), player.getGameProfile().getName())));
+                    ModNetwork.sendTo(player, new CasinoS2C("table", tableTag(player, t)));
                 }
                 yield null;
             }
@@ -829,9 +829,16 @@ public final class CasinoService {
         for (UUID who : table.watchers) {
             ServerPlayer p = server.getPlayerList().getPlayer(who);
             if (p != null) {
-                ModNetwork.sendTo(p, new CasinoS2C("table", table.stateTag(who, p.getGameProfile().getName())));
+                ModNetwork.sendTo(p, new CasinoS2C("table", tableTag(p, table)));
             }
         }
+    }
+
+    /** 画面へ送る卓の様子と、その人の今のチップ（払い戻しのあとの数を画面に出す）。 */
+    static CompoundTag tableTag(ServerPlayer player, CasinoTable table) {
+        CompoundTag tag = table.stateTag(player.getUUID(), player.getGameProfile().getName());
+        tag.putLong("chips", chips(player));
+        return tag;
     }
 
     // ================================================================ カジノナイト
