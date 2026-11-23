@@ -167,7 +167,8 @@ public final class StoryHud {
         int w = 250;
         int h = 16 + lines.size() * 10;
         int x = (width - w) / 2;
-        int y = 56;
+        // ボスの帯・技の名前・状態・「〇〇まで」の札の下に出す（重ならないように。前の絵の位置を使う）
+        int y = Math.max(56, Math.max(countdownBottom, castBottom) + 4);
         graphics.fill(x, y, x + w, y + h, color(a * 0.75F, 0x0B1022));
         graphics.fill(x, y, x + w, y + 1, color(a, 0xFFF2A8));
         graphics.drawString(font, Component.translatable("hud.amemaru.story.tip"), x + 6, y + 4, color(a, 0xFFF2A8), false);
