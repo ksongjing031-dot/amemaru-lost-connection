@@ -167,8 +167,12 @@ public final class GearTooltips {
             for (ResourceLocation id : def.jobs()) {
                 names.add(jobName(id));
             }
+            // 3階からの職業ごとの装備（Phase 8 その2）は「ナイト専用」のように出す
+            MutableComponent jobs = names.size() == 1
+                    ? Component.translatable("tooltip.amemaru.job_only", names.get(0))
+                    : Component.literal(String.join("・", names));
             requirement.append(Component.literal(" ・ ").withStyle(ChatFormatting.DARK_GRAY))
-                    .append(Component.literal(String.join("・", names)).withStyle(jobOk ? ChatFormatting.GRAY : ChatFormatting.RED));
+                    .append(jobs.withStyle(jobOk ? ChatFormatting.GRAY : ChatFormatting.RED));
         }
         lines.add(requirement);
 

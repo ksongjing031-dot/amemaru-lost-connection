@@ -1,0 +1,24 @@
+{
+  "slot": "legs",
+  "generation": 1,
+  "series": "流紋シリーズ（ウィザード）",
+  "rarity": "common",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:wizard"
+  ],
+  "stats": {
+    "defense": 3,
+    "mp": 25,
+    "magic": 2
+  },
+  "durability": 300,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 1
+    }
+  ],
+  "description": "すそに銀の波を縫った、前の割れた長い下衣。"
+}

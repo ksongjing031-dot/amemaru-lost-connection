@@ -1,0 +1,27 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "weapon",
+  "mastery": 2,
+  "mastery_exp": 18,
+  "ingredients": [
+    {
+      "item": "amemaru:waterway_bronze",
+      "count": 5
+    },
+    {
+      "item": "amemaru:gnawed_cog",
+      "count": 2
+    },
+    {
+      "item": "amemaru:moss_iron",
+      "count": 2
+    },
+    {
+      "item": "amemaru:flow_crystal",
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "amemaru:ryumon_sword"
+  }
+}

@@ -35,11 +35,12 @@ THICK = set()
 # 太く見えても、そのまま2倍にする絵（先の小さな飾りが Scale2x でつぶれる杖・お守り）
 FORCE_THIN = {"apprentice_bell_staff", "ancient_stone_bell_staff", "apprentice_staff", "ancient_stone_staff",
               "bee_crystal_staff_icon", "waystone_charm", "grassland_necklace", "keepsake_doran", "keepsake_ernesto",
-              "elder_branch_staff_icon", "knot_lantern"}
+              "elder_branch_staff_icon", "knot_lantern",
+              "ryumon_staff", "ryumon_bell_staff"}
 # 茶色の所を「木」として描く絵（ほかの茶色は革）
 WOODEN = {"training_dummy", "apprentice_staff", "apprentice_bell_staff", "apprentice_bow", "ancient_stone_bow",
           "elder_branch_staff_icon",
-          "apprentice_sword", "apprentice_greatsword", "keepsake_doran", "soft_horn", "market_notebook"}
+          "apprentice_sword", "apprentice_greatsword", "keepsake_doran", "soft_horn", "market_notebook", "ryumon_bow"}
 
 # 絵ごとの材質の上書き：{絵の名前: {"#rrggbb"（元の色）または "*": 材質}}
 HINTS = {
@@ -64,6 +65,16 @@ HINTS = {
     "wavering_crystal": {"*": "crystal"},
     "crystal_shard": {"*": "crystal"},
     "bee_stinger": {"*": "crystal"},
+}
+# 流紋シリーズ（Phase 8 その2。ryumon_icons.py の色）：青銅と緑青は金属、流水の結晶は結晶、白・生成り・黒・緑・水色の布は布、
+# わらは木、ナマズのひげは革（名前が ryumon_ で始まる絵すべてに使う）
+RYUMON_HINT = {
+    **{c: "metal" for c in ("#edcb8c", "#d6a962", "#b98948", "#966a35", "#704d26", "#6aaf93", "#3b7563",
+                            "#5d6067", "#35373c", "#232327")},
+    **{c: "crystal" for c in ("#d8fbff", "#93e2ec", "#2fa6be", "#17627a")},
+    **{c: "cloth" for c in ("#fbfbfa", "#e6e7e8", "#bdc0c5", "#86d3da", "#568157", "#355739", "#1f3424",
+                            "#434a58", "#252932", "#131519", "#f3efe2", "#d8d1ba", "#aba38c")},
+    "#dcc988": "wood", "#b59c52": "wood", "#3c342c": "leather",
 }
 
 
@@ -175,7 +186,7 @@ def is_thin(a16):
 def enhance(src, name):
     src = src.convert("RGBA")
     a16 = np.asarray(src)
-    hint_map = HINTS.get(name, {})
+    hint_map = HINTS.get(name) or (RYUMON_HINT if name.startswith("ryumon_") else {})
     thin = (is_thin(a16) or name in FORCE_THIN) and name not in THICK
     if thin:
         big = np.repeat(np.repeat(a16, 2, axis=0), 2, axis=1)

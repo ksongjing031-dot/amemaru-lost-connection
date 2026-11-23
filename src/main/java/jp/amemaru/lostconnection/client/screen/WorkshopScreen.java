@@ -4,6 +4,7 @@ import jp.amemaru.lostconnection.accessory.AccessoryData;
 import jp.amemaru.lostconnection.accessory.AccessoryItem;
 import jp.amemaru.lostconnection.client.ClientAdventure;
 import jp.amemaru.lostconnection.client.ClientContent;
+import jp.amemaru.lostconnection.client.ClientDefinitions;
 import jp.amemaru.lostconnection.client.ClientPlayerState;
 import jp.amemaru.lostconnection.client.ClientRefine;
 import jp.amemaru.lostconnection.client.GearTooltips;
@@ -17,6 +18,7 @@ import jp.amemaru.lostconnection.network.c2s.AccessoryOperationC2S;
 import jp.amemaru.lostconnection.network.c2s.SocialActionC2S;
 import jp.amemaru.lostconnection.network.c2s.WorkshopActionC2S;
 import jp.amemaru.lostconnection.network.s2c.SyncContentS2C;
+import jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C;
 import jp.amemaru.lostconnection.player.StatType;
 import jp.amemaru.lostconnection.workshop.ModRecipes;
 import jp.amemaru.lostconnection.workshop.ProductionRules;
@@ -28,6 +30,7 @@ import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -86,6 +89,18 @@ public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
     private static final int LOCK_X = WIDTH - 21;
     /** 分解の確かめ（2回目を押せる時間）。 */
     private static final long CONFIRM_MILLIS = 4000L;
+    /** 職業の絞り込みのボタン（タブの行の右のはし。武器・防具の工房はタブが3つなので、右があいている）。 */
+    private static final int FILTER_W = 112;
+    private static final int FILTER_X = WIDTH - 8 - FILTER_W;
+    private static final int TAB_Y = 30;
+
+    /**
+     * 作る品の一覧の、職業の絞り込み（Phase 8 その2：3階からは職業ごとの防具と武器になる）。null は「すべて」。
+     * 初めは自分の職業。押すたびに、次の職業 →…→「すべて」と変わる。選んだものは、画面を閉じても覚えておく。
+     * 職業の決まっていない品（アクセサリーなど）は、いつも出す。
+     */
+    private static ResourceLocation jobFilter;
+    private static boolean jobFilterChosen;
 
     private enum Tab {
         CRAFT, REFINE, ENHANCE, REPAIR, DISMANTLE, COMMISSION
@@ -101,6 +116,9 @@ public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
     private Button valuesButton;
     private Button typesButton;
     private Button commissionButton;
+    private Button filterButton;
+    /** この工房に、職業の決まった品のレシピがあるか（ないなら、絞り込みのボタンを出さない）。 */
+    private boolean hasJobGear;
     private final List<Button> tabButtons = new ArrayList<>();
     private long confirmUntil;
     /** 振り直す前の行（変わった行を光らせる）。 */
@@ -126,11 +144,14 @@ public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
     @Override
     protected void init() {
         super.init();
+        if (!jobFilterChosen) {
+            jobFilter = currentJob();
+        }
         loadRecipes();
         tabButtons.clear();
         for (int i = 0; i < tabs.size(); i++) {
             Tab target = tabs.get(i);
-            CrystalButton button = new CrystalButton(leftPos + 8 + i * 64, topPos + 30, 60, 14,
+            CrystalButton button = new CrystalButton(leftPos + 8 + i * 64, topPos + TAB_Y, 60, 14,
                     Component.translatable("screen.amemaru.workshop.tab." + target.name().toLowerCase(Locale.ROOT)), pressed -> {
                         tab = target;
                         confirmUntil = 0;
@@ -151,6 +172,9 @@ public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
                 ModNetwork.sendToServer(new AccessoryOperationC2S(AccessoryOperationC2S.Action.REROLL_TYPES, 0))));
         commissionButton = addRenderableWidget(new CrystalButton(leftPos + RIGHT_X + 4, topPos + ACTION_Y, 150, 16,
                 Component.translatable("screen.amemaru.commission.open"), pressed -> openCommissionBoard()));
+        filterButton = addRenderableWidget(new CrystalButton(leftPos + FILTER_X, topPos + TAB_Y, FILTER_W, 14,
+                filterLabel(), pressed -> cycleFilter()));
+        filterButton.setTooltip(Tooltip.create(Component.translatable("screen.amemaru.workshop.filter_help")));
         if (accessory()) {
             ModNetwork.sendToServer(new AccessoryOperationC2S(AccessoryOperationC2S.Action.QUOTE, 0));
         }
@@ -177,16 +201,63 @@ public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
 
     private void loadRecipes() {
         recipes.clear();
+        hasJobGear = false;
         if (Minecraft.getInstance().level == null) {
             return;
         }
+        EquipmentDefs.Snapshot gear = EquipmentDefs.client();
         for (WorkshopRecipe recipe : Minecraft.getInstance().level.getRecipeManager().getAllRecipesFor(ModRecipes.WORKSHOP_TYPE.get())) {
-            if (recipe.workshop() == menu.type()) {
-                recipes.add(recipe);
+            if (recipe.workshop() != menu.type()) {
+                continue;
             }
+            EquipmentDef def = gear.get(recipe.result());
+            boolean jobGear = def != null && def.hasJobRequirement();
+            hasJobGear |= jobGear;
+            if (jobGear && jobFilter != null && !def.jobs().contains(jobFilter)) {
+                continue;
+            }
+            recipes.add(recipe);
         }
         recipes.sort(Comparator.comparingInt(WorkshopRecipe::mastery).thenComparing(recipe -> recipe.getId().toString()));
         selected = Math.min(selected, Math.max(0, recipes.size() - 1));
+    }
+
+    /** 絞り込みを次の職業へ（最後の職業の次は「すべて」、その次は最初の職業）。 */
+    private void cycleFilter() {
+        List<SyncDefinitionsS2C.JobInfo> jobs = ClientDefinitions.get().jobs();
+        int at = -1;
+        for (int i = 0; i < jobs.size(); i++) {
+            if (jobs.get(i).id().equals(jobFilter)) {
+                at = i;
+            }
+        }
+        jobFilter = at + 1 >= jobs.size() ? null : jobs.get(at + 1).id();
+        jobFilterChosen = true;
+        selected = 0;
+        scroll = 0;
+        loadRecipes();
+        filterButton.setMessage(filterLabel());
+        updateButtons();
+    }
+
+    private static Component filterLabel() {
+        return Component.translatable("screen.amemaru.workshop.filter", jobFilter == null
+                ? Component.translatable("screen.amemaru.workshop.filter_all") : Component.literal(jobName(jobFilter)));
+    }
+
+    private static ResourceLocation currentJob() {
+        int index = ClientPlayerState.get().jobIndex();
+        SyncDefinitionsS2C.JobInfo job = index < 0 ? null : ClientDefinitions.get().job(index);
+        return job == null ? null : job.id();
+    }
+
+    private static String jobName(ResourceLocation id) {
+        for (SyncDefinitionsS2C.JobInfo job : ClientDefinitions.get().jobs()) {
+            if (job.id().equals(id)) {
+                return job.name();
+            }
+        }
+        return id.getPath();
     }
 
     // ---------------------------------------------------------------- 状態
@@ -246,6 +317,7 @@ public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
         valuesButton.active = canReroll;
         typesButton.active = canReroll;
         commissionButton.visible = tab == Tab.COMMISSION;
+        filterButton.visible = tab == Tab.CRAFT && hasJobGear && 8 + tabs.size() * 64 <= FILTER_X;
     }
 
     private void act() {
@@ -405,7 +477,10 @@ public class WorkshopScreen extends AbstractContainerScreen<WorkshopMenu> {
             UiStyle.wrapped(graphics, font, text, RIGHT_X + 2, RIGHT_Y + 2, imageWidth - RIGHT_X - 12, UiStyle.TEXT, 6);
         }
         if (recipes.isEmpty()) {
-            graphics.drawString(font, Component.translatable("screen.amemaru.workshop.no_recipes"), LIST_X, LIST_Y, UiStyle.TEXT_DIM, true);
+            Component none = hasJobGear && jobFilter != null
+                    ? Component.translatable("screen.amemaru.workshop.no_recipes_job", jobName(jobFilter))
+                    : Component.translatable("screen.amemaru.workshop.no_recipes");
+            graphics.drawString(font, none, LIST_X, LIST_Y, UiStyle.TEXT_DIM, true);
             return;
         }
         int mastery = mastery();

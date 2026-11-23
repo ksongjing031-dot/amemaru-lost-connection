@@ -1,0 +1,23 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "armor",
+  "mastery": 2,
+  "mastery_exp": 14,
+  "ingredients": [
+    {
+      "item": "amemaru:waterway_bronze",
+      "count": 3
+    },
+    {
+      "item": "amemaru:gnawed_cog",
+      "count": 2
+    },
+    {
+      "item": "amemaru:murky_gel",
+      "count": 2
+    }
+  ],
+  "result": {
+    "item": "amemaru:ryumon_knight_sabatons"
+  }
+}

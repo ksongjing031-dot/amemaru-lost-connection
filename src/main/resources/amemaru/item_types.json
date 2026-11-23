@@ -82,6 +82,34 @@
     {
       "id": "ancient_stone_gauntlets",
       "kind": "fist"
+    },
+    {
+      "id": "ryumon_sword",
+      "kind": "sword"
+    },
+    {
+      "id": "ryumon_greatsword",
+      "kind": "greatsword"
+    },
+    {
+      "id": "ryumon_staff",
+      "kind": "staff"
+    },
+    {
+      "id": "ryumon_bell_staff",
+      "kind": "bell_staff"
+    },
+    {
+      "id": "ryumon_bow",
+      "kind": "bow"
+    },
+    {
+      "id": "ryumon_daggers",
+      "kind": "daggers"
+    },
+    {
+      "id": "ryumon_gauntlets",
+      "kind": "fist"
     }
   ],
   "shields": [
@@ -93,6 +121,9 @@
     },
     {
       "id": "floodgate_key_shield"
+    },
+    {
+      "id": "ryumon_shield"
     }
   ],
   "armor": [
@@ -121,6 +152,60 @@
         "chest": "ancient_stone_jerkin",
         "legs": "ancient_stone_breeches",
         "feet": "ancient_stone_shoes"
+      }
+    },
+    {
+      "series": "ryumon_knight",
+      "pieces": {
+        "head": "ryumon_knight_helm",
+        "chest": "ryumon_knight_cuirass",
+        "legs": "ryumon_knight_greaves",
+        "feet": "ryumon_knight_sabatons"
+      }
+    },
+    {
+      "series": "ryumon_wizard",
+      "pieces": {
+        "head": "ryumon_wizard_hat",
+        "chest": "ryumon_wizard_robe",
+        "legs": "ryumon_wizard_legwear",
+        "feet": "ryumon_wizard_shoes"
+      }
+    },
+    {
+      "series": "ryumon_healer",
+      "pieces": {
+        "head": "ryumon_healer_hood",
+        "chest": "ryumon_healer_robe",
+        "legs": "ryumon_healer_legwear",
+        "feet": "ryumon_healer_shoes"
+      }
+    },
+    {
+      "series": "ryumon_archer",
+      "pieces": {
+        "head": "ryumon_archer_cap",
+        "chest": "ryumon_archer_jerkin",
+        "legs": "ryumon_archer_leggings",
+        "feet": "ryumon_archer_boots"
+      }
+    },
+    {
+      "series": "ryumon_rogue",
+      "pieces": {
+        "head": "ryumon_rogue_mask",
+        "chest": "ryumon_rogue_garb",
+        "legs": "ryumon_rogue_leggings",
+        "feet": "ryumon_rogue_tabi"
+      }
+    },
+    {
+      "series": "ryumon_monk",
+      "pieces": {
+        "head": "ryumon_monk_headband",
+        "chest": "ryumon_monk_gi",
+        "legs": "ryumon_monk_hakama",
+        "feet": "ryumon_monk_sandals"
       }
     }
   ],

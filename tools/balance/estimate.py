@@ -27,14 +27,19 @@ for p in glob.glob(os.path.join(R, "floors", "floor*.json")):
 
 HEAVY = ["ancient_stone_helm", "ancient_stone_cuirass", "ancient_stone_greaves", "ancient_stone_sabatons"]
 ROBE = ["ancient_stone_hood", "ancient_stone_robe", "ancient_stone_legwear", "ancient_stone_boots"]
+# 3〜4階の職業ごとの装備「流紋シリーズ」（Phase 8 その2。tools/datagen/build_gear_ryumon.py）
+RYUMON_KNIGHT = ["ryumon_knight_helm", "ryumon_knight_cuirass", "ryumon_knight_greaves", "ryumon_knight_sabatons"]
+RYUMON_WIZARD = ["ryumon_wizard_hat", "ryumon_wizard_robe", "ryumon_wizard_legwear", "ryumon_wizard_shoes"]
 GEAR = {
-    "knight": {"early": ["apprentice_sword", "apprentice_shield"], "mid": HEAVY + ["ancient_stone_sword", "ancient_stone_shield"]},
-    "wizard": {"early": ["apprentice_staff"], "mid": ROBE + ["ancient_stone_staff"]},
+    "knight": {"early": ["apprentice_sword", "apprentice_shield"], "mid": HEAVY + ["ancient_stone_sword", "ancient_stone_shield"],
+               "late": RYUMON_KNIGHT + ["ryumon_sword", "ryumon_shield"]},
+    "wizard": {"early": ["apprentice_staff"], "mid": ROBE + ["ancient_stone_staff"], "late": RYUMON_WIZARD + ["ryumon_staff"]},
 }
 ALLOC = {"knight": {"hp": 0.34, "attack": 0.33, "defense": 0.33}, "wizard": {"magic": 0.6, "hp": 0.2, "mp": 0.2}}
 DPS = {"knight": ("attack", 1.8), "wizard": ("magic", 2.6)}
 # 階ごとのおすすめのレベルの真ん中と、そのころの装備
-REFERENCE = {1: (3, "early"), 2: (5, "mid"), 3: (7, "mid")}
+# 3階は、入ったころ（古代石）と、流紋シリーズをそろえたころの2つ
+REFERENCE = {1: [(3, "early")], 2: [(5, "mid")], 3: [(7, "mid"), (8, "late")]}
 
 
 def stats(level, job, gear):
@@ -65,13 +70,17 @@ def mitigation(defense):
 
 def main():
     for floor in sorted(FL):
-        if floor not in REFERENCE:
-            continue
-        level, era = REFERENCE[floor]
+        for level, era in REFERENCE.get(floor, []):
+            report(floor, level, era)
+
+
+def report(floor, level, era):
+    if True:
         knight = stats(level, "knight", GEAR["knight"][era])
         wizard = stats(level, "wizard", GEAR["wizard"][era])
         raw = sum(s[DPS[j][0]] * DPS[j][1] for j, s in (("knight", knight), ("wizard", wizard)))
-        print("== %d階（Lv%d。ウィザード HP%d・ナイト HP%d、2人の1秒あたり %d）" % (floor, level, wizard["hp"], knight["hp"], raw))
+        print("== %d階（Lv%d・%s。ウィザード HP%d・ナイト HP%d、2人の1秒あたり %d）" % (
+            floor, level, {"early": "見習い装備", "mid": "古代石", "late": "流紋"}[era], wizard["hp"], knight["hp"], raw))
         print("| 敵 | HP | 攻撃 | 2人で倒す秒 | 1回でウィザードの | ナイトの |")
         print("| --- | --- | --- | --- | --- | --- |")
         boss = FL[floor]["boss_room"]["boss"].split(":")[1]

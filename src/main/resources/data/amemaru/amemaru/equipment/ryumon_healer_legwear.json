@@ -1,0 +1,24 @@
+{
+  "slot": "legs",
+  "generation": 1,
+  "series": "流紋シリーズ（ヒーラー）",
+  "rarity": "common",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:healer"
+  ],
+  "stats": {
+    "defense": 3,
+    "mp": 20,
+    "hp": 10
+  },
+  "durability": 300,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 1
+    }
+  ],
+  "description": "すそに水色の波を縫った、白い長い下衣。"
+}

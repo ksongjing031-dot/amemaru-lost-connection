@@ -1,0 +1,27 @@
+{
+  "slot": "offhand",
+  "generation": 1,
+  "series": "流紋シリーズ（ナイト）",
+  "rarity": "common",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "defense": 7,
+    "hp": 25
+  },
+  "durability": 560,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:waterway_bronze",
+      "count": 2
+    },
+    {
+      "item": "amemaru:gnawed_cog",
+      "count": 1
+    }
+  ],
+  "description": "水門の扉の板金を盾にしたもの。表に、渦をまく流れの紋が打ち出してある。"
+}

@@ -1,0 +1,27 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "流紋シリーズ（ローグ）",
+  "rarity": "common",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:rogue"
+  ],
+  "stats": {
+    "attack": 18,
+    "crit": 3
+  },
+  "durability": 480,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:waterway_bronze",
+      "count": 1
+    },
+    {
+      "item": "amemaru:catfish_whisker",
+      "count": 1
+    }
+  ],
+  "description": "魚のひれの形に反った、二本ひと組の青銅の短剣。刃のふちに流れの紋が浮いている。"
+}

@@ -1,0 +1,23 @@
+{
+  "slot": "legs",
+  "generation": 1,
+  "series": "流紋シリーズ（モンク）",
+  "rarity": "common",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:monk"
+  ],
+  "stats": {
+    "defense": 4,
+    "hp": 22
+  },
+  "durability": 280,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 1
+    }
+  ],
+  "description": "すそを絞った、藍の袴。"
+}

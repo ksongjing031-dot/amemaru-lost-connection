@@ -1,0 +1,23 @@
+{
+  "slot": "head",
+  "generation": 1,
+  "series": "流紋シリーズ（ナイト）",
+  "rarity": "common",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "defense": 4,
+    "hp": 18
+  },
+  "durability": 480,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:waterway_bronze",
+      "count": 1
+    }
+  ],
+  "description": "波頭のとさかを立てた青銅の兜。ほおの板に流れの紋が刻んである。"
+}

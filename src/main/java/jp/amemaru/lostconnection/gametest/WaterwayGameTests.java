@@ -11,12 +11,21 @@ import jp.amemaru.lostconnection.enemy.waterway.KibaNamazu;
 import jp.amemaru.lostconnection.enemy.waterway.Soujikihei;
 import jp.amemaru.lostconnection.enemy.waterway.SuimonNezumi;
 import jp.amemaru.lostconnection.enemy.waterway.YodomiSlime;
+import jp.amemaru.lostconnection.equipment.EquipmentDef;
+import jp.amemaru.lostconnection.equipment.EquipmentDefs;
+import jp.amemaru.lostconnection.equipment.GearService;
+import jp.amemaru.lostconnection.equipment.GearSlot;
 import jp.amemaru.lostconnection.guild.ErnestoArrival;
 import jp.amemaru.lostconnection.guild.RecordDef;
 import jp.amemaru.lostconnection.guild.RecordDefs;
+import jp.amemaru.lostconnection.item.AmemaruArmorItem;
+import jp.amemaru.lostconnection.item.ItemManifest;
+import jp.amemaru.lostconnection.job.def.JobDef;
+import jp.amemaru.lostconnection.job.def.SkillRegistry;
 import jp.amemaru.lostconnection.npc.NpcDefs;
 import jp.amemaru.lostconnection.player.PlayerData;
 import jp.amemaru.lostconnection.player.PlayerDataCapability;
+import jp.amemaru.lostconnection.player.StatType;
 import jp.amemaru.lostconnection.story.StoryEventDef;
 import jp.amemaru.lostconnection.story.StoryEventManager;
 import jp.amemaru.lostconnection.story.StoryState;
@@ -25,22 +34,34 @@ import jp.amemaru.lostconnection.tower.FloorDefs;
 import jp.amemaru.lostconnection.tower.FloorFeatures;
 import jp.amemaru.lostconnection.tower.TowerService;
 import jp.amemaru.lostconnection.tower.waterway.FloodgateService;
+import jp.amemaru.lostconnection.workshop.ModRecipes;
+import jp.amemaru.lostconnection.workshop.WorkshopRecipe;
+import jp.amemaru.lostconnection.workshop.WorkshopType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
 import net.minecraft.gametest.framework.GameTestHelper;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegistryObject;
 
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 
 /**
@@ -318,6 +339,90 @@ public final class WaterwayGameTests {
         StoryEventDef white = StoryEventManager.get(AmemaruMod.id("floor3/white_flow"));
         check(helper, white.triggerType().equals("floor_zone") && white.triggerZone().equals("white_flow"), "白い流れの物語が、物語の場所で流れません");
         helper.succeed();
+    }
+
+    // ---------------------------------------------------------------- 3階からの職業ごとの装備（流紋シリーズ）
+
+    /** 3階の素材（流紋シリーズの材料には、どれかが入る）。 */
+    private static final Set<String> FLOOR3_MATERIALS = Set.of("gnawed_cog", "murky_gel", "waterway_bronze", "catfish_whisker",
+            "flow_crystal");
+
+    /**
+     * 11月23日の決定：3階からは職業ごとの固有防具と武器。6職業それぞれに、その職業だけが着られる頭・胴・脚・足（見た目の
+     * シリーズも職業ごと）と武器があり、工房で3階の素材から作れる。古代石より強く、3階のレアの盾よりは弱い。
+     */
+    @GameTest(template = EMPTY)
+    public static void ryumonJobGear(GameTestHelper helper) {
+        EquipmentDefs.Snapshot gear = EquipmentDefs.server();
+        Map<ResourceLocation, WorkshopRecipe> recipes = new HashMap<>();
+        for (WorkshopRecipe recipe : helper.getLevel().getServer().getRecipeManager().getAllRecipesFor(ModRecipes.WORKSHOP_TYPE.get())) {
+            recipes.put(ForgeRegistries.ITEMS.getKey(recipe.result().getItem()), recipe);
+        }
+        String[] jobs = {"knight", "wizard", "healer", "archer", "rogue", "monk"};
+        for (String job : jobs) {
+            ResourceLocation jobId = AmemaruMod.id(job);
+            Set<GearSlot> slots = new HashSet<>();
+            for (RegistryObject<Item> item : ModItems.MANIFEST.category(ItemManifest.Category.ARMOR)) {
+                if (!(item.get() instanceof AmemaruArmorItem armor) || !armor.series().equals("ryumon_" + job)) {
+                    continue;
+                }
+                EquipmentDef def = gear.get(item.get());
+                check(helper, def != null, item.getId() + " に装備の定義がありません");
+                check(helper, def.jobs().equals(List.of(jobId)), item.getId() + " が " + job + " だけの防具ではありません：" + def.jobs());
+                check(helper, def.requiredLevel() == 7 && def.series().startsWith("流紋シリーズ"),
+                        item.getId() + " が Lv7 の流紋シリーズではありません");
+                check(helper, slots.add(def.slot()), item.getId() + " と同じ場所の防具が、ほかにもあります");
+                checkRecipe(helper, recipes, item.getId(), WorkshopType.ARMOR);
+            }
+            check(helper, slots.equals(Set.of(GearSlot.HEAD, GearSlot.CHEST, GearSlot.LEGS, GearSlot.FEET)),
+                    job + " の流紋シリーズの防具が、頭・胴・脚・足の4つそろっていません：" + slots);
+        }
+        // 武器：その職業だけが持て、その職業の武器のタグに入り、古代石の武器より強い
+        String[][] weapons = {{"knight", "ryumon_sword", "ancient_stone_sword"}, {"knight", "ryumon_greatsword", "ancient_stone_greatsword"},
+                {"wizard", "ryumon_staff", "ancient_stone_staff"}, {"healer", "ryumon_bell_staff", "ancient_stone_bell_staff"},
+                {"archer", "ryumon_bow", "ancient_stone_bow"}, {"rogue", "ryumon_daggers", "ancient_stone_daggers"},
+                {"monk", "ryumon_gauntlets", "ancient_stone_gauntlets"}};
+        for (String[] w : weapons) {
+            ResourceLocation id = AmemaruMod.id(w[1]);
+            EquipmentDef def = gear.get(id);
+            EquipmentDef old = gear.get(AmemaruMod.id(w[2]));
+            check(helper, def != null && def.slot() == GearSlot.WEAPON && def.jobs().equals(List.of(AmemaruMod.id(w[0]))),
+                    w[1] + " が " + w[0] + " だけの武器ではありません");
+            JobDef job = SkillRegistry.get().job(AmemaruMod.id(w[0]));
+            check(helper, job != null && job.weapons() != null && new ItemStack(ForgeRegistries.ITEMS.getValue(id)).is(job.weapons()),
+                    w[1] + " が " + w[0] + " の武器のタグに入っていません");
+            StatType main = old.stat(StatType.MAGIC) > old.stat(StatType.ATTACK) ? StatType.MAGIC : StatType.ATTACK;
+            check(helper, def.stat(main) > old.stat(main), w[1] + " が " + w[2] + " より弱いです");
+            checkRecipe(helper, recipes, id, WorkshopType.WEAPON);
+        }
+        EquipmentDef shield = gear.get(AmemaruMod.id("ryumon_shield"));
+        EquipmentDef rare = gear.get(AmemaruMod.id("floodgate_key_shield"));
+        check(helper, shield != null && shield.slot() == GearSlot.OFFHAND && shield.jobs().equals(List.of(AmemaruMod.id("knight")))
+                        && shield.stat(StatType.DEFENSE) > gear.get(AmemaruMod.id("ancient_stone_shield")).stat(StatType.DEFENSE)
+                        && shield.stat(StatType.DEFENSE) < rare.stat(StatType.DEFENSE),
+                "流紋の盾が、古代石の盾より強く水門の鍵盾より弱いナイトの盾になっていません");
+        checkRecipe(helper, recipes, AmemaruMod.id("ryumon_shield"), WorkshopType.ARMOR);
+        // 着られるかどうか：ナイトの兜は、Lv7のナイトだけ
+        EquipmentDef helm = gear.get(AmemaruMod.id("ryumon_knight_helm"));
+        PlayerData data = new PlayerData();
+        data.setLevel(7);
+        data.setCombatJob(AmemaruMod.id("wizard"));
+        check(helper, !GearService.usable(data, helm), "ウィザードが、ナイトの流紋の兜を着られます");
+        data.setCombatJob(AmemaruMod.id("knight"));
+        check(helper, GearService.usable(data, helm), "Lv7のナイトが、流紋の兜を着られません");
+        data.setLevel(6);
+        check(helper, !GearService.usable(data, helm), "Lv6で流紋の兜を着られます");
+        helper.succeed();
+    }
+
+    private static void checkRecipe(GameTestHelper helper, Map<ResourceLocation, WorkshopRecipe> recipes, ResourceLocation item,
+                                    WorkshopType bench) {
+        WorkshopRecipe recipe = recipes.get(item);
+        check(helper, recipe != null && recipe.workshop() == bench, item + " を作るレシピが " + bench.id() + " の工房にありません");
+        // 第1章の熟練度の上限は3（production_rules の chapter_caps）
+        check(helper, recipe.mastery() >= 2 && recipe.mastery() <= 3, item + " のレシピの熟練度が2〜3ではありません：" + recipe.mastery());
+        check(helper, recipe.ingredients().stream().anyMatch(cost -> cost.item().getNamespace().equals(AmemaruMod.MOD_ID)
+                && FLOOR3_MATERIALS.contains(cost.item().getPath())), item + " の材料に3階の素材がありません");
     }
 
     // ---------------------------------------------------------------- 道具

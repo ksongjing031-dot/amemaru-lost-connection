@@ -40,6 +40,12 @@ MATERIALS = {
     "amemaru:wavering_crystal": 280,    # 1階のボスから60%（1回5分 → 8.3分 × 33）。フリマでも
     "amemaru:binding_thread": 500,      # NPCの依頼のお礼だけ（釣り・カジノの景品は Phase 7）。少ないので高め
     "amemaru:clear_echo": 1500,         # ★4以上の分解と章のボスだけ
+    # 3階の素材（Phase 8 その2）【補完】。3階の敵は1階の敵の3〜4倍の時間がかかるので、落ちる確率の計算より高め
+    "amemaru:gnawed_cog": 30,           # 水門ネズミから60%で1〜2個・掃除機兵から25%
+    "amemaru:murky_gel": 30,            # 澱みスライムから75%で1〜2個（分かれた小さいのからも35%）
+    "amemaru:waterway_bronze": 90,      # 水路掃除機兵から60%で1〜2個・番人から3〜5個（めずらしい）
+    "amemaru:catfish_whisker": 120,     # 牙ナマズから55%・番人から60%（めずらしい）
+    "amemaru:flow_crystal": 600,        # 名のある魔物から35%・番人から60%・宝箱から20%（レア。流紋シリーズの芯）
 }
 DROPS = {
     "amemaru:ancient_stone": 0.7 * 1.5,
@@ -60,6 +66,7 @@ RARE_GEAR = {
 FIXED = {
     "amemaru:grassland_horn": 2050,          # Phase 0-A の計算例（1回5分のボスから8% → 62分 × 33）
     "amemaru:elder_branch_staff": 3300,      # 2階のボスから6%（1回6分 → 100分 × 33）【補完】
+    "amemaru:floodgate_key_shield": 8800,    # 3階のボスから6%（2人で1回16分 → 267分 × 33）【補完】
 }
 # 表にない物：レアリティごとの基準額（×（1＋0.08×装備レベル）はゲームの中で計算する）【補完】
 RARITY_BASE = {"common": 30, "uncommon": 100, "rare": 400, "epic": 1600, "legendary": 6000, "unique": 20000}

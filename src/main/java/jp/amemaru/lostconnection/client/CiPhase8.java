@@ -16,13 +16,16 @@ import java.util.List;
  * 正しい灯台に結び目の灯を置く・品を手に持つ。
  */
 final class CiPhase8 {
+    /** p8_bench で置いた作業台。 */
+    private static BlockPos bench;
+
     private CiPhase8() {
     }
 
     /** その種類の行なら true（first のときだけ動かす）。 */
     static boolean action(Minecraft minecraft, String[] shot, boolean first) {
         String kind = shot[0];
-        if (!List.of("p8_bell", "p8_listen", "p8_knot", "p8_hold", "p8_valve").contains(kind)) {
+        if (!List.of("p8_bell", "p8_listen", "p8_knot", "p8_hold", "p8_valve", "p8_bench", "p8_bench_open").contains(kind)) {
             return false;
         }
         if (!first) {
@@ -55,6 +58,19 @@ final class CiPhase8 {
             case "p8_hold" -> CiPhase3.onServer(minecraft, player -> CiGear.hold(player, "-".equals(shot[3]) ? null : shot[3], null));
             // Phase 8 その2：3階の水門のハンドルの前（2マス）に立って、回す（「組:0か1」）
             case "p8_valve" -> CiPhase3.onServer(minecraft, player -> turnValve(player, shot[3]));
+            // Phase 8 その2：目の前（北へ1ブロック）に工房の作業台（armor・weapon・accessory）を置き、次の行で開く
+            case "p8_bench" -> {
+                bench = minecraft.player == null ? null : minecraft.player.blockPosition().north(1);
+                if (bench != null) {
+                    CiScreenshots.runCommand(minecraft, "setblock " + bench.getX() + " " + bench.getY() + " " + bench.getZ()
+                            + " amemaru:" + shot[3] + "_workbench[facing=south]");
+                }
+            }
+            case "p8_bench_open" -> {
+                if (bench != null) {
+                    CiPhase3.useWorkbench(minecraft, bench);
+                }
+            }
             default -> {
             }
         }

@@ -1,0 +1,28 @@
+{
+  "slot": "chest",
+  "generation": 1,
+  "series": "流紋シリーズ（モンク）",
+  "rarity": "common",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:monk"
+  ],
+  "stats": {
+    "defense": 5,
+    "hp": 30,
+    "speed": 1
+  },
+  "durability": 320,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 2
+    },
+    {
+      "item": "amemaru:murky_gel",
+      "count": 1
+    }
+  ],
+  "description": "生成りの厚い道着に、藍の帯。背に流れの紋が染めぬいてある。"
+}

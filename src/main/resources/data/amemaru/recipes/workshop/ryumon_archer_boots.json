@@ -1,0 +1,23 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "armor",
+  "mastery": 2,
+  "mastery_exp": 14,
+  "ingredients": [
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 3
+    },
+    {
+      "item": "amemaru:murky_gel",
+      "count": 2
+    },
+    {
+      "item": "amemaru:waterway_bronze",
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "amemaru:ryumon_archer_boots"
+  }
+}

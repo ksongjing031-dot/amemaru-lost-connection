@@ -1,0 +1,23 @@
+{
+  "slot": "feet",
+  "generation": 1,
+  "series": "流紋シリーズ（ナイト）",
+  "rarity": "common",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "defense": 3,
+    "hp": 12
+  },
+  "durability": 480,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:waterway_bronze",
+      "count": 1
+    }
+  ],
+  "description": "継ぎ目を澱みのゼリーでふさいだ、水の入らない鉄靴。"
+}

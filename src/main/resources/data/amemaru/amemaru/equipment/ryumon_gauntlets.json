@@ -1,0 +1,27 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "流紋シリーズ（モンク）",
+  "rarity": "common",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:monk"
+  ],
+  "stats": {
+    "attack": 18,
+    "hp": 30
+  },
+  "durability": 480,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:waterway_bronze",
+      "count": 1
+    },
+    {
+      "item": "amemaru:gnawed_cog",
+      "count": 1
+    }
+  ],
+  "description": "拳に歯車の歯を並べた青銅の籠手。打ち込むと、水車のように重さが乗る。"
+}
