@@ -188,7 +188,7 @@ TRADES = {
 # 店の呼び鈴（Phase 6。11月22日に決定：施設は右クリックでGUIを開いて使う）：店の人の前のカウンターの天板の上に、
 # amemaru:shop_counter（中身の shop が、data/amemaru/amemaru/shops/<店>.json の店）。料理屋は寄付で開くまで置かない。
 # 11月21日の直しでカウンターを1段低くした店は、直し（edits/market_*.json）の側で、天板の上のマスに slab=false を置いている。
-# 直しのない店は、ここで天板（下付きの半ブロック）ごと置く（slab=true）。
+# 11月23日から、もとの形も同じ（上付きの半ブロックの天板の上に slab=false）。直しのなかった「布と仕立て」も同じ形になる。
 SHOP_IDS = {"general", "bakery", "greengrocer", "apothecary", "tools", "lights", "cloth", "butcher", "books", "leather",
             "flowers", "hardware", "tea"}
 
@@ -595,15 +595,15 @@ class Shop:
                     self.put(a, b, Y3, AIR)
 
     def counter(self):
-        """カウンター（b=4）：皮をはいたダークオークの丸太に、ダークオークのハーフの天板（高さ1.5で、跳び越えられない）。
-        左の端は柵の門（店の人の通り口）。"""
+        """カウンター（b=4）：ダークオークの上付きのハーフの天板（高さ1）。左の端は柵の門（店の人の通り口）。
+        11月21日のゲームの中の直しで12軒をこの形にした（もとは丸太の上にハーフの天板で高さ1.5）。直しのなかった
+        「布と仕立て」も、11月23日のご指示でほかの店と同じ形にするため、もとの形のほうをこの形に変えた。"""
         for a in range(2, self.F - 1):
-            self.put(a, 4, Y1 + 1, log("dark_oak", "z", stripped=True))
-            self.put(a, 4, Y1 + 2, slab("dark_oak", "bottom"))
+            self.put(a, 4, Y1 + 1, slab("dark_oak", "top"))
         self.put(1, 4, Y1 + 1, block("spruce_fence_gate", facing=self.front, open=False, powered=False, in_wall=False))
         if self.trade in SHOP_IDS:
-            # 店の人の前の天板を、呼び鈴の付いた天板に替える（Phase 6）
-            self.put(self.npc[0], 4, Y1 + 2, block("amemaru:shop_counter", slab="true"), shop_bell_nbt(self.trade))
+            # 店の人の前の天板の上に、呼び鈴（Phase 6。右クリックで店の画面）
+            self.put(self.npc[0], 4, Y1 + 2, block("amemaru:shop_counter", slab="false"), shop_bell_nbt(self.trade))
 
     def shelf_rows(self, a):
         """売り場の棚の b。左の列は b=1..2（b=3 はカウンターの門への通り道）、右の列は b=2..3（b=1 は入口の前）。

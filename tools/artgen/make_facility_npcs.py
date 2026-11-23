@@ -129,108 +129,153 @@ def pokka():
 
 
 def gisele():
+    """支配人ジゼル・ノワール（11月23日の直し：大人びた、きちんとした支配人の姿に）。
+    黒い仕立ての上着に、紫の胴着と白い襟飾り、金の飾りボタン。黒髪は高くまとめて金の櫛で留める。"""
     s = Skin(True, 113)
     r = s.rng
-    hair, hair_d, sheen = "#1E1726", "#120D18", "#4A2E66"
-    skin, skin_d = "#F0D2C0", "#D9B4A0"
-    dress, dress_d, dress_l = "#5A2D82", "#3E1D5C", "#7F3FB2"
-    gold, gold_d = "#E8C25A", "#B8923A"
-    glove = "#1A1620"
-    stock, shoe = "#2A2230", "#141018"
+    hair, hair_d, sheen, hair_l = "#231A2E", "#150F1C", "#4B3466", "#6A4C8C"
+    skin, skin_s, skin_d = "#F2D5C4", "#E2BBA8", "#C99A86"
+    coat, coat_l, coat_d = "#1F1A24", "#34293E", "#120E16"
+    plum, plum_l, plum_d = "#5B2A73", "#7C3E99", "#3F1C52"
+    gold, gold_l, gold_d = "#E3BD5A", "#F6DE8E", "#A9873A"
+    lace, lace_d = "#F2EEF0", "#C9C2CC"
+    gem, gem_l = "#9C4DCC", "#D9A6F2"
+    skirt, skirt_l, skirt_d = "#4A1F5E", "#6A2E85", "#321440"
+    glove, glove_l = "#16121A", "#2E2636"
+    shoe = "#141018"
 
     def head(face, x, y, w, h):
         if face == "top":
-            return noisy(r, hair if (x + y) % 4 else sheen, 0.05)
+            return noisy(r, sheen if (x + y) % 5 == 0 else hair, 0.04)
         if face == "bottom":
-            return noisy(r, hair_d, 0.05)
+            return noisy(r, hair_d, 0.04)
         if face == "front":
             return skin
         if face == "back":
-            return noisy(r, hair if (x + y) % 5 else sheen, 0.05)   # 長い黒髪（背中へ）
-        # 横：耳の前まで髪、耳に金の耳飾り
-        if y <= 2 or (face == "right" and x <= 2) or (face == "left" and x >= 5):
-            return noisy(r, hair, 0.05)
-        if y == 5 and ((face == "right" and x == 4) or (face == "left" and x == 3)):
+            if y == 7:
+                return noisy(r, hair_d, 0.04)                      # 結い上げた髪の生えぎわ
+            return noisy(r, sheen if (x * 3 + y) % 7 == 0 else hair, 0.04)
+        # 横：耳の上まで髪。耳もとに金の小さな耳飾り
+        if y <= 3 or (face == "right" and x <= 1) or (face == "left" and x >= 6):
+            return noisy(r, sheen if (x + y) % 6 == 0 else hair, 0.04)
+        if y == 5 and ((face == "right" and x == 3) or (face == "left" and x == 4)):
             return gold
-        return skin
+        return skin_s if y == 7 else skin
     s.head(head)
 
     def hat(face, x, y, w, h):
-        # 小さな紫の帽子（右に寄せてかぶる）に金の帯と、黒い羽根
+        # 高くまとめた髪（頭のうしろの上に髷）と、金の櫛。前は流した前髪の厚み
         if face == "top":
-            return noisy(r, dress, 0.05) if 1 <= x <= 5 and 1 <= y <= 5 else None
+            if 2 <= x <= 5 and y >= 4:
+                return noisy(r, hair_l if (x + y) % 3 == 0 else sheen, 0.04)   # 髷の上の照り
+            return None
         if face == "bottom":
             return None
-        if face == "front" and y == 0 and 1 <= x <= 5:
-            return dress_l
-        if face == "front" and y == 1 and 1 <= x <= 5:
-            return gold
-        if face == "right" and y <= 1:
-            return dress if y == 0 else gold
-        if face == "left" and y <= 2 and x >= 4:
-            return "#101014" if y < 2 else gold                    # 羽根
-        if face == "back" and y >= 1:
-            return noisy(r, hair, 0.05) if y >= 2 else None        # 背中へ垂れる髪
+        if face == "back":
+            if 2 <= x <= 5 and 1 <= y <= 4:
+                if y == 2 and x in (2, 5):
+                    return gold_l                                  # 櫛の両端
+                if y == 2:
+                    return gold                                    # 金の櫛
+                return noisy(r, sheen if (x + y) % 2 else hair, 0.04)
+            return None
+        if face == "front":
+            if y == 1 and 1 <= x <= 5:
+                return noisy(r, sheen if x % 2 else hair, 0.04)    # 前髪の厚み
+            if y == 2 and 4 <= x <= 6:
+                return noisy(r, hair, 0.04)                        # 右へ流した前髪
+            return None
+        if face in ("right", "left") and y <= 2 and (x >= 4 if face == "right" else x <= 3):
+            return noisy(r, hair, 0.04)                            # 耳の上へ流した髪
         return None
     s.hat(hat)
 
     def body(face, x, y, w, h):
         if face == "front":
-            if y == 0 and 2 <= x <= 5:
-                return skin                                       # 首もと
-            if y == 1 and 3 <= x <= 4:
-                return gold                                       # 金の首飾り
-            if y == 1:
-                return skin
-            if y == 2 and 1 <= x <= 6:
-                return dress_l                                    # 胸の縁
-            if 6 <= y <= 7:
-                return gold if y == 6 else dress_d                # 腰の金の帯
-            return noisy(r, dress if y < 10 else dress_d, 0.04)
+            if y == 0:
+                return lace if 3 <= x <= 4 else (coat_l if x in (1, 6) else coat)      # 襟もと
+            if 1 <= y <= 3 and 3 <= x <= 4:
+                if y == 2 and x == 3:
+                    return gem                                     # 紫の石のブローチ
+                if y == 2 and x == 4:
+                    return gem_l
+                return lace if (x + y) % 2 else lace_d            # 白い襟飾り（ひだ）
+            if 1 <= y <= 3 and x in (2, 5):
+                return plum_l                                      # 胴着の縁
+            if 4 <= y <= 7 and 2 <= x <= 5:
+                if x in (2, 5) and y in (4, 6):
+                    return gold                                    # 二列の金ボタン
+                return noisy(r, plum if x in (3, 4) else plum_d, 0.03)   # 紫の胴着
+            if y == 8:
+                return gold_d if 2 <= x <= 5 else gold             # 腰の金の飾り帯
+            if y >= 9 and 2 <= x <= 5:
+                return noisy(r, skirt_l if x in (3, 4) and y == 9 else skirt, 0.03)  # 上着の合わせから見えるスカート
+            # 黒い上着（左右）。肩と縁に明るい面
+            if x in (1, 6) and y <= 7:
+                return coat_l
+            if y == 11:
+                return gold_d                                      # 上着のすその金の縁
+            return noisy(r, coat, 0.03)
         if face == "back":
-            if y <= 6:
-                return noisy(r, hair if (x + y) % 4 else sheen, 0.05)   # 背中の長い髪
-            return noisy(r, dress, 0.04) if y != 7 else gold
-        if face in ("top", "bottom"):
-            return dress_d
-        return noisy(r, dress, 0.04) if y != 6 else gold
+            if y == 8:
+                return gold
+            if y >= 9:
+                return noisy(r, coat_d if x in (3, 4) else coat, 0.03)   # 上着のすその切れ込み
+            if x in (3, 4) and 2 <= y <= 7:
+                return coat_l                                      # 背中の縫い目
+            return noisy(r, coat, 0.03)
+        if face == "top":
+            return coat_l if x in (0, 7) else coat
+        if face == "bottom":
+            return skirt_d
+        if y == 8:
+            return gold
+        return noisy(r, coat_l if y <= 1 else coat, 0.03)
     s.body(body)
 
     def arm(face, x, y, w, h):
         if face == "top":
-            return dress
+            return gold if y in (0, 3) else coat_l                  # 肩の金の飾り縁
         if face == "bottom":
             return glove
-        if y <= 3:
-            return noisy(r, dress, 0.04)                          # 紫の袖
-        if y == 4:
-            return gold                                           # 袖口の金
-        return glove                                              # 黒い長い手袋
+        if y == 0:
+            return gold
+        if y <= 5:
+            return noisy(r, coat_l if (face == "front" and x == 0) else coat, 0.03)
+        if y == 6:
+            return plum_l                                          # 袖口の紫
+        if y == 7:
+            return gold                                            # 袖口の金
+        return glove_l if (face == "front" and x == 1) else glove  # 黒い長い手袋（照り）
     s.arm("right", arm)
     s.arm("left", arm)
 
     def leg(face, x, y, w, h):
         if face == "top":
-            return dress_d
+            return skirt_d
         if face == "bottom":
             return shoe
-        if y <= 6:
-            return noisy(r, dress_d if (x + y) % 3 else dress, 0.04)   # 長いドレスのすそ
-        if y == 7:
-            return gold
         if y >= 10:
+            if y == 10 and face == "front" and x == 1:
+                return gold                                        # 靴の金の留め金
             return shoe
-        return stock
+        if y == 9:
+            return gold_d                                          # すその金の縁
+        # 長いスカート：たてのひだ（明るい・暗いの縞）
+        if face == "front":
+            return noisy(r, skirt_l if x == 1 else (skirt_d if x == 3 else skirt), 0.03)
+        return noisy(r, skirt_d if x % 2 else skirt, 0.03)
     s.leg("right", leg)
     s.leg("left", leg)
-    pal = {"H": hair, "h": sheen, "S": skin, "s": skin_d, "W": "#FFFFFF", "E": "#3A1E52", "L": "#1A1018", "M": "#B8304A",
-           "m": "#8E2038", "T": "#FFFFFF", "P": "#E8A0B0", "D": "#4A3040"}
+    pal = {"H": hair, "h": sheen, "S": skin, "s": skin_s, "B": "#5A3A50", "L": "#1A1020", "E": "#6B3FA0",
+           "M": "#A8283C", "m": "#7A1A2C", "D": "#4A3040"}
     faces = {
-        # 切れ長の目と長いまつげ、紫の瞳、赤い口紅、左の目もとのほくろ
-        "": ["H H h H H H H H", "H H H H H H S H", "S L L S S L L S", "S W E S S E W S",
-             "S S S S S S D S", "S P S s s S P S", "S S S M M S S S", "S S S S S S S S"],
-        "laugh": ["H H h H H H H H", "H H H H H H S H", "S S S S S S S S", "S L L S S L L S",
-                  "S S S S S S D S", "S P S s s S P S", "S S M T T M S S", "S S S m m S S S"],
+        # 細い眉、切れ長の目（濃いまつげと紫の瞳）、鼻すじの影、閉じた赤い唇、左の目もとのほくろ
+        "": ["H H h H H H H H", "H h H H H h H H", "H S S S S S S H", "S B B S S B B S",
+             "S L E S S E L S", "S s S S s S D S", "S S S M M S S S", "S S S S S S S S"],
+        # 目を細めた笑い（口もとだけ品よくほころぶ）
+        "laugh": ["H H h H H H H H", "H h H H H h H H", "H S S S S S S H", "S B B S S B B S",
+                  "S L L S S L L S", "S s S S s S D S", "S S m M M m S S", "S S S S S S S S"],
     }
     return s, pal, faces
 

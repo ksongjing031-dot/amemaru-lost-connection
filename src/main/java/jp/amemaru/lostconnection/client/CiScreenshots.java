@@ -673,6 +673,16 @@ public final class CiScreenshots {
             {"p6_shop_buy", null, "20"},
             {"snap", null, "10", "phase6_shop_bought"},
             {"screen", null, "10", "hold"},
+            // 11月23日の直し：布と仕立ての机（ほかの店と同じ、1段低い天板と呼び鈴）と、見た目の服の店の画面・薬屋の画面
+            {"cmd", null, "40", "tp @p {at:7.5,2,50.5} -90 14"},
+            {"snap", null, "40", "fix_cloth_counter"},
+            {"p6_shop_at", null, "20", "cloth", "9", "3", "50"},
+            {"snap", null, "20", "fix_cloth_shop"},
+            {"screen", null, "10", "hold"},
+            {"cmd", null, "40", "tp @p {at:-7.5,2,50.5} 90 14"},
+            {"p6_shop_at", null, "20", "apothecary", "-9", "3", "50"},
+            {"snap", null, "20", "fix_apothecary_shop"},
+            {"screen", null, "10", "hold"},
             // フリーマーケット：2日目に開く。市場の手帳を持ち、見本の出品と露店を置いて、取引所を開く
             {"cmd", null, "20", "amemaru admin day set 2"},
             {"cmd", null, "5", "give @p amemaru:market_notebook"},

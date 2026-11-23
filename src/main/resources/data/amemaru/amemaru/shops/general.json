@@ -11,32 +11,20 @@
       "price": 120
     },
     {
+      "item": "amemaru:return_feather",
+      "price": 150
+    },
+    {
+      "item": "amemaru:repair_kit",
+      "price": 200
+    },
+    {
       "item": "minecraft:bread",
       "price": 12
     },
     {
       "item": "minecraft:apple",
       "price": 8
-    },
-    {
-      "item": "minecraft:torch",
-      "price": 4
-    },
-    {
-      "item": "minecraft:lead",
-      "price": 30
-    },
-    {
-      "item": "minecraft:glass_bottle",
-      "price": 6
-    },
-    {
-      "item": "minecraft:string",
-      "price": 6
-    },
-    {
-      "item": "minecraft:paper",
-      "price": 6
     }
   ],
   "buys": [

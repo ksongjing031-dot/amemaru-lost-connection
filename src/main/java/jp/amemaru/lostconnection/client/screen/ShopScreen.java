@@ -283,19 +283,25 @@ public class ShopScreen extends Screen {
         ItemStack hovered = ItemStack.EMPTY;
         for (int i = page * PER_PAGE; i < Math.min(list.size(), (page + 1) * PER_PAGE); i++) {
             ShopDef.Entry entry = list.get(i);
-            ItemStack stack = new ItemStack(item(entry));
+            ItemStack stack = entry.stack(item(entry), 1);
             boolean chosen = i == selected;
             boolean hover = mouseX >= left + 14 && mouseX < left + PANEL_WIDTH - 14 && mouseY >= y && mouseY < y + ROW - 2;
             UiStyle.card(graphics, left + 14, y, left + PANEL_WIDTH - 14, y + ROW - 2, chosen ? 0xFFFFD36A : 0xFF8FD3FF, chosen || hover);
             graphics.renderItem(stack, left + 17, y + 1);
-            graphics.drawString(font, UiStyle.clip(font, stack.getHoverName().getString(), 132), left + 38, y + 5,
+            // 1行目は名前、2行目は使い道（11月23日の直し：「どこで使うかわからない」品をなくす）
+            Component use = jp.amemaru.lostconnection.client.ItemUseTooltips.use(stack);
+            int nameY = use == null ? y + 5 : y + 1;
+            graphics.drawString(font, UiStyle.clip(font, stack.getHoverName().getString(), 132), left + 38, nameY,
                     chosen ? UiStyle.TEXT_GOLD : UiStyle.TEXT, true);
+            if (use != null) {
+                graphics.drawString(font, UiStyle.clip(font, use.getString(), 222), left + 38, y + 10, 0xFF9FD8C8, false);
+            }
             if (selling && inventory != null) {
                 String have = Component.translatable("screen.amemaru.shop.have", owned(inventory, stack.getItem())).getString();
-                graphics.drawString(font, have, left + 176, y + 5, UiStyle.TEXT_DIM, true);
+                graphics.drawString(font, have, left + 176, nameY, UiStyle.TEXT_DIM, true);
             }
             String price = Component.translatable("screen.amemaru.shop.price", knots(entry.price())).getString();
-            graphics.drawString(font, price, left + PANEL_WIDTH - 20 - font.width(price), y + 5,
+            graphics.drawString(font, price, left + PANEL_WIDTH - 20 - font.width(price), nameY,
                     !selling && entry.price() > balance ? UiStyle.TEXT_BAD : UiStyle.TEXT_GOLD, true);
             if (mouseX >= left + 16 && mouseX < left + 34 && mouseY >= y && mouseY < y + 18) {
                 hovered = stack;

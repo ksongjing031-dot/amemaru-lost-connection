@@ -115,6 +115,21 @@ public final class ItemManifest {
             int size = Math.max(1, Math.min(64, stack));
             manifest.add(register, Category.CONSUMABLE, id, () -> new ConsumableItem(new Item.Properties().stacksTo(size)));
         }
+        // 11月23日の直し（店の品を実用的なものに）：店で売る道具。kind で品の働きを決める
+        for (JsonObject entry : objects(json, "tools")) {
+            String id = string(entry, "id");
+            String kind = string(entry, "kind");
+            int stack = entry.has("stack") ? entry.get("stack").getAsInt() : 16;
+            int size = Math.max(1, Math.min(64, stack));
+            java.util.function.Supplier<Item> factory = switch (kind) {
+                case "return" -> () -> new ReturnFeatherItem(new Item.Properties().stacksTo(size));
+                case "repair" -> () -> new RepairKitItem(new Item.Properties().stacksTo(size));
+                case "lantern" -> () -> new HandLanternItem(new Item.Properties().stacksTo(size));
+                case "vial" -> () -> new LanternVialItem(new Item.Properties().stacksTo(size));
+                default -> throw new IllegalStateException(PATH + "：道具 " + id + " の kind が分かりません（" + kind + "）");
+            };
+            manifest.add(register, Category.CONSUMABLE, id, factory);
+        }
         // Phase 7 その2：魚（★の数は rarity。数値はデータパックの fish/）
         for (JsonObject entry : objects(json, "fish")) {
             String id = string(entry, "id");

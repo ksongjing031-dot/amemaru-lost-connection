@@ -238,6 +238,40 @@
     {
       "id": "mana_water_small",
       "stack": 16
+    },
+    {
+      "id": "healing_potion_medium",
+      "stack": 16
+    },
+    {
+      "id": "mana_water_medium",
+      "stack": 16
+    },
+    {
+      "id": "herb_tea",
+      "stack": 16
+    }
+  ],
+  "tools": [
+    {
+      "id": "return_feather",
+      "kind": "return",
+      "stack": 16
+    },
+    {
+      "id": "repair_kit",
+      "kind": "repair",
+      "stack": 16
+    },
+    {
+      "id": "hand_lantern",
+      "kind": "lantern",
+      "stack": 1
+    },
+    {
+      "id": "lantern_vial",
+      "kind": "vial",
+      "stack": 16
     }
   ],
   "fish": [

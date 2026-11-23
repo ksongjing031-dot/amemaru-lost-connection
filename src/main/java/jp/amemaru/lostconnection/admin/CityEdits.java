@@ -703,6 +703,10 @@ final class CityEdits {
         if (want.isAir() && b instanceof BaseFireBlock || now.isAir() && a instanceof BaseFireBlock) {
             return true;
         }
+        // 手提げランタンと灯りの小瓶の、見えない灯り（11月23日。持ち歩くと置いては消える。消し忘れても直しにしない）
+        if (want.isAir() && b == Blocks.LIGHT) {
+            return true;
+        }
         // 伸びる草木（サトウキビ・竹・つる・昆布）
         if (want.isAir() && (b == Blocks.SUGAR_CANE || b == Blocks.BAMBOO || b == Blocks.BAMBOO_SAPLING || b == Blocks.VINE)) {
             return true;

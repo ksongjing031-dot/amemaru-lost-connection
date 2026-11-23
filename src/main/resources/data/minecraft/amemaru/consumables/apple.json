@@ -1,0 +1,9 @@
+{
+  "_comment": "11月23日の直し：このModでは満腹度がいつも満ちていて食べ物が食べられなかったので、右クリックですぐに少しHPかMPが戻るようにした（食べ物の仲間 group food。20秒に1回）【補完】",
+  "restore": "hp",
+  "percent": 6,
+  "flat": 0,
+  "cooldown": 20,
+  "group": "food",
+  "kind": "eat"
+}

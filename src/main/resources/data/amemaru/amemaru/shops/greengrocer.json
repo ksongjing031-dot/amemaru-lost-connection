@@ -2,11 +2,11 @@
   "name": "八百屋",
   "sells": [
     {
-      "item": "minecraft:carrot",
+      "item": "minecraft:potato",
       "price": 5
     },
     {
-      "item": "minecraft:potato",
+      "item": "minecraft:carrot",
       "price": 5
     },
     {
@@ -18,25 +18,21 @@
       "price": 8
     },
     {
-      "item": "minecraft:melon_slice",
-      "price": 3
-    },
-    {
       "item": "minecraft:sweet_berries",
       "price": 4
     },
     {
-      "item": "minecraft:pumpkin",
-      "price": 12
+      "item": "minecraft:melon_slice",
+      "price": 3
     }
   ],
   "buys": [
     {
-      "item": "minecraft:carrot",
+      "item": "minecraft:potato",
       "ratio": 0.5
     },
     {
-      "item": "minecraft:potato",
+      "item": "minecraft:carrot",
       "ratio": 0.5
     },
     {
@@ -48,15 +44,11 @@
       "ratio": 0.5
     },
     {
-      "item": "minecraft:melon_slice",
-      "ratio": 0.5
-    },
-    {
       "item": "minecraft:sweet_berries",
       "ratio": 0.5
     },
     {
-      "item": "minecraft:pumpkin",
+      "item": "minecraft:melon_slice",
       "ratio": 0.5
     }
   ]

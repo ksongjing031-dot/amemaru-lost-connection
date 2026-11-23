@@ -23,8 +23,29 @@ import java.util.List;
  * <p>買い取りの値段は {@code price}（ノット）か、{@code ratio}（相場の基準価格 {@link MarketPrices} に対する割合）で書く。</p>
  */
 public record ShopDef(ResourceLocation id, String name, String keeper, List<Entry> sells, List<Entry> buys) {
-    /** 1つの品：値段（ノット）か、基準価格に対する割合 */
-    public record Entry(ResourceLocation item, long price, double ratio) {
+    /**
+     * 1つの品：値段（ノット）か、基準価格に対する割合。{@code look} は見た目の服（11月23日の直し。布と仕立て・革と鞄）の名前
+     * （空なら、ふつうの品）。{@code color} は革の服の色（0 は色なし）。
+     */
+    public record Entry(ResourceLocation item, long price, double ratio, String look, int color) {
+        public Entry(ResourceLocation item, long price, double ratio) {
+            this(item, price, ratio, "", 0);
+        }
+
+        /** 見た目の服か。 */
+        public boolean isLook() {
+            return !look.isEmpty();
+        }
+
+        /** 渡す品（見た目の服は、色と名前を付け、守りと強さを外す）。 */
+        public net.minecraft.world.item.ItemStack stack(net.minecraft.world.item.Item item, int count) {
+            net.minecraft.world.item.ItemStack stack = new net.minecraft.world.item.ItemStack(item, count);
+            if (isLook()) {
+                jp.amemaru.lostconnection.item.Looks.dress(stack, "shop.amemaru.look." + look, color);
+            }
+            return stack;
+        }
+
         /** 値段（割合なら基準価格から。1以上）。 */
         public long resolvedPrice() {
             if (price > 0) {
@@ -37,10 +58,12 @@ public record ShopDef(ResourceLocation id, String name, String keeper, List<Entr
         void write(FriendlyByteBuf buf) {
             buf.writeResourceLocation(item);
             buf.writeVarLong(Math.max(0L, resolvedPrice()));
+            buf.writeUtf(look);
+            buf.writeInt(color);
         }
 
         static Entry read(FriendlyByteBuf buf) {
-            return new Entry(buf.readResourceLocation(), buf.readVarLong(), 0.0);
+            return new Entry(buf.readResourceLocation(), buf.readVarLong(), 0.0, buf.readUtf(), buf.readInt());
         }
     }
 
@@ -64,7 +87,17 @@ public record ShopDef(ResourceLocation id, String name, String keeper, List<Entr
             if (price <= 0 && ratio <= 0) {
                 throw new DefinitionException(key + " の " + item + "：price（1以上）か ratio を書いてください");
             }
-            list.add(new Entry(item, price, ratio));
+            String look = Json.optionalString(entry, "look", "");
+            int color = 0;
+            if (entry.has("color")) {
+                String text = Json.string(entry, "color");
+                try {
+                    color = Integer.parseInt(text.startsWith("#") ? text.substring(1) : text, 16);
+                } catch (NumberFormatException e) {
+                    throw new DefinitionException(key + " の " + item + "：color は #RRGGBB で書いてください（「" + text + "」）");
+                }
+            }
+            list.add(new Entry(item, price, ratio, look, color));
         }
         return list;
     }

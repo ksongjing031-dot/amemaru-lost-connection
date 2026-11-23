@@ -6,20 +6,12 @@
       "price": 30
     },
     {
-      "item": "minecraft:writable_book",
-      "price": 40
-    },
-    {
-      "item": "minecraft:map",
-      "price": 40
-    },
-    {
       "item": "minecraft:paper",
       "price": 6
     },
     {
-      "item": "minecraft:feather",
-      "price": 4
+      "item": "minecraft:map",
+      "price": 40
     }
   ],
   "buys": [
@@ -28,19 +20,11 @@
       "ratio": 0.5
     },
     {
-      "item": "minecraft:writable_book",
-      "ratio": 0.5
-    },
-    {
-      "item": "minecraft:map",
-      "ratio": 0.5
-    },
-    {
       "item": "minecraft:paper",
       "ratio": 0.5
     },
     {
-      "item": "minecraft:feather",
+      "item": "minecraft:map",
       "ratio": 0.5
     }
   ]

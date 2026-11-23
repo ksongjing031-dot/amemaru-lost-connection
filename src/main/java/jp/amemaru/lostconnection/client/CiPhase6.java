@@ -30,7 +30,7 @@ final class CiPhase6 {
     /** その種類の行なら true（first のときだけ動かす）。 */
     static boolean action(Minecraft minecraft, String[] shot, boolean first) {
         String kind = shot[0];
-        if (!List.of("p6_shop", "p6_shop_buy", "p6_market_seed", "p6_market", "p6_market_tab", "p6_use", "p6_shoot", "p6_tree",
+        if (!List.of("p6_shop", "p6_shop_at", "p6_shop_buy", "p6_market_seed", "p6_market", "p6_market_tab", "p6_use", "p6_shoot", "p6_tree",
                 "p6_jobs", "p6_front").contains(kind)) {
             return false;
         }
@@ -40,6 +40,10 @@ final class CiPhase6 {
         switch (kind) {
             case "p6_shop" -> CiPhase3.onServer(minecraft, player -> MarketService.origin(player.server).ifPresent(origin ->
                     ShopService.open(player, origin.offset(GENERAL_BELL), AmemaruMod.id("general"))));
+            // 11月23日の直し：ほかの店の画面（店の名前と、街の真ん中から見た呼び鈴の場所）
+            case "p6_shop_at" -> CiPhase3.onServer(minecraft, player -> MarketService.origin(player.server).ifPresent(origin ->
+                    ShopService.open(player, origin.offset(Integer.parseInt(shot[4]), Integer.parseInt(shot[5]), Integer.parseInt(shot[6])),
+                            AmemaruMod.id(shot[3]))));
             case "p6_shop_buy" -> CiPhase3.onServer(minecraft, player -> MarketService.origin(player.server).ifPresent(origin ->
                     ShopService.buy(player, origin.offset(GENERAL_BELL), AmemaruMod.id("general"), 0, 2)));
             case "p6_market_seed" -> CiPhase3.onServer(minecraft, CiPhase6::seed);
