@@ -127,10 +127,10 @@ public final class JobSkillGameTests {
         expectStat(helper, data, StatType.ATTACK, 28);
         expectStat(helper, data, StatType.MAGIC, 22);
         expectStat(helper, data, StatType.DEFENSE, 18);
-        // 片手剣と盾：攻撃+6、防御+4（防御は職業の+30%の前に足す）
+        // 片手剣と盾：攻撃+6、防御+3（11月24日のバランスの調節で4→3。防御は職業の+30%の前に足す）
         equip(player, data, new ItemStack(ModItems.APPRENTICE_SWORD.get()), new ItemStack(ModItems.APPRENTICE_SHIELD.get()));
         expectStat(helper, data, StatType.ATTACK, 34);
-        expectStat(helper, data, StatType.DEFENSE, 23);
+        expectStat(helper, data, StatType.DEFENSE, 22);
         // 両手剣：攻撃+10。もう片方の手の盾は効かない
         equip(player, data, new ItemStack(ModItems.APPRENTICE_GREATSWORD.get()), new ItemStack(ModItems.APPRENTICE_SHIELD.get()));
         expectStat(helper, data, StatType.ATTACK, 38);
