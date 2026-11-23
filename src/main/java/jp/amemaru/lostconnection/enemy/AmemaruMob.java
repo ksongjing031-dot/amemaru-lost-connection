@@ -49,7 +49,9 @@ import java.util.UUID;
  *   <li>数値は敵の定義（データパックの {@code enemies/}）から読む。HPと攻撃には config の倍率がかかる</li>
  *   <li>独自のHPを持つ。バニラの体力は「独自のHPの割合」を写したもの（0になるとバニラのとおりに倒れる）</li>
  *   <li>ヘイトの表を持つ：与えたダメージの分だけ敵視が増え、一番高い人を狙う。ナイトの「呼び声」は表の一番上に置く</li>
- *   <li>生まれた場所から離れすぎると、追うのをやめて戻り、HPが満タンになる（戻る間は攻撃が当たらない）</li>
+ *   <li>戦い始めた所から離れすぎて、しばらく戦っていない（打たれも打ちもしない）と、追うのをやめて戻る。着くとHPが満タンに
+ *       なる。戻る間も攻撃は当たり、打たれると戻るのをやめて戦い直す（HPはそのまま）。ノックバックで離れただけでは戻らない
+ *       （11月22日のご指示。前は生まれた場所から28ブロックで、戻る間は攻撃が当たらなかった）</li>
  *   <li>攻撃の前には必ず予兆を出す（{@link #setTelegraph}。クライアントが地面の線や円・光で見せる）</li>
  *   <li>倒されると、攻撃を当てた人それぞれにドロップと経験値を配る（{@link DropService}）</li>
  * </ul>
@@ -69,6 +71,8 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
     public static final int TELEGRAPH_CIRCLE = 3;
     /** 頭の上に「！」（仲間を呼ぶ）。 */
     public static final int TELEGRAPH_ALERT = 4;
+    /** 地面に、向きを持つ扇形（薙ぎ払い・後ろ蹴り。開きの角度は {@link #telegraphArg}）。11月22日 */
+    public static final int TELEGRAPH_CONE = 5;
 
     private static final EntityDataAccessor<Float> DATA_HP = SynchedEntityData.defineId(AmemaruMob.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> DATA_MAX_HP = SynchedEntityData.defineId(AmemaruMob.class, EntityDataSerializers.FLOAT);
@@ -76,12 +80,26 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
     private static final EntityDataAccessor<Integer> DATA_TELEGRAPH_TICKS = SynchedEntityData.defineId(AmemaruMob.class, EntityDataSerializers.INT);
     private static final EntityDataAccessor<Float> DATA_TELEGRAPH_YAW = SynchedEntityData.defineId(AmemaruMob.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Float> DATA_TELEGRAPH_SIZE = SynchedEntityData.defineId(AmemaruMob.class, EntityDataSerializers.FLOAT);
+    /** 予兆の形のほかの数（扇形の開きの角度・帯の幅。0 は決まった形） */
+    private static final EntityDataAccessor<Float> DATA_TELEGRAPH_ARG = SynchedEntityData.defineId(AmemaruMob.class, EntityDataSerializers.FLOAT);
     private static final EntityDataAccessor<Boolean> DATA_RETURNING = SynchedEntityData.defineId(AmemaruMob.class, EntityDataSerializers.BOOLEAN);
+    /** 同じ見た目の別の定義（強い個体）のID（クライアントの名前の表示に使う。11月22日） */
+    private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(AmemaruMob.class, EntityDataSerializers.STRING);
+    /** 見た目と当たりの大きさ（定義の behavior の scale。11月22日） */
+    private static final EntityDataAccessor<Float> DATA_SCALE = SynchedEntityData.defineId(AmemaruMob.class, EntityDataSerializers.FLOAT);
 
     /** 倒れてから消えるまで（死ぬアニメーションの長さ）。 */
     private static final int DEATH_TICKS = 30;
     /** 敵視の表から外すまで、攻撃されていない時間。 */
     private static final int FORGET_TICKS = 20 * 20;
+    /** 離れすぎても、この間戦っていなければ戻らない（戦っている間は、押し出されても戻らない）。 */
+    private static final int LEASH_QUIET_TICKS = 20 * 5;
+    /** 離れすぎがその2倍を超えたときは、これだけ戦っていなければ戻る。 */
+    private static final int LEASH_FAR_QUIET_TICKS = 20 * 2;
+    /** 相手を見失って（追う相手がいない）から、戻り始めるまで。 */
+    private static final int LOST_QUIET_TICKS = 20 * 3;
+    /** 戻る道がふさがっていても、これだけたったら、その場で戻り終える。 */
+    private static final int RETURN_GIVE_UP_TICKS = 20 * 20;
 
     private final AnimatableInstanceCache geoCache = GeckoLibUtil.createInstanceCache(this);
     private RawAnimation animIdle;
@@ -94,12 +112,26 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
     private int appliedGeneration = -1;
     @Nullable
     private BlockPos home;
+    /** 戦い始めた所（追い始めた所。戻るときはここへ。巡回の敵は、生まれた場所ではなく、巡回の途中のここへ戻る）。 */
+    @Nullable
+    private Vec3 combatAnchor;
+    /** 最後に戦った時（打たれた・打った。ゲームの時間）。 */
+    private long lastCombatTime = Long.MIN_VALUE / 4;
+    private int returnTicks;
     private final Map<UUID, Double> threat = new LinkedHashMap<>();
     private final Map<UUID, Double> contributions = new HashMap<>();
     private long lastHurtTick = Long.MIN_VALUE / 4;
     private int busyTicks;
     private int telegraphLeft;
     private final Map<String, Long> cooldowns = new HashMap<>();
+    /** 塔の階の湧く所やボスの部屋が出した敵（保存しない。人が離れて区画が閉じたら消え、また人が来たら出し直す。Phase 5）。 */
+    private boolean transientMob;
+    /** 石柱の守り手なら、その階と名前（11月22日）。 */
+    private int guardianFloor;
+    @Nullable
+    private String guardianId;
+    /** HPの倍率（ボスの人数補正。Phase 5）。 */
+    private double hpMultiplier = 1.0;
 
     // ---- クライアントだけ
     private long telegraphStartClient;
@@ -132,7 +164,10 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
         entityData.define(DATA_TELEGRAPH_TICKS, 0);
         entityData.define(DATA_TELEGRAPH_YAW, 0.0F);
         entityData.define(DATA_TELEGRAPH_SIZE, 0.0F);
+        entityData.define(DATA_TELEGRAPH_ARG, 0.0F);
         entityData.define(DATA_RETURNING, false);
+        entityData.define(DATA_VARIANT, "");
+        entityData.define(DATA_SCALE, 1.0F);
     }
 
     // ---------------------------------------------------------------- 定義と数値
@@ -197,11 +232,124 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
             return;
         }
         double ratio = getEnemyMaxHp() > 0 ? getEnemyHp() / getEnemyMaxHp() : 1.0;
-        double max = def.hp() * ServerConfig.ENEMY_HP_MULTIPLIER.get();
+        double max = def.hp() * ServerConfig.ENEMY_HP_MULTIPLIER.get() * hpMultiplier;
         entityData.set(DATA_MAX_HP, (float) max);
         entityData.set(DATA_HP, (float) Math.max(1.0, max * Math.max(0.0, Math.min(1.0, ratio))));
         getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(def.moveSpeed());
         getAttribute(Attributes.FOLLOW_RANGE).setBaseValue(def.followRange());
+        entityData.set(DATA_VARIANT, variant == null ? "" : variant.toString());
+        entityData.set(DATA_SCALE, (float) Math.max(0.3, Math.min(4.0, def.behavior().getOrDefault("scale", 1.0))));
+    }
+
+    /** 同じ見た目の別の定義のID（なければ null。クライアントでも読める）。 */
+    @Nullable
+    public ResourceLocation variantId() {
+        String value = entityData.get(DATA_VARIANT);
+        return value.isEmpty() ? null : ResourceLocation.tryParse(value);
+    }
+
+    /** 見た目と当たりの大きさ（1 がふつう）。 */
+    public float modelScale() {
+        return entityData.get(DATA_SCALE);
+    }
+
+    @Override
+    public net.minecraft.world.entity.EntityDimensions getDimensions(net.minecraft.world.entity.Pose pose) {
+        return super.getDimensions(pose).scale(modelScale());
+    }
+
+    /** 石柱の守り手にする（11月22日）。 */
+    public void setGuardian(int floor, String id) {
+        guardianFloor = floor;
+        guardianId = id;
+    }
+
+    public int guardianFloor() {
+        return guardianFloor;
+    }
+
+    @Nullable
+    public String guardianId() {
+        return guardianId;
+    }
+
+    @Override
+    public void die(DamageSource source) {
+        super.die(source);
+        if (!level().isClientSide() && guardianId != null) {
+            jp.amemaru.lostconnection.tower.TowerService.onGuardianDied(this);
+        }
+    }
+
+    /** HPの倍率（ボスの人数補正）を変える。HPの割合は保つ。 */
+    public void setHpMultiplier(double multiplier) {
+        hpMultiplier = Math.max(0.1, multiplier);
+        appliedGeneration = -1;
+        if (level() instanceof ServerLevel) {
+            applyDefinition();
+        }
+    }
+
+    public double hpMultiplier() {
+        return hpMultiplier;
+    }
+
+    /** 保存しない敵にする（塔の階の湧く所・ボスの部屋が出した敵）。 */
+    public void setTransient(boolean value) {
+        transientMob = value;
+    }
+
+    public boolean isTransient() {
+        return transientMob;
+    }
+
+    /*
+     * 保存しない敵は、区画が閉じたら消す（11月22日：ボス戦で倒れるとボスが増えた不具合）。
+     *
+     * 前は shouldBeSaved() を false にしていた。区画を閉じるとき、バニラは shouldBeSaved() の敵だけを書き出して消すので、
+     * そうでない敵は書き出されないうえに消えもせず、見えないまま記憶に残り、区画がまた開くと戻ってきた。部屋や湧く所からは
+     * 見えない間に「いなくなった」と数えて新しく出すので、人が離れて戻るたびにボスや雑魚が1組ずつ増えた。
+     * 今は書き出し（save）だけを断る。区画を閉じるときは、ほかの敵と同じく消える（区画には何も書かれない）。
+     */
+    @Override
+    public boolean save(net.minecraft.nbt.CompoundTag tag) {
+        return !transientMob && super.save(tag);
+    }
+
+    @Override
+    public boolean saveAsPassenger(net.minecraft.nbt.CompoundTag tag) {
+        return !transientMob && super.saveAsPassenger(tag);
+    }
+
+    /** 戦いをはじめからにする（敵視・貢献・予兆・技の途中を消し、HPを満タンにする）。ボスの部屋で全員が倒れたときに使う。 */
+    public void resetCombat() {
+        threat.clear();
+        contributions.clear();
+        cooldowns.clear();
+        clearTelegraph();
+        clearBusy();
+        setTarget(null);
+        setReturning(false);
+        getNavigation().stop();
+        setEnemyHp(getEnemyMaxHp());
+    }
+
+    /** 敵視のいちばん高い人（いなければ null）。 */
+    @Nullable
+    public ServerPlayer topThreat() {
+        if (!(level() instanceof ServerLevel level)) {
+            return null;
+        }
+        ServerPlayer best = null;
+        double value = -1.0;
+        for (Map.Entry<UUID, Double> entry : threat.entrySet()) {
+            ServerPlayer player = level.getServer().getPlayerList().getPlayer(entry.getKey());
+            if (player != null && player.isAlive() && player.level() == level && entry.getValue() > value) {
+                best = player;
+                value = entry.getValue();
+            }
+        }
+        return best;
     }
 
     /** 独自のダメージを受ける。 */
@@ -225,10 +373,20 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
 
     // ---------------------------------------------------------------- 敵視（ヘイトの表）
 
-    /** ダメージを受けたとき（プレイヤーなら、敵視と貢献を足す）。 */
+    /** ダメージを受けたとき（プレイヤーなら、敵視と貢献を足す。戻っている途中なら、戻るのをやめて戦い直す）。 */
     public void onDamagedBy(@Nullable Entity attacker, double amount) {
         lastHurtTick = level().getGameTime();
         if (attacker instanceof ServerPlayer player && !player.isCreative() && !player.isSpectator()) {
+            noteCombat();
+            if (isReturning()) {
+                // HPは満タンにせず、その場から戦い直す。戻る先はそのまま（次に離れすぎたときも、同じ所から数える）
+                setReturning(false);
+                returnTicks = 0;
+                getNavigation().stop();
+            }
+            if (combatAnchor == null) {
+                combatAnchor = position();
+            }
             threat.merge(player.getUUID(), Math.max(1.0, amount), Double::sum);
             contributions.merge(player.getUUID(), Math.max(0.0, amount), Double::sum);
             if (getTarget() == null) {
@@ -409,6 +567,16 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
      * @param size 線の長さ・円の半径
      */
     public void setTelegraph(int kind, int ticks, float yaw, float size) {
+        setTelegraph(kind, ticks, yaw, size, 0.0F);
+    }
+
+    /**
+     * 予兆を出す（形のほかの数つき）。
+     *
+     * @param arg 扇形の開きの角度（度）・帯の幅（ブロック）。0 なら決まった形
+     */
+    public void setTelegraph(int kind, int ticks, float yaw, float size, float arg) {
+        entityData.set(DATA_TELEGRAPH_ARG, arg);
         entityData.set(DATA_TELEGRAPH_YAW, yaw);
         entityData.set(DATA_TELEGRAPH_SIZE, size);
         entityData.set(DATA_TELEGRAPH_TICKS, ticks);
@@ -437,6 +605,10 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
         return entityData.get(DATA_TELEGRAPH_SIZE);
     }
 
+    public float telegraphArg() {
+        return entityData.get(DATA_TELEGRAPH_ARG);
+    }
+
     /** クライアント：予兆が始まってからの時間（tick）。 */
     public float telegraphAge(float partialTick) {
         return (float) (level().getGameTime() - telegraphStartClient) + partialTick;
@@ -447,6 +619,9 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
         super.onSyncedDataUpdated(key);
         if (DATA_TELEGRAPH.equals(key) && level().isClientSide()) {
             telegraphStartClient = level().getGameTime();
+        }
+        if (DATA_SCALE.equals(key)) {
+            refreshDimensions();
         }
     }
 
@@ -476,31 +651,84 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
         }
     }
 
-    /** 生まれた場所から離れすぎたら、追うのをやめて戻る。 */
+    /**
+     * 追うのをやめて戻るか（11月22日に作り直し）：戦い始めた所から離れすぎて、しばらく戦っていない（打たれも打ちもしない）とき、
+     * または追う相手を見失ったとき。戦っている間は、ノックバックで押し出されても戻らない。
+     */
     private void checkLeash() {
-        if (isReturning()) {
+        if (isReturning() || combatAnchor == null || !usesLeash()) {
             return;
         }
-        double leash = ServerConfig.ENEMY_LEASH_RANGE.get();
-        if (home().distToCenterSqr(position()) > leash * leash) {
-            setReturning(true);
-            threat.clear();
-            setTarget(null);
-            clearTelegraph();
-            clearBusy();
+        long quiet = level().getGameTime() - lastCombatTime;
+        switch (leashDecision(combatAnchor.distanceToSqr(position()), leashRange(), quiet, getTarget() != null)) {
+            case LEASH_RETURN -> startReturn();
+            // 戦い始めた所のそばで見失った：歩いて戻らずに、その場で戻り終える
+            case LEASH_FINISH_HERE -> finishReturn();
+            default -> {
+            }
         }
     }
 
-    private void tickReturn() {
-        BlockPos pos = home();
-        getNavigation().moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, 1.4);
-        setEnemyHp(getEnemyHp() + getEnemyMaxHp() * 0.05);
-        if (pos.distToCenterSqr(position()) < 4.0 || tickCount % 200 == 0 && pos.distToCenterSqr(position()) < 16.0) {
-            setReturning(false);
-            setEnemyHp(getEnemyMaxHp());
-            contributions.clear();
-            getNavigation().stop();
+    public static final int LEASH_STAY = 0;
+    public static final int LEASH_RETURN = 1;
+    public static final int LEASH_FINISH_HERE = 2;
+
+    /**
+     * 戻るかの決まり。{@code farSqr} は戦い始めた所からの距離の2乗、{@code quiet} は最後に戦って（打たれて・打って）からの tick。
+     * 離れすぎ（{@code leash} より遠く）で5秒、ひどく離れすぎ（2倍より遠く）で2秒、相手を見失って3秒、戦っていなければ戻る。
+     */
+    public static int leashDecision(double farSqr, double leash, long quiet, boolean hasTarget) {
+        boolean tooFar = farSqr > leash * leash && quiet > LEASH_QUIET_TICKS;
+        boolean wayTooFar = farSqr > 4.0 * leash * leash && quiet > LEASH_FAR_QUIET_TICKS;
+        boolean lost = !hasTarget && quiet > LOST_QUIET_TICKS;
+        if (!tooFar && !wayTooFar && !lost) {
+            return LEASH_STAY;
         }
+        return !tooFar && !wayTooFar && farSqr < 9.0 ? LEASH_FINISH_HERE : LEASH_RETURN;
+    }
+
+    /** 追うのをやめて、戦い始めた所へ戻り始める（戻る間も攻撃は当たる）。 */
+    public void startReturn() {
+        setReturning(true);
+        returnTicks = 0;
+        threat.clear();
+        setTarget(null);
+        clearTelegraph();
+        clearBusy();
+    }
+
+    /** 追うのをやめて戻る距離（戦い始めた所から。config の {@code enemyLeashRange}）。 */
+    protected double leashRange() {
+        return ServerConfig.ENEMY_LEASH_RANGE.get();
+    }
+
+    /** 戻る仕組みを使うか（ボスは使わない。部屋が戦いを終わらせる）。 */
+    protected boolean usesLeash() {
+        return true;
+    }
+
+    /** 戦った（打たれた・打った）。押し出されても、戦っている間は戻らない。 */
+    public void noteCombat() {
+        lastCombatTime = level().getGameTime();
+    }
+
+    private void tickReturn() {
+        Vec3 to = combatAnchor != null ? combatAnchor : Vec3.atBottomCenterOf(home());
+        getNavigation().moveTo(to.x, to.y, to.z, 1.4);
+        if (to.distanceToSqr(position()) < 4.0 || ++returnTicks > RETURN_GIVE_UP_TICKS) {
+            finishReturn();
+        }
+    }
+
+    /** 戻り終えた：HPを満タンにして、戦いの記録を消す（打たれずに戻れたときだけ）。 */
+    private void finishReturn() {
+        setReturning(false);
+        setEnemyHp(getEnemyMaxHp());
+        contributions.clear();
+        threat.clear();
+        combatAnchor = null;
+        returnTicks = 0;
+        getNavigation().stop();
     }
 
     @Override
@@ -508,16 +736,10 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
         if (isReturning() && target != null) {
             return;
         }
-        super.setTarget(target);
-    }
-
-    @Override
-    public boolean isInvulnerableTo(DamageSource source) {
-        // 戻っている途中は、プレイヤーの攻撃が当たらない（/kill は効く）
-        if (isReturning() && source.getEntity() instanceof Player) {
-            return true;
+        if (target != null && combatAnchor == null && !level().isClientSide()) {
+            combatAnchor = position();
         }
-        return super.isInvulnerableTo(source);
+        super.setTarget(target);
     }
 
     // ---------------------------------------------------------------- 倒れたとき

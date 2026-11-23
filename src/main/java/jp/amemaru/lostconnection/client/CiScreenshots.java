@@ -435,6 +435,9 @@ public final class CiScreenshots {
             {"city_market", "market", "100"}, {"city_free_market", "free_market", "100"}, {"city_church", "church", "100"},
             {"city_fishing", "fishing", "100"}, {"city_lake", "lake", "100"}, {"city_casino", "casino", "100"},
             {"city_tower", "tower", "100"},
+            // Phase 5：街並み（家並み・南の門・倉庫地区・角の塔と城壁）
+            {"city_houses", "houses", "140"}, {"city_gate_south", "gate_south", "140"}, {"city_warehouses", "warehouses", "140"},
+            {"city_wall", "wall", "100"},
             // 直しの書き出しを通しで確かめる（ログで見る）。直しがなければ「新しい直しはありませんでした」（自然に変わる所を数えない）。
             // ギルドの上の空に金のブロックを置くと、書き出す前の建て直しは止まる。書き出すと、建て直しても残る。空気に戻して書き出すと、
             // 直しのファイルは消える（Modの形と同じになった直しを外す）
@@ -450,6 +453,7 @@ public final class CiScreenshots {
             {"night", null, "60"},
             {"city_top_n_night", "top_n", "200"}, {"city_top_s_night", "top_s", "200"}, {"city_plaza_night", "plaza", "100"},
             {"city_market_night", "market", "100"}, {"city_church_night", "church", "100"}, {"city_tower_night", "tower", "100"},
+            {"city_houses_night", "houses", "140"}, {"city_gate_south_night", "gate_south", "140"},
             {"grown", null, "600"},
             {"city_grown_top_n", "top_n", "200"}, {"city_grown_top_s", "top_s", "200"},
             // 北から東・南・西へ回る（遠くへ移るほど長めに待つ）
@@ -483,6 +487,179 @@ public final class CiScreenshots {
             {"snap_keep", null, "5", "phase4_church"},
             {"party_clear", null, "5"},
             {"cmd", null, "10", "effect clear @p"},
+            // ---- Phase 5：街のNPC・オープニング（その人の画面だけで流れる）・会話と名簿・職業の画面・進行の知らせ・塔の門・
+            // 1階（入口・石橋・石柱・封印・石板）・ボス（戦い・予兆・初撃破）・出口の円・記憶の再生・1階を上から
+            // keep_hold：ここから終わりまで、画面が閉じたら何も描かない画面を開き直す（オープニングの場面は開いている画面を閉じ、
+            // 会話の画面も閉じると何もない画面になる。何もない画面になると、自動テストが写真の途中で始まり、終わるとゲームが閉じる）
+            {"keep_hold", null, "5"},
+            {"hud", null, "5", "on"},
+            {"cmd", null, "10", "gamemode creative @p"},
+            {"p5_build_floor", null, "20"},
+            {"await_floor", null, "0"},
+            {"cmd", null, "80", "tp @p {at:21.5,3,-78.5} -90 6"},
+            {"snap", null, "40", "phase5_npc_guild"},
+            // バルドは書見台の東に立つので、書見台の陰にならない南の斜めから（11月22日。広間の柱は (±8, −161)・(±8, −169) の
+            // 3×3 で、台の段は x 10 まで。x 11 の列は空いている）
+            {"cmd", null, "80", "tp @p {at:11.5,4,-161.5} -162 11"},
+            {"snap", null, "40", "phase5_npc_bard"},
+            // 11月22日：立体のモデルになったNPC（教会のセレナ・武器工房のドラン）
+            {"cmd", null, "80", "tp @p {at:-95.0,4,0.5} 90 4"},
+            {"snap", null, "40", "phase5_npc_serena"},
+            {"cmd", null, "80", "tp @p {at:88.5,2,-12.5} 180 6"},
+            {"snap", null, "40", "phase5_npc_doran"},
+            {"cmd", null, "10", "gamemode adventure @p"},
+            {"cmd", null, "1", "amemaru admin story opening start @p"},
+            // 準備を待っている間（真っ暗に「……」）。まわりが届いてから30 tick 待って始まるので、その間に撮る
+            {"await_pending", null, "0"},
+            {"snap", null, "2", "phase5_opening_wait"},
+            {"await_scene", null, "0"},
+            // 声の字幕が出てから撮る（字幕は時計の時間で消える。CIの描画が遅いと、tick で数えた待ちの間に消えていた）
+            {"await_text", null, "0"},
+            {"snap", null, "10", "phase5_opening_voice"},
+            // 字幕のあと暗転が明けて大結晶を見上げ（場面の190〜250 tick）、リリアが駆け寄る（250〜）
+            {"snap", null, "195", "phase5_opening_awake"},
+            {"snap", null, "50", "phase5_opening_lilia"},
+            {"await_dialogue", null, "0"},
+            {"snap", null, "30", "phase5_dialogue"},
+            {"dialogue_end", null, "10"},
+            {"snap", null, "10", "phase5_dialogue_choices"},
+            {"dialogue_choose", null, "20", "0"},
+            {"dialogue_end", null, "10"},
+            {"snap", null, "10", "phase5_dialogue_roster"},
+            {"dialogue_finish", null, "30"},
+            {"snap", null, "20", "phase5_job_screen"},
+            {"screen", null, "10", "hold"},
+            {"cmd", null, "40", "amemaru admin floor unlock 2 in 30"},
+            {"snap", null, "10", "phase5_announce"},
+            // 転移の台の上の段（円の真ん中から3ブロック。円は半径2.6）から、円と奥の門を見下ろす
+            {"cmd", null, "80", "tp @p {at:0.5,7,-164.5} 180 20"},
+            {"snap", null, "30", "phase5_tower_gate"},
+            {"cmd", null, "10", "tp @p {at:0.5,7,-167.5} 180 12"},
+            {"await_screen", null, "0", "floor_select"},
+            {"snap", null, "20", "phase5_floor_select"},
+            {"floor_select", null, "40", "1"},
+            {"snap", null, "10", "phase5_floor1_arrival"},
+            {"snap", null, "130", "phase5_floor1_entrance"},
+            {"cmd", null, "100", "execute in amemaru:tower run tp @p {f1:184.5,24,252.5} 165 18"},
+            {"snap", null, "40", "phase5_floor1_bridge"},
+            // 11月22日に濃くした1階：西の丘（崖と巻き道と洞）・群れの長・石柱の課題・北西の林・東の遺跡（仕掛け石と門）・古代の宝箱
+            {"cmd", null, "80", "execute in amemaru:tower run tp @p {f1:112.5,15,262.5} 124 -8"},
+            {"snap", null, "60", "phase5_floor1_hill"},
+            {"cmd", null, "60", "execute in amemaru:tower run tp @p {f1:42.5,20,239.5} 150 0"},
+            {"snap", null, "40", "phase5_floor1_hill_path"},
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f1:80.5,14,232.5} 102 6"},
+            {"snap", null, "40", "phase5_floor1_cave"},
+            // 台地に上がると、群れの長が出る（人が40ブロックの中に来たら。1秒ごとに見る）。石柱の陰にならない東から、出る所を見る
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f1:66.5,28,222.5} 101 6"},
+            {"snap", null, "70", "phase5_guardian"},
+            {"cmd", null, "10", "amemaru admin floor tp 1 pillar1 @p"},
+            {"p5_pillar_try", null, "20", "0"},
+            {"snap", null, "10", "phase5_pillar_hint"},
+            {"cmd", null, "10", "execute in amemaru:tower run kill @e[type=amemaru:tsunomofu,distance=..80]"},
+            {"cmd", null, "40", "amemaru admin floor tp 1 pillar1 @p"},
+            {"p5_pillar", null, "20", "0"},
+            {"snap", null, "10", "phase5_pillar_text"},
+            {"snap", null, "70", "phase5_pillar_lit"},
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f1:112.5,17,104.5} 90 4"},
+            {"snap", null, "50", "phase5_floor1_woods"},
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f1:292.5,10,195.5} -90 -6"},
+            {"snap", null, "50", "phase5_floor1_ruins"},
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f1:297.5,10,179.5} 153 28"},
+            {"p5_switch", null, "15", "0"},
+            {"snap", null, "5", "phase5_ruins_switch"},
+            {"p5_switch", null, "10", "1"},
+            {"cmd", null, "10", "execute in amemaru:tower run tp @p {f1:306.5,10,195.5} -90 2"},
+            {"snap", null, "30", "phase5_ruins_gate_open"},
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f1:336.5,10,202.5} -90 32"},
+            {"p5_chest", null, "20", "2"},
+            {"snap", null, "10", "phase5_chest_open"},
+            {"cmd", null, "80", "amemaru admin floor tp 1 boss @p"},
+            {"snap", null, "40", "phase5_boss_gate_sealed"},
+            {"cmd", null, "10", "amemaru admin pillars complete 1 @p"},
+            {"snap", null, "40", "phase5_boss_gate_open"},
+            {"cmd", null, "30", "execute in amemaru:tower run tp @p {f1:192.5,15,107.5} 180 8"},
+            {"snap", null, "40", "phase5_tablet"},
+            {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "60", "execute in amemaru:tower run tp @p {f1:192.5,15,68.5} 180 4"},
+            {"snap", null, "60", "phase5_boss_fight"},
+            // 11月22日：技ごとの当たる所。ボスを出る所（{f1:192.5,15,51.5}。南を向く）に戻し、決まった所に立って、管理者のコマンドで
+            // 技を出させ、打つ前に撮る（技は見ている人の方を向いて出る）。跳んでいる途中のボスは戻しても跳び続けるので、先に踏みつけを
+            // 出させて（その場で1.2秒ためる）止めてから戻す。踏みつけは、次の技を出させると取り消される。間でHPを戻す。
+            // 突進の通り道の線（14南。前は自然に出た最初の予兆を撮っていたが、大跳躍のときは円が足もとに出て写らない）
+            {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @e[type=amemaru:veldhorn,limit=1] {f1:192.5,15,51.5} 0 0"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,65.5} 180 10"},
+            {"cmd", null, "0", "amemaru admin boss skill 1 charge"},
+            {"await_mark", null, "2", "phase5_boss_telegraph"},
+            // 薙ぎ払いの扇（5南。届く長さ5.5）
+            {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @e[type=amemaru:veldhorn,limit=1] {f1:192.5,15,51.5} 0 0"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,56.5} 180 20"},
+            {"cmd", null, "0", "amemaru admin boss skill 1 sweep"},
+            {"await_mark", null, "5", "phase5_boss_sweep"},
+            // 角の突き上げの帯（9南。帯は長さ7）
+            {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @e[type=amemaru:veldhorn,limit=1] {f1:192.5,15,51.5} 0 0"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,60.5} 180 14"},
+            // 突き上げの予兆は0.6秒。CIの機械では1行に1秒ほどかかることがあるので、帯が見えたらすぐ撮る
+            {"cmd", null, "0", "amemaru admin boss skill 1 upthrust"},
+            {"await_mark", null, "2", "phase5_boss_upthrust"},
+            // 後ろ蹴りの後ろの扇（ボスの後ろ＝4北に立ち、南のボスを見る）
+            {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @e[type=amemaru:veldhorn,limit=1] {f1:192.5,15,51.5} 0 0"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,47.5} 0 22"},
+            // 後ろ蹴りの予兆は0.7秒。扇が見えたらすぐ撮る
+            {"cmd", null, "0", "amemaru admin boss skill 1 kick"},
+            {"await_mark", null, "5", "phase5_boss_kick"},
+            // 大跳躍の降りる円（12南。円は立っている所に出るので、下を向いて前の半分とボスを写す）
+            {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @e[type=amemaru:veldhorn,limit=1] {f1:192.5,15,51.5} 0 0"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,63.5} 180 40"},
+            {"cmd", null, "12", "amemaru admin boss skill 1 leap"},
+            {"snap", null, "0", "phase5_boss_leap"},
+            // 根の牙の足もとの円（10南。降りてくるのを待ってから。真下に近い向きで円を写す）
+            {"cmd", null, "60", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @e[type=amemaru:veldhorn,limit=1] {f1:192.5,15,51.5} 0 0"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,61.5} 180 55"},
+            {"cmd", null, "10", "amemaru admin boss skill 1 roots"},
+            {"snap", null, "0", "phase5_boss_roots"},
+            {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
+            // 戦っている人のまま（アドベンチャー。クリエイティブにすると戦いから外れる）倒す。
+            // 倒してすぐ：ボスの名前の大きな字（下に出口の円の知らせ）。初撃破の場面がHUDを隠す（50 tick 待って白く光り、125〜215 tick に
+            // 「始まりの草原　踏破」、215〜295 tick に字幕）。場面が終わると、初撃破の知らせの帯が出る（演出の間に届いた知らせは、演出の後に出す）
+            {"cmd", null, "5", "kill @e[type=amemaru:veldhorn]"},
+            {"snap_keep", null, "30", "phase5_boss_defeated"},
+            {"snap_keep", null, "120", "phase5_boss_title"},
+            {"await_idle", null, "0"},
+            {"snap_keep", null, "15", "phase5_boss_first_kill"},
+            {"cmd", null, "10", "execute in amemaru:tower run tp @p {f1:192.5,15,38.5} 180 10"},
+            {"snap", null, "70", "phase5_return_gate"},
+            {"p5_replay", null, "20"},
+            {"snap", null, "10", "phase5_replay"},
+            {"screen", null, "10", "hold"},
+            // 11月22日：「目覚め」を見返すと、そのときのリリアの会話が開く（直す前は、ギルドでのあいさつになっていた）
+            {"cmd", null, "10", "amemaru admin story replay amemaru:ch1/opening @p"},
+            {"await_dialogue", null, "0"},
+            {"snap", null, "40", "phase5_replay_opening"},
+            {"dialogue_finish", null, "10"},
+            {"screen", null, "10", "hold"},
+            {"cmd", null, "10", "gamemode spectator @p"},
+            // 1階を上から：CIの描く距離は短いので、階の外から全体ではなく、入口の上から北（2本目の小川と石橋・古代の道）と、
+            // 東の遺跡の上から（奥の院と庭と回廊）を撮る（11月22日。前の階の外からの写真は、空しか写っていなかった）
+            // 11月22日（run 133）：ここでは街（ボスの後に帰った）から塔へ、別の世界をまたいで移る。そのテレポートでは向きが
+            // 反映されず、南（階の端の格子）を水平に見ていた。先に塔へ移って世界を読み込ませ、同じ世界の中でもう一度
+            // テレポートして向きを決める（同じ世界の中の移動なら向きは反映される。遺跡の上からの写真はそうなっていた）
+            {"cmd", null, "100", "execute in amemaru:tower run tp @p {f1:192.5,44,372.5} 180 34"},
+            {"cmd", null, "10", "execute in amemaru:tower run tp @p {f1:192.5,44,372.5} 180 34"},
+            {"hud", null, "5", "off"},
+            {"snap", null, "200", "phase5_floor1_aerial"},
+            {"cmd", null, "10", "execute in amemaru:tower run tp @p {f1:318.5,46,244.5} 180 46"},
+            {"snap", null, "160", "phase5_floor1_ruins_aerial"},
             {"cmd", null, "10", "gamemode spectator @p"},
             {"hud", null, "5", "off"}};
 
@@ -495,6 +672,9 @@ public final class CiScreenshots {
             return;
         }
         Minecraft minecraft = Minecraft.getInstance();
+        if (keepHold && !cityDone && minecraft.player != null && minecraft.screen == null) {
+            minecraft.setScreen(new HoldScreen());
+        }
         if (minecraft.player == null || !ClientPlayerState.get().hasData() || pendingShot != null) {
             return;
         }
@@ -1644,6 +1824,7 @@ public final class CiScreenshots {
         if (j >= CITY_SHOTS.length * 2) {
             if (!cityDone) {
                 cityDone = true;
+                keepHold = false;
                 hideHud = false;
                 command(minecraft, "time set noon");
                 if (returnPos != null) {
@@ -1689,6 +1870,31 @@ public final class CiScreenshots {
                 pendingShot = shot[3];
                 next(stage + 1, 2);
             }
+        } else if (shot[0].startsWith("await_")) {
+            // 待つ：まだなら同じ行をもう一度（5 tick ごと。長く待っても来なければ、あきらめて次へ）。
+            // await_mark は、予兆の形（行の3つ目の数）が出たらすぐ撮る（毎 tick 見る。短い予兆を逃さない。11月22日）
+            boolean mark = "await_mark".equals(shot[0]);
+            if (first) {
+                if (!awaitReady(minecraft, shot) && awaitTicks < awaitLimit(shot[0])) {
+                    int step = mark ? 1 : 5;
+                    awaitTicks += step;
+                    next(stage, step);
+                } else {
+                    if (awaitTicks >= awaitLimit(shot[0])) {
+                        AmemaruMod.LOGGER.warn("[amemaru] CI: gave up waiting ({})", shot[0]);
+                    }
+                    awaitTicks = 0;
+                    if (mark && shot.length > 3) {
+                        clean(minecraft);
+                        pendingShot = shot[3];
+                        next(stage + 2, 2);
+                    } else {
+                        next(stage + 2, 0);
+                    }
+                }
+            }
+        } else if (phase5Action(minecraft, shot, first)) {
+            next(stage + 1, first ? waitTicks : 0);
         } else if (phase4Action(minecraft, shot, first)) {
             next(stage + 1, first ? waitTicks : 0);
         } else if (first) {
@@ -1705,6 +1911,145 @@ public final class CiScreenshots {
             }
             next(stage + 1, waitTicks);
         }
+    }
+
+    // ---------------------------------------------------------------- Phase 5 の写真の小物
+
+    private static int awaitTicks;
+    private static int floorBuilds;
+    /** Phase 5 の写真の間（keep_hold の行から終わりまで）。画面が閉じたら、何も描かない画面を開き直す */
+    private static boolean keepHold;
+
+    /**
+     * 画面を閉じるときに開く画面。CIで写真を撮っている間（keep_hold から）は、何も描かない画面（何もない画面になると、自動テストが
+     * 写真の途中で始まるため）。ふだんは null（閉じる）。
+     */
+    public static net.minecraft.client.gui.screens.Screen screenAfterClose() {
+        return ENABLED && keepHold && !cityDone ? new HoldScreen() : null;
+    }
+
+    /** CIの、何も描かない画面か（場面が始まるときに閉じない） */
+    public static boolean isHoldScreen(net.minecraft.client.gui.screens.Screen screen) {
+        return screen instanceof HoldScreen;
+    }
+
+    private static int awaitLimit(String kind) {
+        return switch (kind) {
+            case "await_floor" -> 20 * 120;
+            case "await_scene" -> 20 * 60;
+            case "await_dialogue" -> 20 * 40;
+            case "await_telegraph" -> 20 * 25;
+            case "await_idle" -> 20 * 40;
+            default -> 20 * 20;
+        };
+    }
+
+    private static boolean awaitReady(Minecraft minecraft, String[] shot) {
+        return switch (shot[0]) {
+            case "await_floor" -> jp.amemaru.lostconnection.tower.FloorBuild.builds > floorBuilds;
+            case "await_scene" -> ScenePlayer.isPlaying();
+            case "await_dialogue" -> minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.DialogueScreen;
+            case "await_screen" -> minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.FloorSelectScreen;
+            case "await_telegraph" -> CiPhase3.anyTelegraph(minecraft);
+            // 行の3つ目の数が予兆の形（2 線・3 円・5 扇）
+            case "await_mark" -> CiPhase3.anyTelegraphOf(minecraft, Integer.parseInt(shot[2]));
+            // オープニングの準備待ち（場面が始まる前の真っ暗な間）
+            case "await_pending" -> ClientStory.openingPending() && !ScenePlayer.isActive();
+            // 場面の字幕が出ている
+            case "await_text" -> ClientStory.texts().stream()
+                    .anyMatch(t -> t.kind() == jp.amemaru.lostconnection.network.s2c.StoryTextS2C.Kind.SUBTITLE);
+            // 場面が終わった
+            case "await_idle" -> !ScenePlayer.isActive();
+            default -> true;
+        };
+    }
+
+    /** Phase 5 の写真の段取り（階を建てる・会話を進める・階を選ぶ・石柱を起動する・記憶の再生）。その種類の行なら true。 */
+    private static boolean phase5Action(Minecraft minecraft, String[] shot, boolean first) {
+        String kind = shot[0];
+        if (!List.of("keep_hold", "p5_build_floor", "dialogue_end", "dialogue_choose", "dialogue_finish", "floor_select", "p5_pillar",
+                "p5_pillar_try", "p5_switch", "p5_chest", "p5_replay").contains(kind)) {
+            return false;
+        }
+        if (!first) {
+            return true;
+        }
+        jp.amemaru.lostconnection.client.screen.DialogueScreen dialogue =
+                minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.DialogueScreen d ? d : null;
+        switch (kind) {
+            case "keep_hold" -> {
+                keepHold = true;
+                if (minecraft.screen == null) {
+                    minecraft.setScreen(new HoldScreen());
+                }
+            }
+            case "p5_build_floor" -> {
+                floorBuilds = jp.amemaru.lostconnection.tower.FloorBuild.builds;
+                command(minecraft, "amemaru admin map build floor 1");
+            }
+            case "dialogue_end" -> {
+                if (dialogue != null) {
+                    dialogue.ciToEnd();
+                }
+            }
+            case "dialogue_choose" -> {
+                if (dialogue != null) {
+                    dialogue.ciChoose(Integer.parseInt(shot[3]));
+                }
+            }
+            case "dialogue_finish" -> {
+                if (dialogue != null) {
+                    dialogue.ciFinish();
+                }
+            }
+            case "floor_select" -> {
+                ModNetwork.sendToServer(new jp.amemaru.lostconnection.network.c2s.FloorSelectC2S(Integer.parseInt(shot[3])));
+                minecraft.setScreen(new HoldScreen());
+            }
+            case "p5_pillar", "p5_pillar_try" -> {
+                // p5_pillar_try：課題を終える前に触れる（手がかりが出る）。p5_pillar：課題を終えたことにしてから触れる（11月22日）
+                int index = Integer.parseInt(shot[3]);
+                boolean wake = kind.equals("p5_pillar");
+                CiPhase3.onServer(minecraft, player -> {
+                    jp.amemaru.lostconnection.tower.FloorDef def = jp.amemaru.lostconnection.tower.FloorDefs.byNumber(1);
+                    if (def != null && index < def.pillars().size()) {
+                        if (wake) {
+                            jp.amemaru.lostconnection.player.PlayerDataCapability.get(player)
+                                    .ifPresent(data -> data.getStory().wakePillar(1, index));
+                        }
+                        jp.amemaru.lostconnection.tower.TowerService.activatePillar(player, 1, index,
+                                def.world(def.pillars().get(index).pos()));
+                    }
+                });
+            }
+            case "p5_switch" -> {
+                // 東の遺跡の仕掛け石を押す（11月22日）
+                int index = Integer.parseInt(shot[3]);
+                CiPhase3.onServer(minecraft, player -> {
+                    jp.amemaru.lostconnection.tower.FloorDef def = jp.amemaru.lostconnection.tower.FloorDefs.byNumber(1);
+                    if (def != null && !def.extras().switches().isEmpty()) {
+                        jp.amemaru.lostconnection.tower.FloorDef.SwitchGroup group = def.extras().switches().get(0);
+                        if (index < group.stones().size()) {
+                            jp.amemaru.lostconnection.tower.TowerService.pressSwitch(player, 1, group.id(), index,
+                                    def.world(group.stones().get(index)));
+                        }
+                    }
+                });
+            }
+            case "p5_chest" -> {
+                // 古代の宝箱を開ける（11月22日）
+                int index = Integer.parseInt(shot[3]);
+                CiPhase3.onServer(minecraft, player -> {
+                    jp.amemaru.lostconnection.tower.FloorDef def = jp.amemaru.lostconnection.tower.FloorDefs.byNumber(1);
+                    if (def != null && index < def.extras().chests().size()) {
+                        jp.amemaru.lostconnection.tower.TowerService.openChest(player, 1, index,
+                                def.world(def.extras().chests().get(index).pos()));
+                    }
+                });
+            }
+            default -> CiPhase3.onServer(minecraft, jp.amemaru.lostconnection.story.StoryEventManager::openReplayList);
+        }
+        return true;
     }
 
     // ---------------------------------------------------------------- Phase 4 の写真の小物
@@ -1786,8 +2131,21 @@ public final class CiScreenshots {
     private static String cityCommand(String template) {
         BlockPos o = cityOrigin == null ? BlockPos.ZERO : cityOrigin;
         BlockPos guild = o.offset(6 + 1, 37, -100 + 1);
-        return template.replace("{origin}", o.getX() + " " + o.getY() + " " + o.getZ())
+        String out = template.replace("{origin}", o.getX() + " " + o.getY() + " " + o.getZ())
                 .replace("{guild}", guild.getX() + " " + guild.getY() + " " + guild.getZ());
+        // {at:x,y,z}：街の真ん中からの位置。{f1:x,y,z}：塔の1階の (0, 0, 0) からの位置（Phase 5）
+        jp.amemaru.lostconnection.tower.FloorDef floor1 = jp.amemaru.lostconnection.tower.FloorDefs.byNumber(1);
+        BlockPos f1 = floor1 != null ? floor1.origin() : new BlockPos(3904, 60, -192);
+        java.util.regex.Matcher m = java.util.regex.Pattern.compile("\\{(at|f1):(-?[0-9.]+),(-?[0-9.]+),(-?[0-9.]+)\\}").matcher(out);
+        StringBuilder sb = new StringBuilder();
+        while (m.find()) {
+            BlockPos base = "at".equals(m.group(1)) ? o : f1;
+            String pos = String.format(Locale.ROOT, "%.2f %.2f %.2f", base.getX() + Double.parseDouble(m.group(2)),
+                    base.getY() + Double.parseDouble(m.group(3)), base.getZ() + Double.parseDouble(m.group(4)));
+            m.appendReplacement(sb, pos);
+        }
+        m.appendTail(sb);
+        return sb.toString();
     }
 
     private static void cityBuild(Minecraft minecraft, boolean grown) {

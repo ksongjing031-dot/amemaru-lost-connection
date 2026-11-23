@@ -82,7 +82,39 @@ public final class DropService {
             }
             dropNormal(mob, def, source, level, player, data);
             dropRare(mob, def, level, player, data);
+            // 階の中だけのドロップ（1階の光のかけら。11月22日）
+            jp.amemaru.lostconnection.tower.TowerService.extraDrops(mob, level, player, data);
         }
+        if (mob.guardianId() != null) {
+            // 石柱の守り手：倒した人（パーティを含む）の石柱の課題を終えた印をつける（11月22日）
+            jp.amemaru.lostconnection.tower.TowerService.creditGuardian(mob, receivers);
+        }
+    }
+
+    /**
+     * 古代の宝箱の中身（11月22日）：宝箱の決まり（ルートテーブル）を引いて、開けた人だけが拾える品として出す。出した数を返す。
+     */
+    public static int dropChest(ServerPlayer player, ResourceLocation tableId, net.minecraft.world.phys.Vec3 at) {
+        ServerLevel level = player.serverLevel();
+        LootTable table = level.getServer().getLootData().getLootTable(tableId);
+        if (table == LootTable.EMPTY) {
+            return 0;
+        }
+        LootParams params = new LootParams.Builder(level)
+                .withParameter(LootContextParams.ORIGIN, at)
+                .withParameter(LootContextParams.THIS_ENTITY, player)
+                .withLuck(player.getLuck())
+                .create(LootContextParamSets.CHEST);
+        int count = 0;
+        for (ItemStack stack : table.getRandomItems(params)) {
+            if (stack.isEmpty()) {
+                continue;
+            }
+            finish(stack, level);
+            LootItemEntity.spawn(level, at.x, at.y, at.z, stack, player.getUUID(), -1);
+            count++;
+        }
+        return count;
     }
 
     /** ドロップと経験値を受け取る人。 */
@@ -147,7 +179,7 @@ public final class DropService {
         int misses = def.pity() ? data.getAdventure().pity(def.id()) : 0;
         boolean any = false;
         for (EnemyDef.RareDrop rare : def.rare()) {
-            double chance = rareChance(rare, misses);
+            double chance = rareChance(rare, rare.pity() ? misses : 0);
             if (level.random.nextDouble() * 100.0 >= chance) {
                 continue;
             }
@@ -155,7 +187,9 @@ public final class DropService {
             if (item == null || !rare.item().equals(ForgeRegistries.ITEMS.getKey(item))) {
                 continue;
             }
-            any = true;
+            if (rare.pity()) {
+                any = true;
+            }
             ItemStack stack = new ItemStack(item, rare.count());
             Rarity rarity = rare.rarity() == null ? null : Rarity.byId(rare.rarity());
             finishRare(stack, level, rarity);

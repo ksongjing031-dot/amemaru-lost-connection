@@ -23,6 +23,8 @@ public final class ServerConfig {
     public static final ForgeConfigSpec.IntValue OUT_OF_COMBAT_SECONDS;
 
     // ワールド
+    // ---- Phase 5：物語・塔
+    public static final ForgeConfigSpec.BooleanValue OPENING_ON_FIRST_LOGIN;
     public static final ForgeConfigSpec.BooleanValue APPLY_GAME_RULES;
     public static final ForgeConfigSpec.BooleanValue KEEP_FOOD_FULL;
 
@@ -188,7 +190,7 @@ public final class ServerConfig {
                 .comment("このModの敵の攻撃にかける倍率")
                 .defineInRange("enemyAttackMultiplier", 1.0, 0.0, 1000.0);
         ENEMY_LEASH_RANGE = b
-                .comment("このModの敵が、生まれた場所から何ブロック離れると追うのをやめて戻るか（戻るとHPが満タンになる）")
+                .comment("このModの敵が、戦い始めた所から何ブロック離れて、5秒戦わなかったら（打たれも打ちもしない）追うのをやめて戻るか（打たれずに戻れたらHPが満タンになる。戻る間も攻撃は当たる）")
                 .defineInRange("enemyLeashRange", 28.0, 8.0, 256.0);
         b.pop();
 
@@ -270,6 +272,13 @@ public final class ServerConfig {
         WORKSHOP_REACH = b
                 .comment("工房の作業台から何ブロック以内で、制作・強化・修理ができるか")
                 .defineInRange("workshopReach", 8.0, 2.0, 64.0);
+        b.pop();
+
+        b.comment("物語と塔（Phase 5）").push("story");
+        OPENING_ON_FIRST_LOGIN = b
+                .comment("初めてログインした人に、召喚から始まるオープニング（大結晶のそばで目覚め、リリアと出会う）を流す。",
+                        "オープニングは一人ひとりの画面で、その人の準備ができてから流す（ラグで入るのが遅れても弊害がないように）")
+                .define("openingOnFirstLogin", true);
         b.pop();
 
         SPEC = b.build();

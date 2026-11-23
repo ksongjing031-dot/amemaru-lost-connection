@@ -1,0 +1,12 @@
+{
+  "_comment": "草原の角笛（1階のボス「草原の主ヴェルドホーン」のレア。お守り：移動速度+5%。Phase 0-A 20章の表）",
+  "slot": "charm",
+  "generation": 1,
+  "rarity": "rare",
+  "effects": [
+    {
+      "type": "move_speed",
+      "percent": 5
+    }
+  ]
+}

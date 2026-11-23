@@ -100,6 +100,10 @@
       "id": "waystone_charm",
       "slot": "charm",
       "model": "geckolib"
+    },
+    {
+      "id": "grassland_horn",
+      "slot": "charm"
     }
   ],
   "materials": [
@@ -133,6 +137,10 @@
     {
       "id": "ishikure_core",
       "rarity": "rare"
+    },
+    {
+      "id": "light_shard",
+      "rarity": "uncommon"
     }
   ],
   "fruits": [

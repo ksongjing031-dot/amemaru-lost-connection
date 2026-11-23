@@ -1,0 +1,41 @@
+{
+  "_comment": "門番バルド（無口。「……行くのか」。Phase 0-A 8章）。行くと答えると、行く階を選ぶ画面を開く",
+  "npc": "amemaru:bard",
+  "priority": 10,
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "……行くのか",
+      "choices": [
+        {
+          "text": "行く",
+          "next": "end",
+          "actions": [
+            {
+              "type": "amemaru:open_floor_select"
+            }
+          ]
+        },
+        {
+          "text": "塔のことを聞く",
+          "next": "t1"
+        },
+        {
+          "text": "やめておく",
+          "next": "end"
+        }
+      ]
+    },
+    "t1": {
+      "text": "転移の円に立てば、ひらいた階へ行ける",
+      "next": "t2"
+    },
+    "t2": {
+      "text": "まだひらいていない階は、灯りがついていない",
+      "next": "t3"
+    },
+    "t3": {
+      "text": "……仲間と行け。それだけだ"
+    }
+  }
+}

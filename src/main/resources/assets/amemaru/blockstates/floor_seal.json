@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "sealed=false": {
+      "model": "amemaru:block/floor_seal"
+    },
+    "sealed=true": {
+      "model": "amemaru:block/floor_seal"
+    }
+  }
+}

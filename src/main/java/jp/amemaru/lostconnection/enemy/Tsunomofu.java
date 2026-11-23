@@ -82,6 +82,7 @@ public class Tsunomofu extends AmemaruMob {
 
     @Override
     public float getVoicePitch() {
-        return 1.4F + (random.nextFloat() - 0.5F) * 0.2F;
+        // 大きな個体（群れの長）は低い声（11月22日）
+        return (1.4F + (random.nextFloat() - 0.5F) * 0.2F) / Math.max(1.0F, modelScale() * 0.75F);
     }
 }

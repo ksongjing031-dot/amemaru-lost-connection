@@ -1,0 +1,50 @@
+{
+  "_comment": "1階のボスの初撃破（倒したパーティの画面だけ。サーバー全体には知らせが出る）",
+  "title": "草原の主",
+  "trigger": {
+    "type": "amemaru:floor_first_kill",
+    "floor": 1
+  },
+  "scope": "party",
+  "once": true,
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:wait",
+      "ticks": 50
+    },
+    {
+      "type": "amemaru:hud",
+      "hide": true
+    },
+    {
+      "type": "amemaru:sound",
+      "sound": "minecraft:block.beacon.activate",
+      "volume": 1.0,
+      "pitch": 1.1
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "none",
+      "to": "white",
+      "ticks": 25
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "white",
+      "to": "none",
+      "ticks": 50
+    },
+    {
+      "type": "amemaru:title",
+      "title": "始まりの草原　踏破",
+      "subtitle": "1階",
+      "ticks": 90
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "石板の文字が、淡く光りはじめた……",
+      "ticks": 80
+    }
+  ]
+}

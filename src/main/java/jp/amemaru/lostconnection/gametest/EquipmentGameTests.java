@@ -122,12 +122,18 @@ public final class EquipmentGameTests {
                 check(helper, gear.get(item.get()) != null, "装備の定義がありません：" + item.getId());
             }
         }
-        check(helper, AccessoryDefs.all().size() == 5, "アクセサリーの定義が5ではありません：" + AccessoryDefs.all().size());
+        // Phase 5 で、1階のボスのレアのお守り「草原の角笛」が増えた
+        check(helper, AccessoryDefs.all().size() == 6, "アクセサリーの定義が6ではありません：" + AccessoryDefs.all().size());
         for (RegistryObject<Item> item : ModItems.MANIFEST.category(ItemManifest.Category.ACCESSORY)) {
             check(helper, AccessoryDefs.get(item.get()) != null, "アクセサリーの定義がありません：" + item.getId());
         }
 
-        check(helper, EnemyDefs.all().size() == 4, "敵の定義が4ではありません：" + EnemyDefs.all().keySet());
+        // Phase 5 で、1階のボス「草原の主ヴェルドホーン」が増えた
+        // 11月22日：1階の西の丘の石柱の守り手「群れの長」（ツノモフの見た目を借りる別の定義）が増えた
+        check(helper, EnemyDefs.all().size() == 6, "敵の定義が6ではありません：" + EnemyDefs.all().keySet());
+        EnemyDef alpha = EnemyDefs.get(AmemaruMod.id("tsunomofu_alpha"));
+        check(helper, alpha != null && AmemaruMod.id("tsunomofu").equals(alpha.entity()) && alpha.behavior().getOrDefault("scale", 1.0) > 1.0,
+                "群れの長が、ツノモフの見た目を借りる大きな個体になっていません");
         for (EntityType<?> type : List.<EntityType<?>>of(ModEntities.TSUNOMOFU.get(), ModEntities.ISHIKURE_SOLDIER.get(),
                 ModEntities.CRYSTAL_BEE.get(), ModEntities.KAKEKIBA_WOLF.get())) {
             EnemyDef def = EnemyDefs.forType(type);
@@ -821,6 +827,51 @@ public final class EquipmentGameTests {
             mob.discard();
         }
         helper.succeed();
+    }
+
+    /**
+     * 戻る仕組み（11月22日に作り直し）：戦っている間は、押し出されて離れても戻らない。戻るのは、離れすぎてしばらく戦っていない
+     * ときか、相手を見失ったとき。戻る間も攻撃は当たり、打たれると戻るのをやめて戦い直す（HPはそのまま）。打たれずに戻れたら満タン。
+     */
+    @GameTest(template = EMPTY, timeoutTicks = 100)
+    public static void enemyLeashOnlyWhenQuiet(GameTestHelper helper) {
+        double leash = 28.0;
+        check(helper, AmemaruMob.leashDecision(40 * 40, leash, 10, true) == AmemaruMob.LEASH_STAY,
+                "戦っている間に押し出されて離れただけで、戻ろうとします");
+        check(helper, AmemaruMob.leashDecision(40 * 40, leash, 20 * 6, true) == AmemaruMob.LEASH_RETURN,
+                "離れすぎて5秒戦っていないのに、戻りません");
+        check(helper, AmemaruMob.leashDecision(60 * 60, leash, 20 * 3, true) == AmemaruMob.LEASH_RETURN,
+                "ひどく離れすぎて2秒戦っていないのに、戻りません");
+        check(helper, AmemaruMob.leashDecision(10 * 10, leash, 20 * 60, true) == AmemaruMob.LEASH_STAY,
+                "戦い始めた所の近くで相手がいるのに、戻ります");
+        check(helper, AmemaruMob.leashDecision(20 * 20, leash, 20, false) == AmemaruMob.LEASH_STAY,
+                "相手を見失ってすぐに戻ります（3秒待つ）");
+        check(helper, AmemaruMob.leashDecision(20 * 20, leash, 20 * 4, false) == AmemaruMob.LEASH_RETURN,
+                "相手を見失っても戻りません");
+        check(helper, AmemaruMob.leashDecision(2 * 2, leash, 20 * 4, false) == AmemaruMob.LEASH_FINISH_HERE,
+                "戦い始めた所のそばで見失ったのに、歩いて戻ろうとします");
+        FakePlayer hunter = fake(helper, "leash");
+        AmemaruMob mob = helper.spawnWithNoFreeWill(ModEntities.TSUNOMOFU.get(), new BlockPos(1, 1, 1));
+        helper.startSequence()
+                .thenExecuteAfter(3, () -> {
+                    double max = mob.getEnemyMaxHp();
+                    mob.onDamagedBy(hunter, 5.0);
+                    mob.applyCustomDamage(max / 2.0);
+                    mob.startReturn();
+                    check(helper, mob.isReturning(), "戻り始めません");
+                    check(helper, !mob.isInvulnerableTo(mob.damageSources().playerAttack(hunter)), "戻る間に、攻撃が当たりません");
+                    mob.onDamagedBy(hunter, 1.0);
+                    check(helper, !mob.isReturning() && Math.abs(mob.getEnemyHp() - max / 2.0) < 0.01,
+                            "打たれても戻り続けるか、HPが戻りました：" + mob.getEnemyHp() + "/" + max);
+                    // 打たれずに戻る（戦い始めた所にいるので、すぐ着く）
+                    mob.startReturn();
+                })
+                .thenExecuteAfter(5, () -> {
+                    check(helper, !mob.isReturning() && Math.abs(mob.getEnemyHp() - mob.getEnemyMaxHp()) < 0.01,
+                            "戻り終えても、HPが満タンになりません：" + mob.getEnemyHp());
+                    mob.discard();
+                })
+                .thenSucceed();
     }
 
     /** 敵のHP：定義のHP × config の倍率。独自のHPの割合が、バニラの体力にも映る。 */

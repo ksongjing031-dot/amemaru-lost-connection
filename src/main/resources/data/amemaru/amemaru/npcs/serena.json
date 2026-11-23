@@ -1,0 +1,18 @@
+{
+  "_comment": "セレナ・アステル（Phase 0-A 8章）。結びの教会の司祭。1日目は呼び戻しの説明。立つ所は内陣の祭壇の前（身廊を向く）。11月22日から、凹凸のある立体のモデル（model）で描く（tools/artgen/make_npc_models.py）",
+  "name": "セレナ",
+  "title": "結びの教会の司祭",
+  "skin": "amemaru:textures/entity/npc/serena.png",
+  "slim": true,
+  "model": "amemaru:npc/serena",
+  "model_scale": 0.9375,
+  "portrait_y": 1.18,
+  "expressions": ["smile"],
+  "home": {
+    "place": "conelia",
+    "pos": [-98.5, 4, 0.5],
+    "yaw": -90
+  },
+  "roles": ["church"],
+  "talk_range": 5
+}

@@ -1,0 +1,22 @@
+{
+  "_comment": "初めて1階に入ったとき（本人だけ）。地平線の格子の線（この階が再現された世界だという最初の手がかり。Phase 0-A 9章）に目を向ける",
+  "title": "始まりの草原",
+  "trigger": {
+    "type": "amemaru:floor_enter",
+    "floor": 1
+  },
+  "scope": "player",
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:wait",
+      "ticks": 70
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "風が草を渡っていく。……地平線に、細い線が見えた気がした。",
+      "ticks": 100,
+      "wait": false
+    }
+  ]
+}

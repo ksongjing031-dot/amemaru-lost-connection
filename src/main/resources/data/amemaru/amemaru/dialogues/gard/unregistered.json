@@ -1,0 +1,15 @@
+{
+  "_comment": "まだ名簿に名前を書いていない人",
+  "npc": "amemaru:gard",
+  "priority": 20,
+  "conditions": {
+    "opening_max": 1
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "expression": "stern",
+      "text": "……受付はあっちだ。まず、リリアに名前を言え"
+    }
+  }
+}

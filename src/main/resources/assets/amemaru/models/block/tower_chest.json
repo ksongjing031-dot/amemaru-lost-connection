@@ -1,0 +1,210 @@
+{
+  "parent": "minecraft:block/block",
+  "textures": {
+    "particle": "amemaru:block/tower_chest_side",
+    "front": "amemaru:block/tower_chest_front",
+    "side": "amemaru:block/tower_chest_side",
+    "top": "amemaru:block/tower_chest_top",
+    "bottom": "amemaru:block/tower_chest_bottom"
+  },
+  "elements": [
+    {
+      "name": "body",
+      "from": [
+        1,
+        0,
+        1
+      ],
+      "to": [
+        15,
+        9,
+        15
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            7,
+            15,
+            16
+          ],
+          "texture": "#front"
+        },
+        "south": {
+          "uv": [
+            1,
+            7,
+            15,
+            16
+          ],
+          "texture": "#side"
+        },
+        "east": {
+          "uv": [
+            1,
+            7,
+            15,
+            16
+          ],
+          "texture": "#side"
+        },
+        "west": {
+          "uv": [
+            1,
+            7,
+            15,
+            16
+          ],
+          "texture": "#side"
+        },
+        "up": {
+          "uv": [
+            1,
+            1,
+            15,
+            15
+          ],
+          "texture": "#top"
+        },
+        "down": {
+          "uv": [
+            1,
+            1,
+            15,
+            15
+          ],
+          "texture": "#bottom"
+        }
+      }
+    },
+    {
+      "name": "lid",
+      "from": [
+        1,
+        9,
+        1
+      ],
+      "to": [
+        15,
+        13,
+        15
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            1,
+            15,
+            5
+          ],
+          "texture": "#front"
+        },
+        "south": {
+          "uv": [
+            1,
+            1,
+            15,
+            5
+          ],
+          "texture": "#side"
+        },
+        "east": {
+          "uv": [
+            1,
+            1,
+            15,
+            5
+          ],
+          "texture": "#side"
+        },
+        "west": {
+          "uv": [
+            1,
+            1,
+            15,
+            5
+          ],
+          "texture": "#side"
+        },
+        "up": {
+          "uv": [
+            1,
+            1,
+            15,
+            15
+          ],
+          "texture": "#top"
+        },
+        "down": {
+          "uv": [
+            1,
+            1,
+            15,
+            15
+          ],
+          "texture": "#bottom"
+        }
+      }
+    },
+    {
+      "name": "latch",
+      "from": [
+        7,
+        6,
+        0.5
+      ],
+      "to": [
+        9,
+        11,
+        1
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6,
+            4,
+            10,
+            10
+          ],
+          "texture": "#front"
+        },
+        "east": {
+          "uv": [
+            6,
+            4,
+            7,
+            10
+          ],
+          "texture": "#front"
+        },
+        "west": {
+          "uv": [
+            9,
+            4,
+            10,
+            10
+          ],
+          "texture": "#front"
+        },
+        "up": {
+          "uv": [
+            6,
+            4,
+            10,
+            5
+          ],
+          "texture": "#front"
+        },
+        "down": {
+          "uv": [
+            6,
+            9,
+            10,
+            10
+          ],
+          "texture": "#front"
+        }
+      }
+    }
+  ]
+}

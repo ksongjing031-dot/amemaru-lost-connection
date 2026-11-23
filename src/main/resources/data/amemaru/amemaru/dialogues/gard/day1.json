@@ -1,0 +1,29 @@
+{
+  "_comment": "1〜4日目のガルド。「仮登録だ」（Phase 0-A 11章の1日目）・「仲間ごっこで塔は登れん」（8章）。口ぐせ「生きて戻れ。それが命令だ」",
+  "npc": "amemaru:gard",
+  "priority": 10,
+  "conditions": {
+    "opening": 2,
+    "day_max": 4
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "expression": "stern",
+      "text": "……迷い人か",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "リリアから聞いている。お前は仮登録だ",
+      "next": "s3"
+    },
+    "s3": {
+      "expression": "stern",
+      "text": "仲間ごっこで塔は登れん。それを忘れるな",
+      "next": "s4"
+    },
+    "s4": {
+      "text": "……生きて戻れ。それが命令だ"
+    }
+  }
+}

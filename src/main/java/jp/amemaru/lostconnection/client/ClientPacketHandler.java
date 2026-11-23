@@ -95,4 +95,67 @@ public final class ClientPacketHandler {
     public static void handleWallet(jp.amemaru.lostconnection.network.s2c.SyncWalletS2C message) {
         ClientPlayerState.get().setKnots(message.knots());
     }
+
+    // ---------------------------------------------------------------- Phase 5：進行・物語・NPC・塔
+
+    public static void handleWorldState(jp.amemaru.lostconnection.network.s2c.WorldStateS2C message) {
+        ClientStory.apply(message);
+    }
+
+    public static void handleAnnouncement(jp.amemaru.lostconnection.network.s2c.AnnouncementS2C message) {
+        ClientStory.announce(message);
+        Minecraft.getInstance().getSoundManager().play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
+                net.minecraft.sounds.SoundEvents.NOTE_BLOCK_BELL.value(), 1.2F, 0.7F));
+    }
+
+    public static void handleStory(jp.amemaru.lostconnection.network.s2c.SyncStoryS2C message) {
+        ClientStory.apply(message);
+    }
+
+    public static void handleStoryText(jp.amemaru.lostconnection.network.s2c.StoryTextS2C message) {
+        ClientStory.show(message);
+        if (message.kind() == jp.amemaru.lostconnection.network.s2c.StoryTextS2C.Kind.ANCIENT) {
+            Minecraft.getInstance().getSoundManager().play(net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
+                    net.minecraft.sounds.SoundEvents.AMETHYST_BLOCK_CHIME, 1.4F, 0.8F));
+        }
+    }
+
+    public static void handleScene(jp.amemaru.lostconnection.network.s2c.SceneS2C message) {
+        Minecraft minecraft = Minecraft.getInstance();
+        // 場面は、開いている画面（メニューなど）を閉じて見せる。会話の画面と、CIの何も描かない画面は閉じない
+        if (minecraft.screen != null && !(minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.DialogueScreen)
+                && !CiScreenshots.isHoldScreen(minecraft.screen)) {
+            minecraft.setScreen(null);
+        }
+        ScenePlayer.start(message);
+    }
+
+    public static void handleDialogue(jp.amemaru.lostconnection.network.s2c.DialogueS2C message) {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (message.isClose()) {
+            if (minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.DialogueScreen screen
+                    && screen.session() == message.session()) {
+                screen.closeFromServer();
+            }
+            return;
+        }
+        if (minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.DialogueScreen screen
+                && screen.session() == message.session()) {
+            screen.accept(message);
+        } else {
+            minecraft.setScreen(new jp.amemaru.lostconnection.client.screen.DialogueScreen(message));
+        }
+    }
+
+    public static void handleReplayList(jp.amemaru.lostconnection.network.s2c.ReplayListS2C message) {
+        Minecraft.getInstance().setScreen(new jp.amemaru.lostconnection.client.screen.ReplayScreen(message));
+    }
+
+    public static void handleFloorSelect(jp.amemaru.lostconnection.network.s2c.FloorSelectS2C message) {
+        Minecraft.getInstance().setScreen(new jp.amemaru.lostconnection.client.screen.FloorSelectScreen(message));
+    }
+
+    public static void handleNpcs(jp.amemaru.lostconnection.network.s2c.SyncNpcsS2C message) {
+        jp.amemaru.lostconnection.npc.NpcDefs.setClient(message.npcs());
+    }
 }

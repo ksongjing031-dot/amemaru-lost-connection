@@ -1,6 +1,7 @@
 {
   "replace": false,
   "values": [
-    "amemaru:waystone_charm"
+    "amemaru:waystone_charm",
+    "amemaru:grassland_horn"
   ]
 }

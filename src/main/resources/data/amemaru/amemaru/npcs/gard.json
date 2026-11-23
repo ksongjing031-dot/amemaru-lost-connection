@@ -1,0 +1,18 @@
+{
+  "_comment": "ガルド・レイヴン（Phase 0-A 8章）。冒険者ギルドのマスター。1日目は「仮登録だ」。立つ所は受付の北の端の横（新しく来た迷い人を見ている【補完】）。11月22日から、凹凸のある立体のモデル（model）で描く（tools/artgen/make_npc_models.py）",
+  "name": "ガルド",
+  "title": "冒険者ギルドのマスター",
+  "skin": "amemaru:textures/entity/npc/gard.png",
+  "slim": false,
+  "model": "amemaru:npc/gard",
+  "model_scale": 0.97,
+  "portrait_y": 1.33,
+  "expressions": ["stern"],
+  "home": {
+    "place": "conelia",
+    "pos": [26.5, 3, -82.5],
+    "yaw": 90
+  },
+  "roles": [],
+  "talk_range": 5
+}

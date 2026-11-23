@@ -1,0 +1,25 @@
+{
+  "_comment": "名簿に書いた後、職業を選ばずに画面を閉じた人",
+  "npc": "amemaru:lilia",
+  "priority": 50,
+  "conditions": {
+    "opening": 2,
+    "has_job": false
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "expression": "smile",
+      "text": "{player}さん！　職業はまだでしたね",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "塔に入る前に、大結晶に職業を誓ってください。ここで選べますよ"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:open_job_screen"
+    }
+  ]
+}

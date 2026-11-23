@@ -38,7 +38,8 @@ public final class CityEditsGameTests {
     private CityEditsGameTests() {
     }
 
-    @GameTest(template = EMPTY, batch = "city_edits", timeoutTicks = 6000)
+    // 自動テストのサーバーは速く進むので、tick の上限は多めにする（終わればすぐ次へ進むので、ふだんの長さは変わらない。11月22日）
+    @GameTest(template = EMPTY, batch = "city_edits", timeoutTicks = 24000)
     public static void cityEditsRoundTrip(GameTestHelper helper) {
         ServerLevel level = helper.getLevel();
         MinecraftServer server = level.getServer();

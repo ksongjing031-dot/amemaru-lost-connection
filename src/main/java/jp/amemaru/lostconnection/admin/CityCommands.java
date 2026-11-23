@@ -75,6 +75,39 @@ public final class CityCommands {
     }
 
     static final List<Placement> PLACEMENTS = List.of(
+            // Phase 5：街並み（道・中央広場と大結晶・城壁と門・結界の柱・家・倉庫・灯り・木。tools/mapgen/build_city.py が
+            // 書き出す 48×48 の区画）。地面の後、11の施設より先に置く（施設が上に重なる。街並みは施設の書くマスを書かない）
+            new Placement("town/t0_2", "town", -144, -7, -88, false),
+            new Placement("town/t0_3", "town", -144, -7, -40, false),
+            new Placement("town/t0_4", "town", -144, -7, 8, false),
+            new Placement("town/t1_1", "town", -96, -7, -136, false),
+            new Placement("town/t1_2", "town", -96, -7, -88, false),
+            new Placement("town/t1_3", "town", -96, -7, -40, false),
+            new Placement("town/t1_4", "town", -96, -7, 8, false),
+            new Placement("town/t1_5", "town", -96, -7, 56, false),
+            new Placement("town/t1_6", "town", -96, -7, 104, false),
+            new Placement("town/t2_1", "town", -48, -7, -136, false),
+            new Placement("town/t2_2", "town", -48, -7, -88, false),
+            new Placement("town/t2_3", "town", -48, -7, -40, false),
+            new Placement("town/t2_4", "town", -48, -7, 8, false),
+            new Placement("town/t2_5", "town", -48, -7, 56, false),
+            new Placement("town/t2_6", "town", -48, -7, 104, false),
+            new Placement("town/t3_1", "town", 0, -7, -136, false),
+            new Placement("town/t3_2", "town", 0, -7, -88, false),
+            new Placement("town/t3_3", "town", 0, -7, -40, false),
+            new Placement("town/t3_4", "town", 0, -7, 8, false),
+            new Placement("town/t3_5", "town", 0, -7, 56, false),
+            new Placement("town/t3_6", "town", 0, -7, 104, false),
+            new Placement("town/t4_1", "town", 48, -7, -136, false),
+            new Placement("town/t4_2", "town", 48, -7, -88, false),
+            new Placement("town/t4_3", "town", 48, -7, -40, false),
+            new Placement("town/t4_4", "town", 48, -7, 8, false),
+            new Placement("town/t4_5", "town", 48, -7, 56, false),
+            new Placement("town/t4_6", "town", 48, -7, 104, false),
+            new Placement("town/t5_2", "town", 96, -7, -88, false),
+            new Placement("town/t5_3", "town", 96, -7, -40, false),
+            new Placement("town/t5_4", "town", 96, -7, 8, false),
+            new Placement("town/t5_5", "town", 96, -7, 56, false),
             new Placement("guild_hall", "guild", 6, 0, -100, false),
             new Placement("personal_storage", "storage", 22, -7, -82, false),        // ギルドの後に置く
             new Placement("weapon_workshop", "weapon", 79, 0, -26, false),
@@ -113,20 +146,29 @@ public final class CityCommands {
     public record View(String id, double x, double y, double z, float yaw, float pitch) {
     }
 
+    /**
+     * 11月21日：街並み（家と木）が建ったので、施設の向かいの空き地に立っていた所（個人倉庫・3つの工房・フリーマーケット）を
+     * 通りの上へ、木や倉庫の壁が目の前に来ていた所（倉庫地区）を見通せる所へ、城壁と角の塔は城壁の外の北東へ移した（角の塔は城壁の厚みの中に建ち、城壁の上へ6ブロック出るだけなので、内からはほとんど見えない）（tools/mapgen/check_city.py の街で確かめた）。
+     */
     public static final List<View> VIEWS = List.of(
             new View("plaza", 0.5, 1, 12.5, 180, -5),
             new View("guild", -1.5, 1, -78.5, -90, -25),
-            new View("storage", 49.5, 1, -45.5, 180, -20),
-            new View("weapon", 90.5, 1, 6.5, 180, -20),
-            new View("armor", 71.5, 1, -6.5, 0, -20),
-            new View("accessory", 31.5, 1, 6.5, 180, -20),
+            new View("storage", 54.5, 1, -50.5, 165, -20),
+            new View("weapon", 90.5, 1, 3.5, 180, -25),
+            new View("armor", 71.5, 1, -3.5, 0, -25),
+            new View("accessory", 31.5, 1, 3.5, 180, -25),
             new View("market", 0.5, 1, 17.5, 0, 0),
-            new View("free_market", -33.5, 1, 51.5, 0, -5),
+            new View("free_market", -33.5, 1, 54.5, 0, -10),
             new View("church", -50.5, 1, 0.5, 90, -25),
             new View("fishing", -49.5, 1, 56.5, 90, 5),
             new View("lake", -99.5, 1, 88.5, 140, 15),
             new View("casino", -1.5, 1, 84.5, -90, -25),
             new View("tower", 0.5, 1, -109.5, 180, -20),
+            // Phase 5：街並み（北西の環状路の家並み・南の門・北東の倉庫地区・北東の角の塔と城壁）
+            new View("houses", -30.5, 1, -56.5, 90, -5),
+            new View("gate_south", 0.5, 1, 100.5, 0, -10),
+            new View("warehouses", 68.5, 1, -47.5, -165, -15),
+            new View("wall", 100.5, 1, -96.5, 51, -14),
             // 上から：描く距離12チャンクでも霧に隠れないよう、北と南の半分ずつ（高さ110）
             new View("top_n", -13.5, 110, -100.5, 180, 90),
             new View("top_s", -13.5, 110, 26.5, 180, 90),
@@ -308,10 +350,13 @@ public final class CityCommands {
         data.grown = grown;
         data.built = true;
         data.setDirty();
+        // Phase 5：街のNPCを立つ所に置き、塔の入口の「塔の灯り」と札を、今の解放に合わせる
+        int npcs = jp.amemaru.lostconnection.npc.NpcService.spawnAll(level, origin);
+        jp.amemaru.lostconnection.tower.TowerHall.update(level.getServer());
         builds++;
         long millis = System.currentTimeMillis() - started;
         AdminCommands.log(source, "city build " + origin.toShortString() + (grown ? " grown" : "") + " (" + changed + " ground blocks, "
-                + millis + " ms" + (edited.isEmpty() ? "" : ", edits: " + String.join(",", edited)) + ")");
+                + millis + " ms, " + npcs + " npcs" + (edited.isEmpty() ? "" : ", edits: " + String.join(",", edited)) + ")");
         Component form = Component.translatable(grown ? "commands.amemaru.city.form.grown" : "commands.amemaru.city.form.start");
         source.sendSuccess(() -> Component.translatable("commands.amemaru.city.built", form,
                 origin.getX(), origin.getY(), origin.getZ()), true);
@@ -331,6 +376,12 @@ public final class CityCommands {
         } catch (CityEdits.EditsException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
+    }
+
+    /** このワールドに街を建てていれば、中央広場の真ん中（大結晶の場所。道のブロックの高さ）。Phase 5の塔の門・NPC・目覚める所の基準。 */
+    public static java.util.Optional<BlockPos> builtOrigin(ServerLevel level) {
+        CityData data = CityData.get(level);
+        return data.built ? java.util.Optional.of(data.origin) : java.util.Optional.empty();
     }
 
     /** その構造物（map/conelia/ の後ろの名前）に、書き出した直しのファイルがあるか（自動テスト用） */
@@ -369,7 +420,10 @@ public final class CityCommands {
                 o.getZ() + CHURCH_CIRCLE_Z));
     }
 
-    /** 道の高さのブロック：ゾーニングの図の道と広場は土の道、まだ作っていない城壁は砂利、ほかは草 */
+    /**
+     * 道の高さのブロック：ゾーニングの図の道と広場は土の道、城壁の所は砂利、ほかは草。Phase 5 からは街並みの区画が、城壁の内の
+     * 地面（道・広場・空き地）と城壁と門の前の道を上に書くので、見えるのは城壁の外の草地だけ。
+     */
     static BlockState surface(int x, int z) {
         double r = Math.sqrt((double) x * x + (double) z * z);
         if (r <= PLAZA_R) {

@@ -107,7 +107,7 @@ public class BestiaryScreen extends Screen {
             graphics.drawString(font, Component.translatable("screen.amemaru.bestiary.unknown", info.floor()), x + 2, y + 14,
                     UiStyle.TEXT_DIM, false);
         } else {
-            LivingEntity preview = preview(info.id());
+            LivingEntity preview = preview(info.entity());
             if (preview != null) {
                 InventoryScreen.renderEntityInInventoryFollowsMouse(graphics, left + WIDTH - 36, y + 62, previewScale(preview),
                         (float) (left + WIDTH - 36 - mouseX), (float) (y + 30 - mouseY), preview);

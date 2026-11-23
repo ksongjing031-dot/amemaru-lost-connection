@@ -1,0 +1,75 @@
+{
+  "_comment": "はじめの手引き（目覚めてから1階のボスまで。画面の右上）。target の pos は、conelia なら中央広場の真ん中から、floorN ならその階の原点から",
+  "steps": [
+    {
+      "id": "register",
+      "text": "ギルドの受付のリリアに、名前を伝える",
+      "target": {
+        "place": "conelia",
+        "pos": [
+          26.5,
+          3,
+          -78.5
+        ]
+      },
+      "done": "registered"
+    },
+    {
+      "id": "job",
+      "text": "受付のリリアに話しかけて、職業を選ぶ",
+      "target": {
+        "place": "conelia",
+        "pos": [
+          26.5,
+          3,
+          -78.5
+        ]
+      },
+      "done": "job_selected"
+    },
+    {
+      "id": "gate",
+      "text": "北門を出て、塔の門の転移の円に立つ",
+      "target": {
+        "place": "conelia",
+        "pos": [
+          0.5,
+          7,
+          -167.5
+        ]
+      },
+      "done": "tower_gate"
+    },
+    {
+      "id": "floor1",
+      "text": "転移の円で「1階　始まりの草原」を選ぶ",
+      "target": {
+        "place": "conelia",
+        "pos": [
+          0.5,
+          7,
+          -167.5
+        ]
+      },
+      "done": "floor_entered:1"
+    },
+    {
+      "id": "pillars",
+      "text": "草原の石柱を探して起動する（{n}/{total}）",
+      "done": "pillars:1"
+    },
+    {
+      "id": "boss",
+      "text": "ボスの部屋へ行き、草原の主を倒す",
+      "target": {
+        "place": "floor1",
+        "pos": [
+          192.5,
+          15,
+          95.5
+        ]
+      },
+      "done": "boss:1"
+    }
+  ]
+}

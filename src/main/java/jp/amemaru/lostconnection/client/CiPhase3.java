@@ -218,6 +218,19 @@ final class CiPhase3 {
     // ---------------------------------------------------------------- クライアント
 
     /** 予兆（地面の帯・円・構え）を出している敵がいるか。 */
+    /** 予兆の形が {@code kind}（{@link AmemaruMob#TELEGRAPH_LINE} など）の敵がいるか。 */
+    static boolean anyTelegraphOf(Minecraft minecraft, int kind) {
+        if (minecraft.level == null) {
+            return false;
+        }
+        for (Entity entity : minecraft.level.entitiesForRendering()) {
+            if (entity instanceof AmemaruMob mob && mob.telegraph() == kind) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     static boolean anyTelegraph(Minecraft minecraft) {
         if (minecraft.level == null) {
             return false;

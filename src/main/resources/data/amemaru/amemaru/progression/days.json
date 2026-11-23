@@ -1,0 +1,105 @@
+{
+  "_comment": "進行日ごとに開く階（Phase 0-A 11章の日ごとの進行表：N日目にN階）。announce は、日が進んだときに全員に出す一言（空なら出さない）",
+  "days": {
+    "1": {
+      "unlock_floors": [
+        1
+      ]
+    },
+    "2": {
+      "unlock_floors": [
+        2
+      ]
+    },
+    "3": {
+      "unlock_floors": [
+        3
+      ]
+    },
+    "4": {
+      "unlock_floors": [
+        4
+      ]
+    },
+    "5": {
+      "unlock_floors": [
+        5
+      ]
+    },
+    "6": {
+      "unlock_floors": [
+        6
+      ]
+    },
+    "7": {
+      "unlock_floors": [
+        7
+      ]
+    },
+    "8": {
+      "unlock_floors": [
+        8
+      ]
+    },
+    "9": {
+      "unlock_floors": [
+        9
+      ]
+    },
+    "10": {
+      "unlock_floors": [
+        10
+      ]
+    },
+    "11": {
+      "unlock_floors": [
+        11
+      ]
+    },
+    "12": {
+      "unlock_floors": [
+        12
+      ]
+    },
+    "13": {
+      "unlock_floors": [
+        13
+      ]
+    },
+    "14": {
+      "unlock_floors": [
+        14
+      ]
+    },
+    "15": {
+      "unlock_floors": [
+        15
+      ]
+    },
+    "16": {
+      "unlock_floors": [
+        16
+      ]
+    },
+    "17": {
+      "unlock_floors": [
+        17
+      ]
+    },
+    "18": {
+      "unlock_floors": [
+        18
+      ]
+    },
+    "19": {
+      "unlock_floors": [
+        19
+      ]
+    },
+    "20": {
+      "unlock_floors": [
+        20
+      ]
+    }
+  }
+}

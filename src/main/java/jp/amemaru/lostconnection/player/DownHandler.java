@@ -56,6 +56,7 @@ import java.util.UUID;
  *   <li>時間切れで、教会の呼び戻しの円（{@link ChurchPoint}）へ戻る。呼び戻しの儀の代価として所持金の5%
  *       （{@code deathMoneyPercent}）を失う。経験値とアイテムは失わない。HPとMPは全快、60秒の「衰弱」
  *       （{@code weaknessSeconds}・{@code weaknessPercent}：HP・MP・攻撃・魔力・防御・素早さ・会心が10%下がる）。</li>
+ *   <li>ダウン中にリタイアのキー（初期値H）を3秒押し続けると、時間切れを待たずに教会へ戻る（代価も同じ。11月22日のご指示）。</li>
  *   <li>ダウン中に抜けた（サーバーが止まった）ら、入り直したときに教会へ戻す（代価も払う）【補完】。</li>
  *   <li>奈落と /kill はバニラの死亡のまま（すぐにリスポーンし、教会へ戻す。代価も払う）。</li>
  * </ul>
@@ -248,6 +249,34 @@ public final class DownHandler {
         }
         sendState(player, data);
         PartyService.markChanged(player);
+    }
+
+    // ================================================================ リタイア
+
+    /**
+     * ダウン中のリタイア（11月22日のご指示）：決まったキー（初期値H）を3秒押し続けると、30秒を待たずに教会へ戻る。代価・衰弱・
+     * HPとMPの全快は、時間切れと同じ。起こされている途中でもできる【補完】。ダウンしていなければ何もしない。
+     *
+     * @return 教会へ戻したら true
+     */
+    public static boolean retire(ServerPlayer player, PlayerData data) {
+        if (!data.down().isDown()) {
+            return false;
+        }
+        AmemaruMod.LOGGER.info("[amemaru] {} retired while down", player.getGameProfile().getName());
+        // そばで起こそうとしていた人に知らせる（パーティの仲間には、教会に戻った知らせが出る）
+        Set<UUID> party = new HashSet<>();
+        for (ServerPlayer member : PartyService.onlineMembers(player)) {
+            party.add(member.getUUID());
+        }
+        Component name = player.getDisplayName();
+        for (ServerPlayer other : noticeTargets(player)) {
+            if (!party.contains(other.getUUID())) {
+                other.sendSystemMessage(Component.translatable("message.amemaru.down.retired_other", name).withStyle(ChatFormatting.GRAY));
+            }
+        }
+        returnToChurch(player, data);
+        return true;
     }
 
     // ================================================================ 教会へ戻る（呼び戻しの儀）

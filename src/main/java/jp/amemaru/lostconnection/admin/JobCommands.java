@@ -321,7 +321,12 @@ final class JobCommands {
                         .then(Commands.argument("day", IntegerArgumentType.integer(1, ProgressionData.MAX_DAY))
                                 .executes(ctx -> setDay(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "day")))))
                 .then(Commands.literal("next")
-                        .executes(ctx -> setDay(ctx.getSource(), ProgressionData.currentDay(ctx.getSource().getServer()) + 1)))
+                        .executes(ctx -> setDay(ctx.getSource(), ProgressionData.currentDay(ctx.getSource().getServer()) + 1))
+                        // 予告をつけて、時間をおいて進める（Phase 0-B 9章。Phase 5）
+                        .then(Commands.literal("in")
+                                .then(Commands.argument("minutes", com.mojang.brigadier.arguments.DoubleArgumentType.doubleArg(0.1, 1440.0))
+                                        .executes(ctx -> scheduleNextDay(ctx.getSource(),
+                                                com.mojang.brigadier.arguments.DoubleArgumentType.getDouble(ctx, "minutes"))))))
                 .then(Commands.literal("info")
                         .executes(ctx -> {
                             int day = ProgressionData.currentDay(ctx.getSource().getServer());
@@ -334,21 +339,20 @@ final class JobCommands {
     }
 
     private static int setDay(CommandSourceStack source, int day) {
-        ProgressionData data = ProgressionData.get(source.getServer());
-        data.setDay(day);
-        int result = data.day();
+        // その日の予定（階層の解放・知らせ）もまとめて行う（Phase 5）
+        int result = jp.amemaru.lostconnection.progression.ProgressionService.setDay(source.getServer(), day);
         AdminCommands.log(source, "day set " + result);
-        // 章（レベルと熟練度の上限）と、アクセサリーの留め具の枠（11日目）を、全員に合わせ直す（Phase 3）
-        for (net.minecraft.server.level.ServerPlayer player : source.getServer().getPlayerList().getPlayers()) {
-            jp.amemaru.lostconnection.accessory.AccessoryService.updateClaspSlot(player);
-            jp.amemaru.lostconnection.player.PlayerDataCapability.get(player).ifPresent(playerData ->
-                    playerData.markDirty(jp.amemaru.lostconnection.player.PlayerData.SYNC_ADVENTURE
-                            | jp.amemaru.lostconnection.player.PlayerData.SYNC_GROWTH));
-        }
-        source.getServer().getPlayerList().broadcastSystemMessage(
-                Component.translatable("message.amemaru.day.changed", result).withStyle(ChatFormatting.GOLD), false);
         source.sendSuccess(() -> Component.translatable("commands.amemaru.day.set", result), true);
         return result;
+    }
+
+    private static int scheduleNextDay(CommandSourceStack source, double minutes) {
+        int next = ProgressionData.currentDay(source.getServer()) + 1;
+        jp.amemaru.lostconnection.progression.ProgressionData.Scheduled s = jp.amemaru.lostconnection.progression.ProgressionService.schedule(
+                source.getServer(), jp.amemaru.lostconnection.progression.ProgressionData.ScheduleKind.DAY, next, "", minutes);
+        AdminCommands.log(source, "day next in " + minutes + " (#" + s.id() + ")");
+        source.sendSuccess(() -> Component.translatable("commands.amemaru.schedule.added", s.id()), true);
+        return s.id();
     }
 
     // ---------------------------------------------------------------- dummy

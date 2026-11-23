@@ -32,7 +32,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
  * {@link #PROTOCOL_VERSION} を上げる。クライアントが送るのは「何をしたいか」だけで、数値の計算はサーバーで行う。</p>
  */
 public final class ModNetwork {
-    public static final String PROTOCOL_VERSION = "5";
+    public static final String PROTOCOL_VERSION = "6";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             AmemaruMod.id("main"),
@@ -171,6 +171,77 @@ public final class ModNetwork {
                 .encoder(jp.amemaru.lostconnection.network.c2s.PartyActionC2S::encode)
                 .decoder(jp.amemaru.lostconnection.network.c2s.PartyActionC2S::decode)
                 .consumerMainThread(jp.amemaru.lostconnection.network.c2s.PartyActionC2S::handle)
+                .add();
+        // ---- Phase 5：進行・物語・NPC・塔
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.WorldStateS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.WorldStateS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.WorldStateS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.WorldStateS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.AnnouncementS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.AnnouncementS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.AnnouncementS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.AnnouncementS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.DialogueS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.DialogueS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.DialogueS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.DialogueS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.SceneS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.SceneS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.SceneS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.SceneS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.ReplayListS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.ReplayListS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.ReplayListS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.ReplayListS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.SyncStoryS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.SyncStoryS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.SyncStoryS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.SyncStoryS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.StoryTextS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.StoryTextS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.StoryTextS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.StoryTextS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.FloorSelectS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.FloorSelectS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.FloorSelectS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.FloorSelectS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.SyncNpcsS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.SyncNpcsS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.SyncNpcsS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.SyncNpcsS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.c2s.DialogueChoiceC2S.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(jp.amemaru.lostconnection.network.c2s.DialogueChoiceC2S::encode)
+                .decoder(jp.amemaru.lostconnection.network.c2s.DialogueChoiceC2S::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.c2s.DialogueChoiceC2S::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.c2s.SceneStateC2S.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(jp.amemaru.lostconnection.network.c2s.SceneStateC2S::encode)
+                .decoder(jp.amemaru.lostconnection.network.c2s.SceneStateC2S::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.c2s.SceneStateC2S::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.c2s.FloorSelectC2S.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(jp.amemaru.lostconnection.network.c2s.FloorSelectC2S::encode)
+                .decoder(jp.amemaru.lostconnection.network.c2s.FloorSelectC2S::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.c2s.FloorSelectC2S::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.c2s.ReplayMemoryC2S.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(jp.amemaru.lostconnection.network.c2s.ReplayMemoryC2S::encode)
+                .decoder(jp.amemaru.lostconnection.network.c2s.ReplayMemoryC2S::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.c2s.ReplayMemoryC2S::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.c2s.RetireC2S.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(jp.amemaru.lostconnection.network.c2s.RetireC2S::encode)
+                .decoder(jp.amemaru.lostconnection.network.c2s.RetireC2S::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.c2s.RetireC2S::handle)
                 .add();
     }
 

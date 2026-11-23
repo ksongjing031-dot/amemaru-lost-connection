@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "open=false": {
+      "model": "amemaru:block/tower_gate"
+    },
+    "open=true": {
+      "model": "amemaru:block/tower_gate_open"
+    }
+  }
+}

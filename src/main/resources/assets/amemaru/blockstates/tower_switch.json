@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "amemaru:block/tower_switch"
+    },
+    "lit=true": {
+      "model": "amemaru:block/tower_switch_lit"
+    }
+  }
+}

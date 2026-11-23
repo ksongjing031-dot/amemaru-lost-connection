@@ -38,7 +38,12 @@ python3 tools/mapgen/build_tower.py                       # tower_entrance.nbt�
 python3 tools/mapgen/build_tower.py /tmp/out --render /tmp/out   # 見本の絵も描く（外6枚・中13枚・記念碑1枚、高さ5・17で切った絵2枚。入口と広場を合わせて描く）
 python3 tools/mapgen/build_tower.py /tmp/out --render /tmp/out --only hall,ring   # 一部の絵だけ描く
 python3 tools/mapgen/build_tower.py /tmp/out --ci         # 自動の確認の写真の座標（CiScreenshots.java の MAP_VIEWS の行）を出す
-python3 tools/mapgen/check_city.py                        # 11の施設の構造物を世界の座標に並べて、街全体を通しで確かめる（はじめの形と育ったあとの形。15秒ほど）
+python3 tools/mapgen/build_city.py                        # 街並み（道・中央広場と大結晶・城壁と門・家・倉庫・灯り・木）を town/t*_*.nbt に書き直す（20秒ほど）
+python3 tools/mapgen/build_city.py /tmp/out --render /tmp/out    # 別の所に書き出して、上から見た地図（town_map.png）も描く
+python3 tools/mapgen/build_floor1.py                      # 塔の1階「始まりの草原」（384×384）を map/floor1/p*_*.nbt と floors/floor1.json に書き直す
+python3 tools/mapgen/build_floor1.py /tmp/out --render /tmp/out  # 見本の絵も描く（上から見た地図・ボスの広間・石柱・入口・西の丘・洞・東の遺跡・林など）
+python3 tools/mapgen/check_floor1.py                     # 塔の1階を歩いて確かめる（石柱・仕掛け石・宝箱へ行ける・奥の院・巻き道・湧く所・洞の明るさ。15秒ほど）
+python3 tools/mapgen/check_city.py                        # 街並みと11の施設の構造物を世界の座標に並べて、街全体を通しで確かめる（はじめの形と育ったあとの形。30秒ほど）
 python3 tools/mapgen/check_city.py --render /tmp/city     # 結果（city_check.json）と、上から見た街・南から見た高さ・夜の灯り・つながる道の絵も書く
 python3 tools/mapgen/check_city.py --render /tmp/city --aerial   # 鳥瞰の絵も描く（光線で描くので1〜2分）
 python3 -I tools/mapgen/import_edits.py <送ってもらったフォルダ>   # ゲームの中で直した所（city export）を確かめて edits/ に取り込む
@@ -116,8 +121,12 @@ python3 -I tools/mapgen/import_edits.py <フォルダ> --dry-run       # 確か�
 | `build_church.py` | コネリアの結びの教会（PHASE 8 の設計。46×41×38、正面は東）と記憶の庭（25×12×18）。平面図の (u, v) と高さ y（道のブロックが 0）で組み立てる。アーチは `arch_row()`、色ガラスの窓は `lancet()` と `rose()`、鐘楼のらせん階段は `spiral()`（1回りめは下を埋め、2回りめは裏に逆さの階段）。記憶の庭を並べた写しは `combined_world()`（見本の絵と確かめで使う）。6日目の記憶の相談所の重ねる形は `counsel_overlay()`（書く所は `COUNSEL_OWNED` の4マスだけ）、重ねたあとは `counsel_world()` |
 | `build_fishing.py` | コネリアの釣り堀（PHASE 9 の設計。36×25×44、入口は東）と、水門と湖（48×34×48）・路地（18×8×14）。平面図の (u, v) と高さ y（道のブロックが 0、水面のブロックは −3）で組み立てる。池の形は `POND_ROWS`、水の深さは `depth()`（岸からの近さ）、岸の斜面は `land_dist()`。釣り堀が書くマスは `mine()`（記憶の庭と城壁沿いの道は書かない）。水は構造物ごとに漏れない（池は `weir()` の堰板、水門は `gate_channel()` の堰板で止まる）。寄付で開く湖畔の釣り場は `lakeside()`（書くマスは `LK_OWNED`）、第2章の氷は `frozen_overlay()`（`FROZEN_OWNED`）。3つの形を並べた写しは `checked_world(which)`（見本の絵と確かめで使う） |
 | `build_casino.py` | コネリアのカジノ「ラッキーノット」（PHASE 10 の設計。43×29×36、正面は西）。建物の中の (u, v)（u 0 = 世界の x 13、v 0 = 世界の z 72）と高さ y（道のブロックが 0、地下は負）で組み立てる。屋根は前と奥の寄棟 `Hip`（金の縁の軒）、大広間の切妻と真ん中の帯の切妻（`Roof`、縁は `dark_rim()` で黒くして外の破風板だけを金に）、正面の両端の小塔。ルーレットの卓は `roulette()`（12の目は `POCKETS`）、大きな吊り灯は `chandelier()`、部屋から見える屋根の下は `roof_boards()` で野地板にする。書くマスは `owned()`（城壁沿いの道・南門の前の東の区画・茶と香辛料の店の横は書かない）。寄付で足すハイ＆ローは `highlow_overlay()`（`HL_OWNED`）、魚レースは `fishrace_overlay()`（`FR_OWNED`）。重ねたあとの写しは `checked_world(which)` |
-| `check_city.py` | 街全体の通しの確かめ。構造物ファイル（`src/main/resources/.../map/conelia/*.nbt`）を、地図を組むときの位置と順番（`PLACEMENTS`。docs/map_style.md の「置き方（地図を組むとき）」と同じ）に並べた街 `City(stage)`（`"start"` はじめの形、`"grown"` 重ねる形をすべて重ねた形）で、構造物どうしの重なり（`overlaps`）、ゾーニングの図の道と広場（`ROADS`・`ROAD_CENTERS`。まだ作っていない所も）の真ん中と上の物、城壁と城壁沿いの道にかかる物、高さ（`footprints`・`ring_heights`）、灯り（`lamp_kinds`・`chandeliers`・`door_lamps`・`dark_spots`）、つながる道（`walk`・`back_reach`。まだない道は道の高さの地面、施設のない土地は歩けない所）と各 PHASE の行き先（`GOALS`）を確かめる。読んだ構造物は `~/.cache/amemaru-mapgen/city` にためる |
+| `check_city.py` | 街全体の通しの確かめ。構造物ファイル（`src/main/resources/.../map/conelia/*.nbt`）を、地図を組むときの位置と順番（街並みの区画 `town/placements.txt` を先に、次に `PLACEMENTS`。docs/map_style.md の「置き方（地図を組むとき）」と同じ）に並べた街 `City(stage)`（街並みを入れないときは `town=False`）（`"start"` はじめの形、`"grown"` 重ねる形をすべて重ねた形）で、構造物どうしの重なり（`overlaps`）、ゾーニングの図の道と広場（`ROADS`・`ROAD_CENTERS`。まだ作っていない所も）の真ん中と上の物、城壁と城壁沿いの道にかかる物、高さ（`footprints`・`ring_heights`）、灯り（`lamp_kinds`・`chandeliers`・`door_lamps`・`dark_spots`）、つながる道（`walk`・`back_reach`。まだない道は道の高さの地面、施設のない土地は歩けない所）と各 PHASE の行き先（`GOALS`）を確かめる。読んだ構造物は `~/.cache/amemaru-mapgen/city` にためる |
 | `city_figures.py` | 街全体の絵（`check_city.py --render` から呼ぶ）：上から見た街（各柱のいちばん上のブロックの色と陰）・南から見た高さ（施設ごとの影絵と④の線）・夜の灯り（中央広場から歩ける所の明るさと灯りの種類）・つながる道・鳥瞰（`render_aerial()`。池と湖は `render(sunken=...)` で地面の平らな面の下も描く） |
+| `build_city.py` | コネリアの街並み（Phase 5）。11の施設の構造物（`check_city.City("grown", town=False)`）が置かれていない所を、建築の文書 Tab 1 の都市のルールで埋める：道と中央広場の舗装（`paving`・`plaza`。大結晶）、城壁と3つの門と門の塔・斜めの4つの塔（`wall_and_gates`。城壁の上の通路は見張りの所で、上がる階段は作らない）、結界の柱8本、家50軒（`house`。2階＋屋根裏、平入りと妻入り、**内装なし**。扉は手で開かない `amemaru:house_door_*`、中は空洞で見えない灯り）・倉庫3棟（`warehouse`）・小広場と井戸6か所・裏庭の木と花の畑（`yards`）・灯り（`street_lamps`）・案内板（`signposts`）。暗くて湧ける所は、見えない灯り（`minecraft:light`）で埋める（`fill_dark`。街が光をさえぎって暗くなった施設の足もとも、そばの空いたマスで）。街の箱（x −144〜135、z −184〜127）を 48×48 の区画 `town/t<i>_<j>.nbt` に、空気を書かずに書き出し、置く所を `town/placements.txt` に書く。施設の書くマスは書かない（`Town.put`）ので、施設より先に置く |
+| `build_floor1.py` | 塔の1階「始まりの草原」（Phase 5。384×48×384）。丘で囲んだ草原・小川と石橋・古代の道・3本の石柱・封印の門・草原の主の広間（ボスの部屋）・道標の石板・湧く所。11月22日から、西の丘の台地と巻き道と洞（`hill_terrain`・`hill_features`・`hill_cave`）・東の遺跡と奥の院と仕掛け石と格子（`ruins_compound`）・北西の林（`woods`）・2本目の小川・生け垣と石積みの垣（`hedgerows`）・飛び石（`fords`）・結晶の窪み・古代の宝箱10（`chest`）も。48×48 の区画64個（`map/floor1/p<i>_<j>.nbt`）と、階の定義 `floors/floor1.json`（入口・戻りの円・ボスの部屋・石柱と課題・湧く所・石板・守り手・仕掛け石と門・宝箱・階の中だけのドロップ）を書き出す |
+| `check_floor1.py` | 塔の1階を、ゲームに近い歩き方（1段は跳んで上がる・2段は上がれない・下りは何段でも・水は泳ぐ・つるは上る）で確かめる：入口から石柱の核・仕掛け石・宝箱・広間の前へ行けるか、門が閉じている間は奥の院に入れないか（ひらくと入れるか）、奥の院の中から出られるか、巻き道をふさぐと台地へ上がれないか、湧く所と巡回の点と守り手の出る所に立てるか、洞に暗い所がないか |
+| `floor_figures.py` | 階の見本の絵（`build_floor1.py --render` から呼ぶ） |
 | `build_tower.py` | コネリアの塔の入口（PHASE 11 の設計。入口 45×48×30・塔前広場 47×18×32、正面は南）。世界の座標（x・z）と高さ y（道のブロックが 0）で、入口と広場を1つの合わせた形（47×50×62）に組み立て、書き出すときに2つの箱に切り分ける（`split()`。箱からはみ出すブロックがあれば止まる）。塔の基部の丸い壁は `base_face()`（3つの帯の半径 `BANDS`）、門のアーチは `arch_open()`、転移門の輪は `ring_cell()`・`ring_open()`、左右の塔のらせん階段は `spiral()`、広場の段は `terrace()`。重ねる形は記念碑（`M`）。確かめの写し `checked_world()` は、建物の下と外にゲームの地面（y 0）を足す |
 
 ## 決まり
@@ -161,6 +170,14 @@ python3 -I tools/mapgen/import_edits.py <フォルダ> --dry-run       # 確か�
 - 上にふさぐブロックがある土の道（`dirt_path`）は、置いたときにゲームが土に変えるので、`finalize()` で先に土にする。
 - 物語で形が変わる所（育つ施設）は、変わる範囲だけの小さな構造物を別に書き出して、後から重ねて置く
   （`build_weapon.py` の `forge_lit_world()`。範囲の中は空気も書き出すので、外したブロックは消える）。
+- 街並み（`build_city.py`）は施設の後から作るので、施設を足したり、置き方や形を直したりしたら、`build_city.py` も作り直す
+  （施設の書くマスを避けて、家・灯り・暗い所の灯りを置き直す）。
+- 街並みの家の並び（`row`）は、中央広場の縁から13まで（④の最初の1列）にかかる家を、軒9・煙突なし・屋根の縁取りの頂も18までにする
+  （`first_ring`・`house(max_top=18)`）。木の葉は道・広場・城壁沿いの道の上に出さない（`leaf_ok`）。灯りの腕木と結晶灯は、
+  道の真ん中の帯（⑤）に出さない。
+- 作物（小麦・ニンジン・ジャガイモ）は植えない。時間で育ち、建てた直後に一部が消えることもあって、ゲームの中で直した所を
+  見分ける確かめ（`city export`・自動テスト）に出てしまう。花・シダ・ツツジなど、変わらない植物にする。
+- 書き出すファイルは、同じ設計からいつも同じになるようにする（性質は名前の順、圧縮の時刻は 0）。
 - 施設を足したり、置き方や形を直したりしたら、`check_city.py` で街全体を通しで確かめる。新しい施設は `PLACEMENTS` に
   置く所と順番（後に置くほど上書きする）を足し、重ねる形は土台の構造物の名前も書く。各 PHASE の行き先は `GOALS` に足す。
 - 1つの施設の中の直しで、乱数を引く数を変えない（`rng.random()` を引く回数が変わると、そのあとに作る形の乱数がすべてずれて、

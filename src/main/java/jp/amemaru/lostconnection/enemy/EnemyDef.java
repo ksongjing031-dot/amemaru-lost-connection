@@ -30,12 +30,19 @@ import java.util.Map;
  *   <li>{@code behavior}：行動の型ごとの数値（群れで反撃する範囲、仲間を呼ぶ範囲など）</li>
  *   <li>{@code drops}：loot_table（ふつうのドロップ表）、rare（レアドロップ。確率は%）、pity（天井。ボスだけ）</li>
  *   <li>{@code lost}：ロストを見せる敵か（体の一部が白く欠けた見た目。ロスト状態を与える仕組みはPhase 8）</li>
+ *   <li>{@code model}：見た目を借りる敵（エンティティ）のID。同じ見た目で数値だけ別の個体（1階の「群れの長」など。11月22日【補完】）に使う。
+ *       ないときは、この定義と同じIDの敵の見た目</li>
  * </ul>
  */
 public record EnemyDef(ResourceLocation id, String name, String description, int floor, int level, double hp, double attack,
                        double defense, double moveSpeed, double followRange, double aggroRange, int exp,
                        Map<String, Skill> skills, Map<String, Double> behavior, @Nullable ResourceLocation lootTable,
-                       List<RareDrop> rare, boolean pity, boolean lost) {
+                       List<RareDrop> rare, boolean pity, boolean lost, @Nullable ResourceLocation model) {
+
+    /** 見た目（エンティティ）のID：{@code model} があればそれ、なければこの定義のID。 */
+    public ResourceLocation entity() {
+        return model != null ? model : id;
+    }
 
     /** 技の数値。 */
     public record Skill(double power, double windup, double cooldown, double range, Map<String, Double> params) {
@@ -53,8 +60,16 @@ public record EnemyDef(ResourceLocation id, String name, String description, int
         }
     }
 
-    /** レアドロップ（{@code chance} は%。{@code rarity} は装備のレアリティを上げるとき）。 */
-    public record RareDrop(ResourceLocation item, double chance, int count, @Nullable String rarity) {
+    /**
+     * レアドロップ（{@code chance} は%。{@code rarity} は装備のレアリティを上げるとき）。{@code pity}：天井の数に入る品か
+     * （Phase 0-A 20章「同じボスでレアが出なかった回数ごとに」はボスのレア装備のこと。ボスの結晶果は {@code "pity": false} にして、
+     * 出ても天井の数を戻さない。Phase 5で足した【補完】）。
+     */
+    public record RareDrop(ResourceLocation item, double chance, int count, @Nullable String rarity, boolean pity) {
+        public RareDrop(ResourceLocation item, double chance, int count, @Nullable String rarity) {
+            this(item, chance, count, rarity, true);
+        }
+
     }
 
     /** 技の数値（定義になければ、渡した値で作る）。 */
@@ -126,24 +141,28 @@ public record EnemyDef(ResourceLocation id, String name, String description, int
                 JsonObject one = Json.asObject(rareArray.get(i), "drops.rare[" + i + "]");
                 String rarity = Json.optionalString(one, "rarity", "");
                 rare.add(new RareDrop(Json.id(one, "item"), Json.doubleInRange(one, "chance", 0.0, 100.0),
-                        Json.optionalInt(one, "count", 1, 1, 64), rarity.isEmpty() ? null : rarity));
+                        Json.optionalInt(one, "count", 1, 1, 64), rarity.isEmpty() ? null : rarity,
+                        Json.optionalBoolean(one, "pity", true)));
             }
         }
         if (attack <= 0 && !skills.isEmpty()) {
             throw new DefinitionException("技を持つ敵の「stats.attack」は0より大きくしてください");
         }
         boolean lost = Json.optionalBoolean(json, "lost", false);
+        ResourceLocation model = Json.optionalId(json, "model");
         return new EnemyDef(id, name, description, floor, level, hp, attack, defense, moveSpeed, followRange, aggroRange, exp,
-                Collections.unmodifiableMap(skills), Collections.unmodifiableMap(behavior), lootTable, List.copyOf(rare), pity, lost);
+                Collections.unmodifiableMap(skills), Collections.unmodifiableMap(behavior), lootTable, List.copyOf(rare), pity, lost,
+                model == null || model.equals(id) ? null : model);
     }
 
     // ---------------------------------------------------------------- 図鑑に要る分をクライアントへ
 
     /** 図鑑の1行（名前・説明・階・レベル・ふつうのドロップの品・レアドロップの品と確率）。 */
     public record Info(ResourceLocation id, String name, String description, int floor, int level, boolean lost,
-                       List<ResourceLocation> drops, List<RareDrop> rare) {
+                       List<ResourceLocation> drops, List<RareDrop> rare, ResourceLocation entity) {
         public void write(FriendlyByteBuf buf) {
             buf.writeResourceLocation(id);
+            buf.writeResourceLocation(entity);
             buf.writeUtf(name);
             buf.writeUtf(description);
             buf.writeVarInt(floor);
@@ -164,6 +183,7 @@ public record EnemyDef(ResourceLocation id, String name, String description, int
 
         public static Info read(FriendlyByteBuf buf) {
             ResourceLocation id = buf.readResourceLocation();
+            ResourceLocation entity = buf.readResourceLocation();
             String name = buf.readUtf();
             String description = buf.readUtf();
             int floor = buf.readVarInt();
@@ -183,7 +203,7 @@ public record EnemyDef(ResourceLocation id, String name, String description, int
                 String rarity = buf.readUtf();
                 rare.add(new RareDrop(item, chance, count, rarity.isEmpty() ? null : rarity));
             }
-            return new Info(id, name, description, floor, level, lost, List.copyOf(drops), List.copyOf(rare));
+            return new Info(id, name, description, floor, level, lost, List.copyOf(drops), List.copyOf(rare), entity);
         }
     }
 }

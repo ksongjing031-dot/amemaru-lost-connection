@@ -48,6 +48,13 @@ public final class ServerEvents {
         event.addListener(AccessoryDefs.loader());
         event.addListener(EnemyDefs.loader());
         event.addListener(ProductionRules.loader());
+        // Phase 5：塔の階・NPC・会話・ストーリーイベント・はじめの手引き・進行日の予定
+        event.addListener(jp.amemaru.lostconnection.tower.FloorDefs.loader());
+        event.addListener(jp.amemaru.lostconnection.npc.NpcDefs.loader());
+        event.addListener(jp.amemaru.lostconnection.story.DialogueDefs.loader());
+        event.addListener(jp.amemaru.lostconnection.story.StoryEventManager.loader());
+        event.addListener(jp.amemaru.lostconnection.story.GuideService.loader());
+        event.addListener(jp.amemaru.lostconnection.progression.DaySchedule.loader());
     }
 
     @SubscribeEvent
@@ -68,9 +75,11 @@ public final class ServerEvents {
         SyncDefinitionsS2C definitions = SyncDefinitionsS2C.of(SkillRegistry.get());
         SyncContentS2C content = SyncContentS2C.current();
         ServerPlayer joining = event.getPlayer();
+        jp.amemaru.lostconnection.network.s2c.SyncNpcsS2C npcs = jp.amemaru.lostconnection.network.s2c.SyncNpcsS2C.current();
         if (joining != null) {
             ModNetwork.sendTo(joining, definitions);
             ModNetwork.sendTo(joining, content);
+            ModNetwork.sendTo(joining, npcs);
             DataReport.notifyAdmins(List.of(joining));
             return;
         }
@@ -78,6 +87,7 @@ public final class ServerEvents {
         for (ServerPlayer player : players) {
             ModNetwork.sendTo(player, definitions);
             ModNetwork.sendTo(player, content);
+            ModNetwork.sendTo(player, npcs);
             PlayerDataCapability.get(player).ifPresent(data -> {
                 LevelService.recompute(player, data);
                 // 定義の番号が変わっているかもしれないので、すべて送り直す

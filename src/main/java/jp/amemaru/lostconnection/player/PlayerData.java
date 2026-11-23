@@ -24,7 +24,9 @@ import java.util.Set;
  * <p>Phase 1で「成長」（レベル・経験値・振り分けたステータス）と「戦闘」のうちHPとMPを持ち、Phase 2で「職業」
  * （戦闘職・上位職）と「スキル」（習得したスキルと段階・スキル枠6つ・専用ゲージ）を足した（版2）。
  * 所持金・物語などのまとまりは、使い始めるPhaseで足し、{@link #DATA_VERSION} を上げて古い保存データを読み替える。
- * Phase 4で「所持金」（ノット）と「ダウン」（ダウン中か）・記録（ダウン・起こした・教会に戻った回数）を足した（版4）。</p>
+ * Phase 4で「所持金」（ノット）と「ダウン」（ダウン中か）・記録（ダウン・起こした・教会に戻った回数）を足した（版4）。
+ * Phase 5で「物語」（本人の物語フラグ・オープニングの進み・見たイベント・読んだ会話・起動した石柱・行った階・倒した階層ボス・
+ * はじめの手引き。{@link PlayerStory}）を足した（版5）。</p>
  *
  * <p>クールダウン・詠唱・専用ゲージ・強化は保存しない（ログアウトすると消える。ゲージは戦闘が終わると0）。</p>
  *
@@ -33,7 +35,7 @@ import java.util.Set;
  */
 public final class PlayerData {
     /** 保存データの版。項目を増やしたら上げ、{@link #load} で古い版を読み替える。 */
-    public static final int DATA_VERSION = 4;
+    public static final int DATA_VERSION = 5;
     /** スキル枠の数。 */
     public static final int LOADOUT_SIZE = 6;
 
@@ -57,9 +59,11 @@ public final class PlayerData {
     public static final int SYNC_ADVENTURE = 1 << 8;
     /** 同期するまとまり：所持金（Phase 4）。別のパケットで送る。 */
     public static final int SYNC_WALLET = 1 << 9;
+    /** 同期するまとまり：物語（Phase 5。オープニングの進み・起動した石柱・手引き）。別のパケットで送る。 */
+    public static final int SYNC_STORY = 1 << 10;
     /** すべてのまとまり。 */
     public static final int SYNC_ALL = SYNC_GROWTH | SYNC_STATS | SYNC_VITALS | SYNC_JOB | SYNC_SKILLS | SYNC_GAUGE
-            | SYNC_COOLDOWNS | SYNC_CAST | SYNC_ADVENTURE | SYNC_WALLET;
+            | SYNC_COOLDOWNS | SYNC_CAST | SYNC_ADVENTURE | SYNC_WALLET | SYNC_STORY;
 
     // ---- 保存する項目
     private int level = 1;
@@ -99,6 +103,8 @@ public final class PlayerData {
     @Nullable
     private ResourceKey<Level> oathCrystalLevel;
     private long oathCrystalUntil;
+    /** 職業選択の画面を、会話（リリア・オープニング）から開いたか（Phase 5。保存しない）。 */
+    private boolean oathFromDialogue;
 
     // ---- 冒険の記録（保存する。Phase 3）
     private final AdventureData adventure = new AdventureData(() -> markDirty(SYNC_ADVENTURE));
@@ -106,6 +112,9 @@ public final class PlayerData {
     private long knots;
     /** ダウン（Phase 4。ダウン中かだけ保存し、残り時間・起こしている人は保存しない） */
     private final DownState down = new DownState();
+    /** 物語（Phase 5）。 */
+    private final jp.amemaru.lostconnection.story.PlayerStory story =
+            new jp.amemaru.lostconnection.story.PlayerStory(() -> markDirty(SYNC_STORY));
     /** 記録（Phase 4）：ダウンした・仲間を起こした・教会に戻った回数（称号・ランキングは後のPhase） */
     private int downCount;
     private int reviveCount;
@@ -514,9 +523,22 @@ public final class PlayerData {
 
     /** 職業選択の画面を開いた誓約の結晶の場所（画面を開いている間だけ有効）。 */
     public void setOathCrystal(@Nullable BlockPos pos, @Nullable ResourceKey<Level> level, long until) {
+        setOathCrystal(pos, level, until, false);
+    }
+
+    /**
+     * {@code fromDialogue}：会話から開いた画面（ギルドの受付のリリア、オープニングの大結晶のそばでのリリア）。このときは、
+     * 開いた所から離れていないかだけを見る（誓約の結晶のブロックがなくてもよい。「職業登録＝大結晶への誓約」。Phase 5）。
+     */
+    public void setOathCrystal(@Nullable BlockPos pos, @Nullable ResourceKey<Level> level, long until, boolean fromDialogue) {
         oathCrystalPos = pos;
         oathCrystalLevel = level;
         oathCrystalUntil = until;
+        oathFromDialogue = fromDialogue && pos != null;
+    }
+
+    public boolean isOathFromDialogue() {
+        return oathFromDialogue;
     }
 
     @Nullable
@@ -553,6 +575,11 @@ public final class PlayerData {
 
     public DownState down() {
         return down;
+    }
+
+    /** 物語（Phase 5）。 */
+    public jp.amemaru.lostconnection.story.PlayerStory getStory() {
+        return story;
     }
 
     public int getDownCount() {
@@ -603,6 +630,7 @@ public final class PlayerData {
         pendingConfirm = "";
         oathCrystalPos = null;
         oathCrystalLevel = null;
+        oathFromDialogue = false;
         dirty = SYNC_ALL;
     }
 
@@ -675,6 +703,7 @@ public final class PlayerData {
         records.putInt("revives", reviveCount);
         records.putInt("church", churchCount);
         tag.put("records", records);
+        tag.put("story", story.save());
         return tag;
     }
 
@@ -687,6 +716,7 @@ public final class PlayerData {
         // 版1 → 版2：職業とスキルのまとまりが増えた。版1のデータには無いので、職業なし・スキルなしで始まる
         // 版2 → 版3：冒険の記録（結晶果・生産職・図鑑など）が増えた。版2のデータには無いので、空で始まる
         // 版3 → 版4：所持金・ダウン・記録が増えた。版3のデータには無いので、0で始まる
+        // 版4 → 版5：物語が増えた。版4のデータには無いので、オープニングを見ていない人として始まる
 
         CompoundTag growth = tag.getCompound("growth");
         level = growth.contains("level") ? Math.max(1, growth.getInt("level")) : 1;
@@ -751,6 +781,7 @@ public final class PlayerData {
         downCount = Math.max(0, records.getInt("downs"));
         reviveCount = Math.max(0, records.getInt("revives"));
         churchCount = Math.max(0, records.getInt("church"));
+        story.load(tag.getCompound("story"));
         resetTransient();
     }
 
@@ -780,6 +811,7 @@ public final class PlayerData {
         downCount = other.downCount;
         reviveCount = other.reviveCount;
         churchCount = other.churchCount;
+        story.copyFrom(other.story);
         // バニラの死亡（奈落・/kill）のあとは、リスポーンで教会へ戻す（DownHandler）。ダウンそのものは引き継がない
         down.clear();
         down.setDiedForReal(other.down.diedForReal() || other.down.isDown());

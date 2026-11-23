@@ -223,8 +223,11 @@ final class GearCommands {
     }
 
     private static int spawn(CommandSourceStack source, ResourceLocation id, int count) {
-        EntityType<?> type = ForgeRegistries.ENTITY_TYPES.getValue(id);
-        if (type == null || EnemyDefs.get(id) == null || !id.equals(ForgeRegistries.ENTITY_TYPES.getKey(type))) {
+        // 見た目を借りる個体（群れの長など）は、借りる先の敵を出して定義だけ替える（11月22日）
+        jp.amemaru.lostconnection.enemy.EnemyDef def = EnemyDefs.get(id);
+        ResourceLocation entityId = def != null ? def.entity() : id;
+        EntityType<?> type = ForgeRegistries.ENTITY_TYPES.getValue(entityId);
+        if (type == null || def == null || !entityId.equals(ForgeRegistries.ENTITY_TYPES.getKey(type))) {
             source.sendFailure(Component.translatable("commands.amemaru.enemy.unknown", id.toString()));
             return 0;
         }
@@ -238,6 +241,9 @@ final class GearCommands {
             Entity entity = type.create(level);
             if (entity instanceof AmemaruMob mob) {
                 mob.moveTo(pos.x, pos.y, pos.z, level.random.nextFloat() * 360.0F, 0.0F);
+                if (def.model() != null) {
+                    mob.setVariant(id);
+                }
                 mob.finalizeSpawn(level, level.getCurrentDifficultyAt(mob.blockPosition()), MobSpawnType.COMMAND, null, null);
                 mob.setHome(mob.blockPosition());
                 level.addFreshEntity(mob);
