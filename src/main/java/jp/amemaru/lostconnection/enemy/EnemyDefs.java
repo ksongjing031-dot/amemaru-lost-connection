@@ -56,6 +56,9 @@ public final class EnemyDefs {
     public static List<EnemyDef.Info> infos() {
         List<EnemyDef.Info> list = new ArrayList<>();
         for (EnemyDef def : LOADER.all().values()) {
+            if (!def.bestiary()) {
+                continue;
+            }
             List<ResourceLocation> drops = new ArrayList<>(LOADER.dropsOf(def.id()));
             list.add(new EnemyDef.Info(def.id(), def.name(), def.description(), def.floor(), def.level(), def.lost(),
                     List.copyOf(drops), def.rare(), def.entity()));

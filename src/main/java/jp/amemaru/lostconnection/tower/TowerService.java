@@ -368,7 +368,14 @@ public final class TowerService {
     /** その人が、その階の石柱をすべて起動したか（封印を通れるか）。 */
     public static boolean pillarsComplete(ServerPlayer player, int floor) {
         FloorDef def = FloorDefs.byNumber(floor);
-        if (def == null || def.pillars().isEmpty()) {
+        if (def == null) {
+            return true;
+        }
+        // Phase 8 その1：2階は、迷いの森の区画がすべてつながったら（みんな）
+        if (FloorFeatures.SEAL_LOST_WOODS.equals(def.features().sealRequires())) {
+            return jp.amemaru.lostconnection.tower.forest.LostWoodsService.allTied(player.server, def);
+        }
+        if (def.pillars().isEmpty()) {
             return true;
         }
         int all = (1 << def.pillars().size()) - 1;
@@ -506,6 +513,17 @@ public final class TowerService {
             return;
         }
         int total = def.extras().chests().size();
+        FloorDef.ChestDef guarded = def.extras().chests().get(index);
+        if (!guarded.guardian().isEmpty() && !data.getStory().has(guardianFlag(floor, guarded.guardian()))) {
+            // Phase 8 その1：守り手（名のある魔物）を倒すまでは開かない（開けた印も付けない）
+            FloorDef.Guardian g = def.extras().guardian(guarded.guardian());
+            jp.amemaru.lostconnection.enemy.EnemyDef ed = g == null ? null
+                    : jp.amemaru.lostconnection.enemy.EnemyDefs.get(g.variant() != null ? g.variant() : g.enemy());
+            player.displayClientMessage(Component.translatable("message.amemaru.chest.guarded", ed == null ? guarded.guardian() : ed.name())
+                    .withStyle(ChatFormatting.GRAY), true);
+            level.playSound(null, pos, SoundEvents.CHEST_LOCKED, SoundSource.BLOCKS, 0.8F, 1.0F);
+            return;
+        }
         if (!data.getStory().openChest(floor, index)) {
             player.displayClientMessage(Component.translatable("message.amemaru.chest.already", data.getStory().chestCount(floor), total)
                     .withStyle(ChatFormatting.GRAY), true);
@@ -535,6 +553,11 @@ public final class TowerService {
                 index, floor, knots, items);
     }
 
+    /** 名のある魔物（守り手）を倒した印の名前（Phase 8 その1）。 */
+    public static net.minecraft.resources.ResourceLocation guardianFlag(int floor, String id) {
+        return AmemaruMod.id("guardian/floor" + floor + "/" + id);
+    }
+
     /** 守り手が倒れた（倒した人がいてもいなくても）：決まった秒数のあとにまた出す。 */
     public static void onGuardianDied(jp.amemaru.lostconnection.enemy.AmemaruMob mob) {
         FloorRuntime runtime = runtime(mob.guardianFloor());
@@ -553,9 +576,17 @@ public final class TowerService {
         Component name = mob.def() != null ? Component.literal(mob.def().name()) : mob.getDisplayName();
         for (ServerPlayer player : receivers) {
             PlayerData data = PlayerDataCapability.get(player).orElse(null);
-            if (data != null && data.getStory().wakePillar(def.number(), guardian.pillar())) {
+            if (data == null) {
+                continue;
+            }
+            if (guardian.pillar() >= 0 && data.getStory().wakePillar(def.number(), guardian.pillar())) {
                 player.sendSystemMessage(Component.translatable("message.amemaru.guardian.defeated", name, guardian.pillar() + 1)
                         .withStyle(ChatFormatting.AQUA));
+            }
+            // Phase 8 その1：名のある魔物を倒した印（守り手のいる宝箱を開けられる）
+            if (data.getStory().add(guardianFlag(def.number(), guardian.id())) && guardian.pillar() < 0) {
+                player.sendSystemMessage(Component.translatable("message.amemaru.guardian.defeated_named", name).withStyle(ChatFormatting.AQUA));
+                data.markDirty(PlayerData.SYNC_STORY);
             }
         }
     }

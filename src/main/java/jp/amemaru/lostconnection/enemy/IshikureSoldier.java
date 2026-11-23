@@ -31,7 +31,7 @@ import java.util.List;
  * <p>巡回の道は、NBT の {@code Amemaru.Patrol}（点の一覧。Phase 5で階層を作るときに置く）。なければ、生まれた場所の
  * まわりの四角（{@code behavior.patrol_size}）を回る。</p>
  */
-public class IshikureSoldier extends AmemaruMob {
+public class IshikureSoldier extends AmemaruMob implements Patroller {
     private final List<BlockPos> patrol = new ArrayList<>();
     private boolean alerted;
     private int calmTimer;
@@ -70,6 +70,7 @@ public class IshikureSoldier extends AmemaruMob {
     }
 
     /** 巡回の道を決める（塔の階の湧く所の {@code route}。Phase 5）。 */
+    @Override
     public void setPatrol(List<BlockPos> points) {
         patrol.clear();
         patrol.addAll(points);

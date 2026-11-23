@@ -47,6 +47,11 @@
       "model": "geckolib"
     },
     {
+      "id": "elder_branch_staff",
+      "kind": "staff",
+      "model": "geckolib"
+    },
+    {
       "id": "apprentice_bell_staff",
       "kind": "bell_staff"
     },
@@ -272,6 +277,21 @@
       "id": "lantern_vial",
       "kind": "vial",
       "stack": 16
+    },
+    {
+      "id": "antidote",
+      "kind": "antidote",
+      "stack": 16
+    },
+    {
+      "id": "knot_lantern",
+      "kind": "knot",
+      "stack": 4
+    },
+    {
+      "id": "warden_light",
+      "kind": "warden",
+      "stack": 1
     }
   ],
   "fish": [

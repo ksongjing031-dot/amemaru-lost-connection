@@ -96,6 +96,41 @@ public final class ModEntities {
                     .clientTrackingRange(10)
                     .build(AmemaruMod.id("npc").toString()));
 
+    // ---- Phase 8 その1：2階「忘れられた森」の敵（Phase 0-A 9章）
+    /** 迷い灯（道から外れた方へ誘う光の玉）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.forest.MayoiBi>> MAYOI_BI = ENTITIES.register("mayoi_bi", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.forest.MayoiBi>of(jp.amemaru.lostconnection.enemy.forest.MayoiBi::new,
+                            MobCategory.MONSTER)
+                    .sized(0.6F, 0.6F).clientTrackingRange(10).build(AmemaruMod.id("mayoi_bi").toString()));
+    /** 樹皮兵（古代の植樹管理人形）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.forest.Juhihei>> JUHIHEI = ENTITIES.register("juhihei", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.forest.Juhihei>of(jp.amemaru.lostconnection.enemy.forest.Juhihei::new,
+                            MobCategory.MONSTER)
+                    .sized(1.0F, 2.3F).clientTrackingRange(10).build(AmemaruMod.id("juhihei").toString()));
+    /** ポコダケ（毒の胞子を出すキノコ）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.forest.Pokodake>> POKODAKE = ENTITIES.register("pokodake", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.forest.Pokodake>of(jp.amemaru.lostconnection.enemy.forest.Pokodake::new,
+                            MobCategory.MONSTER)
+                    .sized(0.9F, 1.0F).clientTrackingRange(10).build(AmemaruMod.id("pokodake").toString()));
+    /** 葉影ギツネ（素早く、背後を狙う）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.forest.HakageKitsune>> HAKAGE_KITSUNE =
+            ENTITIES.register("hakage_kitsune", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.forest.HakageKitsune>of(jp.amemaru.lostconnection.enemy.forest.HakageKitsune::new,
+                            MobCategory.MONSTER)
+                    .sized(0.7F, 0.8F).clientTrackingRange(10).build(AmemaruMod.id("hakage_kitsune").toString()));
+
+    /** 2階のボス、森番の古樹オールドウォード（Phase 0-A 9章。動かない大木）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.boss.OldWard>> OLD_WARD = ENTITIES.register("old_ward", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.boss.OldWard>of(jp.amemaru.lostconnection.enemy.boss.OldWard::new,
+                            MobCategory.MONSTER)
+                    .sized(2.6F, 5.4F).clientTrackingRange(16).build(AmemaruMod.id("old_ward").toString()));
+    /** 古樹の光る節（ボスの幹の弱点）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.boss.OldWardKnot>> OLD_WARD_KNOT =
+            ENTITIES.register("old_ward_knot", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.boss.OldWardKnot>of(jp.amemaru.lostconnection.enemy.boss.OldWardKnot::new,
+                            MobCategory.MONSTER)
+                    .sized(0.8F, 0.8F).clientTrackingRange(16).updateInterval(1).build(AmemaruMod.id("old_ward_knot").toString()));
+
     /** 1階のボス、草原の主ヴェルドホーン（Phase 0-A 9章）。 */
     public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.boss.Veldhorn>> VELDHORN = ENTITIES.register("veldhorn", () ->
             EntityType.Builder.<jp.amemaru.lostconnection.enemy.boss.Veldhorn>of(jp.amemaru.lostconnection.enemy.boss.Veldhorn::new,
@@ -128,5 +163,12 @@ public final class ModEntities {
         event.put(KAKEKIBA_WOLF.get(), AmemaruMob.createAttributes().build());
         event.put(NPC.get(), jp.amemaru.lostconnection.npc.NpcEntity.createAttributes().build());
         event.put(VELDHORN.get(), jp.amemaru.lostconnection.enemy.boss.AmemaruBoss.createBossAttributes().build());
+        event.put(MAYOI_BI.get(), jp.amemaru.lostconnection.enemy.forest.MayoiBi.createLightAttributes().build());
+        event.put(JUHIHEI.get(), AmemaruMob.createAttributes().build());
+        event.put(POKODAKE.get(), AmemaruMob.createAttributes().build());
+        event.put(HAKAGE_KITSUNE.get(), AmemaruMob.createAttributes().build());
+        event.put(OLD_WARD.get(), jp.amemaru.lostconnection.enemy.boss.AmemaruBoss.createBossAttributes().build());
+        event.put(OLD_WARD_KNOT.get(), AmemaruMob.createAttributes().add(
+                net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE, 1.0).build());
     }
 }

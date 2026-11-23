@@ -138,7 +138,9 @@ public class EnemyMeleeGoal extends Goal {
             if (reach > range || (halfAngle < 180.0 && !mob.inFront(center, halfAngle))) {
                 continue;
             }
-            EnemyCombat.strike(mob, player, skill.power(), null);
+            if (EnemyCombat.strike(mob, player, skill.power(), null)) {
+                mob.onSkillHit(skillName, player);
+            }
         }
         if (sound != null) {
             level.playSound(null, mob.getX(), mob.getY(), mob.getZ(), sound, SoundSource.HOSTILE, 1.0F,

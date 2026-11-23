@@ -96,6 +96,29 @@ public final class ModBlocks {
                     .noOcclusion()
                     .pushReaction(PushReaction.BLOCK)));
 
+    // ---- Phase 8 その1：2階「忘れられた森」の仕掛け（壊せない）
+    /** 迷いの森の鐘（風鈴のような古代の装置）。 */
+    public static final RegistryObject<Block> FOREST_BELL = BLOCKS.register("forest_bell", () ->
+            new jp.amemaru.lostconnection.tower.forest.ForestBlocks.Bell(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(-1.0F, 3600000.0F).sound(SoundType.METAL).lightLevel(state -> 4)
+                    .noOcclusion().pushReaction(PushReaction.BLOCK)));
+    /** 結び目の灯台（結び目の灯を置くと灯る）。 */
+    public static final RegistryObject<Block> KNOT_POST = BLOCKS.register("knot_post", () ->
+            new jp.amemaru.lostconnection.tower.forest.ForestBlocks.KnotPost(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD).strength(-1.0F, 3600000.0F).sound(SoundType.WOOD)
+                    .lightLevel(state -> state.getValue(jp.amemaru.lostconnection.tower.forest.ForestBlocks.LIT) ? 14 : 0)
+                    .noOcclusion().pushReaction(PushReaction.BLOCK)));
+    /** 中継の灯（広い階の途中から入れる所）。 */
+    public static final RegistryObject<Block> WAYPOINT = BLOCKS.register("waypoint", () ->
+            new jp.amemaru.lostconnection.tower.forest.ForestBlocks.Waypoint(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE).strength(-1.0F, 3600000.0F).sound(SoundType.STONE).lightLevel(state -> 12)
+                    .noOcclusion().pushReaction(PushReaction.BLOCK)));
+    /** 入口の道しるべの石（ともした中継の灯へ連れていく）。 */
+    public static final RegistryObject<Block> TRAVEL_STONE = BLOCKS.register("travel_stone", () ->
+            new jp.amemaru.lostconnection.tower.forest.ForestBlocks.TravelStone(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE).strength(-1.0F, 3600000.0F).sound(SoundType.STONE).lightLevel(state -> 6)
+                    .noOcclusion().pushReaction(PushReaction.BLOCK)));
+
     /** ロストの「欠け」（白く抜け落ちた所。Phase 0-A 3章）。 */
     public static final RegistryObject<Block> LOST_BLANK = BLOCKS.register("lost_blank", () -> new jp.amemaru.lostconnection.block.LostBlankBlock(
             BlockBehaviour.Properties.of()

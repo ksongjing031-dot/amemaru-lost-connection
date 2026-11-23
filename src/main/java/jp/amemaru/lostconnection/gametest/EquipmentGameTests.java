@@ -116,7 +116,8 @@ public final class EquipmentGameTests {
 
         EquipmentDefs.Snapshot gear = EquipmentDefs.server();
         // Phase 6 その2 で、4職業の見習い・古代石の武器（8）と、古代石シリーズ（軽装）の防具（4）が増えた
-        check(helper, gear.equipment().size() == 32, "装備の定義が32ではありません：" + gear.equipment().size());
+        // Phase 8 その1 で、2階のボスのレア「古樹の枝杖」が増えた
+        check(helper, gear.equipment().size() == 33, "装備の定義が33ではありません：" + gear.equipment().size());
         for (ItemManifest.Category category : new ItemManifest.Category[]{
                 ItemManifest.Category.WEAPON, ItemManifest.Category.SHIELD, ItemManifest.Category.ARMOR}) {
             for (RegistryObject<Item> item : ModItems.MANIFEST.category(category)) {
@@ -131,12 +132,15 @@ public final class EquipmentGameTests {
 
         // Phase 5 で、1階のボス「草原の主ヴェルドホーン」が増えた
         // 11月22日：1階の西の丘の石柱の守り手「群れの長」（ツノモフの見た目を借りる別の定義）が増えた
-        check(helper, EnemyDefs.all().size() == 6, "敵の定義が6ではありません：" + EnemyDefs.all().keySet());
+        // Phase 8 その1：2階の雑魚4種（迷い灯・樹皮兵・ポコダケ・葉影ギツネ）と名のある魔物2体、ボス「森番の古樹オールドウォード」と、
+        // その幹の「光る節」
+        check(helper, EnemyDefs.all().size() == 14, "敵の定義が14ではありません：" + EnemyDefs.all().keySet());
         EnemyDef alpha = EnemyDefs.get(AmemaruMod.id("tsunomofu_alpha"));
         check(helper, alpha != null && AmemaruMod.id("tsunomofu").equals(alpha.entity()) && alpha.behavior().getOrDefault("scale", 1.0) > 1.0,
                 "群れの長が、ツノモフの見た目を借りる大きな個体になっていません");
         for (EntityType<?> type : List.<EntityType<?>>of(ModEntities.TSUNOMOFU.get(), ModEntities.ISHIKURE_SOLDIER.get(),
-                ModEntities.CRYSTAL_BEE.get(), ModEntities.KAKEKIBA_WOLF.get())) {
+                ModEntities.CRYSTAL_BEE.get(), ModEntities.KAKEKIBA_WOLF.get(), ModEntities.MAYOI_BI.get(), ModEntities.JUHIHEI.get(),
+                ModEntities.POKODAKE.get(), ModEntities.HAKAGE_KITSUNE.get(), ModEntities.OLD_WARD.get())) {
             EnemyDef def = EnemyDefs.forType(type);
             check(helper, def != null, "敵の定義がありません：" + ForgeRegistries.ENTITY_TYPES.getKey(type));
             check(helper, def.lootTable() != null, def.id() + " にドロップ表がありません");

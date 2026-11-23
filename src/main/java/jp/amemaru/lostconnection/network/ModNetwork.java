@@ -365,6 +365,11 @@ public final class ModNetwork {
                 .consumerMainThread(jp.amemaru.lostconnection.network.c2s.FishingC2S::handle)
                 .add();
         // Phase 7 その3：カジノ
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.TowerS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.TowerS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.TowerS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.TowerS2C::handle)
+                .add();
         CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.CasinoS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(jp.amemaru.lostconnection.network.s2c.CasinoS2C::encode)
                 .decoder(jp.amemaru.lostconnection.network.s2c.CasinoS2C::decode)

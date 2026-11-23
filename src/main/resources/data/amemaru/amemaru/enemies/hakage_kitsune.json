@@ -1,0 +1,45 @@
+{
+  "_comment": "葉影ギツネ（Phase 8 その1。2階の雑魚。2〜3匹の群れ。数値は【補完】）",
+  "name": "葉影ギツネ",
+  "floor": 2,
+  "level": 6,
+  "lost": false,
+  "description": "木の葉の影にまぎれる、緑がかった毛のキツネ。群れで獲物を囲み、背中へ回り込んで噛みつく。背中を見せないように、仲間と背中を合わせよう。",
+  "stats": {
+    "hp": 210,
+    "attack": 26,
+    "defense": 4,
+    "move_speed": 0.36,
+    "follow_range": 26,
+    "aggro_range": 15
+  },
+  "exp": 8,
+  "skills": {
+    "bite": {
+      "power": 1.0,
+      "windup": 0.25,
+      "cooldown": 1.4,
+      "range": 1.8,
+      "angle": 70
+    }
+  },
+  "behavior": {
+    "flank_seconds": 3,
+    "flank_speed": 1.5,
+    "back_multiplier": 1.5,
+    "retreat_seconds": 1.5
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/hakage_kitsune",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_white",
+        "chance": 0.6
+      },
+      {
+        "item": "amemaru:crystal_fruit_gold",
+        "chance": 0.3
+      }
+    ]
+  }
+}

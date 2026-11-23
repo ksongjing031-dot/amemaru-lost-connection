@@ -126,6 +126,10 @@ public final class ItemManifest {
                 case "repair" -> () -> new RepairKitItem(new Item.Properties().stacksTo(size));
                 case "lantern" -> () -> new HandLanternItem(new Item.Properties().stacksTo(size));
                 case "vial" -> () -> new LanternVialItem(new Item.Properties().stacksTo(size));
+                // Phase 8 その1：毒消しの薬（薬屋）と、2階の結び目の灯（迷いの森の鐘でもらう）
+                case "antidote" -> () -> new AntidoteItem(new Item.Properties().stacksTo(size));
+                case "knot" -> () -> new jp.amemaru.lostconnection.tower.forest.KnotLanternItem(new Item.Properties().stacksTo(size));
+                case "warden" -> () -> new jp.amemaru.lostconnection.tower.forest.WardenLightItem(new Item.Properties().stacksTo(size));
                 default -> throw new IllegalStateException(PATH + "：道具 " + id + " の kind が分かりません（" + kind + "）");
             };
             manifest.add(register, Category.CONSUMABLE, id, factory);

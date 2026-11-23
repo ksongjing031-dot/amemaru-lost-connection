@@ -1,0 +1,36 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "2階のレア装備",
+  "rarity": "rare",
+  "required_level": 6,
+  "jobs": [
+    "amemaru:wizard"
+  ],
+  "stats": {
+    "magic": 23,
+    "mp": 45
+  },
+  "durability": 520,
+  "binding": "on_equip",
+  "effects": [
+    {
+      "type": "heal_on_hit",
+      "chance": 100,
+      "percent": 5,
+      "source": "skill"
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:ancient_stone",
+      "count": 2
+    },
+    {
+      "item": "amemaru:crystal_shard",
+      "count": 2
+    }
+  ],
+  "description": "森番の古樹オールドウォードの枝を、そのまま杖にしたもの。芯を古代の管の細い筋が通り、魔法が当たるたびに、樹液のような淡い光が持ち手へ流れ込んで、使い手の傷を少しだけふさぐ。"
+}

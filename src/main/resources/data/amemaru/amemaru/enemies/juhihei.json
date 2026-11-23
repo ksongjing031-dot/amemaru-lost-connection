@@ -1,0 +1,50 @@
+{
+  "_comment": "樹皮兵（Phase 8 その1。2階の雑魚。数値は【補完】）",
+  "name": "樹皮兵",
+  "floor": 2,
+  "level": 7,
+  "lost": false,
+  "description": "苔むした樹皮の体をした、古代の植樹管理人形。決まった道をゆっくり巡り、森を荒らす者を見つけると、地面を叩いて根で足をからめとる。",
+  "stats": {
+    "hp": 620,
+    "attack": 32,
+    "defense": 16,
+    "move_speed": 0.2,
+    "follow_range": 20,
+    "aggro_range": 11
+  },
+  "exp": 12,
+  "skills": {
+    "strike": {
+      "power": 1.0,
+      "windup": 0.7,
+      "cooldown": 1.8,
+      "range": 2.6,
+      "angle": 110
+    },
+    "slam": {
+      "power": 1.5,
+      "windup": 1.2,
+      "cooldown": 7,
+      "range": 3.5,
+      "angle": 360
+    }
+  },
+  "behavior": {
+    "patrol_size": 10,
+    "root_seconds": 2
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/juhihei",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_amber",
+        "chance": 0.6
+      },
+      {
+        "item": "amemaru:crystal_fruit_jade",
+        "chance": 0.3
+      }
+    ]
+  }
+}
