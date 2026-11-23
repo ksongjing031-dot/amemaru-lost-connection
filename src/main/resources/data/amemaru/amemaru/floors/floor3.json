@@ -1035,10 +1035,10 @@
   ],
   "environment": {
     "fog": [
-      10,
-      72
+      18,
+      110
     ],
-    "fog_color": "#163440"
+    "fog_color": "#41707C"
   },
   "waypoints": [
     {

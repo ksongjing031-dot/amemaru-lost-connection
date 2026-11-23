@@ -1162,6 +1162,28 @@ def wall_lights(f):
                             break
 
 
+def ambient_lights(f):
+    """見えない灯（minecraft:light）を、掘った所に6マスおきに置く（11月24日：CI の写真で、3階がほとんど真っ暗だった）。
+
+    地下の水路は空の光が届かないので、見える灯（海晶の灯・魂のランタン）だけでは、灯と灯の間が真っ暗になる。
+    上の層は床から3マス上（立つ高さ＋2）、下の層も同じ。水の中（水門の区画が満ちているとき）は水を含ませる（抜けると外れる）。
+    ボスの部屋と広間は明るく（15）、ほかは 12。灯どうしの間でも明るさ6くらいになる。"""
+    water = f.idx(WATER)
+    for base in (UP, LOW):
+        y = base + 3
+        for x in range(3, SIZE - 3, 6):
+            for z in range(3, SIZE - 3, 6):
+                if not f.carved[x, y, z]:
+                    continue
+                here = f.v[x, y, z]
+                if here not in (0, water):
+                    continue
+                bright = (math.hypot(x - ARENA[0], z - ARENA[1]) <= ARENA_R + 2
+                          or math.hypot(x - HUB[0], z - HUB[1]) <= HUB_R + 2)
+                level = 15 if bright else 12
+                f.v[x, y, z] = f.idx(block("light", level=level, waterlogged="true" if here == water else "false"))
+
+
 # ================================================================ 階の定義（floors/floor3.json）
 
 def spawn_zones(f):
@@ -1270,7 +1292,8 @@ def floor_json(f):
         "spawns": spawn_zones(f),
         "guardians": f.guardians,
         "chests": [dict({"pos": list(p), "loot": CHEST_LOOT}, **({"guardian": g} if g else {})) for p, g in f.chests],
-        "environment": {"fog": [10, 72], "fog_color": "#163440"},
+        # 11月24日：暗すぎたので、霧を明るい青緑に・遠くに（水の上の湿った霧）
+        "environment": {"fog": [18, 110], "fog_color": "#41707C"},
         "waypoints": f.waypoints,
         "travel_stone": list(f.travel_stone),
         # 3組の水門をすべて開き（みんなの分）、名のある魔物を3体とも倒す（人ごと）と、封印が開く【補完】
@@ -1343,6 +1366,7 @@ def build():
     shell(f)
     lost(f)
     wall_lights(f)
+    ambient_lights(f)
     return f
 
 

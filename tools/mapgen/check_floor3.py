@@ -22,7 +22,8 @@ import numpy as np
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import build_floor3 as B  # noqa: E402
 
-PASSABLE = {"water", "spruce_sign", "dark_oak_wall_sign"}
+# light：見えない灯（11月24日に足した。当たり判定がない）
+PASSABLE = {"water", "spruce_sign", "dark_oak_wall_sign", "light"}
 DIRS = {"east": (1, 0), "west": (-1, 0), "south": (0, 1), "north": (0, -1)}
 
 
@@ -51,15 +52,32 @@ def state_volume(f, open_gates, seal_open):
             for door in g.get("doors", []):
                 x0, y0, z0, x1, y1, z1 = door["box"]
                 v[x0:x1 + 1, y0:y1 + 1, z0:z1 + 1] = 0
+    dry = dry_table(f)
     for sec in f.water_sections:
         if sec["id"] in drained:
             x0, low, z0, x1, high, z1 = sec["box"]
             sub = v[x0:x1 + 1, low + 1:high + 1, z0:z1 + 1]
             sub[sub == water] = 0
+            # 水を含んだブロック（階段・見えない灯など）は、ゲームと同じく水が抜ける
+            v[x0:x1 + 1, low + 1:high + 1, z0:z1 + 1] = dry[sub]
     if seal_open:
         for (x, y, z) in f.seal_cells:
             v[x, y, z] = 0
     return v
+
+
+def dry_table(f):
+    """ブロックの番号 → 水を含んでいない番号（水を含んだものだけ変わる）"""
+    n = len(f.states)
+    table = np.arange(n, dtype=f.v.dtype)
+    for i, st in enumerate(list(f.states)):
+        if st is not None and dict(st[1]).get("waterlogged") == "true":
+            props = dict(st[1])
+            props["waterlogged"] = "false"
+            table[i] = f.idx(B.block(st[0], **props))
+    if len(f.states) > n:
+        table = np.concatenate([table, np.arange(n, len(f.states), dtype=f.v.dtype)])
+    return table
 
 
 def B_GATES(f):
@@ -67,9 +85,9 @@ def B_GATES(f):
 
 
 def water_leaks(f, v):
-    """水のとなり（東西南北と下）が空気の所"""
-    water = f.idx(B.WATER)
-    w = v == water
+    """水のとなり（東西南北と下）が空気の所。水を含んだブロック（ゲームでは水が流れ出す）も水と同じに見る"""
+    _, wet_t = tables(f)
+    w = wet_t[v]
     air = v == 0
     leaks = []
     for (dx, dy, dz) in ((1, 0, 0), (-1, 0, 0), (0, 0, 1), (0, 0, -1), (0, -1, 0)):

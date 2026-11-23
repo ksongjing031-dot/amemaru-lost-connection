@@ -1208,11 +1208,12 @@ public final class CiScreenshots {
             {"cmd", null, "40", "execute in amemaru:tower run tp @p {f3:252.5,27,248.5} 180 12"},
             {"snap_keep", null, "40", "phase8_f3_record"},
             // 3階の敵（広間の南西の石だたみに、動かないように並べる。北に並べて、南から見る）
-            {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:suimon_nezumi {f3:213.5,27,280.5} {NoAI:1b,Rotation:[0f,0f]}"},
-            {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:yodomi_slime {f3:217.5,27,280.5} {NoAI:1b,Rotation:[0f,0f]}"},
-            {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:soujikihei {f3:222.5,27,280.5} {NoAI:1b,Rotation:[0f,0f]}"},
-            {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:kiba_namazu {f3:227.5,27,280.5} {NoAI:1b,Rotation:[20f,0f]}"},
-            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f3:220.5,28,289.5} 180 10"},
+            // 11月24日：広間の西の床に並べ、東から見る（前は通路の壁の陰になって写らなかった）
+            {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:suimon_nezumi {f3:218.5,27,255.5} {NoAI:1b,Rotation:[270f,0f]}"},
+            {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:yodomi_slime {f3:217.5,27,259.5} {NoAI:1b,Rotation:[270f,0f]}"},
+            {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:soujikihei {f3:217.5,27,264.5} {NoAI:1b,Rotation:[270f,0f]}"},
+            {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:kiba_namazu {f3:218.5,27,269.5} {NoAI:1b,Rotation:[250f,0f]}"},
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f3:229.5,28,262.5} 90 8"},
             {"snap", null, "40", "phase8_f3_enemies"},
             {"cmd", null, "5", "execute in amemaru:tower run kill @e[type=amemaru:suimon_nezumi,distance=..30]"},
             {"cmd", null, "5", "execute in amemaru:tower run kill @e[type=amemaru:yodomi_slime,distance=..30]"},

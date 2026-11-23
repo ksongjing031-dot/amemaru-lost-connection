@@ -312,13 +312,22 @@ public final class StoryHud {
         boolean good = boss.status().startsWith("open");
         int accent = good ? 0xF2C94C : 0x8FA3B8;
         String text = (good ? "\u25C6 " : "\u25C7 ") + net.minecraft.client.resources.language.I18n.get(key, boss.statusSeconds());
-        int w = font.width(text) + 16;
+        // 長い文は、画面の幅に合わせて折り返す（小さな画面でも、右のはしの欄と重ならない）
+        List<String> lines = UiStyle.wrap(font, text, Math.max(120, Math.min(360, width - 40)));
+        int w = 0;
+        for (String line : lines) {
+            w = Math.max(w, font.width(line));
+        }
+        w += 16;
+        int h = 3 + lines.size() * 10;
         int x = (width - w) / 2;
         int y = castBottom > 0 ? castBottom + 2 : System.currentTimeMillis() - bossSeen < 250L ? bossBottom + 2 : 4;
-        graphics.fill(x, y, x + w, y + 13, 0xC80B1022);
-        graphics.fill(x, y, x + 2, y + 13, 0xFF000000 | accent);
-        graphics.drawString(font, text, x + 8, y + 3, 0xFF000000 | (good ? 0xFFF0C0 : 0xD8E2EC), false);
-        castBottom = y + 13;
+        graphics.fill(x, y, x + w, y + h, 0xC80B1022);
+        graphics.fill(x, y, x + 2, y + h, 0xFF000000 | accent);
+        for (int i = 0; i < lines.size(); i++) {
+            graphics.drawString(font, lines.get(i), x + 8, y + 3 + i * 10, 0xFF000000 | (good ? 0xFFF0C0 : 0xD8E2EC), false);
+        }
+        castBottom = y + h;
     }
 
     /** 技が当たるまでの進み（0〜1。分からなければ -1）。地面の印か、ボスの予兆から。 */
@@ -348,6 +357,14 @@ public final class StoryHud {
     /** ボスのHPの帯の下の端と、最後に描いた時刻（{@link ClientForgeEvents#onBossBar}）。 */
     private static int bossBottom;
     private static long bossSeen;
+
+    /**
+     * ボスの帯が出ているか（いま出ているか、出たばかり）。ボスと戦っている間は、ギルドのクエストの一覧を出さない
+     * （画面の上がボスの帯・技の名前・状態・手がかりでいっぱいになり、小さな画面では重なるため。Phase 8 その2）。
+     */
+    public static boolean bossBarShown() {
+        return System.currentTimeMillis() - bossSeen < 1500L;
+    }
 
     /** ボスのHPの帯を1本描いた（{@code bottom}：その帯の下の端）。同じ絵の中の帯は、いちばん下のものを覚える。 */
     public static void noteBossBar(int bottom) {
