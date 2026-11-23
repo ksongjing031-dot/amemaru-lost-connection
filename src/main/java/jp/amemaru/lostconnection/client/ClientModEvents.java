@@ -147,6 +147,12 @@ public final class ClientModEvents {
         event.registerEntityRenderer(ModEntities.HAKAGE_KITSUNE.get(), context -> new AmemaruMobRenderer<>(context, "hakage_kitsune", 0.4F));
         event.registerEntityRenderer(ModEntities.OLD_WARD.get(), context -> new AmemaruMobRenderer<>(context, "old_ward", 1.8F));
         event.registerEntityRenderer(ModEntities.OLD_WARD_KNOT.get(), context -> new AmemaruMobRenderer<>(context, "old_ward_knot", 0.0F));
+        // Phase 8 その2：3階の敵
+        event.registerEntityRenderer(ModEntities.SUIMON_NEZUMI.get(), context -> new AmemaruMobRenderer<>(context, "suimon_nezumi", 0.35F));
+        event.registerEntityRenderer(ModEntities.YODOMI_SLIME.get(), context -> new AmemaruMobRenderer<>(context, "yodomi_slime", 0.6F));
+        event.registerEntityRenderer(ModEntities.SOUJIKIHEI.get(), context -> new AmemaruMobRenderer<>(context, "soujikihei", 0.7F));
+        event.registerEntityRenderer(ModEntities.KIBA_NAMAZU.get(), context -> new AmemaruMobRenderer<>(context, "kiba_namazu", 0.6F));
+        event.registerEntityRenderer(ModEntities.HYDRAM.get(), context -> new AmemaruMobRenderer<>(context, "hydram", 2.0F));
         event.registerEntityRenderer(ModEntities.GROUND_MARKER.get(), jp.amemaru.lostconnection.client.render.GroundMarkerRenderer::new);
         event.registerBlockEntityRenderer(jp.amemaru.lostconnection.core.registry.ModBlockEntities.TOWER_PILLAR.get(),
                 jp.amemaru.lostconnection.client.render.TowerPillarRenderer::new);

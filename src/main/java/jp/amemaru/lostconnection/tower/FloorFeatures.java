@@ -28,8 +28,10 @@ import java.util.List;
  * </ul>
  */
 public record FloorFeatures(@Nullable Environment environment, List<LostWoods> lostWoods, List<Waypoint> waypoints,
-                            @Nullable BlockPos travelStone, String sealRequires, List<StoryZone> storyZones) {
-    public static final FloorFeatures NONE = new FloorFeatures(null, List.of(), List.of(), null, "pillars", List.of());
+                            @Nullable BlockPos travelStone, String sealRequires, List<StoryZone> storyZones,
+                            List<Floodgate> floodgates, List<WaterSection> waterSections) {
+    public static final FloorFeatures NONE = new FloorFeatures(null, List.of(), List.of(), null, "pillars", List.of(), List.of(),
+            List.of());
     public static final String SEAL_PILLARS = "pillars";
     public static final String SEAL_LOST_WOODS = "lost_woods";
     /**
@@ -37,6 +39,47 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
      * 消えない）。{@code lost_woods+guardians} のように、{@code +} でつないで、いくつも求められる。
      */
     public static final String SEAL_GUARDIANS = "guardians";
+    /** Phase 8 その2（3階）：その階の水門（ボスの部屋の排水 {@link #DRAIN} をのぞく）がすべて開いた（みんなで同じ。その日のうち）。 */
+    public static final String SEAL_FLOODGATES = "floodgates";
+    /** ボスの部屋の排水のハンドル（ボスが使う。開いたままにならない）。 */
+    public static final String DRAIN = "drain";
+
+    /**
+     * 水門の組（Phase 8 その2：3階のギミック。Phase 0-A 9章「離れた部屋の水門を、複数人が声をかけ合って同時に操作し、水の流れを
+     * 変える」）。{@code valves} の2つのハンドルを、決まった秒数のうちに両方回すと開き、{@code drains} の水の区画の水が引く。
+     * {@code after} は、先に開いていないと回せない水門（水の底のハンドルを、泳いで回せないように。なければ ""）【補完】。
+     * {@code doors} は、開くと上がる扉（水門の扉。水を引いたあとで消え、閉じるとき水を戻す前に戻る）。
+     */
+    public record Floodgate(String id, String name, List<BlockPos> valves, List<String> drains, String after, List<Door> doors) {
+    }
+
+    /** 水門の扉（{@code min}〜{@code max} の箱を、{@code block} のブロックでふさぐ。階の座標）。 */
+    public record Door(BlockPos min, BlockPos max, net.minecraft.resources.ResourceLocation block) {
+    }
+
+    /** 水の区画。{@code min}〜{@code max}（階の座標）の中の、高さ {@code low} より上・{@code high} までの水を、引く・戻す。 */
+    public record WaterSection(String id, BlockPos min, BlockPos max, int low, int high) {
+    }
+
+    @Nullable
+    public Floodgate floodgate(String id) {
+        for (Floodgate gate : floodgates) {
+            if (gate.id().equals(id)) {
+                return gate;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public WaterSection waterSection(String id) {
+        for (WaterSection section : waterSections) {
+            if (section.id().equals(id)) {
+                return section;
+            }
+        }
+        return null;
+    }
 
     /** 霧（クライアントの見え方）。色は 0xRRGGBB（−1 は空の色のまま）。 */
     public record Environment(float fogStart, float fogEnd, int fogColor) {
@@ -154,10 +197,74 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
         BlockPos travel = stone.size() == 3 ? FloorDef.blockPos(stone, "travel_stone") : null;
         String seal = Json.optionalString(json, "seal_requires", SEAL_PILLARS);
         for (String token : seal.split("\\+")) {
-            if (!token.equals(SEAL_PILLARS) && !token.equals(SEAL_LOST_WOODS) && !token.equals(SEAL_GUARDIANS)) {
-                throw new DefinitionException("「seal_requires」は pillars・lost_woods・guardians を + でつないだものにしてください（今は "
+            if (!token.equals(SEAL_PILLARS) && !token.equals(SEAL_LOST_WOODS) && !token.equals(SEAL_GUARDIANS)
+                    && !token.equals(SEAL_FLOODGATES)) {
+                throw new DefinitionException("「seal_requires」は pillars・lost_woods・guardians・floodgates を + でつないだものにしてください（今は "
                         + seal + "）");
             }
+        }
+        List<WaterSection> sections = new ArrayList<>();
+        for (JsonElement element : Json.optionalArray(json, "water_sections")) {
+            JsonObject w = Json.asObject(element, "water_sections");
+            JsonArray b = Json.array(w, "box");
+            if (b.size() != 6) {
+                throw new DefinitionException("「water_sections.box」は [x0, y0, z0, x1, y1, z1] の6つの数にしてください");
+            }
+            int[] v = new int[6];
+            for (int i = 0; i < 6; i++) {
+                v[i] = (int) Math.floor(Json.asNumber(b.get(i), "water_sections.box"));
+            }
+            sections.add(new WaterSection(Json.string(w, "id"), new BlockPos(Math.min(v[0], v[3]), Math.min(v[1], v[4]), Math.min(v[2], v[5])),
+                    new BlockPos(Math.max(v[0], v[3]), Math.max(v[1], v[4]), Math.max(v[2], v[5])),
+                    Json.intInRange(w, "low", -64, 512), Json.intInRange(w, "high", -64, 512)));
+        }
+        List<Floodgate> gates = new ArrayList<>();
+        for (JsonElement element : Json.optionalArray(json, "floodgates")) {
+            JsonObject g = Json.asObject(element, "floodgates");
+            JsonArray valveArray = Json.array(g, "valves");
+            if (valveArray.size() != 2) {
+                throw new DefinitionException("「floodgates.valves」は、ハンドル2つの位置にしてください");
+            }
+            List<BlockPos> valves = new ArrayList<>();
+            for (JsonElement v : valveArray) {
+                valves.add(FloorDef.blockPos(v.getAsJsonArray(), "floodgates.valves"));
+            }
+            List<String> drains = new ArrayList<>();
+            for (JsonElement d : Json.optionalArray(g, "drains")) {
+                String id = d.getAsString();
+                boolean known = false;
+                for (WaterSection section : sections) {
+                    known |= section.id().equals(id);
+                }
+                if (!known) {
+                    throw new DefinitionException("「floodgates.drains」の " + id + " が「water_sections」にありません");
+                }
+                drains.add(id);
+            }
+            List<Door> doors = new ArrayList<>();
+            for (JsonElement d : Json.optionalArray(g, "doors")) {
+                JsonObject door = Json.asObject(d, "floodgates.doors");
+                JsonArray b = Json.array(door, "box");
+                if (b.size() != 6) {
+                    throw new DefinitionException("「floodgates.doors.box」は [x0, y0, z0, x1, y1, z1] の6つの数にしてください");
+                }
+                int[] v = new int[6];
+                for (int i = 0; i < 6; i++) {
+                    v[i] = (int) Math.floor(Json.asNumber(b.get(i), "floodgates.doors.box"));
+                }
+                doors.add(new Door(new BlockPos(Math.min(v[0], v[3]), Math.min(v[1], v[4]), Math.min(v[2], v[5])),
+                        new BlockPos(Math.max(v[0], v[3]), Math.max(v[1], v[4]), Math.max(v[2], v[5])), Json.id(door, "block")));
+            }
+            gates.add(new Floodgate(Json.string(g, "id"), Json.optionalString(g, "name", ""), List.copyOf(valves), List.copyOf(drains),
+                    Json.optionalString(g, "after", ""), List.copyOf(doors)));
+        }
+        for (Floodgate gate : gates) {
+            if (!gate.after().isEmpty() && gates.stream().noneMatch(other -> other.id().equals(gate.after()))) {
+                throw new DefinitionException("「floodgates.after」の " + gate.after() + " が「floodgates」にありません");
+            }
+        }
+        if (requires(seal, SEAL_FLOODGATES) && gates.isEmpty()) {
+            throw new DefinitionException("「seal_requires」が floodgates なのに、「floodgates」がありません");
         }
         if (requires(seal, SEAL_LOST_WOODS) && woods.isEmpty()) {
             throw new DefinitionException("「seal_requires」が lost_woods なのに、「lost_woods」がありません");
@@ -167,7 +274,8 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
             JsonObject z = Json.asObject(element, "story_zones");
             zones.add(new StoryZone(Json.string(z, "id"), box(Json.array(z, "box"), "story_zones.box")));
         }
-        return new FloorFeatures(env, List.copyOf(woods), List.copyOf(waypoints), travel, seal, List.copyOf(zones));
+        return new FloorFeatures(env, List.copyOf(woods), List.copyOf(waypoints), travel, seal, List.copyOf(zones), List.copyOf(gates),
+                List.copyOf(sections));
     }
 
     private static AABB box(JsonArray array, String name) {

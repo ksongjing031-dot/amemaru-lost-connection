@@ -148,13 +148,25 @@ public final class WaypointService {
         player.displayClientMessage(Component.translatable("message.amemaru.waypoint.travel", best.name()).withStyle(ChatFormatting.AQUA), true);
     }
 
-    /** その人がともした、いちばん先（番号のいちばん大きい）中継の灯。 */
+    /**
+     * 着く所が水の中か（Phase 8 その2：3階の沈んだ区画の灯は、水門が閉じて水が戻ると水の底になる。そこへは送らない）。
+     */
+    private static boolean submerged(@Nullable ServerLevel tower, FloorDef def, FloorFeatures.Waypoint point) {
+        if (tower == null) {
+            return false;
+        }
+        BlockPos head = BlockPos.containing(def.originVec().add(point.arrive().pos()).add(0.0, 1.2, 0.0));
+        return tower.isLoaded(head) && tower.getFluidState(head).is(net.minecraft.tags.FluidTags.WATER);
+    }
+
+    /** その人がともした、いちばん先（番号のいちばん大きい）中継の灯（水の底になった灯はのぞく）。 */
     @Nullable
     public static FloorFeatures.Waypoint furthest(ServerPlayer player, FloorDef def) {
         Data data = Data.get(player.server);
         FloorFeatures.Waypoint best = null;
+        ServerLevel tower = FloorDefs.towerLevel(player.server);
         for (FloorFeatures.Waypoint point : def.features().waypoints()) {
-            if (data.has(player.getUUID(), def.number(), point.index())) {
+            if (data.has(player.getUUID(), def.number(), point.index()) && !submerged(tower, def, point)) {
                 best = point;
             }
         }

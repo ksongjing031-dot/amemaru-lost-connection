@@ -1,0 +1,34 @@
+{
+  "_comment": "初めて3階に入ったとき（本人だけ）。地下の水路網・水門・青い結晶の灯（Phase 0-A 9章の3階の地形・環境）",
+  "title": "古代の水路",
+  "trigger": {
+    "type": "amemaru:floor_enter",
+    "floor": 3
+  },
+  "scope": "player",
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:wait",
+      "ticks": 70
+    },
+    {
+      "type": "amemaru:sound",
+      "sound": "minecraft:ambient.underwater.loop.additions.rare",
+      "volume": 1.0,
+      "pitch": 0.8
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "水の音が、どこまでも続いている。青い結晶の灯が、黒い水面に揺れている……。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "遠くで、重い水門がきしむ音がした。ひとりでは開けられそうにない。",
+      "ticks": 110,
+      "wait": false
+    }
+  ]
+}

@@ -117,7 +117,8 @@ public final class FloorSpawner {
             if (!floor.contains(new Vec3(x + 0.5, base.y, z + 0.5))) {
                 continue;
             }
-            Integer y = ground(level, x, (int) Math.floor(base.y) + 8, z, 20);
+            Integer y = zone.inWater() ? water(level, x, (int) Math.floor(base.y) + 4, z, 16)
+                    : ground(level, x, (int) Math.floor(base.y) + 8, z, 20);
             if (y == null || y - base.y >= 3.0) {
                 // 湧く所の高さより3つ以上高い所（遺跡の壁の上など）には出さない（11月22日）
                 continue;
@@ -145,6 +146,21 @@ public final class FloorSpawner {
             }
             if (!below.isAir() && below.isFaceSturdy(level, feet.below(), net.minecraft.core.Direction.UP)
                     && passable(level, feet) && passable(level, feet.above()) && level.getFluidState(feet.below()).isEmpty()) {
+                return y;
+            }
+        }
+        return null;
+    }
+
+    /** 上から下へ、水の底を探す（足もとと頭の所が水で、その下が固い所。足もとの高さを返す）。Phase 8 その2：牙ナマズ。 */
+    private static Integer water(ServerLevel level, int x, int top, int z, int depth) {
+        for (int y = top; y > top - depth; y--) {
+            BlockPos feet = new BlockPos(x, y, z);
+            BlockState below = level.getBlockState(feet.below());
+            if (!below.isAir() && below.getFluidState().isEmpty() && below.isFaceSturdy(level, feet.below(), net.minecraft.core.Direction.UP)
+                    && level.getFluidState(feet).is(net.minecraft.tags.FluidTags.WATER)
+                    && level.getFluidState(feet.above()).is(net.minecraft.tags.FluidTags.WATER)
+                    && level.getBlockState(feet).getCollisionShape(level, feet).isEmpty()) {
                 return y;
             }
         }

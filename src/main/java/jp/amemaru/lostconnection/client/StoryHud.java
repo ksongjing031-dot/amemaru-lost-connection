@@ -68,6 +68,7 @@ public final class StoryHud {
         }
         renderAnnouncements(graphics, font, width);
         renderBossCast(graphics, font, width, partialTick);
+        renderBossStatus(graphics, font, width);
         renderCountdowns(graphics, font, width);
         renderGuide(graphics, font, width, minecraft);
     }
@@ -277,6 +278,47 @@ public final class StoryHud {
             graphics.fill(x + 2, y + 13, x + 2 + bar, y + 15, 0xFF000000 | accent);
         }
         castBottom = y + 15;
+    }
+
+    /**
+     * ボスの今の様子（技の名前の下。Phase 8 その2：3階のボスの「炉心は水の中」「炉心がむき出し！ あと 18 秒」）。
+     * 金色は攻めどき、灰色は守りの固いとき。{@code castBottom} を、この札の下の端にする（「〇〇まで」の札をその下に出す）。
+     */
+    private static void renderBossStatus(GuiGraphics graphics, Font font, int width) {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.level == null || minecraft.player == null) {
+            return;
+        }
+        jp.amemaru.lostconnection.enemy.boss.AmemaruBoss boss = null;
+        double best = 48.0 * 48.0;
+        for (net.minecraft.world.entity.Entity entity : minecraft.level.entitiesForRendering()) {
+            if (entity instanceof jp.amemaru.lostconnection.enemy.boss.AmemaruBoss candidate && candidate.isAlive()
+                    && !candidate.status().isEmpty()) {
+                double d = candidate.distanceToSqr(minecraft.player);
+                if (d < best) {
+                    best = d;
+                    boss = candidate;
+                }
+            }
+        }
+        if (boss == null) {
+            return;
+        }
+        ResourceLocation id = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(boss.getType());
+        String key = "status." + id.getNamespace() + "." + id.getPath() + "." + boss.status();
+        if (!net.minecraft.client.resources.language.I18n.exists(key)) {
+            return;
+        }
+        boolean good = boss.status().startsWith("open");
+        int accent = good ? 0xF2C94C : 0x8FA3B8;
+        String text = (good ? "\u25C6 " : "\u25C7 ") + net.minecraft.client.resources.language.I18n.get(key, boss.statusSeconds());
+        int w = font.width(text) + 16;
+        int x = (width - w) / 2;
+        int y = castBottom > 0 ? castBottom + 2 : System.currentTimeMillis() - bossSeen < 250L ? bossBottom + 2 : 4;
+        graphics.fill(x, y, x + w, y + 13, 0xC80B1022);
+        graphics.fill(x, y, x + 2, y + 13, 0xFF000000 | accent);
+        graphics.drawString(font, text, x + 8, y + 3, 0xFF000000 | (good ? 0xFFF0C0 : 0xD8E2EC), false);
+        castBottom = y + 13;
     }
 
     /** 技が当たるまでの進み（0〜1。分からなければ -1）。地面の印か、ボスの予兆から。 */

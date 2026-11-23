@@ -77,6 +77,22 @@ public final class StoryCommands {
             for (jp.amemaru.lostconnection.tower.FloorFeatures.Waypoint point : def.features().waypoints()) {
                 builder.suggest("waypoint" + (point.index() + 1));
             }
+            // Phase 8 その2：水門のハンドル（valve_<組>_<1か2>）
+            for (jp.amemaru.lostconnection.tower.FloorFeatures.Floodgate gate : def.features().floodgates()) {
+                builder.suggest("valve_" + gate.id() + "_1");
+                builder.suggest("valve_" + gate.id() + "_2");
+            }
+        }
+        return builder.buildFuture();
+    };
+    private static final SuggestionProvider<CommandSourceStack> GATES = (context, builder) -> {
+        builder.suggest("all");
+        for (FloorDef def : FloorDefs.all()) {
+            for (jp.amemaru.lostconnection.tower.FloorFeatures.Floodgate gate : def.features().floodgates()) {
+                if (!jp.amemaru.lostconnection.tower.FloorFeatures.DRAIN.equals(gate.id())) {
+                    builder.suggest(gate.id());
+                }
+            }
         }
         return builder.buildFuture();
     };
@@ -170,6 +186,20 @@ public final class StoryCommands {
                                                     ctx.getSource().sendSuccess(() -> Component.translatable("commands.amemaru.floor.waypoints_cleared"), true);
                                                     return 1;
                                                 })))))
+                // Phase 8 その2：水門を開く・閉じる（確かめ用。閉じると水が戻る）
+                .then(Commands.literal("floodgate")
+                        .then(Commands.argument("floor", IntegerArgumentType.integer(1, 99)).suggests(FLOORS)
+                                .then(Commands.literal("open")
+                                        .then(Commands.argument("gate", com.mojang.brigadier.arguments.StringArgumentType.word()).suggests(GATES)
+                                                .executes(ctx -> openGates(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"),
+                                                        com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "gate")))))
+                                .then(Commands.literal("reset")
+                                        .executes(ctx -> {
+                                            jp.amemaru.lostconnection.tower.waterway.FloodgateService.onDayChanged(ctx.getSource().getServer());
+                                            AdminCommands.log(ctx.getSource(), "floor floodgate reset");
+                                            ctx.getSource().sendSuccess(() -> Component.translatable("commands.amemaru.floor.floodgates_reset"), true);
+                                            return 1;
+                                        }))))
                 // 11月24日：名のある魔物を倒した印をつける・消す（封印の条件 guardians の確かめ用）
                 .then(Commands.literal("guardians")
                         .then(Commands.argument("floor", IntegerArgumentType.integer(1, 99)).suggests(FLOORS)
@@ -181,6 +211,27 @@ public final class StoryCommands {
                                         .then(Commands.argument("targets", EntityArgument.players())
                                                 .executes(ctx -> setGuardians(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"),
                                                         EntityArgument.getPlayers(ctx, "targets"), false))))));
+    }
+
+    private static int openGates(CommandSourceStack source, int floor, String which) {
+        FloorDef def = FloorDefs.byNumber(floor);
+        if (def == null) {
+            source.sendFailure(Component.translatable("commands.amemaru.map.no_floor", floor));
+            return 0;
+        }
+        int opened = 0;
+        for (jp.amemaru.lostconnection.tower.FloorFeatures.Floodgate gate : def.features().floodgates()) {
+            if (jp.amemaru.lostconnection.tower.FloorFeatures.DRAIN.equals(gate.id()) || !(which.equals("all") || which.equals(gate.id()))
+                    || jp.amemaru.lostconnection.tower.waterway.FloodgateService.isOpen(source.getServer(), floor, gate.id())) {
+                continue;
+            }
+            jp.amemaru.lostconnection.tower.waterway.FloodgateService.open(source.getServer(), def, gate, null);
+            opened++;
+        }
+        AdminCommands.log(source, "floor floodgate " + floor + " open " + which);
+        int count = opened;
+        source.sendSuccess(() -> Component.translatable("commands.amemaru.floor.floodgates_opened", count), true);
+        return opened;
     }
 
     private static int setGuardians(CommandSourceStack source, int floor, Collection<ServerPlayer> players, boolean done) {
@@ -341,6 +392,18 @@ public final class StoryCommands {
                     at = def.world(entry.pos());
                     yaw = entry.yaw();
                     break;
+                }
+                if (spot.startsWith("valve_") && spot.length() > "valve_".length() + 2) {
+                    // 水門のハンドルの前（ハンドルの向いている方へ2ブロック）
+                    String rest = spot.substring("valve_".length());
+                    jp.amemaru.lostconnection.tower.FloorFeatures.Floodgate gate = features.floodgate(rest.substring(0, rest.length() - 2));
+                    int side = rest.endsWith("_2") ? 1 : 0;
+                    if (gate != null) {
+                        BlockPos valve = def.world(gate.valves().get(side));
+                        at = new Vec3(valve.getX() + 0.5, valve.getY(), valve.getZ() + 2.5);
+                        yaw = 180.0F;
+                        break;
+                    }
                 }
                 if (spot.startsWith("waypoint")) {
                     int index;

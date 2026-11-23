@@ -131,6 +131,37 @@ public final class ModEntities {
                             MobCategory.MONSTER)
                     .sized(0.8F, 0.8F).clientTrackingRange(16).updateInterval(1).build(AmemaruMod.id("old_ward_knot").toString()));
 
+    // ---- Phase 8 その2：3階「古代の水路」の敵（Phase 0-A 9章）
+    /** 水門ネズミ（群れ）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.waterway.SuimonNezumi>> SUIMON_NEZUMI =
+            ENTITIES.register("suimon_nezumi", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.waterway.SuimonNezumi>of(jp.amemaru.lostconnection.enemy.waterway.SuimonNezumi::new,
+                            MobCategory.MONSTER)
+                    .sized(0.7F, 0.6F).clientTrackingRange(10).build(AmemaruMod.id("suimon_nezumi").toString()));
+    /** 澱みスライム（分裂する）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.waterway.YodomiSlime>> YODOMI_SLIME =
+            ENTITIES.register("yodomi_slime", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.waterway.YodomiSlime>of(jp.amemaru.lostconnection.enemy.waterway.YodomiSlime::new,
+                            MobCategory.MONSTER)
+                    .sized(1.3F, 1.2F).clientTrackingRange(10).build(AmemaruMod.id("yodomi_slime").toString()));
+    /** 水路掃除機兵（古代の清掃機械。正面の装甲）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.waterway.Soujikihei>> SOUJIKIHEI =
+            ENTITIES.register("soujikihei", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.waterway.Soujikihei>of(jp.amemaru.lostconnection.enemy.waterway.Soujikihei::new,
+                            MobCategory.MONSTER)
+                    .sized(1.2F, 1.9F).clientTrackingRange(10).build(AmemaruMod.id("soujikihei").toString()));
+    /** 牙ナマズ（水中から跳ねる）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.waterway.KibaNamazu>> KIBA_NAMAZU =
+            ENTITIES.register("kiba_namazu", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.waterway.KibaNamazu>of(jp.amemaru.lostconnection.enemy.waterway.KibaNamazu::new,
+                            MobCategory.MONSTER)
+                    .sized(1.4F, 0.8F).clientTrackingRange(10).updateInterval(2).build(AmemaruMod.id("kiba_namazu").toString()));
+    /** 3階のボス、大水門の番人ハイドラム（Phase 0-A 9章）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.boss.Hydram>> HYDRAM = ENTITIES.register("hydram", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.boss.Hydram>of(jp.amemaru.lostconnection.enemy.boss.Hydram::new,
+                            MobCategory.MONSTER)
+                    .sized(3.2F, 6.4F).clientTrackingRange(16).updateInterval(2).build(AmemaruMod.id("hydram").toString()));
+
     /** 1階のボス、草原の主ヴェルドホーン（Phase 0-A 9章）。 */
     public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.boss.Veldhorn>> VELDHORN = ENTITIES.register("veldhorn", () ->
             EntityType.Builder.<jp.amemaru.lostconnection.enemy.boss.Veldhorn>of(jp.amemaru.lostconnection.enemy.boss.Veldhorn::new,
@@ -170,5 +201,11 @@ public final class ModEntities {
         event.put(OLD_WARD.get(), jp.amemaru.lostconnection.enemy.boss.AmemaruBoss.createBossAttributes().build());
         event.put(OLD_WARD_KNOT.get(), AmemaruMob.createAttributes().add(
                 net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE, 1.0).build());
+        event.put(SUIMON_NEZUMI.get(), AmemaruMob.createAttributes().build());
+        event.put(YODOMI_SLIME.get(), AmemaruMob.createAttributes().build());
+        event.put(SOUJIKIHEI.get(), AmemaruMob.createAttributes().add(
+                net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE, 0.7).build());
+        event.put(KIBA_NAMAZU.get(), AmemaruMob.createAttributes().build());
+        event.put(HYDRAM.get(), jp.amemaru.lostconnection.enemy.boss.AmemaruBoss.createBossAttributes().build());
     }
 }

@@ -795,6 +795,8 @@ public final class CiScreenshots {
             {"snap", null, "15", "phase6_archer_first"},
             // Phase 6 その3（11月22日）：ギルド。4日目にして（ノアが話す・エルネストがいる）、NPCを置き直す
             {"cmd", null, "10", "amemaru admin day set 4"},
+            // Phase 8 その2：エルネストは3階の記録を持ち帰ると来る（ここでは、来たことにする）
+            {"cmd", null, "5", "amemaru admin flag add amemaru:story/ernesto_arrived"},
             {"cmd", null, "20", "amemaru admin npc place"},
             // ノア：塔前広場の石柱の陰（2日目から。4日目から話す）
             {"cmd", null, "80", "tp @p {at:16.5,3,-133.5} 180 8"},
@@ -804,7 +806,7 @@ public final class CiScreenshots {
             {"snap", null, "30", "phase6g_noa_dialogue"},
             {"dialogue_finish", null, "10"},
             {"screen", null, "10", "hold"},
-            // エルネスト：ギルドの2階の資料室（3日目から）。初めて会うと、記録帳を渡す
+            // エルネスト：ギルドの2階の資料室（3階の記録を持ち帰ると来る）。初めて会うと、記録帳を渡す
             {"cmd", null, "80", "tp @p {at:30.5,10,-66.5} -90 8"},
             {"snap", null, "40", "phase6g_npc_ernesto"},
             {"p6g_talk", null, "10", "ernesto"},
@@ -1183,6 +1185,103 @@ public final class CiScreenshots {
             // 古樹の枝杖（一人称）
             {"p8_hold", null, "20", "elder_branch_staff"},
             {"snap", null, "30", "phase8_f2_staff"},
+            {"p8_hold", null, "5", "-"},
+            {"screen", null, "10", "hold"},
+            // ---- Phase 8 その2：3階「古代の水路」。階を建て、入口の船着き場・大水路（白い空白に消える水）・管理局の広間と
+            // 古代記録・3階の敵・西の貯水槽・東の水車の間・水門①（2つのハンドル）・水の引いた沈んだ区画・牙ナマズの跳ね上がり・
+            // 大水門の前の回廊・白い流れ・大水門の番人ハイドラム（水の大砲・渦・大放流・排水で炉心がむき出し）
+            {"cmd", null, "10", "gamemode creative @p"},
+            {"p5_build_floor", null, "20", "3"},
+            {"await_floor", null, "0"},
+            {"cmd", null, "10", "gamemode adventure @p"},
+            {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "100", "amemaru admin floor tp 3 entrance @p"},
+            {"cmd", null, "10", "amemaru admin floor tp 3 entrance @p"},
+            {"snap", null, "120", "phase8_f3_entrance"},
+            {"cmd", null, "60", "execute in amemaru:tower run tp @p {f3:226.5,27,424.5} 170 6"},
+            {"snap", null, "60", "phase8_f3_canal"},
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f3:259.5,27,343.5} -90 12"},
+            {"snap", null, "40", "phase8_f3_canal_lost"},
+            {"cmd", null, "60", "amemaru admin floor tp 3 waypoint1 @p"},
+            {"snap", null, "60", "phase8_f3_hub"},
+            // 古代記録「水路管理局の掲示」（机に近づくと読める）
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f3:252.5,27,248.5} 180 12"},
+            {"snap_keep", null, "40", "phase8_f3_record"},
+            // 3階の敵（広間の南西の石だたみに、動かないように並べる。北に並べて、南から見る）
+            {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:suimon_nezumi {f3:213.5,27,280.5} {NoAI:1b,Rotation:[0f,0f]}"},
+            {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:yodomi_slime {f3:217.5,27,280.5} {NoAI:1b,Rotation:[0f,0f]}"},
+            {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:soujikihei {f3:222.5,27,280.5} {NoAI:1b,Rotation:[0f,0f]}"},
+            {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:kiba_namazu {f3:227.5,27,280.5} {NoAI:1b,Rotation:[20f,0f]}"},
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f3:220.5,28,289.5} 180 10"},
+            {"snap", null, "40", "phase8_f3_enemies"},
+            {"cmd", null, "5", "execute in amemaru:tower run kill @e[type=amemaru:suimon_nezumi,distance=..30]"},
+            {"cmd", null, "5", "execute in amemaru:tower run kill @e[type=amemaru:yodomi_slime,distance=..30]"},
+            {"cmd", null, "5", "execute in amemaru:tower run kill @e[type=amemaru:soujikihei,distance=..30]"},
+            {"cmd", null, "5", "execute in amemaru:tower run kill @e[type=amemaru:kiba_namazu,distance=..30]"},
+            {"cmd", null, "60", "amemaru admin floor tp 3 waypoint2 @p"},
+            {"snap", null, "80", "phase8_f3_cistern"},
+            {"cmd", null, "60", "amemaru admin floor tp 3 waypoint3 @p"},
+            {"snap", null, "80", "phase8_f3_waterwheel"},
+            // 水門①：西のハンドルを回す（「もう片方を待っている」）→ 東のハンドルも3秒のうちに回す → 開く
+            {"cmd", null, "40", "amemaru admin floor floodgate 3 reset"},
+            {"p8_valve", null, "20", "first:0"},
+            {"snap_keep", null, "10", "phase8_f3_valve_waiting"},
+            {"p8_valve", null, "20", "first:1"},
+            {"snap_keep", null, "20", "phase8_f3_gate_opened"},
+            // 沈んだ区画の水が引く（広間の北の坂の上から見下ろす）
+            {"cmd", null, "200", "execute in amemaru:tower run tp @p {f3:240.5,27,235.5} 180 28"},
+            {"snap", null, "60", "phase8_f3_sunken_drained"},
+            {"cmd", null, "60", "amemaru admin floor tp 3 waypoint4 @p"},
+            {"snap", null, "60", "phase8_f3_sunken"},
+            // 牙ナマズ：深い水路のふちに立つと、線の予兆のあとで跳ねる
+            {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:kiba_namazu {f3:252.5,12,162.5}"},
+            {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "20", "execute in amemaru:tower run tp @p {f3:252.5,15,168.5} 180 25"},
+            {"await_mark", null, "2", "phase8_f3_namazu_leap"},
+            {"cmd", null, "30", "execute in amemaru:tower run kill @e[type=amemaru:kiba_namazu]"},
+            // 水門②・③（ここでは管理者のコマンドで）と、名のある魔物の印。大水門の前の回廊（堀の水が引いた）
+            {"cmd", null, "10", "amemaru admin floor floodgate 3 open all"},
+            {"cmd", null, "10", "amemaru admin floor guardians 3 done @p"},
+            {"cmd", null, "200", "amemaru admin floor tp 3 waypoint5 @p"},
+            {"snap", null, "60", "phase8_f3_gallery"},
+            // 白い流れ（物語の場所に入ると、一人一度だけ流れる）
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f3:50.5,15,66.5} 90 8"},
+            {"await_scene", null, "0"},
+            {"snap_keep", null, "60", "phase8_f3_white"},
+            {"await_idle", null, "0"},
+            // 大水門（封印は開いている）と、大水門の番人ハイドラム
+            {"cmd", null, "60", "amemaru admin floor tp 3 boss @p"},
+            {"snap", null, "40", "phase8_f3_seal"},
+            {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "60", "execute in amemaru:tower run tp @p {f3:240.5,15,60.5} 180 -10"},
+            {"cmd", null, "20", "execute in amemaru:tower run tp @p {f3:240.5,15,54.5} 180 -12"},
+            {"snap", null, "60", "phase8_f3_boss"},
+            // 水の大砲（線）
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f3:240.5,15,60.5} 180 16"},
+            {"cmd", null, "0", "amemaru admin boss skill 3 cannon"},
+            {"await_mark", null, "2", "phase8_f3_boss_cannon"},
+            // 渦（足もとの円）
+            {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f3:246.5,15,56.5} 180 35"},
+            {"cmd", null, "0", "amemaru admin boss skill 3 whirl"},
+            {"await_ground", null, "0", "phase8_f3_boss_whirl"},
+            // 大放流（みんなで受ける一撃。青い円）
+            {"cmd", null, "50", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f3:234.5,15,56.5} 180 35"},
+            {"cmd", null, "0", "amemaru admin boss skill 3 share"},
+            {"await_ground", null, "0", "phase8_f3_boss_share"},
+            // 排水：東と西の排水のハンドルを回す → 水が引き、炉心がむき出しになる
+            {"cmd", null, "60", "amemaru admin debug vitals @a 100 100"},
+            {"p8_valve", null, "10", "drain:0"},
+            {"p8_valve", null, "60", "drain:1"},
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f3:240.5,15,52.5} 180 -14"},
+            {"snap", null, "30", "phase8_f3_boss_exposed"},
+            {"cmd", null, "5", "kill @e[type=amemaru:hydram]"},
+            {"snap_keep", null, "30", "phase8_f3_boss_defeated"},
+            {"snap_keep", null, "120", "phase8_f3_boss_title"},
+            {"await_idle", null, "0"},
+            {"p8_hold", null, "20", "floodgate_key_shield"},
+            {"snap", null, "30", "phase8_f3_shield"},
             {"p8_hold", null, "5", "-"},
             {"screen", null, "10", "hold"},
             {"cmd", null, "10", "gamemode spectator @p"},

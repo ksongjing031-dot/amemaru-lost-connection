@@ -22,7 +22,7 @@ final class CiPhase8 {
     /** その種類の行なら true（first のときだけ動かす）。 */
     static boolean action(Minecraft minecraft, String[] shot, boolean first) {
         String kind = shot[0];
-        if (!List.of("p8_bell", "p8_listen", "p8_knot", "p8_hold").contains(kind)) {
+        if (!List.of("p8_bell", "p8_listen", "p8_knot", "p8_hold", "p8_valve").contains(kind)) {
             return false;
         }
         if (!first) {
@@ -53,6 +53,8 @@ final class CiPhase8 {
                 LostWoodsService.placeKnot(player, def.number(), woods.id(), woods.exits().indexOf(exit), post);
             }));
             case "p8_hold" -> CiPhase3.onServer(minecraft, player -> CiGear.hold(player, "-".equals(shot[3]) ? null : shot[3], null));
+            // Phase 8 その2：3階の水門のハンドルの前（2マス）に立って、回す（「組:0か1」）
+            case "p8_valve" -> CiPhase3.onServer(minecraft, player -> turnValve(player, shot[3]));
             default -> {
             }
         }
@@ -70,6 +72,25 @@ final class CiPhase8 {
             }
         }
         return false;
+    }
+
+    private static void turnValve(ServerPlayer player, String spec) {
+        String[] parts = spec.split(":");
+        FloorDef def = FloorDefs.byNumber(3);
+        ServerLevel level = FloorDefs.towerLevel(player.server);
+        FloorFeatures.Floodgate gate = def == null ? null : def.features().floodgate(parts[0]);
+        if (gate == null || level == null || parts.length < 2) {
+            return;
+        }
+        int side = Integer.parseInt(parts[1]);
+        BlockPos valve = def.world(gate.valves().get(side));
+        net.minecraft.world.level.block.state.BlockState state = level.getBlockState(valve);
+        net.minecraft.core.Direction facing = state.hasProperty(jp.amemaru.lostconnection.tower.waterway.WaterwayBlocks.FACING)
+                ? state.getValue(jp.amemaru.lostconnection.tower.waterway.WaterwayBlocks.FACING) : net.minecraft.core.Direction.SOUTH;
+        double x = valve.getX() + 0.5 + facing.getStepX() * 2.0;
+        double z = valve.getZ() + 0.5 + facing.getStepZ() * 2.0;
+        player.teleportTo(level, x, valve.getY(), z, facing.getOpposite().toYRot(), 20.0F);
+        jp.amemaru.lostconnection.tower.waterway.FloodgateService.turn(player, def.number(), gate.id(), side, valve);
     }
 
     private interface WoodsAction {

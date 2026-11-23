@@ -113,6 +113,11 @@ public final class ModBlocks {
             new jp.amemaru.lostconnection.tower.forest.ForestBlocks.Waypoint(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE).strength(-1.0F, 3600000.0F).sound(SoundType.STONE).lightLevel(state -> 12)
                     .noOcclusion().pushReaction(PushReaction.BLOCK)));
+    /** 3階の水門のハンドル（2つを同時に回すと水門が開く。Phase 8 その2）。 */
+    public static final RegistryObject<Block> FLOODGATE_VALVE = BLOCKS.register("floodgate_valve", () ->
+            new jp.amemaru.lostconnection.tower.waterway.WaterwayBlocks.Valve(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(-1.0F, 3600000.0F).sound(SoundType.METAL).lightLevel(state -> 7)
+                    .noOcclusion().pushReaction(PushReaction.BLOCK)));
     /** 入口の道しるべの石（ともした中継の灯へ連れていく）。 */
     public static final RegistryObject<Block> TRAVEL_STONE = BLOCKS.register("travel_stone", () ->
             new jp.amemaru.lostconnection.tower.forest.ForestBlocks.TravelStone(BlockBehaviour.Properties.of()

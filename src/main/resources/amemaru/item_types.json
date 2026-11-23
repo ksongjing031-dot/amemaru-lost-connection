@@ -203,6 +203,24 @@
     {
       "id": "clear_echo",
       "rarity": "rare"
+    },
+    {
+      "id": "gnawed_cog"
+    },
+    {
+      "id": "murky_gel"
+    },
+    {
+      "id": "waterway_bronze",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "catfish_whisker",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "flow_crystal",
+      "rarity": "rare"
     }
   ],
   "fruits": [

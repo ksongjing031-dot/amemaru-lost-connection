@@ -41,4 +41,17 @@ public class AssetGeoModel<T extends GeoAnimatable> extends GeoModel<T> {
     public ResourceLocation getAnimationResource(T animatable) {
         return animation;
     }
+
+    /** 敵が決める、見せる・隠すボーン（Phase 8 その2：3階のボスの水の外套。{@link jp.amemaru.lostconnection.enemy.AmemaruMob#boneToggles}）。 */
+    @Override
+    public void setCustomAnimations(T animatable, long instanceId, software.bernie.geckolib.core.animation.AnimationState<T> animationState) {
+        if (animatable instanceof jp.amemaru.lostconnection.enemy.AmemaruMob mob) {
+            for (java.util.Map.Entry<String, Boolean> entry : mob.boneToggles().entrySet()) {
+                software.bernie.geckolib.core.animatable.model.CoreGeoBone bone = getAnimationProcessor().getBone(entry.getKey());
+                if (bone != null) {
+                    bone.setHidden(!entry.getValue());
+                }
+            }
+        }
+    }
 }

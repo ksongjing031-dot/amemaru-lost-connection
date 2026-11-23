@@ -134,7 +134,9 @@ public final class EquipmentGameTests {
         // 11月22日：1階の西の丘の石柱の守り手「群れの長」（ツノモフの見た目を借りる別の定義）が増えた
         // Phase 8 その1：2階の雑魚4種（迷い灯・樹皮兵・ポコダケ・葉影ギツネ）と名のある魔物2体、ボス「森番の古樹オールドウォード」と、
         // その幹の「光る節」
-        check(helper, EnemyDefs.all().size() == 14, "敵の定義が14ではありません：" + EnemyDefs.all().keySet());
+        // Phase 8 その2：3階の雑魚4種（水門ネズミ・澱みスライムと小さな澱みスライム・水路掃除機兵・牙ナマズ）と名のある魔物3体、
+        // ボス「大水門の番人ハイドラム」
+        check(helper, EnemyDefs.all().size() == 23, "敵の定義が23ではありません：" + EnemyDefs.all().keySet());
         EnemyDef alpha = EnemyDefs.get(AmemaruMod.id("tsunomofu_alpha"));
         check(helper, alpha != null && AmemaruMod.id("tsunomofu").equals(alpha.entity()) && alpha.behavior().getOrDefault("scale", 1.0) > 1.0,
                 "群れの長が、ツノモフの見た目を借りる大きな個体になっていません");

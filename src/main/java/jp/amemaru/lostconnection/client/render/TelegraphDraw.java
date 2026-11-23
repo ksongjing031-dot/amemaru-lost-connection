@@ -53,6 +53,24 @@ public final class TelegraphDraw {
         }
     }
 
+    /**
+     * 足もとが水なら、予兆を水面の高さに描くための持ち上げ（Phase 8 その2：3階の浅い水の中でも、予兆の円や線が見えるように）。
+     */
+    public static float waterLift(net.minecraft.world.entity.Entity entity) {
+        net.minecraft.world.level.Level level = entity.level();
+        net.minecraft.core.BlockPos feet = net.minecraft.core.BlockPos.containing(entity.getX(), entity.getY() + 0.05, entity.getZ());
+        float lift = 0.0F;
+        for (int i = 0; i < 3; i++) {
+            net.minecraft.core.BlockPos at = feet.above(i);
+            net.minecraft.world.level.material.FluidState fluid = level.getFluidState(at);
+            if (fluid.isEmpty()) {
+                break;
+            }
+            lift = (float) (at.getY() + fluid.getHeight(level, at) - entity.getY());
+        }
+        return Math.max(0.0F, lift);
+    }
+
     public static VertexConsumer consumer(MultiBufferSource buffer) {
         return buffer.getBuffer(RenderType.entityTranslucentEmissive(TEXTURE));
     }

@@ -78,7 +78,8 @@ public class AmemaruMobRenderer<T extends AmemaruMob> extends GeoEntityRenderer<
         int alpha = TelegraphDraw.alpha(progress, age);
         VertexConsumer consumer = TelegraphDraw.consumer(buffer);
         poseStack.pushPose();
-        poseStack.translate(0.0, 0.06, 0.0);
+        // 浅い水の中では、水面に描く（Phase 8 その2）
+        poseStack.translate(0.0, 0.06 + TelegraphDraw.waterLift(entity), 0.0);
         if (kind == AmemaruMob.TELEGRAPH_LINE) {
             // 体の向きではなく、予兆を出したときの向き（固定）で地面に帯を描く。幅は arg（0 なら 1.5）
             poseStack.mulPose(Axis.YP.rotationDegrees(-entity.telegraphYaw()));

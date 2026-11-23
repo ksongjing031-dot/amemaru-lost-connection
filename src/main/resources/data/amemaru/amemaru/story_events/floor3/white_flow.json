@@ -1,0 +1,43 @@
+{
+  "_comment": "Phase 0-A 9章の3階のロストの侵食：水が流れの途中で白い空白に消えている区画（白い流れ。階の定義の story_zones の white_flow）。入った人に、一人一度だけ（本人の物語フラグ white_flow_seen）【補完】",
+  "title": "白い流れ",
+  "trigger": {
+    "type": "amemaru:floor_zone",
+    "floor": 3,
+    "zone": "white_flow"
+  },
+  "scope": "player",
+  "once": false,
+  "replayable": true,
+  "conditions": {
+    "flags_none": [
+      "amemaru:story/white_flow_seen"
+    ]
+  },
+  "steps": [
+    {
+      "type": "amemaru:sound",
+      "sound": "minecraft:block.amethyst_block.chime",
+      "volume": 1.0,
+      "pitch": 0.5
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "流れが……白い空白の中へ、音もなく消えていく。その先が、どこにもない。",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "森の獣たちが帰り道を忘れたように、この水も、行き先を忘れてしまったのだろうか。",
+      "ticks": 110,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/white_flow_seen"
+      ]
+    }
+  ]
+}

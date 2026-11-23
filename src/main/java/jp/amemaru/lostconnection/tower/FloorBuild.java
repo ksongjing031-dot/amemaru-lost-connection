@@ -192,6 +192,8 @@ public final class FloorBuild {
             }
         }
         TowerData.get(level.getServer()).markBuilt(def.number());
+        // Phase 8 その2：建て直すと水は満ちた形に戻るので、次に人が来たとき開いた水門の状態に合わせ直す
+        jp.amemaru.lostconnection.tower.waterway.FloodgateService.forgetSync(level.getServer(), def.number());
         builds++;
         long millis = System.currentTimeMillis() - started;
         int placed = pieces;

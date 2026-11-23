@@ -50,6 +50,11 @@ public final class ModCreativeTabs {
                 output.accept(ModItems.JUHIHEI_SPAWN_EGG.get());
                 output.accept(ModItems.POKODAKE_SPAWN_EGG.get());
                 output.accept(ModItems.HAKAGE_KITSUNE_SPAWN_EGG.get());
+                // Phase 8 その2：3階の敵
+                output.accept(ModItems.SUIMON_NEZUMI_SPAWN_EGG.get());
+                output.accept(ModItems.YODOMI_SLIME_SPAWN_EGG.get());
+                output.accept(ModItems.SOUJIKIHEI_SPAWN_EGG.get());
+                output.accept(ModItems.KIBA_NAMAZU_SPAWN_EGG.get());
             })
             .build());
 

@@ -20,7 +20,7 @@ public class GroundMarkerRenderer extends EntityRenderer<GroundMarker> {
         float age = marker.tickCount + partialTick;
         float progress = marker.progress(partialTick);
         poseStack.pushPose();
-        poseStack.translate(0.0, 0.07, 0.0);
+        poseStack.translate(0.0, 0.07 + TelegraphDraw.waterLift(marker), 0.0);
         if (marker.kind() == GroundMarker.KIND_SHARE) {
             // 青の印：みんなで集まって受ける所。内向きの矢じりで「集まれ」を見せる（11月24日）
             int alpha = Math.min(255, TelegraphDraw.alpha(progress, age) + 30);

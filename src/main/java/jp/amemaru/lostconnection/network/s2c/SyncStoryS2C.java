@@ -32,7 +32,8 @@ public record SyncStoryS2C(int opening, boolean openingPending, Map<Integer, Int
         for (jp.amemaru.lostconnection.tower.FloorDef def : jp.amemaru.lostconnection.tower.FloorDefs.all()) {
             jp.amemaru.lostconnection.tower.FloorFeatures features = def.features();
             if (features.requires(jp.amemaru.lostconnection.tower.FloorFeatures.SEAL_LOST_WOODS)
-                    || features.requires(jp.amemaru.lostconnection.tower.FloorFeatures.SEAL_GUARDIANS)) {
+                    || features.requires(jp.amemaru.lostconnection.tower.FloorFeatures.SEAL_GUARDIANS)
+                    || features.requires(jp.amemaru.lostconnection.tower.FloorFeatures.SEAL_FLOODGATES)) {
                 // Phase 8 その1：迷いの森の区画（みんなで同じ）を、石柱と同じ形で送る（封印の判定をクライアントでも同じにする）。
                 // 11月24日：名のある魔物を倒した印（人ごと）も、その後ろのビットに足す
                 int bits = 0;
@@ -40,6 +41,18 @@ public record SyncStoryS2C(int opening, boolean openingPending, Map<Integer, Int
                 if (features.requires(jp.amemaru.lostconnection.tower.FloorFeatures.SEAL_LOST_WOODS)) {
                     bits = jp.amemaru.lostconnection.tower.forest.LostWoodsService.tieBits(player.server, def);
                     total = features.lostWoods().size();
+                }
+                if (features.requires(jp.amemaru.lostconnection.tower.FloorFeatures.SEAL_FLOODGATES)) {
+                    // Phase 8 その2：開いた水門（みんなで同じ）
+                    for (jp.amemaru.lostconnection.tower.FloorFeatures.Floodgate gate : features.floodgates()) {
+                        if (jp.amemaru.lostconnection.tower.FloorFeatures.DRAIN.equals(gate.id())) {
+                            continue;
+                        }
+                        if (jp.amemaru.lostconnection.tower.waterway.FloodgateService.isOpen(player.server, def.number(), gate.id())) {
+                            bits |= 1 << total;
+                        }
+                        total++;
+                    }
                 }
                 if (features.requires(jp.amemaru.lostconnection.tower.FloorFeatures.SEAL_GUARDIANS)) {
                     List<jp.amemaru.lostconnection.tower.FloorDef.Guardian> named = jp.amemaru.lostconnection.tower.TowerService.namedGuardians(def);

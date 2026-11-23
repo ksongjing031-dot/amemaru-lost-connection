@@ -1,0 +1,48 @@
+{
+  "_comment": "水門ネズミ（Phase 8 その2。3階の雑魚。Phase 0-A 9章「群れ」。5〜6匹の群れで出る。1匹は弱いが速い。1匹が気づくと swarm_radius の中の群れがみな向かってくる。噛みつきと、少し離れた所からの飛びかかり（charge）。数値は【補完】）",
+  "name": "水門ネズミ",
+  "floor": 3,
+  "level": 6,
+  "lost": false,
+  "description": "水門の歯車のすき間に住みついた、灰色の大きなネズミ。古代の油と苔をかじって育った。1匹が鳴くと、どこからともなく群れが集まってくる。",
+  "stats": {
+    "hp": 760,
+    "attack": 40,
+    "defense": 4,
+    "move_speed": 0.32,
+    "follow_range": 22,
+    "aggro_range": 10
+  },
+  "exp": 10,
+  "skills": {
+    "bite": {
+      "power": 0.8,
+      "windup": 0.4,
+      "cooldown": 1.2,
+      "range": 1.8,
+      "angle": 90
+    },
+    "charge": {
+      "power": 1.0,
+      "windup": 0.7,
+      "cooldown": 5.0,
+      "range": 6.0,
+      "min_range": 3.0,
+      "speed": 0.6,
+      "width": 1.2,
+      "recover": 0.6
+    }
+  },
+  "behavior": {
+    "swarm_radius": 10
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/suimon_nezumi",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_amber",
+        "chance": 0.3
+      }
+    ]
+  }
+}

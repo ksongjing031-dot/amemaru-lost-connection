@@ -1,0 +1,97 @@
+{
+  "_comment": "3階のボス（Phase 0-A 9章「水の大砲を撃つ。水位を下げると胸の炉心が露出して弱点になる」）。部屋に水が満ちている間は、受けるダメージが drain.flooded 倍（水の鎧）。部屋の東と西の排水のハンドル（階の水門 drain）を2人で同時に回すと水が引き、stagger_seconds よろめいて、exposed_seconds の間、炉心がむき出し（受けるダメージ drain.exposed 倍。HP30%からは rage_exposed 倍の長さ）。そのあと水が戻り、drain.cooldown 秒はハンドルが回らない。技：水の大砲（cannon。長い線。押し流す。HP30%から2連）・水の薙ぎ払い（sweep。扇）・渦（whirl。何人かの足もとの円。引き寄せて遅くする）・大放流（share。みんなで受ける一撃）。HP60%で水門ネズミを呼ぶ（call）。部屋のまん中から leash より離れない。HPは2人のときの基準（ひとりでも2人ぶん）。数値は【補完】（2人で16分・4人で13分ほど）",
+  "name": "大水門の番人ハイドラム",
+  "floor": 3,
+  "level": 10,
+  "description": "古代の水路の大水門を守り続ける、石と青銅の大きな番人。右の腕は水の大砲で、胸の炉心は水の外套に包まれている。水路の水がすべて流れるか止まるかは、この番人の門ひとつで決まる。",
+  "stats": {
+    "hp": 64000,
+    "attack": 108,
+    "defense": 14,
+    "move_speed": 0.16,
+    "follow_range": 64,
+    "aggro_range": 26
+  },
+  "exp": 1200,
+  "skills": {
+    "cannon": {
+      "power": 1.7,
+      "windup": 1.6,
+      "cooldown": 7.0,
+      "range": 30.0,
+      "width": 2.6,
+      "push": 1.4
+    },
+    "sweep": {
+      "power": 1.3,
+      "windup": 1.1,
+      "cooldown": 4.5,
+      "range": 8.0,
+      "angle": 150,
+      "push": 0.9
+    },
+    "whirl": {
+      "power": 1.1,
+      "windup": 1.8,
+      "cooldown": 10.0,
+      "range": 26.0,
+      "radius": 2.8,
+      "count": 2,
+      "pull": 0.6,
+      "slow_seconds": 2.0
+    },
+    "call": {
+      "count": 2,
+      "max": 6,
+      "range": 12.0
+    },
+    "drain": {
+      "flooded": 0.2,
+      "exposed": 2.0,
+      "exposed_seconds": 25,
+      "rage_exposed": 0.72,
+      "stagger_seconds": 3,
+      "cooldown": 12,
+      "leash": 14
+    },
+    "share": {
+      "power": 170,
+      "windup": 3.4,
+      "cooldown": 40,
+      "range": 3.5,
+      "first": 30
+    }
+  },
+  "behavior": {},
+  "drops": {
+    "loot_table": "amemaru:entities/hydram",
+    "pity": true,
+    "rare": [
+      {
+        "item": "amemaru:floodgate_key_shield",
+        "chance": 6,
+        "rarity": "epic"
+      },
+      {
+        "item": "amemaru:flow_crystal",
+        "chance": 60,
+        "pity": false
+      },
+      {
+        "item": "amemaru:crystal_fruit_azure",
+        "chance": 15,
+        "pity": false
+      },
+      {
+        "item": "amemaru:crystal_fruit_crimson",
+        "chance": 10,
+        "pity": false
+      },
+      {
+        "item": "amemaru:crystal_fruit_white",
+        "chance": 10,
+        "pity": false
+      }
+    ]
+  }
+}

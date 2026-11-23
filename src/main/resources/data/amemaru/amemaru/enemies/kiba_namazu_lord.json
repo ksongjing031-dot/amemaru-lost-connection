@@ -1,0 +1,48 @@
+{
+  "_comment": "主ナマズ（Phase 8 その2。3階の名のある魔物。沈んだ区画の宝箱の守り手。牙ナマズの大きな主。数値は【補完】）",
+  "name": "主ナマズ",
+  "model": "amemaru:kiba_namazu",
+  "floor": 3,
+  "level": 9,
+  "description": "沈んだ区画のいちばん深い溜まりに棲む、小舟ほどもある大ナマズ。水が引いても、この溜まりだけは干上がらない。ひげの先が白く消えかけている。",
+  "stats": {
+    "hp": 14000,
+    "attack": 82,
+    "defense": 14,
+    "move_speed": 0.18,
+    "follow_range": 22,
+    "aggro_range": 12
+  },
+  "exp": 240,
+  "skills": {
+    "leap": {
+      "power": 1.8,
+      "windup": 1.0,
+      "cooldown": 3.5,
+      "range": 13.0,
+      "width": 2.4
+    }
+  },
+  "behavior": {
+    "water_guard": 0.4,
+    "land_seconds": 3.0,
+    "scale": 1.7
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/kiba_namazu",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_white",
+        "chance": 6.0
+      },
+      {
+        "item": "amemaru:flow_crystal",
+        "chance": 35.0
+      },
+      {
+        "item": "amemaru:wavering_crystal",
+        "chance": 15.0
+      }
+    ]
+  }
+}
