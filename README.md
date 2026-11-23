@@ -7,6 +7,14 @@ Discordサーバー「あめまるさん」のための、Minecraft Java版 1.20
 - 各Phaseの内容と確認の手順は [`docs/`](docs/) にあります（[Phase 1](docs/phase1.md)・[Phase 2](docs/phase2.md)・[Phase 3](docs/phase3.md)・[Phase 4](docs/phase4.md)・[Phase 5](docs/phase5.md)）。建物の様式は [`docs/map_style.md`](docs/map_style.md)、装備のデザインは [`docs/gear/`](docs/gear/README.md)。
 - 今までの全部をゲームの中で見て回る道具（確かめ用の平らなワールドと、街の11施設をまとめて建てるコマンド）は [`docs/ingame_check.md`](docs/ingame_check.md)。
 
+## 権利について（License）
+
+© 2026 27kan
+
+このリポジトリには、ライセンスを付けていません。中のコード・絵・モデル・文章・マップの権利は、すべて作者にあります。GitHub の利用規約で認められている範囲（GitHub の上で見る・フォークする）をこえて、複製・再配布・改変して使うことはご遠慮ください。
+
+No license is granted. All rights reserved. You may view and fork this repository on GitHub as the GitHub Terms of Service allow, but please do not copy, redistribute or modify its contents elsewhere without permission.
+
 ## 動かすのに必要なもの
 
 | もの | 版 |
