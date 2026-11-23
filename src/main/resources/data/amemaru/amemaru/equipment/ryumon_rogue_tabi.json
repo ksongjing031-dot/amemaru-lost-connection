@@ -1,0 +1,24 @@
+{
+  "slot": "feet",
+  "generation": 1,
+  "series": "流紋シリーズ（ローグ）",
+  "rarity": "common",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:rogue"
+  ],
+  "stats": {
+    "defense": 2,
+    "hp": 8,
+    "speed": 3
+  },
+  "durability": 260,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 1
+    }
+  ],
+  "description": "つま先の割れた、底のうすい黒い足袋。"
+}

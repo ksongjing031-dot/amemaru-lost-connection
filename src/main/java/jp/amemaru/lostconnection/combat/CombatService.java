@@ -117,7 +117,7 @@ public final class CombatService {
             critChance = 100.0;
         }
         // 結晶の加護（その階のボスへの与ダメージ。Phase 5）
-        power *= TargetVitals.takenMultiplier(target);
+        power *= TargetVitals.takenMultiplier(target, owner);
         double defense = TargetVitals.defense(target) * (1.0 - Math.max(0.0, Math.min(100.0, ctx.currentPierce)) / 100.0);
         DamageCalculator.Result result = DamageCalculator.compute(power, critChance, critDamage, defense,
                 ServerConfig.DAMAGE_VARIANCE.get(), ctx.random());
@@ -141,7 +141,7 @@ public final class CombatService {
         if (power <= 0 || !target.isAlive()) {
             return -1;
         }
-        double amount = power * TargetVitals.takenMultiplier(target) * DamageCalculator.mitigation(TargetVitals.defense(target));
+        double amount = power * TargetVitals.takenMultiplier(target, owner) * DamageCalculator.mitigation(TargetVitals.defense(target));
         amount *= 1.0 + AfflictionService.markBonus(target) / 100.0;
         amount *= 1.0 + AfflictionService.corrodeBonus(target) / 100.0;
         amount = Math.max(1.0, Math.round(amount));
@@ -163,7 +163,7 @@ public final class CombatService {
         power *= GearEffects.outgoingMultiplier(attacker, target, false);
         CombatBonuses.Offense offense = CombatBonuses.offense(attacker, data, target, null, true, now);
         power *= offense.multiplier();
-        power *= TargetVitals.takenMultiplier(target);
+        power *= TargetVitals.takenMultiplier(target, attacker);
         DamageCalculator.Result result = DamageCalculator.compute(power, data.getStats().get(StatType.CRIT) + offense.critBonus(),
                 data.getStats().get(StatType.CRIT_DAMAGE) + offense.critDamageBonus(), TargetVitals.defense(target),
                 ServerConfig.DAMAGE_VARIANCE.get(), attacker.getRandom());
@@ -413,7 +413,7 @@ public final class CombatService {
         // 職業の強化とパッシブ（Phase 6 その2）
         CombatBonuses.Offense offense = CombatBonuses.offense(attacker, data, target, null, false, now);
         power *= offense.multiplier();
-        power *= TargetVitals.takenMultiplier(target);
+        power *= TargetVitals.takenMultiplier(target, attacker);
         DamageCalculator.Result result = DamageCalculator.compute(power, data.getStats().get(StatType.CRIT) + offense.critBonus(),
                 data.getStats().get(StatType.CRIT_DAMAGE) + offense.critDamageBonus(), TargetVitals.defense(target),
                 ServerConfig.DAMAGE_VARIANCE.get(), attacker.getRandom());

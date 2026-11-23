@@ -1,0 +1,24 @@
+{
+  "slot": "head",
+  "generation": 1,
+  "series": "流紋シリーズ（モンク）",
+  "rarity": "common",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:monk"
+  ],
+  "stats": {
+    "defense": 2,
+    "hp": 15,
+    "crit": 1
+  },
+  "durability": 280,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 1
+    }
+  ],
+  "description": "額に青銅の小さな板を縫いつけた鉢巻。結んだ端がうしろに垂れる。"
+}

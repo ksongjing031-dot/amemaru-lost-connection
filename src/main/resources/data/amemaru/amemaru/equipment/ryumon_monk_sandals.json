@@ -1,0 +1,24 @@
+{
+  "slot": "feet",
+  "generation": 1,
+  "series": "流紋シリーズ（モンク）",
+  "rarity": "common",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:monk"
+  ],
+  "stats": {
+    "defense": 2,
+    "hp": 10,
+    "speed": 2
+  },
+  "durability": 280,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 1
+    }
+  ],
+  "description": "ナマズのひげで編んだ鼻緒の草鞋。足首に布を巻く。"
+}

@@ -1,0 +1,57 @@
+{
+  "_comment": "監督機兵（Phase 8 その2。3階の名のある魔物。西の貯水槽の宝箱の守り手。水路掃除機兵の大きな監督機。数値は【補完】）",
+  "name": "監督機兵",
+  "model": "amemaru:soujikihei",
+  "floor": 3,
+  "level": 9,
+  "description": "掃除機兵たちを束ねていた、ひと回り大きな監督機。胸の板に、すり減った管理局の紋がある。今も貯水槽の真ん中で、来ない命令を待ち続けている。",
+  "stats": {
+    "hp": 16000,
+    "attack": 78,
+    "defense": 24,
+    "move_speed": 0.22,
+    "follow_range": 26,
+    "aggro_range": 13
+  },
+  "exp": 250,
+  "skills": {
+    "sweep": {
+      "power": 1.3,
+      "windup": 0.9,
+      "cooldown": 2.4,
+      "range": 4.2,
+      "angle": 120
+    },
+    "jet": {
+      "power": 1.6,
+      "windup": 1.3,
+      "cooldown": 6.0,
+      "range": 13.0,
+      "min_range": 3.0,
+      "width": 2.2,
+      "push": 1.3
+    }
+  },
+  "behavior": {
+    "front_armor": 0.4,
+    "front_angle": 150,
+    "scale": 1.35
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/soujikihei",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_crimson",
+        "chance": 6.0
+      },
+      {
+        "item": "amemaru:flow_crystal",
+        "chance": 35.0
+      },
+      {
+        "item": "amemaru:wavering_crystal",
+        "chance": 15.0
+      }
+    ]
+  }
+}

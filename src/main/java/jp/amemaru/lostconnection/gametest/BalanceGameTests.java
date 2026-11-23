@@ -46,9 +46,17 @@ public final class BalanceGameTests {
             EnemyDef def = enemy(id);
             check(helper, def.hp() >= 700 && def.attack() >= 30, "2階の雑魚 " + id + " が弱すぎます：HP" + def.hp() + "・攻撃" + def.attack());
         }
+        for (String id : List.of("suimon_nezumi", "yodomi_slime", "soujikihei", "kiba_namazu")) {
+            EnemyDef def = enemy(id);
+            check(helper, def.hp() >= 750 && def.attack() >= 40, "3階の雑魚 " + id + " が弱すぎます：HP" + def.hp() + "・攻撃" + def.attack());
+        }
         for (String id : List.of("tsunomofu_alpha", "juhihei_captain", "hakage_kitsune_chief")) {
             EnemyDef def = enemy(id);
             check(helper, def.hp() >= 7000, "名のある魔物 " + id + " のHPが少なすぎます：" + def.hp());
+        }
+        for (String id : List.of("soujikihei_overseer", "kiba_namazu_lord", "suimon_nezumi_boss")) {
+            EnemyDef def = enemy(id);
+            check(helper, def.hp() >= 12000, "3階の名のある魔物 " + id + " のHPが少なすぎます：" + def.hp());
         }
         check(helper, enemy("hakage_kitsune").moveSpeed() <= 0.30 + EPSILON && enemy("hakage_kitsune_chief").moveSpeed() <= 0.33 + EPSILON,
                 "葉影ギツネが遅くなっていません");
@@ -59,7 +67,7 @@ public final class BalanceGameTests {
     /** ボス：ひとりでも2人ぶんのHP・みんなで受ける一撃（ひとりで受けると倒れる）・怒るまでの時間。 */
     @GameTest(template = EMPTY)
     public static void bossesNeedAParty(GameTestHelper helper) {
-        for (int floor = 1; floor <= 2; floor++) {
+        for (int floor = 1; floor <= 3; floor++) {
             FloorDef def = FloorDefs.byNumber(floor);
             check(helper, def != null && def.bossRoom() != null, floor + "階のボスの部屋がありません");
             FloorDef.BossRoomDef room = def.bossRoom();
@@ -77,7 +85,8 @@ public final class BalanceGameTests {
             check(helper, SharedBlow.split(share.power(), 1) >= 1.0, floor + "階のみんなで受ける一撃が、ひとりで受けても倒れない強さです");
             check(helper, SharedBlow.split(share.power(), 2) < 1.0, floor + "階のみんなで受ける一撃が、2人で分けても倒れる強さです");
             check(helper, share.windupTicks() >= 60, floor + "階のみんなで受ける一撃の予兆が短すぎます（集まる間がない）");
-            check(helper, boss.hp() * two >= (floor == 1 ? 40000 : 85000), floor + "階のボスのHP（2人）が少なすぎます：" + boss.hp() * two);
+            check(helper, boss.hp() * two >= (floor == 1 ? 40000 : floor == 2 ? 85000 : 100000), floor + "階のボスのHP（2人）が少なすぎます："
+                    + boss.hp() * two);
         }
         check(helper, Math.abs(SharedBlow.split(160, 4) - 0.4) < EPSILON, "4人で分けると、ひとり最大HPの40%ではありません");
         check(helper, SharedBlow.split(160, 0) == 1.6, "円に誰もいないとき、狙われた人がひとりで受けていません");

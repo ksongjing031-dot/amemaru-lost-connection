@@ -857,6 +857,22 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
         return state.setAndContinue(state.isMoving() ? animWalk : animIdle);
     }
 
+    /**
+     * 受けるダメージの倍率（Phase 8 その2：3階の敵の「正面の装甲」「水の中」、ボスの炉心など）。{@code attacker} は打った人
+     * （分からなければ null）。ふつうは 1。
+     */
+    public double damageTakenMultiplier(@Nullable net.minecraft.world.entity.Entity attacker) {
+        return 1.0;
+    }
+
+    /**
+     * 見た目で、見せる・隠すを切りかえるボーン（クライアントで読む。キーはボーンの名前、値は見せるか）。Phase 8 その2：
+     * 3階のボスの水の外套（水が引くと消え、炉心が見える）。
+     */
+    public java.util.Map<String, Boolean> boneToggles() {
+        return java.util.Map.of();
+    }
+
     /** 技のアニメーションを流す（サーバーから。まわりのクライアントに届く）。 */
     public void playAction(String name) {
         triggerAnim("action", name);

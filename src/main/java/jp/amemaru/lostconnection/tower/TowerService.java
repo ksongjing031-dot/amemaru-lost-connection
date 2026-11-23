@@ -380,6 +380,10 @@ public final class TowerService {
         if (features.requires(FloorFeatures.SEAL_GUARDIANS) && guardiansDefeated(player, def) < namedGuardians(def).size()) {
             return false;
         }
+        if (features.requires(FloorFeatures.SEAL_FLOODGATES)
+                && !jp.amemaru.lostconnection.tower.waterway.FloodgateService.allOpen(player.server, def)) {
+            return false;
+        }
         if (!features.requires(FloorFeatures.SEAL_PILLARS) || def.pillars().isEmpty()) {
             return true;
         }
@@ -593,6 +597,11 @@ public final class TowerService {
                 && !jp.amemaru.lostconnection.tower.forest.LostWoodsService.allTied(player.server, def)) {
             int tied = Integer.bitCount(jp.amemaru.lostconnection.tower.forest.LostWoodsService.tieBits(player.server, def));
             return Component.translatable("message.amemaru.seal.woods", tied, features.lostWoods().size());
+        }
+        if (features.requires(FloorFeatures.SEAL_FLOODGATES)
+                && !jp.amemaru.lostconnection.tower.waterway.FloodgateService.allOpen(player.server, def)) {
+            int[] gates = jp.amemaru.lostconnection.tower.waterway.FloodgateService.count(player.server, def);
+            return Component.translatable("message.amemaru.seal.floodgates", gates[0], gates[1]);
         }
         if (features.requires(FloorFeatures.SEAL_GUARDIANS)) {
             int done = guardiansDefeated(player, def);

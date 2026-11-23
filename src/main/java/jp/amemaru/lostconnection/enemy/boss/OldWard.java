@@ -692,8 +692,11 @@ public class OldWard extends AmemaruBoss {
             BossRoom room = room();
             List<ServerPlayer> players = room == null ? level.players() : room.participants();
             for (ServerPlayer player : players) {
-                ModNetwork.sendTo(player, new TowerS2C("dark", tag));
                 player.removeEffect(MobEffects.BLINDNESS);
+            }
+            // 暗さを戻す知らせは、部屋を出た人にも送る（出たあとも暗いままにならないように。11月24日）
+            for (ServerPlayer player : level.players()) {
+                ModNetwork.sendTo(player, new TowerS2C("dark", tag));
             }
         }
     }

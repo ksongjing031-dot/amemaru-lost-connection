@@ -1,0 +1,24 @@
+{
+  "slot": "feet",
+  "generation": 1,
+  "series": "流紋シリーズ（ヒーラー）",
+  "rarity": "common",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:healer"
+  ],
+  "stats": {
+    "defense": 2,
+    "mp": 10,
+    "speed": 1
+  },
+  "durability": 300,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 1
+    }
+  ],
+  "description": "金の留め金の白い靴。"
+}

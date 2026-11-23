@@ -1,0 +1,42 @@
+{
+  "_comment": "小さな澱みスライム（Phase 8 その2。澱みスライムが分かれたもの。分かれない。見た目は澱みスライムを小さく（scale）。数値は【補完】）",
+  "name": "小さな澱みスライム",
+  "model": "amemaru:yodomi_slime",
+  "floor": 3,
+  "level": 5,
+  "description": "澱みスライムが叩き割られて分かれた、小さなかたまり。すぐに水に戻ろうとするが、その前に誰かの足にからみつく。",
+  "stats": {
+    "hp": 650,
+    "attack": 30,
+    "defense": 3,
+    "move_speed": 0.26,
+    "follow_range": 16,
+    "aggro_range": 9
+  },
+  "exp": 5,
+  "skills": {
+    "touch": {
+      "power": 0.8,
+      "windup": 0.5,
+      "cooldown": 1.3,
+      "range": 1.6,
+      "angle": 100
+    },
+    "slam": {
+      "power": 1.0,
+      "windup": 0.9,
+      "cooldown": 7.0,
+      "range": 1.8,
+      "angle": 360
+    }
+  },
+  "behavior": {
+    "split": 0,
+    "slow_seconds": 1.5,
+    "touch_slow_seconds": 1.0,
+    "scale": 0.55
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/yodomi_slime_small"
+  }
+}

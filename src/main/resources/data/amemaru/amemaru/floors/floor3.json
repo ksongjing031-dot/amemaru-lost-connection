@@ -1,0 +1,1321 @@
+{
+  "_comment": "塔の3階「古代の水路」（tools/mapgen/build_floor3.py が書き出す。手で直すときは、スクリプトを直して作り直す）",
+  "floor": 3,
+  "chapter": 1,
+  "name": "古代の水路",
+  "chapter_title": "第1章　失われた古代領域",
+  "recommended_level": [
+    5,
+    8
+  ],
+  "origin": [
+    12048,
+    60,
+    -240
+  ],
+  "size": [
+    480,
+    64,
+    480
+  ],
+  "structure": "amemaru:map/floor3/",
+  "piece_size": 48,
+  "entrance": {
+    "pos": [
+      240.5,
+      27,
+      444.5
+    ],
+    "yaw": 180
+  },
+  "return_circle": {
+    "center": [
+      240.5,
+      27,
+      452.5
+    ],
+    "radius": 2.6
+  },
+  "boss_room": {
+    "boss": "amemaru:hydram",
+    "name": "大水門",
+    "spawn": {
+      "pos": [
+        240.5,
+        15,
+        40.5
+      ],
+      "yaw": 0
+    },
+    "arena": {
+      "center": [
+        240.5,
+        15,
+        40.5
+      ],
+      "radius": 27.0,
+      "y_min": 12,
+      "y_max": 38
+    },
+    "seal": [
+      [
+        236,
+        15,
+        75
+      ],
+      [
+        244,
+        21,
+        75
+      ]
+    ],
+    "start_radius": 22,
+    "respawn_seconds": 120,
+    "max_players": 8,
+    "hp_min_players": 2,
+    "hp_per_extra_player": 0.6,
+    "attack_per_extra_player": 0.1,
+    "pace_per_extra_player": 0.05,
+    "enrage_seconds": 1500,
+    "exit": {
+      "center": [
+        240.5,
+        15,
+        20.5
+      ],
+      "radius": 2.6
+    }
+  },
+  "pillars": [],
+  "pillars_done": "",
+  "tablet": {
+    "pos": [
+      252,
+      27,
+      243
+    ],
+    "title": "水路管理局の掲示",
+    "text": "水路管理局より告知。この水路は、魔力の循環路を兼ねる。流れが止まれば、街は乾く。"
+  },
+  "spawns": [
+    {
+      "id": "canal_rats_south",
+      "enemy": "amemaru:suimon_nezumi",
+      "center": [
+        226,
+        27,
+        400
+      ],
+      "radius": 8,
+      "max": 6,
+      "respawn_seconds": 60,
+      "group": [
+        4,
+        6
+      ],
+      "activation": 48
+    },
+    {
+      "id": "canal_rats_north",
+      "enemy": "amemaru:suimon_nezumi",
+      "center": [
+        254,
+        27,
+        322
+      ],
+      "radius": 8,
+      "max": 6,
+      "respawn_seconds": 60,
+      "group": [
+        4,
+        6
+      ],
+      "activation": 48
+    },
+    {
+      "id": "canal_slimes",
+      "enemy": "amemaru:yodomi_slime",
+      "center": [
+        226,
+        27,
+        352
+      ],
+      "radius": 8,
+      "max": 3,
+      "respawn_seconds": 50,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 48
+    },
+    {
+      "id": "canal_cleaner",
+      "enemy": "amemaru:soujikihei",
+      "center": [
+        254,
+        27,
+        380
+      ],
+      "radius": 6,
+      "max": 2,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 48,
+      "route": [
+        [
+          254,
+          27,
+          420
+        ],
+        [
+          254,
+          27,
+          380
+        ],
+        [
+          254,
+          27,
+          340
+        ],
+        [
+          254,
+          27,
+          312
+        ]
+      ]
+    },
+    {
+      "id": "canal_cleaner_w",
+      "enemy": "amemaru:soujikihei",
+      "center": [
+        225,
+        27,
+        330
+      ],
+      "radius": 6,
+      "max": 1,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 48,
+      "route": [
+        [
+          225,
+          27,
+          312
+        ],
+        [
+          225,
+          27,
+          350
+        ],
+        [
+          225,
+          27,
+          390
+        ]
+      ]
+    },
+    {
+      "id": "cistern_slimes_a",
+      "enemy": "amemaru:yodomi_slime",
+      "center": [
+        75,
+        27,
+        220
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 50,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "cistern_slimes_b",
+      "enemy": "amemaru:yodomi_slime",
+      "center": [
+        105,
+        27,
+        300
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 50,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "cistern_slimes_c",
+      "enemy": "amemaru:yodomi_slime",
+      "center": [
+        45,
+        27,
+        265
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 50,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "cistern_rats",
+      "enemy": "amemaru:suimon_nezumi",
+      "center": [
+        120,
+        27,
+        265
+      ],
+      "radius": 6,
+      "max": 5,
+      "respawn_seconds": 60,
+      "group": [
+        3,
+        5
+      ],
+      "activation": 44
+    },
+    {
+      "id": "cistern_cleaner",
+      "enemy": "amemaru:soujikihei",
+      "center": [
+        31,
+        27,
+        240
+      ],
+      "radius": 4,
+      "max": 1,
+      "respawn_seconds": 60,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 44,
+      "route": [
+        [
+          31,
+          27,
+          206
+        ],
+        [
+          31,
+          27,
+          240
+        ],
+        [
+          31,
+          27,
+          300
+        ],
+        [
+          31,
+          27,
+          320
+        ]
+      ]
+    },
+    {
+      "id": "east_cleaner_n",
+      "enemy": "amemaru:soujikihei",
+      "center": [
+        380,
+        27,
+        232
+      ],
+      "radius": 6,
+      "max": 2,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 48,
+      "route": [
+        [
+          350,
+          27,
+          236
+        ],
+        [
+          380,
+          27,
+          236
+        ],
+        [
+          412,
+          27,
+          236
+        ],
+        [
+          440,
+          27,
+          240
+        ]
+      ]
+    },
+    {
+      "id": "east_cleaner_s",
+      "enemy": "amemaru:soujikihei",
+      "center": [
+        400,
+        27,
+        290
+      ],
+      "radius": 6,
+      "max": 2,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 48,
+      "route": [
+        [
+          440,
+          27,
+          286
+        ],
+        [
+          400,
+          27,
+          290
+        ],
+        [
+          366,
+          27,
+          286
+        ],
+        [
+          344,
+          27,
+          290
+        ]
+      ]
+    },
+    {
+      "id": "east_cleaner_m",
+      "enemy": "amemaru:soujikihei",
+      "center": [
+        420,
+        27,
+        210
+      ],
+      "radius": 6,
+      "max": 1,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 48,
+      "route": [
+        [
+          400,
+          27,
+          210
+        ],
+        [
+          440,
+          27,
+          212
+        ]
+      ]
+    },
+    {
+      "id": "east_rats",
+      "enemy": "amemaru:suimon_nezumi",
+      "center": [
+        430,
+        27,
+        214
+      ],
+      "radius": 8,
+      "max": 6,
+      "respawn_seconds": 60,
+      "group": [
+        4,
+        6
+      ],
+      "activation": 48
+    },
+    {
+      "id": "east_slimes",
+      "enemy": "amemaru:yodomi_slime",
+      "center": [
+        360,
+        27,
+        306
+      ],
+      "radius": 8,
+      "max": 3,
+      "respawn_seconds": 50,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 48
+    },
+    {
+      "id": "warren_a",
+      "enemy": "amemaru:suimon_nezumi",
+      "center": [
+        420,
+        27,
+        180
+      ],
+      "radius": 4,
+      "max": 6,
+      "respawn_seconds": 50,
+      "group": [
+        4,
+        6
+      ],
+      "activation": 36
+    },
+    {
+      "id": "warren_b",
+      "enemy": "amemaru:suimon_nezumi",
+      "center": [
+        382,
+        27,
+        150
+      ],
+      "radius": 4,
+      "max": 6,
+      "respawn_seconds": 50,
+      "group": [
+        4,
+        6
+      ],
+      "activation": 36
+    },
+    {
+      "id": "warren_c",
+      "enemy": "amemaru:suimon_nezumi",
+      "center": [
+        440,
+        27,
+        105
+      ],
+      "radius": 4,
+      "max": 6,
+      "respawn_seconds": 50,
+      "group": [
+        4,
+        6
+      ],
+      "activation": 36
+    },
+    {
+      "id": "warren_d",
+      "enemy": "amemaru:suimon_nezumi",
+      "center": [
+        372,
+        27,
+        70
+      ],
+      "radius": 4,
+      "max": 5,
+      "respawn_seconds": 50,
+      "group": [
+        3,
+        5
+      ],
+      "activation": 36
+    },
+    {
+      "id": "sunken_namazu_a",
+      "enemy": "amemaru:kiba_namazu",
+      "center": [
+        190,
+        13,
+        162
+      ],
+      "radius": 5,
+      "max": 2,
+      "respawn_seconds": 60,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 36,
+      "in_water": true
+    },
+    {
+      "id": "sunken_namazu_b",
+      "enemy": "amemaru:kiba_namazu",
+      "center": [
+        290,
+        13,
+        162
+      ],
+      "radius": 5,
+      "max": 2,
+      "respawn_seconds": 60,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 36,
+      "in_water": true
+    },
+    {
+      "id": "sunken_namazu_c",
+      "enemy": "amemaru:kiba_namazu",
+      "center": [
+        238,
+        13,
+        130
+      ],
+      "radius": 3,
+      "max": 1,
+      "respawn_seconds": 60,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 36,
+      "in_water": true
+    },
+    {
+      "id": "sunken_namazu_d",
+      "enemy": "amemaru:kiba_namazu",
+      "center": [
+        238,
+        13,
+        190
+      ],
+      "radius": 3,
+      "max": 1,
+      "respawn_seconds": 60,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 36,
+      "in_water": true
+    },
+    {
+      "id": "sunken_slimes_a",
+      "enemy": "amemaru:yodomi_slime",
+      "center": [
+        216,
+        15,
+        146
+      ],
+      "radius": 8,
+      "max": 3,
+      "respawn_seconds": 50,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 40
+    },
+    {
+      "id": "sunken_slimes_b",
+      "enemy": "amemaru:yodomi_slime",
+      "center": [
+        290,
+        15,
+        122
+      ],
+      "radius": 8,
+      "max": 3,
+      "respawn_seconds": 50,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 40
+    },
+    {
+      "id": "sunken_cleaner_a",
+      "enemy": "amemaru:soujikihei",
+      "center": [
+        204,
+        15,
+        176
+      ],
+      "radius": 6,
+      "max": 1,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 40,
+      "route": [
+        [
+          176,
+          15,
+          176
+        ],
+        [
+          204,
+          15,
+          176
+        ],
+        [
+          228,
+          15,
+          176
+        ]
+      ]
+    },
+    {
+      "id": "sunken_cleaner_b",
+      "enemy": "amemaru:soujikihei",
+      "center": [
+        276,
+        15,
+        198
+      ],
+      "radius": 6,
+      "max": 1,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 40,
+      "route": [
+        [
+          256,
+          15,
+          198
+        ],
+        [
+          276,
+          15,
+          198
+        ],
+        [
+          300,
+          15,
+          198
+        ]
+      ]
+    },
+    {
+      "id": "sunken_rats",
+      "enemy": "amemaru:suimon_nezumi",
+      "center": [
+        304,
+        15,
+        146
+      ],
+      "radius": 6,
+      "max": 5,
+      "respawn_seconds": 60,
+      "group": [
+        3,
+        5
+      ],
+      "activation": 40
+    },
+    {
+      "id": "white_slimes_a",
+      "enemy": "amemaru:yodomi_slime",
+      "center": [
+        74,
+        15,
+        80
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 50,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "white_slimes_b",
+      "enemy": "amemaru:yodomi_slime",
+      "center": [
+        50,
+        15,
+        106
+      ],
+      "radius": 8,
+      "max": 2,
+      "respawn_seconds": 50,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "white_namazu",
+      "enemy": "amemaru:kiba_namazu",
+      "center": [
+        84,
+        13,
+        104
+      ],
+      "radius": 4,
+      "max": 1,
+      "respawn_seconds": 60,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 36,
+      "in_water": true
+    },
+    {
+      "id": "gallery_cleaner_w",
+      "enemy": "amemaru:soujikihei",
+      "center": [
+        190,
+        27,
+        96
+      ],
+      "radius": 6,
+      "max": 1,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 40,
+      "route": [
+        [
+          170,
+          27,
+          96
+        ],
+        [
+          195,
+          27,
+          96
+        ],
+        [
+          214,
+          27,
+          96
+        ]
+      ]
+    },
+    {
+      "id": "gallery_cleaner_e",
+      "enemy": "amemaru:soujikihei",
+      "center": [
+        290,
+        27,
+        96
+      ],
+      "radius": 6,
+      "max": 1,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 40,
+      "route": [
+        [
+          266,
+          27,
+          96
+        ],
+        [
+          290,
+          27,
+          96
+        ],
+        [
+          320,
+          27,
+          96
+        ]
+      ]
+    },
+    {
+      "id": "gallery_rats",
+      "enemy": "amemaru:suimon_nezumi",
+      "center": [
+        300,
+        27,
+        82
+      ],
+      "radius": 6,
+      "max": 5,
+      "respawn_seconds": 60,
+      "group": [
+        3,
+        5
+      ],
+      "activation": 40
+    }
+  ],
+  "guardians": [
+    {
+      "id": "overseer",
+      "enemy": "amemaru:soujikihei",
+      "variant": "amemaru:soujikihei_overseer",
+      "pos": [
+        90.5,
+        27,
+        248.5
+      ],
+      "respawn_seconds": 300,
+      "activation": 36,
+      "pillar": -1
+    },
+    {
+      "id": "lord",
+      "enemy": "amemaru:kiba_namazu",
+      "variant": "amemaru:kiba_namazu_lord",
+      "pos": [
+        196.5,
+        8,
+        132.5
+      ],
+      "respawn_seconds": 300,
+      "activation": 32,
+      "pillar": -1
+    },
+    {
+      "id": "rat_boss",
+      "enemy": "amemaru:suimon_nezumi",
+      "variant": "amemaru:suimon_nezumi_boss",
+      "pos": [
+        420.5,
+        27,
+        66.5
+      ],
+      "respawn_seconds": 300,
+      "activation": 30,
+      "pillar": -1
+    }
+  ],
+  "chests": [
+    {
+      "pos": [
+        219,
+        27,
+        469
+      ],
+      "loot": "amemaru:chests/floor3_ancient"
+    },
+    {
+      "pos": [
+        222,
+        27,
+        356
+      ],
+      "loot": "amemaru:chests/floor3_ancient"
+    },
+    {
+      "pos": [
+        257,
+        27,
+        249
+      ],
+      "loot": "amemaru:chests/floor3_ancient"
+    },
+    {
+      "pos": [
+        90,
+        27,
+        241
+      ],
+      "loot": "amemaru:chests/floor3_ancient",
+      "guardian": "overseer"
+    },
+    {
+      "pos": [
+        27,
+        27,
+        256
+      ],
+      "loot": "amemaru:chests/floor3_ancient"
+    },
+    {
+      "pos": [
+        44,
+        27,
+        324
+      ],
+      "loot": "amemaru:chests/floor3_ancient"
+    },
+    {
+      "pos": [
+        447,
+        27,
+        317
+      ],
+      "loot": "amemaru:chests/floor3_ancient"
+    },
+    {
+      "pos": [
+        386,
+        28,
+        224
+      ],
+      "loot": "amemaru:chests/floor3_ancient"
+    },
+    {
+      "pos": [
+        196,
+        15,
+        144
+      ],
+      "loot": "amemaru:chests/floor3_ancient",
+      "guardian": "lord"
+    },
+    {
+      "pos": [
+        310,
+        15,
+        206
+      ],
+      "loot": "amemaru:chests/floor3_ancient"
+    },
+    {
+      "pos": [
+        164,
+        15,
+        200
+      ],
+      "loot": "amemaru:chests/floor3_ancient"
+    },
+    {
+      "pos": [
+        36,
+        15,
+        104
+      ],
+      "loot": "amemaru:chests/floor3_ancient"
+    },
+    {
+      "pos": [
+        420,
+        27,
+        55
+      ],
+      "loot": "amemaru:chests/floor3_ancient",
+      "guardian": "rat_boss"
+    },
+    {
+      "pos": [
+        461,
+        27,
+        110
+      ],
+      "loot": "amemaru:chests/floor3_ancient"
+    },
+    {
+      "pos": [
+        327,
+        27,
+        101
+      ],
+      "loot": "amemaru:chests/floor3_ancient"
+    }
+  ],
+  "environment": {
+    "fog": [
+      18,
+      110
+    ],
+    "fog_color": "#41707C"
+  },
+  "waypoints": [
+    {
+      "id": "hub",
+      "name": "管理局の広間",
+      "pos": [
+        226,
+        27,
+        278
+      ],
+      "arrive": {
+        "pos": [
+          226.5,
+          27,
+          280.5
+        ],
+        "yaw": -143.9
+      }
+    },
+    {
+      "id": "cistern",
+      "name": "西の貯水槽",
+      "pos": [
+        138,
+        27,
+        268
+      ],
+      "arrive": {
+        "pos": [
+          136.5,
+          27,
+          268.5
+        ],
+        "yaw": 98.0
+      }
+    },
+    {
+      "id": "waterwheel",
+      "name": "東の水車の間",
+      "pos": [
+        342,
+        27,
+        240
+      ],
+      "arrive": {
+        "pos": [
+          344.5,
+          27,
+          240.5
+        ],
+        "yaw": -66.9
+      }
+    },
+    {
+      "id": "sunken",
+      "name": "沈んだ区画",
+      "pos": [
+        226,
+        15,
+        204
+      ],
+      "arrive": {
+        "pos": [
+          226.5,
+          15,
+          202.5
+        ],
+        "yaw": -157.4
+      }
+    },
+    {
+      "id": "great_gate",
+      "name": "大水門の前",
+      "pos": [
+        154,
+        27,
+        100
+      ],
+      "arrive": {
+        "pos": [
+          156.5,
+          27,
+          100.5
+        ],
+        "yaw": -97.2
+      }
+    }
+  ],
+  "travel_stone": [
+    232,
+    27,
+    446
+  ],
+  "seal_requires": "floodgates+guardians",
+  "water_sections": [
+    {
+      "id": "sunken",
+      "box": [
+        156,
+        14,
+        106,
+        324,
+        25,
+        233
+      ],
+      "low": 14,
+      "high": 25
+    },
+    {
+      "id": "white_channel",
+      "box": [
+        113,
+        14,
+        122,
+        153,
+        21,
+        128
+      ],
+      "low": 14,
+      "high": 21
+    },
+    {
+      "id": "sunken_ne",
+      "box": [
+        325,
+        14,
+        131,
+        346,
+        25,
+        133
+      ],
+      "low": 14,
+      "high": 25
+    },
+    {
+      "id": "moat",
+      "box": [
+        222,
+        14,
+        76,
+        258,
+        25,
+        104
+      ],
+      "low": 14,
+      "high": 25
+    },
+    {
+      "id": "arena",
+      "box": [
+        212,
+        14,
+        9,
+        268,
+        15,
+        74
+      ],
+      "low": 14,
+      "high": 15
+    }
+  ],
+  "floodgates": [
+    {
+      "id": "first",
+      "name": "西と東の水門",
+      "valves": [
+        [
+          17,
+          27,
+          262
+        ],
+        [
+          463,
+          27,
+          238
+        ]
+      ],
+      "drains": [
+        "sunken",
+        "sunken_ne"
+      ]
+    },
+    {
+      "id": "deep",
+      "name": "沈んだ区画の奥の水門",
+      "valves": [
+        [
+          161,
+          15,
+          108
+        ],
+        [
+          319,
+          15,
+          108
+        ]
+      ],
+      "drains": [
+        "white_channel"
+      ],
+      "after": "first",
+      "doors": [
+        {
+          "box": [
+            154,
+            15,
+            122,
+            155,
+            21,
+            128
+          ],
+          "block": "minecraft:waxed_oxidized_cut_copper"
+        },
+        {
+          "box": [
+            111,
+            15,
+            122,
+            112,
+            21,
+            128
+          ],
+          "block": "minecraft:waxed_oxidized_cut_copper"
+        }
+      ]
+    },
+    {
+      "id": "moat",
+      "name": "大水門の前の水門",
+      "valves": [
+        [
+          161,
+          27,
+          74
+        ],
+        [
+          319,
+          27,
+          74
+        ]
+      ],
+      "drains": [
+        "moat"
+      ],
+      "after": "deep"
+    },
+    {
+      "id": "drain",
+      "name": "排水口",
+      "valves": [
+        [
+          216,
+          16,
+          40
+        ],
+        [
+          264,
+          16,
+          40
+        ]
+      ],
+      "drains": [
+        "arena"
+      ]
+    }
+  ],
+  "story_zones": [
+    {
+      "id": "white_flow",
+      "box": [
+        24,
+        12,
+        44,
+        54,
+        30,
+        88
+      ]
+    }
+  ]
+}

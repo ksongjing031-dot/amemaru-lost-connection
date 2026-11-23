@@ -1,0 +1,27 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "流紋シリーズ（ウィザード）",
+  "rarity": "common",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:wizard"
+  ],
+  "stats": {
+    "magic": 24,
+    "mp": 55
+  },
+  "durability": 480,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:waterway_bronze",
+      "count": 1
+    },
+    {
+      "item": "amemaru:crystal_shard",
+      "count": 1
+    }
+  ],
+  "description": "青銅の渦の先に、水の玉を閉じ込めた流水の結晶を浮かせた杖。星灯の水読みの写し。"
+}

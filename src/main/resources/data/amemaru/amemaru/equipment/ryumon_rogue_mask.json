@@ -1,0 +1,24 @@
+{
+  "slot": "head",
+  "generation": 1,
+  "series": "流紋シリーズ（ローグ）",
+  "rarity": "common",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:rogue"
+  ],
+  "stats": {
+    "defense": 2,
+    "hp": 10,
+    "crit": 2
+  },
+  "durability": 260,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 1
+    }
+  ],
+  "description": "目のまわりだけを開けた黒い頭巾と覆面。結び目の布が、うしろに長く流れる。"
+}

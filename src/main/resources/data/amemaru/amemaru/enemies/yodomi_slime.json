@@ -1,0 +1,47 @@
+{
+  "_comment": "澱みスライム（Phase 8 その2。3階の雑魚。Phase 0-A 9章「止まった水が魔物になったもの。分裂する」。倒すと小さな澱みスライム（yodomi_slime_small）に split 匹分かれる。当たると、ねばって遅くなる（押しつぶしは slow_seconds、体当たりは touch_slow_seconds）。数値は【補完】）",
+  "name": "澱みスライム",
+  "floor": 3,
+  "level": 6,
+  "lost": false,
+  "description": "流れの止まった水路の底にたまった、濁った水のかたまり。体の中に、沈んだ古代の部品や落ち葉が透けて見える。叩き割ると、小さなかたまりに分かれてなお動く。",
+  "stats": {
+    "hp": 2300,
+    "attack": 50,
+    "defense": 6,
+    "move_speed": 0.2,
+    "follow_range": 18,
+    "aggro_range": 9
+  },
+  "exp": 22,
+  "skills": {
+    "touch": {
+      "power": 0.9,
+      "windup": 0.6,
+      "cooldown": 1.6,
+      "range": 2.0,
+      "angle": 100
+    },
+    "slam": {
+      "power": 1.3,
+      "windup": 1.1,
+      "cooldown": 6.0,
+      "range": 2.6,
+      "angle": 360
+    }
+  },
+  "behavior": {
+    "split": 2,
+    "slow_seconds": 3.0,
+    "touch_slow_seconds": 1.5
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/yodomi_slime",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_jade",
+        "chance": 0.4
+      }
+    ]
+  }
+}

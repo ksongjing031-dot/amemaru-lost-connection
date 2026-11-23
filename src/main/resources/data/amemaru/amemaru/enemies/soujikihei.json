@@ -1,0 +1,52 @@
+{
+  "_comment": "水路掃除機兵（Phase 8 その2。3階の雑魚。Phase 0-A 9章「古代の清掃機械」。正面の装甲：front_angle の内（前）からのダメージは front_armor 倍。回るブラシの薙ぎ払い（sweep。扇）と、水の噴射（jet。線の上の人を押し流す）。数値は【補完】）",
+  "name": "水路掃除機兵",
+  "floor": 3,
+  "level": 7,
+  "lost": false,
+  "description": "水路の底のごみを掃き続けてきた、古代の青銅の清掃機械。正面の厚い板で水の流れを受け、前の回るブラシで何でも掃き出す。人も、ごみと見分けがつかないらしい。",
+  "stats": {
+    "hp": 3400,
+    "attack": 62,
+    "defense": 18,
+    "move_speed": 0.2,
+    "follow_range": 20,
+    "aggro_range": 11
+  },
+  "exp": 34,
+  "skills": {
+    "sweep": {
+      "power": 1.1,
+      "windup": 0.8,
+      "cooldown": 2.2,
+      "range": 3.2,
+      "angle": 120
+    },
+    "jet": {
+      "power": 1.3,
+      "windup": 1.2,
+      "cooldown": 7.0,
+      "range": 9.0,
+      "min_range": 3.0,
+      "width": 1.6,
+      "push": 1.0
+    }
+  },
+  "behavior": {
+    "front_armor": 0.5,
+    "front_angle": 140
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/soujikihei",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_amber",
+        "chance": 0.6
+      },
+      {
+        "item": "amemaru:crystal_fruit_azure",
+        "chance": 0.3
+      }
+    ]
+  }
+}

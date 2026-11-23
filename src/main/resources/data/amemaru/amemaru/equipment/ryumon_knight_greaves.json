@@ -1,0 +1,23 @@
+{
+  "slot": "legs",
+  "generation": 1,
+  "series": "流紋シリーズ（ナイト）",
+  "rarity": "common",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "defense": 5,
+    "hp": 24
+  },
+  "durability": 480,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:waterway_bronze",
+      "count": 1
+    }
+  ],
+  "description": "膝に渦の形の当て板をつけた青銅の脚甲。"
+}

@@ -1,0 +1,29 @@
+{
+  "slot": "chest",
+  "generation": 1,
+  "series": "流紋シリーズ（ローグ）",
+  "rarity": "common",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:rogue"
+  ],
+  "stats": {
+    "defense": 4,
+    "hp": 22,
+    "speed": 1,
+    "crit": 1
+  },
+  "durability": 300,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 2
+    },
+    {
+      "item": "amemaru:murky_gel",
+      "count": 1
+    }
+  ],
+  "description": "澱みのゼリーで黒く染めた軽い装束。腰の布と、たすきの短剣差し。"
+}

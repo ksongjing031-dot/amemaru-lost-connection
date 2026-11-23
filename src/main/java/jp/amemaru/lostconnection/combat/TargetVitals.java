@@ -57,11 +57,23 @@ public final class TargetVitals {
      * Phase 0-A 11章）。
      */
     public static double takenMultiplier(LivingEntity entity) {
+        return takenMultiplier(entity, null);
+    }
+
+    /**
+     * 受けるダメージの倍率。{@code attacker} は打った人（分からなければ null）。Phase 8 その2（3階）：敵ごとの受け方
+     * （{@link AmemaruMob#damageTakenMultiplier}：正面の装甲・水の中・ボスの炉心）も掛ける。
+     */
+    public static double takenMultiplier(LivingEntity entity, @javax.annotation.Nullable net.minecraft.world.entity.Entity attacker) {
+        double multiplier = 1.0;
         if (entity instanceof jp.amemaru.lostconnection.enemy.boss.AmemaruBoss boss && boss.room() != null && boss.getServer() != null) {
-            return jp.amemaru.lostconnection.progression.ProgressionService.blessingMultiplier(boss.getServer(),
+            multiplier *= jp.amemaru.lostconnection.progression.ProgressionService.blessingMultiplier(boss.getServer(),
                     boss.room().floor().number());
         }
-        return 1.0;
+        if (entity instanceof AmemaruMob mob) {
+            multiplier *= mob.damageTakenMultiplier(attacker);
+        }
+        return multiplier;
     }
 
     /** 防御（防御崩しの間は {@link StatusService#ARMOR_BREAK_DEFENSE} だけ下がる）。 */

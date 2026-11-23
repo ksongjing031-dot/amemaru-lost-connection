@@ -45,6 +45,8 @@ public final class FloorEnvService {
                 floor = def == null ? 0 : def.number();
                 if (def != null) {
                     checkStoryZones(server, player, def);
+                    // Phase 8 その2：3階の水を、開いた水門の状態に合わせる（サーバーが起きて初めて人が来たとき）
+                    jp.amemaru.lostconnection.tower.waterway.FloodgateService.sync(server, def);
                 }
             } else {
                 dropKnotLanterns(player);

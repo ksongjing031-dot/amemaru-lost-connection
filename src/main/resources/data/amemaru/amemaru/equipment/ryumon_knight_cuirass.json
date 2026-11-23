@@ -1,0 +1,27 @@
+{
+  "slot": "chest",
+  "generation": 1,
+  "series": "流紋シリーズ（ナイト）",
+  "rarity": "common",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "defense": 6,
+    "hp": 30
+  },
+  "durability": 520,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:waterway_bronze",
+      "count": 2
+    },
+    {
+      "item": "amemaru:moss_iron",
+      "count": 1
+    }
+  ],
+  "description": "胸に、水門のハンドルの形の円盤と流水の結晶をはめた青銅の鎧。肩は魚のうろこのように重なる。"
+}

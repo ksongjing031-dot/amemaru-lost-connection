@@ -1,0 +1,26 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "流紋シリーズ（ナイト）",
+  "rarity": "common",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "attack": 19
+  },
+  "durability": 480,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:waterway_bronze",
+      "count": 1
+    },
+    {
+      "item": "amemaru:moss_iron",
+      "count": 1
+    }
+  ],
+  "description": "水路の青銅を打ち延ばした片手剣。刃の溝に流水の結晶を溶かし込み、振ると水の筋が走る。"
+}

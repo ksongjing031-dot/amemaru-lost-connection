@@ -135,8 +135,9 @@ public record FloorDef(
      * 敵の湧く所。{@code route} があれば、その道を巡回する（石くれ兵）。{@code activation} の中に人がいる間だけ湧く
      * （人のいない所には敵を出さない。Phase 0-B 11章）。
      */
+    /** 湧く所。{@code inWater}：水の中に湧かせる（3階の牙ナマズ。Phase 8 その2）。 */
     public record SpawnZone(String id, ResourceLocation enemy, Vec3 center, double radius, int max, int respawnSeconds,
-                            int groupMin, int groupMax, double activation, List<BlockPos> route) {
+                            int groupMin, int groupMax, double activation, List<BlockPos> route, boolean inWater) {
     }
 
     /**
@@ -280,7 +281,8 @@ public record FloorDef(
                     vec(Json.array(s, "center"), "spawns.center"), Json.optionalDouble(s, "radius", 12.0, 1.0, 256.0),
                     Json.optionalInt(s, "max", 4, 0, 64), Json.optionalInt(s, "respawn_seconds", 30, 1, 3600),
                     Math.max(1, gMin), Math.max(Math.max(1, gMin), gMax),
-                    Json.optionalDouble(s, "activation", 64.0, 8.0, 512.0), List.copyOf(route)));
+                    Json.optionalDouble(s, "activation", 64.0, 8.0, 512.0), List.copyOf(route),
+                    Json.optionalBoolean(s, "in_water", false)));
         }
         JsonObject tabletJson = Json.optionalObject(json, "tablet");
         Tablet tablet = tabletJson == null ? null : new Tablet(blockPos(Json.array(tabletJson, "pos"), "tablet.pos"),

@@ -1,5 +1,5 @@
 {
-  "_comment": "エルネスト（Phase 0-A 8章）。古代文明研究者。3日目、3階の記録を持ち帰ると現れ、記録帳を渡す（3階ができるまでは、3日目からギルドの2階の資料室にいる。Phase 8 で3階の記録の持ち帰りに替える）。見つけた古代記録を解読し、記録帳に載せる。立体のモデルは tools/artgen/make_npc_models.py",
+  "_comment": "エルネスト（Phase 0-A 8章）。古代文明研究者。3日目、3階の記録「水路管理局の掲示」を持ち帰ると現れ、記録帳を渡す（Phase 8 その2：サーバー全体の物語フラグ amemaru:story/ernesto_arrived。記録を見つけた人が塔から街へ戻ると立つ。ErnestoArrival.java）。いる所はギルドの2階の資料室。見つけた古代記録を解読し、記録帳に載せる。立体のモデルは tools/artgen/make_npc_models.py",
   "name": "エルネスト",
   "title": "古代文明研究者",
   "skin": "amemaru:textures/entity/npc/ernesto.png",
@@ -23,7 +23,9 @@
   "roles": [],
   "talk_range": 5,
   "appears": {
-    "day_min": 3
+    "flags_all": [
+      "amemaru:story/ernesto_arrived"
+    ]
   },
   "bond": {
     "loved": [

@@ -1,0 +1,24 @@
+{
+  "slot": "legs",
+  "generation": 1,
+  "series": "流紋シリーズ（アーチャー）",
+  "rarity": "common",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:archer"
+  ],
+  "stats": {
+    "defense": 4,
+    "hp": 18,
+    "speed": 1
+  },
+  "durability": 260,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 1
+    }
+  ],
+  "description": "腿に革の当てをつけた、動きやすい脚絆。"
+}

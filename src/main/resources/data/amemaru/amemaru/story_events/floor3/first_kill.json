@@ -1,0 +1,50 @@
+{
+  "_comment": "3階のボスの初撃破（倒したパーティの画面だけ。サーバー全体には知らせが出る）",
+  "title": "大水門の番人",
+  "trigger": {
+    "type": "amemaru:floor_first_kill",
+    "floor": 3
+  },
+  "scope": "party",
+  "once": true,
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:wait",
+      "ticks": 50
+    },
+    {
+      "type": "amemaru:hud",
+      "hide": true
+    },
+    {
+      "type": "amemaru:sound",
+      "sound": "minecraft:block.conduit.activate",
+      "volume": 1.0,
+      "pitch": 0.9
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "none",
+      "to": "white",
+      "ticks": 25
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "white",
+      "to": "none",
+      "ticks": 50
+    },
+    {
+      "type": "amemaru:title",
+      "title": "古代の水路　踏破",
+      "subtitle": "3階",
+      "ticks": 90
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "大水門が、ゆっくりと開いた。止まっていた水が、街の方へ流れ出していく……",
+      "ticks": 100
+    }
+  ]
+}

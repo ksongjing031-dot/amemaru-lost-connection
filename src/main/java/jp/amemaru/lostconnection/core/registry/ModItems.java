@@ -75,6 +75,9 @@ public final class ModItems {
             new BlockItem(ModBlocks.WAYPOINT.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> TRAVEL_STONE = ITEMS.register("travel_stone", () ->
             new BlockItem(ModBlocks.TRAVEL_STONE.get(), new Item.Properties().rarity(Rarity.RARE)));
+    // Phase 8 その2：3階の仕掛けのブロック
+    public static final RegistryObject<Item> FLOODGATE_VALVE = ITEMS.register("floodgate_valve", () ->
+            new BlockItem(ModBlocks.FLOODGATE_VALVE.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> STORAGE_ACCESS = ITEMS.register("storage_access", () ->
             new BlockItem(ModBlocks.STORAGE_ACCESS.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> SHOP_COUNTER = ITEMS.register("shop_counter", () ->
@@ -119,6 +122,18 @@ public final class ModItems {
             new ForgeSpawnEggItem(ModEntities.POKODAKE, 0xB0503A, 0xE8E0C8, new Item.Properties()));
     public static final RegistryObject<Item> HAKAGE_KITSUNE_SPAWN_EGG = ITEMS.register("hakage_kitsune_spawn_egg", () ->
             new ForgeSpawnEggItem(ModEntities.HAKAGE_KITSUNE, 0x3E5A2E, 0xC86E2E, new Item.Properties()));
+
+    // Phase 8 その2：3階の敵
+    public static final RegistryObject<Item> SUIMON_NEZUMI_SPAWN_EGG = ITEMS.register("suimon_nezumi_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.SUIMON_NEZUMI, 0x6E6A66, 0xC9A27E, new Item.Properties()));
+    public static final RegistryObject<Item> YODOMI_SLIME_SPAWN_EGG = ITEMS.register("yodomi_slime_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.YODOMI_SLIME, 0x3E5A55, 0x7FB3A6, new Item.Properties()));
+    public static final RegistryObject<Item> SOUJIKIHEI_SPAWN_EGG = ITEMS.register("soujikihei_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.SOUJIKIHEI, 0x8A6A3A, 0x4FA3B8, new Item.Properties()));
+    public static final RegistryObject<Item> KIBA_NAMAZU_SPAWN_EGG = ITEMS.register("kiba_namazu_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.KIBA_NAMAZU, 0x3B4A3E, 0xE8E0C8, new Item.Properties()));
+    public static final RegistryObject<Item> HYDRAM_SPAWN_EGG = ITEMS.register("hydram_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.HYDRAM, 0x6B7A86, 0x48C8FF, new Item.Properties()));
 
     public static final RegistryObject<Item> VELDHORN_SPAWN_EGG = ITEMS.register("veldhorn_spawn_egg", () ->
             new ForgeSpawnEggItem(ModEntities.VELDHORN, 0x6B5A3E, 0x7FD98A, new Item.Properties()));

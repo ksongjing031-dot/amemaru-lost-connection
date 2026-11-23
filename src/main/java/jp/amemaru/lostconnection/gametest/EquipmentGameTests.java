@@ -117,7 +117,8 @@ public final class EquipmentGameTests {
         EquipmentDefs.Snapshot gear = EquipmentDefs.server();
         // Phase 6 その2 で、4職業の見習い・古代石の武器（8）と、古代石シリーズ（軽装）の防具（4）が増えた
         // Phase 8 その1 で、2階のボスのレア「古樹の枝杖」が増えた
-        check(helper, gear.equipment().size() == 33, "装備の定義が33ではありません：" + gear.equipment().size());
+        // Phase 8 その2 で、3階のボスのレア「水門の鍵盾」と、3階からの職業ごとの装備「流紋シリーズ」（6職業の防具24・武器7・盾1）が増えた
+        check(helper, gear.equipment().size() == 65, "装備の定義が65ではありません：" + gear.equipment().size());
         for (ItemManifest.Category category : new ItemManifest.Category[]{
                 ItemManifest.Category.WEAPON, ItemManifest.Category.SHIELD, ItemManifest.Category.ARMOR}) {
             for (RegistryObject<Item> item : ModItems.MANIFEST.category(category)) {
@@ -134,7 +135,9 @@ public final class EquipmentGameTests {
         // 11月22日：1階の西の丘の石柱の守り手「群れの長」（ツノモフの見た目を借りる別の定義）が増えた
         // Phase 8 その1：2階の雑魚4種（迷い灯・樹皮兵・ポコダケ・葉影ギツネ）と名のある魔物2体、ボス「森番の古樹オールドウォード」と、
         // その幹の「光る節」
-        check(helper, EnemyDefs.all().size() == 14, "敵の定義が14ではありません：" + EnemyDefs.all().keySet());
+        // Phase 8 その2：3階の雑魚4種（水門ネズミ・澱みスライムと小さな澱みスライム・水路掃除機兵・牙ナマズ）と名のある魔物3体、
+        // ボス「大水門の番人ハイドラム」
+        check(helper, EnemyDefs.all().size() == 23, "敵の定義が23ではありません：" + EnemyDefs.all().keySet());
         EnemyDef alpha = EnemyDefs.get(AmemaruMod.id("tsunomofu_alpha"));
         check(helper, alpha != null && AmemaruMod.id("tsunomofu").equals(alpha.entity()) && alpha.behavior().getOrDefault("scale", 1.0) > 1.0,
                 "群れの長が、ツノモフの見た目を借りる大きな個体になっていません");
@@ -164,7 +167,8 @@ public final class EquipmentGameTests {
         List<WorkshopRecipe> recipes = helper.getLevel().getServer().getRecipeManager()
                 .getAllRecipesFor(ModRecipes.WORKSHOP_TYPE.get());
         // Phase 6 その2 で、古代石の鈴杖・弓・双短剣・籠手と、古代石シリーズ（軽装）の4つ（計8）が増えた
-        check(helper, recipes.size() == 25, "工房のレシピが25ではありません：" + recipes.size());
+        // Phase 8 その2 で、流紋シリーズの32が増えた
+        check(helper, recipes.size() == 57, "工房のレシピが57ではありません：" + recipes.size());
         for (WorkshopRecipe recipe : recipes) {
             check(helper, recipe.workshop().accepts(recipe.result()), recipe.getId() + " の品が、その工房で扱う品ではありません");
             check(helper, !recipe.ingredients().isEmpty(), recipe.getId() + " に素材がありません");

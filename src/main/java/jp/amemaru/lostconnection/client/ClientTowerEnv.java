@@ -27,6 +27,9 @@ public final class ClientTowerEnv {
     public static void handle(String kind, CompoundTag data) {
         switch (kind) {
             case "env" -> {
+                // 階が変わった：ボスの部屋の暗さは、その部屋の中だけのもの（11月24日：2階のボスの暗さが3階まで残り、
+                // 3階が真っ暗に見えた。暗いままの部屋にいれば、サーバーがもう一度送る）
+                dark = false;
                 if (data.contains("fogEnd")) {
                     fogStart = data.getFloat("fogStart");
                     fogEnd = data.getFloat("fogEnd");
@@ -35,7 +38,6 @@ public final class ClientTowerEnv {
                     fogStart = -1;
                     fogEnd = -1;
                     fogColor = -1;
-                    dark = false;
                 }
             }
             case "dark" -> {

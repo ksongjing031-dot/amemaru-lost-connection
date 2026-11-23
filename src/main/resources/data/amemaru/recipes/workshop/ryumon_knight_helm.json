@@ -1,0 +1,23 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "armor",
+  "mastery": 2,
+  "mastery_exp": 16,
+  "ingredients": [
+    {
+      "item": "amemaru:waterway_bronze",
+      "count": 4
+    },
+    {
+      "item": "amemaru:gnawed_cog",
+      "count": 3
+    },
+    {
+      "item": "amemaru:moss_iron",
+      "count": 2
+    }
+  ],
+  "result": {
+    "item": "amemaru:ryumon_knight_helm"
+  }
+}

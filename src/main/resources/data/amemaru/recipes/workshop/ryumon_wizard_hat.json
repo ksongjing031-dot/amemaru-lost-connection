@@ -1,0 +1,23 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "armor",
+  "mastery": 2,
+  "mastery_exp": 14,
+  "ingredients": [
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 4
+    },
+    {
+      "item": "amemaru:murky_gel",
+      "count": 3
+    },
+    {
+      "item": "amemaru:catfish_whisker",
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "amemaru:ryumon_wizard_hat"
+  }
+}

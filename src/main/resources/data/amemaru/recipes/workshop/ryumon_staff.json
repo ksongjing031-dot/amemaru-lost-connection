@@ -1,0 +1,27 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "weapon",
+  "mastery": 3,
+  "mastery_exp": 22,
+  "ingredients": [
+    {
+      "item": "amemaru:waterway_bronze",
+      "count": 3
+    },
+    {
+      "item": "amemaru:murky_gel",
+      "count": 3
+    },
+    {
+      "item": "amemaru:crystal_shard",
+      "count": 2
+    },
+    {
+      "item": "amemaru:flow_crystal",
+      "count": 2
+    }
+  ],
+  "result": {
+    "item": "amemaru:ryumon_staff"
+  }
+}

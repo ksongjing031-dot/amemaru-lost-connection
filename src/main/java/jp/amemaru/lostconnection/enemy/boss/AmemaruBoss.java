@@ -45,6 +45,10 @@ import java.util.UUID;
 public abstract class AmemaruBoss extends AmemaruMob {
     /** 今出している技の名前（クライアントで、ボスのHPの帯の下に技の名前を出す。11月24日「ボスの攻撃がわかりづらい」）。 */
     private static final EntityDataAccessor<String> DATA_CAST = SynchedEntityData.defineId(AmemaruBoss.class, EntityDataSerializers.STRING);
+    /** ボスの今の様子（Phase 8 その2：3階のボスの「炉心は水の中」「炉心がむき出し」など。なければ ""）と、残りの秒。 */
+    private static final EntityDataAccessor<String> DATA_STATUS = SynchedEntityData.defineId(AmemaruBoss.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<Integer> DATA_STATUS_SECONDS = SynchedEntityData.defineId(AmemaruBoss.class,
+            EntityDataSerializers.INT);
     /**
      * 管理者・CIの写真：みんなで受ける一撃を、印と演出だけにする（ダメージなし）。保存しない
      * （{@code /amemaru admin boss share safe}）。
@@ -68,6 +72,8 @@ public abstract class AmemaruBoss extends AmemaruMob {
     protected void defineSynchedData() {
         super.defineSynchedData();
         entityData.define(DATA_CAST, "");
+        entityData.define(DATA_STATUS, "");
+        entityData.define(DATA_STATUS_SECONDS, 0);
     }
 
     public static AttributeSupplier.Builder createBossAttributes() {
@@ -227,6 +233,27 @@ public abstract class AmemaruBoss extends AmemaruMob {
     protected void setCast(String skill, int ticks) {
         entityData.set(DATA_CAST, skill);
         castClear = tickCount + Math.max(10, ticks) + 8;
+    }
+
+    /**
+     * ボスの今の様子（{@code status.amemaru.<ボス>.<様子>} の文で、技の名前の下に出す。{@code seconds} が 0 より大きければ、
+     * 残りの秒も出す）。Phase 8 その2：3階のボスの水の鎧と炉心。
+     */
+    public String status() {
+        return entityData.get(DATA_STATUS);
+    }
+
+    public int statusSeconds() {
+        return entityData.get(DATA_STATUS_SECONDS);
+    }
+
+    protected void setStatus(String key, int seconds) {
+        if (!key.equals(entityData.get(DATA_STATUS))) {
+            entityData.set(DATA_STATUS, key);
+        }
+        if (seconds != entityData.get(DATA_STATUS_SECONDS)) {
+            entityData.set(DATA_STATUS_SECONDS, Math.max(0, seconds));
+        }
     }
 
     /** 技のアニメーション（{@code skill_<技>}）を流すときに、技の名前も出す。 */

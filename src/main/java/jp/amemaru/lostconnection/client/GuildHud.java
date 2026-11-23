@@ -35,7 +35,7 @@ public final class GuildHud {
             return;
         }
         List<CompoundTag> quests = ClientGuild.trackedQuests();
-        if (quests.isEmpty()) {
+        if (quests.isEmpty() || StoryHud.bossBarShown()) {
             return;
         }
         Font font = minecraft.font;

@@ -1,0 +1,28 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "流紋シリーズ（ヒーラー）",
+  "rarity": "common",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:healer"
+  ],
+  "stats": {
+    "magic": 22,
+    "mp": 55,
+    "heal_power": 5
+  },
+  "durability": 480,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:waterway_bronze",
+      "count": 1
+    },
+    {
+      "item": "amemaru:crystal_shard",
+      "count": 1
+    }
+  ],
+  "description": "白い輪に、青銅の小さな鈴を三つ下げた杖。鳴らすと、水面に落ちるしずくの音がする。"
+}

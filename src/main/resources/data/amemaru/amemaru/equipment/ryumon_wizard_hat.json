@@ -1,0 +1,24 @@
+{
+  "slot": "head",
+  "generation": 1,
+  "series": "流紋シリーズ（ウィザード）",
+  "rarity": "common",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:wizard"
+  ],
+  "stats": {
+    "defense": 2,
+    "mp": 25,
+    "magic": 3
+  },
+  "durability": 300,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 1
+    }
+  ],
+  "description": "深い水の色に染めた、つばの広い尖り帽。帯に銀の糸で波が縫ってある。"
+}

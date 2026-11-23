@@ -123,6 +123,8 @@ public final class ProgressionService {
         jp.amemaru.lostconnection.town.ProjectService.onDayChanged(server, before, now);
         // Phase 8 その1：迷いの森の結び目の灯は、進行日が変わると消える
         jp.amemaru.lostconnection.tower.forest.LostWoodsService.onDayChanged(server);
+        // Phase 8 その2：3階の水門は、進行日が変わると閉じる（水が戻る）
+        jp.amemaru.lostconnection.tower.waterway.FloodgateService.onDayChanged(server);
         broadcastWorldState(server);
         TowerHall.update(server);
         return now;

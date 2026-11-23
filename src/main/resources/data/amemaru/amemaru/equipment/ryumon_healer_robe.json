@@ -1,0 +1,29 @@
+{
+  "slot": "chest",
+  "generation": 1,
+  "series": "流紋シリーズ（ヒーラー）",
+  "rarity": "common",
+  "required_level": 7,
+  "jobs": [
+    "amemaru:healer"
+  ],
+  "stats": {
+    "defense": 4,
+    "mp": 30,
+    "hp": 15,
+    "heal_power": 2
+  },
+  "durability": 340,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 2
+    },
+    {
+      "item": "amemaru:waterway_bronze",
+      "count": 1
+    }
+  ],
+  "description": "白い法衣。肩掛けのふちに小さな鈴が並び、歩くたびに澄んだ音がする。"
+}

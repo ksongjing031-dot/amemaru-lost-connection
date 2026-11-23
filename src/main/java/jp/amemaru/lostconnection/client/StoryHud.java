@@ -68,6 +68,7 @@ public final class StoryHud {
         }
         renderAnnouncements(graphics, font, width);
         renderBossCast(graphics, font, width, partialTick);
+        renderBossStatus(graphics, font, width);
         renderCountdowns(graphics, font, width);
         renderGuide(graphics, font, width, minecraft);
     }
@@ -166,7 +167,8 @@ public final class StoryHud {
         int w = 250;
         int h = 16 + lines.size() * 10;
         int x = (width - w) / 2;
-        int y = 56;
+        // ボスの帯・技の名前・状態・「〇〇まで」の札の下に出す（重ならないように。前の絵の位置を使う）
+        int y = Math.max(56, Math.max(countdownBottom, castBottom) + 4);
         graphics.fill(x, y, x + w, y + h, color(a * 0.75F, 0x0B1022));
         graphics.fill(x, y, x + w, y + 1, color(a, 0xFFF2A8));
         graphics.drawString(font, Component.translatable("hud.amemaru.story.tip"), x + 6, y + 4, color(a, 0xFFF2A8), false);
@@ -279,6 +281,56 @@ public final class StoryHud {
         castBottom = y + 15;
     }
 
+    /**
+     * ボスの今の様子（技の名前の下。Phase 8 その2：3階のボスの「炉心は水の中」「炉心がむき出し！ あと 18 秒」）。
+     * 金色は攻めどき、灰色は守りの固いとき。{@code castBottom} を、この札の下の端にする（「〇〇まで」の札をその下に出す）。
+     */
+    private static void renderBossStatus(GuiGraphics graphics, Font font, int width) {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.level == null || minecraft.player == null) {
+            return;
+        }
+        jp.amemaru.lostconnection.enemy.boss.AmemaruBoss boss = null;
+        double best = 48.0 * 48.0;
+        for (net.minecraft.world.entity.Entity entity : minecraft.level.entitiesForRendering()) {
+            if (entity instanceof jp.amemaru.lostconnection.enemy.boss.AmemaruBoss candidate && candidate.isAlive()
+                    && !candidate.status().isEmpty()) {
+                double d = candidate.distanceToSqr(minecraft.player);
+                if (d < best) {
+                    best = d;
+                    boss = candidate;
+                }
+            }
+        }
+        if (boss == null) {
+            return;
+        }
+        ResourceLocation id = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(boss.getType());
+        String key = "status." + id.getNamespace() + "." + id.getPath() + "." + boss.status();
+        if (!net.minecraft.client.resources.language.I18n.exists(key)) {
+            return;
+        }
+        boolean good = boss.status().startsWith("open");
+        int accent = good ? 0xF2C94C : 0x8FA3B8;
+        String text = (good ? "\u25C6 " : "\u25C7 ") + net.minecraft.client.resources.language.I18n.get(key, boss.statusSeconds());
+        // 長い文は、画面の幅に合わせて折り返す（小さな画面でも、右のはしの欄と重ならない）
+        List<String> lines = UiStyle.wrap(font, text, Math.max(120, Math.min(360, width - 40)));
+        int w = 0;
+        for (String line : lines) {
+            w = Math.max(w, font.width(line));
+        }
+        w += 16;
+        int h = 3 + lines.size() * 10;
+        int x = (width - w) / 2;
+        int y = castBottom > 0 ? castBottom + 2 : System.currentTimeMillis() - bossSeen < 250L ? bossBottom + 2 : 4;
+        graphics.fill(x, y, x + w, y + h, 0xC80B1022);
+        graphics.fill(x, y, x + 2, y + h, 0xFF000000 | accent);
+        for (int i = 0; i < lines.size(); i++) {
+            graphics.drawString(font, lines.get(i), x + 8, y + 3 + i * 10, 0xFF000000 | (good ? 0xFFF0C0 : 0xD8E2EC), false);
+        }
+        castBottom = y + h;
+    }
+
     /** 技が当たるまでの進み（0〜1。分からなければ -1）。地面の印か、ボスの予兆から。 */
     private static float castProgress(Minecraft minecraft, jp.amemaru.lostconnection.enemy.boss.AmemaruBoss boss, boolean share,
                                       float partialTick) {
@@ -306,6 +358,14 @@ public final class StoryHud {
     /** ボスのHPの帯の下の端と、最後に描いた時刻（{@link ClientForgeEvents#onBossBar}）。 */
     private static int bossBottom;
     private static long bossSeen;
+
+    /**
+     * ボスの帯が出ているか（いま出ているか、出たばかり）。ボスと戦っている間は、ギルドのクエストの一覧を出さない
+     * （画面の上がボスの帯・技の名前・状態・手がかりでいっぱいになり、小さな画面では重なるため。Phase 8 その2）。
+     */
+    public static boolean bossBarShown() {
+        return System.currentTimeMillis() - bossSeen < 1500L;
+    }
 
     /** ボスのHPの帯を1本描いた（{@code bottom}：その帯の下の端）。同じ絵の中の帯は、いちばん下のものを覚える。 */
     public static void noteBossBar(int bottom) {
