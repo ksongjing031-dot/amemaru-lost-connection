@@ -90,6 +90,10 @@ public class CasinoScreen extends Screen {
     public void setState(CompoundTag next) {
         String before = signature(state);
         state = next;
+        if (next.contains("chips")) {
+            // 払い戻しのあとのチップ（卓の知らせに入っている）
+            data.putLong("chips", next.getLong("chips"));
+        }
         stateAt = System.currentTimeMillis();
         if (next.getString("table").startsWith("highlow")) {
             highLowTable = next.getString("table");
@@ -190,7 +194,7 @@ public class CasinoScreen extends Screen {
                     for (int i = 0; i < 2; i++) {
                         String kind = i == 0 ? "high" : "low";
                         double mult = state.getDouble(i == 0 ? "multHigh" : "multLow");
-                        CrystalButton b = new CrystalButton(left + 20 + i * 112, top + 150, 104, 16,
+                        CrystalButton b = new CrystalButton(left + 20 + i * 112, top + 152, 104, 16,
                                 Component.translatable("screen.amemaru.casino.hl." + kind, mult <= 0 ? "-" : fmt(mult)), x -> bet(kind, 0));
                         b.active = betting && mult > 0;
                         addRenderableWidget(b);
@@ -203,19 +207,19 @@ public class CasinoScreen extends Screen {
                     ListTag lanes = state.getList("lanes", Tag.TAG_COMPOUND);
                     for (int i = 0; i < lanes.size(); i++) {
                         int lane = i;
-                        CrystalButton b = new CrystalButton(left + 196, top + 54 + i * 26, 46, 14,
+                        CrystalButton b = new CrystalButton(left + 196, top + 56 + i * 25, 46, 14,
                                 Component.translatable("screen.amemaru.casino.race.bet"), x -> bet("lane", lane));
                         b.active = betting;
                         addRenderableWidget(b);
                     }
                     boolean canEnter = betting && state.getInt("bettors") == 0 && !fish().isEmpty();
-                    addRenderableWidget(new CrystalButton(left + 8, top + 162, 14, 14, Component.literal("◀"), x -> {
+                    addRenderableWidget(new CrystalButton(left + 8, top + 168, 14, 14, Component.literal("◀"), x -> {
                         fishIndex = Math.floorMod(fishIndex - 1, Math.max(1, fish().size()));
                     }));
-                    addRenderableWidget(new CrystalButton(left + 132, top + 162, 14, 14, Component.literal("▶"), x -> {
+                    addRenderableWidget(new CrystalButton(left + 132, top + 168, 14, 14, Component.literal("▶"), x -> {
                         fishIndex = Math.floorMod(fishIndex + 1, Math.max(1, fish().size()));
                     }));
-                    CrystalButton enter = new CrystalButton(left + 150, top + 162, 92, 14, Component.translatable("screen.amemaru.casino.race.enter"),
+                    CrystalButton enter = new CrystalButton(left + 150, top + 168, 92, 14, Component.translatable("screen.amemaru.casino.race.enter"),
                             x -> {
                                 if (!fish().isEmpty()) {
                                     CompoundTag args = table();
@@ -437,7 +441,7 @@ public class CasinoScreen extends Screen {
     }
 
     private int boardY() {
-        return top + 96;
+        return top + 100;
     }
 
     private void renderRoulette(GuiGraphics graphics, int mouseX, int mouseY) {
@@ -483,8 +487,6 @@ public class CasinoScreen extends Screen {
                     UiStyle.TEXT_DIM);
         }
         renderBoard(graphics, mouseX, mouseY);
-        graphics.drawString(font, Component.translatable("screen.amemaru.casino.chip", chip), left + 250 - 6 - font.width(
-                Component.translatable("screen.amemaru.casino.chip", chip)), top + 197, UiStyle.TEXT_DIM, false);
         renderSide(graphics, left + 260, top + 56, W - 260 - 8);
     }
 
@@ -586,21 +588,20 @@ public class CasinoScreen extends Screen {
         int x0 = left + 8;
         int y0 = top + 52;
         UiStyle.card(graphics, x0, y0, x0 + 244, y0 + 136, 0x58C060, false);
-        graphics.drawCenteredString(font, Component.translatable("screen.amemaru.casino.hl.help"), x0 + 122, y0 + 4, UiStyle.TEXT_DIM);
+        UiStyle.wrapped(graphics, font, Component.translatable("screen.amemaru.casino.hl.help").getString(), x0 + 6, y0 + 3, 232, UiStyle.TEXT_DIM, 2);
         int card = state.getInt("card");
-        drawCard(graphics, x0 + 50, y0 + 20, card, true);
+        drawCard(graphics, x0 + 50, y0 + 25, card, true);
         String phase = state.getString("phase");
         int outcome = state.getInt("outcome");
         boolean shown = "result".equals(phase) || ("rolling".equals(phase) && rollProgress() > 0.6F);
-        drawCard(graphics, x0 + 146, y0 + 20, outcome, shown && outcome > 0);
-        graphics.drawCenteredString(font, Component.translatable("screen.amemaru.casino.hl.now"), x0 + 74, y0 + 86, UiStyle.TEXT_HEADER);
-        graphics.drawCenteredString(font, Component.translatable("screen.amemaru.casino.hl.next"), x0 + 170, y0 + 86, UiStyle.TEXT_HEADER);
+        drawCard(graphics, x0 + 146, y0 + 25, outcome, shown && outcome > 0);
+        graphics.drawCenteredString(font, Component.translatable("screen.amemaru.casino.hl.now"), x0 + 74, y0 + 88, UiStyle.TEXT_HEADER);
+        graphics.drawCenteredString(font, Component.translatable("screen.amemaru.casino.hl.next"), x0 + 170, y0 + 88, UiStyle.TEXT_HEADER);
         if ("result".equals(phase) && outcome > 0) {
             Component res = Component.translatable(outcome > card ? "screen.amemaru.casino.hl.went_high"
                     : outcome < card ? "screen.amemaru.casino.hl.went_low" : "screen.amemaru.casino.hl.same");
-            graphics.drawCenteredString(font, res, x0 + 122, y0 + 100, UiStyle.TEXT_GOLD);
+            graphics.drawCenteredString(font, res, x0 + 122, y0 + 120, UiStyle.TEXT_GOLD);
         }
-        graphics.drawString(font, Component.translatable("screen.amemaru.casino.chip", chip), x0 + 4, top + 182, UiStyle.TEXT_DIM, false);
         renderSide(graphics, left + 260, top + 56, W - 260 - 8);
     }
 
@@ -648,10 +649,14 @@ public class CasinoScreen extends Screen {
                 pos[i] = Mth.lerp(t - f, a.getFloat(i), b.getFloat(i));
             }
         }
+        boolean result = "result".equals(state.getString("phase"));
         for (int i = 0; i < lanes.size(); i++) {
             CompoundTag lane = lanes.getCompound(i);
-            int y = y0 + i * 26;
+            int y = y0 + i * 25;
             int color = LANE_COLORS[i % 4];
+            if (result && state.getInt("outcome") == i) {
+                graphics.fill(x0 - 2, y - 2, x0 + 186, y + 24, 0xFFFFD866);    // 勝った走路を金の縁で
+            }
             graphics.fill(x0, y, x0 + 184, y + 22, 0xFF1E3A5A);
             graphics.fill(x0, y, x0 + 3, y + 22, 0xFF000000 | color);
             graphics.fill(x0 + 176, y, x0 + 178, y + 22, 0xFFFFD866);
@@ -668,22 +673,20 @@ public class CasinoScreen extends Screen {
                 graphics.drawString(font, String.valueOf(mine), x0 + 186 - font.width(String.valueOf(mine)) - 4, y + 12, 0xFF9CF5, false);
             }
         }
-        if ("result".equals(state.getString("phase")) && state.getInt("outcome") >= 0) {
-            graphics.drawString(font, Component.translatable("screen.amemaru.casino.race.won", state.getInt("outcome") + 1), x0 + 4,
-                    y0 + 106, UiStyle.TEXT_GOLD, false);
-        }
-        // 出す魚
+        // 出す魚（勝った走路は、結果のあいだ金の縁）
         List<CompoundTag> fish = fish();
+        Component help = result && state.getInt("outcome") >= 0
+                ? Component.translatable("screen.amemaru.casino.race.won", state.getInt("outcome") + 1)
+                : Component.translatable("screen.amemaru.casino.race.help");
+        graphics.drawString(font, help, x0, top + 156, result ? UiStyle.TEXT_GOLD : UiStyle.TEXT_DIM, false);
         if (fish.isEmpty()) {
-            graphics.drawString(font, Component.translatable("screen.amemaru.casino.race.no_fish"), x0 + 18, top + 165, UiStyle.TEXT_DIM, false);
+            graphics.drawString(font, Component.translatable("screen.amemaru.casino.race.no_fish"), x0 + 18, top + 171, UiStyle.TEXT_DIM, false);
         } else {
             CompoundTag one = fish.get(Mth.clamp(fishIndex, 0, fish.size() - 1));
             ItemStack stack = ItemStack.of(one.getCompound("stack"));
-            graphics.renderItem(stack, x0 + 18, top + 161);
-            graphics.drawString(font, UiStyle.clip(font, stack.getHoverName().getString(), 84), x0 + 38, top + 165, UiStyle.TEXT, false);
+            graphics.renderItem(stack, x0 + 18, top + 167);
+            graphics.drawString(font, UiStyle.clip(font, stack.getHoverName().getString(), 84), x0 + 38, top + 171, UiStyle.TEXT, false);
         }
-        graphics.drawString(font, Component.translatable("screen.amemaru.casino.race.help"), x0, top + 150, UiStyle.TEXT_DIM, false);
-        graphics.drawString(font, Component.translatable("screen.amemaru.casino.chip", chip), x0 + 4, top + 182, UiStyle.TEXT_DIM, false);
         renderSide(graphics, left + 260, top + 56, W - 260 - 8);
     }
 

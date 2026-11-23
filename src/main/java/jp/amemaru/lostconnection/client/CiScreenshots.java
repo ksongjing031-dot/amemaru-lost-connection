@@ -987,6 +987,8 @@ public final class CiScreenshots {
             // Phase 7 その3（11月23日）：カジノ。大広間のルーレットの卓の西から、卓と支配人ジゼルを見る（進行日は Phase 6 で 4日目）
             {"cmd", null, "100", "tp @p {at:22.5,3,84.5} -90 10"},
             {"snap", null, "60", "phase7c_hall"},
+            // 話せるのは5ブロックまでなので、ジゼルの南（卓の東）へ寄る
+            {"cmd", null, "40", "tp @p {at:31.5,3,88.0} 180 5"},
             {"p6g_talk", null, "10", "gisele"},
             {"await_dialogue", null, "0"},
             {"snap", null, "30", "phase7c_dialogue"},
@@ -994,6 +996,7 @@ public final class CiScreenshots {
             {"screen", null, "10", "hold"},
             // ルーレットの卓を右クリックすると、カジノの画面が開く。チップを持たせて、一点・赤・ダズンに賭けて、17で回す
             {"cmd", null, "5", "amemaru admin casino chips @p 500"},
+            {"cmd", null, "40", "tp @p {at:22.5,3,84.5} -90 10"},
             {"p7c_use", null, "30"},
             {"snap", null, "20", "phase7c_roulette"},
             {"p7c_chip", null, "5", "50"},
