@@ -22,6 +22,7 @@
     "amemaru:ancient_stone_shoes": 60,
     "amemaru:ancient_stone_staff": 650,
     "amemaru:ancient_stone_sword": 500,
+    "amemaru:antidote": 48,
     "amemaru:bee_crystal_staff": 1100,
     "amemaru:bee_stinger": 18,
     "amemaru:binding_thread": 500,
@@ -30,6 +31,7 @@
     "amemaru:clear_echo": 1500,
     "amemaru:crystal_shard": 110,
     "amemaru:echo_fragment": 280,
+    "amemaru:elder_branch_staff": 3300,
     "amemaru:grassland_horn": 2050,
     "amemaru:grassland_necklace": 300,
     "amemaru:hand_lantern": 240,
@@ -98,6 +100,8 @@
   ],
   "level_step": 0.08,
   "untradeable": [
-    "amemaru:light_shard"
+    "amemaru:light_shard",
+    "amemaru:knot_lantern",
+    "amemaru:warden_light"
   ]
 }

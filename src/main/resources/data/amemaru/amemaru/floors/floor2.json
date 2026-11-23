@@ -1,0 +1,1158 @@
+{
+  "_comment": "塔の2階「忘れられた森」（tools/mapgen/build_floor2.py が書き出す。手で直すときは、スクリプトを直して作り直す）",
+  "floor": 2,
+  "chapter": 1,
+  "name": "忘れられた森",
+  "chapter_title": "第1章　失われた古代領域",
+  "recommended_level": [
+    3,
+    6
+  ],
+  "origin": [
+    7976,
+    60,
+    -216
+  ],
+  "size": [
+    432,
+    64,
+    432
+  ],
+  "structure": "amemaru:map/floor2/",
+  "piece_size": 48,
+  "entrance": {
+    "pos": [
+      216.5,
+      18,
+      395.5
+    ],
+    "yaw": 180
+  },
+  "return_circle": {
+    "center": [
+      216.5,
+      18,
+      404.5
+    ],
+    "radius": 2.6
+  },
+  "boss_room": {
+    "boss": "amemaru:old_ward",
+    "name": "森番の空き地",
+    "spawn": {
+      "pos": [
+        216.5,
+        19,
+        56.5
+      ],
+      "yaw": 0
+    },
+    "arena": {
+      "center": [
+        216.5,
+        19,
+        56.5
+      ],
+      "radius": 29.0,
+      "y_min": 16,
+      "y_max": 38
+    },
+    "seal": [
+      [
+        213,
+        19,
+        96
+      ],
+      [
+        219,
+        25,
+        96
+      ]
+    ],
+    "start_radius": 20,
+    "respawn_seconds": 120,
+    "max_players": 8,
+    "hp_per_extra_player": 1.0,
+    "attack_per_extra_player": 0.1,
+    "pace_per_extra_player": 0.05,
+    "enrage_seconds": 720,
+    "exit": {
+      "center": [
+        216.5,
+        19,
+        36.5
+      ],
+      "radius": 2.6
+    }
+  },
+  "pillars": [],
+  "pillars_done": "",
+  "tablet": {
+    "pos": [
+      227,
+      19,
+      244
+    ],
+    "title": "森番の日誌",
+    "text": "木々の根は、地の下で細い糸を運んでいる。……最近、獣たちが帰り道を忘れる。"
+  },
+  "spawns": [
+    {
+      "id": "outer_lure_south",
+      "enemy": "amemaru:mayoi_bi",
+      "center": [
+        224,
+        20,
+        372
+      ],
+      "radius": 12,
+      "max": 3,
+      "respawn_seconds": 45,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 52
+    },
+    {
+      "id": "outer_lure_mid",
+      "enemy": "amemaru:mayoi_bi",
+      "center": [
+        204,
+        18,
+        334
+      ],
+      "radius": 12,
+      "max": 3,
+      "respawn_seconds": 45,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 52
+    },
+    {
+      "id": "outer_foxes",
+      "enemy": "amemaru:hakage_kitsune",
+      "center": [
+        228,
+        19,
+        312
+      ],
+      "radius": 12,
+      "max": 3,
+      "respawn_seconds": 60,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 52
+    },
+    {
+      "id": "outer_shrooms",
+      "enemy": "amemaru:pokodake",
+      "center": [
+        196,
+        19,
+        350
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 50,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 52
+    },
+    {
+      "id": "west_woods",
+      "enemy": "amemaru:hakage_kitsune",
+      "center": [
+        136,
+        18,
+        258
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 60,
+      "group": [
+        2,
+        2
+      ],
+      "activation": 40
+    },
+    {
+      "id": "east_woods",
+      "enemy": "amemaru:juhihei",
+      "center": [
+        300,
+        17,
+        258
+      ],
+      "radius": 6,
+      "max": 2,
+      "respawn_seconds": 60,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 40,
+      "route": [
+        [
+          282,
+          17,
+          258
+        ],
+        [
+          300,
+          19,
+          248
+        ],
+        [
+          316,
+          18,
+          258
+        ],
+        [
+          300,
+          18,
+          270
+        ]
+      ]
+    },
+    {
+      "id": "east_lure",
+      "enemy": "amemaru:mayoi_bi",
+      "center": [
+        312,
+        19,
+        240
+      ],
+      "radius": 8,
+      "max": 2,
+      "respawn_seconds": 50,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 40
+    },
+    {
+      "id": "north_woods",
+      "enemy": "amemaru:hakage_kitsune",
+      "center": [
+        216,
+        18,
+        168
+      ],
+      "radius": 12,
+      "max": 3,
+      "respawn_seconds": 60,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 40
+    },
+    {
+      "id": "north_lure",
+      "enemy": "amemaru:mayoi_bi",
+      "center": [
+        236,
+        18,
+        150
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 50,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 40
+    },
+    {
+      "id": "hollow_a",
+      "enemy": "amemaru:pokodake",
+      "center": [
+        44,
+        13,
+        264
+      ],
+      "radius": 10,
+      "max": 4,
+      "respawn_seconds": 45,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 52
+    },
+    {
+      "id": "hollow_b",
+      "enemy": "amemaru:pokodake",
+      "center": [
+        66,
+        13,
+        284
+      ],
+      "radius": 10,
+      "max": 4,
+      "respawn_seconds": 45,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 52
+    },
+    {
+      "id": "hollow_c",
+      "enemy": "amemaru:pokodake",
+      "center": [
+        52,
+        14,
+        294
+      ],
+      "radius": 8,
+      "max": 3,
+      "respawn_seconds": 50,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 52
+    },
+    {
+      "id": "hollow_lure",
+      "enemy": "amemaru:mayoi_bi",
+      "center": [
+        62,
+        13,
+        252
+      ],
+      "radius": 12,
+      "max": 3,
+      "respawn_seconds": 45,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 52
+    },
+    {
+      "id": "hollow_path",
+      "enemy": "amemaru:hakage_kitsune",
+      "center": [
+        50,
+        19,
+        196
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 60,
+      "group": [
+        2,
+        2
+      ],
+      "activation": 52
+    },
+    {
+      "id": "grove_loop_a",
+      "enemy": "amemaru:hakage_kitsune",
+      "center": [
+        96,
+        27,
+        106
+      ],
+      "radius": 8,
+      "max": 2,
+      "respawn_seconds": 60,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 44,
+      "route": [
+        [
+          103,
+          27,
+          106
+        ],
+        [
+          101,
+          27,
+          111
+        ],
+        [
+          96,
+          27,
+          113
+        ],
+        [
+          91,
+          27,
+          111
+        ],
+        [
+          89,
+          27,
+          106
+        ],
+        [
+          91,
+          27,
+          101
+        ],
+        [
+          96,
+          27,
+          99
+        ],
+        [
+          101,
+          27,
+          101
+        ]
+      ]
+    },
+    {
+      "id": "grove_loop_b",
+      "enemy": "amemaru:hakage_kitsune",
+      "center": [
+        66,
+        27,
+        112
+      ],
+      "radius": 8,
+      "max": 2,
+      "respawn_seconds": 60,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 44,
+      "route": [
+        [
+          72,
+          27,
+          112
+        ],
+        [
+          70,
+          27,
+          116
+        ],
+        [
+          66,
+          27,
+          118
+        ],
+        [
+          62,
+          27,
+          116
+        ],
+        [
+          60,
+          27,
+          112
+        ],
+        [
+          62,
+          27,
+          108
+        ],
+        [
+          66,
+          27,
+          106
+        ],
+        [
+          70,
+          27,
+          108
+        ]
+      ]
+    },
+    {
+      "id": "grove_lure",
+      "enemy": "amemaru:mayoi_bi",
+      "center": [
+        104,
+        27,
+        78
+      ],
+      "radius": 12,
+      "max": 3,
+      "respawn_seconds": 45,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 52
+    },
+    {
+      "id": "ravine_south",
+      "enemy": "amemaru:juhihei",
+      "center": [
+        368,
+        9,
+        320
+      ],
+      "radius": 6,
+      "max": 2,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 44,
+      "route": [
+        [
+          366,
+          9,
+          338
+        ],
+        [
+          368,
+          9,
+          320
+        ],
+        [
+          374,
+          9,
+          300
+        ],
+        [
+          380,
+          9,
+          282
+        ]
+      ]
+    },
+    {
+      "id": "ravine_mid",
+      "enemy": "amemaru:juhihei",
+      "center": [
+        382,
+        9,
+        214
+      ],
+      "radius": 6,
+      "max": 2,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 44,
+      "route": [
+        [
+          384,
+          9,
+          240
+        ],
+        [
+          382,
+          9,
+          220
+        ],
+        [
+          376,
+          9,
+          196
+        ],
+        [
+          372,
+          9,
+          176
+        ]
+      ]
+    },
+    {
+      "id": "ravine_north",
+      "enemy": "amemaru:juhihei",
+      "center": [
+        380,
+        9,
+        110
+      ],
+      "radius": 6,
+      "max": 2,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 44,
+      "route": [
+        [
+          374,
+          9,
+          140
+        ],
+        [
+          380,
+          9,
+          120
+        ],
+        [
+          386,
+          9,
+          96
+        ],
+        [
+          384,
+          9,
+          76
+        ]
+      ]
+    },
+    {
+      "id": "ravine_shrooms",
+      "enemy": "amemaru:pokodake",
+      "center": [
+        372,
+        9,
+        268
+      ],
+      "radius": 6,
+      "max": 3,
+      "respawn_seconds": 50,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "approach",
+      "enemy": "amemaru:juhihei",
+      "center": [
+        220,
+        17,
+        112
+      ],
+      "radius": 6,
+      "max": 2,
+      "respawn_seconds": 60,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 40,
+      "route": [
+        [
+          224,
+          17,
+          120
+        ],
+        [
+          218,
+          17,
+          106
+        ],
+        [
+          212,
+          17,
+          114
+        ]
+      ]
+    }
+  ],
+  "guardians": [
+    {
+      "id": "fox_chief",
+      "enemy": "amemaru:hakage_kitsune",
+      "variant": "amemaru:hakage_kitsune_chief",
+      "pos": [
+        70.5,
+        27,
+        84.5
+      ],
+      "respawn_seconds": 300,
+      "activation": 36,
+      "pillar": -1
+    },
+    {
+      "id": "bark_captain",
+      "enemy": "amemaru:juhihei",
+      "variant": "amemaru:juhihei_captain",
+      "pos": [
+        380.5,
+        9,
+        205.5
+      ],
+      "respawn_seconds": 300,
+      "activation": 36,
+      "pillar": -1
+    }
+  ],
+  "chests": [
+    {
+      "pos": [
+        230,
+        19,
+        240
+      ],
+      "loot": "amemaru:chests/floor2_ancient"
+    },
+    {
+      "pos": [
+        40,
+        13,
+        260
+      ],
+      "loot": "amemaru:chests/floor2_ancient"
+    },
+    {
+      "pos": [
+        64,
+        15,
+        296
+      ],
+      "loot": "amemaru:chests/floor2_ancient"
+    },
+    {
+      "pos": [
+        70,
+        27,
+        80
+      ],
+      "loot": "amemaru:chests/floor2_ancient",
+      "guardian": "fox_chief"
+    },
+    {
+      "pos": [
+        110,
+        27,
+        92
+      ],
+      "loot": "amemaru:chests/floor2_ancient"
+    },
+    {
+      "pos": [
+        376,
+        9,
+        205
+      ],
+      "loot": "amemaru:chests/floor2_ancient",
+      "guardian": "bark_captain"
+    },
+    {
+      "pos": [
+        383,
+        9,
+        61
+      ],
+      "loot": "amemaru:chests/floor2_ancient"
+    },
+    {
+      "pos": [
+        200,
+        19,
+        362
+      ],
+      "loot": "amemaru:chests/floor2_ancient"
+    },
+    {
+      "pos": [
+        230,
+        19,
+        334
+      ],
+      "loot": "amemaru:chests/floor2_ancient"
+    },
+    {
+      "pos": [
+        228,
+        20,
+        386
+      ],
+      "loot": "amemaru:chests/floor2_ancient"
+    },
+    {
+      "pos": [
+        114,
+        21,
+        269
+      ],
+      "loot": "amemaru:chests/floor2_ancient"
+    },
+    {
+      "pos": [
+        300,
+        18,
+        250
+      ],
+      "loot": "amemaru:chests/floor2_ancient"
+    },
+    {
+      "pos": [
+        222,
+        17,
+        139
+      ],
+      "loot": "amemaru:chests/floor2_ancient"
+    }
+  ],
+  "environment": {
+    "fog": [
+      6,
+      46
+    ],
+    "fog_color": "#8EA396"
+  },
+  "lost_woods": [
+    {
+      "id": "west",
+      "name": "迷いの森・西",
+      "box": [
+        106,
+        0,
+        226,
+        172,
+        63,
+        290
+      ],
+      "entry": {
+        "pos": [
+          167.5,
+          19,
+          258.5
+        ],
+        "yaw": 90
+      },
+      "bell": [
+        156,
+        18,
+        258
+      ],
+      "listen_distance": 12,
+      "echo_delay": 4,
+      "decoys": 0,
+      "exits": [
+        {
+          "id": "west_0",
+          "box": [
+            105,
+            0,
+            235,
+            108,
+            63,
+            241
+          ],
+          "post": [
+            112,
+            20,
+            240
+          ],
+          "correct": false
+        },
+        {
+          "id": "west_1",
+          "box": [
+            105,
+            0,
+            275,
+            108,
+            63,
+            281
+          ],
+          "post": [
+            112,
+            20,
+            280
+          ],
+          "correct": true
+        }
+      ]
+    },
+    {
+      "id": "east",
+      "name": "迷いの森・東",
+      "box": [
+        262,
+        0,
+        224,
+        334,
+        63,
+        292
+      ],
+      "entry": {
+        "pos": [
+          267.5,
+          17,
+          258.5
+        ],
+        "yaw": -90
+      },
+      "bell": [
+        278,
+        17,
+        258
+      ],
+      "listen_distance": 13,
+      "echo_delay": 4,
+      "decoys": 1,
+      "exits": [
+        {
+          "id": "east_0",
+          "box": [
+            332,
+            0,
+            231,
+            335,
+            63,
+            237
+          ],
+          "post": [
+            328,
+            17,
+            236
+          ],
+          "correct": true
+        },
+        {
+          "id": "east_1",
+          "box": [
+            332,
+            0,
+            255,
+            335,
+            63,
+            261
+          ],
+          "post": [
+            328,
+            19,
+            260
+          ],
+          "correct": false
+        },
+        {
+          "id": "east_2",
+          "box": [
+            332,
+            0,
+            279,
+            335,
+            63,
+            285
+          ],
+          "post": [
+            328,
+            20,
+            284
+          ],
+          "correct": false
+        }
+      ]
+    },
+    {
+      "id": "north",
+      "name": "迷いの森・奥",
+      "box": [
+        172,
+        0,
+        128,
+        262,
+        63,
+        206
+      ],
+      "entry": {
+        "pos": [
+          216.5,
+          18,
+          201.5
+        ],
+        "yaw": 180
+      },
+      "bell": [
+        216,
+        19,
+        190
+      ],
+      "listen_distance": 14,
+      "echo_delay": 4,
+      "decoys": 2,
+      "exits": [
+        {
+          "id": "north_0",
+          "box": [
+            179,
+            0,
+            127,
+            185,
+            63,
+            130
+          ],
+          "post": [
+            184,
+            18,
+            134
+          ],
+          "correct": false
+        },
+        {
+          "id": "north_1",
+          "box": [
+            201,
+            0,
+            127,
+            207,
+            63,
+            130
+          ],
+          "post": [
+            206,
+            18,
+            134
+          ],
+          "correct": false
+        },
+        {
+          "id": "north_2",
+          "box": [
+            225,
+            0,
+            127,
+            231,
+            63,
+            130
+          ],
+          "post": [
+            230,
+            17,
+            134
+          ],
+          "correct": true
+        },
+        {
+          "id": "north_3",
+          "box": [
+            247,
+            0,
+            127,
+            253,
+            63,
+            130
+          ],
+          "post": [
+            252,
+            19,
+            134
+          ],
+          "correct": false
+        }
+      ]
+    }
+  ],
+  "waypoints": [
+    {
+      "id": "hub",
+      "name": "森番の広場",
+      "pos": [
+        216,
+        19,
+        258
+      ],
+      "arrive": {
+        "pos": [
+          216.5,
+          19,
+          256.5
+        ],
+        "yaw": 180
+      }
+    },
+    {
+      "id": "hollow",
+      "name": "胞子の窪地",
+      "pos": [
+        72,
+        13,
+        272
+      ],
+      "arrive": {
+        "pos": [
+          70.5,
+          13,
+          272.5
+        ],
+        "yaw": 90
+      }
+    },
+    {
+      "id": "grove",
+      "name": "白い木立",
+      "pos": [
+        94,
+        27,
+        128
+      ],
+      "arrive": {
+        "pos": [
+          94.5,
+          27,
+          126.5
+        ],
+        "yaw": 180
+      }
+    },
+    {
+      "id": "ravine",
+      "name": "管の谷",
+      "pos": [
+        369,
+        18,
+        253
+      ],
+      "arrive": {
+        "pos": [
+          371.5,
+          18,
+          253.5
+        ],
+        "yaw": -90
+      }
+    },
+    {
+      "id": "approach",
+      "name": "空き地の前",
+      "pos": [
+        219,
+        18,
+        104
+      ],
+      "arrive": {
+        "pos": [
+          217.5,
+          17,
+          104.5
+        ],
+        "yaw": 172.9
+      }
+    }
+  ],
+  "travel_stone": [
+    211,
+    18,
+    397
+  ],
+  "seal_requires": "lost_woods",
+  "story_zones": [
+    {
+      "id": "noa_sighting",
+      "box": [
+        72,
+        24,
+        62,
+        96,
+        38,
+        78
+      ]
+    }
+  ]
+}

@@ -169,7 +169,7 @@ public final class FloorSpawner {
         mob.moveTo(at.x, at.y, at.z, random.nextFloat() * 360.0F, 0.0F);
         mob.setHome(BlockPos.containing(at));
         mob.setTransient(true);
-        if (mob instanceof IshikureSoldier soldier && !zone.route().isEmpty()) {
+        if (mob instanceof jp.amemaru.lostconnection.enemy.Patroller soldier && !zone.route().isEmpty()) {
             List<BlockPos> route = new ArrayList<>();
             for (BlockPos point : zone.route()) {
                 route.add(floor.world(point));

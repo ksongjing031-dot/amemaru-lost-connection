@@ -1085,6 +1085,92 @@ public final class CiScreenshots {
             {"p7p_cook", null, "20", "1"},
             {"snap", null, "20", "phase7p_cooked"},
             {"screen", null, "10", "hold"},
+            // ---- Phase 8 その1：2階「忘れられた森」。階を建て、霧の入口・森番の広場・迷いの森（鐘・こだま・結び目の灯）・
+            // 2階の敵・胞子の窪地・白い木立（霧の奥の少女）・管の谷・封印の門・森番の古樹（節・技・怯み・暗い森）・古樹の枝杖
+            {"cmd", null, "10", "gamemode creative @p"},
+            {"p5_build_floor", null, "20", "2"},
+            {"await_floor", null, "0"},
+            {"cmd", null, "10", "gamemode adventure @p"},
+            {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "100", "amemaru admin floor tp 2 entrance @p"},
+            {"cmd", null, "10", "amemaru admin floor tp 2 entrance @p"},
+            {"snap", null, "120", "phase8_f2_entrance"},
+            {"cmd", null, "60", "amemaru admin floor tp 2 waypoint1 @p"},
+            {"snap", null, "80", "phase8_f2_hub"},
+            // 2階の敵（広場の石だたみに、動かないように並べる。北に並べて、南から見る）
+            {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:mayoi_bi {f2:208.5,20.5,250.5} {NoAI:1b,Rotation:[0f,0f]}"},
+            {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:juhihei {f2:212.5,19,250.5} {NoAI:1b,Rotation:[0f,0f]}"},
+            {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:pokodake {f2:217.5,19,250.5} {NoAI:1b,Rotation:[0f,0f]}"},
+            {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:hakage_kitsune {f2:221.5,19,250.5} {NoAI:1b,Rotation:[20f,0f]}"},
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f2:215.5,20,258.5} 180 10"},
+            {"snap", null, "40", "phase8_f2_enemies"},
+            {"cmd", null, "5", "execute in amemaru:tower run kill @e[type=amemaru:mayoi_bi,distance=..30]"},
+            {"cmd", null, "5", "execute in amemaru:tower run kill @e[type=amemaru:juhihei,distance=..30]"},
+            {"cmd", null, "5", "execute in amemaru:tower run kill @e[type=amemaru:pokodake,distance=..30]"},
+            {"cmd", null, "5", "execute in amemaru:tower run kill @e[type=amemaru:hakage_kitsune,distance=..30]"},
+            // 迷いの森・奥：鐘を鳴らし、出口の方へ離れてこだまを聞き、正しい灯台に結び目の灯を置く
+            {"cmd", null, "40", "amemaru admin floor woods 2 reset"},
+            {"cmd", null, "60", "amemaru admin floor tp 2 woods_north @p"},
+            {"snap", null, "60", "phase8_f2_woods"},
+            {"p8_bell", null, "10", "north"},
+            {"snap", null, "10", "phase8_f2_bell"},
+            {"p8_listen", null, "100", "north"},
+            // こだまはチャットに出るので、チャットを消さずに撮る
+            {"snap_keep", null, "10", "phase8_f2_echo"},
+            {"p8_knot", null, "20", "north"},
+            {"snap", null, "40", "phase8_f2_knot_lit"},
+            {"cmd", null, "10", "amemaru admin floor woods 2 tie all"},
+            // 胞子の窪地・白い木立・管の谷（中継の灯の番号：1 広場・2 窪地・3 木立・4 谷・5 空き地の前）
+            {"cmd", null, "60", "amemaru admin floor tp 2 waypoint2 @p"},
+            {"snap", null, "80", "phase8_f2_hollow"},
+            {"cmd", null, "60", "amemaru admin floor tp 2 waypoint3 @p"},
+            {"snap", null, "80", "phase8_f2_grove"},
+            {"cmd", null, "60", "amemaru admin floor tp 2 waypoint4 @p"},
+            {"snap", null, "80", "phase8_f2_ravine"},
+            // 霧の奥の少女（物語の場所に入ると、最初のパーティにだけ流れる。全員に知らせ）
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f2:84.5,27,72.5} 180 2"},
+            {"await_scene", null, "0"},
+            {"snap_keep", null, "70", "phase8_f2_noa"},
+            {"await_idle", null, "0"},
+            {"snap_keep", null, "20", "phase8_f2_noa_announce"},
+            // 封印の門（3つともつないだので開いている）と、森番の古樹
+            {"cmd", null, "60", "amemaru admin floor tp 2 boss @p"},
+            {"snap", null, "40", "phase8_f2_gate"},
+            {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
+            // 部屋に入ると戦いが始まる（真ん中から20ブロック）。始まったら12ブロックまで近づいて、少し見上げて撮る
+            {"cmd", null, "60", "execute in amemaru:tower run tp @p {f2:216.5,19,74.5} 180 12"},
+            {"cmd", null, "20", "execute in amemaru:tower run tp @p {f2:216.5,19,68.5} 180 -12"},
+            {"snap", null, "60", "phase8_f2_boss"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f2:216.5,19,70.5} 180 14"},
+            // 地割れの線（予兆の形2：線）
+            {"cmd", null, "0", "amemaru admin boss skill 2 crack"},
+            {"await_mark", null, "2", "phase8_f2_boss_crack"},
+            {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f2:216.5,19,66.5} 180 30"},
+            // 根の檻（立っている人の足もとの円。地面の印が出たらすぐ撮る）
+            {"cmd", null, "0", "amemaru admin boss skill 2 cage"},
+            {"await_ground", null, "0", "phase8_f2_boss_cage"},
+            // 光る節を3つとも壊すと怯む（傾いた幹が写るように、少し見上げる）
+            {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "10", "execute in amemaru:tower run tp @p {f2:216.5,19,68.5} 180 -14"},
+            {"cmd", null, "20", "execute in amemaru:tower run kill @e[type=amemaru:old_ward_knot]"},
+            {"snap", null, "30", "phase8_f2_boss_stun"},
+            {"cmd", null, "150", "amemaru admin debug vitals @a 100 100"},
+            // 暗い森：足もとの地面とボスの根もとが写るように、少し見下ろす（灯を持つと、まわりの地面が明るくなる）
+            {"cmd", null, "10", "execute in amemaru:tower run tp @p {f2:216.5,19,66.5} 180 16"},
+            {"cmd", null, "10", "amemaru admin boss skill 2 dark"},
+            {"snap", null, "40", "phase8_f2_boss_dark"},
+            {"p8_hold", null, "40", "warden_light"},
+            {"snap", null, "20", "phase8_f2_boss_dark_lit"},
+            {"cmd", null, "5", "kill @e[type=amemaru:old_ward]"},
+            {"snap_keep", null, "30", "phase8_f2_boss_defeated"},
+            {"snap_keep", null, "120", "phase8_f2_boss_title"},
+            {"await_idle", null, "0"},
+            // 古樹の枝杖（一人称）
+            {"p8_hold", null, "20", "elder_branch_staff"},
+            {"snap", null, "30", "phase8_f2_staff"},
+            {"p8_hold", null, "5", "-"},
+            {"screen", null, "10", "hold"},
             {"cmd", null, "10", "gamemode spectator @p"},
             {"hud", null, "5", "off"}};
 
@@ -2298,7 +2384,7 @@ public final class CiScreenshots {
         } else if (shot[0].startsWith("await_")) {
             // 待つ：まだなら同じ行をもう一度（5 tick ごと。長く待っても来なければ、あきらめて次へ）。
             // await_mark は、予兆の形（行の3つ目の数）が出たらすぐ撮る（毎 tick 見る。短い予兆を逃さない。11月22日）
-            boolean mark = "await_mark".equals(shot[0]);
+            boolean mark = "await_mark".equals(shot[0]) || "await_ground".equals(shot[0]);
             if (first) {
                 if (!awaitReady(minecraft, shot) && awaitTicks < awaitLimit(shot[0])) {
                     int step = mark ? 1 : 5;
@@ -2319,7 +2405,8 @@ public final class CiScreenshots {
                 }
             }
         } else if (CiPhase6.action(minecraft, shot, first) || CiPhase6Guild.action(minecraft, shot, first)
-                || CiPhase6Refine.action(minecraft, shot, first) || CiPhase7.action(minecraft, shot, first)) {
+                || CiPhase6Refine.action(minecraft, shot, first) || CiPhase7.action(minecraft, shot, first)
+                || CiPhase8.action(minecraft, shot, first)) {
             next(stage + 1, first ? waitTicks : 0);
         } else if (phase5Action(minecraft, shot, first)) {
             next(stage + 1, first ? waitTicks : 0);
@@ -2363,7 +2450,8 @@ public final class CiScreenshots {
 
     private static int awaitLimit(String kind) {
         return switch (kind) {
-            case "await_floor" -> 20 * 120;
+            // 2階（81区画）は1階より大きいので、5分まで待つ（Phase 8 その1）
+            case "await_floor" -> 20 * 300;
             case "await_scene" -> 20 * 60;
             case "await_dialogue" -> 20 * 40;
             case "await_telegraph" -> 20 * 25;
@@ -2381,6 +2469,8 @@ public final class CiScreenshots {
             case "await_telegraph" -> CiPhase3.anyTelegraph(minecraft);
             // 行の3つ目の数が予兆の形（2 線・3 円・5 扇）
             case "await_mark" -> CiPhase3.anyTelegraphOf(minecraft, Integer.parseInt(shot[2]));
+            // 地面の印（ボスの体でなく、地面に置く円。2階の根の檻など）が出た
+            case "await_ground" -> CiPhase8.anyGroundMarker(minecraft);
             // オープニングの準備待ち（場面が始まる前の真っ暗な間）
             case "await_pending" -> ClientStory.openingPending() && !ScenePlayer.isActive();
             // 場面の字幕が出ている
@@ -2412,8 +2502,9 @@ public final class CiScreenshots {
                 }
             }
             case "p5_build_floor" -> {
+                // Phase 8 その1：4つ目に階の番号（ないときは1階）
                 floorBuilds = jp.amemaru.lostconnection.tower.FloorBuild.builds;
-                command(minecraft, "amemaru admin map build floor 1");
+                command(minecraft, "amemaru admin map build floor " + (shot.length > 3 ? shot[3] : "1"));
             }
             case "dialogue_end" -> {
                 if (dialogue != null) {
@@ -2561,13 +2652,16 @@ public final class CiScreenshots {
         BlockPos guild = o.offset(6 + 1, 37, -100 + 1);
         String out = template.replace("{origin}", o.getX() + " " + o.getY() + " " + o.getZ())
                 .replace("{guild}", guild.getX() + " " + guild.getY() + " " + guild.getZ());
-        // {at:x,y,z}：街の真ん中からの位置。{f1:x,y,z}：塔の1階の (0, 0, 0) からの位置（Phase 5）
-        jp.amemaru.lostconnection.tower.FloorDef floor1 = jp.amemaru.lostconnection.tower.FloorDefs.byNumber(1);
-        BlockPos f1 = floor1 != null ? floor1.origin() : new BlockPos(3904, 60, -192);
-        java.util.regex.Matcher m = java.util.regex.Pattern.compile("\\{(at|f1):(-?[0-9.]+),(-?[0-9.]+),(-?[0-9.]+)\\}").matcher(out);
+        // {at:x,y,z}：街の真ん中からの位置。{f1:x,y,z}：塔の1階の (0, 0, 0) からの位置（Phase 5）。{f2:…} は2階（Phase 8 その1）
+        java.util.regex.Matcher m = java.util.regex.Pattern.compile("\\{(at|f[0-9]+):(-?[0-9.]+),(-?[0-9.]+),(-?[0-9.]+)\\}").matcher(out);
         StringBuilder sb = new StringBuilder();
         while (m.find()) {
-            BlockPos base = "at".equals(m.group(1)) ? o : f1;
+            BlockPos base = o;
+            if (!"at".equals(m.group(1))) {
+                int number = Integer.parseInt(m.group(1).substring(1));
+                jp.amemaru.lostconnection.tower.FloorDef floor = jp.amemaru.lostconnection.tower.FloorDefs.byNumber(number);
+                base = floor != null ? floor.origin() : new BlockPos(number * 4096 - 192, 60, -192);
+            }
             String pos = String.format(Locale.ROOT, "%.2f %.2f %.2f", base.getX() + Double.parseDouble(m.group(2)),
                     base.getY() + Double.parseDouble(m.group(3)), base.getZ() + Double.parseDouble(m.group(4)));
             m.appendReplacement(sb, pos);

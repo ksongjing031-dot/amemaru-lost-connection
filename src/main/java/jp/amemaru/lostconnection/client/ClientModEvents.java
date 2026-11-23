@@ -140,6 +140,13 @@ public final class ClientModEvents {
         // Phase 5：NPC・1階のボス・塔の仕掛け
         event.registerEntityRenderer(ModEntities.NPC.get(), jp.amemaru.lostconnection.client.render.NpcRenderer::new);
         event.registerEntityRenderer(ModEntities.VELDHORN.get(), context -> new AmemaruMobRenderer<>(context, "veldhorn", 1.6F));
+        // Phase 8 その1：2階の敵
+        event.registerEntityRenderer(ModEntities.MAYOI_BI.get(), context -> new AmemaruMobRenderer<>(context, "mayoi_bi", 0.2F));
+        event.registerEntityRenderer(ModEntities.JUHIHEI.get(), context -> new AmemaruMobRenderer<>(context, "juhihei", 0.7F));
+        event.registerEntityRenderer(ModEntities.POKODAKE.get(), context -> new AmemaruMobRenderer<>(context, "pokodake", 0.5F));
+        event.registerEntityRenderer(ModEntities.HAKAGE_KITSUNE.get(), context -> new AmemaruMobRenderer<>(context, "hakage_kitsune", 0.4F));
+        event.registerEntityRenderer(ModEntities.OLD_WARD.get(), context -> new AmemaruMobRenderer<>(context, "old_ward", 1.8F));
+        event.registerEntityRenderer(ModEntities.OLD_WARD_KNOT.get(), context -> new AmemaruMobRenderer<>(context, "old_ward_knot", 0.0F));
         event.registerEntityRenderer(ModEntities.GROUND_MARKER.get(), jp.amemaru.lostconnection.client.render.GroundMarkerRenderer::new);
         event.registerBlockEntityRenderer(jp.amemaru.lostconnection.core.registry.ModBlockEntities.TOWER_PILLAR.get(),
                 jp.amemaru.lostconnection.client.render.TowerPillarRenderer::new);

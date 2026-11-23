@@ -27,10 +27,17 @@ public record SyncStoryS2C(int opening, boolean openingPending, Map<Integer, Int
     public static SyncStoryS2C of(ServerPlayer player, PlayerData data) {
         GuideService.View view = GuideService.view(player, data);
         Map<Integer, Integer> totals = new HashMap<>();
+        Map<Integer, Integer> pillars = new HashMap<>(data.getStory().allPillars());
         for (jp.amemaru.lostconnection.tower.FloorDef def : jp.amemaru.lostconnection.tower.FloorDefs.all()) {
-            totals.put(def.number(), def.pillars().size());
+            if (jp.amemaru.lostconnection.tower.FloorFeatures.SEAL_LOST_WOODS.equals(def.features().sealRequires())) {
+                // Phase 8 その1：迷いの森の区画（みんなで同じ）を、石柱と同じ形で送る（封印の判定をクライアントでも同じにする）
+                totals.put(def.number(), def.features().lostWoods().size());
+                pillars.put(def.number(), jp.amemaru.lostconnection.tower.forest.LostWoodsService.tieBits(player.server, def));
+            } else {
+                totals.put(def.number(), def.pillars().size());
+            }
         }
-        return new SyncStoryS2C(data.getStory().opening(), OpeningService.isPending(player), Map.copyOf(data.getStory().allPillars()),
+        return new SyncStoryS2C(data.getStory().opening(), OpeningService.isPending(player), Map.copyOf(pillars),
                 Map.copyOf(totals),
                 view == null ? -1 : view.index(), view == null ? 0 : view.total(), view == null ? "" : view.text(),
                 view == null || view.dimension() == null ? null : view.dimension().location(), view == null ? null : view.target());

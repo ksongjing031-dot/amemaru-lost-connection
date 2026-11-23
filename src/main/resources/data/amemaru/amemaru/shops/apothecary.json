@@ -18,6 +18,10 @@
       "price": 300
     },
     {
+      "item": "amemaru:antidote",
+      "price": 60
+    },
+    {
       "item": "minecraft:honey_bottle",
       "price": 24
     },
@@ -41,6 +45,10 @@
     },
     {
       "item": "amemaru:mana_water_medium",
+      "ratio": 0.5
+    },
+    {
+      "item": "amemaru:antidote",
       "ratio": 0.5
     },
     {

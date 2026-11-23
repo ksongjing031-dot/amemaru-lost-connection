@@ -59,6 +59,7 @@ RARE_GEAR = {
 }
 FIXED = {
     "amemaru:grassland_horn": 2050,          # Phase 0-A の計算例（1回5分のボスから8% → 62分 × 33）
+    "amemaru:elder_branch_staff": 3300,      # 2階のボスから6%（1回6分 → 100分 × 33）【補完】
 }
 # 表にない物：レアリティごとの基準額（×（1＋0.08×装備レベル）はゲームの中で計算する）【補完】
 RARITY_BASE = {"common": 30, "uncommon": 100, "rare": 400, "epic": 1600, "legendary": 6000, "unique": 20000}
@@ -80,8 +81,8 @@ SHOPS = [
     ("greengrocer", "八百屋", "", [("potato", 5), ("carrot", 5), ("beetroot", 4), ("apple", 8), ("sweet_berries", 4),
                                   ("melon_slice", 3)], None),
     ("apothecary", "薬屋", "", [("amemaru:healing_potion_small", 100), ("amemaru:healing_potion_medium", 260),
-                               ("amemaru:mana_water_small", 120), ("amemaru:mana_water_medium", 300), ("honey_bottle", 24),
-                               ("glow_berries", 8)], None),
+                               ("amemaru:mana_water_small", 120), ("amemaru:mana_water_medium", 300), ("amemaru:antidote", 60),
+                               ("honey_bottle", 24), ("glow_berries", 8)], None),
     ("tools", "道具屋", "", [("amemaru:return_feather", 150), ("amemaru:repair_kit", 200), ("spyglass", 120)], None),
     ("lights", "ろうそくと灯り", "", [("amemaru:hand_lantern", 300), ("amemaru:lantern_vial", 40)], None),
     ("cloth", "布と仕立て", "", [
@@ -120,6 +121,7 @@ USES = {
     "amemaru:mana_water_small": "MPが30%戻る（戦いの最中に使える）",
     "amemaru:mana_water_medium": "MPが60%戻る（戦いの最中に使える）",
     "amemaru:herb_tea": "飲むとMPが15%戻る（食べ物の仲間）",
+    "amemaru:antidote": "毒を治し、そのあと30秒は毒にならない（2階のポコダケの胞子に）",
     "amemaru:return_feather": "塔の中で3秒持つと、街の塔の門へ帰る",
     "amemaru:repair_kit": "防具とホットバーの装備の耐久を30%ずつ戻す",
     "amemaru:hand_lantern": "手に持つと、まわりが明るくなる（暗い所で）",
@@ -156,7 +158,8 @@ LOOK_USE = "見た目だけの服（守りもステータスも変わらない�
 LANG = [os.path.join(ROOT, "src", "main", "resources", "assets", "amemaru", "lang", n) for n in ("ja_jp.json", "en_us.json")]
 BUY_RATIO = 0.5
 # フリーマーケットに出せない品（クエストの品）【補完】。結晶果・見習い装備・装備したボスのレア装備は、ゲームの中の決まりで出せない
-UNTRADEABLE = ["amemaru:light_shard"]
+# 2階の結び目の灯（鐘を鳴らすともらえる）と森番の灯（ボス戦で落ちる）も、その場の仕掛けの品なので出せない（Phase 8 その1）
+UNTRADEABLE = ["amemaru:light_shard", "amemaru:knot_lantern", "amemaru:warden_light"]
 
 
 def full(item):

@@ -25,7 +25,8 @@ public final class ModBlockEntities {
     @SuppressWarnings("DataFlowIssue")
     public static final RegistryObject<BlockEntityType<jp.amemaru.lostconnection.tower.FloorThingBlockEntity>> FLOOR_THING =
             BLOCK_ENTITIES.register("floor_thing", () -> BlockEntityType.Builder.of(jp.amemaru.lostconnection.tower.FloorThingBlockEntity::new,
-                    ModBlocks.TOWER_SWITCH.get(), ModBlocks.TOWER_CHEST.get()).build(null));
+                    ModBlocks.TOWER_SWITCH.get(), ModBlocks.TOWER_CHEST.get(), ModBlocks.FOREST_BELL.get(), ModBlocks.KNOT_POST.get(),
+                    ModBlocks.WAYPOINT.get(), ModBlocks.TRAVEL_STONE.get()).build(null));
 
     /** 店のカウンターの呼び鈴（どの店か。Phase 6）。 */
     @SuppressWarnings("DataFlowIssue")

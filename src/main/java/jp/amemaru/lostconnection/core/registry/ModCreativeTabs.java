@@ -46,6 +46,10 @@ public final class ModCreativeTabs {
                 output.accept(ModItems.ISHIKURE_SOLDIER_SPAWN_EGG.get());
                 output.accept(ModItems.CRYSTAL_BEE_SPAWN_EGG.get());
                 output.accept(ModItems.KAKEKIBA_WOLF_SPAWN_EGG.get());
+                output.accept(ModItems.MAYOI_BI_SPAWN_EGG.get());
+                output.accept(ModItems.JUHIHEI_SPAWN_EGG.get());
+                output.accept(ModItems.POKODAKE_SPAWN_EGG.get());
+                output.accept(ModItems.HAKAGE_KITSUNE_SPAWN_EGG.get());
             })
             .build());
 

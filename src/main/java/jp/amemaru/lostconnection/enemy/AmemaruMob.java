@@ -841,6 +841,10 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
         controllers.add(action);
     }
 
+    /** 技が当たったとき（Phase 8：根が絡む・毒など、技ごとの追加の効き目。ふつうは何もしない）。 */
+    public void onSkillHit(String skill, ServerPlayer player) {
+    }
+
     /** 「攻撃」のほかに使う技のアニメーションの名前（{@code skill_charge} など）。 */
     protected String[] actionNames() {
         return new String[0];

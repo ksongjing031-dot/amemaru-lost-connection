@@ -63,6 +63,11 @@ public final class ScenePlayer {
     private static Vec3 cameraTarget;
     @Nullable
     private static Integer cameraActor;
+    /**
+     * 役者のどの高さを見るか（背の高さの割合。ふつうは目のあたりの 0.85）。遠くの役者は、足もとのあたりを見ると、
+     * 体が字幕の帯より上に写る（Phase 8 その1：霧の奥の少女。カメラの {@code look_height}）。
+     */
+    private static float cameraHeight = 0.85F;
     private static float cameraYaw;
     private static float cameraPitch;
     private static boolean cameraInit;
@@ -159,6 +164,7 @@ public final class ScenePlayer {
         moves.clear();
         cameraTarget = null;
         cameraActor = null;
+        cameraHeight = 0.85F;
         cameraInit = false;
         playing = false;
         linger = 0;
@@ -292,6 +298,7 @@ public final class ScenePlayer {
                     String actor = string(step, "actor", "");
                     cameraActor = actor.isEmpty() ? null : actors.get(actor);
                     cameraTarget = vec(step, "look_at");
+                    cameraHeight = (float) Math.max(0.0, Math.min(1.2, number(step, "look_height", 0.85)));
                 }
                 stepLength = wait ? ticks : 0;
             }
@@ -406,7 +413,7 @@ public final class ScenePlayer {
         if (cameraActor != null && minecraft.level != null) {
             Entity actor = minecraft.level.getEntity(cameraActor);
             if (actor != null) {
-                target = actor.getPosition(partialTick).add(0.0, actor.getBbHeight() * 0.85, 0.0);
+                target = actor.getPosition(partialTick).add(0.0, actor.getBbHeight() * cameraHeight, 0.0);
             }
         }
         if (target == null) {

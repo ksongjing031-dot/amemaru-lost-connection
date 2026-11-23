@@ -1,0 +1,50 @@
+{
+  "_comment": "葉隠れの長（Phase 8 その1。2階の名のある魔物。白い木立の宝箱の守り手。葉影ギツネの大きな個体。数値は【補完】）",
+  "name": "葉隠れの長",
+  "model": "amemaru:hakage_kitsune",
+  "floor": 2,
+  "level": 8,
+  "description": "白く抜けた木立に棲む、葉影ギツネの群れの長。尾の先だけが白く欠けている。群れの背後から、いちばん弱った者を狙う。",
+  "stats": {
+    "hp": 1600,
+    "attack": 34,
+    "defense": 8,
+    "move_speed": 0.4,
+    "follow_range": 28,
+    "aggro_range": 14
+  },
+  "exp": 80,
+  "skills": {
+    "bite": {
+      "power": 1.2,
+      "windup": 0.3,
+      "cooldown": 1.2,
+      "range": 2.4,
+      "angle": 80
+    }
+  },
+  "behavior": {
+    "flank_seconds": 2.5,
+    "flank_speed": 1.6,
+    "back_multiplier": 1.6,
+    "retreat_seconds": 1.2,
+    "scale": 1.5
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/hakage_kitsune",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_white",
+        "chance": 5.0
+      },
+      {
+        "item": "amemaru:echo_fragment",
+        "chance": 40.0
+      },
+      {
+        "item": "amemaru:wavering_crystal",
+        "chance": 20.0
+      }
+    ]
+  }
+}

@@ -43,7 +43,8 @@ public record FloorDef(
         String pillarsDoneMessage,
         List<SpawnZone> spawns,
         @Nullable Tablet tablet,
-        Extras extras) {
+        Extras extras,
+        FloorFeatures features) {
 
     /** 足もとの位置と向き（yaw 0 が南、90 が西、180 が北、−90 が東）。 */
     public record Spot(Vec3 pos, float yaw) {
@@ -91,8 +92,11 @@ public record FloorDef(
     public record SwitchGroup(String id, List<BlockPos> stones, int windowSeconds, int openSeconds, BlockPos gateMin, BlockPos gateMax) {
     }
 
-    /** 古代の宝箱：人それぞれ1度だけ開けられる。中身は {@code lootTable} と、{@code knotsMin}〜{@code knotsMax} のノット。 */
-    public record ChestDef(int index, BlockPos pos, @Nullable ResourceLocation lootTable, int knotsMin, int knotsMax) {
+    /**
+     * 古代の宝箱：人それぞれ1度だけ開けられる。中身は {@code lootTable} と、{@code knotsMin}〜{@code knotsMax} のノット。
+     * {@code guardian} があれば、その守り手（名のある魔物）を倒した人（とパーティ）だけが開けられる（Phase 8 その1【補完】）。
+     */
+    public record ChestDef(int index, BlockPos pos, @Nullable ResourceLocation lootTable, int knotsMin, int knotsMax, String guardian) {
     }
 
     /**
@@ -281,11 +285,16 @@ public record FloorDef(
         }
         for (Guardian guardian : extras.guardians()) {
             if (guardian.pillar() >= pillars.size()) {
-                throw new DefinitionException("守り手「" + guardian.id() + "」の石柱の番号が大きすぎます");
+                throw new DefinitionException("守り手「" + guardian.id() + "」の石柱の番号が大きすぎます（石柱のない守り手は -1）");
+            }
+        }
+        for (ChestDef chest : extras.chests()) {
+            if (!chest.guardian().isEmpty() && extras.guardian(chest.guardian()) == null) {
+                throw new DefinitionException("宝箱 " + (chest.index() + 1) + " の守り手「" + chest.guardian() + "」が「guardians」にありません");
             }
         }
         return new FloorDef(id, number, chapter, name, chapterTitle, min, max, origin, sx, sy, sz, prefix, piece, entrance,
-                back, boss, List.copyOf(pillars), done, List.copyOf(spawns), tablet, extras);
+                back, boss, List.copyOf(pillars), done, List.copyOf(spawns), tablet, extras, FloorFeatures.parse(json));
     }
 
     private static Requirement requirement(JsonObject json) {
@@ -304,7 +313,7 @@ public record FloorDef(
             JsonObject g = Json.asObject(element, "guardians");
             list.add(new Guardian(Json.string(g, "id"), Json.id(g, "enemy"), Json.optionalId(g, "variant"),
                     vec(Json.array(g, "pos"), "guardians.pos"), Json.optionalInt(g, "respawn_seconds", 180, 5, 86400),
-                    Json.optionalDouble(g, "activation", 48.0, 8.0, 512.0), Json.optionalInt(g, "pillar", 0, 0, 31)));
+                    Json.optionalDouble(g, "activation", 48.0, 8.0, 512.0), Json.optionalInt(g, "pillar", 0, -1, 31)));
         }
         return List.copyOf(list);
     }
@@ -344,7 +353,8 @@ public record FloorDef(
             JsonObject c = Json.asObject(array.get(i), "chests");
             int min = Json.optionalInt(c, "knots_min", 0, 0, 1_000_000);
             int max = Json.optionalInt(c, "knots_max", min, min, 1_000_000);
-            list.add(new ChestDef(i, blockPos(Json.array(c, "pos"), "chests.pos"), Json.optionalId(c, "loot"), min, max));
+            list.add(new ChestDef(i, blockPos(Json.array(c, "pos"), "chests.pos"), Json.optionalId(c, "loot"), min, max,
+                    Json.optionalString(c, "guardian", "")));
         }
         return List.copyOf(list);
     }

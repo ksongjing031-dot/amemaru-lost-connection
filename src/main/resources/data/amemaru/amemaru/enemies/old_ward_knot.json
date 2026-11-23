@@ -1,0 +1,22 @@
+{
+  "_comment": "古樹の光る節（2階のボスの幹の弱点。ボスが3つ生やす。経験値とドロップはない。HPはボスと同じく、部屋の人数で増える。数値は【補完】）",
+  "name": "古樹の光る節",
+  "floor": 2,
+  "level": 9,
+  "bestiary": false,
+  "description": "森番の古樹の幹にふくらむ、光る節。硬い樹皮を内から支えている。",
+  "stats": {
+    "hp": 320,
+    "attack": 0,
+    "defense": 0,
+    "move_speed": 0.0,
+    "follow_range": 1,
+    "aggro_range": 0
+  },
+  "exp": 0,
+  "skills": {},
+  "behavior": {},
+  "drops": {
+    "rare": []
+  }
+}

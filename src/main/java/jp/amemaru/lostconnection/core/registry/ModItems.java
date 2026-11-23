@@ -65,6 +65,16 @@ public final class ModItems {
             new BlockItem(ModBlocks.TOWER_GATE.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> TOWER_CHEST = ITEMS.register("tower_chest", () ->
             new BlockItem(ModBlocks.TOWER_CHEST.get(), new Item.Properties().rarity(Rarity.RARE)));
+
+    // Phase 8 その1：2階の仕掛けのブロック（管理者が置き直すとき用）
+    public static final RegistryObject<Item> FOREST_BELL = ITEMS.register("forest_bell", () ->
+            new BlockItem(ModBlocks.FOREST_BELL.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> KNOT_POST = ITEMS.register("knot_post", () ->
+            new BlockItem(ModBlocks.KNOT_POST.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> WAYPOINT = ITEMS.register("waypoint", () ->
+            new BlockItem(ModBlocks.WAYPOINT.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> TRAVEL_STONE = ITEMS.register("travel_stone", () ->
+            new BlockItem(ModBlocks.TRAVEL_STONE.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> STORAGE_ACCESS = ITEMS.register("storage_access", () ->
             new BlockItem(ModBlocks.STORAGE_ACCESS.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> SHOP_COUNTER = ITEMS.register("shop_counter", () ->
@@ -100,9 +110,20 @@ public final class ModItems {
             new ForgeSpawnEggItem(ModEntities.CRYSTAL_BEE, 0x8FD3FF, 0xE8C15A, new Item.Properties()));
     public static final RegistryObject<Item> KAKEKIBA_WOLF_SPAWN_EGG = ITEMS.register("kakekiba_wolf_spawn_egg", () ->
             new ForgeSpawnEggItem(ModEntities.KAKEKIBA_WOLF, 0x5B6270, 0xF4F7FB, new Item.Properties()));
+    // Phase 8 その1：2階の敵
+    public static final RegistryObject<Item> MAYOI_BI_SPAWN_EGG = ITEMS.register("mayoi_bi_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.MAYOI_BI, 0xFFF2B0, 0x9FE0C8, new Item.Properties()));
+    public static final RegistryObject<Item> JUHIHEI_SPAWN_EGG = ITEMS.register("juhihei_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.JUHIHEI, 0x6B4E32, 0x6E8E3A, new Item.Properties()));
+    public static final RegistryObject<Item> POKODAKE_SPAWN_EGG = ITEMS.register("pokodake_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.POKODAKE, 0xB0503A, 0xE8E0C8, new Item.Properties()));
+    public static final RegistryObject<Item> HAKAGE_KITSUNE_SPAWN_EGG = ITEMS.register("hakage_kitsune_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.HAKAGE_KITSUNE, 0x3E5A2E, 0xC86E2E, new Item.Properties()));
 
     public static final RegistryObject<Item> VELDHORN_SPAWN_EGG = ITEMS.register("veldhorn_spawn_egg", () ->
             new ForgeSpawnEggItem(ModEntities.VELDHORN, 0x6B5A3E, 0x7FD98A, new Item.Properties()));
+    public static final RegistryObject<Item> OLD_WARD_SPAWN_EGG = ITEMS.register("old_ward_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.OLD_WARD, 0x4A3A28, 0xE8F0A8, new Item.Properties()));
     public static final RegistryObject<Item> NPC_SPAWN_EGG = ITEMS.register("npc_spawn_egg", () ->
             new ForgeSpawnEggItem(ModEntities.NPC, 0x2E5E3A, 0xF3E6C8, new Item.Properties()));
 

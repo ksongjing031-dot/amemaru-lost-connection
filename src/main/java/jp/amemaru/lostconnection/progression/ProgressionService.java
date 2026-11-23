@@ -121,6 +121,8 @@ public final class ProgressionService {
         jp.amemaru.lostconnection.economy.MarketService.onDayChanged(server, before, now);
         // Phase 7 その4：共同事業の受付の始まりと、完成していた共同事業の施設が変わる（次の朝）
         jp.amemaru.lostconnection.town.ProjectService.onDayChanged(server, before, now);
+        // Phase 8 その1：迷いの森の結び目の灯は、進行日が変わると消える
+        jp.amemaru.lostconnection.tower.forest.LostWoodsService.onDayChanged(server);
         broadcastWorldState(server);
         TowerHall.update(server);
         return now;

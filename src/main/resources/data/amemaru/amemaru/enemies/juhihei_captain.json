@@ -1,0 +1,55 @@
+{
+  "_comment": "苔衣の樹皮兵長（Phase 8 その1。2階の名のある魔物。管の谷の宝箱の守り手。樹皮兵の大きな個体で、見た目は同じ・定義だけ別。倒されると5分でまた現れる。数値は【補完】）",
+  "name": "苔衣の樹皮兵長",
+  "model": "amemaru:juhihei",
+  "floor": 2,
+  "level": 8,
+  "description": "厚い苔を衣のようにまとった、樹皮兵の頭。管の谷の古い宝箱のそばを離れず、近づく者を根の叩きつけで追い払う。",
+  "stats": {
+    "hp": 2600,
+    "attack": 40,
+    "defense": 22,
+    "move_speed": 0.22,
+    "follow_range": 22,
+    "aggro_range": 10
+  },
+  "exp": 90,
+  "skills": {
+    "strike": {
+      "power": 1.2,
+      "windup": 0.8,
+      "cooldown": 1.8,
+      "range": 3.4,
+      "angle": 120
+    },
+    "slam": {
+      "power": 1.7,
+      "windup": 1.3,
+      "cooldown": 6,
+      "range": 5.0,
+      "angle": 360
+    }
+  },
+  "behavior": {
+    "patrol_size": 6,
+    "root_seconds": 2.5,
+    "scale": 1.5
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/juhihei",
+    "rare": [
+      {
+        "item": "amemaru:wavering_crystal",
+        "chance": 30.0
+      },
+      {
+        "item": "amemaru:crystal_fruit_amber",
+        "chance": 4.0
+      },
+      {
+        "item": "amemaru:echo_fragment",
+        "chance": 40.0
+      }
+    ]
+  }
+}

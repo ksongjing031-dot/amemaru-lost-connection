@@ -207,6 +207,10 @@ public final class StoryHud {
     private static void renderCountdowns(GuiGraphics graphics, Font font, int width) {
         WorldStateS2C world = ClientStory.world();
         int y = 4;
+        // ボスのHPの帯が出ているときは、その下に出す
+        if (System.currentTimeMillis() - bossSeen < 250L) {
+            y = Math.max(y, bossBottom + 2);
+        }
         countdownBottom = 0;
         for (WorldStateS2C.Countdown countdown : world.countdowns()) {
             long left = ClientStory.remaining(countdown) / 1000L;
@@ -219,6 +223,17 @@ public final class StoryHud {
             countdownBottom = y + 12;
             y += 14;
         }
+    }
+
+    /** ボスのHPの帯の下の端と、最後に描いた時刻（{@link ClientForgeEvents#onBossBar}）。 */
+    private static int bossBottom;
+    private static long bossSeen;
+
+    /** ボスのHPの帯を1本描いた（{@code bottom}：その帯の下の端）。同じ絵の中の帯は、いちばん下のものを覚える。 */
+    public static void noteBossBar(int bottom) {
+        long now = System.currentTimeMillis();
+        bossBottom = now - bossSeen > 50L ? bottom : Math.max(bossBottom, bottom);
+        bossSeen = now;
     }
 
     /** 上の真ん中の「〇〇まで」の札の下の端（出していなければ 0。釣り大会の札を、その下に出すため。Phase 7 その2） */

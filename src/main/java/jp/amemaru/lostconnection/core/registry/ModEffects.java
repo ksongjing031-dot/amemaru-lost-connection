@@ -52,6 +52,13 @@ public final class ModEffects {
     public static final RegistryObject<MobEffect> LINK_SUPPORT = EFFECTS.register("link_support", () ->
             new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0xFFE066, false));
 
+    /**
+     * 毒よけ（Phase 8 その1。薬屋の解毒薬）：しばらく毒にならない。プレイヤーがかかる毒（2階のポコダケの胞子）は、
+     * 敵にかける毒と同じ {@link #POISON} のアイコンを使い、減り方は {@link jp.amemaru.lostconnection.combat.PoisonService}。
+     */
+    public static final RegistryObject<MobEffect> ANTIDOTE = EFFECTS.register("antidote", () ->
+            new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0xD8F0A0, false));
+
     /** 凍結：凍えが5つ重なると、しばらく動けず、攻撃もできない。 */
     public static final RegistryObject<MobEffect> FROZEN = EFFECTS.register("frozen", () ->
             new AmemaruEffect(MobEffectCategory.HARMFUL, 0xBFF2FF, true).freezing()
