@@ -183,6 +183,14 @@ def face_textures(name, props):
         if name in ("tall_grass", "large_fern"):
             return all6(_tinted(name + ("_top" if props.get("half") == "upper" else "_bottom"), GRASS_TINT))
         return all6(texture(name))
+    # 上と横でテクスチャの名前が違うもの（2階の森で使う。Phase 8 その1）
+    if name == "mushroom_stem":
+        return [texture("mushroom_stem")] * 2 + [texture("mushroom_block_inside")] * 2 + [texture("mushroom_stem")] * 2
+    if name in ("mycelium", "mangrove_roots", "azalea", "flowering_azalea"):
+        bottom = {"mycelium": "dirt", "mangrove_roots": "mangrove_roots_top", "azalea": "azalea_top",
+                  "flowering_azalea": "flowering_azalea_top"}[name]
+        side = texture(name + "_side")
+        return [side] * 2 + [texture(name + "_top"), texture(bottom)] + [side] * 2
     if name.endswith("_log") or name.endswith("_wood") or name.endswith("_stem") or name.endswith("_hyphae"):
         base = name.replace("_wood", "_log").replace("_hyphae", "_stem")
         side = texture(base)

@@ -242,7 +242,7 @@ public final class LostWoodsService {
         tower.playSound(null, post, SoundEvents.BELL_RESONATE, SoundSource.BLOCKS, 1.2F, echo.decoy() ? 0.6F : 1.5F);
         tower.sendParticles(echo.decoy() ? ParticleTypes.SMOKE : ParticleTypes.NOTE, post.getX() + 0.5, post.getY() + 1.6,
                 post.getZ() + 0.5, 5, 0.3, 0.3, 0.3, 0.5);
-        Vec3 bell = Vec3.atCenterOf(echo.bell().offset(def.origin()));
+        Vec3 bell = Vec3.atCenterOf(echo.bell());   // 鐘はワールドの位置（灯台は階の中の位置）
         for (ServerPlayer player : tower.players()) {
             if (!FloorFeatures.inside(woods.box(), player.position(), origin)) {
                 continue;
