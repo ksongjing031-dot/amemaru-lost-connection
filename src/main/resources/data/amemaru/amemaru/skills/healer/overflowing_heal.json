@@ -6,13 +6,15 @@
   "type": "passive",
   "name": "溢れる癒し",
   "description": "あふれた癒しは、薄い光の膜になって残る。満タンを超えて癒した分の一部が、ダメージを吸う障壁になる（最大HPの15%まで・8秒）。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 20,
+  "min_level": 21,
   "requires": [
     {
       "skill": "healer/bond_healing",
@@ -22,6 +24,6 @@
   "passive": {
     "type": "overheal_barrier",
     "value": 30,
-    "value_per_rank": 10
+    "value_per_rank": 5.0
   }
 }

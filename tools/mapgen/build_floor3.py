@@ -1268,7 +1268,7 @@ def floor_json(f):
         "chapter": 1,
         "name": "古代の水路",
         "chapter_title": "第1章　失われた古代領域",
-        "recommended_level": [5, 8],
+        "recommended_level": [10, 17],
         "origin": list(ORIGIN),
         "size": [SIZE, HEIGHT, SIZE],
         "structure": "amemaru:map/floor3/",

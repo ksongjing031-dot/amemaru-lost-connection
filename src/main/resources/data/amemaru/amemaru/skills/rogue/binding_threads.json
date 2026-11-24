@@ -6,9 +6,11 @@
   "type": "active",
   "name": "絡め糸",
   "description": "粘る糸を扇に投げ広げ、前の敵をまとめて絡め取る。絡まった敵は少しの間動けず、その後もしばらく足が鈍る。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -26,7 +28,7 @@
   "delivery": {
     "type": "cone",
     "radius": 6,
-    "radius_per_rank": 0.5,
+    "radius_per_rank": 0.25,
     "angle": 45
   },
   "effects": [
@@ -34,12 +36,12 @@
       "type": "damage",
       "stat": "attack",
       "coefficient": 0.6,
-      "coefficient_per_rank": 0.1
+      "coefficient_per_rank": 0.05
     },
     {
       "type": "root",
       "duration": 1.0,
-      "duration_per_rank": 0.25
+      "duration_per_rank": 0.125
     },
     {
       "type": "status",

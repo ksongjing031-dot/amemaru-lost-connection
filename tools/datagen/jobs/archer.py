@@ -37,7 +37,7 @@ JOB = {
     "upper": {
         "name": "天弓",
         "description": "星の高さまで矢を届かせる射手。奥義（狙撃の「流れ星の一矢」か、速射の「疾風の弓舞」）と、各スキルの第3段が開く。",
-        "min_level": 30,
+        "min_level": 60,
         "min_day": 11,
     },
 }
@@ -141,10 +141,11 @@ active(J, "whirl_arrows", "rapid", 3, 1, "旋風矢",
 passive(J, "chained_arrows", "rapid", 3, "連なる矢",
         "矢が当たるたびに、次の矢が狙いやすくなる。2秒以内に矢を当て続けると、1本ごとにダメージが上がる（10本まで）。",
         "arrow_chain", (2, 1), requires="archer/rapid_mastery")
-active(J, "ricochet", "rapid", 4, 0, "跳ね矢",
+# 11月24日のご指示「アーチャーだと跳弾する矢」：前は Lv20 の段（1章では届かなかった）。2段目（Lv10）へ移した
+active(J, "ricochet", "rapid", 2, 3, "跳ね矢",
        "敵から敵へ跳ねる矢。狙った敵から、近くの敵へ次々に当たる。",
-       mp=18, cd=8, delivery=d_chain(30, (3, 1), 8, 0.85), effects=[dmg("attack", (1.3, 0.2))], tags=["arrow"],
-       anim="archer_shot", requires="archer/burst_arrow")
+       mp=14, cd=8, delivery=d_chain(30, (3, 1), 8, 0.85), effects=[dmg("attack", (1.2, 0.18))], tags=["arrow"],
+       anim="archer_shot", requires="archer/spread_arrows")
 passive(J, "wind_reading", "rapid", 4, "風読み",
         "風を読み、矢の軌道を整える。矢のスキルのダメージが上がり、矢が速く遠くまで飛ぶ。", "wind_reading", (5, 2.5),
         requires="archer/chained_arrows")
@@ -161,3 +162,25 @@ ultimate(J, "gale_dance", "rapid", "疾風の弓舞",
          "天弓の奥義。風をまとって舞うように射る。10秒の間、足が速くなり、矢のダメージが上がり、スキルのクールダウンが早く戻る。",
          mp=50, cd=120, delivery=d_self(), effects=[buff("bow_dance", 10, 30)], requires="archer/arrow_rain",
          anim="archer_dance")
+
+# ================================================================ 11月24日に足したスキル（スキルツリーの作り直し）
+active(J, "quick_draw", "rapid", 1, 3, "速射",
+       "弦を引ききらずに、狙った敵へ3本の矢をたて続けに放つ。",
+       mp=9, cd=4, delivery=d_projectile(26, speed=2.4, burst=3, burst_interval=3), effects=[dmg("attack", (0.55, 0.08))],
+       tags=["arrow"], anim="archer_triple", requires="archer/spread_arrows")
+active(J, "flash_arrow", "sniping", 2, 3, "閃光矢",
+       "鏃に光る石を付けた矢。当たると強く光り、敵の目をくらませる（攻撃が当たりにくくなる）。",
+       mp=14, cd=10, delivery=d_projectile(24, speed=2.2), effects=[dmg("attack", (1.1, 0.18)), blind((30, 5), 4)],
+       tags=["arrow"], anim="archer_shot", requires="archer/piercing_shot")
+active(J, "wind_cloak", "rapid", 3, 3, "風纏い",
+       "風を身にまとい、しばらく足が速くなり、与えるダメージも少し上がる。",
+       mp=16, cd=28, cdpr=-1.5, delivery=d_self(), effects=[buff("haste", (6, 1), (20, 4)), buff("power_up", (6, 1), (8, 2))],
+       anim="archer_dance", requires="archer/triple_shot")
+active(J, "hunters_focus", "sniping", 3, 3, "狩人の集中",
+       "息を止め、獲物だけを見る。しばらく自分の与えるダメージが上がる。",
+       mp=18, cd=36, cdpr=-2, delivery=d_self(), effects=[buff("power_up", (10, 1), (15, 4))], anim="archer_gaze",
+       requires="archer/full_draw")
+active(J, "arrow_fan", "rapid", 4, 0, "扇射",
+       "前へ扇のように5本の矢を放ち、当たった敵を押し返す。",
+       mp=22, cd=11, cdpr=-0.5, delivery=d_projectile(20, speed=2.2, count=5, spread=50), effects=[dmg("attack", (1.0, 0.15)), kb(0.4)],
+       tags=["arrow"], anim="archer_fan", requires="archer/burst_arrow")

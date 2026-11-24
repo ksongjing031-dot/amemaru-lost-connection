@@ -55,7 +55,7 @@ JOB = {
     "upper": {
         "name": "拳聖",
         "description": "拳で人と人をつなぐ聖者。奥義（剛の「百烈・結」か、柔の「天地流転」）と、各スキルの第3段が開く。",
-        "min_level": 30,
+        "min_level": 60,
         "min_day": 11,
     },
 }
@@ -178,3 +178,26 @@ ultimate(J, "heaven_earth", "soft", "天地流転",
                        on_success=[dmg("attack", 1.2), gauge(10), {"type": "combo_step"}]),
                   buff("endless_flow", 8)],
          requires="monk/flowing_stance", anim="monk_heaven")
+
+# ================================================================ 11月24日に足したスキル（スキルツリーの作り直し）
+# ご指示「モンクだと回復できるパンチや、パッシブとは別で一定時間火力上げる自身のバフ」
+active(J, "kaisei_fist", "soft", 1, 3, "回生拳",
+       "気を巡らせた拳で打ち、打った手応えをそのまま命に変える。与えたダメージの一部だけHPが戻る。【継】",
+       mp=10, cd=6, delivery=MELEE, effects=[dmg("attack", (1.3, 0.2), lifesteal=(30, 5))], tags=["fist"], combo="link",
+       anim="monk_palm", requires="monk/palm_strike")
+active(J, "kien", "hard", 2, 3, "気炎",
+       "腹の底の気を燃やし、しばらく自分の与えるダメージを上げる。使うと気が20たまる。",
+       mp=16, cd=40, cdpr=-2, delivery=d_self(), effects=[buff("power_up", (10, 1), (15, 4)), gauge(20)], anim="monk_stance",
+       requires="monk/spin_kick")
+active(J, "air_palm", "soft", 2, 3, "空掌",
+       "離れた敵へ、掌から気の塊を撃ち出す。当たった敵を大きく押し返す。【起】",
+       mp=10, cd=6, delivery=d_projectile(14, speed=1.6, kind="ki"), effects=[dmg("attack", (1.1, 0.18)), kb(1.0)], tags=["fist"],
+       combo="opener", anim="monk_push", requires="monk/flowing_stance")
+active(J, "chain_kicks", "hard", 3, 3, "連環脚",
+       "回りながら三度蹴り、まわりの敵をまとめて打つ。【継】",
+       mp=16, cd=10, delivery=d_around(3.5), effects=[dmg("attack", (0.55, 0.08), hits=3, interval=4), kb(0.3)], tags=["kick"],
+       combo="link", anim="monk_kick", requires="monk/hakkei")
+active(J, "back_strike", "hard", 4, 3, "背当て",
+       "踏み込みざまに背中ごとぶつかり、敵を大きく吹き飛ばしてよろめかせる。【極】",
+       mp=22, cd=14, cdpr=-0.5, link="finisher", delivery=d_dash(4, 1.6), effects=[dmg("attack", (2.2, 0.3)), stagger(1.0), kb(1.4)],
+       tags=["fist"], combo="finisher", anim="monk_dash_punch", requires="monk/rising_dragon")

@@ -6,13 +6,15 @@
   "type": "passive",
   "name": "連ね斬り",
   "description": "剛剣の技を途切れなくつなぐ。3秒以内に違う剛剣のスキルを続けて当てると、1つごとにダメージが上がる（3つまで）。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 25,
+  "min_level": 26,
   "requires": [
     {
       "skill": "knight/greatsword_mastery",
@@ -22,6 +24,6 @@
   "passive": {
     "type": "blade_chain",
     "value": 6,
-    "value_per_rank": 3
+    "value_per_rank": 1.5
   }
 }

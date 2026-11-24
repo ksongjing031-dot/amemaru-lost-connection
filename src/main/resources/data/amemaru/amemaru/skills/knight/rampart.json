@@ -6,9 +6,11 @@
   "type": "active",
   "name": "城壁の構え",
   "description": "盾を前に構えて足を止め、正面からの攻撃を大きく減らす。構えている間は、受けた攻撃で誓気が倍たまる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -23,7 +25,7 @@
     "mp": 10
   },
   "cooldown": 16,
-  "cooldown_per_rank": -2,
+  "cooldown_per_rank": -1,
   "delivery": {
     "type": "self"
   },
@@ -32,9 +34,9 @@
       "type": "buff",
       "buff": "rampart",
       "duration": 6,
-      "duration_per_rank": 1,
+      "duration_per_rank": 0.5,
       "value": 50,
-      "value_per_rank": 5
+      "value_per_rank": 2.5
     }
   ],
   "animation": "knight_rampart",

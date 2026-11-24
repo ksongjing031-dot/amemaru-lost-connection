@@ -6,13 +6,15 @@
   "type": "active",
   "name": "矢嵐",
   "description": "矢筒が空になるまで射続ける。3秒の間、まわり16ブロックでいちばん近い敵へ、次々に矢を放つ（その間は足が遅くなる）。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 25,
+  "min_level": 26,
   "requires": [
     {
       "skill": "archer/ricochet",
@@ -39,7 +41,7 @@
           "type": "damage",
           "stat": "attack",
           "coefficient": 0.5,
-          "coefficient_per_rank": 0.08
+          "coefficient_per_rank": 0.04
         }
       ]
     },

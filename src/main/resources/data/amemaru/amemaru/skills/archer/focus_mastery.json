@@ -6,13 +6,15 @@
   "type": "passive",
   "name": "集中の極意",
   "description": "使った集中は、次の一矢のために戻ってくる。スキルで使った集中の一部が戻る。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 25,
+  "min_level": 26,
   "requires": [
     {
       "skill": "archer/weak_point",
@@ -22,6 +24,6 @@
   "passive": {
     "type": "focus_refund",
     "value": 30,
-    "value_per_rank": 10
+    "value_per_rank": 5.0
   }
 }

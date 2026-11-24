@@ -1,0 +1,45 @@
+{
+  "job": "wizard",
+  "school": "starlight",
+  "row": 4,
+  "column": 3,
+  "type": "active",
+  "name": "光槍",
+  "description": "光を槍のように細くのばし、まっすぐ遠くまで貫く。敵の守りを一部つらぬく。",
+  "max_rank": 5,
+  "rank_costs": [
+    1,
+    1,
+    2,
+    2,
+    3
+  ],
+  "min_level": 21,
+  "requires": [
+    {
+      "skill": "wizard/star_burst",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 28
+  },
+  "cooldown": 13,
+  "cooldown_per_rank": -0.25,
+  "delivery": {
+    "type": "line",
+    "range": 20,
+    "width": 1.4
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "magic",
+      "coefficient": 2.0,
+      "coefficient_per_rank": 0.15,
+      "pierce": 30
+    }
+  ],
+  "animation": "wizard_thunderbolt",
+  "sound": "amemaru:skill.wizard.light_lance"
+}

@@ -3,7 +3,7 @@
   "name": "監視の大眼",
   "model": "amemaru:watcher",
   "floor": 5,
-  "level": 12,
+  "level": 26,
   "description": "祭壇の見張りを束ねる、ひときわ大きな目。そのまなざしは奈落の向こうまで届き、見つけた者のことを、守護者へ二度知らせる。",
   "stats": {
     "hp": 22000,

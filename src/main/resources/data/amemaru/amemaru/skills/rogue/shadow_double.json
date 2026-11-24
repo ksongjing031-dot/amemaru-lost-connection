@@ -6,13 +6,15 @@
   "type": "active",
   "name": "影分身",
   "description": "自分の影を立ち上がらせ、共に戦わせる。8秒の間、スキルを当てるたびに影がもう一度斬りつける（ダメージの一部）。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 25,
+  "min_level": 26,
   "requires": [
     {
       "skill": "rogue/shadow_burial",
@@ -32,7 +34,7 @@
       "buff": "shadow_clone",
       "duration": 8,
       "value": 30,
-      "value_per_rank": 10
+      "value_per_rank": 5.0
     }
   ],
   "animation": "rogue_clone",

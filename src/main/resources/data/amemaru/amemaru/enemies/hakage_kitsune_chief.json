@@ -3,7 +3,7 @@
   "name": "葉隠れの長",
   "model": "amemaru:hakage_kitsune",
   "floor": 2,
-  "level": 8,
+  "level": 17,
   "description": "白く抜けた木立に棲む、葉影ギツネの群れの長。尾の先だけが白く欠けている。群れの背後から、いちばん弱った者を狙う。",
   "stats": {
     "hp": 11000,

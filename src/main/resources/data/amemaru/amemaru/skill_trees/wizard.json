@@ -1,0 +1,1438 @@
+{
+  "_comment": "スキルツリー（tools/datagen/build_skill_trees.py が書き出す。手で直さない）。節（core：職業の核・skill：スキル・stat：ステータスの小さな節・notable：大きな節）と、つながり（links）。x・y はツリーの単位（右・下が正）",
+  "job": "amemaru:wizard",
+  "nodes": [
+    {
+      "id": "core",
+      "kind": "core",
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "id": "s:wizard/star_shield",
+      "kind": "skill",
+      "skill": "amemaru:wizard/star_shield",
+      "x": -167.8,
+      "y": -49.7,
+      "start": false
+    },
+    {
+      "id": "s:wizard/mana_focus",
+      "kind": "skill",
+      "skill": "amemaru:wizard/mana_focus",
+      "x": -244.5,
+      "y": -72.4,
+      "start": false
+    },
+    {
+      "id": "g:starlight:3:3",
+      "kind": "stat",
+      "x": -321.2,
+      "y": -95.1,
+      "stats": {
+        "magic": 2
+      }
+    },
+    {
+      "id": "s:wizard/light_lance",
+      "kind": "skill",
+      "skill": "amemaru:wizard/light_lance",
+      "x": -397.9,
+      "y": -117.9,
+      "start": false
+    },
+    {
+      "id": "n:starlight:3",
+      "kind": "notable",
+      "name": "星読み",
+      "x": -474.6,
+      "y": -140.6,
+      "percent": {
+        "magic": 6
+      }
+    },
+    {
+      "id": "s:wizard/lamp_bolt",
+      "kind": "skill",
+      "skill": "amemaru:wizard/lamp_bolt",
+      "x": -79.2,
+      "y": -52.4,
+      "start": true
+    },
+    {
+      "id": "s:wizard/meteor_shower",
+      "kind": "skill",
+      "skill": "amemaru:wizard/meteor_shower",
+      "x": -145.9,
+      "y": -96.6,
+      "start": false
+    },
+    {
+      "id": "s:wizard/mana_thread",
+      "kind": "skill",
+      "skill": "amemaru:wizard/mana_thread",
+      "x": -212.6,
+      "y": -140.7,
+      "start": false
+    },
+    {
+      "id": "s:wizard/light_veil",
+      "kind": "skill",
+      "skill": "amemaru:wizard/light_veil",
+      "x": -279.4,
+      "y": -184.9,
+      "start": false
+    },
+    {
+      "id": "s:wizard/star_ring",
+      "kind": "skill",
+      "skill": "amemaru:wizard/star_ring",
+      "x": -346.1,
+      "y": -229.1,
+      "start": false
+    },
+    {
+      "id": "s:wizard/comet",
+      "kind": "skill",
+      "skill": "amemaru:wizard/comet",
+      "x": -412.8,
+      "y": -273.2,
+      "start": false
+    },
+    {
+      "id": "s:wizard/lamp_barrage",
+      "kind": "skill",
+      "skill": "amemaru:wizard/lamp_barrage",
+      "x": -162.2,
+      "y": -196.8,
+      "start": false
+    },
+    {
+      "id": "s:wizard/star_burst",
+      "kind": "skill",
+      "skill": "amemaru:wizard/star_burst",
+      "x": -213.1,
+      "y": -258.5,
+      "start": false
+    },
+    {
+      "id": "g:starlight:4:1",
+      "kind": "stat",
+      "x": -264.0,
+      "y": -320.2,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "n:starlight:1",
+      "kind": "notable",
+      "name": "流星の眼",
+      "x": -314.9,
+      "y": -382.0,
+      "stats": {
+        "crit": 3,
+        "crit_damage": 10
+      }
+    },
+    {
+      "id": "s:wizard/swift_chant",
+      "kind": "skill",
+      "skill": "amemaru:wizard/swift_chant",
+      "x": -67.0,
+      "y": -161.7,
+      "start": false
+    },
+    {
+      "id": "s:wizard/mana_resonance",
+      "kind": "skill",
+      "skill": "amemaru:wizard/mana_resonance",
+      "x": -97.6,
+      "y": -235.6,
+      "start": false
+    },
+    {
+      "id": "s:wizard/star_afterglow",
+      "kind": "skill",
+      "skill": "amemaru:wizard/star_afterglow",
+      "x": -128.2,
+      "y": -309.5,
+      "start": false
+    },
+    {
+      "id": "s:wizard/star_guide",
+      "kind": "skill",
+      "skill": "amemaru:wizard/star_guide",
+      "x": -158.8,
+      "y": -383.4,
+      "start": false
+    },
+    {
+      "id": "s:wizard/starry_sky",
+      "kind": "skill",
+      "skill": "amemaru:wizard/starry_sky",
+      "x": -189.4,
+      "y": -457.3,
+      "start": false
+    },
+    {
+      "id": "b21",
+      "kind": "stat",
+      "x": -206.2,
+      "y": -61.1,
+      "stats": {
+        "crit": 1.0
+      }
+    },
+    {
+      "id": "b22",
+      "kind": "stat",
+      "x": -282.9,
+      "y": -83.8,
+      "stats": {
+        "magic": 2
+      }
+    },
+    {
+      "id": "b23",
+      "kind": "stat",
+      "x": -359.5,
+      "y": -106.5,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "b24",
+      "kind": "stat",
+      "x": -436.2,
+      "y": -129.2,
+      "stats": {
+        "magic": 3
+      }
+    },
+    {
+      "id": "b25",
+      "kind": "stat",
+      "x": -112.6,
+      "y": -74.5,
+      "stats": {
+        "magic": 2
+      }
+    },
+    {
+      "id": "b26",
+      "kind": "stat",
+      "x": -179.2,
+      "y": -118.6,
+      "stats": {
+        "mp": 12
+      }
+    },
+    {
+      "id": "b27",
+      "kind": "stat",
+      "x": -246.0,
+      "y": -162.8,
+      "stats": {
+        "magic": 2
+      }
+    },
+    {
+      "id": "b28",
+      "kind": "stat",
+      "x": -312.8,
+      "y": -207.0,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b29",
+      "kind": "stat",
+      "x": -379.5,
+      "y": -251.1,
+      "stats": {
+        "magic": 3
+      }
+    },
+    {
+      "id": "b30",
+      "kind": "stat",
+      "x": -187.6,
+      "y": -227.7,
+      "stats": {
+        "magic": 2
+      }
+    },
+    {
+      "id": "b31",
+      "kind": "stat",
+      "x": -238.6,
+      "y": -289.4,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "b32",
+      "kind": "stat",
+      "x": -289.4,
+      "y": -351.1,
+      "stats": {
+        "magic": 3
+      }
+    },
+    {
+      "id": "b33",
+      "kind": "stat",
+      "x": -82.3,
+      "y": -198.6,
+      "stats": {
+        "mp": 12
+      }
+    },
+    {
+      "id": "b34",
+      "kind": "stat",
+      "x": -112.9,
+      "y": -272.6,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b35",
+      "kind": "stat",
+      "x": -143.5,
+      "y": -346.4,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b36",
+      "kind": "stat",
+      "x": -174.1,
+      "y": -420.4,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b37",
+      "kind": "stat",
+      "x": -39.6,
+      "y": -26.2,
+      "stats": {
+        "mp": 10
+      }
+    },
+    {
+      "id": "b38",
+      "kind": "stat",
+      "x": -106.5,
+      "y": -129.1,
+      "stats": {
+        "magic": 2
+      }
+    },
+    {
+      "id": "b39",
+      "kind": "stat",
+      "x": -300.3,
+      "y": -140.0,
+      "stats": {
+        "magic": 2
+      }
+    },
+    {
+      "id": "b40",
+      "kind": "stat",
+      "x": -246.2,
+      "y": -221.7,
+      "stats": {
+        "magic": 2
+      }
+    },
+    {
+      "id": "b41",
+      "kind": "stat",
+      "x": -170.6,
+      "y": -284.0,
+      "stats": {
+        "magic": 2
+      }
+    },
+    {
+      "id": "b42",
+      "kind": "stat",
+      "x": -454.0,
+      "y": -184.8,
+      "stats": {
+        "magic": 3
+      }
+    },
+    {
+      "id": "b43",
+      "kind": "stat",
+      "x": -433.4,
+      "y": -229.0,
+      "stats": {
+        "magic": 3
+      }
+    },
+    {
+      "id": "b44",
+      "kind": "stat",
+      "x": -380.2,
+      "y": -309.5,
+      "stats": {
+        "magic": 3
+      }
+    },
+    {
+      "id": "b45",
+      "kind": "stat",
+      "x": -347.5,
+      "y": -345.7,
+      "stats": {
+        "magic": 3
+      }
+    },
+    {
+      "id": "b46",
+      "kind": "stat",
+      "x": -273.1,
+      "y": -407.1,
+      "stats": {
+        "magic": 3
+      }
+    },
+    {
+      "id": "b47",
+      "kind": "stat",
+      "x": -231.2,
+      "y": -432.2,
+      "stats": {
+        "magic": 3
+      }
+    },
+    {
+      "id": "s:wizard/starfall",
+      "kind": "skill",
+      "skill": "amemaru:wizard/starfall",
+      "x": -492.0,
+      "y": -325.6,
+      "start": false
+    },
+    {
+      "id": "b49",
+      "kind": "stat",
+      "x": -452.4,
+      "y": -299.4,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "s:wizard/ice_shard",
+      "kind": "skill",
+      "skill": "amemaru:wizard/ice_shard",
+      "x": 167.8,
+      "y": -49.7,
+      "start": false
+    },
+    {
+      "id": "g:frost:2:3",
+      "kind": "stat",
+      "x": 244.5,
+      "y": -72.4,
+      "stats": {
+        "magic": 2
+      }
+    },
+    {
+      "id": "s:wizard/frost_mist",
+      "kind": "skill",
+      "skill": "amemaru:wizard/frost_mist",
+      "x": 321.2,
+      "y": -95.1,
+      "start": false
+    },
+    {
+      "id": "g:frost:4:3",
+      "kind": "stat",
+      "x": 397.9,
+      "y": -117.9,
+      "stats": {
+        "defense": 3
+      }
+    },
+    {
+      "id": "n:frost:3",
+      "kind": "notable",
+      "name": "凍てる泉",
+      "x": 474.6,
+      "y": -140.6,
+      "percent": {
+        "mp": 10,
+        "magic": 3
+      }
+    },
+    {
+      "id": "s:wizard/frost_circle",
+      "kind": "skill",
+      "skill": "amemaru:wizard/frost_circle",
+      "x": 79.2,
+      "y": -52.4,
+      "start": true
+    },
+    {
+      "id": "s:wizard/chain_lightning",
+      "kind": "skill",
+      "skill": "amemaru:wizard/chain_lightning",
+      "x": 145.9,
+      "y": -96.6,
+      "start": false
+    },
+    {
+      "id": "s:wizard/blink",
+      "kind": "skill",
+      "skill": "amemaru:wizard/blink",
+      "x": 212.6,
+      "y": -140.7,
+      "start": false
+    },
+    {
+      "id": "s:wizard/thunderbolt",
+      "kind": "skill",
+      "skill": "amemaru:wizard/thunderbolt",
+      "x": 279.4,
+      "y": -184.9,
+      "start": false
+    },
+    {
+      "id": "s:wizard/blizzard",
+      "kind": "skill",
+      "skill": "amemaru:wizard/blizzard",
+      "x": 346.1,
+      "y": -229.1,
+      "start": false
+    },
+    {
+      "id": "s:wizard/absolute_zero",
+      "kind": "skill",
+      "skill": "amemaru:wizard/absolute_zero",
+      "x": 412.8,
+      "y": -273.2,
+      "start": false
+    },
+    {
+      "id": "s:wizard/icicle",
+      "kind": "skill",
+      "skill": "amemaru:wizard/icicle",
+      "x": 162.2,
+      "y": -196.8,
+      "start": false
+    },
+    {
+      "id": "s:wizard/frost_wave",
+      "kind": "skill",
+      "skill": "amemaru:wizard/frost_wave",
+      "x": 213.1,
+      "y": -258.5,
+      "start": false
+    },
+    {
+      "id": "g:frost:4:1",
+      "kind": "stat",
+      "x": 264.0,
+      "y": -320.2,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "n:frost:1",
+      "kind": "notable",
+      "name": "霜の衣",
+      "x": 314.9,
+      "y": -382.0,
+      "stats": {
+        "defense": 6
+      },
+      "percent": {
+        "hp": 6
+      }
+    },
+    {
+      "id": "s:wizard/mana_spring",
+      "kind": "skill",
+      "skill": "amemaru:wizard/mana_spring",
+      "x": 67.0,
+      "y": -161.7,
+      "start": false
+    },
+    {
+      "id": "s:wizard/frost_heart",
+      "kind": "skill",
+      "skill": "amemaru:wizard/frost_heart",
+      "x": 97.6,
+      "y": -235.6,
+      "start": false
+    },
+    {
+      "id": "s:wizard/deep_chill",
+      "kind": "skill",
+      "skill": "amemaru:wizard/deep_chill",
+      "x": 128.2,
+      "y": -309.5,
+      "start": false
+    },
+    {
+      "id": "s:wizard/thunder_mastery",
+      "kind": "skill",
+      "skill": "amemaru:wizard/thunder_mastery",
+      "x": 158.8,
+      "y": -383.4,
+      "start": false
+    },
+    {
+      "id": "s:wizard/permafrost",
+      "kind": "skill",
+      "skill": "amemaru:wizard/permafrost",
+      "x": 189.4,
+      "y": -457.3,
+      "start": false
+    },
+    {
+      "id": "b70",
+      "kind": "stat",
+      "x": 206.2,
+      "y": -61.1,
+      "stats": {
+        "magic": 2
+      }
+    },
+    {
+      "id": "b71",
+      "kind": "stat",
+      "x": 282.9,
+      "y": -83.8,
+      "stats": {
+        "defense": 2
+      }
+    },
+    {
+      "id": "b72",
+      "kind": "stat",
+      "x": 359.5,
+      "y": -106.5,
+      "stats": {
+        "magic": 3
+      }
+    },
+    {
+      "id": "b73",
+      "kind": "stat",
+      "x": 436.2,
+      "y": -129.2,
+      "stats": {
+        "defense": 3
+      }
+    },
+    {
+      "id": "b74",
+      "kind": "stat",
+      "x": 112.6,
+      "y": -74.5,
+      "stats": {
+        "magic": 2
+      }
+    },
+    {
+      "id": "b75",
+      "kind": "stat",
+      "x": 179.2,
+      "y": -118.6,
+      "stats": {
+        "mp": 12
+      }
+    },
+    {
+      "id": "b76",
+      "kind": "stat",
+      "x": 246.0,
+      "y": -162.8,
+      "stats": {
+        "magic": 2
+      }
+    },
+    {
+      "id": "b77",
+      "kind": "stat",
+      "x": 312.8,
+      "y": -207.0,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b78",
+      "kind": "stat",
+      "x": 379.5,
+      "y": -251.1,
+      "stats": {
+        "magic": 3
+      }
+    },
+    {
+      "id": "b79",
+      "kind": "stat",
+      "x": 187.6,
+      "y": -227.7,
+      "stats": {
+        "magic": 2
+      }
+    },
+    {
+      "id": "b80",
+      "kind": "stat",
+      "x": 238.6,
+      "y": -289.4,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b81",
+      "kind": "stat",
+      "x": 289.4,
+      "y": -351.1,
+      "stats": {
+        "magic": 3
+      }
+    },
+    {
+      "id": "b82",
+      "kind": "stat",
+      "x": 82.3,
+      "y": -198.6,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b83",
+      "kind": "stat",
+      "x": 112.9,
+      "y": -272.6,
+      "stats": {
+        "defense": 2
+      }
+    },
+    {
+      "id": "b84",
+      "kind": "stat",
+      "x": 143.5,
+      "y": -346.4,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b85",
+      "kind": "stat",
+      "x": 174.1,
+      "y": -420.4,
+      "stats": {
+        "defense": 3
+      }
+    },
+    {
+      "id": "b86",
+      "kind": "stat",
+      "x": 39.6,
+      "y": -26.2,
+      "stats": {
+        "mp": 10
+      }
+    },
+    {
+      "id": "b87",
+      "kind": "stat",
+      "x": 106.5,
+      "y": -129.1,
+      "stats": {
+        "mp": 10
+      }
+    },
+    {
+      "id": "b88",
+      "kind": "stat",
+      "x": 300.3,
+      "y": -140.0,
+      "stats": {
+        "mp": 12
+      }
+    },
+    {
+      "id": "b89",
+      "kind": "stat",
+      "x": 246.2,
+      "y": -221.7,
+      "stats": {
+        "mp": 12
+      }
+    },
+    {
+      "id": "b90",
+      "kind": "stat",
+      "x": 170.6,
+      "y": -284.0,
+      "stats": {
+        "mp": 12
+      }
+    },
+    {
+      "id": "b91",
+      "kind": "stat",
+      "x": 454.0,
+      "y": -184.8,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b92",
+      "kind": "stat",
+      "x": 433.4,
+      "y": -229.0,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b93",
+      "kind": "stat",
+      "x": 380.2,
+      "y": -309.5,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b94",
+      "kind": "stat",
+      "x": 347.5,
+      "y": -345.7,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b95",
+      "kind": "stat",
+      "x": 273.1,
+      "y": -407.1,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b96",
+      "kind": "stat",
+      "x": 231.2,
+      "y": -432.2,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "s:wizard/ice_garden",
+      "kind": "skill",
+      "skill": "amemaru:wizard/ice_garden",
+      "x": 492.0,
+      "y": -325.6,
+      "start": false
+    },
+    {
+      "id": "b98",
+      "kind": "stat",
+      "x": 452.4,
+      "y": -299.4,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "n:bridge:2",
+      "kind": "notable",
+      "name": "魔力の巡り",
+      "x": 0.0,
+      "y": -255.0,
+      "percent": {
+        "mp": 8,
+        "magic": 2
+      }
+    },
+    {
+      "id": "b100",
+      "kind": "stat",
+      "x": -48.8,
+      "y": -245.3,
+      "stats": {
+        "mp": 12
+      }
+    },
+    {
+      "id": "b101",
+      "kind": "stat",
+      "x": 48.8,
+      "y": -245.3,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "n:bridge:4",
+      "kind": "notable",
+      "name": "深い詠唱",
+      "x": 0.0,
+      "y": -415.0,
+      "stats": {
+        "cooldown_reduction": 4
+      },
+      "percent": {
+        "magic": 3
+      }
+    },
+    {
+      "id": "b103",
+      "kind": "stat",
+      "x": -105.9,
+      "y": -393.9,
+      "stats": {
+        "magic": 3
+      }
+    },
+    {
+      "id": "b104",
+      "kind": "stat",
+      "x": -52.9,
+      "y": -404.5,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b105",
+      "kind": "stat",
+      "x": 105.9,
+      "y": -393.9,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b106",
+      "kind": "stat",
+      "x": 52.9,
+      "y": -404.5,
+      "stats": {
+        "magic": 3
+      }
+    }
+  ],
+  "links": [
+    [
+      "b100",
+      "n:bridge:2"
+    ],
+    [
+      "b100",
+      "s:wizard/mana_resonance"
+    ],
+    [
+      "b101",
+      "n:bridge:2"
+    ],
+    [
+      "b101",
+      "s:wizard/frost_heart"
+    ],
+    [
+      "b103",
+      "b104"
+    ],
+    [
+      "b103",
+      "s:wizard/star_guide"
+    ],
+    [
+      "b104",
+      "n:bridge:4"
+    ],
+    [
+      "b105",
+      "b106"
+    ],
+    [
+      "b105",
+      "s:wizard/thunder_mastery"
+    ],
+    [
+      "b106",
+      "n:bridge:4"
+    ],
+    [
+      "b21",
+      "s:wizard/mana_focus"
+    ],
+    [
+      "b21",
+      "s:wizard/star_shield"
+    ],
+    [
+      "b22",
+      "g:starlight:3:3"
+    ],
+    [
+      "b22",
+      "s:wizard/mana_focus"
+    ],
+    [
+      "b23",
+      "g:starlight:3:3"
+    ],
+    [
+      "b23",
+      "s:wizard/light_lance"
+    ],
+    [
+      "b24",
+      "n:starlight:3"
+    ],
+    [
+      "b24",
+      "s:wizard/light_lance"
+    ],
+    [
+      "b25",
+      "s:wizard/lamp_bolt"
+    ],
+    [
+      "b25",
+      "s:wizard/meteor_shower"
+    ],
+    [
+      "b26",
+      "s:wizard/mana_thread"
+    ],
+    [
+      "b26",
+      "s:wizard/meteor_shower"
+    ],
+    [
+      "b27",
+      "s:wizard/light_veil"
+    ],
+    [
+      "b27",
+      "s:wizard/mana_thread"
+    ],
+    [
+      "b28",
+      "s:wizard/light_veil"
+    ],
+    [
+      "b28",
+      "s:wizard/star_ring"
+    ],
+    [
+      "b29",
+      "s:wizard/comet"
+    ],
+    [
+      "b29",
+      "s:wizard/star_ring"
+    ],
+    [
+      "b30",
+      "s:wizard/lamp_barrage"
+    ],
+    [
+      "b30",
+      "s:wizard/star_burst"
+    ],
+    [
+      "b31",
+      "g:starlight:4:1"
+    ],
+    [
+      "b31",
+      "s:wizard/star_burst"
+    ],
+    [
+      "b32",
+      "g:starlight:4:1"
+    ],
+    [
+      "b32",
+      "n:starlight:1"
+    ],
+    [
+      "b33",
+      "s:wizard/mana_resonance"
+    ],
+    [
+      "b33",
+      "s:wizard/swift_chant"
+    ],
+    [
+      "b34",
+      "s:wizard/mana_resonance"
+    ],
+    [
+      "b34",
+      "s:wizard/star_afterglow"
+    ],
+    [
+      "b35",
+      "s:wizard/star_afterglow"
+    ],
+    [
+      "b35",
+      "s:wizard/star_guide"
+    ],
+    [
+      "b36",
+      "s:wizard/star_guide"
+    ],
+    [
+      "b36",
+      "s:wizard/starry_sky"
+    ],
+    [
+      "b37",
+      "core"
+    ],
+    [
+      "b37",
+      "s:wizard/lamp_bolt"
+    ],
+    [
+      "b38",
+      "s:wizard/meteor_shower"
+    ],
+    [
+      "b38",
+      "s:wizard/swift_chant"
+    ],
+    [
+      "b39",
+      "g:starlight:3:3"
+    ],
+    [
+      "b39",
+      "s:wizard/light_veil"
+    ],
+    [
+      "b40",
+      "s:wizard/light_veil"
+    ],
+    [
+      "b40",
+      "s:wizard/star_burst"
+    ],
+    [
+      "b41",
+      "s:wizard/star_afterglow"
+    ],
+    [
+      "b41",
+      "s:wizard/star_burst"
+    ],
+    [
+      "b42",
+      "b43"
+    ],
+    [
+      "b42",
+      "n:starlight:3"
+    ],
+    [
+      "b43",
+      "s:wizard/comet"
+    ],
+    [
+      "b44",
+      "b45"
+    ],
+    [
+      "b44",
+      "s:wizard/comet"
+    ],
+    [
+      "b45",
+      "n:starlight:1"
+    ],
+    [
+      "b46",
+      "b47"
+    ],
+    [
+      "b46",
+      "n:starlight:1"
+    ],
+    [
+      "b47",
+      "s:wizard/starry_sky"
+    ],
+    [
+      "b49",
+      "s:wizard/comet"
+    ],
+    [
+      "b49",
+      "s:wizard/starfall"
+    ],
+    [
+      "b70",
+      "g:frost:2:3"
+    ],
+    [
+      "b70",
+      "s:wizard/ice_shard"
+    ],
+    [
+      "b71",
+      "g:frost:2:3"
+    ],
+    [
+      "b71",
+      "s:wizard/frost_mist"
+    ],
+    [
+      "b72",
+      "g:frost:4:3"
+    ],
+    [
+      "b72",
+      "s:wizard/frost_mist"
+    ],
+    [
+      "b73",
+      "g:frost:4:3"
+    ],
+    [
+      "b73",
+      "n:frost:3"
+    ],
+    [
+      "b74",
+      "s:wizard/chain_lightning"
+    ],
+    [
+      "b74",
+      "s:wizard/frost_circle"
+    ],
+    [
+      "b75",
+      "s:wizard/blink"
+    ],
+    [
+      "b75",
+      "s:wizard/chain_lightning"
+    ],
+    [
+      "b76",
+      "s:wizard/blink"
+    ],
+    [
+      "b76",
+      "s:wizard/thunderbolt"
+    ],
+    [
+      "b77",
+      "s:wizard/blizzard"
+    ],
+    [
+      "b77",
+      "s:wizard/thunderbolt"
+    ],
+    [
+      "b78",
+      "s:wizard/absolute_zero"
+    ],
+    [
+      "b78",
+      "s:wizard/blizzard"
+    ],
+    [
+      "b79",
+      "s:wizard/frost_wave"
+    ],
+    [
+      "b79",
+      "s:wizard/icicle"
+    ],
+    [
+      "b80",
+      "g:frost:4:1"
+    ],
+    [
+      "b80",
+      "s:wizard/frost_wave"
+    ],
+    [
+      "b81",
+      "g:frost:4:1"
+    ],
+    [
+      "b81",
+      "n:frost:1"
+    ],
+    [
+      "b82",
+      "s:wizard/frost_heart"
+    ],
+    [
+      "b82",
+      "s:wizard/mana_spring"
+    ],
+    [
+      "b83",
+      "s:wizard/deep_chill"
+    ],
+    [
+      "b83",
+      "s:wizard/frost_heart"
+    ],
+    [
+      "b84",
+      "s:wizard/deep_chill"
+    ],
+    [
+      "b84",
+      "s:wizard/thunder_mastery"
+    ],
+    [
+      "b85",
+      "s:wizard/permafrost"
+    ],
+    [
+      "b85",
+      "s:wizard/thunder_mastery"
+    ],
+    [
+      "b86",
+      "core"
+    ],
+    [
+      "b86",
+      "s:wizard/frost_circle"
+    ],
+    [
+      "b87",
+      "s:wizard/chain_lightning"
+    ],
+    [
+      "b87",
+      "s:wizard/mana_spring"
+    ],
+    [
+      "b88",
+      "s:wizard/frost_mist"
+    ],
+    [
+      "b88",
+      "s:wizard/thunderbolt"
+    ],
+    [
+      "b89",
+      "s:wizard/frost_wave"
+    ],
+    [
+      "b89",
+      "s:wizard/thunderbolt"
+    ],
+    [
+      "b90",
+      "s:wizard/deep_chill"
+    ],
+    [
+      "b90",
+      "s:wizard/frost_wave"
+    ],
+    [
+      "b91",
+      "b92"
+    ],
+    [
+      "b91",
+      "n:frost:3"
+    ],
+    [
+      "b92",
+      "s:wizard/absolute_zero"
+    ],
+    [
+      "b93",
+      "b94"
+    ],
+    [
+      "b93",
+      "s:wizard/absolute_zero"
+    ],
+    [
+      "b94",
+      "n:frost:1"
+    ],
+    [
+      "b95",
+      "b96"
+    ],
+    [
+      "b95",
+      "n:frost:1"
+    ],
+    [
+      "b96",
+      "s:wizard/permafrost"
+    ],
+    [
+      "b98",
+      "s:wizard/absolute_zero"
+    ],
+    [
+      "b98",
+      "s:wizard/ice_garden"
+    ],
+    [
+      "s:wizard/blink",
+      "s:wizard/icicle"
+    ],
+    [
+      "s:wizard/chain_lightning",
+      "s:wizard/ice_shard"
+    ],
+    [
+      "s:wizard/frost_heart",
+      "s:wizard/icicle"
+    ],
+    [
+      "s:wizard/lamp_barrage",
+      "s:wizard/mana_resonance"
+    ],
+    [
+      "s:wizard/lamp_barrage",
+      "s:wizard/mana_thread"
+    ],
+    [
+      "s:wizard/meteor_shower",
+      "s:wizard/star_shield"
+    ]
+  ]
+}

@@ -90,6 +90,12 @@ public final class PlayerData {
     // ---- スキル（保存する）
     private final Map<ResourceLocation, Integer> learned = new LinkedHashMap<>();
     private final ResourceLocation[] loadout = new ResourceLocation[LOADOUT_SIZE];
+    /**
+     * スキルツリーで取ったステータスの節（11月24日。今の戦闘職のツリーの節の名前。スキルの節は {@link #learned} の段階で決まる）。
+     */
+    private final Set<String> treeNodes = new LinkedHashSet<>();
+    /** スキルツリーの形の版（0：ステータスを別に振っていたころのデータ。ログインのときに、ポイントをすべて戻して1にする）。 */
+    private int treeVersion = TREE_VERSION;
 
     // ---- スキル（保存しない）
     private double gauge;
@@ -403,6 +409,44 @@ public final class PlayerData {
     /** 習得したすべてのスキルと段階（読み取り専用）。 */
     public Map<ResourceLocation, Integer> getLearnedSkills() {
         return Collections.unmodifiableMap(learned);
+    }
+
+    // ---------------------------------------------------------------- スキルツリー（11月24日）
+
+    /** 今のスキルツリーの形の版。 */
+    public static final int TREE_VERSION = 1;
+
+    /** 取ったステータスの節（読み取り専用）。 */
+    public Set<String> getTreeNodes() {
+        return Collections.unmodifiableSet(treeNodes);
+    }
+
+    public boolean hasTreeNode(String node) {
+        return treeNodes.contains(node);
+    }
+
+    public void addTreeNode(String node) {
+        if (treeNodes.add(node)) {
+            dirty |= SYNC_SKILLS | SYNC_STATS;
+            invalidateStats();
+        }
+    }
+
+    /** 取ったステータスの節をすべて消す。 */
+    public void clearTreeNodes() {
+        if (!treeNodes.isEmpty()) {
+            treeNodes.clear();
+            dirty |= SYNC_SKILLS | SYNC_STATS;
+            invalidateStats();
+        }
+    }
+
+    public int getTreeVersion() {
+        return treeVersion;
+    }
+
+    public void setTreeVersion(int version) {
+        treeVersion = version;
     }
 
     /** 習得したスキルとスキル枠をすべて消す。 */
@@ -737,6 +781,12 @@ public final class PlayerData {
             loadoutTag.add(StringTag.valueOf(skill == null ? "" : skill.toString()));
         }
         skills.put("loadout", loadoutTag);
+        ListTag treeTag = new ListTag();
+        for (String node : treeNodes) {
+            treeTag.add(StringTag.valueOf(node));
+        }
+        skills.put("tree", treeTag);
+        skills.putInt("treeVersion", treeVersion);
         // クールダウンは、ログアウトしても続く（ログインし直して使い直す、を防ぐ）。時刻はすべてのディメンションで共通のゲーム内時刻
         CompoundTag cooldownTag = new CompoundTag();
         for (Map.Entry<ResourceLocation, SkillCooldown> entry : cooldowns.entrySet()) {
@@ -820,6 +870,13 @@ public final class PlayerData {
             String value = i < loadoutTag.size() ? loadoutTag.getString(i) : "";
             loadout[i] = value.isEmpty() ? null : ResourceLocation.tryParse(value);
         }
+        treeNodes.clear();
+        ListTag treeTag = skills.getList("tree", Tag.TAG_STRING);
+        for (int i = 0; i < treeTag.size(); i++) {
+            treeNodes.add(treeTag.getString(i));
+        }
+        // 11月24日より前のデータ（ツリーの版がない）：ログインのときにポイントをすべて戻す（SkillTreeService#migrate）
+        treeVersion = skills.contains("treeVersion") ? skills.getInt("treeVersion") : (tag.contains("growth") ? 0 : TREE_VERSION);
 
         cooldowns.clear();
         CompoundTag cooldownTag = skills.getCompound("cooldowns");
@@ -870,6 +927,9 @@ public final class PlayerData {
         learned.clear();
         learned.putAll(other.learned);
         System.arraycopy(other.loadout, 0, loadout, 0, loadout.length);
+        treeNodes.clear();
+        treeNodes.addAll(other.treeNodes);
+        treeVersion = other.treeVersion;
         // クールダウンは、死んでも消えない（死んで使い直す、を防ぐ）。ゲージ・詠唱・強化は消える
         cooldowns.clear();
         cooldowns.putAll(other.cooldowns);

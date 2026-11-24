@@ -32,7 +32,7 @@ public class StatusScreen extends Screen {
     private static final int ROW_HEIGHT = 13;
     private static final int STATS_TOP = 73;
     private static final int SUB_TOP = 181;
-    private static final int VALUE_RIGHT = 160;
+    private static final int VALUE_RIGHT = 196;
 
     private static final int OUTLINE = 0xFF090C14;
     private static final int BORDER = 0xFF3E5274;
@@ -59,6 +59,16 @@ public class StatusScreen extends Screen {
         STAT_COLORS.put(StatType.DEFENSE, 0xFFE0B04A);
         STAT_COLORS.put(StatType.SPEED, 0xFFE8F4FF);
         STAT_COLORS.put(StatType.CRIT, 0xFFFFE066);
+        // 11月24日：スキルツリーのステータスの節の印にも使うため、装備で上がる4つの色も決める
+        STAT_COLORS.put(StatType.CRIT_DAMAGE, 0xFFFFB45C);
+        STAT_COLORS.put(StatType.HEAL_POWER, 0xFF7CF0B0);
+        STAT_COLORS.put(StatType.COOLDOWN_REDUCTION, 0xFF8FD3FF);
+        STAT_COLORS.put(StatType.LOST_RESIST, 0xFFC8C8D8);
+    }
+
+    /** ステータスの色（スキルツリーの節の印でも使う）。 */
+    static int statColor(StatType type) {
+        return STAT_COLORS.getOrDefault(type, 0xFFFFFFFF);
     }
 
     private final Map<StatType, Button> plusButtons = new EnumMap<>(StatType.class);
@@ -74,15 +84,7 @@ public class StatusScreen extends Screen {
         left = (width - PANEL_WIDTH) / 2;
         top = (height - PANEL_HEIGHT) / 2;
         plusButtons.clear();
-
-        int y = top + STATS_TOP;
-        for (StatType type : StatType.allocatable()) {
-            CrystalButton button = new CrystalButton(left + PANEL_WIDTH - 34, y - 1, 20, 12,
-                    Component.literal("+"), pressed -> allocate(type));
-            button.setTooltip(Tooltip.create(Component.translatable("screen.amemaru.status.plus_tooltip")));
-            plusButtons.put(type, addRenderableWidget(button));
-            y += ROW_HEIGHT;
-        }
+        // 11月24日：ステータスはスキルツリーのステータスの節で振る（ここには「+」を置かない）
 
         int buttonY = top + PANEL_HEIGHT - 20;
         addRenderableWidget(new CrystalButton(left + 12, buttonY, 64, 16,
@@ -219,7 +221,7 @@ public class StatusScreen extends Screen {
     private void renderGrowth(GuiGraphics graphics, ClientPlayerState state) {
         int gemX = left + 14;
         int gemY = top + 24;
-        boolean pointsLeft = state.statPoints() > 0;
+        boolean pointsLeft = state.skillPoints() > 0;
         RenderSystem.enableBlend();
         if (pointsLeft) {
             float pulse = 0.45F + 0.55F * (0.5F + 0.5F * Mth.sin(Util.getMillis() / 1000.0F * 4.4F));
@@ -270,8 +272,8 @@ public class StatusScreen extends Screen {
         int x = left + 12;
         int right = left + PANEL_WIDTH - 12;
         graphics.drawString(font, Component.translatable("screen.amemaru.status.base_section"), x, top + 60, TEXT_HEADER, true);
-        Component points = Component.translatable("screen.amemaru.status.points", state.statPoints());
-        boolean pointsLeft = state.statPoints() > 0;
+        Component points = Component.translatable("screen.amemaru.status.points", state.skillPoints());
+        boolean pointsLeft = state.skillPoints() > 0;
         int badgeRight = right - 2;
         int badgeLeft = badgeRight - font.width(points) - 8;
         graphics.fill(badgeLeft, top + 58, badgeRight, top + 69, pointsLeft ? 0xC0403A10 : 0x80202638);
@@ -292,11 +294,6 @@ public class StatusScreen extends Screen {
             graphics.drawString(font, Component.translatable(type.translationKey()), x + 12, y + 2, TEXT, true);
             String value = type.format(state.stat(type));
             graphics.drawString(font, value, left + VALUE_RIGHT - font.width(value), y + 2, TEXT, true);
-            int points2 = state.allocated(type);
-            if (points2 > 0) {
-                graphics.drawString(font, Component.translatable("screen.amemaru.status.allocated", points2),
-                        left + VALUE_RIGHT + 4, y + 2, TEXT_DIM, true);
-            }
             y += ROW_HEIGHT;
             row++;
         }

@@ -1,0 +1,52 @@
+{
+  "job": "wizard",
+  "school": "frost",
+  "row": 1,
+  "column": 3,
+  "type": "active",
+  "name": "氷礫",
+  "description": "小さな氷のつぶてを撃ち出す。当たった敵を少し凍えさせる。",
+  "max_rank": 5,
+  "rank_costs": [
+    1,
+    1,
+    2,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "requires": [
+    {
+      "skill": "wizard/frost_circle",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 8
+  },
+  "cooldown": 3,
+  "delivery": {
+    "type": "projectile",
+    "kind": "lamp",
+    "range": 18,
+    "speed": 2.2,
+    "radius": 0.25
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "magic",
+      "coefficient": 0.9,
+      "coefficient_per_rank": 0.075
+    },
+    {
+      "type": "chill",
+      "stacks": 1,
+      "duration": 4,
+      "max": 5,
+      "freeze": 2
+    }
+  ],
+  "animation": "wizard_icicle",
+  "sound": "amemaru:skill.wizard.ice_shard"
+}

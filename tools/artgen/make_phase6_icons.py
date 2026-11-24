@@ -1033,6 +1033,207 @@ def w_permafrost(c):
     c.line([(3, 20), (29, 20)], WHITE, 1)
 
 
+# ================================================================ 11月24日に足したスキル（スキルツリーの作り直し）
+def flame(c, cx, cy, s, col=FIRE, core=GOLD_LIGHT):
+    """上へ立つ炎（cx, cy は根もと、s は高さ）。"""
+    c.poly([(cx, cy - s), (cx + s * 0.45, cy - s * 0.35), (cx + s * 0.35, cy), (cx - s * 0.35, cy), (cx - s * 0.45, cy - s * 0.35)],
+           fill=col)
+    c.poly([(cx, cy - s * 0.6), (cx + s * 0.22, cy - s * 0.2), (cx, cy), (cx - s * 0.22, cy - s * 0.2)], fill=core)
+
+
+def a_quick_draw(c):
+    bow(c, 10, 16, 11, 110, 250)
+    for y in (9, 16, 23):
+        arrow(c, 12, y, 29, y)
+
+
+def a_flash_arrow(c):
+    arrow(c, 3, 27, 22, 8)
+    for a in range(0, 360, 45):
+        r = math.radians(a)
+        c.line([(24, 6), (24 + int(6 * math.cos(r)), 6 + int(6 * math.sin(r)))], THUNDER, 1)
+    c.ellipse(21, 3, 27, 9, fill=WHITE)
+
+
+def a_wind_cloak(c):
+    person(c, 16, 6, ARCHER)
+    swirl(c, 16, 17, 12, WIND, 1.2, 1)
+    up_arrow(c, 26, 6, GOLD_LIGHT)
+
+
+def a_hunters_focus(c):
+    eye(c, 15, 11, 14, 8, WHITE, ARCHER)
+    flame(c, 15, 30, 10)
+    up_arrow(c, 27, 4, GOLD_LIGHT)
+
+
+def a_arrow_fan(c):
+    for deg in (-50, -25, 0, 25, 50):
+        r = math.radians(deg - 90)
+        arrow(c, 16, 28, 16 + int(14 * math.cos(r)), 28 + int(14 * math.sin(r)))
+
+
+def h_bell_strike(c):
+    c.line([(5, 28), (19, 12)], WOOD_LIGHT, 2)
+    bell(c, 21, 4, 11)
+    plus_mark(c, 7, 7, LIFE)
+    sparkle(c, 27, 21, WHITE, 2)
+
+
+def h_mending_light(c):
+    c.ellipse(9, 9, 23, 23, fill=BELL)
+    cross(c, 16, 16, 4, LIFE, LIFE_DARK)
+    waves(c, 16, 16, (10, 13), LIFE, -60, 60)
+
+
+def h_chorus_bell(c):
+    bell(c, 9, 6, 10)
+    bell(c, 22, 9, 10)
+    waves(c, 16, 22, (9, 12), BELL, 200, 340)
+    up_arrow(c, 27, 4, FIRE)
+
+
+def h_swift_prayer(c):
+    c.ellipse(10, 3, 22, 15, fill=BELL)
+    for i, y in enumerate((18, 22, 26)):
+        c.line([(4 + i * 3, y), (28, y)], mix(WIND, CLEAR, i * 0.2), 2)
+
+
+def h_judgment_bell(c):
+    bell(c, 16, 3, 16)
+    bolt(c, [(7, 21), (11, 25), (8, 25), (12, 30)], THUNDER)
+    bolt(c, [(25, 21), (21, 25), (24, 25), (20, 30)], THUNDER)
+
+
+def r_throwing_knife(c):
+    dagger(c, 6, 26, 24, 8)
+    for i in range(3):
+        c.line([(3 + i * 3, 29 - i * 3), (6 + i * 3, 29 - i * 3)], SMOKE, 1)
+
+
+def r_twin_fangs(c):
+    dagger(c, 6, 27, 22, 6)
+    dagger(c, 26, 27, 10, 6, blade=SHADOW)
+
+
+def r_venom_veil(c):
+    cloud(c, 16, 13, 5, VENOM, VENOM_DARK)
+    for x in (9, 16, 23):
+        droplet(c, x, 25, 2)
+
+
+def r_shadow_dance(c):
+    person(c, 12, 5, SHADOW_DARK)
+    person(c, 20, 7, SHADOW)
+    flame(c, 26, 14, 8)
+
+
+def r_hamstring(c):
+    dagger(c, 4, 22, 26, 22)
+    chain_links(c, 6, 28, 26, 28, 4, SMOKE)
+    c.line([(14, 6), (18, 14)], MARK_RED, 2)
+
+
+def m_kaisei_fist(c):
+    fist(c, 14, 16, 9)
+    cross(c, 25, 8, 3, LIFE, LIFE_DARK)
+    swirl(c, 14, 16, 13, LIFE, 0.8, 1)
+
+
+def m_kien(c):
+    flame(c, 16, 29, 22, FIRE, GOLD_LIGHT)
+    fist(c, 16, 20, 5)
+
+
+def m_air_palm(c):
+    palm(c, 9, 16, 8)
+    for r in (6, 9, 12):
+        c.arc((16 - r, 16 - r, 16 + r, 16 + r), -50, 50, KI, 1)
+
+
+def m_chain_kicks(c):
+    swirl(c, 16, 16, 13, MONK, 1.6, 2)
+    for a in (0, 120, 240):
+        r = math.radians(a)
+        c.ellipse(16 + int(11 * math.cos(r)) - 2, 16 + int(11 * math.sin(r)) - 2, 16 + int(11 * math.cos(r)) + 2,
+                  16 + int(11 * math.sin(r)) + 2, fill=FIST)
+
+
+def m_back_strike(c):
+    person(c, 11, 6, FIST_DARK)
+    for y in (12, 17, 22):
+        c.line([(18, y), (29, y)], KI, 1)
+    c.poly([(24, 9), (30, 16), (24, 23)], fill=FIST)
+
+
+def k_sword_pressure(c):
+    sword(c, 6, 26, 18, 6)
+    for r in (8, 11, 14):
+        c.arc((14 - r, 16 - r, 14 + r, 16 + r), -60, 20, WHITE, 1)
+
+
+def k_war_cry(c):
+    person(c, 16, 7, KNIGHT)
+    waves(c, 16, 12, (10, 13), GOLD_LIGHT, -70, 70)
+    waves(c, 16, 12, (10, 13), GOLD_LIGHT, 110, 250)
+    up_arrow(c, 27, 22, FIRE)
+
+
+def k_shield_rush(c):
+    shield_shape(c, 20, 6, 14, 18, STEEL, RIM)
+    for y in (10, 15, 20):
+        c.line([(2, y), (11, y)], WHITE, 1)
+
+
+def k_crushing_blow(c):
+    sword(c, 8, 4, 22, 22)
+    for a in range(200, 340, 35):
+        r = math.radians(a)
+        c.line([(22, 24), (22 + int(7 * math.cos(r)), 24 - int(7 * math.sin(r)))], FIRE, 1)
+    c.ellipse(19, 21, 25, 27, fill=GOLD_LIGHT)
+
+
+def k_iron_resolve(c):
+    shield_shape(c, 16, 4, 18, 22, STEEL_DARK, RIM)
+    c.rect(6, 26, 26, 28, EARTH)
+    up_arrow(c, 16, 10, FIRE)
+
+
+def w_ice_shard(c):
+    for (x, y) in ((8, 22), (16, 15), (24, 8)):
+        c.poly([(x, y - 4), (x + 3, y), (x, y + 4), (x - 3, y)], fill=FROST, outline=WHITE)
+
+
+def w_star_shield(c):
+    c.ellipse(5, 5, 27, 27, outline=ICE, width=2)
+    star(c, 16, 16, 7, 3, GOLD_LIGHT)
+    for (x, y) in ((8, 9), (24, 11), (11, 24)):
+        sparkle(c, x, y, WHITE, 1)
+
+
+def w_mana_focus(c):
+    for r in (12, 8):
+        c.ellipse(16 - r, 16 - r, 16 + r, 16 + r, outline=VIOLET, width=1)
+    c.ellipse(12, 12, 20, 20, fill=GOLD_LIGHT)
+    up_arrow(c, 27, 4, FIRE)
+
+
+def w_frost_mist(c):
+    cloud(c, 16, 13, 5, ICE, FROST)
+    snowflake(c, 9, 25, 3)
+    snowflake(c, 23, 25, 3)
+
+
+def w_light_lance(c):
+    c.poly([(3, 29), (27, 5), (29, 3), (5, 27)], fill=GOLD_LIGHT)
+    c.line([(3, 29), (29, 3)], WHITE, 1)
+    sparkle(c, 27, 5, WHITE, 2)
+
+
+def e_power_up(c):
+    flame(c, 9, 17, 14, FIRE, GOLD_LIGHT)
+
+
 SKILLS = {
     # ヒーラー
     "healer/bell_heal": (h_bell_heal, HEALER), "healer/prayer_circle": (h_prayer_circle, HEALER),
@@ -1100,6 +1301,23 @@ SKILLS = {
     "wizard/starry_sky": (w_starry_sky, WIZARD), "wizard/blizzard": (w_blizzard, WIZARD),
     "wizard/thunder_mastery": (w_thunder_mastery, WIZARD), "wizard/absolute_zero": (w_absolute_zero, WIZARD),
     "wizard/permafrost": (w_permafrost, WIZARD),
+    # 11月24日に足したスキル
+    "archer/quick_draw": (a_quick_draw, ARCHER), "archer/flash_arrow": (a_flash_arrow, ARCHER),
+    "archer/wind_cloak": (a_wind_cloak, ARCHER), "archer/hunters_focus": (a_hunters_focus, ARCHER),
+    "archer/arrow_fan": (a_arrow_fan, ARCHER),
+    "healer/bell_strike": (h_bell_strike, HEALER), "healer/mending_light": (h_mending_light, HEALER),
+    "healer/chorus_bell": (h_chorus_bell, HEALER), "healer/swift_prayer": (h_swift_prayer, HEALER),
+    "healer/judgment_bell": (h_judgment_bell, HEALER),
+    "rogue/throwing_knife": (r_throwing_knife, ROGUE), "rogue/twin_fangs": (r_twin_fangs, ROGUE),
+    "rogue/venom_veil": (r_venom_veil, ROGUE), "rogue/shadow_dance": (r_shadow_dance, ROGUE), "rogue/hamstring": (r_hamstring, ROGUE),
+    "monk/kaisei_fist": (m_kaisei_fist, MONK), "monk/kien": (m_kien, MONK), "monk/air_palm": (m_air_palm, MONK),
+    "monk/chain_kicks": (m_chain_kicks, MONK), "monk/back_strike": (m_back_strike, MONK),
+    "knight/sword_pressure": (k_sword_pressure, KNIGHT), "knight/war_cry": (k_war_cry, KNIGHT),
+    "knight/shield_rush": (k_shield_rush, KNIGHT), "knight/crushing_blow": (k_crushing_blow, KNIGHT),
+    "knight/iron_resolve": (k_iron_resolve, KNIGHT),
+    "wizard/ice_shard": (w_ice_shard, WIZARD), "wizard/star_shield": (w_star_shield, WIZARD),
+    "wizard/mana_focus": (w_mana_focus, WIZARD), "wizard/frost_mist": (w_frost_mist, WIZARD),
+    "wizard/light_lance": (w_light_lance, WIZARD),
 }
 
 
@@ -1243,7 +1461,7 @@ EFFECTS = {
     "blessing": e_blessing, "protected": e_protected, "keen": e_keen, "swift": e_swift, "empowered": e_empowered,
     "aiming": e_aiming, "life_thread": e_life_thread, "guardian_bell": e_guardian_bell, "star_ring": e_star_ring,
     "shadow_clone": e_shadow_clone, "venom_coat": e_venom_coat, "bow_dance": e_bow_dance, "evade": e_evade,
-    "endless_flow": e_endless_flow, "renewal": e_renewal, "hidden": e_hidden,
+    "endless_flow": e_endless_flow, "renewal": e_renewal, "hidden": e_hidden, "power_up": e_power_up,
 }
 
 

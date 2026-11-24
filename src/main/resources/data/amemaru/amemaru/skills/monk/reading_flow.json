@@ -6,13 +6,15 @@
   "type": "passive",
   "name": "流れを読む",
   "description": "相手の流れを読みきる。受け流しやかわした後3秒は、次のスキルが同じ技でも連撃をつなぎ、ダメージも上がる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 25,
+  "min_level": 26,
   "requires": [
     {
       "skill": "monk/calm_breath",
@@ -22,6 +24,6 @@
   "passive": {
     "type": "read_flow",
     "value": 10,
-    "value_per_rank": 5
+    "value_per_rank": 2.5
   }
 }

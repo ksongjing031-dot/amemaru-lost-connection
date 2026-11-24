@@ -6,13 +6,15 @@
   "type": "passive",
   "name": "極めの一撃",
   "description": "締めの一撃に、すべてを込める。【極】の技のダメージが上がり、連撃5で放つと必ず会心になる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 25,
+  "min_level": 26,
   "requires": [
     {
       "skill": "monk/flowing_ki",
@@ -22,6 +24,6 @@
   "passive": {
     "type": "finishing_blow",
     "value": 8,
-    "value_per_rank": 4
+    "value_per_rank": 2.0
   }
 }

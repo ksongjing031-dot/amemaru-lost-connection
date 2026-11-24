@@ -229,9 +229,10 @@ public final class AdminCommands {
         source.sendSuccess(() -> Component.translatable("commands.amemaru.level.info.header",
                 player.getDisplayName(), data.getLevel(), data.getExp(), growth.expToNext(data.getLevel()))
                 .withStyle(ChatFormatting.GOLD), false);
+        // 11月24日：ポイントはスキルツリーの1つ（残り・使った分・取ったステータスの節の数）
         source.sendSuccess(() -> Component.translatable("commands.amemaru.level.info.points",
-                LevelService.availableStatPoints(data, growth), data.totalAllocated(),
-                LevelService.availableSkillPoints(data, growth)), false);
+                LevelService.availableSkillPoints(data, growth), jp.amemaru.lostconnection.job.SkillTreeService.spentPoints(data),
+                data.getTreeNodes().size()), false);
         source.sendSuccess(() -> Component.translatable("commands.amemaru.level.info.vitals",
                 (long) Math.ceil(data.getHp()), (long) data.getStats().maxHp(),
                 (long) Math.ceil(data.getMp()), (long) data.getStats().maxMp()), false);

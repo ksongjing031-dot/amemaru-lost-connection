@@ -6,9 +6,11 @@
   "type": "active",
   "name": "跳躍斬",
   "description": "大きく跳び上がり、狙った地点へ剣ごと落ちる。着地の衝撃で、まわりの敵をよろめかせる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -23,21 +25,21 @@
     "mp": 20
   },
   "cooldown": 12,
-  "cooldown_per_rank": -1,
+  "cooldown_per_rank": -0.5,
   "link": "starter",
   "delivery": {
     "type": "leap",
     "range": 10,
-    "range_per_rank": 1,
+    "range_per_rank": 0.5,
     "radius": 3.5,
-    "radius_per_rank": 0.5
+    "radius_per_rank": 0.25
   },
   "effects": [
     {
       "type": "damage",
       "stat": "attack",
       "coefficient": 1.5,
-      "coefficient_per_rank": 0.25
+      "coefficient_per_rank": 0.125
     },
     {
       "type": "status",

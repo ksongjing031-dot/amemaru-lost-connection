@@ -6,9 +6,11 @@
   "type": "active",
   "name": "盾結び",
   "description": "味方と自分を糸で結び、その味方が受けるダメージの一部を代わりに受ける。受けた分だけ誓気がたまる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -23,7 +25,7 @@
     "mp": 20
   },
   "cooldown": 20,
-  "cooldown_per_rank": -2,
+  "cooldown_per_rank": -1,
   "link": "support",
   "delivery": {
     "type": "target",
@@ -34,9 +36,9 @@
     {
       "type": "shield_bond",
       "duration": 8,
-      "duration_per_rank": 2,
+      "duration_per_rank": 1,
       "share": 30,
-      "share_per_rank": 5
+      "share_per_rank": 2.5
     }
   ],
   "animation": "knight_shield_bond",

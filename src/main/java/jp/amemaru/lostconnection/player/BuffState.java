@@ -81,6 +81,9 @@ public final class BuffState {
     /** 疾風の弓舞：上がり幅（%）。 */
     public long bowDanceUntil;
     public double bowDance;
+    /** 気炎など：与えるダメージ+%（11月24日）。 */
+    public long powerUpUntil;
+    public double powerUp;
     /** 影走り：敵の攻撃をすり抜ける。 */
     public long evadeUntil;
     /** 天地流転：【極】の技を使っても連撃が消えない。 */
@@ -182,6 +185,11 @@ public final class BuffState {
         return now < venomUntil;
     }
 
+    /** 与えるダメージの上がり（%。気炎・魔力集中・鬨の声など）。 */
+    public double powerUp(long now) {
+        return now < powerUpUntil ? powerUp : 0.0;
+    }
+
     public double bowDance(long now) {
         return now < bowDanceUntil ? bowDance : 0.0;
     }
@@ -244,6 +252,8 @@ public final class BuffState {
         venomPower = 0;
         bowDanceUntil = 0;
         bowDance = 0;
+        powerUpUntil = 0;
+        powerUp = 0;
         evadeUntil = 0;
         endlessFlowUntil = 0;
         regenUntil = 0;

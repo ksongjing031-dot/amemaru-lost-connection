@@ -6,13 +6,15 @@
   "type": "active",
   "name": "影葬",
   "description": "気配を残らず使い、足もとの影から黒い刃を突き上げる。使った気配1つにつき威力が35%上がり、敵の防御の半分を無視してよろめかせる（気配が1以上ないと使えない）。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 20,
+  "min_level": 21,
   "requires": [
     {
       "skill": "rogue/shadow_stitch",
@@ -38,7 +40,7 @@
       "type": "damage",
       "stat": "attack",
       "coefficient": 1.8,
-      "coefficient_per_rank": 0.3,
+      "coefficient_per_rank": 0.15,
       "pierce": 50
     },
     {

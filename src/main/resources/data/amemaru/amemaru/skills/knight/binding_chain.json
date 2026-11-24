@@ -6,9 +6,11 @@
   "type": "active",
   "name": "縛鎖",
   "description": "盾の縁から結びの鎖を投げ、狙った敵を自分の手前まで引き寄せて挑発する。後ろの仲間を狙う敵を引きはがす。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -23,12 +25,12 @@
     "mp": 14
   },
   "cooldown": 14,
-  "cooldown_per_rank": -1.5,
+  "cooldown_per_rank": -0.75,
   "link": "starter",
   "delivery": {
     "type": "target",
     "range": 12,
-    "range_per_rank": 2,
+    "range_per_rank": 1,
     "affects": "enemies"
   },
   "effects": [
@@ -36,7 +38,7 @@
       "type": "damage",
       "stat": "attack",
       "coefficient": 0.6,
-      "coefficient_per_rank": 0.1
+      "coefficient_per_rank": 0.05
     },
     {
       "type": "pull",
@@ -45,7 +47,7 @@
     {
       "type": "taunt",
       "duration": 4,
-      "duration_per_rank": 0.5
+      "duration_per_rank": 0.25
     },
     {
       "type": "status",

@@ -3,7 +3,7 @@
   "name": "監督機兵",
   "model": "amemaru:soujikihei",
   "floor": 3,
-  "level": 9,
+  "level": 19,
   "description": "掃除機兵たちを束ねていた、ひと回り大きな監督機。胸の板に、すり減った管理局の紋がある。今も貯水槽の真ん中で、来ない命令を待ち続けている。",
   "stats": {
     "hp": 16000,

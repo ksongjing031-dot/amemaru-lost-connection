@@ -6,9 +6,11 @@
   "type": "passive",
   "name": "連撃の心得",
   "description": "技と技の継ぎ目に、無駄がない。連撃1つごとのダメージの上がり方が大きくなる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -22,6 +24,6 @@
   "passive": {
     "type": "chain_mastery",
     "value": 2,
-    "value_per_rank": 1
+    "value_per_rank": 0.5
   }
 }

@@ -1,0 +1,52 @@
+{
+  "job": "knight",
+  "school": "guardian",
+  "row": 2,
+  "column": 3,
+  "type": "active",
+  "name": "盾突進",
+  "description": "盾を構えたまま突き進み、ぶつかった敵をよろめかせて、狙いを自分に向ける。",
+  "max_rank": 5,
+  "rank_costs": [
+    1,
+    1,
+    2,
+    2,
+    3
+  ],
+  "min_level": 10,
+  "requires": [
+    {
+      "skill": "knight/binding_chain",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 14
+  },
+  "cooldown": 10,
+  "delivery": {
+    "type": "dash",
+    "distance": 6,
+    "width": 1.6
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 1.0,
+      "coefficient_per_rank": 0.075
+    },
+    {
+      "type": "status",
+      "effect": "amemaru:stagger",
+      "duration": 0.8
+    },
+    {
+      "type": "taunt",
+      "duration": 3
+    }
+  ],
+  "animation": "knight_charge_slash",
+  "sound": "amemaru:skill.knight.shield_rush"
+}

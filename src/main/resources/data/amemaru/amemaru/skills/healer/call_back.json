@@ -6,9 +6,11 @@
   "type": "active",
   "name": "呼び戻し",
   "description": "鈴の音で、倒れた仲間の名前を呼ぶ。離れた所でダウンしている仲間を、その場で起こす。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -23,7 +25,7 @@
     "mp": 40
   },
   "cooldown": 150,
-  "cooldown_per_rank": -20,
+  "cooldown_per_rank": -10.0,
   "cast": 1.0,
   "delivery": {
     "type": "target",
@@ -35,7 +37,7 @@
     {
       "type": "revive",
       "hp": 30,
-      "hp_per_rank": 10
+      "hp_per_rank": 5.0
     }
   ],
   "tags": [

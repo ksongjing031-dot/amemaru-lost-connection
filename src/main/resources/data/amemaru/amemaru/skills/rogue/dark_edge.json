@@ -6,13 +6,15 @@
   "type": "passive",
   "name": "闇の刃",
   "description": "闇に研がれた刃は、深く入る。会心ダメージが上がる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 25,
+  "min_level": 26,
   "requires": [
     {
       "skill": "rogue/shadow_footwork",
@@ -22,6 +24,6 @@
   "passive": {
     "type": "dark_edge",
     "value": 10,
-    "value_per_rank": 5
+    "value_per_rank": 2.5
   }
 }

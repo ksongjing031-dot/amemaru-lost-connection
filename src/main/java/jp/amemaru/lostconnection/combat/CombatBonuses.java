@@ -70,6 +70,8 @@ public final class CombatBonuses {
             multiplier *= 1.0 + backstab / 100.0;
         }
         BuffState buffs = data.getBuffs();
+        // 気炎・魔力集中・鬨の声など（11月24日）：与えるダメージがすべて上がる
+        multiplier *= 1.0 + buffs.powerUp(now) / 100.0;
         double fade = PassiveService.value(data, PassiveDef.Type.FADE);
         if (fade > 0 && buffs.stealthed(now)) {
             multiplier *= 1.0 + fade / 100.0;

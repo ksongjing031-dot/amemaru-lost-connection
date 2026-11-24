@@ -6,9 +6,11 @@
   "type": "active",
   "name": "影討ち",
   "description": "敵の影に溶けて背後へ回り込み、そのまま斬りつける。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -32,7 +34,7 @@
       "type": "damage",
       "stat": "attack",
       "coefficient": 1.2,
-      "coefficient_per_rank": 0.2,
+      "coefficient_per_rank": 0.1,
       "backstab": 1.3
     }
   ],

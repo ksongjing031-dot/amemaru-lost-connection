@@ -183,6 +183,9 @@ public final class ModEffects {
     /** 天地流転：連撃が消えない。 */
     public static final RegistryObject<MobEffect> ENDLESS_FLOW = EFFECTS.register("endless_flow", () ->
             new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0x7FD6FF, false));
+    /** 気炎・魔力集中・鬨の声など（11月24日）：しばらく与えるダメージが上がる。 */
+    public static final RegistryObject<MobEffect> POWER_UP = EFFECTS.register("power_up", () ->
+            new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0xFF8A3D, false));
     /** 余韻など：HPが戻り続ける。 */
     public static final RegistryObject<MobEffect> RENEWAL = EFFECTS.register("renewal", () ->
             new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0x8CF0B4, false));

@@ -1,0 +1,52 @@
+{
+  "job": "healer",
+  "school": "healing",
+  "row": 3,
+  "column": 3,
+  "type": "active",
+  "name": "疾き祈り",
+  "description": "短い祈りで、まわりの仲間（自分も）の足を速くし、悪い状態を1つ払う。",
+  "max_rank": 5,
+  "rank_costs": [
+    1,
+    1,
+    2,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "healer/bond_mend",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 18
+  },
+  "cooldown": 26,
+  "cooldown_per_rank": -0.75,
+  "link": "support",
+  "delivery": {
+    "type": "around",
+    "radius": 10,
+    "affects": "allies",
+    "include_self": true
+  },
+  "effects": [
+    {
+      "type": "buff",
+      "buff": "haste",
+      "duration": 8,
+      "duration_per_rank": 0.5,
+      "value": 20,
+      "value_per_rank": 2.0
+    },
+    {
+      "type": "cleanse",
+      "count": 1
+    }
+  ],
+  "animation": "healer_pray",
+  "sound": "amemaru:skill.healer.swift_prayer"
+}

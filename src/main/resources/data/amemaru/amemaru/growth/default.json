@@ -1,12 +1,12 @@
 {
-  "max_level": 50,
+  "max_level": 100,
   "exp": {
-    "base": 120,
-    "growth": 1.09
+    "base": 55,
+    "growth": 1.038
   },
   "points": {
-    "stat_per_level": 3,
-    "skill_per_level": 1,
+    "stat_per_level": 0,
+    "skill_per_level": 2,
     "skill_bonus_every": 5,
     "skill_bonus": 1
   },
@@ -21,11 +21,11 @@
     "crit_damage": 50
   },
   "per_level": {
-    "hp": 40,
-    "mp": 10,
-    "attack": 2,
-    "magic": 2,
-    "defense": 1
+    "hp": 18,
+    "mp": 4,
+    "attack": 0.9,
+    "magic": 0.9,
+    "defense": 0.45
   },
   "per_point": {
     "hp": 12,
@@ -39,19 +39,19 @@
   "chapters": [
     {
       "from_day": 1,
-      "level_cap": 15
+      "level_cap": 30
     },
     {
       "from_day": 6,
-      "level_cap": 28
+      "level_cap": 55
     },
     {
       "from_day": 11,
-      "level_cap": 40
+      "level_cap": 80
     },
     {
       "from_day": 16,
-      "level_cap": 50
+      "level_cap": 100
     }
   ],
   "overflow": {
@@ -60,11 +60,11 @@
   },
   "catch_up": [
     {
-      "below_median": 5,
+      "below_median": 10,
       "bonus": 50
     },
     {
-      "below_median": 10,
+      "below_median": 20,
       "bonus": 100
     }
   ],

@@ -2081,7 +2081,7 @@ def floor_json(cores, seal_cells, f=None):
         "chapter": 1,
         "name": "始まりの草原",
         "chapter_title": "第1章　失われた古代領域",
-        "recommended_level": [1, 4],
+        "recommended_level": [1, 8],
         "origin": list(ORIGIN),
         "size": [SIZE, HEIGHT, SIZE],
         "structure": "amemaru:map/floor1/",

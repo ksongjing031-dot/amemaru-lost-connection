@@ -24,6 +24,7 @@ import jp.amemaru.lostconnection.job.def.JobDef;
 import jp.amemaru.lostconnection.job.def.SkillDef;
 import jp.amemaru.lostconnection.job.def.SkillKind;
 import jp.amemaru.lostconnection.job.def.SkillRegistry;
+import jp.amemaru.lostconnection.job.def.SkillTreeDef;
 import jp.amemaru.lostconnection.player.CastState;
 import jp.amemaru.lostconnection.player.LevelService;
 import jp.amemaru.lostconnection.player.PlayerData;
@@ -280,19 +281,24 @@ public final class SkillMechanicsGameTests {
 
     /**
      * 奥義は2つのうち1つだけ（11月17日のご指示）。1つを覚えると、もう一方は覚えられない。上位職を外して奥義が消えたり、
-     * 白紙の誓約書でやり直したりすると、もう一方を選べる。
+     * 白紙の誓約書でやり直したりすると、もう一方を選べる。11月24日からは、奥義はスキルツリーの流派の先端（Lv60・上位職から）にあり、
+     * 核から道をのばしてとなりの節を取ってから覚える。
      */
     @GameTest(template = EMPTY)
     public static void ultimateIsAChoice(GameTestHelper helper) {
         FakePlayer player = fake(helper, "ultimate");
         PlayerData data = knight(helper, player);
-        LevelService.setLevel(player, data, 30);
+        LevelService.setLevel(player, data, 60);
         check(helper, JobService.promote(player, data, true), "上位職に昇格できません");
         SkillDef castle = skill("knight/unfallen_castle");
         SkillDef cleave = skill("knight/heaven_cleave");
-        for (String path : new String[]{"knight/rampart", "knight/whirlwind", "knight/heavy_slash"}) {
-            SkillTreeService.forceRank(player, data, skill(path), 1);
-        }
+        SkillTreeDef tree = TreeTestUtil.tree(AmemaruMod.id("knight"));
+        String castleNode = TreeTestUtil.nodeOf(tree, castle.id());
+        String cleaveNode = TreeTestUtil.nodeOf(tree, cleave.id());
+        check(helper, SkillTreeService.canLearn(data, castle) == SkillTreeService.Blocker.NOT_CONNECTED,
+                "道をのばす前から、不落の城を覚えられます：" + SkillTreeService.canLearn(data, castle));
+        takeRoadBefore(helper, player, data, tree, castleNode);
+        takeRoadBefore(helper, player, data, tree, cleaveNode);
         check(helper, SkillTreeService.canLearn(data, castle) == SkillTreeService.Blocker.NONE,
                 "不落の城を覚えられません：" + SkillTreeService.canLearn(data, castle));
         check(helper, SkillTreeService.canLearn(data, cleave) == SkillTreeService.Blocker.NONE,
@@ -311,14 +317,22 @@ public final class SkillMechanicsGameTests {
         check(helper, SkillTreeService.learn(player, data, castle.id()), "不落の城を覚えられません");
         check(helper, SkillTreeService.canLearn(data, cleave) == SkillTreeService.Blocker.ULTIMATE_CHOSEN,
                 "不落の城を覚えたのに、天断ちも覚えられます");
-        // 白紙の誓約書と同じやり直し：どちらも選べる状態に戻る
+        // 白紙の誓約書と同じやり直し：取った節もすべて戻り、道をのばし直せば、どちらも選べる状態に戻る
         SkillTreeService.resetSkills(player, data);
-        for (String path : new String[]{"knight/rampart", "knight/whirlwind", "knight/heavy_slash"}) {
-            SkillTreeService.forceRank(player, data, skill(path), 1);
-        }
+        check(helper, SkillTreeService.canLearn(data, cleave) == SkillTreeService.Blocker.NOT_CONNECTED,
+                "やり直した後も、天断ちへの道が残っています：" + SkillTreeService.canLearn(data, cleave));
+        takeRoadBefore(helper, player, data, tree, cleaveNode);
         check(helper, SkillTreeService.canLearn(data, cleave) == SkillTreeService.Blocker.NONE,
                 "やり直した後に、天断ちを選べません：" + SkillTreeService.canLearn(data, cleave));
         helper.succeed();
+    }
+
+    /** 取れている節から、その節の手前まで道の節を取る（その節は取らない）。 */
+    private static void takeRoadBefore(GameTestHelper helper, ServerPlayer player, PlayerData data, SkillTreeDef tree, String target) {
+        java.util.List<String> road = TreeTestUtil.path(tree, data, target);
+        for (int i = 0; i < road.size() - 1; i++) {
+            TreeTestUtil.take(helper, player, data, tree, road.get(i));
+        }
     }
 
     /**

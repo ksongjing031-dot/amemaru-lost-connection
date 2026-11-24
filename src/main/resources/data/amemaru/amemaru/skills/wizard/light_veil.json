@@ -6,9 +6,11 @@
   "type": "active",
   "name": "光の帳",
   "description": "星の光を薄い帳にして、狙った味方を包む。帳は受けるダメージを吸い、吸いきると砕ける。狙える味方がいなければ自分を包む。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -23,7 +25,7 @@
     "mp": 26
   },
   "cooldown": 18,
-  "cooldown_per_rank": -2,
+  "cooldown_per_rank": -1,
   "link": "support",
   "delivery": {
     "type": "target",
@@ -36,7 +38,7 @@
       "type": "barrier",
       "stat": "magic",
       "coefficient": 3.0,
-      "coefficient_per_rank": 0.6,
+      "coefficient_per_rank": 0.3,
       "duration": 8
     }
   ],

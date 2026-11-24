@@ -6,13 +6,15 @@
   "type": "passive",
   "name": "凍土",
   "description": "砕けた氷は、まわりも凍らせる。凍結を砕くと、氷がまわりの敵に飛び散ってダメージを与え、凍えを重ねる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 25,
+  "min_level": 26,
   "requires": [
     {
       "skill": "wizard/thunder_mastery",
@@ -22,6 +24,6 @@
   "passive": {
     "type": "permafrost",
     "value": 0.8,
-    "value_per_rank": 0.2
+    "value_per_rank": 0.1
   }
 }

@@ -6,9 +6,11 @@
   "type": "active",
   "name": "幻影刃",
   "description": "影の分身たちと一緒に、まわりの敵をいっせいに斬る。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -26,14 +28,14 @@
   "delivery": {
     "type": "around",
     "radius": 4,
-    "radius_per_rank": 0.5
+    "radius_per_rank": 0.25
   },
   "effects": [
     {
       "type": "damage",
       "stat": "attack",
       "coefficient": 1.2,
-      "coefficient_per_rank": 0.2
+      "coefficient_per_rank": 0.1
     }
   ],
   "tags": [

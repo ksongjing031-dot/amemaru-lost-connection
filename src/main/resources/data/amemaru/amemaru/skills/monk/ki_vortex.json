@@ -6,13 +6,15 @@
   "type": "active",
   "name": "気の渦",
   "description": "気の渦を起こし、まわりの敵を自分のそばへ引き寄せて打つ。引き寄せられた敵は足が鈍る。【継】",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 20,
+  "min_level": 21,
   "requires": [
     {
       "skill": "monk/ki_bullet",
@@ -26,7 +28,7 @@
   "delivery": {
     "type": "around",
     "radius": 6,
-    "radius_per_rank": 0.5
+    "radius_per_rank": 0.25
   },
   "effects": [
     {
@@ -38,7 +40,7 @@
       "type": "damage",
       "stat": "attack",
       "coefficient": 1.0,
-      "coefficient_per_rank": 0.18
+      "coefficient_per_rank": 0.09
     },
     {
       "type": "status",

@@ -6,9 +6,11 @@
   "type": "active",
   "name": "旋風矢",
   "description": "その場で身をひるがえし、まわりへ矢を放つ。近づいた敵を吹き飛ばし、しばらく足が速くなる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -26,14 +28,14 @@
   "delivery": {
     "type": "around",
     "radius": 5,
-    "radius_per_rank": 0.5
+    "radius_per_rank": 0.25
   },
   "effects": [
     {
       "type": "damage",
       "stat": "attack",
       "coefficient": 1.0,
-      "coefficient_per_rank": 0.15
+      "coefficient_per_rank": 0.075
     },
     {
       "type": "knockback",

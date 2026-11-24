@@ -1,0 +1,52 @@
+{
+  "job": "rogue",
+  "school": "shadow",
+  "row": 3,
+  "column": 3,
+  "type": "active",
+  "name": "影の舞",
+  "description": "影のように軽く舞う。しばらく足が速くなり、与えるダメージも上がる。",
+  "max_rank": 5,
+  "rank_costs": [
+    1,
+    1,
+    2,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "rogue/vital_strike",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 20
+  },
+  "cooldown": 36,
+  "cooldown_per_rank": -1.0,
+  "delivery": {
+    "type": "self"
+  },
+  "effects": [
+    {
+      "type": "buff",
+      "buff": "power_up",
+      "duration": 8,
+      "duration_per_rank": 0.5,
+      "value": 15,
+      "value_per_rank": 2.0
+    },
+    {
+      "type": "buff",
+      "buff": "haste",
+      "duration": 8,
+      "duration_per_rank": 0.5,
+      "value": 15,
+      "value_per_rank": 1.5
+    }
+  ],
+  "animation": "rogue_spin",
+  "sound": "amemaru:skill.rogue.shadow_dance"
+}

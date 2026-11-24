@@ -6,9 +6,11 @@
   "type": "active",
   "name": "毒爆",
   "description": "毒に合図を送り、敵の体の中で一気に弾けさせる。狙った敵とまわりの敵の毒を消すかわりに、毒の数だけ大きなダメージを与える。気配が残っていれば、それも込める。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -38,7 +40,7 @@
       "stat": "attack",
       "base": 0.6,
       "per_stack": 0.6,
-      "per_stack_per_rank": 0.1,
+      "per_stack_per_rank": 0.05,
       "radius": 4
     }
   ],

@@ -6,9 +6,11 @@
   "type": "passive",
   "name": "静止集中",
   "description": "足を止めると、心が研ぎ澄まされる。立ち止まっている間の集中のたまり方が上がる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -22,6 +24,6 @@
   "passive": {
     "type": "still_focus",
     "value": 40,
-    "value_per_rank": 20
+    "value_per_rank": 10.0
   }
 }

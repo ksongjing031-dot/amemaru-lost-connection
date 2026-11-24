@@ -6,13 +6,15 @@
   "type": "active",
   "name": "鉄の誓約",
   "description": "剣を掲げて誓いを立て、まわりの仲間すべてと鎖の糸で結ぶ。8秒、仲間の受けるダメージの一部を肩代わりする。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 20,
+  "min_level": 21,
   "requires": [
     {
       "skill": "knight/oath_circle",

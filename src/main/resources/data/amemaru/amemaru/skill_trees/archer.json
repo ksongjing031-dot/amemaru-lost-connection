@@ -1,0 +1,1416 @@
+{
+  "_comment": "スキルツリー（tools/datagen/build_skill_trees.py が書き出す。手で直さない）。節（core：職業の核・skill：スキル・stat：ステータスの小さな節・notable：大きな節）と、つながり（links）。x・y はツリーの単位（右・下が正）",
+  "job": "amemaru:archer",
+  "nodes": [
+    {
+      "id": "core",
+      "kind": "core",
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "id": "s:archer/flash_arrow",
+      "kind": "skill",
+      "skill": "amemaru:archer/flash_arrow",
+      "x": -244.5,
+      "y": -72.4,
+      "start": false
+    },
+    {
+      "id": "s:archer/hunters_focus",
+      "kind": "skill",
+      "skill": "amemaru:archer/hunters_focus",
+      "x": -321.2,
+      "y": -95.1,
+      "start": false
+    },
+    {
+      "id": "g:sniping:4:3",
+      "kind": "stat",
+      "x": -397.9,
+      "y": -117.9,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "n:sniping:3",
+      "kind": "notable",
+      "name": "鷹の構え",
+      "x": -474.6,
+      "y": -140.6,
+      "stats": {
+        "crit": 3
+      },
+      "percent": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "s:archer/marking_arrow",
+      "kind": "skill",
+      "skill": "amemaru:archer/marking_arrow",
+      "x": -79.2,
+      "y": -52.4,
+      "start": true
+    },
+    {
+      "id": "s:archer/piercing_shot",
+      "kind": "skill",
+      "skill": "amemaru:archer/piercing_shot",
+      "x": -145.9,
+      "y": -96.6,
+      "start": false
+    },
+    {
+      "id": "s:archer/pinning_arrow",
+      "kind": "skill",
+      "skill": "amemaru:archer/pinning_arrow",
+      "x": -212.6,
+      "y": -140.7,
+      "start": false
+    },
+    {
+      "id": "s:archer/hawks_gaze",
+      "kind": "skill",
+      "skill": "amemaru:archer/hawks_gaze",
+      "x": -279.4,
+      "y": -184.9,
+      "start": false
+    },
+    {
+      "id": "s:archer/sniper_stance",
+      "kind": "skill",
+      "skill": "amemaru:archer/sniper_stance",
+      "x": -346.1,
+      "y": -229.1,
+      "start": false
+    },
+    {
+      "id": "s:archer/sky_piercer",
+      "kind": "skill",
+      "skill": "amemaru:archer/sky_piercer",
+      "x": -412.8,
+      "y": -273.2,
+      "start": false
+    },
+    {
+      "id": "s:archer/full_draw",
+      "kind": "skill",
+      "skill": "amemaru:archer/full_draw",
+      "x": -162.2,
+      "y": -196.8,
+      "start": false
+    },
+    {
+      "id": "s:archer/drill_arrow",
+      "kind": "skill",
+      "skill": "amemaru:archer/drill_arrow",
+      "x": -213.1,
+      "y": -258.5,
+      "start": false
+    },
+    {
+      "id": "g:sniping:4:1",
+      "kind": "stat",
+      "x": -264.0,
+      "y": -320.2,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "n:sniping:1",
+      "kind": "notable",
+      "name": "一矢の重み",
+      "x": -314.9,
+      "y": -382.0,
+      "stats": {
+        "crit_damage": 15
+      }
+    },
+    {
+      "id": "s:archer/hawk_eye",
+      "kind": "skill",
+      "skill": "amemaru:archer/hawk_eye",
+      "x": -67.0,
+      "y": -161.7,
+      "start": false
+    },
+    {
+      "id": "s:archer/still_focus",
+      "kind": "skill",
+      "skill": "amemaru:archer/still_focus",
+      "x": -97.6,
+      "y": -235.6,
+      "start": false
+    },
+    {
+      "id": "s:archer/long_shot",
+      "kind": "skill",
+      "skill": "amemaru:archer/long_shot",
+      "x": -128.2,
+      "y": -309.5,
+      "start": false
+    },
+    {
+      "id": "s:archer/weak_point",
+      "kind": "skill",
+      "skill": "amemaru:archer/weak_point",
+      "x": -158.8,
+      "y": -383.4,
+      "start": false
+    },
+    {
+      "id": "s:archer/focus_mastery",
+      "kind": "skill",
+      "skill": "amemaru:archer/focus_mastery",
+      "x": -189.4,
+      "y": -457.3,
+      "start": false
+    },
+    {
+      "id": "b20",
+      "kind": "stat",
+      "x": -282.9,
+      "y": -83.8,
+      "stats": {
+        "crit": 1.0
+      }
+    },
+    {
+      "id": "b21",
+      "kind": "stat",
+      "x": -359.5,
+      "y": -106.5,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b22",
+      "kind": "stat",
+      "x": -436.2,
+      "y": -129.2,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "b23",
+      "kind": "stat",
+      "x": -112.6,
+      "y": -74.5,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b24",
+      "kind": "stat",
+      "x": -179.2,
+      "y": -118.6,
+      "stats": {
+        "crit": 1.0
+      }
+    },
+    {
+      "id": "b25",
+      "kind": "stat",
+      "x": -246.0,
+      "y": -162.8,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b26",
+      "kind": "stat",
+      "x": -312.8,
+      "y": -207.0,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "b27",
+      "kind": "stat",
+      "x": -379.5,
+      "y": -251.1,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b28",
+      "kind": "stat",
+      "x": -187.6,
+      "y": -227.7,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b29",
+      "kind": "stat",
+      "x": -238.6,
+      "y": -289.4,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "b30",
+      "kind": "stat",
+      "x": -289.4,
+      "y": -351.1,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b31",
+      "kind": "stat",
+      "x": -82.3,
+      "y": -198.6,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b32",
+      "kind": "stat",
+      "x": -112.9,
+      "y": -272.6,
+      "stats": {
+        "mp": 12
+      }
+    },
+    {
+      "id": "b33",
+      "kind": "stat",
+      "x": -143.5,
+      "y": -346.4,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b34",
+      "kind": "stat",
+      "x": -174.1,
+      "y": -420.4,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b35",
+      "kind": "stat",
+      "x": -39.6,
+      "y": -26.2,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b36",
+      "kind": "stat",
+      "x": -106.5,
+      "y": -129.1,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b37",
+      "kind": "stat",
+      "x": -300.3,
+      "y": -140.0,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b38",
+      "kind": "stat",
+      "x": -246.2,
+      "y": -221.7,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b39",
+      "kind": "stat",
+      "x": -170.6,
+      "y": -284.0,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b40",
+      "kind": "stat",
+      "x": -454.0,
+      "y": -184.8,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b41",
+      "kind": "stat",
+      "x": -433.4,
+      "y": -229.0,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b42",
+      "kind": "stat",
+      "x": -380.2,
+      "y": -309.5,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b43",
+      "kind": "stat",
+      "x": -347.5,
+      "y": -345.7,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b44",
+      "kind": "stat",
+      "x": -273.1,
+      "y": -407.1,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b45",
+      "kind": "stat",
+      "x": -231.2,
+      "y": -432.2,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "s:archer/shooting_star",
+      "kind": "skill",
+      "skill": "amemaru:archer/shooting_star",
+      "x": -492.0,
+      "y": -325.6,
+      "start": false
+    },
+    {
+      "id": "b47",
+      "kind": "stat",
+      "x": -452.4,
+      "y": -299.4,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "s:archer/quick_draw",
+      "kind": "skill",
+      "skill": "amemaru:archer/quick_draw",
+      "x": 167.8,
+      "y": -49.7,
+      "start": false
+    },
+    {
+      "id": "s:archer/ricochet",
+      "kind": "skill",
+      "skill": "amemaru:archer/ricochet",
+      "x": 244.5,
+      "y": -72.4,
+      "start": false
+    },
+    {
+      "id": "s:archer/wind_cloak",
+      "kind": "skill",
+      "skill": "amemaru:archer/wind_cloak",
+      "x": 321.2,
+      "y": -95.1,
+      "start": false
+    },
+    {
+      "id": "g:rapid:4:3",
+      "kind": "stat",
+      "x": 397.9,
+      "y": -117.9,
+      "stats": {
+        "speed": 2
+      }
+    },
+    {
+      "id": "n:rapid:3",
+      "kind": "notable",
+      "name": "疾風の指",
+      "x": 474.6,
+      "y": -140.6,
+      "stats": {
+        "speed": 4
+      },
+      "percent": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "s:archer/spread_arrows",
+      "kind": "skill",
+      "skill": "amemaru:archer/spread_arrows",
+      "x": 79.2,
+      "y": -52.4,
+      "start": true
+    },
+    {
+      "id": "s:archer/back_leap",
+      "kind": "skill",
+      "skill": "amemaru:archer/back_leap",
+      "x": 145.9,
+      "y": -96.6,
+      "start": false
+    },
+    {
+      "id": "s:archer/arrow_rain",
+      "kind": "skill",
+      "skill": "amemaru:archer/arrow_rain",
+      "x": 212.6,
+      "y": -140.7,
+      "start": false
+    },
+    {
+      "id": "s:archer/burst_arrow",
+      "kind": "skill",
+      "skill": "amemaru:archer/burst_arrow",
+      "x": 279.4,
+      "y": -184.9,
+      "start": false
+    },
+    {
+      "id": "s:archer/arrow_fan",
+      "kind": "skill",
+      "skill": "amemaru:archer/arrow_fan",
+      "x": 346.1,
+      "y": -229.1,
+      "start": false
+    },
+    {
+      "id": "s:archer/arrow_storm",
+      "kind": "skill",
+      "skill": "amemaru:archer/arrow_storm",
+      "x": 412.8,
+      "y": -273.2,
+      "start": false
+    },
+    {
+      "id": "s:archer/triple_shot",
+      "kind": "skill",
+      "skill": "amemaru:archer/triple_shot",
+      "x": 162.2,
+      "y": -196.8,
+      "start": false
+    },
+    {
+      "id": "s:archer/whirl_arrows",
+      "kind": "skill",
+      "skill": "amemaru:archer/whirl_arrows",
+      "x": 213.1,
+      "y": -258.5,
+      "start": false
+    },
+    {
+      "id": "g:rapid:4:1",
+      "kind": "stat",
+      "x": 264.0,
+      "y": -320.2,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "n:rapid:1",
+      "kind": "notable",
+      "name": "矢継ぎ",
+      "x": 314.9,
+      "y": -382.0,
+      "stats": {
+        "cooldown_reduction": 4
+      },
+      "percent": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "s:archer/nimble_archer",
+      "kind": "skill",
+      "skill": "amemaru:archer/nimble_archer",
+      "x": 67.0,
+      "y": -161.7,
+      "start": false
+    },
+    {
+      "id": "s:archer/rapid_mastery",
+      "kind": "skill",
+      "skill": "amemaru:archer/rapid_mastery",
+      "x": 97.6,
+      "y": -235.6,
+      "start": false
+    },
+    {
+      "id": "s:archer/chained_arrows",
+      "kind": "skill",
+      "skill": "amemaru:archer/chained_arrows",
+      "x": 128.2,
+      "y": -309.5,
+      "start": false
+    },
+    {
+      "id": "s:archer/wind_reading",
+      "kind": "skill",
+      "skill": "amemaru:archer/wind_reading",
+      "x": 158.8,
+      "y": -383.4,
+      "start": false
+    },
+    {
+      "id": "s:archer/quiver_master",
+      "kind": "skill",
+      "skill": "amemaru:archer/quiver_master",
+      "x": 189.4,
+      "y": -457.3,
+      "start": false
+    },
+    {
+      "id": "b68",
+      "kind": "stat",
+      "x": 206.2,
+      "y": -61.1,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b69",
+      "kind": "stat",
+      "x": 282.9,
+      "y": -83.8,
+      "stats": {
+        "speed": 1
+      }
+    },
+    {
+      "id": "b70",
+      "kind": "stat",
+      "x": 359.5,
+      "y": -106.5,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b71",
+      "kind": "stat",
+      "x": 436.2,
+      "y": -129.2,
+      "stats": {
+        "speed": 2
+      }
+    },
+    {
+      "id": "b72",
+      "kind": "stat",
+      "x": 112.6,
+      "y": -74.5,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b73",
+      "kind": "stat",
+      "x": 179.2,
+      "y": -118.6,
+      "stats": {
+        "speed": 1
+      }
+    },
+    {
+      "id": "b74",
+      "kind": "stat",
+      "x": 246.0,
+      "y": -162.8,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b75",
+      "kind": "stat",
+      "x": 312.8,
+      "y": -207.0,
+      "stats": {
+        "speed": 2
+      }
+    },
+    {
+      "id": "b76",
+      "kind": "stat",
+      "x": 379.5,
+      "y": -251.1,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b77",
+      "kind": "stat",
+      "x": 187.6,
+      "y": -227.7,
+      "stats": {
+        "crit": 1.0
+      }
+    },
+    {
+      "id": "b78",
+      "kind": "stat",
+      "x": 238.6,
+      "y": -289.4,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b79",
+      "kind": "stat",
+      "x": 289.4,
+      "y": -351.1,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "b80",
+      "kind": "stat",
+      "x": 82.3,
+      "y": -198.6,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b81",
+      "kind": "stat",
+      "x": 112.9,
+      "y": -272.6,
+      "stats": {
+        "defense": 2
+      }
+    },
+    {
+      "id": "b82",
+      "kind": "stat",
+      "x": 143.5,
+      "y": -346.4,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b83",
+      "kind": "stat",
+      "x": 174.1,
+      "y": -420.4,
+      "stats": {
+        "defense": 3
+      }
+    },
+    {
+      "id": "b84",
+      "kind": "stat",
+      "x": 39.6,
+      "y": -26.2,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b85",
+      "kind": "stat",
+      "x": 106.5,
+      "y": -129.1,
+      "stats": {
+        "speed": 1
+      }
+    },
+    {
+      "id": "b86",
+      "kind": "stat",
+      "x": 300.3,
+      "y": -140.0,
+      "stats": {
+        "speed": 1
+      }
+    },
+    {
+      "id": "b87",
+      "kind": "stat",
+      "x": 246.2,
+      "y": -221.7,
+      "stats": {
+        "speed": 1
+      }
+    },
+    {
+      "id": "b88",
+      "kind": "stat",
+      "x": 170.6,
+      "y": -284.0,
+      "stats": {
+        "speed": 1
+      }
+    },
+    {
+      "id": "b89",
+      "kind": "stat",
+      "x": 454.0,
+      "y": -184.8,
+      "stats": {
+        "speed": 2
+      }
+    },
+    {
+      "id": "b90",
+      "kind": "stat",
+      "x": 433.4,
+      "y": -229.0,
+      "stats": {
+        "speed": 2
+      }
+    },
+    {
+      "id": "b91",
+      "kind": "stat",
+      "x": 380.2,
+      "y": -309.5,
+      "stats": {
+        "speed": 2
+      }
+    },
+    {
+      "id": "b92",
+      "kind": "stat",
+      "x": 347.5,
+      "y": -345.7,
+      "stats": {
+        "speed": 2
+      }
+    },
+    {
+      "id": "b93",
+      "kind": "stat",
+      "x": 273.1,
+      "y": -407.1,
+      "stats": {
+        "speed": 2
+      }
+    },
+    {
+      "id": "b94",
+      "kind": "stat",
+      "x": 231.2,
+      "y": -432.2,
+      "stats": {
+        "speed": 2
+      }
+    },
+    {
+      "id": "s:archer/gale_dance",
+      "kind": "skill",
+      "skill": "amemaru:archer/gale_dance",
+      "x": 492.0,
+      "y": -325.6,
+      "start": false
+    },
+    {
+      "id": "b96",
+      "kind": "stat",
+      "x": 452.4,
+      "y": -299.4,
+      "stats": {
+        "speed": 2
+      }
+    },
+    {
+      "id": "n:bridge:2",
+      "kind": "notable",
+      "name": "射手の均衡",
+      "x": 0.0,
+      "y": -255.0,
+      "percent": {
+        "attack": 4,
+        "hp": 3
+      }
+    },
+    {
+      "id": "b98",
+      "kind": "stat",
+      "x": -48.8,
+      "y": -245.3,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b99",
+      "kind": "stat",
+      "x": 48.8,
+      "y": -245.3,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "n:bridge:4",
+      "kind": "notable",
+      "name": "張りつめた弦",
+      "x": 0.0,
+      "y": -415.0,
+      "stats": {
+        "crit": 2
+      },
+      "percent": {
+        "attack": 4
+      }
+    },
+    {
+      "id": "b101",
+      "kind": "stat",
+      "x": -105.9,
+      "y": -393.9,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "b102",
+      "kind": "stat",
+      "x": -52.9,
+      "y": -404.5,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b103",
+      "kind": "stat",
+      "x": 105.9,
+      "y": -393.9,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b104",
+      "kind": "stat",
+      "x": 52.9,
+      "y": -404.5,
+      "stats": {
+        "crit": 1.2
+      }
+    }
+  ],
+  "links": [
+    [
+      "b101",
+      "b102"
+    ],
+    [
+      "b101",
+      "s:archer/weak_point"
+    ],
+    [
+      "b102",
+      "n:bridge:4"
+    ],
+    [
+      "b103",
+      "b104"
+    ],
+    [
+      "b103",
+      "s:archer/wind_reading"
+    ],
+    [
+      "b104",
+      "n:bridge:4"
+    ],
+    [
+      "b20",
+      "s:archer/flash_arrow"
+    ],
+    [
+      "b20",
+      "s:archer/hunters_focus"
+    ],
+    [
+      "b21",
+      "g:sniping:4:3"
+    ],
+    [
+      "b21",
+      "s:archer/hunters_focus"
+    ],
+    [
+      "b22",
+      "g:sniping:4:3"
+    ],
+    [
+      "b22",
+      "n:sniping:3"
+    ],
+    [
+      "b23",
+      "s:archer/marking_arrow"
+    ],
+    [
+      "b23",
+      "s:archer/piercing_shot"
+    ],
+    [
+      "b24",
+      "s:archer/piercing_shot"
+    ],
+    [
+      "b24",
+      "s:archer/pinning_arrow"
+    ],
+    [
+      "b25",
+      "s:archer/hawks_gaze"
+    ],
+    [
+      "b25",
+      "s:archer/pinning_arrow"
+    ],
+    [
+      "b26",
+      "s:archer/hawks_gaze"
+    ],
+    [
+      "b26",
+      "s:archer/sniper_stance"
+    ],
+    [
+      "b27",
+      "s:archer/sky_piercer"
+    ],
+    [
+      "b27",
+      "s:archer/sniper_stance"
+    ],
+    [
+      "b28",
+      "s:archer/drill_arrow"
+    ],
+    [
+      "b28",
+      "s:archer/full_draw"
+    ],
+    [
+      "b29",
+      "g:sniping:4:1"
+    ],
+    [
+      "b29",
+      "s:archer/drill_arrow"
+    ],
+    [
+      "b30",
+      "g:sniping:4:1"
+    ],
+    [
+      "b30",
+      "n:sniping:1"
+    ],
+    [
+      "b31",
+      "s:archer/hawk_eye"
+    ],
+    [
+      "b31",
+      "s:archer/still_focus"
+    ],
+    [
+      "b32",
+      "s:archer/long_shot"
+    ],
+    [
+      "b32",
+      "s:archer/still_focus"
+    ],
+    [
+      "b33",
+      "s:archer/long_shot"
+    ],
+    [
+      "b33",
+      "s:archer/weak_point"
+    ],
+    [
+      "b34",
+      "s:archer/focus_mastery"
+    ],
+    [
+      "b34",
+      "s:archer/weak_point"
+    ],
+    [
+      "b35",
+      "core"
+    ],
+    [
+      "b35",
+      "s:archer/marking_arrow"
+    ],
+    [
+      "b36",
+      "s:archer/hawk_eye"
+    ],
+    [
+      "b36",
+      "s:archer/piercing_shot"
+    ],
+    [
+      "b37",
+      "s:archer/hawks_gaze"
+    ],
+    [
+      "b37",
+      "s:archer/hunters_focus"
+    ],
+    [
+      "b38",
+      "s:archer/drill_arrow"
+    ],
+    [
+      "b38",
+      "s:archer/hawks_gaze"
+    ],
+    [
+      "b39",
+      "s:archer/drill_arrow"
+    ],
+    [
+      "b39",
+      "s:archer/long_shot"
+    ],
+    [
+      "b40",
+      "b41"
+    ],
+    [
+      "b40",
+      "n:sniping:3"
+    ],
+    [
+      "b41",
+      "s:archer/sky_piercer"
+    ],
+    [
+      "b42",
+      "b43"
+    ],
+    [
+      "b42",
+      "s:archer/sky_piercer"
+    ],
+    [
+      "b43",
+      "n:sniping:1"
+    ],
+    [
+      "b44",
+      "b45"
+    ],
+    [
+      "b44",
+      "n:sniping:1"
+    ],
+    [
+      "b45",
+      "s:archer/focus_mastery"
+    ],
+    [
+      "b47",
+      "s:archer/shooting_star"
+    ],
+    [
+      "b47",
+      "s:archer/sky_piercer"
+    ],
+    [
+      "b68",
+      "s:archer/quick_draw"
+    ],
+    [
+      "b68",
+      "s:archer/ricochet"
+    ],
+    [
+      "b69",
+      "s:archer/ricochet"
+    ],
+    [
+      "b69",
+      "s:archer/wind_cloak"
+    ],
+    [
+      "b70",
+      "g:rapid:4:3"
+    ],
+    [
+      "b70",
+      "s:archer/wind_cloak"
+    ],
+    [
+      "b71",
+      "g:rapid:4:3"
+    ],
+    [
+      "b71",
+      "n:rapid:3"
+    ],
+    [
+      "b72",
+      "s:archer/back_leap"
+    ],
+    [
+      "b72",
+      "s:archer/spread_arrows"
+    ],
+    [
+      "b73",
+      "s:archer/arrow_rain"
+    ],
+    [
+      "b73",
+      "s:archer/back_leap"
+    ],
+    [
+      "b74",
+      "s:archer/arrow_rain"
+    ],
+    [
+      "b74",
+      "s:archer/burst_arrow"
+    ],
+    [
+      "b75",
+      "s:archer/arrow_fan"
+    ],
+    [
+      "b75",
+      "s:archer/burst_arrow"
+    ],
+    [
+      "b76",
+      "s:archer/arrow_fan"
+    ],
+    [
+      "b76",
+      "s:archer/arrow_storm"
+    ],
+    [
+      "b77",
+      "s:archer/triple_shot"
+    ],
+    [
+      "b77",
+      "s:archer/whirl_arrows"
+    ],
+    [
+      "b78",
+      "g:rapid:4:1"
+    ],
+    [
+      "b78",
+      "s:archer/whirl_arrows"
+    ],
+    [
+      "b79",
+      "g:rapid:4:1"
+    ],
+    [
+      "b79",
+      "n:rapid:1"
+    ],
+    [
+      "b80",
+      "s:archer/nimble_archer"
+    ],
+    [
+      "b80",
+      "s:archer/rapid_mastery"
+    ],
+    [
+      "b81",
+      "s:archer/chained_arrows"
+    ],
+    [
+      "b81",
+      "s:archer/rapid_mastery"
+    ],
+    [
+      "b82",
+      "s:archer/chained_arrows"
+    ],
+    [
+      "b82",
+      "s:archer/wind_reading"
+    ],
+    [
+      "b83",
+      "s:archer/quiver_master"
+    ],
+    [
+      "b83",
+      "s:archer/wind_reading"
+    ],
+    [
+      "b84",
+      "core"
+    ],
+    [
+      "b84",
+      "s:archer/spread_arrows"
+    ],
+    [
+      "b85",
+      "s:archer/back_leap"
+    ],
+    [
+      "b85",
+      "s:archer/nimble_archer"
+    ],
+    [
+      "b86",
+      "s:archer/burst_arrow"
+    ],
+    [
+      "b86",
+      "s:archer/wind_cloak"
+    ],
+    [
+      "b87",
+      "s:archer/burst_arrow"
+    ],
+    [
+      "b87",
+      "s:archer/whirl_arrows"
+    ],
+    [
+      "b88",
+      "s:archer/chained_arrows"
+    ],
+    [
+      "b88",
+      "s:archer/whirl_arrows"
+    ],
+    [
+      "b89",
+      "b90"
+    ],
+    [
+      "b89",
+      "n:rapid:3"
+    ],
+    [
+      "b90",
+      "s:archer/arrow_storm"
+    ],
+    [
+      "b91",
+      "b92"
+    ],
+    [
+      "b91",
+      "s:archer/arrow_storm"
+    ],
+    [
+      "b92",
+      "n:rapid:1"
+    ],
+    [
+      "b93",
+      "b94"
+    ],
+    [
+      "b93",
+      "n:rapid:1"
+    ],
+    [
+      "b94",
+      "s:archer/quiver_master"
+    ],
+    [
+      "b96",
+      "s:archer/arrow_storm"
+    ],
+    [
+      "b96",
+      "s:archer/gale_dance"
+    ],
+    [
+      "b98",
+      "n:bridge:2"
+    ],
+    [
+      "b98",
+      "s:archer/still_focus"
+    ],
+    [
+      "b99",
+      "n:bridge:2"
+    ],
+    [
+      "b99",
+      "s:archer/rapid_mastery"
+    ],
+    [
+      "s:archer/arrow_rain",
+      "s:archer/triple_shot"
+    ],
+    [
+      "s:archer/back_leap",
+      "s:archer/quick_draw"
+    ],
+    [
+      "s:archer/flash_arrow",
+      "s:archer/pinning_arrow"
+    ],
+    [
+      "s:archer/full_draw",
+      "s:archer/pinning_arrow"
+    ],
+    [
+      "s:archer/full_draw",
+      "s:archer/still_focus"
+    ],
+    [
+      "s:archer/rapid_mastery",
+      "s:archer/triple_shot"
+    ]
+  ]
+}

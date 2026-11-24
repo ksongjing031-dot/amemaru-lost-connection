@@ -6,9 +6,11 @@
   "type": "active",
   "name": "鷹の眼差し",
   "description": "鷹の目で戦場を見渡す。しばらく会心が大きく上がり、集中が20たまる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -31,9 +33,9 @@
       "type": "buff",
       "buff": "crit_up",
       "duration": 8,
-      "duration_per_rank": 1,
+      "duration_per_rank": 0.5,
       "value": 15,
-      "value_per_rank": 5
+      "value_per_rank": 2.5
     },
     {
       "type": "gauge",

@@ -3,7 +3,7 @@
   "name": "祈りの導き手",
   "model": "amemaru:prayer_echo",
   "floor": 4,
-  "level": 10,
+  "level": 22,
   "description": "祈り手たちの歌を導いていた、ひときわ大きな残響。その歌は速く、深い傷さえふさいでしまう。奥の院の祭壇を、いまも離れない。",
   "stats": {
     "hp": 18000,

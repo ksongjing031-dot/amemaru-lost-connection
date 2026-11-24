@@ -3,7 +3,7 @@
   "name": "主ナマズ",
   "model": "amemaru:kiba_namazu",
   "floor": 3,
-  "level": 9,
+  "level": 19,
   "description": "沈んだ区画のいちばん深い溜まりに棲む、小舟ほどもある大ナマズ。水が引いても、この溜まりだけは干上がらない。ひげの先が白く消えかけている。",
   "stats": {
     "hp": 14000,

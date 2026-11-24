@@ -34,21 +34,8 @@ public final class ResetService {
         }
         long now = player.level().getGameTime();
         switch (kind) {
-            case STATS -> {
-                if (data.totalAllocated() <= 0) {
-                    SkillTreeService.tell(player, Component.translatable("message.amemaru.reset.stats.nothing"));
-                    return false;
-                }
-                if (!data.confirm("reset_stats", now, CONFIRM_TICKS)) {
-                    player.displayClientMessage(Component.translatable("message.amemaru.reset.stats.confirm", data.totalAllocated())
-                            .withStyle(ChatFormatting.YELLOW), true);
-                    return false;
-                }
-                int refunded = LevelService.resetAllocation(player, data);
-                player.displayClientMessage(Component.translatable("message.amemaru.reset.stats.done", refunded)
-                        .withStyle(ChatFormatting.AQUA), false);
-            }
-            case SKILLS -> {
+            case STATS, SKILLS -> {
+                // 11月24日：ステータスもスキルツリーで振るので、忘却の水も白紙の誓約書も、スキルツリーをすべて戻す
                 if (!data.hasCombatJob()) {
                     SkillTreeService.tell(player, Component.translatable("message.amemaru.reset.skills.no_job"));
                     return false;

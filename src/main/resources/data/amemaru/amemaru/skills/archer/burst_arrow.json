@@ -6,9 +6,11 @@
   "type": "active",
   "name": "爆ぜ矢",
   "description": "結晶の火薬を仕込んだ矢。当たった所で弾け、まわりの敵をまとめて吹き飛ばす。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -31,14 +33,14 @@
     "speed": 2.6,
     "radius": 0.25,
     "explode": 3,
-    "explode_per_rank": 0.5
+    "explode_per_rank": 0.25
   },
   "effects": [
     {
       "type": "damage",
       "stat": "attack",
       "coefficient": 1.6,
-      "coefficient_per_rank": 0.25
+      "coefficient_per_rank": 0.125
     },
     {
       "type": "knockback",

@@ -6,9 +6,11 @@
   "type": "active",
   "name": "誓気解放",
   "description": "胸に溜めた誓気をすべて剣に込め、渾身の突きを放つ。誓気が多いほど強く、斬った手応えが体を癒やす。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -24,7 +26,7 @@
     "gauge": 30
   },
   "cooldown": 18,
-  "cooldown_per_rank": -2,
+  "cooldown_per_rank": -1,
   "link": "finisher",
   "delivery": {
     "type": "target",
@@ -35,7 +37,7 @@
     {
       "type": "gauge_burst",
       "per_gauge": 0.04,
-      "per_gauge_per_rank": 0.005
+      "per_gauge_per_rank": 0.0025
     },
     {
       "type": "damage",

@@ -6,13 +6,15 @@
   "type": "active",
   "name": "破山撃",
   "description": "高く跳び、落ちる勢いのまま地面に拳を叩きつける。まわりの敵の守りを砕く。【極】",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 20,
+  "min_level": 21,
   "requires": [
     {
       "skill": "monk/rising_dragon",
@@ -34,7 +36,7 @@
       "type": "damage",
       "stat": "attack",
       "coefficient": 2.2,
-      "coefficient_per_rank": 0.35
+      "coefficient_per_rank": 0.175
     },
     {
       "type": "status",

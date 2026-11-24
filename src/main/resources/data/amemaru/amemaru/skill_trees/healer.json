@@ -1,0 +1,1437 @@
+{
+  "_comment": "スキルツリー（tools/datagen/build_skill_trees.py が書き出す。手で直さない）。節（core：職業の核・skill：スキル・stat：ステータスの小さな節・notable：大きな節）と、つながり（links）。x・y はツリーの単位（右・下が正）",
+  "job": "amemaru:healer",
+  "nodes": [
+    {
+      "id": "core",
+      "kind": "core",
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "id": "s:healer/mending_light",
+      "kind": "skill",
+      "skill": "amemaru:healer/mending_light",
+      "x": -167.8,
+      "y": -49.7,
+      "start": false
+    },
+    {
+      "id": "g:healing:2:3",
+      "kind": "stat",
+      "x": -244.5,
+      "y": -72.4,
+      "stats": {
+        "magic": 2
+      }
+    },
+    {
+      "id": "s:healer/swift_prayer",
+      "kind": "skill",
+      "skill": "amemaru:healer/swift_prayer",
+      "x": -321.2,
+      "y": -95.1,
+      "start": false
+    },
+    {
+      "id": "g:healing:4:3",
+      "kind": "stat",
+      "x": -397.9,
+      "y": -117.9,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "n:healing:3",
+      "kind": "notable",
+      "name": "慈しみの手",
+      "x": -474.6,
+      "y": -140.6,
+      "stats": {
+        "heal_power": 8
+      }
+    },
+    {
+      "id": "s:healer/bell_heal",
+      "kind": "skill",
+      "skill": "amemaru:healer/bell_heal",
+      "x": -79.2,
+      "y": -52.4,
+      "start": true
+    },
+    {
+      "id": "s:healer/prayer_circle",
+      "kind": "skill",
+      "skill": "amemaru:healer/prayer_circle",
+      "x": -145.9,
+      "y": -96.6,
+      "start": false
+    },
+    {
+      "id": "s:healer/bond_mend",
+      "kind": "skill",
+      "skill": "amemaru:healer/bond_mend",
+      "x": -212.6,
+      "y": -140.7,
+      "start": false
+    },
+    {
+      "id": "s:healer/call_back",
+      "kind": "skill",
+      "skill": "amemaru:healer/call_back",
+      "x": -279.4,
+      "y": -184.9,
+      "start": false
+    },
+    {
+      "id": "s:healer/swelling_bell",
+      "kind": "skill",
+      "skill": "amemaru:healer/swelling_bell",
+      "x": -346.1,
+      "y": -229.1,
+      "start": false
+    },
+    {
+      "id": "s:healer/resonant_healing",
+      "kind": "skill",
+      "skill": "amemaru:healer/resonant_healing",
+      "x": -412.8,
+      "y": -273.2,
+      "start": false
+    },
+    {
+      "id": "s:healer/healing_rain",
+      "kind": "skill",
+      "skill": "amemaru:healer/healing_rain",
+      "x": -162.2,
+      "y": -196.8,
+      "start": false
+    },
+    {
+      "id": "s:healer/life_thread",
+      "kind": "skill",
+      "skill": "amemaru:healer/life_thread",
+      "x": -213.1,
+      "y": -258.5,
+      "start": false
+    },
+    {
+      "id": "g:healing:4:1",
+      "kind": "stat",
+      "x": -264.0,
+      "y": -320.2,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "n:healing:1",
+      "kind": "notable",
+      "name": "満ちる祈り",
+      "x": -314.9,
+      "y": -382.0,
+      "percent": {
+        "mp": 10,
+        "magic": 3
+      }
+    },
+    {
+      "id": "s:healer/mercy",
+      "kind": "skill",
+      "skill": "amemaru:healer/mercy",
+      "x": -67.0,
+      "y": -161.7,
+      "start": false
+    },
+    {
+      "id": "s:healer/aftercare",
+      "kind": "skill",
+      "skill": "amemaru:healer/aftercare",
+      "x": -97.6,
+      "y": -235.6,
+      "start": false
+    },
+    {
+      "id": "s:healer/bond_healing",
+      "kind": "skill",
+      "skill": "amemaru:healer/bond_healing",
+      "x": -128.2,
+      "y": -309.5,
+      "start": false
+    },
+    {
+      "id": "s:healer/overflowing_heal",
+      "kind": "skill",
+      "skill": "amemaru:healer/overflowing_heal",
+      "x": -158.8,
+      "y": -383.4,
+      "start": false
+    },
+    {
+      "id": "s:healer/full_heart",
+      "kind": "skill",
+      "skill": "amemaru:healer/full_heart",
+      "x": -189.4,
+      "y": -457.3,
+      "start": false
+    },
+    {
+      "id": "b21",
+      "kind": "stat",
+      "x": -206.2,
+      "y": -61.1,
+      "stats": {
+        "magic": 2
+      }
+    },
+    {
+      "id": "b22",
+      "kind": "stat",
+      "x": -282.9,
+      "y": -83.8,
+      "stats": {
+        "mp": 12
+      }
+    },
+    {
+      "id": "b23",
+      "kind": "stat",
+      "x": -359.5,
+      "y": -106.5,
+      "stats": {
+        "magic": 3
+      }
+    },
+    {
+      "id": "b24",
+      "kind": "stat",
+      "x": -436.2,
+      "y": -129.2,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b25",
+      "kind": "stat",
+      "x": -112.6,
+      "y": -74.5,
+      "stats": {
+        "magic": 2
+      }
+    },
+    {
+      "id": "b26",
+      "kind": "stat",
+      "x": -179.2,
+      "y": -118.6,
+      "stats": {
+        "mp": 12
+      }
+    },
+    {
+      "id": "b27",
+      "kind": "stat",
+      "x": -246.0,
+      "y": -162.8,
+      "stats": {
+        "magic": 2
+      }
+    },
+    {
+      "id": "b28",
+      "kind": "stat",
+      "x": -312.8,
+      "y": -207.0,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b29",
+      "kind": "stat",
+      "x": -379.5,
+      "y": -251.1,
+      "stats": {
+        "magic": 3
+      }
+    },
+    {
+      "id": "b30",
+      "kind": "stat",
+      "x": -187.6,
+      "y": -227.7,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b31",
+      "kind": "stat",
+      "x": -238.6,
+      "y": -289.4,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b32",
+      "kind": "stat",
+      "x": -289.4,
+      "y": -351.1,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b33",
+      "kind": "stat",
+      "x": -82.3,
+      "y": -198.6,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b34",
+      "kind": "stat",
+      "x": -112.9,
+      "y": -272.6,
+      "stats": {
+        "defense": 2
+      }
+    },
+    {
+      "id": "b35",
+      "kind": "stat",
+      "x": -143.5,
+      "y": -346.4,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b36",
+      "kind": "stat",
+      "x": -174.1,
+      "y": -420.4,
+      "stats": {
+        "defense": 3
+      }
+    },
+    {
+      "id": "b37",
+      "kind": "stat",
+      "x": -39.6,
+      "y": -26.2,
+      "stats": {
+        "mp": 10
+      }
+    },
+    {
+      "id": "b38",
+      "kind": "stat",
+      "x": -106.5,
+      "y": -129.1,
+      "stats": {
+        "mp": 10
+      }
+    },
+    {
+      "id": "b39",
+      "kind": "stat",
+      "x": -300.3,
+      "y": -140.0,
+      "stats": {
+        "mp": 12
+      }
+    },
+    {
+      "id": "b40",
+      "kind": "stat",
+      "x": -246.2,
+      "y": -221.7,
+      "stats": {
+        "mp": 12
+      }
+    },
+    {
+      "id": "b41",
+      "kind": "stat",
+      "x": -170.6,
+      "y": -284.0,
+      "stats": {
+        "mp": 12
+      }
+    },
+    {
+      "id": "b42",
+      "kind": "stat",
+      "x": -454.0,
+      "y": -184.8,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b43",
+      "kind": "stat",
+      "x": -433.4,
+      "y": -229.0,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b44",
+      "kind": "stat",
+      "x": -380.2,
+      "y": -309.5,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b45",
+      "kind": "stat",
+      "x": -347.5,
+      "y": -345.7,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b46",
+      "kind": "stat",
+      "x": -273.1,
+      "y": -407.1,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b47",
+      "kind": "stat",
+      "x": -231.2,
+      "y": -432.2,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "s:healer/great_call",
+      "kind": "skill",
+      "skill": "amemaru:healer/great_call",
+      "x": -492.0,
+      "y": -325.6,
+      "start": false
+    },
+    {
+      "id": "b49",
+      "kind": "stat",
+      "x": -452.4,
+      "y": -299.4,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "s:healer/bell_strike",
+      "kind": "skill",
+      "skill": "amemaru:healer/bell_strike",
+      "x": 167.8,
+      "y": -49.7,
+      "start": false
+    },
+    {
+      "id": "s:healer/chorus_bell",
+      "kind": "skill",
+      "skill": "amemaru:healer/chorus_bell",
+      "x": 244.5,
+      "y": -72.4,
+      "start": false
+    },
+    {
+      "id": "g:blessing:3:3",
+      "kind": "stat",
+      "x": 321.2,
+      "y": -95.1,
+      "stats": {
+        "magic": 2
+      }
+    },
+    {
+      "id": "s:healer/judgment_bell",
+      "kind": "skill",
+      "skill": "amemaru:healer/judgment_bell",
+      "x": 397.9,
+      "y": -117.9,
+      "start": false
+    },
+    {
+      "id": "n:blessing:3",
+      "kind": "notable",
+      "name": "加護の衣",
+      "x": 474.6,
+      "y": -140.6,
+      "percent": {
+        "defense": 8
+      }
+    },
+    {
+      "id": "s:healer/purifying_chime",
+      "kind": "skill",
+      "skill": "amemaru:healer/purifying_chime",
+      "x": 79.2,
+      "y": -52.4,
+      "start": true
+    },
+    {
+      "id": "s:healer/blessing_light",
+      "kind": "skill",
+      "skill": "amemaru:healer/blessing_light",
+      "x": 145.9,
+      "y": -96.6,
+      "start": false
+    },
+    {
+      "id": "s:healer/silence_sweep",
+      "kind": "skill",
+      "skill": "amemaru:healer/silence_sweep",
+      "x": 212.6,
+      "y": -140.7,
+      "start": false
+    },
+    {
+      "id": "s:healer/admonishing_bell",
+      "kind": "skill",
+      "skill": "amemaru:healer/admonishing_bell",
+      "x": 279.4,
+      "y": -184.9,
+      "start": false
+    },
+    {
+      "id": "s:healer/guardian_bell",
+      "kind": "skill",
+      "skill": "amemaru:healer/guardian_bell",
+      "x": 346.1,
+      "y": -229.1,
+      "start": false
+    },
+    {
+      "id": "s:healer/heavens_bell",
+      "kind": "skill",
+      "skill": "amemaru:healer/heavens_bell",
+      "x": 412.8,
+      "y": -273.2,
+      "start": false
+    },
+    {
+      "id": "s:healer/blessed_shield",
+      "kind": "skill",
+      "skill": "amemaru:healer/blessed_shield",
+      "x": 162.2,
+      "y": -196.8,
+      "start": false
+    },
+    {
+      "id": "s:healer/calming_circle",
+      "kind": "skill",
+      "skill": "amemaru:healer/calming_circle",
+      "x": 213.1,
+      "y": -258.5,
+      "start": false
+    },
+    {
+      "id": "g:blessing:4:1",
+      "kind": "stat",
+      "x": 264.0,
+      "y": -320.2,
+      "stats": {
+        "magic": 3
+      }
+    },
+    {
+      "id": "n:blessing:1",
+      "kind": "notable",
+      "name": "澄んだ鈴",
+      "x": 314.9,
+      "y": -382.0,
+      "stats": {
+        "cooldown_reduction": 4
+      },
+      "percent": {
+        "magic": 3
+      }
+    },
+    {
+      "id": "s:healer/bell_ward",
+      "kind": "skill",
+      "skill": "amemaru:healer/bell_ward",
+      "x": 67.0,
+      "y": -161.7,
+      "start": false
+    },
+    {
+      "id": "s:healer/purity",
+      "kind": "skill",
+      "skill": "amemaru:healer/purity",
+      "x": 97.6,
+      "y": -235.6,
+      "start": false
+    },
+    {
+      "id": "s:healer/admonishing_echo",
+      "kind": "skill",
+      "skill": "amemaru:healer/admonishing_echo",
+      "x": 128.2,
+      "y": -309.5,
+      "start": false
+    },
+    {
+      "id": "s:healer/steady_prayer",
+      "kind": "skill",
+      "skill": "amemaru:healer/steady_prayer",
+      "x": 158.8,
+      "y": -383.4,
+      "start": false
+    },
+    {
+      "id": "s:healer/bell_echo",
+      "kind": "skill",
+      "skill": "amemaru:healer/bell_echo",
+      "x": 189.4,
+      "y": -457.3,
+      "start": false
+    },
+    {
+      "id": "b70",
+      "kind": "stat",
+      "x": 206.2,
+      "y": -61.1,
+      "stats": {
+        "crit": 1.0
+      }
+    },
+    {
+      "id": "b71",
+      "kind": "stat",
+      "x": 282.9,
+      "y": -83.8,
+      "stats": {
+        "magic": 2
+      }
+    },
+    {
+      "id": "b72",
+      "kind": "stat",
+      "x": 359.5,
+      "y": -106.5,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "b73",
+      "kind": "stat",
+      "x": 436.2,
+      "y": -129.2,
+      "stats": {
+        "magic": 3
+      }
+    },
+    {
+      "id": "b74",
+      "kind": "stat",
+      "x": 112.6,
+      "y": -74.5,
+      "stats": {
+        "defense": 2
+      }
+    },
+    {
+      "id": "b75",
+      "kind": "stat",
+      "x": 179.2,
+      "y": -118.6,
+      "stats": {
+        "magic": 2
+      }
+    },
+    {
+      "id": "b76",
+      "kind": "stat",
+      "x": 246.0,
+      "y": -162.8,
+      "stats": {
+        "defense": 2
+      }
+    },
+    {
+      "id": "b77",
+      "kind": "stat",
+      "x": 312.8,
+      "y": -207.0,
+      "stats": {
+        "magic": 3
+      }
+    },
+    {
+      "id": "b78",
+      "kind": "stat",
+      "x": 379.5,
+      "y": -251.1,
+      "stats": {
+        "defense": 3
+      }
+    },
+    {
+      "id": "b79",
+      "kind": "stat",
+      "x": 187.6,
+      "y": -227.7,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b80",
+      "kind": "stat",
+      "x": 238.6,
+      "y": -289.4,
+      "stats": {
+        "magic": 3
+      }
+    },
+    {
+      "id": "b81",
+      "kind": "stat",
+      "x": 289.4,
+      "y": -351.1,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b82",
+      "kind": "stat",
+      "x": 82.3,
+      "y": -198.6,
+      "stats": {
+        "defense": 2
+      }
+    },
+    {
+      "id": "b83",
+      "kind": "stat",
+      "x": 112.9,
+      "y": -272.6,
+      "stats": {
+        "mp": 12
+      }
+    },
+    {
+      "id": "b84",
+      "kind": "stat",
+      "x": 143.5,
+      "y": -346.4,
+      "stats": {
+        "defense": 3
+      }
+    },
+    {
+      "id": "b85",
+      "kind": "stat",
+      "x": 174.1,
+      "y": -420.4,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b86",
+      "kind": "stat",
+      "x": 39.6,
+      "y": -26.2,
+      "stats": {
+        "mp": 10
+      }
+    },
+    {
+      "id": "b87",
+      "kind": "stat",
+      "x": 106.5,
+      "y": -129.1,
+      "stats": {
+        "hp": 20
+      }
+    },
+    {
+      "id": "b88",
+      "kind": "stat",
+      "x": 300.3,
+      "y": -140.0,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b89",
+      "kind": "stat",
+      "x": 246.2,
+      "y": -221.7,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b90",
+      "kind": "stat",
+      "x": 170.6,
+      "y": -284.0,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b91",
+      "kind": "stat",
+      "x": 454.0,
+      "y": -184.8,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b92",
+      "kind": "stat",
+      "x": 433.4,
+      "y": -229.0,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b93",
+      "kind": "stat",
+      "x": 380.2,
+      "y": -309.5,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b94",
+      "kind": "stat",
+      "x": 347.5,
+      "y": -345.7,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b95",
+      "kind": "stat",
+      "x": 273.1,
+      "y": -407.1,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b96",
+      "kind": "stat",
+      "x": 231.2,
+      "y": -432.2,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "s:healer/bond_sanctuary",
+      "kind": "skill",
+      "skill": "amemaru:healer/bond_sanctuary",
+      "x": 492.0,
+      "y": -325.6,
+      "start": false
+    },
+    {
+      "id": "b98",
+      "kind": "stat",
+      "x": 452.4,
+      "y": -299.4,
+      "stats": {
+        "magic": 3
+      }
+    },
+    {
+      "id": "n:bridge:2",
+      "kind": "notable",
+      "name": "祈りの均衡",
+      "x": 0.0,
+      "y": -255.0,
+      "percent": {
+        "hp": 4,
+        "mp": 5
+      }
+    },
+    {
+      "id": "b100",
+      "kind": "stat",
+      "x": -48.8,
+      "y": -245.3,
+      "stats": {
+        "mp": 12
+      }
+    },
+    {
+      "id": "b101",
+      "kind": "stat",
+      "x": 48.8,
+      "y": -245.3,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "n:bridge:4",
+      "kind": "notable",
+      "name": "癒し手の芯",
+      "x": 0.0,
+      "y": -415.0,
+      "stats": {
+        "heal_power": 5
+      },
+      "percent": {
+        "hp": 3
+      }
+    },
+    {
+      "id": "b103",
+      "kind": "stat",
+      "x": -105.9,
+      "y": -393.9,
+      "stats": {
+        "magic": 3
+      }
+    },
+    {
+      "id": "b104",
+      "kind": "stat",
+      "x": -52.9,
+      "y": -404.5,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b105",
+      "kind": "stat",
+      "x": 105.9,
+      "y": -393.9,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b106",
+      "kind": "stat",
+      "x": 52.9,
+      "y": -404.5,
+      "stats": {
+        "magic": 3
+      }
+    }
+  ],
+  "links": [
+    [
+      "b100",
+      "n:bridge:2"
+    ],
+    [
+      "b100",
+      "s:healer/aftercare"
+    ],
+    [
+      "b101",
+      "n:bridge:2"
+    ],
+    [
+      "b101",
+      "s:healer/purity"
+    ],
+    [
+      "b103",
+      "b104"
+    ],
+    [
+      "b103",
+      "s:healer/overflowing_heal"
+    ],
+    [
+      "b104",
+      "n:bridge:4"
+    ],
+    [
+      "b105",
+      "b106"
+    ],
+    [
+      "b105",
+      "s:healer/steady_prayer"
+    ],
+    [
+      "b106",
+      "n:bridge:4"
+    ],
+    [
+      "b21",
+      "g:healing:2:3"
+    ],
+    [
+      "b21",
+      "s:healer/mending_light"
+    ],
+    [
+      "b22",
+      "g:healing:2:3"
+    ],
+    [
+      "b22",
+      "s:healer/swift_prayer"
+    ],
+    [
+      "b23",
+      "g:healing:4:3"
+    ],
+    [
+      "b23",
+      "s:healer/swift_prayer"
+    ],
+    [
+      "b24",
+      "g:healing:4:3"
+    ],
+    [
+      "b24",
+      "n:healing:3"
+    ],
+    [
+      "b25",
+      "s:healer/bell_heal"
+    ],
+    [
+      "b25",
+      "s:healer/prayer_circle"
+    ],
+    [
+      "b26",
+      "s:healer/bond_mend"
+    ],
+    [
+      "b26",
+      "s:healer/prayer_circle"
+    ],
+    [
+      "b27",
+      "s:healer/bond_mend"
+    ],
+    [
+      "b27",
+      "s:healer/call_back"
+    ],
+    [
+      "b28",
+      "s:healer/call_back"
+    ],
+    [
+      "b28",
+      "s:healer/swelling_bell"
+    ],
+    [
+      "b29",
+      "s:healer/resonant_healing"
+    ],
+    [
+      "b29",
+      "s:healer/swelling_bell"
+    ],
+    [
+      "b30",
+      "s:healer/healing_rain"
+    ],
+    [
+      "b30",
+      "s:healer/life_thread"
+    ],
+    [
+      "b31",
+      "g:healing:4:1"
+    ],
+    [
+      "b31",
+      "s:healer/life_thread"
+    ],
+    [
+      "b32",
+      "g:healing:4:1"
+    ],
+    [
+      "b32",
+      "n:healing:1"
+    ],
+    [
+      "b33",
+      "s:healer/aftercare"
+    ],
+    [
+      "b33",
+      "s:healer/mercy"
+    ],
+    [
+      "b34",
+      "s:healer/aftercare"
+    ],
+    [
+      "b34",
+      "s:healer/bond_healing"
+    ],
+    [
+      "b35",
+      "s:healer/bond_healing"
+    ],
+    [
+      "b35",
+      "s:healer/overflowing_heal"
+    ],
+    [
+      "b36",
+      "s:healer/full_heart"
+    ],
+    [
+      "b36",
+      "s:healer/overflowing_heal"
+    ],
+    [
+      "b37",
+      "core"
+    ],
+    [
+      "b37",
+      "s:healer/bell_heal"
+    ],
+    [
+      "b38",
+      "s:healer/mercy"
+    ],
+    [
+      "b38",
+      "s:healer/prayer_circle"
+    ],
+    [
+      "b39",
+      "s:healer/call_back"
+    ],
+    [
+      "b39",
+      "s:healer/swift_prayer"
+    ],
+    [
+      "b40",
+      "s:healer/call_back"
+    ],
+    [
+      "b40",
+      "s:healer/life_thread"
+    ],
+    [
+      "b41",
+      "s:healer/bond_healing"
+    ],
+    [
+      "b41",
+      "s:healer/life_thread"
+    ],
+    [
+      "b42",
+      "b43"
+    ],
+    [
+      "b42",
+      "n:healing:3"
+    ],
+    [
+      "b43",
+      "s:healer/resonant_healing"
+    ],
+    [
+      "b44",
+      "b45"
+    ],
+    [
+      "b44",
+      "s:healer/resonant_healing"
+    ],
+    [
+      "b45",
+      "n:healing:1"
+    ],
+    [
+      "b46",
+      "b47"
+    ],
+    [
+      "b46",
+      "n:healing:1"
+    ],
+    [
+      "b47",
+      "s:healer/full_heart"
+    ],
+    [
+      "b49",
+      "s:healer/great_call"
+    ],
+    [
+      "b49",
+      "s:healer/resonant_healing"
+    ],
+    [
+      "b70",
+      "s:healer/bell_strike"
+    ],
+    [
+      "b70",
+      "s:healer/chorus_bell"
+    ],
+    [
+      "b71",
+      "g:blessing:3:3"
+    ],
+    [
+      "b71",
+      "s:healer/chorus_bell"
+    ],
+    [
+      "b72",
+      "g:blessing:3:3"
+    ],
+    [
+      "b72",
+      "s:healer/judgment_bell"
+    ],
+    [
+      "b73",
+      "n:blessing:3"
+    ],
+    [
+      "b73",
+      "s:healer/judgment_bell"
+    ],
+    [
+      "b74",
+      "s:healer/blessing_light"
+    ],
+    [
+      "b74",
+      "s:healer/purifying_chime"
+    ],
+    [
+      "b75",
+      "s:healer/blessing_light"
+    ],
+    [
+      "b75",
+      "s:healer/silence_sweep"
+    ],
+    [
+      "b76",
+      "s:healer/admonishing_bell"
+    ],
+    [
+      "b76",
+      "s:healer/silence_sweep"
+    ],
+    [
+      "b77",
+      "s:healer/admonishing_bell"
+    ],
+    [
+      "b77",
+      "s:healer/guardian_bell"
+    ],
+    [
+      "b78",
+      "s:healer/guardian_bell"
+    ],
+    [
+      "b78",
+      "s:healer/heavens_bell"
+    ],
+    [
+      "b79",
+      "s:healer/blessed_shield"
+    ],
+    [
+      "b79",
+      "s:healer/calming_circle"
+    ],
+    [
+      "b80",
+      "g:blessing:4:1"
+    ],
+    [
+      "b80",
+      "s:healer/calming_circle"
+    ],
+    [
+      "b81",
+      "g:blessing:4:1"
+    ],
+    [
+      "b81",
+      "n:blessing:1"
+    ],
+    [
+      "b82",
+      "s:healer/bell_ward"
+    ],
+    [
+      "b82",
+      "s:healer/purity"
+    ],
+    [
+      "b83",
+      "s:healer/admonishing_echo"
+    ],
+    [
+      "b83",
+      "s:healer/purity"
+    ],
+    [
+      "b84",
+      "s:healer/admonishing_echo"
+    ],
+    [
+      "b84",
+      "s:healer/steady_prayer"
+    ],
+    [
+      "b85",
+      "s:healer/bell_echo"
+    ],
+    [
+      "b85",
+      "s:healer/steady_prayer"
+    ],
+    [
+      "b86",
+      "core"
+    ],
+    [
+      "b86",
+      "s:healer/purifying_chime"
+    ],
+    [
+      "b87",
+      "s:healer/bell_ward"
+    ],
+    [
+      "b87",
+      "s:healer/blessing_light"
+    ],
+    [
+      "b88",
+      "g:blessing:3:3"
+    ],
+    [
+      "b88",
+      "s:healer/admonishing_bell"
+    ],
+    [
+      "b89",
+      "s:healer/admonishing_bell"
+    ],
+    [
+      "b89",
+      "s:healer/calming_circle"
+    ],
+    [
+      "b90",
+      "s:healer/admonishing_echo"
+    ],
+    [
+      "b90",
+      "s:healer/calming_circle"
+    ],
+    [
+      "b91",
+      "b92"
+    ],
+    [
+      "b91",
+      "n:blessing:3"
+    ],
+    [
+      "b92",
+      "s:healer/heavens_bell"
+    ],
+    [
+      "b93",
+      "b94"
+    ],
+    [
+      "b93",
+      "s:healer/heavens_bell"
+    ],
+    [
+      "b94",
+      "n:blessing:1"
+    ],
+    [
+      "b95",
+      "b96"
+    ],
+    [
+      "b95",
+      "n:blessing:1"
+    ],
+    [
+      "b96",
+      "s:healer/bell_echo"
+    ],
+    [
+      "b98",
+      "s:healer/bond_sanctuary"
+    ],
+    [
+      "b98",
+      "s:healer/heavens_bell"
+    ],
+    [
+      "s:healer/aftercare",
+      "s:healer/healing_rain"
+    ],
+    [
+      "s:healer/bell_strike",
+      "s:healer/blessing_light"
+    ],
+    [
+      "s:healer/blessed_shield",
+      "s:healer/purity"
+    ],
+    [
+      "s:healer/blessed_shield",
+      "s:healer/silence_sweep"
+    ],
+    [
+      "s:healer/bond_mend",
+      "s:healer/healing_rain"
+    ],
+    [
+      "s:healer/mending_light",
+      "s:healer/prayer_circle"
+    ]
+  ]
+}

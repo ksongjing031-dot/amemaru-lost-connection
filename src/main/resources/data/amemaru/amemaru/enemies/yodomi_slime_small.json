@@ -3,7 +3,7 @@
   "name": "小さな澱みスライム",
   "model": "amemaru:yodomi_slime",
   "floor": 3,
-  "level": 5,
+  "level": 10,
   "description": "澱みスライムが叩き割られて分かれた、小さなかたまり。すぐに水に戻ろうとするが、その前に誰かの足にからみつく。",
   "stats": {
     "hp": 650,

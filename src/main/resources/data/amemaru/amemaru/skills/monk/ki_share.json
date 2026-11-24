@@ -6,9 +6,11 @@
   "type": "active",
   "name": "気功・分け与え",
   "description": "自分の気を手のひらに集め、仲間に分け与える。気を30使って仲間を癒し、しばらく会心を上げる（気が30以上ないと使えない）。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -37,7 +39,7 @@
       "type": "heal",
       "stat": "attack",
       "coefficient": 1.5,
-      "coefficient_per_rank": 0.3
+      "coefficient_per_rank": 0.15
     },
     {
       "type": "buff",

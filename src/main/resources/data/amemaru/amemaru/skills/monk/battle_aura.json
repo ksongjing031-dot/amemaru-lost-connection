@@ -6,9 +6,11 @@
   "type": "passive",
   "name": "闘気",
   "description": "気が満ちると、拳にも力がみなぎる。気が50以上ある間、攻撃が上がる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -22,6 +24,6 @@
   "passive": {
     "type": "battle_aura",
     "value": 5,
-    "value_per_rank": 3
+    "value_per_rank": 1.5
   }
 }

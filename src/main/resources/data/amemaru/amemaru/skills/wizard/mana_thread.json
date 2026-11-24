@@ -6,9 +6,11 @@
   "type": "active",
   "name": "魔力の糸",
   "description": "自分の魔力を糸に乗せ、狙った味方に分け与える。分けたMPは自分から減る。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -20,7 +22,7 @@
     }
   ],
   "cooldown": 15,
-  "cooldown_per_rank": -2,
+  "cooldown_per_rank": -1,
   "link": "support",
   "delivery": {
     "type": "target",
@@ -31,7 +33,7 @@
     {
       "type": "mp_transfer",
       "amount": 40,
-      "amount_per_rank": 15
+      "amount_per_rank": 7.5
     }
   ],
   "animation": "wizard_mana_thread",

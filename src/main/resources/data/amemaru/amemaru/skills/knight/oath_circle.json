@@ -6,9 +6,11 @@
   "type": "active",
   "name": "誓いの円陣",
   "description": "誓いの盾を地に立て、光の円陣を張る。円陣の中の仲間は守られ、中にいる敵は自分から目を離せなくなる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -23,7 +25,7 @@
     "mp": 24
   },
   "cooldown": 30,
-  "cooldown_per_rank": -3,
+  "cooldown_per_rank": -1.5,
   "link": "support",
   "delivery": {
     "type": "around",
@@ -36,7 +38,7 @@
       "type": "zone",
       "radius": 5,
       "duration": 6,
-      "duration_per_rank": 1,
+      "duration_per_rank": 0.5,
       "interval": 0.5,
       "effects": [
         {
@@ -49,7 +51,7 @@
           "buff": "ward",
           "duration": 1.0,
           "value": 15,
-          "value_per_rank": 5
+          "value_per_rank": 2.5
         }
       ]
     }

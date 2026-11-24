@@ -29,7 +29,7 @@ JOB = {
     "upper": {
         "name": "鈴守",
         "description": "結びの鈴を守り継ぐ者。奥義（癒しの「大いなる呼び声」か、加護の「結びの聖域」）と、各スキルの第3段が開く。",
-        "min_level": 30,
+        "min_level": 60,
         "min_day": 11,
     },
 }
@@ -147,3 +147,25 @@ ultimate(J, "bond_sanctuary", "blessing", "結びの聖域",
          mp=70, cd=240, delivery=d_around(8, allies=True),
          effects=[zone(8, 10, 1.0, [buff("protect", 1.2, 25, to="allies"), dict(heal(0.4), to="allies"), weaken(20, 1.2)])],
          requires="healer/guardian_bell", tags=["bell", "heal"], anim="healer_sanctuary")
+
+# ================================================================ 11月24日に足したスキル（スキルツリーの作り直し）
+active(J, "bell_strike", "blessing", 1, 3, "鈴打ち",
+       "鈴杖で打ち、鳴った鈴の音が自分の傷をふさぐ。与えたダメージの一部だけHPが戻る。",
+       mp=8, cd=5, delivery=d_target(4.5), effects=[dmg("magic", (1.1, 0.18), lifesteal=(40, 5))], anim="healer_slam",
+       requires="healer/purifying_chime")
+active(J, "mending_light", "healing", 1, 3, "手当ての灯",
+       "仲間ひとりに小さな灯をともし、すぐに癒して、しばらく少しずつ癒し続ける。",
+       mp=12, cd=7, delivery=ALLY, effects=[heal((1.4, 0.25)), regen((0.2, 0.04), 6)], anim="healer_point",
+       requires="healer/bell_heal")
+active(J, "chorus_bell", "blessing", 2, 3, "輪唱の鈴",
+       "鈴を輪唱のように重ねて鳴らす。まわりの仲間（自分も）の与えるダメージが、しばらく上がる。",
+       mp=22, cd=32, cdpr=-2, link="support", delivery=d_around(10, allies=True), effects=[buff("power_up", (12, 1), (8, 3))],
+       anim="healer_ring", requires="healer/blessing_light")
+active(J, "swift_prayer", "healing", 3, 3, "疾き祈り",
+       "短い祈りで、まわりの仲間（自分も）の足を速くし、悪い状態を1つ払う。",
+       mp=18, cd=26, cdpr=-1.5, link="support", delivery=d_around(10, allies=True), effects=[buff("haste", (8, 1), (20, 4)), cleanse(1)],
+       anim="healer_pray", requires="healer/bond_mend")
+active(J, "judgment_bell", "blessing", 4, 3, "裁きの鐘",
+       "狙った所に大きな鐘の音を落とす。まわりの敵にダメージを与え、少しよろめかせ、目をくらませる。",
+       mp=28, cd=16, cdpr=-0.5, delivery=d_point(16, (5, 0.5)), effects=[dmg("magic", (1.8, 0.25)), stagger(0.6), blind(20, 3)],
+       anim="healer_raise", requires="healer/admonishing_bell")

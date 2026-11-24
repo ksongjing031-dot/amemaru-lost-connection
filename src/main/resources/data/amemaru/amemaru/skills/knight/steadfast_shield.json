@@ -6,13 +6,15 @@
   "type": "passive",
   "name": "揺るがぬ盾",
   "description": "構えた盾は、決して揺るがない。城壁の構え・受け流し・誓いの円陣の間、受けるダメージがさらに減る。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 20,
+  "min_level": 21,
   "requires": [
     {
       "skill": "knight/taunt_mastery",
@@ -22,6 +24,6 @@
   "passive": {
     "type": "steadfast_shield",
     "value": 5,
-    "value_per_rank": 3
+    "value_per_rank": 1.5
   }
 }

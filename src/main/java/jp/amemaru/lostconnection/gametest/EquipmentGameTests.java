@@ -304,11 +304,12 @@ public final class EquipmentGameTests {
         FakePlayer player = fake(helper, "gear_stats");
         PlayerData data = knight(player, 10);
         equip(player, data, ItemStack.EMPTY, ItemStack.EMPTY);
-        expectStat(helper, data, StatType.ATTACK, 28, "何も持たないレベル10のナイト");
+        // 11月24日：レベルで上がる攻撃は1レベルにつき0.9（レベル10で18）
+        expectStat(helper, data, StatType.ATTACK, 18, "何も持たないレベル10のナイト");
         equip(player, data, rolled("ancient_stone_sword", Rarity.COMMON, 1.0, 0), ItemStack.EMPTY);
-        expectStat(helper, data, StatType.ATTACK, 42, "古代石の剣（コモン・100%）");
+        expectStat(helper, data, StatType.ATTACK, 32, "古代石の剣（コモン・100%）");
         equip(player, data, rolled("ancient_stone_sword", Rarity.RARE, 1.0, 5), ItemStack.EMPTY);
-        expectStat(helper, data, StatType.ATTACK, 47, "古代石の剣（レア・100%・+5）");
+        expectStat(helper, data, StatType.ATTACK, 37, "古代石の剣（レア・100%・+5）");
         // 両手剣：もう片方の手の盾は効かない
         equip(player, data, rolled("ancient_stone_greatsword", Rarity.COMMON, 1.0, 0),
                 rolled("ancient_stone_shield", Rarity.COMMON, 1.0, 0));
@@ -316,12 +317,12 @@ public final class EquipmentGameTests {
         equip(player, data, ItemStack.EMPTY, ItemStack.EMPTY);
         expectStat(helper, data, StatType.DEFENSE, greatsword, "両手剣と盾（盾が効いている）");
 
-        // 必要レベルに届かない（古代石の剣はLv5から）
-        LevelService.setLevel(player, data, 4);
+        // 必要レベルに届かない（古代石の剣はLv10から。11月24日にレベルの上限を上げ、必要レベルも合わせた）
+        LevelService.setLevel(player, data, 9);
         equip(player, data, ItemStack.EMPTY, ItemStack.EMPTY);
         double bare = data.getStats().get(StatType.ATTACK);
         equip(player, data, rolled("ancient_stone_sword", Rarity.COMMON, 1.0, 0), ItemStack.EMPTY);
-        expectStat(helper, data, StatType.ATTACK, bare, "レベル4で持った古代石の剣");
+        expectStat(helper, data, StatType.ATTACK, bare, "レベル9で持った古代石の剣");
 
         // 職業が違う（ナイトの剣を持ったウィザード）
         LevelService.setLevel(player, data, 10);
@@ -378,7 +379,7 @@ public final class EquipmentGameTests {
 
     /**
      * 水門の鍵盾（3階のボスのレア装備・エピック）：ナイトの左手の盾。持つと防御とHPが上がり、
-     * 固有効果「水の膜」で敵から受けるダメージ −6%。必要レベル（7）に届かない・壊れていると効かない。
+     * 固有効果「水の膜」で敵から受けるダメージ −6%。必要レベル（15。11月24日に7から）に届かない・壊れていると効かない。
      */
     @GameTest(template = EMPTY)
     public static void floodgateKeyShieldWaterVeil(GameTestHelper helper) {
@@ -389,7 +390,7 @@ public final class EquipmentGameTests {
                 "水門の鍵盾が盾のアイテムではありません");
 
         FakePlayer player = fake(helper, "floodgate");
-        PlayerData data = knight(player, 10);
+        PlayerData data = knight(player, 15);
         double bareDefense = data.getStats().get(StatType.DEFENSE);
         check(helper, Math.abs(GearEffects.incomingMultiplier(player, data) - 1.0) < EPSILON, "盾を持つ前から、受けるダメージが減っています");
         ItemStack shield = rolled("floodgate_key_shield", Rarity.EPIC, 1.0, 0);
@@ -399,10 +400,10 @@ public final class EquipmentGameTests {
         check(helper, Math.abs(veil - 0.94) < EPSILON, "水の膜で、受けるダメージが −6% になっていません：" + veil);
 
         // 必要レベルに届かないと効かない
-        LevelService.setLevel(player, data, 6);
+        LevelService.setLevel(player, data, 14);
         LevelService.recompute(player, data);
-        check(helper, Math.abs(GearEffects.incomingMultiplier(player, data) - 1.0) < EPSILON, "Lv6で水の膜が効いています");
-        LevelService.setLevel(player, data, 10);
+        check(helper, Math.abs(GearEffects.incomingMultiplier(player, data) - 1.0) < EPSILON, "Lv14で水の膜が効いています");
+        LevelService.setLevel(player, data, 15);
         // 壊れると効かない
         GearData.setDurability(player.getOffhandItem(), def, 0);
         LevelService.recompute(player, data);
@@ -679,9 +680,11 @@ public final class EquipmentGameTests {
         double baseMove = player.getAttributeBaseValue(Attributes.MOVEMENT_SPEED);
         try {
             check(helper, SpeedService.movePercent(data, growth) == 0 && SpeedService.dodgeChance(data, growth) == 0,
-                    "振り分けていないのに素早さの効果があります");
+                    "素早さを上げていないのに素早さの効果があります");
             check(helper, Math.abs(player.getAttributeValue(Attributes.MOVEMENT_SPEED) - baseMove) < EPSILON, "移動の速さが変わっています");
-            LevelService.allocate(player, data, StatType.SPEED, 20);
+            // 11月24日：ステータスの振り分けはなくなった。結晶果（1つで素早さ+1）で上げる
+            data.getAdventure().setFruits(StatType.SPEED, 20);
+            LevelService.recompute(player, data);
             check(helper, Math.abs(SpeedService.movePercent(data, growth) - 10.0) < EPSILON
                     && Math.abs(SpeedService.attackSpeedPercent(data, growth) - 10.0) < EPSILON
                     && Math.abs(SpeedService.dodgeChance(data, growth) - 4.0) < EPSILON, "素早さ+20で、移動・攻撃+10%・回避4%になっていません");
@@ -696,22 +699,23 @@ public final class EquipmentGameTests {
             LevelService.resetAllocation(player, data);
             LevelService.recompute(player, data);
         }
-        check(helper, Math.abs(player.getAttributeValue(Attributes.MOVEMENT_SPEED) - baseMove) < EPSILON, "振り分けを戻しても移動の速さが戻りません");
+        check(helper, Math.abs(player.getAttributeValue(Attributes.MOVEMENT_SPEED) - baseMove) < EPSILON, "素早さを戻しても移動の速さが戻りません");
         helper.succeed();
     }
 
     // ================================================================ 成長（章の上限・結晶の欠片・追いつき補正）
 
-    /** 第1章はLv15で止まり、あふれた経験値は200ごとに結晶の欠片になる。6日目からLv28まで。中央値と追いつき補正。 */
+    /** 第1章はLv30で止まり、あふれた経験値は200ごとに結晶の欠片になる。6日目からLv55まで（11月24日）。中央値と追いつき補正。 */
     @GameTest(template = EMPTY)
     public static void levelCapShardsAndCatchUp(GameTestHelper helper) {
         GrowthDef growth = GrowthRules.current();
         check(helper, growth.chapterForDay(1) == 1 && growth.chapterForDay(5) == 1 && growth.chapterForDay(6) == 2
                 && growth.chapterForDay(11) == 3 && growth.chapterForDay(16) == 4 && growth.chapterForDay(20) == 4, "日と章の対応が違います");
-        check(helper, growth.levelCap(1) == 15 && growth.levelCap(2) == 28 && growth.levelCap(3) == 40 && growth.levelCap(4) == 50,
-                "章のレベルの上限が15・28・40・50ではありません");
-        check(helper, growth.catchUpBonus(4) == 0 && growth.catchUpBonus(5) == 50 && growth.catchUpBonus(9) == 50
-                && growth.catchUpBonus(10) == 100, "追いつき補正が「5以上低い+50%・10以上低い+100%」ではありません");
+        check(helper, growth.levelCap(1) == 30 && growth.levelCap(2) == 55 && growth.levelCap(3) == 80 && growth.levelCap(4) == 100,
+                "章のレベルの上限が30・55・80・100ではありません");
+        // 11月24日：レベルの幅が倍になったので、追いつき補正のレベル差も倍に
+        check(helper, growth.catchUpBonus(9) == 0 && growth.catchUpBonus(10) == 50 && growth.catchUpBonus(19) == 50
+                && growth.catchUpBonus(20) == 100, "追いつき補正が「10以上低い+50%・20以上低い+100%」ではありません");
 
         ProgressionData sample = ProgressionData.load(new CompoundTag());
         check(helper, sample.medianLevel() == 1, "記録がないときの中央値が1ではありません");
@@ -729,22 +733,23 @@ public final class EquipmentGameTests {
         ProgressionData progression = ProgressionData.get(helper.getLevel().getServer());
         int originalDay = progression.day();
         try {
+            // 11月24日：章ごとのレベルの上限は 30・55・80・100
             progression.setDay(1);
-            LevelService.setLevel(player, data, 15);
+            LevelService.setLevel(player, data, 30);
             LevelService.addExp(player, data, 450, LevelService.ExpSource.ADMIN);
-            check(helper, data.getLevel() == 15 && data.getExp() == 0, "第1章でLv15を超えました：Lv" + data.getLevel());
+            check(helper, data.getLevel() == 30 && data.getExp() == 0, "第1章でLv30を超えました：Lv" + data.getLevel());
             check(helper, count(player, ModItems.CRYSTAL_SHARD.get()) == 2 && data.getAdventure().overflowExp() == 50,
                     "あふれた経験値450が、結晶の欠片2つと残り50になっていません：" + count(player, ModItems.CRYSTAL_SHARD.get())
                             + "・" + data.getAdventure().overflowExp());
-            LevelService.setLevel(player, data, 14);
-            LevelService.addExp(player, data, growth.expToNext(14) + 300L, LevelService.ExpSource.ADMIN);
-            check(helper, data.getLevel() == 15 && data.getAdventure().overflowExp() == 150,
+            LevelService.setLevel(player, data, 29);
+            LevelService.addExp(player, data, growth.expToNext(29) + 300L, LevelService.ExpSource.ADMIN);
+            check(helper, data.getLevel() == 30 && data.getAdventure().overflowExp() == 150,
                     "上限に届いた残りの経験値が結晶の欠片の分に回っていません：Lv" + data.getLevel() + "・" + data.getAdventure().overflowExp());
 
             progression.setDay(6);
-            LevelService.setLevel(player, data, 15);
-            LevelService.addExp(player, data, growth.expToNext(15), LevelService.ExpSource.ADMIN);
-            check(helper, data.getLevel() == 16, "6日目（第2章）にLv16へ上がりません：Lv" + data.getLevel());
+            LevelService.setLevel(player, data, 30);
+            LevelService.addExp(player, data, growth.expToNext(30), LevelService.ExpSource.ADMIN);
+            check(helper, data.getLevel() == 31, "6日目（第2章）にLv31へ上がりません：Lv" + data.getLevel());
         } finally {
             progression.setDay(originalDay);
             data.getAdventure().setOverflowExp(0);

@@ -6,9 +6,11 @@
   "type": "active",
   "name": "雷鎖",
   "description": "狙った敵に雷を落とし、近くの敵へ次々と跳ばす。跳ぶたびに少し弱まる。感電した敵から始めると、跳ぶ回数と威力が増える。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -23,13 +25,13 @@
     "mp": 20
   },
   "cooldown": 7,
-  "cooldown_per_rank": -0.5,
+  "cooldown_per_rank": -0.25,
   "link": "finisher",
   "delivery": {
     "type": "chain",
     "range": 16,
     "jumps": 3,
-    "jumps_per_rank": 1,
+    "jumps_per_rank": 0.5,
     "jump_range": 6,
     "falloff": 0.8,
     "shocked_jumps": 2,
@@ -40,7 +42,7 @@
       "type": "damage",
       "stat": "magic",
       "coefficient": 1.5,
-      "coefficient_per_rank": 0.2
+      "coefficient_per_rank": 0.1
     }
   ],
   "animation": "wizard_chain_lightning",

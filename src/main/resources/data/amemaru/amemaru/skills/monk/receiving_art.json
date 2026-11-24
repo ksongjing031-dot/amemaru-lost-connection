@@ -6,9 +6,11 @@
   "type": "passive",
   "name": "受けの心得",
   "description": "受けることは、打つことの始まり。受け流しからの反撃のダメージが上がり、反撃すると気がたまる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -22,6 +24,6 @@
   "passive": {
     "type": "counter_mastery",
     "value": 15,
-    "value_per_rank": 8
+    "value_per_rank": 4.0
   }
 }

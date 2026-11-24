@@ -6,9 +6,11 @@
   "type": "active",
   "name": "穿ち矢",
   "description": "螺旋を描く矢で、並んだ敵をまとめて貫く。標のある敵には、さらに深く刺さる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -34,7 +36,7 @@
       "type": "damage",
       "stat": "attack",
       "coefficient": 1.8,
-      "coefficient_per_rank": 0.3,
+      "coefficient_per_rank": 0.15,
       "bonus_status": "amemaru:hunter_mark",
       "bonus": 1.3
     }

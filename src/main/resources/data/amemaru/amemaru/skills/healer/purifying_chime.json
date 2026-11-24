@@ -6,9 +6,11 @@
   "type": "active",
   "name": "清めの鈴音",
   "description": "鈴を前へ振り、清めの音を波のように放つ。前にいる敵を打ち、少し押し返す。ひとりで戦うときの、ヒーラーの身を守る技。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -21,7 +23,7 @@
   "delivery": {
     "type": "cone",
     "radius": 6,
-    "radius_per_rank": 0.5,
+    "radius_per_rank": 0.25,
     "angle": 50
   },
   "effects": [
@@ -29,7 +31,7 @@
       "type": "damage",
       "stat": "magic",
       "coefficient": 1.2,
-      "coefficient_per_rank": 0.2
+      "coefficient_per_rank": 0.1
     },
     {
       "type": "knockback",

@@ -3,7 +3,7 @@
   "name": "苔衣の樹皮兵長",
   "model": "amemaru:juhihei",
   "floor": 2,
-  "level": 8,
+  "level": 17,
   "description": "厚い苔を衣のようにまとった、樹皮兵の頭。管の谷の古い宝箱のそばを離れず、近づく者を根の叩きつけで追い払う。",
   "stats": {
     "hp": 15000,

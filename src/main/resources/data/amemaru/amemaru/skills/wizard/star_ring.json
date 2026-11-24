@@ -6,13 +6,15 @@
   "type": "active",
   "name": "星の環",
   "description": "小さな星を5つ呼び、自分のまわりを巡らせる（10秒）。近づいた敵に星がぶつかってダメージを与え、星痕を刻む。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 20,
+  "min_level": 21,
   "requires": [
     {
       "skill": "wizard/light_veil",
@@ -32,7 +34,7 @@
       "buff": "star_ring",
       "duration": 10,
       "value": 0.6,
-      "value_per_rank": 0.1,
+      "value_per_rank": 0.05,
       "count": 5
     }
   ],

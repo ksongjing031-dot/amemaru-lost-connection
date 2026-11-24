@@ -6,13 +6,15 @@
   "type": "active",
   "name": "大車輪",
   "description": "両手剣を振り回し、竜巻のように回り続ける（2秒）。回っている間も歩ける。誓気が20以上あれば、20使って1.3倍。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 20,
+  "min_level": 21,
   "requires": [
     {
       "skill": "knight/oath_release",
@@ -43,7 +45,7 @@
           "type": "damage",
           "stat": "attack",
           "coefficient": 0.6,
-          "coefficient_per_rank": 0.1
+          "coefficient_per_rank": 0.05
         },
         {
           "type": "knockback",

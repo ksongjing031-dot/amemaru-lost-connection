@@ -41,6 +41,7 @@ public final class ServerEvents {
         event.addListener(GrowthRules.loader());
         event.addListener(SkillRegistry.jobLoader());
         event.addListener(SkillRegistry.skillLoader());
+        event.addListener(SkillRegistry.treeLoader());
         // Phase 3：装備・アクセサリー・敵・生産
         event.addListener(GearRules.loader());
         event.addListener(EquipmentDefs.loader());

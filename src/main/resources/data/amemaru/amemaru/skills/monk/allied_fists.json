@@ -6,9 +6,11 @@
   "type": "passive",
   "name": "仲間の拳",
   "description": "肩を並べて戦う仲間がいると、体が軽くなる。まわりに近接で戦う仲間がいると、素早さが上がる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -22,7 +24,7 @@
   "passive": {
     "type": "ally_fist",
     "value": 5,
-    "value_per_rank": 3,
+    "value_per_rank": 1.5,
     "radius": 8
   }
 }

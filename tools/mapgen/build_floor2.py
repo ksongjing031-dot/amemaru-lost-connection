@@ -1267,7 +1267,7 @@ def floor_json(f, woods_json):
         "chapter": 1,
         "name": "忘れられた森",
         "chapter_title": "第1章　失われた古代領域",
-        "recommended_level": [3, 6],
+        "recommended_level": [6, 13],
         "origin": list(ORIGIN),
         "size": [SIZE, HEIGHT, SIZE],
         "structure": "amemaru:map/floor2/",

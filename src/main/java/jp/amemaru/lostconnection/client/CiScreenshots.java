@@ -10,11 +10,9 @@ import jp.amemaru.lostconnection.client.screen.WorkshopScreen;
 import jp.amemaru.lostconnection.job.JobService;
 import jp.amemaru.lostconnection.network.ModNetwork;
 import jp.amemaru.lostconnection.network.c2s.AccessoryActionC2S;
-import jp.amemaru.lostconnection.network.c2s.AllocateStatC2S;
 import jp.amemaru.lostconnection.network.c2s.SetLoadoutC2S;
 import jp.amemaru.lostconnection.network.c2s.UseSkillC2S;
 import jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C;
-import jp.amemaru.lostconnection.player.StatType;
 import net.minecraft.client.CameraType;
 import net.minecraft.client.CloudStatus;
 import net.minecraft.client.Minecraft;
@@ -1578,7 +1576,8 @@ public final class CiScreenshots {
                 }
                 // 透明な画面を開いておく（自動の確認の側は、画面が開いている間は終了を待つ）。HUDはそのまま見える
                 minecraft.setScreen(new HoldScreen());
-                // 見本の状態：レベル12、経験値を半分ほど、HPと攻撃に振り分け（残りのポイントがあるので結晶が光る）
+                // 見本の状態：レベル12、経験値を半分ほど（11月24日からステータスもスキルツリーで振るため、振り分けはしない。
+                // ツリーのポイントが残っているので結晶が光る）
                 command(minecraft, "amemaru admin level set @a 12");
                 command(minecraft, "amemaru admin level exp @a 180");
                 // ホットバーとオフハンドの見え方を確かめるためのアイテム
@@ -1587,8 +1586,6 @@ public final class CiScreenshots {
                 command(minecraft, "give @a minecraft:bread 12");
                 command(minecraft, "give @a minecraft:torch 64");
                 command(minecraft, "item replace entity @a weapon.offhand with minecraft:shield");
-                ModNetwork.sendToServer(new AllocateStatC2S(StatType.HP, 3));
-                ModNetwork.sendToServer(new AllocateStatC2S(StatType.ATTACK, 2));
                 // どんな地形に出ても同じ写真になるよう、30ブロック上の空に15×15の床を作る（立つのは次の段階。
                 // 床が届く前に移ると、落ちることがあるため）
                 command(minecraft, "time set noon");
@@ -1669,13 +1666,55 @@ public final class CiScreenshots {
                 next(12, 2);
             }
             case 12 -> {
+                // 11月24日：ツリーの見本として、取れているスキルのとなりのステータスの節を少し取っておく
+                takeTreeNodesForShot(6);
                 minecraft.setScreen(new SkillTreeScreen());
+                treeShot = 0;
                 next(13, 10);
             }
             case 13 -> {
-                clean(minecraft);
-                pendingShot = "skill_tree";
-                next(14, 2);
+                // 11月24日：星座のスキルツリーを、開いたとき・大きな節を選んだとき・全体・ステータスのつまみで撮る
+                SkillTreeScreen tree = minecraft.screen instanceof SkillTreeScreen open ? open : null;
+                switch (treeShot++) {
+                    case 0 -> {
+                        clean(minecraft);
+                        pendingShot = "skill_tree";
+                        next(13, 3);
+                    }
+                    case 1 -> {
+                        if (tree != null) {
+                            tree.selectNode(firstTreeNode(jp.amemaru.lostconnection.job.def.SkillTreeDef.Kind.NOTABLE));
+                        }
+                        next(13, 6);
+                    }
+                    case 2 -> {
+                        clean(minecraft);
+                        pendingShot = "skill_tree_node";
+                        next(13, 3);
+                    }
+                    case 3 -> {
+                        if (tree != null) {
+                            tree.showWholeTree();
+                        }
+                        next(13, 6);
+                    }
+                    case 4 -> {
+                        clean(minecraft);
+                        pendingShot = "skill_tree_all";
+                        next(13, 3);
+                    }
+                    case 5 -> {
+                        if (tree != null) {
+                            tree.showStats();
+                        }
+                        next(13, 6);
+                    }
+                    default -> {
+                        clean(minecraft);
+                        pendingShot = "skill_tree_stats";
+                        next(14, 2);
+                    }
+                }
             }
             case 14 -> {
                 // 誓約の結晶に手を当てたときと同じ画面（サーバーから開く）
@@ -1871,7 +1910,7 @@ public final class CiScreenshots {
                 next(35, 2);
             }
             case 35 -> {
-                // 奥義のつまみ：天断ちを選んだので、不落の城は選べない（暗い）
+                // 奥義：天断ちを選び、ツリーのまん中に見せる（11月24日から、奥義は流派の先端の節）
                 SkillTreeScreen tree = new SkillTreeScreen();
                 minecraft.setScreen(tree);
                 int cleave = skillIndex("knight/heaven_cleave");
@@ -2022,7 +2061,7 @@ public final class CiScreenshots {
                 next(60, 2);
             }
             case 60 -> {
-                // ウィザードのスキルツリー（星灯のつまみ。星爆を選んで、組み合わせの説明を見せる）
+                // ウィザードのスキルツリー（星爆を選んで、組み合わせの説明を見せる）
                 SkillTreeScreen tree = new SkillTreeScreen();
                 minecraft.setScreen(tree);
                 int starBurst = skillIndex("wizard/star_burst");
@@ -3278,6 +3317,71 @@ public final class CiScreenshots {
     }
 
     /** 写真のじゃまになる、チャットの文と右上の小窓（実績・レシピ）を消す。 */
+    /** スキルツリーの撮影の、何枚目か（11月24日）。 */
+    private static int treeShot;
+
+    /**
+     * 撮影の見本：取れている節のとなりの、ステータスの節を {@code count} 個まで取る（サーバーが確かめる。11月24日）。
+     * 核に近い順に取るので、核から道がのびて見える。
+     */
+    private static void takeTreeNodesForShot(int count) {
+        ClientPlayerState state = ClientPlayerState.get();
+        jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C.TreeInfo tree = ClientDefinitions.get().tree(state.jobIndex());
+        if (tree == null) {
+            return;
+        }
+        List<jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C.TreeNodeInfo> nodes = tree.nodes();
+        boolean[] taken = new boolean[nodes.size()];
+        for (int i = 0; i < nodes.size(); i++) {
+            jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C.TreeNodeInfo node = nodes.get(i);
+            taken[i] = switch (node.kindEnum()) {
+                case CORE -> true;
+                case SKILL -> node.skill() >= 0 && state.rank(node.skill()) > 0;
+                default -> state.hasTreeNode(node.id());
+            };
+        }
+        int[] links = tree.links();
+        for (int sent = 0; sent < count; sent++) {
+            int best = -1;
+            for (int k = 0; k + 1 < links.length; k += 2) {
+                for (int side = 0; side < 2; side++) {
+                    int from = links[k + side];
+                    int to = links[k + 1 - side];
+                    if (from < 0 || to < 0 || from >= nodes.size() || to >= nodes.size() || !taken[from] || taken[to]) {
+                        continue;
+                    }
+                    jp.amemaru.lostconnection.job.def.SkillTreeDef.Kind kind = nodes.get(to).kindEnum();
+                    if (kind != jp.amemaru.lostconnection.job.def.SkillTreeDef.Kind.STAT
+                            && kind != jp.amemaru.lostconnection.job.def.SkillTreeDef.Kind.NOTABLE) {
+                        continue;
+                    }
+                    if (best < 0 || Math.abs(nodes.get(to).y()) < Math.abs(nodes.get(best).y())) {
+                        best = to;
+                    }
+                }
+            }
+            if (best < 0) {
+                return;
+            }
+            taken[best] = true;
+            ModNetwork.sendToServer(new jp.amemaru.lostconnection.network.c2s.TakeTreeNodeC2S(nodes.get(best).id()));
+        }
+    }
+
+    /** 今の職業のツリーの、その種類の最初の節の名前（なければ空）。 */
+    private static String firstTreeNode(jp.amemaru.lostconnection.job.def.SkillTreeDef.Kind kind) {
+        jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C.TreeInfo tree = ClientDefinitions.get().tree(ClientPlayerState.get().jobIndex());
+        if (tree == null) {
+            return "";
+        }
+        for (jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C.TreeNodeInfo node : tree.nodes()) {
+            if (node.kindEnum() == kind) {
+                return node.id();
+            }
+        }
+        return "";
+    }
+
     private static void clean(Minecraft minecraft) {
         minecraft.gui.getChat().clearMessages(false);
         minecraft.getToasts().clear();

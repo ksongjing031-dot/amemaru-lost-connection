@@ -22,7 +22,7 @@ DATA = os.path.join(ROOT, "src/main/resources/data/amemaru")
 ASSETS = os.path.join(ROOT, "src/main/resources/assets/amemaru")
 MANIFEST = os.path.join(ROOT, "src/main/resources/amemaru/item_types.json")
 
-LEVEL = 7
+LEVEL = 15  # 11月24日：レベルの上限を上げたので 7 → 15
 SERIES = "流紋シリーズ"
 JOB_NAMES = {"knight": "ナイト", "wizard": "ウィザード", "healer": "ヒーラー", "archer": "アーチャー", "rogue": "ローグ",
              "monk": "モンク"}

@@ -6,9 +6,11 @@
   "type": "passive",
   "name": "つながりの癒し",
   "description": "仲間が多いほど、癒しの力も強くなる。まわりにいるパーティの仲間1人につき、回復の量が上がる（4人まで）。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -22,7 +24,7 @@
   "passive": {
     "type": "bond_heal",
     "value": 4,
-    "value_per_rank": 2,
+    "value_per_rank": 1.0,
     "radius": 20
   }
 }

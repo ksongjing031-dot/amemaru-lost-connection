@@ -6,13 +6,15 @@
   "type": "passive",
   "name": "矢筒の名手",
   "description": "矢筒の中身を知り尽くしている。速射の流派のスキルを使うと、ときどきクールダウンが半分になる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 25,
+  "min_level": 26,
   "requires": [
     {
       "skill": "archer/wind_reading",
@@ -22,6 +24,6 @@
   "passive": {
     "type": "quiver_master",
     "value": 15,
-    "value_per_rank": 5
+    "value_per_rank": 2.5
   }
 }

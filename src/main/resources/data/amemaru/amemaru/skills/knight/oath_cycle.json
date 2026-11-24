@@ -6,9 +6,11 @@
   "type": "passive",
   "name": "誓気の循環",
   "description": "燃やした誓気が糸を巡り、MPとなって戻ってくる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -22,6 +24,6 @@
   "passive": {
     "type": "oath_cycle",
     "value": 50,
-    "value_per_rank": 10
+    "value_per_rank": 5
   }
 }

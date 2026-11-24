@@ -1,6 +1,10 @@
 package jp.amemaru.lostconnection.gametest;
 
 import jp.amemaru.lostconnection.AmemaruMod;
+import jp.amemaru.lostconnection.job.JobService;
+import jp.amemaru.lostconnection.job.def.JobDef;
+import jp.amemaru.lostconnection.job.def.SkillRegistry;
+import jp.amemaru.lostconnection.job.def.SkillTreeDef;
 import jp.amemaru.lostconnection.player.GrowthRules;
 import jp.amemaru.lostconnection.player.LevelService;
 import jp.amemaru.lostconnection.player.PlayerData;
@@ -21,6 +25,8 @@ import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -43,19 +49,24 @@ public final class PlayerDataGameTests {
     }
 
     /**
-     * /kill などで死んで復活しても、レベル・振り分けが残り、HPとMPが全快になる。
+     * /kill などで死んで復活しても、レベル・スキルツリーで取った節が残り、HPとMPが全快になる。
      *
      * <p>Forgeのリスポーンと同じ順番で動かす：古い体が消える（Capabilityが無効になる）→
      * {@link PlayerEvent.Clone} → {@link PlayerEvent.PlayerRespawnEvent}。Phase 1で見つかった不具合
-     * （古い体のデータを読めず、新しい体が初期値になる）を確かめるテスト。</p>
+     * （古い体のデータを読めず、新しい体が初期値になる）を確かめるテスト。11月24日からは、振り分けの代わりにスキルツリーの節。</p>
      */
     @GameTest(template = EMPTY)
     public static void dataSurvivesRespawn(GameTestHelper helper) {
         FakePlayer oldBody = fake(helper, "respawn_old");
         PlayerData data = data(helper, oldBody);
         LevelService.setLevel(oldBody, data, 10);
-        int used = LevelService.allocate(oldBody, data, StatType.ATTACK, 5);
-        helper.assertTrue(used == 5, "振り分けた数が5ではありません：" + used);
+        JobService.setJobForced(oldBody, data, knight(helper));
+        SkillTreeDef tree = TreeTestUtil.tree(AmemaruMod.id("knight"));
+        String node = TreeTestUtil.statNextToCore(tree);
+        double hpBefore = data.getStats().maxHp();
+        TreeTestUtil.take(helper, oldBody, data, tree, node);
+        double hpWithNode = data.getStats().maxHp();
+        helper.assertTrue(hpWithNode > hpBefore, "体力の節を取っても最大HPが増えません：" + hpBefore + " → " + hpWithNode);
         data.setHp(10);
 
         FakePlayer newBody = fake(helper, "respawn_new");
@@ -65,23 +76,23 @@ public final class PlayerDataGameTests {
 
         PlayerData after = data(helper, newBody);
         helper.assertTrue(after.getLevel() == 10, "復活後のレベルが10ではありません：" + after.getLevel());
-        helper.assertTrue(after.getAllocated(StatType.ATTACK) == 5,
-                "復活後の攻撃の振り分けが5ではありません：" + after.getAllocated(StatType.ATTACK));
-        helper.assertTrue(after.getStats().get(StatType.ATTACK) == 33,
-                "復活後の攻撃が33ではありません：" + after.getStats().get(StatType.ATTACK));
+        helper.assertTrue(after.hasTreeNode(node), "復活後に、スキルツリーで取った節が消えました：" + after.getTreeNodes());
+        helper.assertTrue(Math.abs(after.getStats().maxHp() - hpWithNode) < EPSILON,
+                "復活後の最大HPが " + hpWithNode + " ではありません：" + after.getStats().maxHp());
         helper.assertTrue(Math.abs(after.getHp() - after.getStats().maxHp()) < EPSILON,
                 "復活後のHPが全快ではありません：" + after.getHp());
         helper.succeed();
     }
 
-    /** 保存して読み直しても、レベル・経験値・振り分け・HPとMPが同じ。 */
+    /** 保存して読み直しても、レベル・経験値・スキルツリーで取った節・HPとMPが同じ。 */
     @GameTest(template = EMPTY)
     public static void saveAndLoadKeepsData(GameTestHelper helper) {
         ServerPlayer player = fake(helper, "saveAndLoadKeepsData");
         PlayerData data = data(helper, player);
         LevelService.setLevel(player, data, 7);
         LevelService.addExp(player, data, 42, LevelService.ExpSource.ADMIN);
-        LevelService.allocate(player, data, StatType.HP, 3);
+        data.addTreeNode("b39");
+        data.addTreeNode("n:guardian:1");
         data.setHp(100);
         data.setMp(50);
 
@@ -90,47 +101,67 @@ public final class PlayerDataGameTests {
         loaded.load(saved);
         helper.assertTrue(loaded.getLevel() == 7, "読み直したレベルが7ではありません：" + loaded.getLevel());
         helper.assertTrue(loaded.getExp() == 42, "読み直した経験値が42ではありません：" + loaded.getExp());
-        helper.assertTrue(loaded.getAllocated(StatType.HP) == 3, "読み直したHPの振り分けが3ではありません");
+        helper.assertTrue(loaded.getTreeNodes().equals(data.getTreeNodes()), "読み直したスキルツリーの節が違います：" + loaded.getTreeNodes());
+        helper.assertTrue(loaded.getTreeVersion() == PlayerData.TREE_VERSION,
+                "読み直したスキルツリーの版が " + PlayerData.TREE_VERSION + " ではありません：" + loaded.getTreeVersion());
         helper.assertTrue(Math.abs(loaded.getHp() - 100) < EPSILON, "読み直したHPが100ではありません：" + loaded.getHp());
         helper.assertTrue(Math.abs(loaded.getMp() - 50) < EPSILON, "読み直したMPが50ではありません：" + loaded.getMp());
         helper.succeed();
     }
 
-    /** レベル10のステータスが、同梱の成長の定義どおりになる。 */
+    /**
+     * レベル10のステータスが、同梱の成長の定義どおりになる（11月24日：レベルで上がるのは HP18・MP4・攻撃0.9・魔力0.9・防御0.45。
+     * ステータスポイントはなくなり、ツリーのポイントは1レベルごとに2・5の倍数のレベルでさらに1）。
+     */
     @GameTest(template = EMPTY)
     public static void statsAtLevelTen(GameTestHelper helper) {
         ServerPlayer player = fake(helper, "statsAtLevelTen");
         PlayerData data = data(helper, player);
         LevelService.setLevel(player, data, 10);
-        expectStat(helper, data, StatType.HP, 560);
-        expectStat(helper, data, StatType.MP, 190);
-        expectStat(helper, data, StatType.ATTACK, 28);
-        expectStat(helper, data, StatType.MAGIC, 28);
-        expectStat(helper, data, StatType.DEFENSE, 14);
+        expectStat(helper, data, StatType.HP, 362);
+        expectStat(helper, data, StatType.MP, 136);
+        expectStat(helper, data, StatType.ATTACK, 18);
+        expectStat(helper, data, StatType.MAGIC, 18);
+        expectStat(helper, data, StatType.DEFENSE, 9);
         expectStat(helper, data, StatType.SPEED, 10);
         expectStat(helper, data, StatType.CRIT, 5);
         expectStat(helper, data, StatType.CRIT_DAMAGE, 50);
         int statPoints = LevelService.availableStatPoints(data, GrowthRules.current());
         int skillPoints = LevelService.availableSkillPoints(data, GrowthRules.current());
-        helper.assertTrue(statPoints == 27, "ステータスポイントが27ではありません：" + statPoints);
-        helper.assertTrue(skillPoints == 11, "スキルポイントが11ではありません：" + skillPoints);
+        helper.assertTrue(statPoints == 0, "ステータスポイントが0ではありません：" + statPoints);
+        helper.assertTrue(skillPoints == 20, "ツリーのポイントが20ではありません：" + skillPoints);
         helper.succeed();
     }
 
-    /** HPに振り分けると、最大HPと今のHPが同じだけ増える。 */
+    /** スキルツリーの体力の節を取ると、最大HPと今のHPが同じだけ増える（11月24日。前は振り分け）。 */
     @GameTest(template = EMPTY)
-    public static void allocationRaisesHp(GameTestHelper helper) {
-        ServerPlayer player = fake(helper, "allocationRaisesHp");
+    public static void treeNodeRaisesHp(GameTestHelper helper) {
+        ServerPlayer player = fake(helper, "treeNodeRaisesHp");
         PlayerData data = data(helper, player);
         LevelService.setLevel(player, data, 10);
-        LevelService.allocate(player, data, StatType.HP, 1);
-        expectStat(helper, data, StatType.HP, 572);
-        helper.assertTrue(Math.abs(data.getHp() - 572) < EPSILON, "今のHPが572ではありません：" + data.getHp());
+        JobService.setJobForced(player, data, knight(helper));
+        // 見習い装備は持たない（何も持たないナイトで数える）
+        player.getInventory().clearContent();
+        LevelService.recompute(player, data);
+        SkillTreeDef tree = TreeTestUtil.tree(AmemaruMod.id("knight"));
+        List<String> hpNodes = new ArrayList<>();
+        for (String id : tree.neighbors(tree.core().id())) {
+            SkillTreeDef.Node node = tree.node(id);
+            if (node != null && node.isStatNode() && node.flat().containsKey(StatType.HP)) {
+                hpNodes.add(id);
+            }
+        }
+        helper.assertTrue(hpNodes.size() >= 2, "ナイトの核のとなりに、体力の節が2つありません：" + hpNodes);
+        // 何も持たないナイト（HP+20%）：434 → 体力+20の節で 458
+        expectStat(helper, data, StatType.HP, 434);
+        TreeTestUtil.take(helper, player, data, tree, hpNodes.get(0));
+        expectStat(helper, data, StatType.HP, 458);
+        helper.assertTrue(Math.abs(data.getHp() - 458) < EPSILON, "今のHPが458ではありません：" + data.getHp());
 
         data.setHp(300);
-        LevelService.allocate(player, data, StatType.HP, 1);
-        expectStat(helper, data, StatType.HP, 584);
-        helper.assertTrue(Math.abs(data.getHp() - 312) < EPSILON, "今のHPが312ではありません：" + data.getHp());
+        TreeTestUtil.take(helper, player, data, tree, hpNodes.get(1));
+        expectStat(helper, data, StatType.HP, 482);
+        helper.assertTrue(Math.abs(data.getHp() - 324) < EPSILON, "今のHPが324ではありません：" + data.getHp());
         helper.succeed();
     }
 
@@ -146,12 +177,12 @@ public final class PlayerDataGameTests {
         // バニラの体力が2割減る（落下などと同じ）
         player.setHealth(player.getMaxHealth() * 0.8F);
         VitalsService.tick(player, data);
-        helper.assertTrue(Math.abs(data.getHp() - 448) < 0.5, "2割減った後のHPが448ではありません：" + data.getHp());
+        helper.assertTrue(Math.abs(data.getHp() - 289.6) < 0.5, "2割減った後のHPが289.6ではありません：" + data.getHp());
 
         // バニラの体力が1割戻る（回復薬などと同じ）
         player.setHealth(player.getMaxHealth() * 0.9F);
         VitalsService.tick(player, data);
-        helper.assertTrue(Math.abs(data.getHp() - 504) < 0.5, "1割戻った後のHPが504ではありません：" + data.getHp());
+        helper.assertTrue(Math.abs(data.getHp() - 325.8) < 0.5, "1割戻った後のHPが325.8ではありません：" + data.getHp());
         helper.succeed();
     }
 
@@ -161,14 +192,17 @@ public final class PlayerDataGameTests {
         ServerPlayer player = fake(helper, "expRaisesLevel");
         PlayerData data = data(helper, player);
         LevelService.setLevel(player, data, 10);
+        // 11月24日：次のレベルまでの経験値は 55×1.038^レベル（レベル10→11で80、19→20で112）
         int gained = LevelService.addExp(player, data, 1000, LevelService.ExpSource.ADMIN);
-        helper.assertTrue(gained == 3, "上がったレベルが3ではありません：" + gained);
-        helper.assertTrue(data.getLevel() == 13 && data.getExp() == 68,
-                "レベル13・経験値68になっていません：レベル" + data.getLevel() + "・経験値" + data.getExp());
+        helper.assertTrue(gained == 10, "上がったレベルが10ではありません：" + gained);
+        helper.assertTrue(data.getLevel() == 20 && data.getExp() == 49,
+                "レベル20・経験値49になっていません：レベル" + data.getLevel() + "・経験値" + data.getExp());
 
-        LevelService.setLevel(player, data, 50);
+        int max = GrowthRules.current().maxLevel();
+        helper.assertTrue(max == 100, "最大レベルが100ではありません：" + max);
+        LevelService.setLevel(player, data, max);
         LevelService.addExp(player, data, 5000, LevelService.ExpSource.ADMIN);
-        helper.assertTrue(data.getLevel() == 50 && data.getExp() == 0,
+        helper.assertTrue(data.getLevel() == max && data.getExp() == 0,
                 "最大レベルで経験値がたまっています：経験値" + data.getExp());
         helper.succeed();
     }
@@ -189,6 +223,12 @@ public final class PlayerDataGameTests {
             helper.fail("プレイヤーデータが付いていません");
             return new IllegalStateException("no player data");
         });
+    }
+
+    private static JobDef knight(GameTestHelper helper) {
+        JobDef job = SkillRegistry.get().job(AmemaruMod.id("knight"));
+        helper.assertTrue(job != null, "ナイトの職業がありません");
+        return job;
     }
 
     private static void expectStat(GameTestHelper helper, PlayerData data, StatType type, double expected) {

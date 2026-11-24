@@ -24,15 +24,20 @@ import java.util.Set;
  * 管理者に知らせる。</p>
  */
 public final class SkillRegistry {
+    /** 近接職の消費MPの倍率を数える、覚えられるレベルの上限（11月24日【補完】）。 */
+    public static final int MP_SCALE_LEVEL_CAP = 30;
     /** 今わかっている専用ゲージの働き（誓気・集中・気配・気。働きは {@link jp.amemaru.lostconnection.job.GaugeService}）。 */
     public static final Set<String> KNOWN_GAUGES = Set.of("oath", "focus", "presence", "ki");
 
     private static final DefinitionLoader<JobDef> JOBS = new DefinitionLoader<>("jobs", JobDef::parse);
     private static final DefinitionLoader<SkillDef> SKILLS = new DefinitionLoader<>("skills", SkillDef::parse);
+    /** スキルツリー（11月24日）。ファイルの名前は職業の名前。 */
+    private static final DefinitionLoader<SkillTreeDef> TREES = new DefinitionLoader<>("skill_trees", SkillTreeDef::parse);
 
     private static Snapshot snapshot = Snapshot.EMPTY;
     private static int builtJobs = -1;
     private static int builtSkills = -1;
+    private static int builtTrees = -1;
     private static int version;
 
     private SkillRegistry() {
@@ -46,12 +51,17 @@ public final class SkillRegistry {
         return SKILLS;
     }
 
+    public static DefinitionLoader<SkillTreeDef> treeLoader() {
+        return TREES;
+    }
+
     /** 今の一覧。データパックを読み直していれば、作り直してから返す。 */
     public static synchronized Snapshot get() {
-        if (JOBS.generation() != builtJobs || SKILLS.generation() != builtSkills) {
+        if (JOBS.generation() != builtJobs || SKILLS.generation() != builtSkills || TREES.generation() != builtTrees) {
             builtJobs = JOBS.generation();
             builtSkills = SKILLS.generation();
-            snapshot = build(JOBS.all(), SKILLS.all(), ++version, true);
+            builtTrees = TREES.generation();
+            snapshot = build(JOBS.all(), SKILLS.all(), TREES.all(), ++version, true);
         }
         return snapshot;
     }
@@ -63,6 +73,12 @@ public final class SkillRegistry {
      */
     public static Snapshot build(Map<ResourceLocation, JobDef> jobDefs, Map<ResourceLocation, SkillDef> skillDefs,
                                  int version, boolean report) {
+        return build(jobDefs, skillDefs, Map.of(), version, report);
+    }
+
+    /** スキルツリーも入れて作る（11月24日）。 */
+    public static Snapshot build(Map<ResourceLocation, JobDef> jobDefs, Map<ResourceLocation, SkillDef> skillDefs,
+                                 Map<ResourceLocation, SkillTreeDef> treeDefs, int version, boolean report) {
         List<String> problems = new ArrayList<>();
 
         List<JobDef> jobs = new ArrayList<>(jobDefs.values());
@@ -107,8 +123,9 @@ public final class SkillRegistry {
             checkSound(skill.sound(), where, problems);
             checkSound(skill.castSound(), where, problems);
             checkSound(skill.impactSound(), where, problems);
-            // 近接職：覚えられるレベルが高いスキルほど、消費MPを増やす（11月23日）
-            skill.setMpScale(1.0 + job.skillMpPerLevel() * Math.max(0, skill.minLevel() - 1));
+            // 近接職：覚えられるレベルが高いスキルほど、消費MPを増やす（11月23日）。11月24日にレベルの上限を100にし、奥義を
+            // Lv60からにしたため、倍率を数えるレベルは30まで（奥義は前と同じ2.45倍のまま）
+            skill.setMpScale(1.0 + job.skillMpPerLevel() * Math.max(0, Math.min(MP_SCALE_LEVEL_CAP, skill.minLevel()) - 1));
             candidates.put(skill.id(), skill);
         }
 
@@ -183,6 +200,39 @@ public final class SkillRegistry {
             }
         }
 
+        // スキルツリー（11月24日）：職業ごとに1つ。スキルの節はその職業のスキル。職業のスキルは、すべてツリーにある
+        Map<ResourceLocation, SkillTreeDef> trees = new HashMap<>();
+        for (SkillTreeDef tree : treeDefs.values()) {
+            String where = "skill_trees/" + tree.job() + "：";
+            JobDef job = jobById.get(tree.job());
+            if (job == null || job.kind() != JobDef.Kind.COMBAT) {
+                problems.add(where + "戦闘職「" + tree.job() + "」がありません");
+                continue;
+            }
+            boolean ok = true;
+            for (SkillTreeDef.Node node : tree.nodes()) {
+                if (node.skill() == null) {
+                    continue;
+                }
+                SkillDef skill = skillById.get(node.skill());
+                if (skill == null || !skill.job().equals(job.id())) {
+                    problems.add(where + "節「" + node.id() + "」のスキル「" + node.skill() + "」が、この職業にありません");
+                    ok = false;
+                } else if (node.start() != job.startingSkills().contains(skill.id())) {
+                    problems.add(where + "節「" + node.id() + "」の start と、職業の最初から使えるスキルが合いません");
+                    ok = false;
+                }
+            }
+            for (SkillDef skill : skills) {
+                if (skill.job().equals(job.id()) && tree.nodeOf(skill.id()) == null) {
+                    problems.add(where + "スキル「" + skill.id() + "」の節がありません（覚えられません）");
+                }
+            }
+            if (ok) {
+                trees.put(job.id(), tree);
+            }
+        }
+
         if (report) {
             for (String problem : problems) {
                 SKILLS.addError(problem);
@@ -199,7 +249,7 @@ public final class SkillRegistry {
                 problems.add("jobs/" + job.id() + "：生産職には「workshop」（weapon・armor・accessory）が要ります");
             }
         }
-        return new Snapshot(combat, production, skills, version, problems);
+        return new Snapshot(combat, production, skills, version, problems, trees);
     }
 
     private static boolean checkEffects(List<EffectDef> effects, String where, List<String> problems) {
@@ -230,7 +280,7 @@ public final class SkillRegistry {
 
     /** 組み合わせ済みの一覧。作った後は変わらない。 */
     public static final class Snapshot {
-        public static final Snapshot EMPTY = new Snapshot(List.of(), List.of(), List.of(), 0, List.of());
+        public static final Snapshot EMPTY = new Snapshot(List.of(), List.of(), List.of(), 0, List.of(), Map.of());
 
         private final List<JobDef> jobs;
         private final List<JobDef> productionJobs;
@@ -240,8 +290,11 @@ public final class SkillRegistry {
         private final Map<ResourceLocation, List<SkillDef>> byJob = new HashMap<>();
         private final int version;
         private final List<String> problems;
+        private final Map<ResourceLocation, SkillTreeDef> trees;
 
-        Snapshot(List<JobDef> jobs, List<JobDef> productionJobs, List<SkillDef> skills, int version, List<String> problems) {
+        Snapshot(List<JobDef> jobs, List<JobDef> productionJobs, List<SkillDef> skills, int version, List<String> problems,
+                 Map<ResourceLocation, SkillTreeDef> trees) {
+            this.trees = Map.copyOf(trees);
             this.jobs = List.copyOf(jobs);
             this.productionJobs = List.copyOf(productionJobs);
             this.skills = List.copyOf(skills);
@@ -265,6 +318,12 @@ public final class SkillRegistry {
         /** 作るたびに増える番号（クライアントに配った一覧と、プレイヤーの番号がずれていないかの確かめに使う）。 */
         public int version() {
             return version;
+        }
+
+        /** その職業のスキルツリー（ない職業は null。そのときは前のように、前提のスキルで覚える）。 */
+        @Nullable
+        public SkillTreeDef tree(@Nullable ResourceLocation job) {
+            return job == null ? null : trees.get(job);
         }
 
         /** 戦闘職（職業選択の順）。 */

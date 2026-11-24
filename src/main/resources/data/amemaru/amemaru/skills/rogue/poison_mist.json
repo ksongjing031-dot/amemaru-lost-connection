@@ -6,9 +6,11 @@
   "type": "active",
   "name": "毒霧",
   "description": "毒の小瓶を投げ、狙った地点に毒の霧を広げる。霧の中の敵には、毎秒毒が重なっていく。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -27,13 +29,13 @@
     "type": "point",
     "range": 12,
     "radius": 3.5,
-    "radius_per_rank": 0.5
+    "radius_per_rank": 0.25
   },
   "effects": [
     {
       "type": "zone",
       "radius": 3.5,
-      "radius_per_rank": 0.5,
+      "radius_per_rank": 0.25,
       "duration": 5,
       "interval": 1.0,
       "effects": [
@@ -41,7 +43,7 @@
           "type": "poison",
           "stat": "attack",
           "coefficient": 0.25,
-          "coefficient_per_rank": 0.05,
+          "coefficient_per_rank": 0.025,
           "duration": 6,
           "stacks": 1,
           "max": 3

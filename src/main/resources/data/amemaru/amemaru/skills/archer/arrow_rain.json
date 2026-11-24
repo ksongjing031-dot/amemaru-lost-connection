@@ -6,9 +6,11 @@
   "type": "active",
   "name": "矢の雨",
   "description": "空へ射た矢が、狙った地点に雨となって降りそそぐ。しばらく降り続ける。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -23,13 +25,13 @@
     "mp": 22
   },
   "cooldown": 14,
-  "cooldown_per_rank": -1,
+  "cooldown_per_rank": -0.5,
   "link": "finisher",
   "delivery": {
     "type": "point",
     "range": 24,
     "radius": 4,
-    "radius_per_rank": 0.5,
+    "radius_per_rank": 0.25,
     "impact_delay": 0.6
   },
   "effects": [
@@ -37,12 +39,12 @@
       "type": "damage",
       "stat": "attack",
       "coefficient": 0.6,
-      "coefficient_per_rank": 0.1
+      "coefficient_per_rank": 0.05
     },
     {
       "type": "zone",
       "radius": 4,
-      "radius_per_rank": 0.5,
+      "radius_per_rank": 0.25,
       "duration": 3,
       "interval": 0.5,
       "effects": [
@@ -50,7 +52,7 @@
           "type": "damage",
           "stat": "attack",
           "coefficient": 0.45,
-          "coefficient_per_rank": 0.08
+          "coefficient_per_rank": 0.04
         }
       ]
     }

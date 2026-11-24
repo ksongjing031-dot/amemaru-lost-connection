@@ -5,17 +5,26 @@
 """
 
 # スキルツリーの段と、覚えられるレベル（11月22日のご指示「スキルとパッシブを増やす」で、Lv20・Lv25 の段を足した）
-ROW_LEVEL = {0: 1, 1: 5, 2: 10, 3: 15, 4: 20, 5: 25}
-ULTIMATE_LEVEL = 30
+# 11月24日：レベルの上限を Lv100（1章は Lv30）に上げた。段のレベルは1章のうちにすべての段に届くように、ほぼそのまま
+# （Lv21・Lv26）にし、奥義は上位職（Lv60）から。段階は5まで（5段目は上位職から）、使うポイントは 1・1・2・2・3
+ROW_LEVEL = {0: 1, 1: 5, 2: 10, 3: 15, 4: 21, 5: 26}
+ULTIMATE_LEVEL = 60
+MAX_RANK = 5
+RANK_COSTS = [1, 1, 2, 2, 3]
+
+
+# 11月24日：段階を5まで（前は3）にした。5段目（上位職から）が前の3段目と同じ強さになるよう、書いた「1段ごとの増え方」を
+# 半分にして書き出す（1段目は同じ。上位職になる前に上げられる4段目は、前の2段目と3段目の間）
+RANK_STEP = 0.5
 
 
 def ranked(key, value):
-    """数値か (base, per_rank) を、JSON の2つのキーにする。"""
+    """数値か (base, per_rank) を、JSON の2つのキーにする（per_rank は RANK_STEP 倍）。"""
     if isinstance(value, tuple):
         base, per = value
         out = {key: base}
         if per:
-            out[key + "_per_rank"] = per
+            out[key + "_per_rank"] = round(per * RANK_STEP, 4)
         return out
     return {key: value}
 
@@ -326,8 +335,8 @@ def active(job, sid, school, row, col, name, desc, *, mp, cd, delivery, effects,
         "type": "active",
         "name": name,
         "description": desc,
-        "max_rank": 3,
-        "rank_costs": [1, 2, 3],
+        "max_rank": MAX_RANK,
+        "rank_costs": list(RANK_COSTS),
         "min_level": ROW_LEVEL[row],
     }
     if requires:
@@ -377,8 +386,8 @@ def passive(job, sid, school, row, name, desc, ptype, value, requires=None, radi
         "type": "passive",
         "name": name,
         "description": desc,
-        "max_rank": 3,
-        "rank_costs": [1, 2, 3],
+        "max_rank": MAX_RANK,
+        "rank_costs": list(RANK_COSTS),
         "min_level": ROW_LEVEL[row],
     }
     if requires:

@@ -6,9 +6,11 @@
   "type": "passive",
   "name": "鉄壁",
   "description": "盾の扱いに慣れ、盾を持っている間は受けるダメージが減る。両手剣のときは効かない。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -22,6 +24,6 @@
   "passive": {
     "type": "iron_wall",
     "value": 8,
-    "value_per_rank": 4
+    "value_per_rank": 2
   }
 }

@@ -6,9 +6,11 @@
   "type": "active",
   "name": "気弾",
   "description": "練った気を掌から撃ち出す。離れた敵にも連撃をつなげられる。【継】",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -35,7 +37,7 @@
       "type": "damage",
       "stat": "attack",
       "coefficient": 1.4,
-      "coefficient_per_rank": 0.25
+      "coefficient_per_rank": 0.125
     },
     {
       "type": "gauge",

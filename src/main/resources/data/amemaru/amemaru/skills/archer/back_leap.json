@@ -6,9 +6,11 @@
   "type": "active",
   "name": "後跳び",
   "description": "後ろへ大きく跳びながら、前へ一矢を放つ。当たった敵は足が鈍る。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -23,7 +25,7 @@
     "mp": 10
   },
   "cooldown": 9,
-  "cooldown_per_rank": -1,
+  "cooldown_per_rank": -0.5,
   "delivery": {
     "type": "backstep",
     "kind": "arrow",
@@ -36,7 +38,7 @@
       "type": "damage",
       "stat": "attack",
       "coefficient": 1.0,
-      "coefficient_per_rank": 0.2
+      "coefficient_per_rank": 0.1
     },
     {
       "type": "status",

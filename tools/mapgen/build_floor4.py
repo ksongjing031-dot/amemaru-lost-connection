@@ -1329,7 +1329,7 @@ def floor_json(f):
         "chapter": 1,
         "name": "崩壊した神殿",
         "chapter_title": "第1章　失われた古代領域",
-        "recommended_level": [7, 10],
+        "recommended_level": [15, 22],
         "origin": list(ORIGIN),
         "size": [SIZE, HEIGHT, SIZE],
         "structure": "amemaru:map/floor4/",

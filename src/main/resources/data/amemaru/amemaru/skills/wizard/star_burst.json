@@ -6,9 +6,11 @@
   "type": "active",
   "name": "星爆",
   "description": "刻んだ星痕に呼びかけ、一斉に弾けさせる。星痕を多く刻んだ敵ほど、大きく弾ける。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -23,7 +25,7 @@
     "mp": 20
   },
   "cooldown": 10,
-  "cooldown_per_rank": -1,
+  "cooldown_per_rank": -0.5,
   "link": "finisher",
   "delivery": {
     "type": "branded",
@@ -35,7 +37,7 @@
       "stat": "magic",
       "base": 0.8,
       "per_stack": 0.6,
-      "per_stack_per_rank": 0.15
+      "per_stack_per_rank": 0.075
     }
   ],
   "animation": "wizard_star_burst",

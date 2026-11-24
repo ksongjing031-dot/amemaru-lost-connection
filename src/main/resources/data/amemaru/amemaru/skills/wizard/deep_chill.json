@@ -6,9 +6,11 @@
   "type": "passive",
   "name": "深冷",
   "description": "冷気を糸の奥まで染み込ませ、溶けにくい氷をつくる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -22,6 +24,6 @@
   "passive": {
     "type": "deep_chill",
     "value": 0.5,
-    "value_per_rank": 0.25
+    "value_per_rank": 0.125
   }
 }

@@ -6,9 +6,11 @@
   "type": "passive",
   "name": "挑発の極意",
   "description": "敵の怒りを一身に受け止めるうちに、その刃の鈍らせ方を覚えた。自分が挑発している敵は、誰を攻撃しても力が鈍る。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -22,6 +24,6 @@
   "passive": {
     "type": "taunt_mastery",
     "value": 10,
-    "value_per_rank": 5
+    "value_per_rank": 2.5
   }
 }

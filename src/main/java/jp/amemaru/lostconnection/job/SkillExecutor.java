@@ -1238,7 +1238,8 @@ public final class SkillExecutor {
                 player.addEffect(new MobEffectInstance(ModEffects.VENOM_COAT.get(), ticks, 0, false, false, true));
                 StatusService.sync(player, StatusFxS2C.Event.NONE);
             });
-            default -> applyBuff(player, kind, ticks, Math.min(95.0, value * (kind == BuffKind.CRIT_UP ? 1.0 : multiplier)), now, caster);
+            default -> applyBuff(player, kind, ticks,
+                    Math.min(95.0, value * (kind == BuffKind.CRIT_UP || kind == BuffKind.POWER_UP ? 1.0 : multiplier)), now, caster);
         }
     }
 
@@ -1328,6 +1329,15 @@ public final class SkillExecutor {
                 case EVADE -> {
                     buffs.evadeUntil = Math.max(buffs.evadeUntil, now + ticks);
                     player.addEffect(new MobEffectInstance(ModEffects.EVADE.get(), ticks, 0, false, false, true), source);
+                }
+                case POWER_UP -> {
+                    // 重なったら大きい方・長い方（11月24日）
+                    boolean active = buffs.powerUp(now) > 0;
+                    buffs.powerUp = Math.max(active ? buffs.powerUp : 0.0, value);
+                    buffs.powerUpUntil = Math.max(active ? buffs.powerUpUntil : 0L, now + ticks);
+                    player.addEffect(new MobEffectInstance(ModEffects.POWER_UP.get(), (int) (buffs.powerUpUntil - now), 0, false, false, true),
+                            source);
+                    fresh = !active;
                 }
                 case ENDLESS_FLOW -> {
                     buffs.endlessFlowUntil = now + ticks;
