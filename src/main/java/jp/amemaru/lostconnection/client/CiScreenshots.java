@@ -579,12 +579,12 @@ public final class CiScreenshots {
             {"snap", null, "40", "phase5_boss_gate_open"},
             {"cmd", null, "30", "execute in amemaru:tower run tp @p {f1:192.5,15,107.5} 180 8"},
             {"snap", null, "40", "phase5_tablet"},
+            // 11月25日：石板の前で戦いが始まる → はじまり（上下の黒い帯と、ボスの名前・階の名前）が出たら撮る
+            {"await_intro", null, "0", "phase8_boss_intro"},
+            {"p8_bossfx", null, "0", "f1"},
             {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
             {"cmd", null, "60", "execute in amemaru:tower run tp @p {f1:192.5,15,68.5} 180 4"},
-            // 11月25日：戦いのはじまり（上下の黒い帯と、ボスの名前・階の名前）と、流す曲（記録に書く）
-            {"snap", null, "25", "phase8_boss_intro"},
-            {"p8_bossfx", null, "0", "f1"},
-            {"snap", null, "50", "phase5_boss_fight"},
+            {"snap", null, "60", "phase5_boss_fight"},
             // 11月22日：技ごとの当たる所。ボスを出る所（{f1:192.5,15,51.5}。南を向く）に戻し、決まった所に立って、管理者のコマンドで
             // 技を出させ、打つ前に撮る（技は見ている人の方を向いて出る）。跳んでいる途中のボスは戻しても跳び続けるので、先に踏みつけを
             // 出させて（その場で1.2秒ためる）止めてから戻す。踏みつけは、次の技を出させると取り消される。間でHPを戻す。
@@ -643,9 +643,11 @@ public final class CiScreenshots {
             // 11月25日：段階が変わる（HP45%：ボスから光の波と柱・白い光・「第2段階」）と、追いこんだ（HP25%：字と赤い気配）
             {"cmd", null, "10", "execute in amemaru:tower run tp @p {f1:192.5,15,66.5} 180 12"},
             {"cmd", null, "0", "amemaru admin boss hp 1 45"},
-            {"snap", null, "6", "phase8_boss_phase"},
-            {"cmd", null, "60", "amemaru admin boss hp 1 25"},
-            {"snap", null, "12", "phase8_boss_intense"},
+            {"await_banner", null, "0", "phase8_boss_phase"},
+            // （cmd の数は、コマンドのあとに待つ tick。段階の字が消えるのを待ってから、追いこむ）
+            {"cmd", null, "70", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "0", "amemaru admin boss hp 1 25"},
+            {"await_banner", null, "0", "phase8_boss_intense"},
             {"p8_bossfx", null, "0", "f1_intense"},
             // 自分のHPが少ない（心臓の音と、画面のふちの赤い脈。HPが一気に減ったので、揺れと赤い光も）
             {"cmd", null, "20", "amemaru admin debug vitals @a 20 100"},
@@ -2832,7 +2834,8 @@ public final class CiScreenshots {
         } else if (shot[0].startsWith("await_")) {
             // 待つ：まだなら同じ行をもう一度（5 tick ごと。長く待っても来なければ、あきらめて次へ）。
             // await_mark は、予兆の形（行の3つ目の数）が出たらすぐ撮る（毎 tick 見る。短い予兆を逃さない。11月22日）
-            boolean mark = "await_mark".equals(shot[0]) || "await_ground".equals(shot[0]);
+            boolean mark = "await_mark".equals(shot[0]) || "await_ground".equals(shot[0]) || "await_intro".equals(shot[0])
+                    || "await_banner".equals(shot[0]);
             if (first) {
                 if (!awaitReady(minecraft, shot) && awaitTicks < awaitLimit(shot[0])) {
                     int step = mark ? 1 : 5;
@@ -2919,6 +2922,9 @@ public final class CiScreenshots {
             case "await_mark" -> CiPhase3.anyTelegraphOf(minecraft, Integer.parseInt(shot[2]));
             // 地面の印（ボスの体でなく、地面に置く円。2階の根の檻など）が出た
             case "await_ground" -> CiPhase8.anyGroundMarker(minecraft);
+            // 11月25日：ボス戦のはじまりの名前・段階の字が、すっかり出ている
+            case "await_intro" -> BossFx.introShowing();
+            case "await_banner" -> BossFx.bannerShowing();
             // オープニングの準備待ち（場面が始まる前の真っ暗な間）
             case "await_pending" -> ClientStory.openingPending() && !ScenePlayer.isActive();
             // 場面の字幕が出ている

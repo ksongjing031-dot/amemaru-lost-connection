@@ -58,8 +58,9 @@ public final class BossFx {
     public static final IGuiOverlay OVERLAY = BossFx::render;
 
     private static final double FIND_RANGE = 96.0;
-    private static final long INTRO_MILLIS = 3400L;
-    private static final long BANNER_MILLIS = 2400L;
+    /** はじまりの名前と、段階・追いこんだの字の長さ（クライアントの tick。重い画面でも、ゲームの時間に合わせて進む）。 */
+    private static final int INTRO_TICKS = 70;
+    private static final int BANNER_TICKS = 56;
     /** 時を刻む・赤いふちを出す、ボスの様子（ギミックの構え）。 */
     private static final Set<String> DANGER = Set.of("earth_roar", "flood", "echo", "sever");
     /** ボスごとの色（名前・光の波・段階の字）。 */
@@ -82,11 +83,11 @@ public final class BossFx {
     private static String trackKey = "";
     private static int hush;
     // 演出
-    private static long introStart = -INTRO_MILLIS;
+    private static int introAge = -1;
     private static Component introName = Component.empty();
     private static Component introPlace = Component.empty();
     private static int accent = 0xFF6B6B;
-    private static long bannerStart = -BANNER_MILLIS;
+    private static int bannerAge = -1;
     private static Component bannerText = Component.empty();
     private static int bannerColor = 0xFFFFFF;
     private static float flash;
@@ -127,6 +128,12 @@ public final class BossFx {
         }
         tickMusic(mc);
         tickPlayer(mc, bossEntity >= 0);
+        if (introAge >= 0 && ++introAge >= INTRO_TICKS) {
+            introAge = -1;
+        }
+        if (bannerAge >= 0 && ++bannerAge >= BANNER_TICKS) {
+            bannerAge = -1;
+        }
         flash = Math.max(0.0F, flash - 0.07F);
         redHit = Math.max(0.0F, redHit - 0.045F);
         heart = Math.max(0.0F, heart - 0.055F);
@@ -205,8 +212,8 @@ public final class BossFx {
             track = null;
         }
         trackKey = "";
-        introStart = -INTRO_MILLIS;
-        bannerStart = -BANNER_MILLIS;
+        introAge = -1;
+        bannerAge = -1;
         flash = 0.0F;
         redHit = 0.0F;
         heart = 0.0F;
@@ -322,7 +329,7 @@ public final class BossFx {
     // ---------------------------------------------------------------- 演出
 
     private static void startIntro(Minecraft mc, AmemaruBoss boss) {
-        introStart = Util.getMillis();
+        introAge = 0;
         introName = boss.getDisplayName();
         introPlace = Component.translatable("boss.amemaru.intro." + bossKey);
         FxWorld.shake(mc.player.position(), 12, 0.7F);
@@ -350,7 +357,7 @@ public final class BossFx {
     }
 
     private static void banner(Component text, int color) {
-        bannerStart = Util.getMillis();
+        bannerAge = 0;
         bannerText = text;
         bannerColor = color;
     }
@@ -423,30 +430,29 @@ public final class BossFx {
         }
         long now = Util.getMillis();
         float pulse = 0.5F + 0.5F * Mth.sin(now / (dangerShown > 0.8F ? 90.0F : 160.0F));
-        float edge = Math.max(Math.max(heart * 0.6F, redHit * 0.75F), dangerShown * (0.25F + 0.3F * pulse));
+        // 11月25日（CIの写真で見て濃くした）：明るい床の上でも分かるように
+        float edge = Math.max(Math.max(heart * 0.8F, redHit * 0.9F), dangerShown * (0.45F + 0.35F * pulse));
         if (edge > 0.01F) {
-            edges(graphics, width, height, edge, 0xC81E1E);
+            edges(graphics, width, height, Math.min(1.0F, edge), 0xD01818);
         }
         if (flash > 0.01F) {
             graphics.fill(0, 0, width, height, argb(flash * 0.55F, 0xFFFFFF));
         }
-        long intro = now - introStart;
-        if (intro >= 0 && intro < INTRO_MILLIS) {
-            intro(graphics, mc.font, width, height, intro);
+        if (introAge >= 0) {
+            intro(graphics, mc.font, width, height, (long) ((introAge + partialTick) * 50.0F));
         }
-        long banner = now - bannerStart;
-        if (banner >= 0 && banner < BANNER_MILLIS) {
-            banner(graphics, mc.font, width, height, banner);
+        if (bannerAge >= 0) {
+            banner(graphics, mc.font, width, height, (long) ((bannerAge + partialTick) * 50.0F));
         }
     }
 
     /** 画面のふち（外ほど濃い、何重もの枠）。 */
     private static void edges(GuiGraphics graphics, int width, int height, float alpha, int rgb) {
-        int bands = 14;
-        int thick = Math.max(2, Math.min(width, height) / 70);
+        int bands = 16;
+        int thick = Math.max(2, Math.min(width, height) / 64);
         for (int i = 0; i < bands; i++) {
             float fall = 1.0F - i / (float) bands;
-            int color = argb(alpha * fall * fall * 0.85F, rgb);
+            int color = argb(alpha * (float) Math.pow(fall, 1.6) * 0.9F, rgb);
             int o = i * thick;
             if (o * 2 + thick * 2 >= Math.min(width, height)) {
                 break;
@@ -461,7 +467,7 @@ public final class BossFx {
     /** はじまり：上下の黒い帯と、ボスの名前・階の名前。 */
     private static void intro(GuiGraphics graphics, Font font, int width, int height, long t) {
         float in = Mth.clamp(t / 350.0F, 0.0F, 1.0F);
-        float out = Mth.clamp((INTRO_MILLIS - t) / 700.0F, 0.0F, 1.0F);
+        float out = Mth.clamp((INTRO_TICKS * 50.0F - t) / 700.0F, 0.0F, 1.0F);
         float a = Math.min(in, out);
         int bar = Math.round(height * 0.1F * ease(a));
         if (bar > 0) {
@@ -487,7 +493,7 @@ public final class BossFx {
 
     /** 段階・追いこんだ の字。 */
     private static void banner(GuiGraphics graphics, Font font, int width, int height, long t) {
-        float a = Math.min(Mth.clamp(t / 200.0F, 0.0F, 1.0F), Mth.clamp((BANNER_MILLIS - t) / 600.0F, 0.0F, 1.0F));
+        float a = Math.min(Mth.clamp(t / 200.0F, 0.0F, 1.0F), Mth.clamp((BANNER_TICKS * 50.0F - t) / 600.0F, 0.0F, 1.0F));
         if (a <= 0.02F) {
             return;
         }
@@ -520,5 +526,15 @@ public final class BossFx {
     /** 今の戦いのボス（なければ ""）。 */
     public static String currentBoss() {
         return bossKey;
+    }
+
+    /** CIの写真：はじまりの名前が、すっかり出ている間か（出はじめと消えかけを除く）。 */
+    public static boolean introShowing() {
+        return introAge >= 10 && introAge < INTRO_TICKS - 16;
+    }
+
+    /** CIの写真：段階・追いこんだの字が、すっかり出ている間か。 */
+    public static boolean bannerShowing() {
+        return bannerAge >= 5 && bannerAge < BANNER_TICKS - 14;
     }
 }

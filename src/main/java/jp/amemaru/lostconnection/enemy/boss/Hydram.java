@@ -85,6 +85,10 @@ public class Hydram extends AmemaruBoss implements Drains.Listener {
     private int floodsDone;
     private final TempBlocks dikes = new TempBlocks();
     private int dikeTicks;
+    /** 大放水の、堤のかげ（逃げこむ所。金の円と、金の光の粒）。 */
+    private final List<Vec3> floodSafeSpots = new ArrayList<>();
+    private static final net.minecraft.core.particles.DustParticleOptions SAFE_GOLD =
+            new net.minecraft.core.particles.DustParticleOptions(new org.joml.Vector3f(1.0F, 0.82F, 0.3F), 1.4F);
     /** 水が戻ってから、排水のハンドルがまた回るまでの tick。 */
     private int drainCooldown;
     private int repath;
@@ -496,6 +500,7 @@ public class Hydram extends AmemaruBoss implements Drains.Listener {
     /** 番人のまわりに、青銅の堤をせり上げる（輪の上に、外を向いた幅3・高さ3の壁）。 */
     private void raiseDikes(ServerLevel level, EnemyDef.Skill flood) {
         dikes.restore(level);
+        floodSafeSpots.clear();
         int count = Math.max(3, (int) flood.param("walls", 4.0));
         double radius = flood.param("wall_radius", 7.0);
         double start = random.nextDouble() * Math.PI * 2.0;
@@ -520,6 +525,7 @@ public class Hydram extends AmemaruBoss implements Drains.Listener {
             Vec3 safe = new Vec3(getX() + Math.cos(a) * (radius + 2.2), floorY, getZ() + Math.sin(a) * (radius + 2.2));
             jp.amemaru.lostconnection.entity.GroundMarker.place(level, safe, 1.7F, timer,
                     jp.amemaru.lostconnection.entity.GroundMarker.KIND_SAFE);
+            floodSafeSpots.add(safe);
         }
         dikeTicks = 0;
         level.playSound(null, getX(), getY(), getZ(), SoundEvents.PISTON_EXTEND, SoundSource.HOSTILE, 2.0F, 0.5F);
@@ -528,6 +534,12 @@ public class Hydram extends AmemaruBoss implements Drains.Listener {
     private void tickFlood(ServerLevel level) {
         getNavigation().stop();
         setDeltaMovement(0.0, getDeltaMovement().y, 0.0);
+        if (timer % 5 == 0) {
+            // 堤のかげ（逃げこむ所）に、金の光の粒が立ちのぼる（暗い水の中でも見つけられるように）
+            for (Vec3 safe : floodSafeSpots) {
+                level.sendParticles(SAFE_GOLD, safe.x, safe.y + 0.6, safe.z, 6, 0.5, 0.6, 0.5, 0.0);
+            }
+        }
         if (timer % 10 == 0) {
             setStatus("flood", (timer + 19) / 20);
             Vec3 core = corePos();
