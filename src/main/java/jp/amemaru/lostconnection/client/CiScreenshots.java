@@ -1409,6 +1409,11 @@ public final class CiScreenshots {
             {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:broken_beast {f4:236.5,25,256.5} {NoAI:1b,Rotation:[270f,0f]}"},
             {"cmd", null, "40", "execute in amemaru:tower run tp @p {f4:247.5,25,248.5} 90 8"},
             {"snap", null, "40", "phase8_f4_enemies"},
+            // 11月24日：ロックオン（B）。まん中の結晶甲虫をロックすると、照準の印と、名前・距離・HPが出る
+            {"p8_lock", null, "10"},
+            {"snap", null, "20", "phase8_lock_on"},
+            {"p8_lock", null, "10"},
+            {"snap", null, "20", "phase8_lock_on_next"},
             {"cmd", null, "5", "execute in amemaru:tower run kill @e[type=amemaru:silent_statue,distance=..30]"},
             {"cmd", null, "5", "execute in amemaru:tower run kill @e[type=amemaru:prayer_echo,distance=..30]"},
             {"cmd", null, "5", "execute in amemaru:tower run kill @e[type=amemaru:crystal_beetle,distance=..30]"},
@@ -1431,6 +1436,9 @@ public final class CiScreenshots {
             {"snap_keep", null, "30", "phase8_f4_boss_defeated"},
             {"snap_keep", null, "120", "phase8_f4_boss_title"},
             {"await_idle", null, "0"},
+            // 11月24日：倒したあと、出口の円の横に金の縁の「次の階への円」（5階はまだ開いていない）
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f4:268.0,25,61.5} 180 35"},
+            {"snap", null, "40", "phase8_next_circle"},
             {"cmd", null, "5", "amemaru admin job set @p amemaru:healer"},
             {"p8_hold", null, "20", "prayer_bell_staff"},
             {"snap", null, "30", "phase8_f4_bell"},
