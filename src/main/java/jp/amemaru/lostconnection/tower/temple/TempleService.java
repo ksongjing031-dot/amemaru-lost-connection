@@ -265,6 +265,8 @@ public final class TempleService {
             if (mural.door() != null) {
                 door(tower, def, mural.door(), true);
             }
+            // 11月24日：管理者のコマンドで戻したときも、パネルを正しい向きにそろえる（前は崩れた絵のまま「戻った」になった）
+            straighten(tower, def, mural);
             for (ServerPlayer p : playersOn(tower, def)) {
                 p.sendSystemMessage(Component.translatable("message.amemaru.mural.solved", mural.name(), c[0], c[1])
                         .withStyle(ChatFormatting.AQUA));
@@ -584,12 +586,28 @@ public final class TempleService {
             }
             if (!solved && correct(level, def, mural)) {
                 scramble(level, def, mural);
+            } else if (solved && !correct(level, def, mural)) {
+                straighten(level, def, mural);
             }
         }
         lightDisplays(level, def, c[1] > 0 && c[0] == c[1]);
         for (FloorFeatures.Song song : def.features().songs()) {
             if (song.door() != null) {
                 door(level, def, song.door(), data.sung(def.number(), song.id()));
+            }
+        }
+    }
+
+    /** 壁画のパネルを、すべて正しい向きにそろえる（読み込まれている所だけ）。 */
+    private static void straighten(ServerLevel level, FloorDef def, FloorFeatures.Mural mural) {
+        for (FloorFeatures.Panel panel : mural.panels()) {
+            BlockPos at = def.world(panel.pos());
+            if (!level.isLoaded(at)) {
+                continue;
+            }
+            BlockState state = level.getBlockState(at);
+            if (state.hasProperty(TempleBlocks.TURN) && state.getValue(TempleBlocks.TURN) != panel.answer()) {
+                level.setBlock(at, state.setValue(TempleBlocks.TURN, panel.answer()), 3);
             }
         }
     }
