@@ -57,8 +57,8 @@ final class CiPhase8 {
                 LostWoodsService.placeKnot(player, def.number(), woods.id(), woods.exits().indexOf(exit), post);
             }));
             case "p8_hold" -> CiPhase3.onServer(minecraft, player -> CiGear.hold(player, "-".equals(shot[3]) ? null : shot[3], null));
-            // 11月24日：ロックオンのキー（B）を1回押したことにする（見ている敵をロック。照準の印と名前・距離・HPを撮る）
-            case "p8_lock" -> net.minecraft.client.KeyMapping.click(KeyBindings.LOCK_ON.getKey());
+            // 11月24日：ロックオンのキー（B）を1回押したのと同じ（見ている敵をロック。照準の印と名前・距離・HPを撮る）
+            case "p8_lock" -> TargetLock.ciPress(minecraft);
             // 11月24日：お守りの枠に付ける（「-」で外す）。5階のユニーク「第七の門鍵」の、体に表示するモデルを撮る
             case "p8_charm" -> CiPhase3.onServer(minecraft, player -> CiPhase3.setCurio(player,
                     jp.amemaru.lostconnection.accessory.AccessorySlot.CHARM,

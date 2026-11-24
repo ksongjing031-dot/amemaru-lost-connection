@@ -1437,7 +1437,7 @@ public final class CiScreenshots {
             {"snap_keep", null, "120", "phase8_f4_boss_title"},
             {"await_idle", null, "0"},
             // 11月24日：倒したあと、出口の円の横に金の縁の「次の階への円」（5階はまだ開いていない）
-            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f4:268.0,25,61.5} 180 35"},
+            {"cmd", null, "40", "execute in amemaru:tower run tp @p {f4:268.0,25,64.5} 180 12"},
             {"snap", null, "40", "phase8_next_circle"},
             {"cmd", null, "5", "amemaru admin job set @p amemaru:healer"},
             {"p8_hold", null, "20", "prayer_bell_staff"},

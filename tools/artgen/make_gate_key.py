@@ -22,8 +22,8 @@ from make_floor_accessory_art import FloorAccessoryPainter, hip_cord, ICONS  # n
 from materials import hexc  # noqa: E402
 
 NAME = "seventh_gate_key"
-CX, CY, CZ = -4.0, 7.6, 0.0      # 記録核のまん中（ゲームの中の向き：体の右が +x、表が −z）
-RING_R = 2.6
+CX, CY, CZ = -5.6, 7.6, -0.3     # 記録核のまん中（ゲームの中の向き：体の右が +x、表が −z）。足の外（足は x −4〜0）
+RING_R = 1.9
 RING_TILT = 24.0
 
 
@@ -34,7 +34,7 @@ def build():
     # ボーンの pivot は Bedrock の向き（x を反転）
     g.bone("key_core", (-CX, CY, CZ), parent="armorBody")
     g.bone("key_ring", (-CX, CY, CZ), parent="armorBody")
-    hip_cord(g, "brass", "brass", x=-4.5)
+    hip_cord(g, "brass", "brass", x=CX - 1.0)
     # 鎖の先の留め金（立方体の上の角をつかむ）
     gcube(g, "armorBody", "bail", (CX - 0.5, CY + 1.35, CZ - 0.5), (1, 1, 1), "brass", inflate=-0.2)
     # 記録核：角を下にした翠の立方体（Y に45度・X に35度まわす）。光る
@@ -144,7 +144,7 @@ def sheet(repo, out, g, frames):
              "pairs": [(man, mtex), (g, frames[0])], "icon": disk_icon(repo, NAME),
              "views": [("正面", 180, 0), ("左の横", 90, 0), ("斜め", 145, 14), ("後ろ", 0, 0)]}]
     details = [
-        {"label": "近くで（環は止めた形）", "pairs": [(g, frames[0])], "center": (-CX, CY, CZ), "yaw": 150, "pitch": 18, "scale": 46},
+        {"label": "近くで（環は止めた形）", "pairs": [(g, frames[0])], "center": (CX, CY, CZ), "yaw": 150, "pitch": 18, "scale": 46},
         {"label": "重鎧の上に着けたとき", "pairs": [(man, mtex), (AA.subset(plate, chest), ptex), (armored(g, True), frames[0])],
          "center": (0, 12, 0), "yaw": 140, "pitch": 10, "scale": 13},
     ]

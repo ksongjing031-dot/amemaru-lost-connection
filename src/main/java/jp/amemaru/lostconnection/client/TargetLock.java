@@ -144,6 +144,22 @@ public final class TargetLock {
         turnTicks = 0;
     }
 
+    /**
+     * 自動の確認（CIの写真）用：ロックのキーを1回押したのと同じ。ロックしていなければ見ている敵を、していれば右どなりの敵をロックする。
+     * CI は透明な画面を開いたまま撮るので（画面を開いている間のキーは捨てる決まり）、キーではなくここから呼ぶ。
+     */
+    static void ciPress(Minecraft minecraft) {
+        LocalPlayer player = minecraft.player;
+        if (player == null || minecraft.level == null) {
+            return;
+        }
+        LivingEntity current = target();
+        LivingEntity next = pick(player, current);
+        if (next != null && next != current) {
+            lock(next);
+        }
+    }
+
     private static void lock(LivingEntity entity) {
         lockedId = entity.getId();
         lockedLevel = (ClientLevel) entity.level();
