@@ -102,6 +102,8 @@ public final class ClientModEvents {
         event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "down", DownHud.OVERLAY);
         // 11月24日：ロックした敵の名前・距離・HP（照準のすぐ下）
         event.registerAbove(VanillaGuiOverlay.CROSSHAIR.id(), "lock_on", TargetLock.OVERLAY);
+        // 11月25日：ボス戦の演出（画面のふち・白い光・はじまりの名前・段階の字）。HUDとボスのHPの帯の下に描く
+        event.registerAbove(VanillaGuiOverlay.VIGNETTE.id(), "boss_fx", BossFx.OVERLAY);
         // Phase 3：レアドロップ・工房などの特別な演出の帯
         event.registerAboveAll("special_moment", SpecialMomentFx.OVERLAY);
         // Phase 5：暗転・章題・字幕・古代文字・知らせ・カウントダウン・はじめの手引き

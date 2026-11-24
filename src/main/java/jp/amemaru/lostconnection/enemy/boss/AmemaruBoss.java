@@ -50,6 +50,18 @@ public abstract class AmemaruBoss extends AmemaruMob {
     private static final EntityDataAccessor<Integer> DATA_STATUS_SECONDS = SynchedEntityData.defineId(AmemaruBoss.class,
             EntityDataSerializers.INT);
     /**
+     * 11月25日：戦いの様子（クライアントの、ボスの曲と演出）。{@link #FIGHT_NONE}・{@link #FIGHT_ON}・{@link #FIGHT_INTENSE}
+     * （HPが {@link #INTENSE_RATIO} 以下か、怒った）。
+     */
+    private static final EntityDataAccessor<Byte> DATA_FIGHT = SynchedEntityData.defineId(AmemaruBoss.class, EntityDataSerializers.BYTE);
+    /** 11月25日：今の段階（クライアントで、段階が変わった演出を出す）。 */
+    private static final EntityDataAccessor<Byte> DATA_PHASE = SynchedEntityData.defineId(AmemaruBoss.class, EntityDataSerializers.BYTE);
+    public static final int FIGHT_NONE = 0;
+    public static final int FIGHT_ON = 1;
+    public static final int FIGHT_INTENSE = 2;
+    /** 追いこんだ（曲が少し速く高くなり、ボスのまわりに赤い気配）と見るHPの割合。 */
+    public static final double INTENSE_RATIO = 0.3;
+    /**
      * 管理者・CIの写真：みんなで受ける一撃を、印と演出だけにする（ダメージなし）。保存しない
      * （{@code /amemaru admin boss share safe}）。
      */
@@ -64,6 +76,8 @@ public abstract class AmemaruBoss extends AmemaruMob {
         super(type, level);
         bossEvent = new ServerBossEvent(Component.empty(), color, BossEvent.BossBarOverlay.NOTCHED_10);
         bossEvent.setDarkenScreen(false);
+        // 11月25日：HPの帯を見ている人（戦いの参加者）のクライアントが、このボスの曲を流す（BossFx）。バニラでは、ジ・エンドの外では何もしない
+        bossEvent.setPlayBossMusic(true);
         setTransient(true);
         setPersistenceRequired();
     }
@@ -74,6 +88,8 @@ public abstract class AmemaruBoss extends AmemaruMob {
         entityData.define(DATA_CAST, "");
         entityData.define(DATA_STATUS, "");
         entityData.define(DATA_STATUS_SECONDS, 0);
+        entityData.define(DATA_FIGHT, (byte) FIGHT_NONE);
+        entityData.define(DATA_PHASE, (byte) 1);
     }
 
     public static AttributeSupplier.Builder createBossAttributes() {
@@ -142,6 +158,34 @@ public abstract class AmemaruBoss extends AmemaruMob {
     /** 今の段階（1から）。 */
     public int phase() {
         return phase;
+    }
+
+    /** 11月25日：戦いの様子と段階を、クライアントへ（変わったときだけ）。 */
+    private void syncFight(double ratio) {
+        boolean on = room != null && room.fighting() && room.owns(this);
+        byte fight = (byte) (!on ? FIGHT_NONE : enraged || ratio <= INTENSE_RATIO ? FIGHT_INTENSE : FIGHT_ON);
+        if (entityData.get(DATA_FIGHT) != fight) {
+            entityData.set(DATA_FIGHT, fight);
+        }
+        byte shown = (byte) Math.max(1, Math.min(9, phase));
+        if (entityData.get(DATA_PHASE) != shown) {
+            entityData.set(DATA_PHASE, shown);
+        }
+    }
+
+    /** 戦いの様子（{@link #FIGHT_NONE}・{@link #FIGHT_ON}・{@link #FIGHT_INTENSE}。クライアントでも読める）。 */
+    public int fightState() {
+        return entityData.get(DATA_FIGHT);
+    }
+
+    /** 段階（クライアントでも読める）。 */
+    public int shownPhase() {
+        return entityData.get(DATA_PHASE);
+    }
+
+    /** 自動テスト：HPの帯を見ている人のクライアントで、ボスの曲を流す印が立っているか。 */
+    public boolean barPlaysMusic() {
+        return bossEvent.shouldPlayBossMusic();
     }
 
     /** HPの割合（0〜1）から段階を決める（ボスごとに上書きする）。 */
@@ -530,6 +574,7 @@ public abstract class AmemaruBoss extends AmemaruMob {
             tickFightTimer(level);
             tickShare(level);
             tickBreathe();
+            syncFight(ratio);
             if (castClear > 0 && tickCount >= castClear) {
                 castClear = 0;
                 entityData.set(DATA_CAST, "");

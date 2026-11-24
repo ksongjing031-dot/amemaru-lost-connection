@@ -581,7 +581,10 @@ public final class CiScreenshots {
             {"snap", null, "40", "phase5_tablet"},
             {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
             {"cmd", null, "60", "execute in amemaru:tower run tp @p {f1:192.5,15,68.5} 180 4"},
-            {"snap", null, "60", "phase5_boss_fight"},
+            // 11月25日：戦いのはじまり（上下の黒い帯と、ボスの名前・階の名前）と、流す曲（記録に書く）
+            {"snap", null, "25", "phase8_boss_intro"},
+            {"p8_bossfx", null, "0", "f1"},
+            {"snap", null, "50", "phase5_boss_fight"},
             // 11月22日：技ごとの当たる所。ボスを出る所（{f1:192.5,15,51.5}。南を向く）に戻し、決まった所に立って、管理者のコマンドで
             // 技を出させ、打つ前に撮る（技は見ている人の方を向いて出る）。跳んでいる途中のボスは戻しても跳び続けるので、先に踏みつけを
             // 出させて（その場で1.2秒ためる）止めてから戻す。踏みつけは、次の技を出させると取り消される。間でHPを戻す。
@@ -634,7 +637,20 @@ public final class CiScreenshots {
             {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,63.5} 180 25"},
             {"cmd", null, "0", "amemaru admin boss skill 1 earth_roar"},
             {"snap", null, "40", "phase8_f1_boss_earth_roar"},
-            {"cmd", null, "200", "amemaru admin debug vitals @a 100 100"},
+            // 11月25日：ギミックの残り3秒を切ると、画面のふちが濃く脈打つ（時を刻む音）
+            {"snap", null, "105", "phase8_boss_danger"},
+            {"cmd", null, "95", "amemaru admin debug vitals @a 100 100"},
+            // 11月25日：段階が変わる（HP45%：ボスから光の波と柱・白い光・「第2段階」）と、追いこんだ（HP25%：字と赤い気配）
+            {"cmd", null, "10", "execute in amemaru:tower run tp @p {f1:192.5,15,66.5} 180 12"},
+            {"cmd", null, "0", "amemaru admin boss hp 1 45"},
+            {"snap", null, "6", "phase8_boss_phase"},
+            {"cmd", null, "60", "amemaru admin boss hp 1 25"},
+            {"snap", null, "12", "phase8_boss_intense"},
+            {"p8_bossfx", null, "0", "f1_intense"},
+            // 自分のHPが少ない（心臓の音と、画面のふちの赤い脈。HPが一気に減ったので、揺れと赤い光も）
+            {"cmd", null, "20", "amemaru admin debug vitals @a 20 100"},
+            {"snap", null, "12", "phase8_boss_low_hp"},
+            {"cmd", null, "20", "amemaru admin debug vitals @a 100 100"},
             // 戦っている人のまま（アドベンチャー。クリエイティブにすると戦いから外れる）倒す。
             // 倒してすぐ：ボスの名前の大きな字（下に出口の円の知らせ）。初撃破の場面がHUDを隠す（50 tick 待って白く光り、125〜215 tick に
             // 「始まりの草原　踏破」、215〜295 tick に字幕）。場面が終わると、初撃破の知らせの帯が出る（演出の間に届いた知らせは、演出の後に出す）
@@ -1165,6 +1181,7 @@ public final class CiScreenshots {
             {"cmd", null, "2", "execute in amemaru:tower run tp @p {f2:216.5,19,70.5} 180 25"},
             {"cmd", null, "0", "amemaru admin boss skill 2 seeds"},
             {"await_ground", null, "0", "phase8_f2_boss_seeds"},
+            {"p8_bossfx", null, "0", "f2"},
             {"snap", null, "40", "phase8_f2_boss_seeds_rooted"},
             // 光る節を3つとも壊すと怯む（傾いた幹が写るように、少し見上げる）
             {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
@@ -1271,6 +1288,7 @@ public final class CiScreenshots {
             {"cmd", null, "2", "execute in amemaru:tower run tp @p {f3:234.5,15,60.5} 180 25"},
             {"cmd", null, "0", "amemaru admin boss skill 3 flood"},
             {"snap", null, "30", "phase8_f3_boss_flood"},
+            {"p8_bossfx", null, "0", "f3"},
             {"cmd", null, "130", "amemaru admin debug vitals @a 100 100"},
             // 排水：東と西の排水のハンドルを回す → 水が引き、炉心がむき出しになる
             {"cmd", null, "60", "amemaru admin debug vitals @a 100 100"},
@@ -1438,6 +1456,7 @@ public final class CiScreenshots {
             {"cmd", null, "2", "execute in amemaru:tower run tp @p {f4:264.5,25,88.5} 180 30"},
             {"cmd", null, "0", "amemaru admin boss skill 4 echo"},
             {"snap", null, "30", "phase8_f4_boss_echo"},
+            {"p8_bossfx", null, "0", "f4"},
             {"cmd", null, "130", "amemaru admin debug vitals @a 100 100"},
             {"cmd", null, "40", "kill @e[type=amemaru:cantare]"},
             {"snap_keep", null, "30", "phase8_f4_boss_defeated"},
@@ -1517,6 +1536,7 @@ public final class CiScreenshots {
             {"cmd", null, "2", "execute in amemaru:tower run tp @p {f5:288.5,49,86.5} 180 35"},
             {"cmd", null, "0", "amemaru admin boss skill 5 sever"},
             {"snap", null, "30", "phase8_f5_boss_sever"},
+            {"p8_bossfx", null, "0", "f5"},
             {"cmd", null, "70", "amemaru admin debug vitals @a 100 100"},
             // 最後：HPが尽きても倒れず、祭壇の中央の円に全員が集まるのを待つ → 集まると膝をつき、倒れる
             {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},

@@ -352,6 +352,49 @@ public final class BossMeleeGameTests {
         helper.succeed();
     }
 
+    // ---------------------------------------------------------------- ボス戦の曲と演出（11月25日）
+
+    /**
+     * 1〜5階のボスに、それぞれの曲（sounds.json の {@code music.boss.<ボス>} と、Mod に入った Ogg のファイル）があり、HPの帯に
+     * 「曲を流す」印が立っている。戦いの様子と段階は、クライアントへ送る値に写る（部屋のないボスは「戦っていない」）。
+     */
+    @GameTest(template = EMPTY, timeoutTicks = 100)
+    public static void bossMusicAndFightSync(GameTestHelper helper) {
+        for (int floor = 1; floor <= 5; floor++) {
+            jp.amemaru.lostconnection.tower.FloorDef def = jp.amemaru.lostconnection.tower.FloorDefs.byNumber(floor);
+            check(helper, def != null && def.bossRoom() != null, floor + "階のボスの部屋がありません");
+            String id = def.bossRoom().boss().getPath();
+            ResourceLocation sound = AmemaruMod.id("music.boss." + id);
+            check(helper, ForgeRegistries.SOUND_EVENTS.containsKey(sound), floor + "階のボスの曲（" + sound + "）が登録されていません");
+            try (java.io.InputStream in = AmemaruMod.class.getResourceAsStream("/assets/amemaru/sounds/music/boss_" + id + ".ogg")) {
+                check(helper, in != null, floor + "階のボスの曲のファイル（boss_" + id + ".ogg）がありません");
+                byte[] head = in.readNBytes(4);
+                long size = head.length + in.transferTo(java.io.OutputStream.nullOutputStream());
+                check(helper, "OggS".equals(new String(head, StandardCharsets.US_ASCII)) && size > 200_000L,
+                        floor + "階のボスの曲が Ogg でないか、短すぎます（" + size + " バイト）");
+            } catch (java.io.IOException e) {
+                throw new GameTestAssertException(floor + "階のボスの曲を読めません：" + e);
+            }
+        }
+        ServerLevel level = helper.getLevel();
+        Veldhorn boss = ModEntities.VELDHORN.get().create(level);
+        check(helper, boss != null, "ヴェルドホーンを作れません");
+        check(helper, boss.barPlaysMusic(), "ボスのHPの帯に、曲を流す印が立っていません");
+        Vec3 at = helper.absoluteVec(new Vec3(1.5, 1.0, 1.5));
+        boss.moveTo(at.x, at.y, at.z, 0.0F, 0.0F);
+        level.addFreshEntity(boss);
+        helper.runAfterDelay(2, () -> {
+            check(helper, boss.fightState() == AmemaruBoss.FIGHT_NONE && boss.shownPhase() == 1,
+                    "部屋のないボスが、戦っていることになっているか、段階が1ではありません");
+            boss.setEnemyHp(boss.getEnemyMaxHp() * 0.45);
+        });
+        helper.runAfterDelay(5, () -> {
+            check(helper, boss.phase() == 2 && boss.shownPhase() == 2, "HP45%で、クライアントへ送る段階が2になりません：" + boss.shownPhase());
+            boss.discard();
+            helper.succeed();
+        });
+    }
+
     // ---------------------------------------------------------------- 道具
 
     private static FakePlayer fake(GameTestHelper helper, String name) {

@@ -27,6 +27,8 @@ public final class ClientConfig {
     public static final ForgeConfigSpec.IntValue SKILL_KEYS_VERSION;
     public static final ForgeConfigSpec.BooleanValue CURIOS_KEY_RELEASED;
     public static final ForgeConfigSpec.BooleanValue GEAR_SPARKLES;
+    public static final ForgeConfigSpec.BooleanValue BOSS_MUSIC;
+    public static final ForgeConfigSpec.BooleanValue BOSS_EFFECTS;
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
@@ -67,6 +69,17 @@ public final class ClientConfig {
                 .define("gearSparkles", true);
         b.pop();
 
+        // 11月25日：ボス戦の曲と演出
+        b.comment("ボス戦").push("boss");
+        BOSS_MUSIC = b
+                .comment("ボス戦の間、ボスごとの曲を流す（音量は「音楽」の音量。いつもの曲は止まる）")
+                .define("music", true);
+        BOSS_EFFECTS = b
+                .comment("ボス戦の演出（はじまりの名前・段階が変わったときの光・ギミックの残りの赤いふちと時を刻む音・",
+                        "HPが少ないときの心臓の音・大きく打たれたときの赤いふち）。画面の揺れは skills.screenShake にも従う")
+                .define("effects", true);
+        b.pop();
+
         SPEC = b.build();
     }
 
@@ -104,6 +117,24 @@ public final class ClientConfig {
     public static boolean screenShake() {
         try {
             return SCREEN_SHAKE.get();
+        } catch (IllegalStateException notLoaded) {
+            return true;
+        }
+    }
+
+    /** 設定がまだ読み込まれていないときは初期値を返す。 */
+    public static boolean bossMusic() {
+        try {
+            return BOSS_MUSIC.get();
+        } catch (IllegalStateException notLoaded) {
+            return true;
+        }
+    }
+
+    /** 設定がまだ読み込まれていないときは初期値を返す。 */
+    public static boolean bossEffects() {
+        try {
+            return BOSS_EFFECTS.get();
         } catch (IllegalStateException notLoaded) {
             return true;
         }

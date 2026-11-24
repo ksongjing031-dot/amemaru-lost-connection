@@ -516,10 +516,28 @@ public final class StoryCommands {
                                                 bossSkillNames(IntegerArgumentType.getInteger(ctx, "floor")), builder))
                                         .executes(ctx -> bossSkill(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"),
                                                 com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "name"))))))
+                // 11月25日：戦っているボスのHPを、最大HPの何%にするか（段階が変わる演出・追いこんだときの曲の確かめ用）
+                .then(Commands.literal("hp")
+                        .then(Commands.argument("floor", IntegerArgumentType.integer(1, 99)).suggests(FLOORS)
+                                .then(Commands.argument("percent", IntegerArgumentType.integer(1, 100))
+                                        .executes(ctx -> bossHp(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"),
+                                                IntegerArgumentType.getInteger(ctx, "percent"))))))
                 // 11月24日：みんなで受ける一撃を、印と演出だけにする（safe）・もとに戻す（normal）。ひとりでの確かめ・CIの写真に
                 .then(Commands.literal("share")
                         .then(Commands.literal("safe").executes(ctx -> bossShare(ctx.getSource(), true)))
                         .then(Commands.literal("normal").executes(ctx -> bossShare(ctx.getSource(), false))));
+    }
+
+    private static int bossHp(CommandSourceStack source, int floor, int percent) {
+        jp.amemaru.lostconnection.enemy.boss.AmemaruBoss boss = currentBoss(floor);
+        if (boss == null) {
+            source.sendFailure(Component.translatable("commands.amemaru.boss.none", floor));
+            return 0;
+        }
+        boss.setEnemyHp(boss.getEnemyMaxHp() * percent / 100.0);
+        AdminCommands.log(source, "boss hp " + floor + " " + percent);
+        source.sendSuccess(() -> Component.translatable("commands.amemaru.boss.hp", floor, percent), true);
+        return 1;
     }
 
     private static int bossShare(CommandSourceStack source, boolean safe) {

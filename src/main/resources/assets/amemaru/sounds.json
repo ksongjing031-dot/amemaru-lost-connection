@@ -1513,5 +1513,45 @@
       }
     ],
     "subtitle": "subtitles.amemaru.skill.wizard.light_lance"
+  },
+  "music.boss.veldhorn": {
+    "sounds": [
+      {
+        "name": "amemaru:music/boss_veldhorn",
+        "stream": true
+      }
+    ]
+  },
+  "music.boss.old_ward": {
+    "sounds": [
+      {
+        "name": "amemaru:music/boss_old_ward",
+        "stream": true
+      }
+    ]
+  },
+  "music.boss.hydram": {
+    "sounds": [
+      {
+        "name": "amemaru:music/boss_hydram",
+        "stream": true
+      }
+    ]
+  },
+  "music.boss.cantare": {
+    "sounds": [
+      {
+        "name": "amemaru:music/boss_cantare",
+        "stream": true
+      }
+    ]
+  },
+  "music.boss.ancient_guardian": {
+    "sounds": [
+      {
+        "name": "amemaru:music/boss_ancient_guardian",
+        "stream": true
+      }
+    ]
   }
 }
