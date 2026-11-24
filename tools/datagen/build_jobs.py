@@ -96,7 +96,8 @@ SOUNDS = {
     "skill.rogue.numbing_needle": ("minecraft:entity.arrow.shoot", "痺れ針"),
     "skill.rogue.toxic_burst": ("minecraft:entity.slime.squish", "毒爆の合図"),
     "skill.rogue.toxic_burst_impact": ("minecraft:entity.slime.jump", "毒が弾ける"),
-    "skill.rogue.binding_threads": ("minecraft:block.cobweb.place", "絡め糸"),
+    # 11月24日：1.20.1 には block.cobweb.place がない（音が鳴らない）ので、羊毛を置く音にした
+    "skill.rogue.binding_threads": ("minecraft:block.wool.place", "絡め糸"),
     "skill.rogue.envenom": ("minecraft:item.bottle.empty", "毒を塗る"),
     "skill.rogue.corroding_edge": ("minecraft:block.lava.extinguish", "腐蝕の刃"),
     "skill.rogue.poison_bloom": ("minecraft:block.chorus_flower.grow", "毒華が咲く"),

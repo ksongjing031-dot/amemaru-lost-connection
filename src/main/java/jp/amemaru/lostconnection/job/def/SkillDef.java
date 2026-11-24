@@ -18,7 +18,8 @@ import java.util.List;
  * どの流派の何段目に置くか（{@code school}・{@code row}・{@code column}）もここで決める。</p>
  *
  * <p>段階（{@code rank}）は1から {@code max_rank} まで。{@code upper_rank} 以上の段階は、上位職にならないと覚えられない
- * （Phase 0-A 19章「上位職になると第3段と奥義が開く」）。奥義（{@code ultimate}）は上位職だけが覚えられる。</p>
+ * （Phase 0-A 19章「上位職になると第3段と奥義が開く」。11月24日の2回目に段階を5段にしたので、今は第5段）。
+ * 奥義（{@code ultimate}）は上位職だけが覚えられる。</p>
  */
 public final class SkillDef {
     /** 覚える前に要るスキルと段階。 */

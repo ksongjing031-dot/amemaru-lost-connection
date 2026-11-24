@@ -36,7 +36,7 @@ JOB = {
     "starter_kit": [{"item": "amemaru:apprentice_bow"}],
     "upper": {
         "name": "天弓",
-        "description": "星の高さまで矢を届かせる射手。奥義（狙撃の「流れ星の一矢」か、速射の「疾風の弓舞」）と、各スキルの第3段が開く。",
+        "description": "星の高さまで矢を届かせる射手。奥義（狙撃の「流れ星の一矢」か、速射の「疾風の弓舞」）と、各スキルの第5段が開く。",
         "min_level": 60,
         "min_day": 11,
     },

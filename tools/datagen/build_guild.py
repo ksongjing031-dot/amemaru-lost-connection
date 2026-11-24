@@ -387,7 +387,7 @@ QUESTS = {
                     "description": "新人が増える前に、1階の敵をまとめて減らしておきたいのです。",
                     "requires": {"day_min": 5, "has_job": True},
                     "objectives": [{"type": "kill_any", "count": 80, "floor": 1}], "rewards": {"knots": 1000, "exp": 700}, "order": 220},
-    # ---- 昇格クエスト（11日目・Lv30から。終えると上位職になる。Phase 0-A 19章）
+    # ---- 昇格クエスト（11日目・Lv60から（11月24日の2回目に30から変えた。職業の upper.min_level）。終えると上位職になる。Phase 0-A 19章）
     "promotion": {"name": "昇格試験", "kind": "promotion", "giver": "amemaru:gard", "report": "amemaru:gard", "board": True,
                   "description": "上位職への昇格を望むなら、腕を見せろ。……生きて戻れ。それが命令だ。",
                   "requires": {"day_min": 11, "has_job": True},

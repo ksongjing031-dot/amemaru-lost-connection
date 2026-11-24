@@ -28,7 +28,7 @@ JOB = {
     "starter_kit": [{"item": "amemaru:apprentice_bell_staff"}],
     "upper": {
         "name": "鈴守",
-        "description": "結びの鈴を守り継ぐ者。奥義（癒しの「大いなる呼び声」か、加護の「結びの聖域」）と、各スキルの第3段が開く。",
+        "description": "結びの鈴を守り継ぐ者。奥義（癒しの「大いなる呼び声」か、加護の「結びの聖域」）と、各スキルの第5段が開く。",
         "min_level": 60,
         "min_day": 11,
     },

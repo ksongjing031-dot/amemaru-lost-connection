@@ -55,7 +55,7 @@ public record QuestDef(ResourceLocation id, String name, Kind kind, @Nullable Re
         GUILD,
         /** 上位クエスト（5日目から。Phase 0-A 7章）。 */
         UPPER,
-        /** 昇格クエスト（11日目・Lv30から。上位職になる。Phase 0-A 19章）。 */
+        /** 昇格クエスト（11日目・Lv60から（11月24日の2回目に30から変えた）。上位職になる。Phase 0-A 19章）。 */
         PROMOTION,
         /** NPCの個人的な依頼（親密度2・3で。Phase 0-A 14章）。 */
         PERSONAL,

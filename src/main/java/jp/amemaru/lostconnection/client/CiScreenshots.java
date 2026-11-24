@@ -1842,7 +1842,7 @@ public final class CiScreenshots {
                 next(29, 2);
             }
             case 29 -> {
-                // 奥義のもう一つ：天断ち（レベル30・上位職にして覚える）
+                // 奥義のもう一つ：天断ち（上位職にして覚える。管理者のコマンドはレベルを見ないので、Lv30 のまま撮る）
                 command(minecraft, "amemaru admin level set @a 30");
                 command(minecraft, "amemaru admin job promote @a true");
                 command(minecraft, "amemaru admin skill learn @a amemaru:knight/heaven_cleave 1");

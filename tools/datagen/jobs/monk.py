@@ -54,7 +54,7 @@ JOB = {
     "starter_kit": [{"item": "amemaru:apprentice_gauntlets"}],
     "upper": {
         "name": "拳聖",
-        "description": "拳で人と人をつなぐ聖者。奥義（剛の「百烈・結」か、柔の「天地流転」）と、各スキルの第3段が開く。",
+        "description": "拳で人と人をつなぐ聖者。奥義（剛の「百烈・結」か、柔の「天地流転」）と、各スキルの第5段が開く。",
         "min_level": 60,
         "min_day": 11,
     },

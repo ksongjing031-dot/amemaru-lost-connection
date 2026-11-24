@@ -67,7 +67,7 @@ public final class JobDef {
         }
     }
 
-    /** 上位職（Phase 0-A 19章：11日目から、Lv30以上で昇格クエストを終えると昇格）。 */
+    /** 上位職（Phase 0-A 19章：11日目から、Lv60以上（11月24日の2回目に30から変えた）で昇格クエストを終えると昇格）。 */
     public record UpperDef(String name, String description, int minLevel, int minDay) {
     }
 

@@ -36,7 +36,7 @@ JOB = {
     "starter_kit": [{"item": "amemaru:apprentice_daggers"}],
     "upper": {
         "name": "影結び",
-        "description": "影と影を結んで渡り歩く者。奥義（影の「千の刃」か、毒の「毒華」）と、各スキルの第3段が開く。",
+        "description": "影と影を結んで渡り歩く者。奥義（影の「千の刃」か、毒の「毒華」）と、各スキルの第5段が開く。",
         "min_level": 60,
         "min_day": 11,
     },
