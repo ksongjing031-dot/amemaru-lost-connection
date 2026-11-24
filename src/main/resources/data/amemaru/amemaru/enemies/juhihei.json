@@ -6,8 +6,8 @@
   "lost": false,
   "description": "苔むした樹皮の体をした、古代の植樹管理人形。決まった道をゆっくり巡り、森を荒らす者を見つけると、地面を叩いて根で足をからめとる。",
   "stats": {
-    "hp": 2600,
-    "attack": 52,
+    "hp": 1200,
+    "attack": 76,
     "defense": 16,
     "move_speed": 0.2,
     "follow_range": 20,

@@ -6,8 +6,8 @@
   "level": 17,
   "description": "白く抜けた木立に棲む、葉影ギツネの群れの長。尾の先だけが白く欠けている。群れの背後から、いちばん弱った者を狙う。",
   "stats": {
-    "hp": 11000,
-    "attack": 56,
+    "hp": 5200,
+    "attack": 82,
     "defense": 8,
     "move_speed": 0.33,
     "follow_range": 28,

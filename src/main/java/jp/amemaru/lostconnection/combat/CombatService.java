@@ -517,7 +517,8 @@ public final class CombatService {
             data.markCombat(now);
             if (fromEnemy) {
                 GaugeService.onDamageTaken(player, data, damage, now);
-                GearService.wearArmor(player);
+                // 11月24日：防具と盾の耐久は、受けたダメージ（最大HPに対する割合）に合わせて減る
+                GearService.wearArmor(player, damage / maxHp);
             }
             CombatTextS2C.send(player, damage, CombatTextS2C.Kind.TAKEN);
             // HPが減った後に見るもの（命の糸・守り手の心）は、tick の終わりに（独自のHPは、この後で減る）

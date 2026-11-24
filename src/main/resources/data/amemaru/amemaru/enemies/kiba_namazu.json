@@ -6,8 +6,8 @@
   "lost": false,
   "description": "深い水路の底に潜む、牙の生えた大ナマズ。長いひげで水辺の足音を聞き分け、近づいた者に水の中から跳びかかる。陸に上がると、意外なほど無防備。",
   "stats": {
-    "hp": 2800,
-    "attack": 64,
+    "hp": 1180,
+    "attack": 107,
     "defense": 10,
     "move_speed": 0.18,
     "follow_range": 16,

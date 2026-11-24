@@ -5,8 +5,8 @@
   "level": 17,
   "description": "背中の殻から青白い結晶を生やした、大きな甲虫。殻は剣も矢も弾くほど硬いが、魔力には弱く、魔法が当たると殻にひびが走る。",
   "stats": {
-    "hp": 3200,
-    "attack": 70,
+    "hp": 1620,
+    "attack": 109,
     "defense": 30,
     "move_speed": 0.19,
     "follow_range": 18,

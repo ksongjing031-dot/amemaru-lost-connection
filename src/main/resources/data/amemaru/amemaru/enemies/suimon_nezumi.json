@@ -6,8 +6,8 @@
   "lost": false,
   "description": "水門の歯車のすき間に住みついた、灰色の大きなネズミ。古代の油と苔をかじって育った。1匹が鳴くと、どこからともなく群れが集まってくる。",
   "stats": {
-    "hp": 760,
-    "attack": 40,
+    "hp": 320,
+    "attack": 67,
     "defense": 4,
     "move_speed": 0.32,
     "follow_range": 22,

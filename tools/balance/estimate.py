@@ -14,7 +14,8 @@
 1秒あたりのダメージは「攻撃（魔力）× 係数 × 段階の伸び」：ナイト1.8・ウィザード2.6（通常攻撃と技をならしたもの）。
 戦っている間の手の止まり（移動・よける・回復）で、雑魚は75%、ボスは55%だけ当てられるとする。
 
-目標（11月24日【補完】）：雑魚 2〜9秒（硬い雑魚まで）・名のある魔物 18〜40秒・ボス2人 5〜9分（ひとりは2人ぶんのHP）。
+目標（11月24日【補完】。2回目のご指示「敵が固くなりすぎ」で決め直した）：雑魚 2〜9秒（硬い雑魚まで）・名のある魔物 25〜45秒・
+ボス2人 5〜9分（ひとりは2人ぶんのHP。ひとりで怒るまでに倒せないのは、決めたとおり）。
 1回の攻撃で減るHP：ナイト 6〜14%、ウィザード 10〜24%（強い技は ナイト 30%・ウィザード 45% まで）。
 """
 import glob
@@ -59,7 +60,7 @@ NODE_MIX = {"knight": {"hp": 0.35, "attack": 0.3, "defense": 0.25, "crit": 0.1},
 NOTABLE = {"knight": {"hp": 6, "attack": 6}, "wizard": {"magic": 6}}
 DPS = {"knight": ("attack", 1.8), "wizard": ("magic", 2.6)}
 TARGET_NORMAL = (2.0, 9.0)
-TARGET_NAMED = (18.0, 40.0)
+TARGET_NAMED = (25.0, 45.0)
 TARGET_BOSS_MIN = (5.0, 9.0)
 TARGET_HIT = {"knight": (6.0, 14.0), "wizard": (10.0, 24.0)}
 TARGET_STRONG = {"knight": 30.0, "wizard": 45.0}
@@ -179,7 +180,8 @@ def report(floor, level, era, refine, only_bad):
             bad += 1
         if minutes * 60 > room.get("enrage_seconds", 1e9):
             flag += "（怒るまでに倒せない）"
-            bad += 1
+            # ひとりでは倒せない強さ（2人ぶんのHP）は、決めたとおり（11月24日）。2人からは外れとして数える
+            bad += 1 if n >= max(2, mn) else 0
         if flag or not only_bad:
             boss_lines.append("ボス %s・%d人：HP %d、およそ %.1f 分（怒るまで %d 分）%s" % (
                 e["name"], n, hp, minutes, room.get("enrage_seconds", 0) / 60, flag))

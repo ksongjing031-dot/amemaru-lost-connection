@@ -6,8 +6,8 @@
   "lost": false,
   "description": "流れの止まった水路の底にたまった、濁った水のかたまり。体の中に、沈んだ古代の部品や落ち葉が透けて見える。叩き割ると、小さなかたまりに分かれてなお動く。",
   "stats": {
-    "hp": 2300,
-    "attack": 50,
+    "hp": 970,
+    "attack": 83,
     "defense": 6,
     "move_speed": 0.2,
     "follow_range": 18,

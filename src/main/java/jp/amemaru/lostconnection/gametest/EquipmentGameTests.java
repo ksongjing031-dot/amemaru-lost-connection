@@ -248,7 +248,7 @@ public final class EquipmentGameTests {
         helper.succeed();
     }
 
-    /** 耐久：攻撃・スキルで1ずつ減り、0で壊れる（なくならない）。防具と盾は敵の攻撃で1ずつ減る。 */
+    /** 耐久：攻撃・スキルで1ずつ減り、0で壊れる（なくならない）。防具と盾は、敵から受けたダメージに合わせて減る（11月24日）。 */
     @GameTest(template = EMPTY)
     public static void gearDurabilityWearsAndBreaks(GameTestHelper helper) {
         FakePlayer player = fake(helper, "durability");
@@ -269,10 +269,21 @@ public final class EquipmentGameTests {
         EquipmentDef cuirassDef = gearDef("ancient_stone_cuirass");
         int shieldBefore = GearData.durability(player.getOffhandItem(), shieldDef);
         int cuirassBefore = GearData.durability(player.getItemBySlot(EquipmentSlot.CHEST), cuirassDef);
-        GearService.wearArmor(player);
+        // 11月24日：防具と盾の耐久は、受けたダメージに合わせて減る（最大HPの10%ごとに1。端数は確率で）
+        GearRules gearRules = EquipmentDefs.server().rules();
+        check(helper, Math.abs(gearRules.armorHpPercent() - 10.0) < EPSILON, "防具の耐久が減るダメージが最大HPの10%ではありません："
+                + gearRules.armorHpPercent());
+        GearService.wearArmor(player, 0.10);
         check(helper, GearData.durability(player.getOffhandItem(), shieldDef) == shieldBefore - 1
                         && GearData.durability(player.getItemBySlot(EquipmentSlot.CHEST), cuirassDef) == cuirassBefore - 1,
-                "敵の攻撃で、盾と防具の耐久が1ずつ減っていません");
+                "最大HPの10%のダメージで、盾と防具の耐久が1ずつ減っていません");
+        GearService.wearArmor(player, 0.30);
+        GearService.wearArmor(player, 0.0);
+        check(helper, GearData.durability(player.getOffhandItem(), shieldDef) == shieldBefore - 4
+                        && GearData.durability(player.getItemBySlot(EquipmentSlot.CHEST), cuirassDef) == cuirassBefore - 4,
+                "最大HPの30%のダメージで3、ダメージ0で0減っていません：" + GearData.durability(player.getOffhandItem(), shieldDef));
+        check(helper, GearService.armorLoss(gearRules, 0.05, 0.49) == 1 && GearService.armorLoss(gearRules, 0.05, 0.51) == 0
+                && GearService.armorLoss(gearRules, 0.25, 0.99) == 2, "端数の耐久の減り方（確率）がおかしいです");
         check(helper, GearData.durability(player.getMainHandItem(), swordDef) == 398, "敵の攻撃で武器の耐久が減っています");
 
         // 壊れる：攻撃のステータスは何も持たないときと同じになるが、品はなくならない

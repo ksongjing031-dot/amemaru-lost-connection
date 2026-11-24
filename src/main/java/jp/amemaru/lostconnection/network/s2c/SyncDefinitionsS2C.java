@@ -319,13 +319,6 @@ public final class SyncDefinitionsS2C {
         }
     }
 
-    private static void writeFloats(FriendlyByteBuf buf, float[] values) {
-        buf.writeVarInt(values.length);
-        for (float value : values) {
-            buf.writeFloat(value);
-        }
-    }
-
     public static SyncDefinitionsS2C decode(FriendlyByteBuf buf) {
         int version = buf.readVarInt();
         int jobCount = check(buf.readVarInt(), MAX_ENTRIES);

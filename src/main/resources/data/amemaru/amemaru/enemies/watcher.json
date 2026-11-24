@@ -5,8 +5,8 @@
   "level": 22,
   "description": "金の枠に囲まれた、宙に浮かぶ大きな目。祭壇へ近づく者を見張り続け、見つけると赤く光って、祭壇の守護者に知らせる。",
   "stats": {
-    "hp": 2200,
-    "attack": 66,
+    "hp": 1160,
+    "attack": 132,
     "defense": 8,
     "move_speed": 0.2,
     "follow_range": 22,

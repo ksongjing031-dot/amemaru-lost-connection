@@ -6,8 +6,8 @@
   "level": 17,
   "description": "厚い苔を衣のようにまとった、樹皮兵の頭。管の谷の古い宝箱のそばを離れず、近づく者を根の叩きつけで追い払う。",
   "stats": {
-    "hp": 15000,
-    "attack": 66,
+    "hp": 6300,
+    "attack": 95,
     "defense": 22,
     "move_speed": 0.22,
     "follow_range": 22,

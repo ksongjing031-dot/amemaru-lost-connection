@@ -6,8 +6,8 @@
   "lost": false,
   "description": "赤いかさに白い斑点のある、大きなキノコ。近づく者に毒の胞子をはきかける。胞子の雲はしばらく残るので、吸わないように離れること。",
   "stats": {
-    "hp": 1200,
-    "attack": 30,
+    "hp": 550,
+    "attack": 44,
     "defense": 4,
     "move_speed": 0.0,
     "follow_range": 8,

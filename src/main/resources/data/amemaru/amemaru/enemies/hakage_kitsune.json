@@ -6,8 +6,8 @@
   "lost": false,
   "description": "木の葉の影にまぎれる、緑がかった毛のキツネ。群れで獲物を囲み、背中へ回り込んで噛みつく。背中を見せないように、仲間と背中を合わせよう。",
   "stats": {
-    "hp": 1300,
-    "attack": 44,
+    "hp": 600,
+    "attack": 64,
     "defense": 4,
     "move_speed": 0.3,
     "follow_range": 26,

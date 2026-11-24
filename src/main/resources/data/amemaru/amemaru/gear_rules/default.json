@@ -48,6 +48,8 @@
   "durability_loss": {
     "weapon_hit": 1,
     "skill_use": 1,
-    "armor_hit": 1
+    "armor_hit": 1,
+    "armor_hp_percent": 10,
+    "_comment_armor": "11月24日：防具と盾の耐久は、敵の攻撃1回ごとではなく、受けたダメージに合わせて減る。最大HPの armor_hp_percent% を受けるごとに armor_hit ずつ（端数は確率で。かすり傷ではほとんど減らず、大きな一撃では多く減る）。0にすると、1回ごとに armor_hit ずつ（前の形）"
   }
 }

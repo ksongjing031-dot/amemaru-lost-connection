@@ -6,8 +6,8 @@
   "lost": false,
   "description": "水路の底のごみを掃き続けてきた、古代の青銅の清掃機械。正面の厚い板で水の流れを受け、前の回るブラシで何でも掃き出す。人も、ごみと見分けがつかないらしい。",
   "stats": {
-    "hp": 3400,
-    "attack": 62,
+    "hp": 1430,
+    "attack": 103,
     "defense": 18,
     "move_speed": 0.2,
     "follow_range": 20,

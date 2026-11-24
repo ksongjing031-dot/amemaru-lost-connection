@@ -5,8 +5,8 @@
   "level": 19,
   "description": "青銅の小さな球に、四枚の羽根と翠に光る修理の腕。傷ついた祭壇の機械を見つけると、光の糸で直してしまう。もろいので、先に落としたい。",
   "stats": {
-    "hp": 1200,
-    "attack": 40,
+    "hp": 630,
+    "attack": 80,
     "defense": 4,
     "move_speed": 0.22,
     "follow_range": 20,

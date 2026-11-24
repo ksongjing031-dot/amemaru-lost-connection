@@ -6,8 +6,8 @@
   "level": 10,
   "description": "澱みスライムが叩き割られて分かれた、小さなかたまり。すぐに水に戻ろうとするが、その前に誰かの足にからみつく。",
   "stats": {
-    "hp": 650,
-    "attack": 30,
+    "hp": 270,
+    "attack": 50,
     "defense": 3,
     "move_speed": 0.26,
     "follow_range": 16,

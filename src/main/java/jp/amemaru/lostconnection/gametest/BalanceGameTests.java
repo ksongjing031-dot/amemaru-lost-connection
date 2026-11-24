@@ -22,6 +22,8 @@ import java.util.List;
  *
  * <ul>
  *   <li>雑魚・名のある魔物・ボスのHPと攻撃が、決めた下限より上（「プレイヤーが一方的」にならない）。葉影ギツネは遅くした</li>
+ *   <li>11月24日の2回目（「敵が固くなりすぎ」）：雑魚は2人で2〜9秒・名のある魔物は30〜45秒・ボスは2人で7分半ほどを目安に
+ *       HPを下げ、攻撃を上げた（防具を着ていても、HPがちゃんと減るように）。下限もそれに合わせた</li>
  *   <li>ボスのHPは、ひとりでも2人ぶん（hp_min_players）。みんなで受ける一撃は、ひとりで受けると倒れる強さ</li>
  *   <li>防具と盾の防御とHPを下げた（「装備が強くて全然削れない」）</li>
  * </ul>
@@ -35,28 +37,28 @@ public final class BalanceGameTests {
     private BalanceGameTests() {
     }
 
-    /** 雑魚と名のある魔物の強さの下限（2人で1体に十数秒・名のある魔物は1〜2分）と、葉影ギツネの速さ。 */
+    /** 雑魚と名のある魔物の強さの下限（11月24日の2回目：2人で雑魚は数秒・名のある魔物は30〜45秒）と、葉影ギツネの速さ。 */
     @GameTest(template = EMPTY)
     public static void enemiesAreNotOneSided(GameTestHelper helper) {
         for (String id : List.of("tsunomofu", "crystal_bee", "ishikure_soldier", "kakekiba_wolf")) {
             EnemyDef def = enemy(id);
-            check(helper, def.hp() >= 400 && def.attack() >= 25, "1階の雑魚 " + id + " が弱すぎます：HP" + def.hp() + "・攻撃" + def.attack());
+            check(helper, def.hp() >= 180 && def.attack() >= 25, "1階の雑魚 " + id + " が弱すぎます：HP" + def.hp() + "・攻撃" + def.attack());
         }
         for (String id : List.of("mayoi_bi", "juhihei", "pokodake", "hakage_kitsune")) {
             EnemyDef def = enemy(id);
-            check(helper, def.hp() >= 700 && def.attack() >= 30, "2階の雑魚 " + id + " が弱すぎます：HP" + def.hp() + "・攻撃" + def.attack());
+            check(helper, def.hp() >= 380 && def.attack() >= 40, "2階の雑魚 " + id + " が弱すぎます：HP" + def.hp() + "・攻撃" + def.attack());
         }
         for (String id : List.of("suimon_nezumi", "yodomi_slime", "soujikihei", "kiba_namazu")) {
             EnemyDef def = enemy(id);
-            check(helper, def.hp() >= 750 && def.attack() >= 40, "3階の雑魚 " + id + " が弱すぎます：HP" + def.hp() + "・攻撃" + def.attack());
+            check(helper, def.hp() >= 300 && def.attack() >= 60, "3階の雑魚 " + id + " が弱すぎます：HP" + def.hp() + "・攻撃" + def.attack());
         }
         for (String id : List.of("tsunomofu_alpha", "juhihei_captain", "hakage_kitsune_chief")) {
             EnemyDef def = enemy(id);
-            check(helper, def.hp() >= 7000, "名のある魔物 " + id + " のHPが少なすぎます：" + def.hp());
+            check(helper, def.hp() >= 2500, "名のある魔物 " + id + " のHPが少なすぎます：" + def.hp());
         }
         for (String id : List.of("soujikihei_overseer", "kiba_namazu_lord", "suimon_nezumi_boss")) {
             EnemyDef def = enemy(id);
-            check(helper, def.hp() >= 12000, "3階の名のある魔物 " + id + " のHPが少なすぎます：" + def.hp());
+            check(helper, def.hp() >= 5500, "3階の名のある魔物 " + id + " のHPが少なすぎます：" + def.hp());
         }
         check(helper, enemy("hakage_kitsune").moveSpeed() <= 0.30 + EPSILON && enemy("hakage_kitsune_chief").moveSpeed() <= 0.33 + EPSILON,
                 "葉影ギツネが遅くなっていません");
@@ -85,7 +87,7 @@ public final class BalanceGameTests {
             check(helper, SharedBlow.split(share.power(), 1) >= 1.0, floor + "階のみんなで受ける一撃が、ひとりで受けても倒れない強さです");
             check(helper, SharedBlow.split(share.power(), 2) < 1.0, floor + "階のみんなで受ける一撃が、2人で分けても倒れる強さです");
             check(helper, share.windupTicks() >= 60, floor + "階のみんなで受ける一撃の予兆が短すぎます（集まる間がない）");
-            check(helper, boss.hp() * two >= (floor == 1 ? 40000 : floor == 2 ? 85000 : 100000), floor + "階のボスのHP（2人）が少なすぎます："
+            check(helper, boss.hp() * two >= (floor == 1 ? 24000 : floor == 2 ? 50000 : 58000), floor + "階のボスのHP（2人）が少なすぎます："
                     + boss.hp() * two);
         }
         check(helper, Math.abs(SharedBlow.split(160, 4) - 0.4) < EPSILON, "4人で分けると、ひとり最大HPの40%ではありません");

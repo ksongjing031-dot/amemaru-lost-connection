@@ -138,14 +138,24 @@ public final class GearService {
         }
     }
 
-    /** 防具と盾の耐久を減らす（敵の攻撃を受けたとき）。 */
-    public static void wearArmor(ServerPlayer player) {
+    /**
+     * 敵の攻撃を受けたとき、防具と盾の耐久を減らす（利き手の武器は減らない）。
+     *
+     * <p>11月24日のご指示（「防具を着ているときは耐久力が減るが、なかなか体力が減らない」）：1回ごとではなく、受けたダメージに
+     * 合わせて減らす。最大HPの {@code armor_hp_percent}% を受けるごとに {@code armor_hit} ずつ（端数は確率で）。</p>
+     *
+     * @param hpFraction 受けたダメージの、最大HPに対する割合（0.1 なら10%）
+     */
+        public static void wearArmor(ServerPlayer player, double hpFraction) {
         // 決闘の間は、防具と盾の耐久は減らない（11月22日に決定。Phase 6 その4）
         if (player.getAbilities().instabuild || jp.amemaru.lostconnection.social.DuelService.isolated(player)) {
             return;
         }
         EquipmentDefs.Snapshot snapshot = EquipmentDefs.server();
-        int amount = snapshot.rules().armorHitLoss();
+        int amount = armorLoss(snapshot.rules(), hpFraction, player.getRandom().nextDouble());
+        if (amount <= 0) {
+            return;
+        }
         for (ItemStack stack : activeGear(player)) {
             if (stack == player.getMainHandItem()) {
                 continue;
@@ -159,6 +169,20 @@ public final class GearService {
                 onBroken(player, stack);
             }
         }
+    }
+
+    /**
+     * 1回の攻撃で、防具と盾の耐久がいくつ減るか。{@code armor_hp_percent} が0なら、いつも {@code armor_hit}（前の形）。
+     *
+     * @param roll 端数を切り上げるかを決める、0以上1未満の数
+     */
+    public static int armorLoss(GearRules rules, double hpFraction, double roll) {
+        if (rules.armorHpPercent() <= 0.0) {
+            return rules.armorHitLoss();
+        }
+        double exact = rules.armorHitLoss() * Math.max(0.0, hpFraction) * 100.0 / rules.armorHpPercent();
+        int whole = (int) Math.floor(exact);
+        return whole + (roll < exact - whole ? 1 : 0);
     }
 
     private static void onBroken(ServerPlayer player, ItemStack stack) {

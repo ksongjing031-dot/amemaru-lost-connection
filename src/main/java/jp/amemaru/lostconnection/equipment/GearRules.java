@@ -33,6 +33,8 @@ import java.util.Map;
 public final class GearRules {
     /** 使う定義のID。 */
     public static final ResourceLocation DEFAULT_ID = AmemaruMod.id("default");
+    /** 同梱の初期値：最大HPの10%を受けるごとに、防具と盾の耐久が1減る（11月24日【補完】）。 */
+    public static final double ARMOR_HP_PERCENT_DEFAULT = 10.0;
 
     /** 強化の素材の1種類（{@code from} 段目から、段の数 × {@code perLevel} 個。{@code from} が4なら+4で1個、+5で2個…）。 */
     public record EnhanceCost(ResourceLocation item, int perLevel, int from) {
@@ -58,11 +60,13 @@ public final class GearRules {
     private final int weaponHitLoss;
     private final int skillUseLoss;
     private final int armorHitLoss;
+    /** 11月24日：防具と盾の耐久が {@link #armorHitLoss} 減る、受けたダメージ（最大HPに対する%）。0なら1回ごとに減る（前の形）。 */
+    private final double armorHpPercent;
 
     private GearRules(double[] rarityMultiplier, double rollMin, double rollMax, double greatSuccessBonus,
                       int[] qualityThresholds, int maxEnhance, double enhancePercent, int[] glowLevels,
                       Map<Integer, List<EnhanceCost>> enhanceCosts, double nonCrafterRepair, int weaponHitLoss,
-                      int skillUseLoss, int armorHitLoss) {
+                      int skillUseLoss, int armorHitLoss, double armorHpPercent) {
         this.rarityMultiplier = rarityMultiplier;
         this.rollMin = rollMin;
         this.rollMax = rollMax;
@@ -76,6 +80,7 @@ public final class GearRules {
         this.weaponHitLoss = weaponHitLoss;
         this.skillUseLoss = skillUseLoss;
         this.armorHitLoss = armorHitLoss;
+        this.armorHpPercent = armorHpPercent;
     }
 
     // ---------------------------------------------------------------- 値
@@ -164,6 +169,11 @@ public final class GearRules {
         return armorHitLoss;
     }
 
+    /** 防具と盾の耐久が減る、受けたダメージ（最大HPに対する%。0なら1回ごと）。 */
+    public double armorHpPercent() {
+        return armorHpPercent;
+    }
+
     // ---------------------------------------------------------------- 通信（説明文の計算に要るため、クライアントにも送る）
 
     public void write(FriendlyByteBuf buf) {
@@ -197,6 +207,7 @@ public final class GearRules {
         buf.writeVarInt(weaponHitLoss);
         buf.writeVarInt(skillUseLoss);
         buf.writeVarInt(armorHitLoss);
+        buf.writeDouble(armorHpPercent);
     }
 
     public static GearRules read(FriendlyByteBuf buf) {
@@ -238,8 +249,9 @@ public final class GearRules {
         int weaponHit = buf.readVarInt();
         int skillUse = buf.readVarInt();
         int armorHit = buf.readVarInt();
+        double armorHp = buf.readDouble();
         return new GearRules(multiplier, min, max, great, quality, maxEnhance, percent, glow, costs, nonCrafter,
-                weaponHit, skillUse, armorHit);
+                weaponHit, skillUse, armorHit, armorHp);
     }
 
     // ---------------------------------------------------------------- 読み込み
@@ -311,9 +323,10 @@ public final class GearRules {
         int weaponHit = loss == null ? 1 : Json.optionalInt(loss, "weapon_hit", 1, 0, 100);
         int skillUse = loss == null ? 1 : Json.optionalInt(loss, "skill_use", 1, 0, 100);
         int armorHit = loss == null ? 1 : Json.optionalInt(loss, "armor_hit", 1, 0, 100);
+        double armorHp = loss == null ? 0.0 : Json.optionalDouble(loss, "armor_hp_percent", 0.0, 0.0, 100.0);
 
         return new GearRules(multiplier, min, max, great, quality, maxEnhance, percent, glow, costs, nonCrafter,
-                weaponHit, skillUse, armorHit);
+                weaponHit, skillUse, armorHit, armorHp);
     }
 
     /** 品質の境目（%。4つ、小さい順）。 */
@@ -337,7 +350,7 @@ public final class GearRules {
         costs.put(1, List.of(new EnhanceCost(AmemaruMod.id("moss_iron"), 1, 1),
                 new EnhanceCost(AmemaruMod.id("crystal_shard"), 1, 4)));
         return new GearRules(multiplier, 0.7, 1.0, 0.1, new int[]{60, 70, 80, 90}, 10, 4.0, new int[]{4, 7, 10}, costs,
-                2.0, 1, 1, 1);
+                2.0, 1, 1, 1, ARMOR_HP_PERCENT_DEFAULT);
     }
 
     private static final class Loader extends DefinitionLoader<GearRules> {

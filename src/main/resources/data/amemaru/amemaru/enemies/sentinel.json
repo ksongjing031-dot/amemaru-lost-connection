@@ -5,8 +5,8 @@
   "level": 22,
   "description": "白い石と青銅の、祭壇の兵。左腕に大きな塔の盾、右手に槍。盾の正面からの攻撃は、ほとんど通らない。後ろか横から攻めたい。",
   "stats": {
-    "hp": 4800,
-    "attack": 86,
+    "hp": 2530,
+    "attack": 172,
     "defense": 28,
     "move_speed": 0.19,
     "follow_range": 20,
