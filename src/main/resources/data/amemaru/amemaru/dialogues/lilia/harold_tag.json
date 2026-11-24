@@ -1,0 +1,57 @@
+{
+  "_comment": "4日目：父ハロルドの認識票を受け取る（Phase 0-A 12章のリリア「4日目 父の認識票を受け取る」）。クエスト harold_tag の報告（認識票を渡す）。台詞は【補完】",
+  "npc": "amemaru:lilia",
+  "priority": 40,
+  "conditions": {
+    "opening": 2,
+    "flags_all": [
+      "amemaru:story/gard_expedition_told"
+    ],
+    "flags_none": [
+      "amemaru:story/lilia_tag_received"
+    ]
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "expression": "surprised",
+      "text": "{player}さん？ ガルドさんから……わたしに、ですか？",
+      "next": "s2"
+    },
+    "s2": {
+      "expression": "surprised",
+      "text": "……これ、父の……",
+      "next": "s3"
+    },
+    "s3": {
+      "text": "「結晶騎士団　副団長　ハロルド」……。父は、15年前の遠征から、帰ってこなかったんです",
+      "next": "s4"
+    },
+    "s4": {
+      "expression": "sad",
+      "text": "わたし、まだ小さくて。父の顔は、もうあまり覚えていないんです。……でも、この傷には見覚えがある",
+      "next": "s5"
+    },
+    "s5": {
+      "expression": "smile",
+      "text": "……おかえりなさい、お父さん",
+      "next": "s6"
+    },
+    "s6": {
+      "expression": "smile",
+      "text": "ありがとうございます、{player}さん。この認識票は、受付の、いちばん近い所に置いておきますね"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:report_quest",
+      "quest": "amemaru:harold_tag"
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/lilia_tag_received"
+      ]
+    }
+  ]
+}

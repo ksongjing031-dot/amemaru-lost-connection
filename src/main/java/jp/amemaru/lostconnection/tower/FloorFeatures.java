@@ -25,13 +25,85 @@ import java.util.List;
  *       {@code lost_woods}：迷いの森の区画がすべてつながったら、みんな）</li>
  *   <li>{@code story_zones}：物語のきっかけになる所（{@code id}・{@code box}）。人が入ると、ストーリーイベントの
  *       きっかけ {@code floor_zone}（{@code zone} が同じもの）が起きる。2階の「霧の奥でノアが初めて目撃される」など</li>
+ *   <li>{@code murals}：壁画パズル（4階のギミック。Phase 0-A 9章「回転するパネルを正しく並べると、第一時代から第二時代までの
+ *       歴史が一枚の絵になる」）。{@code songs}：音の順番の仕掛け（同じ表の「音の順番」）。{@code relics}：物語の品を拾う所
+ *       （4階の結晶騎士団の遺品）。{@code boss_marks}：ボスが使う場所の組（4階の音の床・5階の結び台など。名前 → 場所の並び）</li>
  * </ul>
  */
 public record FloorFeatures(@Nullable Environment environment, List<LostWoods> lostWoods, List<Waypoint> waypoints,
                             @Nullable BlockPos travelStone, String sealRequires, List<StoryZone> storyZones,
-                            List<Floodgate> floodgates, List<WaterSection> waterSections) {
+                            List<Floodgate> floodgates, List<WaterSection> waterSections, List<Mural> murals, List<Song> songs,
+                            List<Relic> relics, java.util.Map<String, List<BlockPos>> bossMarks) {
     public static final FloorFeatures NONE = new FloorFeatures(null, List.of(), List.of(), null, "pillars", List.of(), List.of(),
-            List.of());
+            List.of(), List.of(), List.of(), List.of(), java.util.Map.<String, List<BlockPos>>of());
+    /** 11月24日（4階）：その階の壁画をすべて元に戻した（みんなで同じ。その日のうち）。 */
+    public static final String SEAL_MURALS = "murals";
+
+    /**
+     * 壁画（4階）。{@code panels} の向き（0〜3）がすべて {@code answer} にそろうと、元の絵に戻る。そろうと {@code door} の箱を
+     * 開け（ブロックを空気に）、{@code text} の歴史の一文を、近くの人に出す。{@code display} は、すべての壁画がそろうと灯る
+     * 「一枚の絵」（向きは変わらない。どの壁画の組にも入れない）。
+     */
+    public record Mural(String id, String name, List<Panel> panels, String text, @Nullable Door door, boolean display) {
+    }
+
+    /** 壁画のパネル。{@code piece} は絵のどの部分か（ブロックの絵の番号）、{@code answer} は正しい向き。 */
+    public record Panel(BlockPos pos, int piece, int answer) {
+    }
+
+    /**
+     * 音の順番の仕掛け（4階）。{@code chime} の石を鳴らすと、{@code length} 個の音の順番を鳴らす。{@code plates} の音の床
+     * （番号が音）を、同じ順番で踏むと、{@code door} が開く（みんなの分。その日のうち）。
+     */
+    public record Song(String id, String name, BlockPos chime, List<BlockPos> plates, int length, @Nullable Door door) {
+    }
+
+    /**
+     * 物語の品を拾う所（4階の結晶騎士団の遺品）。右クリックで {@code items} を受け取り、{@code flag} が立つ（人ごとに1回）。
+     * {@code event} はそのとき流すストーリーイベント（なければ ""）。
+     */
+    /**
+     * 物語の品の置き場所（11月24日：4階の結晶騎士団の遺品）。右クリックで {@code items} をもらい、{@code flag} が立ち、{@code event} の
+     * ストーリーイベントが流れ、{@code quest} のクエストが始まる（なければ始めない）。
+     */
+    public record Relic(String id, BlockPos pos, List<net.minecraft.resources.ResourceLocation> items, net.minecraft.resources.ResourceLocation flag,
+                        String event, @Nullable net.minecraft.resources.ResourceLocation quest) {
+    }
+
+    @Nullable
+    public Mural mural(String id) {
+        for (Mural mural : murals) {
+            if (mural.id().equals(id)) {
+                return mural;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public Song song(String id) {
+        for (Song song : songs) {
+            if (song.id().equals(id)) {
+                return song;
+            }
+        }
+        return null;
+    }
+
+    @Nullable
+    public Relic relic(String id) {
+        for (Relic relic : relics) {
+            if (relic.id().equals(id)) {
+                return relic;
+            }
+        }
+        return null;
+    }
+
+    /** ボスが使う場所の組（なければ空）。 */
+    public List<BlockPos> bossMarks(String name) {
+        return bossMarks.getOrDefault(name, List.of());
+    }
     public static final String SEAL_PILLARS = "pillars";
     public static final String SEAL_LOST_WOODS = "lost_woods";
     /**
@@ -198,8 +270,8 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
         String seal = Json.optionalString(json, "seal_requires", SEAL_PILLARS);
         for (String token : seal.split("\\+")) {
             if (!token.equals(SEAL_PILLARS) && !token.equals(SEAL_LOST_WOODS) && !token.equals(SEAL_GUARDIANS)
-                    && !token.equals(SEAL_FLOODGATES)) {
-                throw new DefinitionException("「seal_requires」は pillars・lost_woods・guardians・floodgates を + でつないだものにしてください（今は "
+                    && !token.equals(SEAL_FLOODGATES) && !token.equals(SEAL_MURALS)) {
+                throw new DefinitionException("「seal_requires」は pillars・lost_woods・guardians・floodgates・murals を + でつないだものにしてください（今は "
                         + seal + "）");
             }
         }
@@ -274,8 +346,75 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
             JsonObject z = Json.asObject(element, "story_zones");
             zones.add(new StoryZone(Json.string(z, "id"), box(Json.array(z, "box"), "story_zones.box")));
         }
+        // 11月24日（4階）：壁画・音の順番・物語の品・ボスの場所
+        List<Mural> murals = new ArrayList<>();
+        for (JsonElement element : Json.optionalArray(json, "murals")) {
+            JsonObject m = Json.asObject(element, "murals");
+            List<Panel> panels = new ArrayList<>();
+            for (JsonElement pe : Json.array(m, "panels")) {
+                JsonObject p = Json.asObject(pe, "murals.panels");
+                panels.add(new Panel(FloorDef.blockPos(Json.array(p, "pos"), "murals.panels.pos"), Json.intInRange(p, "piece", 0, 63),
+                        Json.optionalInt(p, "answer", 0, 0, 3)));
+            }
+            if (panels.isEmpty()) {
+                throw new DefinitionException("壁画「" + Json.string(m, "id") + "」にパネルがありません");
+            }
+            murals.add(new Mural(Json.string(m, "id"), Json.optionalString(m, "name", ""), List.copyOf(panels),
+                    Json.optionalString(m, "text", ""), door(Json.optionalObject(m, "door"), "murals.door"),
+                    Json.optionalBoolean(m, "display", false)));
+        }
+        List<Song> songs = new ArrayList<>();
+        for (JsonElement element : Json.optionalArray(json, "songs")) {
+            JsonObject g = Json.asObject(element, "songs");
+            List<BlockPos> plates = new ArrayList<>();
+            for (JsonElement pe : Json.array(g, "plates")) {
+                plates.add(FloorDef.blockPos(pe.getAsJsonArray(), "songs.plates"));
+            }
+            if (plates.size() < 2 || plates.size() > 8) {
+                throw new DefinitionException("音の順番「" + Json.string(g, "id") + "」の音の床は2〜8にしてください");
+            }
+            songs.add(new Song(Json.string(g, "id"), Json.optionalString(g, "name", ""), FloorDef.blockPos(Json.array(g, "chime"), "songs.chime"),
+                    List.copyOf(plates), Json.optionalInt(g, "length", 3, 2, 8), door(Json.optionalObject(g, "door"), "songs.door")));
+        }
+        List<Relic> relics = new ArrayList<>();
+        for (JsonElement element : Json.optionalArray(json, "relics")) {
+            JsonObject r = Json.asObject(element, "relics");
+            relics.add(new Relic(Json.string(r, "id"), FloorDef.blockPos(Json.array(r, "pos"), "relics.pos"), Json.idList(r, "items"),
+                    Json.id(r, "flag"), Json.optionalString(r, "event", ""), Json.optionalId(r, "quest")));
+        }
+        java.util.Map<String, List<BlockPos>> marks = new java.util.LinkedHashMap<>();
+        JsonObject markObject = Json.optionalObject(json, "boss_marks");
+        if (markObject != null) {
+            for (String key : markObject.keySet()) {
+                List<BlockPos> list = new ArrayList<>();
+                for (JsonElement pe : Json.array(markObject, key)) {
+                    list.add(FloorDef.blockPos(pe.getAsJsonArray(), "boss_marks." + key));
+                }
+                marks.put(key, List.copyOf(list));
+            }
+        }
+        if (requires(seal, SEAL_MURALS) && murals.stream().noneMatch(m -> !m.display())) {
+            throw new DefinitionException("「seal_requires」が murals なのに、「murals」がありません");
+        }
         return new FloorFeatures(env, List.copyOf(woods), List.copyOf(waypoints), travel, seal, List.copyOf(zones), List.copyOf(gates),
-                List.copyOf(sections));
+                List.copyOf(sections), List.copyOf(murals), List.copyOf(songs), List.copyOf(relics), java.util.Map.copyOf(marks));
+    }
+
+    @Nullable
+    private static Door door(@Nullable JsonObject door, String name) {
+        if (door == null) {
+            return null;
+        }
+        JsonArray b = Json.array(door, "box");
+        if (b.size() != 6) {
+            throw new DefinitionException("「" + name + ".box」は [x0, y0, z0, x1, y1, z1] の6つの数にしてください");
+        }
+        int[] v = new int[6];
+        for (int i = 0; i < 6; i++) {
+            v[i] = (int) Math.floor(Json.asNumber(b.get(i), name + ".box"));
+        }
+        return new Door(new BlockPos(Math.min(v[0], v[3]), Math.min(v[1], v[4]), Math.min(v[2], v[5])),
+                new BlockPos(Math.max(v[0], v[3]), Math.max(v[1], v[4]), Math.max(v[2], v[5])), Json.id(door, "block"));
     }
 
     private static AABB box(JsonArray array, String name) {

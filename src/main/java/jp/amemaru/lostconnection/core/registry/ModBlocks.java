@@ -118,6 +118,29 @@ public final class ModBlocks {
             new jp.amemaru.lostconnection.tower.waterway.WaterwayBlocks.Valve(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL).strength(-1.0F, 3600000.0F).sound(SoundType.METAL).lightLevel(state -> 7)
                     .noOcclusion().pushReaction(PushReaction.BLOCK)));
+    // ---- 11月24日：4階「崩壊した神殿」の仕掛け（壊せない）
+    /** 壁画のパネル（右クリックで回す）。 */
+    public static final RegistryObject<Block> MURAL_PANEL = BLOCKS.register("mural_panel", () ->
+            new jp.amemaru.lostconnection.tower.temple.TempleBlocks.MuralPanel(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.QUARTZ).strength(-1.0F, 3600000.0F).sound(SoundType.STONE)
+                    .lightLevel(state -> state.getValue(jp.amemaru.lostconnection.tower.temple.TempleBlocks.LIT) ? 6 : 2)
+                    .pushReaction(PushReaction.BLOCK)));
+    /** 音の床（踏むと鳴る）。 */
+    public static final RegistryObject<Block> SOUND_PLATE = BLOCKS.register("sound_plate", () ->
+            new jp.amemaru.lostconnection.tower.temple.TempleBlocks.SoundPlate(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.QUARTZ).strength(-1.0F, 3600000.0F).sound(SoundType.AMETHYST)
+                    .lightLevel(state -> state.getValue(jp.amemaru.lostconnection.tower.temple.TempleBlocks.LIT) ? 12 : 4)
+                    .noOcclusion().pushReaction(PushReaction.BLOCK)));
+    /** 音の順番を鳴らす鈴の石。 */
+    public static final RegistryObject<Block> CHIME_STONE = BLOCKS.register("chime_stone", () ->
+            new jp.amemaru.lostconnection.tower.temple.TempleBlocks.ChimeStone(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.QUARTZ).strength(-1.0F, 3600000.0F).sound(SoundType.AMETHYST).lightLevel(state -> 6)
+                    .noOcclusion().pushReaction(PushReaction.BLOCK)));
+    /** 結晶騎士団の遺品（冑と認識票）。 */
+    public static final RegistryObject<Block> KNIGHT_RELIC = BLOCKS.register("knight_relic", () ->
+            new jp.amemaru.lostconnection.tower.temple.TempleBlocks.KnightRelic(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(-1.0F, 3600000.0F).sound(SoundType.METAL).lightLevel(state -> 3)
+                    .noOcclusion().pushReaction(PushReaction.BLOCK)));
     /** 入口の道しるべの石（ともした中継の灯へ連れていく）。 */
     public static final RegistryObject<Block> TRAVEL_STONE = BLOCKS.register("travel_stone", () ->
             new jp.amemaru.lostconnection.tower.forest.ForestBlocks.TravelStone(BlockBehaviour.Properties.of()

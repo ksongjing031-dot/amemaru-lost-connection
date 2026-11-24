@@ -1,0 +1,51 @@
+{
+  "_comment": "結晶甲虫（4階の雑魚。Phase 0-A 9章「硬いが魔法に弱い」）。魔力でないダメージは physical_taken、魔力のダメージはmagic_taken（スキルの効果が魔力で決まるか）。噛みつき（bite。前）と体当たり（charge。短い線）。数値は【補完】",
+  "name": "結晶甲虫",
+  "floor": 4,
+  "level": 8,
+  "description": "背中の殻から青白い結晶を生やした、大きな甲虫。殻は剣も矢も弾くほど硬いが、魔力には弱く、魔法が当たると殻にひびが走る。",
+  "stats": {
+    "hp": 3200,
+    "attack": 70,
+    "defense": 30,
+    "move_speed": 0.19,
+    "follow_range": 18,
+    "aggro_range": 9
+  },
+  "exp": 40,
+  "skills": {
+    "bite": {
+      "power": 1.1,
+      "windup": 0.6,
+      "cooldown": 1.8,
+      "range": 2.4
+    },
+    "charge": {
+      "power": 1.6,
+      "windup": 1.2,
+      "cooldown": 8.0,
+      "range": 10.0,
+      "min_range": 4.0,
+      "width": 1.4,
+      "speed": 0.8,
+      "recover": 1.2
+    }
+  },
+  "behavior": {
+    "physical_taken": 0.35,
+    "magic_taken": 1.6
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/crystal_beetle",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_amber",
+        "chance": 0.6
+      },
+      {
+        "item": "amemaru:crystal_fruit_azure",
+        "chance": 0.3
+      }
+    ]
+  }
+}

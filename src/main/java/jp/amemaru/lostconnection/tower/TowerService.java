@@ -693,6 +693,11 @@ public final class TowerService {
             int[] gates = jp.amemaru.lostconnection.tower.waterway.FloodgateService.count(player.server, def);
             return Component.translatable("message.amemaru.seal.floodgates", gates[0], gates[1]);
         }
+        if (features.requires(FloorFeatures.SEAL_MURALS)
+                && !jp.amemaru.lostconnection.tower.temple.TempleService.allSolved(player.server, def)) {
+            int[] murals = jp.amemaru.lostconnection.tower.temple.TempleService.count(player.server, def);
+            return Component.translatable("message.amemaru.seal.murals", murals[0], murals[1]);
+        }
         if (features.requires(FloorFeatures.SEAL_GUARDIANS)) {
             int done = guardiansDefeated(player, def);
             int total = namedGuardians(def).size();

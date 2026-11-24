@@ -125,6 +125,8 @@ public final class ProgressionService {
         jp.amemaru.lostconnection.tower.forest.LostWoodsService.onDayChanged(server);
         // Phase 8 その2：3階の水門は、進行日が変わると閉じる（水が戻る）
         jp.amemaru.lostconnection.tower.waterway.FloodgateService.onDayChanged(server);
+        // 11月24日（4階）：壁画は朝に崩れ、音の順番の扉も閉じる
+        jp.amemaru.lostconnection.tower.temple.TempleService.onDayChanged(server);
         broadcastWorldState(server);
         TowerHall.update(server);
         return now;

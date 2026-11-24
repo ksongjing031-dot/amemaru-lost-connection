@@ -1,0 +1,1924 @@
+{
+  "variants": {
+    "facing=north,lit=false,piece=0,turn=0": {
+      "model": "amemaru:block/mural/p0_t0_dim"
+    },
+    "facing=north,lit=false,piece=0,turn=1": {
+      "model": "amemaru:block/mural/p0_t1_dim"
+    },
+    "facing=north,lit=false,piece=0,turn=2": {
+      "model": "amemaru:block/mural/p0_t2_dim"
+    },
+    "facing=north,lit=false,piece=0,turn=3": {
+      "model": "amemaru:block/mural/p0_t3_dim"
+    },
+    "facing=north,lit=false,piece=1,turn=0": {
+      "model": "amemaru:block/mural/p1_t0_dim"
+    },
+    "facing=north,lit=false,piece=1,turn=1": {
+      "model": "amemaru:block/mural/p1_t1_dim"
+    },
+    "facing=north,lit=false,piece=1,turn=2": {
+      "model": "amemaru:block/mural/p1_t2_dim"
+    },
+    "facing=north,lit=false,piece=1,turn=3": {
+      "model": "amemaru:block/mural/p1_t3_dim"
+    },
+    "facing=north,lit=false,piece=2,turn=0": {
+      "model": "amemaru:block/mural/p2_t0_dim"
+    },
+    "facing=north,lit=false,piece=2,turn=1": {
+      "model": "amemaru:block/mural/p2_t1_dim"
+    },
+    "facing=north,lit=false,piece=2,turn=2": {
+      "model": "amemaru:block/mural/p2_t2_dim"
+    },
+    "facing=north,lit=false,piece=2,turn=3": {
+      "model": "amemaru:block/mural/p2_t3_dim"
+    },
+    "facing=north,lit=false,piece=3,turn=0": {
+      "model": "amemaru:block/mural/p3_t0_dim"
+    },
+    "facing=north,lit=false,piece=3,turn=1": {
+      "model": "amemaru:block/mural/p3_t1_dim"
+    },
+    "facing=north,lit=false,piece=3,turn=2": {
+      "model": "amemaru:block/mural/p3_t2_dim"
+    },
+    "facing=north,lit=false,piece=3,turn=3": {
+      "model": "amemaru:block/mural/p3_t3_dim"
+    },
+    "facing=north,lit=false,piece=4,turn=0": {
+      "model": "amemaru:block/mural/p4_t0_dim"
+    },
+    "facing=north,lit=false,piece=4,turn=1": {
+      "model": "amemaru:block/mural/p4_t1_dim"
+    },
+    "facing=north,lit=false,piece=4,turn=2": {
+      "model": "amemaru:block/mural/p4_t2_dim"
+    },
+    "facing=north,lit=false,piece=4,turn=3": {
+      "model": "amemaru:block/mural/p4_t3_dim"
+    },
+    "facing=north,lit=false,piece=5,turn=0": {
+      "model": "amemaru:block/mural/p5_t0_dim"
+    },
+    "facing=north,lit=false,piece=5,turn=1": {
+      "model": "amemaru:block/mural/p5_t1_dim"
+    },
+    "facing=north,lit=false,piece=5,turn=2": {
+      "model": "amemaru:block/mural/p5_t2_dim"
+    },
+    "facing=north,lit=false,piece=5,turn=3": {
+      "model": "amemaru:block/mural/p5_t3_dim"
+    },
+    "facing=north,lit=false,piece=6,turn=0": {
+      "model": "amemaru:block/mural/p6_t0_dim"
+    },
+    "facing=north,lit=false,piece=6,turn=1": {
+      "model": "amemaru:block/mural/p6_t1_dim"
+    },
+    "facing=north,lit=false,piece=6,turn=2": {
+      "model": "amemaru:block/mural/p6_t2_dim"
+    },
+    "facing=north,lit=false,piece=6,turn=3": {
+      "model": "amemaru:block/mural/p6_t3_dim"
+    },
+    "facing=north,lit=false,piece=7,turn=0": {
+      "model": "amemaru:block/mural/p7_t0_dim"
+    },
+    "facing=north,lit=false,piece=7,turn=1": {
+      "model": "amemaru:block/mural/p7_t1_dim"
+    },
+    "facing=north,lit=false,piece=7,turn=2": {
+      "model": "amemaru:block/mural/p7_t2_dim"
+    },
+    "facing=north,lit=false,piece=7,turn=3": {
+      "model": "amemaru:block/mural/p7_t3_dim"
+    },
+    "facing=north,lit=false,piece=8,turn=0": {
+      "model": "amemaru:block/mural/p8_t0_dim"
+    },
+    "facing=north,lit=false,piece=8,turn=1": {
+      "model": "amemaru:block/mural/p8_t1_dim"
+    },
+    "facing=north,lit=false,piece=8,turn=2": {
+      "model": "amemaru:block/mural/p8_t2_dim"
+    },
+    "facing=north,lit=false,piece=8,turn=3": {
+      "model": "amemaru:block/mural/p8_t3_dim"
+    },
+    "facing=north,lit=false,piece=9,turn=0": {
+      "model": "amemaru:block/mural/p9_t0_dim"
+    },
+    "facing=north,lit=false,piece=9,turn=1": {
+      "model": "amemaru:block/mural/p9_t1_dim"
+    },
+    "facing=north,lit=false,piece=9,turn=2": {
+      "model": "amemaru:block/mural/p9_t2_dim"
+    },
+    "facing=north,lit=false,piece=9,turn=3": {
+      "model": "amemaru:block/mural/p9_t3_dim"
+    },
+    "facing=north,lit=false,piece=10,turn=0": {
+      "model": "amemaru:block/mural/p10_t0_dim"
+    },
+    "facing=north,lit=false,piece=10,turn=1": {
+      "model": "amemaru:block/mural/p10_t1_dim"
+    },
+    "facing=north,lit=false,piece=10,turn=2": {
+      "model": "amemaru:block/mural/p10_t2_dim"
+    },
+    "facing=north,lit=false,piece=10,turn=3": {
+      "model": "amemaru:block/mural/p10_t3_dim"
+    },
+    "facing=north,lit=false,piece=11,turn=0": {
+      "model": "amemaru:block/mural/p11_t0_dim"
+    },
+    "facing=north,lit=false,piece=11,turn=1": {
+      "model": "amemaru:block/mural/p11_t1_dim"
+    },
+    "facing=north,lit=false,piece=11,turn=2": {
+      "model": "amemaru:block/mural/p11_t2_dim"
+    },
+    "facing=north,lit=false,piece=11,turn=3": {
+      "model": "amemaru:block/mural/p11_t3_dim"
+    },
+    "facing=north,lit=false,piece=12,turn=0": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=false,piece=12,turn=1": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=false,piece=12,turn=2": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=false,piece=12,turn=3": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=false,piece=13,turn=0": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=false,piece=13,turn=1": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=false,piece=13,turn=2": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=false,piece=13,turn=3": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=false,piece=14,turn=0": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=false,piece=14,turn=1": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=false,piece=14,turn=2": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=false,piece=14,turn=3": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=false,piece=15,turn=0": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=false,piece=15,turn=1": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=false,piece=15,turn=2": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=false,piece=15,turn=3": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=true,piece=0,turn=0": {
+      "model": "amemaru:block/mural/p0_t0"
+    },
+    "facing=north,lit=true,piece=0,turn=1": {
+      "model": "amemaru:block/mural/p0_t1"
+    },
+    "facing=north,lit=true,piece=0,turn=2": {
+      "model": "amemaru:block/mural/p0_t2"
+    },
+    "facing=north,lit=true,piece=0,turn=3": {
+      "model": "amemaru:block/mural/p0_t3"
+    },
+    "facing=north,lit=true,piece=1,turn=0": {
+      "model": "amemaru:block/mural/p1_t0"
+    },
+    "facing=north,lit=true,piece=1,turn=1": {
+      "model": "amemaru:block/mural/p1_t1"
+    },
+    "facing=north,lit=true,piece=1,turn=2": {
+      "model": "amemaru:block/mural/p1_t2"
+    },
+    "facing=north,lit=true,piece=1,turn=3": {
+      "model": "amemaru:block/mural/p1_t3"
+    },
+    "facing=north,lit=true,piece=2,turn=0": {
+      "model": "amemaru:block/mural/p2_t0"
+    },
+    "facing=north,lit=true,piece=2,turn=1": {
+      "model": "amemaru:block/mural/p2_t1"
+    },
+    "facing=north,lit=true,piece=2,turn=2": {
+      "model": "amemaru:block/mural/p2_t2"
+    },
+    "facing=north,lit=true,piece=2,turn=3": {
+      "model": "amemaru:block/mural/p2_t3"
+    },
+    "facing=north,lit=true,piece=3,turn=0": {
+      "model": "amemaru:block/mural/p3_t0"
+    },
+    "facing=north,lit=true,piece=3,turn=1": {
+      "model": "amemaru:block/mural/p3_t1"
+    },
+    "facing=north,lit=true,piece=3,turn=2": {
+      "model": "amemaru:block/mural/p3_t2"
+    },
+    "facing=north,lit=true,piece=3,turn=3": {
+      "model": "amemaru:block/mural/p3_t3"
+    },
+    "facing=north,lit=true,piece=4,turn=0": {
+      "model": "amemaru:block/mural/p4_t0"
+    },
+    "facing=north,lit=true,piece=4,turn=1": {
+      "model": "amemaru:block/mural/p4_t1"
+    },
+    "facing=north,lit=true,piece=4,turn=2": {
+      "model": "amemaru:block/mural/p4_t2"
+    },
+    "facing=north,lit=true,piece=4,turn=3": {
+      "model": "amemaru:block/mural/p4_t3"
+    },
+    "facing=north,lit=true,piece=5,turn=0": {
+      "model": "amemaru:block/mural/p5_t0"
+    },
+    "facing=north,lit=true,piece=5,turn=1": {
+      "model": "amemaru:block/mural/p5_t1"
+    },
+    "facing=north,lit=true,piece=5,turn=2": {
+      "model": "amemaru:block/mural/p5_t2"
+    },
+    "facing=north,lit=true,piece=5,turn=3": {
+      "model": "amemaru:block/mural/p5_t3"
+    },
+    "facing=north,lit=true,piece=6,turn=0": {
+      "model": "amemaru:block/mural/p6_t0"
+    },
+    "facing=north,lit=true,piece=6,turn=1": {
+      "model": "amemaru:block/mural/p6_t1"
+    },
+    "facing=north,lit=true,piece=6,turn=2": {
+      "model": "amemaru:block/mural/p6_t2"
+    },
+    "facing=north,lit=true,piece=6,turn=3": {
+      "model": "amemaru:block/mural/p6_t3"
+    },
+    "facing=north,lit=true,piece=7,turn=0": {
+      "model": "amemaru:block/mural/p7_t0"
+    },
+    "facing=north,lit=true,piece=7,turn=1": {
+      "model": "amemaru:block/mural/p7_t1"
+    },
+    "facing=north,lit=true,piece=7,turn=2": {
+      "model": "amemaru:block/mural/p7_t2"
+    },
+    "facing=north,lit=true,piece=7,turn=3": {
+      "model": "amemaru:block/mural/p7_t3"
+    },
+    "facing=north,lit=true,piece=8,turn=0": {
+      "model": "amemaru:block/mural/p8_t0"
+    },
+    "facing=north,lit=true,piece=8,turn=1": {
+      "model": "amemaru:block/mural/p8_t1"
+    },
+    "facing=north,lit=true,piece=8,turn=2": {
+      "model": "amemaru:block/mural/p8_t2"
+    },
+    "facing=north,lit=true,piece=8,turn=3": {
+      "model": "amemaru:block/mural/p8_t3"
+    },
+    "facing=north,lit=true,piece=9,turn=0": {
+      "model": "amemaru:block/mural/p9_t0"
+    },
+    "facing=north,lit=true,piece=9,turn=1": {
+      "model": "amemaru:block/mural/p9_t1"
+    },
+    "facing=north,lit=true,piece=9,turn=2": {
+      "model": "amemaru:block/mural/p9_t2"
+    },
+    "facing=north,lit=true,piece=9,turn=3": {
+      "model": "amemaru:block/mural/p9_t3"
+    },
+    "facing=north,lit=true,piece=10,turn=0": {
+      "model": "amemaru:block/mural/p10_t0"
+    },
+    "facing=north,lit=true,piece=10,turn=1": {
+      "model": "amemaru:block/mural/p10_t1"
+    },
+    "facing=north,lit=true,piece=10,turn=2": {
+      "model": "amemaru:block/mural/p10_t2"
+    },
+    "facing=north,lit=true,piece=10,turn=3": {
+      "model": "amemaru:block/mural/p10_t3"
+    },
+    "facing=north,lit=true,piece=11,turn=0": {
+      "model": "amemaru:block/mural/p11_t0"
+    },
+    "facing=north,lit=true,piece=11,turn=1": {
+      "model": "amemaru:block/mural/p11_t1"
+    },
+    "facing=north,lit=true,piece=11,turn=2": {
+      "model": "amemaru:block/mural/p11_t2"
+    },
+    "facing=north,lit=true,piece=11,turn=3": {
+      "model": "amemaru:block/mural/p11_t3"
+    },
+    "facing=north,lit=true,piece=12,turn=0": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=true,piece=12,turn=1": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=true,piece=12,turn=2": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=true,piece=12,turn=3": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=true,piece=13,turn=0": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=true,piece=13,turn=1": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=true,piece=13,turn=2": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=true,piece=13,turn=3": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=true,piece=14,turn=0": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=true,piece=14,turn=1": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=true,piece=14,turn=2": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=true,piece=14,turn=3": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=true,piece=15,turn=0": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=true,piece=15,turn=1": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=true,piece=15,turn=2": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=north,lit=true,piece=15,turn=3": {
+      "model": "amemaru:block/mural/blank"
+    },
+    "facing=east,lit=false,piece=0,turn=0": {
+      "model": "amemaru:block/mural/p0_t0_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=0,turn=1": {
+      "model": "amemaru:block/mural/p0_t1_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=0,turn=2": {
+      "model": "amemaru:block/mural/p0_t2_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=0,turn=3": {
+      "model": "amemaru:block/mural/p0_t3_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=1,turn=0": {
+      "model": "amemaru:block/mural/p1_t0_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=1,turn=1": {
+      "model": "amemaru:block/mural/p1_t1_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=1,turn=2": {
+      "model": "amemaru:block/mural/p1_t2_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=1,turn=3": {
+      "model": "amemaru:block/mural/p1_t3_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=2,turn=0": {
+      "model": "amemaru:block/mural/p2_t0_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=2,turn=1": {
+      "model": "amemaru:block/mural/p2_t1_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=2,turn=2": {
+      "model": "amemaru:block/mural/p2_t2_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=2,turn=3": {
+      "model": "amemaru:block/mural/p2_t3_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=3,turn=0": {
+      "model": "amemaru:block/mural/p3_t0_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=3,turn=1": {
+      "model": "amemaru:block/mural/p3_t1_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=3,turn=2": {
+      "model": "amemaru:block/mural/p3_t2_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=3,turn=3": {
+      "model": "amemaru:block/mural/p3_t3_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=4,turn=0": {
+      "model": "amemaru:block/mural/p4_t0_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=4,turn=1": {
+      "model": "amemaru:block/mural/p4_t1_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=4,turn=2": {
+      "model": "amemaru:block/mural/p4_t2_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=4,turn=3": {
+      "model": "amemaru:block/mural/p4_t3_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=5,turn=0": {
+      "model": "amemaru:block/mural/p5_t0_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=5,turn=1": {
+      "model": "amemaru:block/mural/p5_t1_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=5,turn=2": {
+      "model": "amemaru:block/mural/p5_t2_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=5,turn=3": {
+      "model": "amemaru:block/mural/p5_t3_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=6,turn=0": {
+      "model": "amemaru:block/mural/p6_t0_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=6,turn=1": {
+      "model": "amemaru:block/mural/p6_t1_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=6,turn=2": {
+      "model": "amemaru:block/mural/p6_t2_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=6,turn=3": {
+      "model": "amemaru:block/mural/p6_t3_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=7,turn=0": {
+      "model": "amemaru:block/mural/p7_t0_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=7,turn=1": {
+      "model": "amemaru:block/mural/p7_t1_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=7,turn=2": {
+      "model": "amemaru:block/mural/p7_t2_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=7,turn=3": {
+      "model": "amemaru:block/mural/p7_t3_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=8,turn=0": {
+      "model": "amemaru:block/mural/p8_t0_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=8,turn=1": {
+      "model": "amemaru:block/mural/p8_t1_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=8,turn=2": {
+      "model": "amemaru:block/mural/p8_t2_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=8,turn=3": {
+      "model": "amemaru:block/mural/p8_t3_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=9,turn=0": {
+      "model": "amemaru:block/mural/p9_t0_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=9,turn=1": {
+      "model": "amemaru:block/mural/p9_t1_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=9,turn=2": {
+      "model": "amemaru:block/mural/p9_t2_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=9,turn=3": {
+      "model": "amemaru:block/mural/p9_t3_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=10,turn=0": {
+      "model": "amemaru:block/mural/p10_t0_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=10,turn=1": {
+      "model": "amemaru:block/mural/p10_t1_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=10,turn=2": {
+      "model": "amemaru:block/mural/p10_t2_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=10,turn=3": {
+      "model": "amemaru:block/mural/p10_t3_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=11,turn=0": {
+      "model": "amemaru:block/mural/p11_t0_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=11,turn=1": {
+      "model": "amemaru:block/mural/p11_t1_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=11,turn=2": {
+      "model": "amemaru:block/mural/p11_t2_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=11,turn=3": {
+      "model": "amemaru:block/mural/p11_t3_dim",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=12,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=12,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=12,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=12,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=13,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=13,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=13,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=13,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=14,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=14,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=14,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=14,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=15,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=15,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=15,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=false,piece=15,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=0,turn=0": {
+      "model": "amemaru:block/mural/p0_t0",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=0,turn=1": {
+      "model": "amemaru:block/mural/p0_t1",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=0,turn=2": {
+      "model": "amemaru:block/mural/p0_t2",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=0,turn=3": {
+      "model": "amemaru:block/mural/p0_t3",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=1,turn=0": {
+      "model": "amemaru:block/mural/p1_t0",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=1,turn=1": {
+      "model": "amemaru:block/mural/p1_t1",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=1,turn=2": {
+      "model": "amemaru:block/mural/p1_t2",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=1,turn=3": {
+      "model": "amemaru:block/mural/p1_t3",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=2,turn=0": {
+      "model": "amemaru:block/mural/p2_t0",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=2,turn=1": {
+      "model": "amemaru:block/mural/p2_t1",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=2,turn=2": {
+      "model": "amemaru:block/mural/p2_t2",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=2,turn=3": {
+      "model": "amemaru:block/mural/p2_t3",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=3,turn=0": {
+      "model": "amemaru:block/mural/p3_t0",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=3,turn=1": {
+      "model": "amemaru:block/mural/p3_t1",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=3,turn=2": {
+      "model": "amemaru:block/mural/p3_t2",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=3,turn=3": {
+      "model": "amemaru:block/mural/p3_t3",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=4,turn=0": {
+      "model": "amemaru:block/mural/p4_t0",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=4,turn=1": {
+      "model": "amemaru:block/mural/p4_t1",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=4,turn=2": {
+      "model": "amemaru:block/mural/p4_t2",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=4,turn=3": {
+      "model": "amemaru:block/mural/p4_t3",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=5,turn=0": {
+      "model": "amemaru:block/mural/p5_t0",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=5,turn=1": {
+      "model": "amemaru:block/mural/p5_t1",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=5,turn=2": {
+      "model": "amemaru:block/mural/p5_t2",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=5,turn=3": {
+      "model": "amemaru:block/mural/p5_t3",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=6,turn=0": {
+      "model": "amemaru:block/mural/p6_t0",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=6,turn=1": {
+      "model": "amemaru:block/mural/p6_t1",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=6,turn=2": {
+      "model": "amemaru:block/mural/p6_t2",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=6,turn=3": {
+      "model": "amemaru:block/mural/p6_t3",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=7,turn=0": {
+      "model": "amemaru:block/mural/p7_t0",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=7,turn=1": {
+      "model": "amemaru:block/mural/p7_t1",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=7,turn=2": {
+      "model": "amemaru:block/mural/p7_t2",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=7,turn=3": {
+      "model": "amemaru:block/mural/p7_t3",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=8,turn=0": {
+      "model": "amemaru:block/mural/p8_t0",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=8,turn=1": {
+      "model": "amemaru:block/mural/p8_t1",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=8,turn=2": {
+      "model": "amemaru:block/mural/p8_t2",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=8,turn=3": {
+      "model": "amemaru:block/mural/p8_t3",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=9,turn=0": {
+      "model": "amemaru:block/mural/p9_t0",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=9,turn=1": {
+      "model": "amemaru:block/mural/p9_t1",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=9,turn=2": {
+      "model": "amemaru:block/mural/p9_t2",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=9,turn=3": {
+      "model": "amemaru:block/mural/p9_t3",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=10,turn=0": {
+      "model": "amemaru:block/mural/p10_t0",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=10,turn=1": {
+      "model": "amemaru:block/mural/p10_t1",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=10,turn=2": {
+      "model": "amemaru:block/mural/p10_t2",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=10,turn=3": {
+      "model": "amemaru:block/mural/p10_t3",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=11,turn=0": {
+      "model": "amemaru:block/mural/p11_t0",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=11,turn=1": {
+      "model": "amemaru:block/mural/p11_t1",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=11,turn=2": {
+      "model": "amemaru:block/mural/p11_t2",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=11,turn=3": {
+      "model": "amemaru:block/mural/p11_t3",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=12,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=12,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=12,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=12,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=13,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=13,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=13,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=13,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=14,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=14,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=14,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=14,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=15,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=15,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=15,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=east,lit=true,piece=15,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 90
+    },
+    "facing=south,lit=false,piece=0,turn=0": {
+      "model": "amemaru:block/mural/p0_t0_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=0,turn=1": {
+      "model": "amemaru:block/mural/p0_t1_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=0,turn=2": {
+      "model": "amemaru:block/mural/p0_t2_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=0,turn=3": {
+      "model": "amemaru:block/mural/p0_t3_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=1,turn=0": {
+      "model": "amemaru:block/mural/p1_t0_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=1,turn=1": {
+      "model": "amemaru:block/mural/p1_t1_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=1,turn=2": {
+      "model": "amemaru:block/mural/p1_t2_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=1,turn=3": {
+      "model": "amemaru:block/mural/p1_t3_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=2,turn=0": {
+      "model": "amemaru:block/mural/p2_t0_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=2,turn=1": {
+      "model": "amemaru:block/mural/p2_t1_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=2,turn=2": {
+      "model": "amemaru:block/mural/p2_t2_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=2,turn=3": {
+      "model": "amemaru:block/mural/p2_t3_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=3,turn=0": {
+      "model": "amemaru:block/mural/p3_t0_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=3,turn=1": {
+      "model": "amemaru:block/mural/p3_t1_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=3,turn=2": {
+      "model": "amemaru:block/mural/p3_t2_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=3,turn=3": {
+      "model": "amemaru:block/mural/p3_t3_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=4,turn=0": {
+      "model": "amemaru:block/mural/p4_t0_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=4,turn=1": {
+      "model": "amemaru:block/mural/p4_t1_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=4,turn=2": {
+      "model": "amemaru:block/mural/p4_t2_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=4,turn=3": {
+      "model": "amemaru:block/mural/p4_t3_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=5,turn=0": {
+      "model": "amemaru:block/mural/p5_t0_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=5,turn=1": {
+      "model": "amemaru:block/mural/p5_t1_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=5,turn=2": {
+      "model": "amemaru:block/mural/p5_t2_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=5,turn=3": {
+      "model": "amemaru:block/mural/p5_t3_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=6,turn=0": {
+      "model": "amemaru:block/mural/p6_t0_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=6,turn=1": {
+      "model": "amemaru:block/mural/p6_t1_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=6,turn=2": {
+      "model": "amemaru:block/mural/p6_t2_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=6,turn=3": {
+      "model": "amemaru:block/mural/p6_t3_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=7,turn=0": {
+      "model": "amemaru:block/mural/p7_t0_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=7,turn=1": {
+      "model": "amemaru:block/mural/p7_t1_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=7,turn=2": {
+      "model": "amemaru:block/mural/p7_t2_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=7,turn=3": {
+      "model": "amemaru:block/mural/p7_t3_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=8,turn=0": {
+      "model": "amemaru:block/mural/p8_t0_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=8,turn=1": {
+      "model": "amemaru:block/mural/p8_t1_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=8,turn=2": {
+      "model": "amemaru:block/mural/p8_t2_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=8,turn=3": {
+      "model": "amemaru:block/mural/p8_t3_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=9,turn=0": {
+      "model": "amemaru:block/mural/p9_t0_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=9,turn=1": {
+      "model": "amemaru:block/mural/p9_t1_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=9,turn=2": {
+      "model": "amemaru:block/mural/p9_t2_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=9,turn=3": {
+      "model": "amemaru:block/mural/p9_t3_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=10,turn=0": {
+      "model": "amemaru:block/mural/p10_t0_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=10,turn=1": {
+      "model": "amemaru:block/mural/p10_t1_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=10,turn=2": {
+      "model": "amemaru:block/mural/p10_t2_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=10,turn=3": {
+      "model": "amemaru:block/mural/p10_t3_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=11,turn=0": {
+      "model": "amemaru:block/mural/p11_t0_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=11,turn=1": {
+      "model": "amemaru:block/mural/p11_t1_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=11,turn=2": {
+      "model": "amemaru:block/mural/p11_t2_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=11,turn=3": {
+      "model": "amemaru:block/mural/p11_t3_dim",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=12,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=12,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=12,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=12,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=13,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=13,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=13,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=13,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=14,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=14,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=14,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=14,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=15,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=15,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=15,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=false,piece=15,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=0,turn=0": {
+      "model": "amemaru:block/mural/p0_t0",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=0,turn=1": {
+      "model": "amemaru:block/mural/p0_t1",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=0,turn=2": {
+      "model": "amemaru:block/mural/p0_t2",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=0,turn=3": {
+      "model": "amemaru:block/mural/p0_t3",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=1,turn=0": {
+      "model": "amemaru:block/mural/p1_t0",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=1,turn=1": {
+      "model": "amemaru:block/mural/p1_t1",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=1,turn=2": {
+      "model": "amemaru:block/mural/p1_t2",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=1,turn=3": {
+      "model": "amemaru:block/mural/p1_t3",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=2,turn=0": {
+      "model": "amemaru:block/mural/p2_t0",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=2,turn=1": {
+      "model": "amemaru:block/mural/p2_t1",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=2,turn=2": {
+      "model": "amemaru:block/mural/p2_t2",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=2,turn=3": {
+      "model": "amemaru:block/mural/p2_t3",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=3,turn=0": {
+      "model": "amemaru:block/mural/p3_t0",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=3,turn=1": {
+      "model": "amemaru:block/mural/p3_t1",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=3,turn=2": {
+      "model": "amemaru:block/mural/p3_t2",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=3,turn=3": {
+      "model": "amemaru:block/mural/p3_t3",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=4,turn=0": {
+      "model": "amemaru:block/mural/p4_t0",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=4,turn=1": {
+      "model": "amemaru:block/mural/p4_t1",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=4,turn=2": {
+      "model": "amemaru:block/mural/p4_t2",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=4,turn=3": {
+      "model": "amemaru:block/mural/p4_t3",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=5,turn=0": {
+      "model": "amemaru:block/mural/p5_t0",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=5,turn=1": {
+      "model": "amemaru:block/mural/p5_t1",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=5,turn=2": {
+      "model": "amemaru:block/mural/p5_t2",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=5,turn=3": {
+      "model": "amemaru:block/mural/p5_t3",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=6,turn=0": {
+      "model": "amemaru:block/mural/p6_t0",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=6,turn=1": {
+      "model": "amemaru:block/mural/p6_t1",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=6,turn=2": {
+      "model": "amemaru:block/mural/p6_t2",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=6,turn=3": {
+      "model": "amemaru:block/mural/p6_t3",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=7,turn=0": {
+      "model": "amemaru:block/mural/p7_t0",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=7,turn=1": {
+      "model": "amemaru:block/mural/p7_t1",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=7,turn=2": {
+      "model": "amemaru:block/mural/p7_t2",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=7,turn=3": {
+      "model": "amemaru:block/mural/p7_t3",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=8,turn=0": {
+      "model": "amemaru:block/mural/p8_t0",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=8,turn=1": {
+      "model": "amemaru:block/mural/p8_t1",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=8,turn=2": {
+      "model": "amemaru:block/mural/p8_t2",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=8,turn=3": {
+      "model": "amemaru:block/mural/p8_t3",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=9,turn=0": {
+      "model": "amemaru:block/mural/p9_t0",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=9,turn=1": {
+      "model": "amemaru:block/mural/p9_t1",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=9,turn=2": {
+      "model": "amemaru:block/mural/p9_t2",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=9,turn=3": {
+      "model": "amemaru:block/mural/p9_t3",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=10,turn=0": {
+      "model": "amemaru:block/mural/p10_t0",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=10,turn=1": {
+      "model": "amemaru:block/mural/p10_t1",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=10,turn=2": {
+      "model": "amemaru:block/mural/p10_t2",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=10,turn=3": {
+      "model": "amemaru:block/mural/p10_t3",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=11,turn=0": {
+      "model": "amemaru:block/mural/p11_t0",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=11,turn=1": {
+      "model": "amemaru:block/mural/p11_t1",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=11,turn=2": {
+      "model": "amemaru:block/mural/p11_t2",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=11,turn=3": {
+      "model": "amemaru:block/mural/p11_t3",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=12,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=12,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=12,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=12,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=13,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=13,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=13,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=13,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=14,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=14,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=14,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=14,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=15,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=15,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=15,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=south,lit=true,piece=15,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 180
+    },
+    "facing=west,lit=false,piece=0,turn=0": {
+      "model": "amemaru:block/mural/p0_t0_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=0,turn=1": {
+      "model": "amemaru:block/mural/p0_t1_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=0,turn=2": {
+      "model": "amemaru:block/mural/p0_t2_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=0,turn=3": {
+      "model": "amemaru:block/mural/p0_t3_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=1,turn=0": {
+      "model": "amemaru:block/mural/p1_t0_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=1,turn=1": {
+      "model": "amemaru:block/mural/p1_t1_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=1,turn=2": {
+      "model": "amemaru:block/mural/p1_t2_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=1,turn=3": {
+      "model": "amemaru:block/mural/p1_t3_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=2,turn=0": {
+      "model": "amemaru:block/mural/p2_t0_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=2,turn=1": {
+      "model": "amemaru:block/mural/p2_t1_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=2,turn=2": {
+      "model": "amemaru:block/mural/p2_t2_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=2,turn=3": {
+      "model": "amemaru:block/mural/p2_t3_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=3,turn=0": {
+      "model": "amemaru:block/mural/p3_t0_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=3,turn=1": {
+      "model": "amemaru:block/mural/p3_t1_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=3,turn=2": {
+      "model": "amemaru:block/mural/p3_t2_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=3,turn=3": {
+      "model": "amemaru:block/mural/p3_t3_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=4,turn=0": {
+      "model": "amemaru:block/mural/p4_t0_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=4,turn=1": {
+      "model": "amemaru:block/mural/p4_t1_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=4,turn=2": {
+      "model": "amemaru:block/mural/p4_t2_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=4,turn=3": {
+      "model": "amemaru:block/mural/p4_t3_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=5,turn=0": {
+      "model": "amemaru:block/mural/p5_t0_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=5,turn=1": {
+      "model": "amemaru:block/mural/p5_t1_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=5,turn=2": {
+      "model": "amemaru:block/mural/p5_t2_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=5,turn=3": {
+      "model": "amemaru:block/mural/p5_t3_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=6,turn=0": {
+      "model": "amemaru:block/mural/p6_t0_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=6,turn=1": {
+      "model": "amemaru:block/mural/p6_t1_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=6,turn=2": {
+      "model": "amemaru:block/mural/p6_t2_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=6,turn=3": {
+      "model": "amemaru:block/mural/p6_t3_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=7,turn=0": {
+      "model": "amemaru:block/mural/p7_t0_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=7,turn=1": {
+      "model": "amemaru:block/mural/p7_t1_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=7,turn=2": {
+      "model": "amemaru:block/mural/p7_t2_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=7,turn=3": {
+      "model": "amemaru:block/mural/p7_t3_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=8,turn=0": {
+      "model": "amemaru:block/mural/p8_t0_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=8,turn=1": {
+      "model": "amemaru:block/mural/p8_t1_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=8,turn=2": {
+      "model": "amemaru:block/mural/p8_t2_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=8,turn=3": {
+      "model": "amemaru:block/mural/p8_t3_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=9,turn=0": {
+      "model": "amemaru:block/mural/p9_t0_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=9,turn=1": {
+      "model": "amemaru:block/mural/p9_t1_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=9,turn=2": {
+      "model": "amemaru:block/mural/p9_t2_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=9,turn=3": {
+      "model": "amemaru:block/mural/p9_t3_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=10,turn=0": {
+      "model": "amemaru:block/mural/p10_t0_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=10,turn=1": {
+      "model": "amemaru:block/mural/p10_t1_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=10,turn=2": {
+      "model": "amemaru:block/mural/p10_t2_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=10,turn=3": {
+      "model": "amemaru:block/mural/p10_t3_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=11,turn=0": {
+      "model": "amemaru:block/mural/p11_t0_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=11,turn=1": {
+      "model": "amemaru:block/mural/p11_t1_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=11,turn=2": {
+      "model": "amemaru:block/mural/p11_t2_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=11,turn=3": {
+      "model": "amemaru:block/mural/p11_t3_dim",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=12,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=12,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=12,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=12,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=13,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=13,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=13,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=13,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=14,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=14,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=14,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=14,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=15,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=15,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=15,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=false,piece=15,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=0,turn=0": {
+      "model": "amemaru:block/mural/p0_t0",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=0,turn=1": {
+      "model": "amemaru:block/mural/p0_t1",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=0,turn=2": {
+      "model": "amemaru:block/mural/p0_t2",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=0,turn=3": {
+      "model": "amemaru:block/mural/p0_t3",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=1,turn=0": {
+      "model": "amemaru:block/mural/p1_t0",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=1,turn=1": {
+      "model": "amemaru:block/mural/p1_t1",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=1,turn=2": {
+      "model": "amemaru:block/mural/p1_t2",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=1,turn=3": {
+      "model": "amemaru:block/mural/p1_t3",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=2,turn=0": {
+      "model": "amemaru:block/mural/p2_t0",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=2,turn=1": {
+      "model": "amemaru:block/mural/p2_t1",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=2,turn=2": {
+      "model": "amemaru:block/mural/p2_t2",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=2,turn=3": {
+      "model": "amemaru:block/mural/p2_t3",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=3,turn=0": {
+      "model": "amemaru:block/mural/p3_t0",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=3,turn=1": {
+      "model": "amemaru:block/mural/p3_t1",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=3,turn=2": {
+      "model": "amemaru:block/mural/p3_t2",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=3,turn=3": {
+      "model": "amemaru:block/mural/p3_t3",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=4,turn=0": {
+      "model": "amemaru:block/mural/p4_t0",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=4,turn=1": {
+      "model": "amemaru:block/mural/p4_t1",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=4,turn=2": {
+      "model": "amemaru:block/mural/p4_t2",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=4,turn=3": {
+      "model": "amemaru:block/mural/p4_t3",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=5,turn=0": {
+      "model": "amemaru:block/mural/p5_t0",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=5,turn=1": {
+      "model": "amemaru:block/mural/p5_t1",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=5,turn=2": {
+      "model": "amemaru:block/mural/p5_t2",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=5,turn=3": {
+      "model": "amemaru:block/mural/p5_t3",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=6,turn=0": {
+      "model": "amemaru:block/mural/p6_t0",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=6,turn=1": {
+      "model": "amemaru:block/mural/p6_t1",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=6,turn=2": {
+      "model": "amemaru:block/mural/p6_t2",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=6,turn=3": {
+      "model": "amemaru:block/mural/p6_t3",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=7,turn=0": {
+      "model": "amemaru:block/mural/p7_t0",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=7,turn=1": {
+      "model": "amemaru:block/mural/p7_t1",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=7,turn=2": {
+      "model": "amemaru:block/mural/p7_t2",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=7,turn=3": {
+      "model": "amemaru:block/mural/p7_t3",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=8,turn=0": {
+      "model": "amemaru:block/mural/p8_t0",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=8,turn=1": {
+      "model": "amemaru:block/mural/p8_t1",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=8,turn=2": {
+      "model": "amemaru:block/mural/p8_t2",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=8,turn=3": {
+      "model": "amemaru:block/mural/p8_t3",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=9,turn=0": {
+      "model": "amemaru:block/mural/p9_t0",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=9,turn=1": {
+      "model": "amemaru:block/mural/p9_t1",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=9,turn=2": {
+      "model": "amemaru:block/mural/p9_t2",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=9,turn=3": {
+      "model": "amemaru:block/mural/p9_t3",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=10,turn=0": {
+      "model": "amemaru:block/mural/p10_t0",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=10,turn=1": {
+      "model": "amemaru:block/mural/p10_t1",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=10,turn=2": {
+      "model": "amemaru:block/mural/p10_t2",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=10,turn=3": {
+      "model": "amemaru:block/mural/p10_t3",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=11,turn=0": {
+      "model": "amemaru:block/mural/p11_t0",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=11,turn=1": {
+      "model": "amemaru:block/mural/p11_t1",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=11,turn=2": {
+      "model": "amemaru:block/mural/p11_t2",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=11,turn=3": {
+      "model": "amemaru:block/mural/p11_t3",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=12,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=12,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=12,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=12,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=13,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=13,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=13,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=13,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=14,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=14,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=14,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=14,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=15,turn=0": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=15,turn=1": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=15,turn=2": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    },
+    "facing=west,lit=true,piece=15,turn=3": {
+      "model": "amemaru:block/mural/blank",
+      "y": 270
+    }
+  }
+}

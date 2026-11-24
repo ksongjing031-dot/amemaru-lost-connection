@@ -1,0 +1,46 @@
+{
+  "_comment": "祈り手の残響（4階の雑魚。Phase 0-A 9章「祈りの歌で仲間を回復させるので先に倒す」）。hymn：少し離れて windup 秒歌い、range の神殿の敵のHPを power（最大HPの割合）回復。歌の間に最大HPの behavior.interrupt の傷を受けると止まる。wail：まわりへの声（円）。宙に浮く。数値は【補完】",
+  "name": "祈り手の残響",
+  "floor": 4,
+  "level": 8,
+  "description": "神殿で祈っていた人の、声だけが残った淡い姿。いまも祈りの歌を口ずさみ、まわりの神殿の魔物の傷をふさぐ。体はもろいので、歌い出す前に倒したい。",
+  "stats": {
+    "hp": 1800,
+    "attack": 58,
+    "defense": 6,
+    "move_speed": 0.2,
+    "follow_range": 20,
+    "aggro_range": 11
+  },
+  "exp": 36,
+  "skills": {
+    "wail": {
+      "power": 0.9,
+      "windup": 0.8,
+      "cooldown": 2.6,
+      "range": 3.0
+    },
+    "hymn": {
+      "power": 0.12,
+      "windup": 3.0,
+      "cooldown": 12.0,
+      "range": 9.0
+    }
+  },
+  "behavior": {
+    "interrupt": 0.12
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/prayer_echo",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_amber",
+        "chance": 0.6
+      },
+      {
+        "item": "amemaru:crystal_fruit_azure",
+        "chance": 0.3
+      }
+    ]
+  }
+}

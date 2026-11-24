@@ -1,0 +1,34 @@
+{
+  "_comment": "初めて4階に入ったとき（本人だけ）。崩れた柱と浮かぶ瓦礫の神殿（Phase 0-A 9章の4階の地形・環境）。台詞は【補完】",
+  "title": "崩壊した神殿",
+  "trigger": {
+    "type": "amemaru:floor_enter",
+    "floor": 4
+  },
+  "scope": "player",
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:wait",
+      "ticks": 70
+    },
+    {
+      "type": "amemaru:sound",
+      "sound": "minecraft:block.amethyst_block.resonate",
+      "volume": 1.0,
+      "pitch": 0.7
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "崩れた柱の間を、風が抜けていく。見上げると、大きな瓦礫がいくつも、音もなく空に浮かんでいた……。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "どこか遠くで、祈りの歌が聞こえる。歌っているのは、いったい誰だろう。",
+      "ticks": 110,
+      "wait": false
+    }
+  ]
+}

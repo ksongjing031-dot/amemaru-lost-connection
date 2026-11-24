@@ -135,6 +135,27 @@ public final class ModItems {
     public static final RegistryObject<Item> HYDRAM_SPAWN_EGG = ITEMS.register("hydram_spawn_egg", () ->
             new ForgeSpawnEggItem(ModEntities.HYDRAM, 0x6B7A86, 0x48C8FF, new Item.Properties()));
 
+    // 11月24日：4階の敵
+    public static final RegistryObject<Item> SILENT_STATUE_SPAWN_EGG = ITEMS.register("silent_statue_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.SILENT_STATUE, 0xD8D3C4, 0x7E786C, new Item.Properties()));
+    public static final RegistryObject<Item> PRAYER_ECHO_SPAWN_EGG = ITEMS.register("prayer_echo_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.PRAYER_ECHO, 0xF4EEDC, 0xDCBC64, new Item.Properties()));
+    public static final RegistryObject<Item> CRYSTAL_BEETLE_SPAWN_EGG = ITEMS.register("crystal_beetle_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.CRYSTAL_BEETLE, 0x2A3442, 0x97C3C9, new Item.Properties()));
+    public static final RegistryObject<Item> BROKEN_BEAST_SPAWN_EGG = ITEMS.register("broken_beast_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.BROKEN_BEAST, 0xE0DACB, 0xDCBC64, new Item.Properties()));
+    public static final RegistryObject<Item> CANTARE_SPAWN_EGG = ITEMS.register("cantare_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.CANTARE, 0xF4EEDC, 0x8478C0, new Item.Properties()));
+    // 11月24日：4階の仕掛けのブロック
+    public static final RegistryObject<Item> MURAL_PANEL = ITEMS.register("mural_panel", () ->
+            new BlockItem(ModBlocks.MURAL_PANEL.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> SOUND_PLATE = ITEMS.register("sound_plate", () ->
+            new BlockItem(ModBlocks.SOUND_PLATE.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> CHIME_STONE = ITEMS.register("chime_stone", () ->
+            new BlockItem(ModBlocks.CHIME_STONE.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> KNIGHT_RELIC = ITEMS.register("knight_relic", () ->
+            new BlockItem(ModBlocks.KNIGHT_RELIC.get(), new Item.Properties().rarity(Rarity.RARE)));
+
     public static final RegistryObject<Item> VELDHORN_SPAWN_EGG = ITEMS.register("veldhorn_spawn_egg", () ->
             new ForgeSpawnEggItem(ModEntities.VELDHORN, 0x6B5A3E, 0x7FD98A, new Item.Properties()));
     public static final RegistryObject<Item> OLD_WARD_SPAWN_EGG = ITEMS.register("old_ward_spawn_egg", () ->

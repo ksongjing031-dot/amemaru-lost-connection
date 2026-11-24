@@ -55,6 +55,11 @@ public final class ModCreativeTabs {
                 output.accept(ModItems.YODOMI_SLIME_SPAWN_EGG.get());
                 output.accept(ModItems.SOUJIKIHEI_SPAWN_EGG.get());
                 output.accept(ModItems.KIBA_NAMAZU_SPAWN_EGG.get());
+                // 11月24日：4階の敵
+                output.accept(ModItems.SILENT_STATUE_SPAWN_EGG.get());
+                output.accept(ModItems.PRAYER_ECHO_SPAWN_EGG.get());
+                output.accept(ModItems.CRYSTAL_BEETLE_SPAWN_EGG.get());
+                output.accept(ModItems.BROKEN_BEAST_SPAWN_EGG.get());
             })
             .build());
 

@@ -1,0 +1,37 @@
+{
+  "_comment": "地下の納骨堂の、結晶騎士団の野営の跡に初めて入ったとき（本人だけ。一人一度）。台詞は【補完】",
+  "title": "野営の跡",
+  "trigger": {
+    "type": "amemaru:floor_zone",
+    "floor": 4,
+    "zone": "knight_camp"
+  },
+  "scope": "player",
+  "once": false,
+  "replayable": true,
+  "conditions": {
+    "flags_none": [
+      "amemaru:story/knight_camp_seen"
+    ]
+  },
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "崩れた天幕と、立てかけたままの白い旗。人の手で作った野営の跡だ。古代のものではない。",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "奥に、何かが大事そうに置かれている。",
+      "ticks": 80,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/knight_camp_seen"
+      ]
+    }
+  ]
+}

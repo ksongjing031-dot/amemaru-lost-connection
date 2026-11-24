@@ -1,0 +1,1378 @@
+{
+  "_comment": "塔の4階「崩壊した神殿」（tools/mapgen/build_floor4.py が書き出す。手で直すときは、スクリプトを直して作り直す）",
+  "floor": 4,
+  "chapter": 1,
+  "name": "崩壊した神殿",
+  "chapter_title": "第1章　失われた古代領域",
+  "recommended_level": [
+    7,
+    10
+  ],
+  "origin": [
+    16120,
+    60,
+    -264
+  ],
+  "size": [
+    528,
+    72,
+    528
+  ],
+  "structure": "amemaru:map/floor4/",
+  "piece_size": 48,
+  "entrance": {
+    "pos": [
+      264.5,
+      25,
+      492.5
+    ],
+    "yaw": 180
+  },
+  "return_circle": {
+    "center": [
+      264.5,
+      25,
+      500.5
+    ],
+    "radius": 2.6
+  },
+  "boss_room": {
+    "boss": "amemaru:cantare",
+    "name": "歌の大広間",
+    "spawn": {
+      "pos": [
+        264.5,
+        26,
+        74.5
+      ],
+      "yaw": 0
+    },
+    "arena": {
+      "center": [
+        264.5,
+        25,
+        74.5
+      ],
+      "radius": 29.0,
+      "y_min": 22,
+      "y_max": 44
+    },
+    "seal": [
+      [
+        260,
+        25,
+        104
+      ],
+      [
+        268,
+        30,
+        104
+      ]
+    ],
+    "start_radius": 22,
+    "respawn_seconds": 120,
+    "max_players": 8,
+    "hp_min_players": 2,
+    "hp_per_extra_player": 0.6,
+    "attack_per_extra_player": 0.1,
+    "pace_per_extra_player": 0.05,
+    "enrage_seconds": 1680,
+    "exit": {
+      "center": [
+        264.5,
+        25,
+        54.5
+      ],
+      "radius": 2.6
+    },
+    "next": {
+      "center": [
+        271.5,
+        25,
+        54.5
+      ],
+      "radius": 2.6
+    }
+  },
+  "pillars": [],
+  "pillars_done": "",
+  "tablet": {
+    "pos": [
+      241,
+      26,
+      126
+    ],
+    "title": "神殿の碑文",
+    "text": "われらは神を祀らない。祀るのは、人と人の間にあるものである。"
+  },
+  "spawns": [
+    {
+      "id": "avenue_statues_s",
+      "enemy": "amemaru:silent_statue",
+      "center": [
+        264,
+        25,
+        450
+      ],
+      "radius": 9,
+      "max": 4,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 48
+    },
+    {
+      "id": "avenue_statues_m",
+      "enemy": "amemaru:silent_statue",
+      "center": [
+        264,
+        25,
+        400
+      ],
+      "radius": 9,
+      "max": 4,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 48
+    },
+    {
+      "id": "avenue_statues_n",
+      "enemy": "amemaru:silent_statue",
+      "center": [
+        264,
+        25,
+        340
+      ],
+      "radius": 9,
+      "max": 4,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 48
+    },
+    {
+      "id": "avenue_beasts",
+      "enemy": "amemaru:broken_beast",
+      "center": [
+        220,
+        25,
+        380
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 60,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 48
+    },
+    {
+      "id": "avenue_ruins_e",
+      "enemy": "amemaru:broken_beast",
+      "center": [
+        310,
+        25,
+        356
+      ],
+      "radius": 10,
+      "max": 2,
+      "respawn_seconds": 60,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 48
+    },
+    {
+      "id": "plaza_beasts",
+      "enemy": "amemaru:broken_beast",
+      "center": [
+        240,
+        25,
+        230
+      ],
+      "radius": 12,
+      "max": 3,
+      "respawn_seconds": 60,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 48
+    },
+    {
+      "id": "plaza_echoes",
+      "enemy": "amemaru:prayer_echo",
+      "center": [
+        290,
+        25,
+        270
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 48
+    },
+    {
+      "id": "plaza_statues",
+      "enemy": "amemaru:silent_statue",
+      "center": [
+        236,
+        25,
+        272
+      ],
+      "radius": 6,
+      "max": 2,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 48
+    },
+    {
+      "id": "gallery_echoes_w",
+      "enemy": "amemaru:prayer_echo",
+      "center": [
+        340,
+        25,
+        250
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 48
+    },
+    {
+      "id": "gallery_echoes_e",
+      "enemy": "amemaru:prayer_echo",
+      "center": [
+        420,
+        25,
+        250
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 48
+    },
+    {
+      "id": "gallery_statues",
+      "enemy": "amemaru:silent_statue",
+      "center": [
+        380,
+        25,
+        260
+      ],
+      "radius": 8,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 48
+    },
+    {
+      "id": "chapel_echoes_a",
+      "enemy": "amemaru:prayer_echo",
+      "center": [
+        390,
+        25,
+        148
+      ],
+      "radius": 10,
+      "max": 4,
+      "respawn_seconds": 50,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 48
+    },
+    {
+      "id": "chapel_echoes_b",
+      "enemy": "amemaru:prayer_echo",
+      "center": [
+        450,
+        25,
+        160
+      ],
+      "radius": 10,
+      "max": 4,
+      "respawn_seconds": 50,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 48
+    },
+    {
+      "id": "chapel_beetles",
+      "enemy": "amemaru:crystal_beetle",
+      "center": [
+        420,
+        25,
+        185
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 48
+    },
+    {
+      "id": "float_beetles_a",
+      "enemy": "amemaru:crystal_beetle",
+      "center": [
+        150,
+        25,
+        290
+      ],
+      "radius": 7,
+      "max": 3,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 48
+    },
+    {
+      "id": "float_beetles_b",
+      "enemy": "amemaru:crystal_beetle",
+      "center": [
+        96,
+        25,
+        312
+      ],
+      "radius": 7,
+      "max": 3,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 48
+    },
+    {
+      "id": "float_beetles_c",
+      "enemy": "amemaru:crystal_beetle",
+      "center": [
+        130,
+        25,
+        352
+      ],
+      "radius": 8,
+      "max": 3,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 48
+    },
+    {
+      "id": "float_beetles_d",
+      "enemy": "amemaru:crystal_beetle",
+      "center": [
+        60,
+        25,
+        270
+      ],
+      "radius": 7,
+      "max": 2,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 48
+    },
+    {
+      "id": "float_echoes",
+      "enemy": "amemaru:prayer_echo",
+      "center": [
+        118,
+        25,
+        254
+      ],
+      "radius": 7,
+      "max": 2,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 48
+    },
+    {
+      "id": "chasm_beetles",
+      "enemy": "amemaru:crystal_beetle",
+      "center": [
+        120,
+        5,
+        300
+      ],
+      "radius": 20,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 48
+    },
+    {
+      "id": "terrace_beasts_w",
+      "enemy": "amemaru:broken_beast",
+      "center": [
+        80,
+        37,
+        120
+      ],
+      "radius": 14,
+      "max": 3,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 48
+    },
+    {
+      "id": "terrace_beasts_e",
+      "enemy": "amemaru:broken_beast",
+      "center": [
+        170,
+        37,
+        130
+      ],
+      "radius": 14,
+      "max": 3,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 48
+    },
+    {
+      "id": "terrace_statues",
+      "enemy": "amemaru:silent_statue",
+      "center": [
+        125,
+        37,
+        70
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 48
+    },
+    {
+      "id": "terrace_echoes",
+      "enemy": "amemaru:prayer_echo",
+      "center": [
+        125,
+        37,
+        170
+      ],
+      "radius": 10,
+      "max": 2,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 48
+    },
+    {
+      "id": "crypt_statues_s",
+      "enemy": "amemaru:silent_statue",
+      "center": [
+        265,
+        11,
+        400
+      ],
+      "radius": 5,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 32
+    },
+    {
+      "id": "crypt_statues_n",
+      "enemy": "amemaru:silent_statue",
+      "center": [
+        265,
+        11,
+        340
+      ],
+      "radius": 5,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 32
+    },
+    {
+      "id": "crypt_beetles",
+      "enemy": "amemaru:crystal_beetle",
+      "center": [
+        240,
+        11,
+        370
+      ],
+      "radius": 8,
+      "max": 3,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 32
+    },
+    {
+      "id": "crypt_echoes",
+      "enemy": "amemaru:prayer_echo",
+      "center": [
+        284,
+        11,
+        358
+      ],
+      "radius": 8,
+      "max": 2,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 32
+    },
+    {
+      "id": "tower_beetles",
+      "enemy": "amemaru:crystal_beetle",
+      "center": [
+        380,
+        25,
+        410
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 48
+    },
+    {
+      "id": "tower_beasts",
+      "enemy": "amemaru:broken_beast",
+      "center": [
+        440,
+        25,
+        350
+      ],
+      "radius": 10,
+      "max": 2,
+      "respawn_seconds": 60,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 48
+    },
+    {
+      "id": "tower_echoes",
+      "enemy": "amemaru:prayer_echo",
+      "center": [
+        406,
+        43,
+        376
+      ],
+      "radius": 6,
+      "max": 2,
+      "respawn_seconds": 55,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 32
+    },
+    {
+      "id": "causeway_statues",
+      "enemy": "amemaru:silent_statue",
+      "center": [
+        264,
+        25,
+        175
+      ],
+      "radius": 8,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 48
+    }
+  ],
+  "guardians": [
+    {
+      "id": "gate_statue",
+      "enemy": "amemaru:silent_statue",
+      "variant": "amemaru:silent_statue_gate",
+      "pos": [
+        265.5,
+        11,
+        318.5
+      ],
+      "respawn_seconds": 300,
+      "activation": 20,
+      "pillar": -1
+    },
+    {
+      "id": "old_beast",
+      "enemy": "amemaru:broken_beast",
+      "variant": "amemaru:broken_beast_elder",
+      "pos": [
+        125.5,
+        37,
+        118.5
+      ],
+      "respawn_seconds": 300,
+      "activation": 30,
+      "pillar": -1
+    },
+    {
+      "id": "lead_echo",
+      "enemy": "amemaru:prayer_echo",
+      "variant": "amemaru:prayer_echo_leader",
+      "pos": [
+        420.5,
+        26,
+        105.5
+      ],
+      "respawn_seconds": 300,
+      "activation": 24,
+      "pillar": -1
+    }
+  ],
+  "chests": [
+    {
+      "pos": [
+        96,
+        25,
+        319
+      ],
+      "loot": "amemaru:chests/floor4_ancient"
+    },
+    {
+      "pos": [
+        60,
+        25,
+        276
+      ],
+      "loot": "amemaru:chests/floor4_ancient"
+    },
+    {
+      "pos": [
+        180,
+        25,
+        335
+      ],
+      "loot": "amemaru:chests/floor4_ancient"
+    },
+    {
+      "pos": [
+        240,
+        11,
+        310
+      ],
+      "loot": "amemaru:chests/floor4_ancient"
+    },
+    {
+      "pos": [
+        290,
+        11,
+        310
+      ],
+      "loot": "amemaru:chests/floor4_ancient"
+    },
+    {
+      "pos": [
+        240,
+        11,
+        342
+      ],
+      "loot": "amemaru:chests/floor4_ancient"
+    },
+    {
+      "pos": [
+        290,
+        11,
+        342
+      ],
+      "loot": "amemaru:chests/floor4_ancient"
+    },
+    {
+      "pos": [
+        240,
+        11,
+        374
+      ],
+      "loot": "amemaru:chests/floor4_ancient"
+    },
+    {
+      "pos": [
+        290,
+        11,
+        374
+      ],
+      "loot": "amemaru:chests/floor4_ancient"
+    },
+    {
+      "pos": [
+        240,
+        11,
+        406
+      ],
+      "loot": "amemaru:chests/floor4_ancient"
+    },
+    {
+      "pos": [
+        290,
+        11,
+        406
+      ],
+      "loot": "amemaru:chests/floor4_ancient"
+    },
+    {
+      "pos": [
+        273,
+        11,
+        302
+      ],
+      "loot": "amemaru:chests/floor4_ancient",
+      "guardian": "gate_statue"
+    },
+    {
+      "pos": [
+        125,
+        37,
+        30
+      ],
+      "loot": "amemaru:chests/floor4_ancient"
+    },
+    {
+      "pos": [
+        117,
+        37,
+        126
+      ],
+      "loot": "amemaru:chests/floor4_ancient",
+      "guardian": "old_beast"
+    },
+    {
+      "pos": [
+        40,
+        37,
+        206
+      ],
+      "loot": "amemaru:chests/floor4_ancient"
+    },
+    {
+      "pos": [
+        286,
+        25,
+        496
+      ],
+      "loot": "amemaru:chests/floor4_ancient"
+    },
+    {
+      "pos": [
+        214,
+        25,
+        345
+      ],
+      "loot": "amemaru:chests/floor4_ancient"
+    },
+    {
+      "pos": [
+        318,
+        25,
+        422
+      ],
+      "loot": "amemaru:chests/floor4_ancient"
+    },
+    {
+      "pos": [
+        234,
+        25,
+        270
+      ],
+      "loot": "amemaru:chests/floor4_ancient"
+    },
+    {
+      "pos": [
+        338,
+        25,
+        234
+      ],
+      "loot": "amemaru:chests/floor4_ancient"
+    },
+    {
+      "pos": [
+        468,
+        25,
+        265
+      ],
+      "loot": "amemaru:chests/floor4_ancient"
+    },
+    {
+      "pos": [
+        404,
+        25,
+        100
+      ],
+      "loot": "amemaru:chests/floor4_ancient",
+      "guardian": "lead_echo"
+    },
+    {
+      "pos": [
+        473,
+        25,
+        115
+      ],
+      "loot": "amemaru:chests/floor4_ancient"
+    },
+    {
+      "pos": [
+        414,
+        43,
+        384
+      ],
+      "loot": "amemaru:chests/floor4_ancient"
+    },
+    {
+      "pos": [
+        364,
+        25,
+        436
+      ],
+      "loot": "amemaru:chests/floor4_ancient"
+    }
+  ],
+  "environment": {
+    "fog": [
+      30,
+      170
+    ],
+    "fog_color": "#CDBF96"
+  },
+  "waypoints": [
+    {
+      "id": "float",
+      "name": "浮石の庭",
+      "pos": [
+        130,
+        25,
+        348
+      ],
+      "arrive": {
+        "pos": [
+          130.5,
+          25,
+          350.5
+        ],
+        "yaw": 18.4
+      }
+    },
+    {
+      "id": "crypt",
+      "name": "納骨堂",
+      "pos": [
+        268,
+        11,
+        420
+      ],
+      "arrive": {
+        "pos": [
+          268.5,
+          11,
+          418.5
+        ],
+        "yaw": 161.6
+      }
+    },
+    {
+      "id": "terrace",
+      "name": "聖獣の庭",
+      "pos": [
+        131,
+        37,
+        202
+      ],
+      "arrive": {
+        "pos": [
+          131.5,
+          37,
+          200.5
+        ],
+        "yaw": 175.5
+      }
+    },
+    {
+      "id": "plaza",
+      "name": "前庭",
+      "pos": [
+        264,
+        25,
+        262
+      ],
+      "arrive": {
+        "pos": [
+          264.5,
+          25,
+          264.5
+        ],
+        "yaw": 178.0
+      }
+    },
+    {
+      "id": "chapel",
+      "name": "祈りの間",
+      "pos": [
+        440,
+        25,
+        194
+      ],
+      "arrive": {
+        "pos": [
+          440.5,
+          25,
+          192.5
+        ],
+        "yaw": 164.2
+      }
+    }
+  ],
+  "travel_stone": [
+    256,
+    25,
+    494
+  ],
+  "seal_requires": "murals+guardians",
+  "murals": [
+    {
+      "id": "second",
+      "name": "第二時代の壁画",
+      "panels": [
+        {
+          "pos": [
+            123,
+            39,
+            33
+          ],
+          "piece": 7,
+          "answer": 0
+        },
+        {
+          "pos": [
+            124,
+            39,
+            33
+          ],
+          "piece": 8,
+          "answer": 0
+        },
+        {
+          "pos": [
+            125,
+            39,
+            33
+          ],
+          "piece": 9,
+          "answer": 0
+        },
+        {
+          "pos": [
+            126,
+            39,
+            33
+          ],
+          "piece": 10,
+          "answer": 0
+        },
+        {
+          "pos": [
+            127,
+            39,
+            33
+          ],
+          "piece": 11,
+          "answer": 0
+        }
+      ],
+      "text": "切れた糸の端を、人々がもう一度結んでいる。新しい塔が建ち、結び目の灯が街に灯る。",
+      "door": {
+        "box": [
+          124,
+          37,
+          33,
+          126,
+          38,
+          33
+        ],
+        "block": "minecraft:chiseled_stone_bricks"
+      }
+    },
+    {
+      "id": "first",
+      "name": "第一時代の壁画",
+      "panels": [
+        {
+          "pos": [
+            458,
+            27,
+            232
+          ],
+          "piece": 0,
+          "answer": 0
+        },
+        {
+          "pos": [
+            459,
+            27,
+            232
+          ],
+          "piece": 1,
+          "answer": 0
+        },
+        {
+          "pos": [
+            460,
+            27,
+            232
+          ],
+          "piece": 2,
+          "answer": 0
+        }
+      ],
+      "text": "手をつないだ人々が、大きな結晶を囲んでいる。みな、同じ一本の光の糸を握っている。",
+      "door": {
+        "box": [
+          410,
+          25,
+          214,
+          418,
+          29,
+          216
+        ],
+        "block": "minecraft:chiseled_stone_bricks"
+      }
+    },
+    {
+      "id": "sunder",
+      "name": "大断絶の壁画",
+      "panels": [
+        {
+          "pos": [
+            418,
+            27,
+            96
+          ],
+          "piece": 3,
+          "answer": 0
+        },
+        {
+          "pos": [
+            419,
+            27,
+            96
+          ],
+          "piece": 4,
+          "answer": 0
+        },
+        {
+          "pos": [
+            420,
+            27,
+            96
+          ],
+          "piece": 5,
+          "answer": 0
+        },
+        {
+          "pos": [
+            421,
+            27,
+            96
+          ],
+          "piece": 6,
+          "answer": 0
+        }
+      ],
+      "text": "塔の根元の輪の装置が、まばゆく光った。糸は焼け切れ、人々は背を向け合って、ちりぢりになる。"
+    },
+    {
+      "id": "whole",
+      "name": "一枚の絵",
+      "panels": [
+        {
+          "pos": [
+            288,
+            27,
+            115
+          ],
+          "piece": 0,
+          "answer": 0
+        },
+        {
+          "pos": [
+            288,
+            27,
+            116
+          ],
+          "piece": 1,
+          "answer": 0
+        },
+        {
+          "pos": [
+            288,
+            27,
+            117
+          ],
+          "piece": 2,
+          "answer": 0
+        },
+        {
+          "pos": [
+            288,
+            27,
+            118
+          ],
+          "piece": 3,
+          "answer": 0
+        },
+        {
+          "pos": [
+            288,
+            27,
+            119
+          ],
+          "piece": 4,
+          "answer": 0
+        },
+        {
+          "pos": [
+            288,
+            27,
+            120
+          ],
+          "piece": 5,
+          "answer": 0
+        },
+        {
+          "pos": [
+            288,
+            27,
+            121
+          ],
+          "piece": 6,
+          "answer": 0
+        },
+        {
+          "pos": [
+            288,
+            27,
+            122
+          ],
+          "piece": 7,
+          "answer": 0
+        },
+        {
+          "pos": [
+            288,
+            27,
+            123
+          ],
+          "piece": 8,
+          "answer": 0
+        },
+        {
+          "pos": [
+            288,
+            27,
+            124
+          ],
+          "piece": 9,
+          "answer": 0
+        },
+        {
+          "pos": [
+            288,
+            27,
+            125
+          ],
+          "piece": 10,
+          "answer": 0
+        },
+        {
+          "pos": [
+            288,
+            27,
+            126
+          ],
+          "piece": 11,
+          "answer": 0
+        }
+      ],
+      "display": true
+    }
+  ],
+  "songs": [
+    {
+      "id": "prayer",
+      "name": "祈りの歌",
+      "chime": [
+        420,
+        25,
+        124
+      ],
+      "plates": [
+        [
+          414,
+          25,
+          120
+        ],
+        [
+          418,
+          25,
+          120
+        ],
+        [
+          422,
+          25,
+          120
+        ],
+        [
+          426,
+          25,
+          120
+        ]
+      ],
+      "length": 3,
+      "door": {
+        "box": [
+          418,
+          25,
+          112,
+          422,
+          28,
+          112
+        ],
+        "block": "minecraft:chiseled_stone_bricks"
+      }
+    }
+  ],
+  "relics": [
+    {
+      "id": "knights",
+      "pos": [
+        265,
+        11,
+        304
+      ],
+      "items": [
+        "amemaru:knight_helm_relic",
+        "amemaru:harold_tag"
+      ],
+      "flag": "amemaru:story/knight_relics_found",
+      "event": "amemaru:floor4/relics",
+      "quest": "amemaru:knight_relics"
+    }
+  ],
+  "boss_marks": {
+    "sound_plates": [
+      [
+        264,
+        25,
+        61
+      ],
+      [
+        277,
+        25,
+        74
+      ],
+      [
+        264,
+        25,
+        87
+      ],
+      [
+        251,
+        25,
+        74
+      ]
+    ]
+  },
+  "story_zones": [
+    {
+      "id": "knight_camp",
+      "box": [
+        255,
+        10,
+        300,
+        275,
+        16,
+        314
+      ]
+    },
+    {
+      "id": "white_murals",
+      "box": [
+        397,
+        24,
+        367,
+        415,
+        32,
+        385
+      ]
+    }
+  ]
+}

@@ -52,6 +52,11 @@
       "model": "geckolib"
     },
     {
+      "id": "prayer_bell_staff",
+      "kind": "bell_staff",
+      "model": "geckolib"
+    },
+    {
       "id": "apprentice_bell_staff",
       "kind": "bell_staff"
     },
@@ -445,6 +450,14 @@
     },
     {
       "id": "prayer_stone",
+      "rarity": "rare"
+    },
+    {
+      "id": "knight_helm_relic",
+      "rarity": "rare"
+    },
+    {
+      "id": "harold_tag",
       "rarity": "rare"
     },
     {

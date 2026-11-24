@@ -20,6 +20,11 @@ import java.util.Locale;
  *   <li>{@code damage_reduction}：敵から受けるダメージ −{@code percent}%</li>
  *   <li>{@code regen}：5秒ごとに、最大HPの {@code percent}% だけHPが回復する</li>
  *   <li>{@code move_speed}：移動の速さ +{@code percent}%</li>
+ *   <li>{@code heal_ward}：スキルで味方を回復すると、その味方の防御 +{@code percent}%（5秒。4階のレア「祈り手の鈴」。11月24日）</li>
+ *   <li>{@code ally_power}：{@code threshold} ブロック以内の味方1人ごとに、与えるダメージ +{@code percent}%（5人まで。
+ *       5階のレア「守護者の核剣」など）</li>
+ *   <li>{@code party_ward}：{@code threshold} ブロック以内に味方が3人以上いると、自分とその味方の、敵から受けるダメージ
+ *       −{@code percent}%（5階のユニーク「第七の門鍵」）</li>
  * </ul>
  *
  * <p>{@code source} は効く攻撃の種類（{@code any}：すべて、{@code melee}：近接攻撃だけ、{@code skill}：スキルだけ）。</p>
@@ -31,7 +36,10 @@ public record SpecialEffect(Type type, double chance, double percent, double thr
         HEAL_ON_HIT("heal_on_hit"),
         DAMAGE_REDUCTION("damage_reduction"),
         REGEN("regen"),
-        MOVE_SPEED("move_speed");
+        MOVE_SPEED("move_speed"),
+        HEAL_WARD("heal_ward"),
+        ALLY_POWER("ally_power"),
+        PARTY_WARD("party_ward");
 
         private final String id;
 
@@ -50,7 +58,7 @@ public record SpecialEffect(Type type, double chance, double percent, double thr
                 }
             }
             throw new DefinitionException("特殊効果の種類「" + id + "」はありません（extra_damage・execute・heal_on_hit・"
-                    + "damage_reduction・regen・move_speed のどれかにしてください）");
+                    + "damage_reduction・regen・move_speed・heal_ward・ally_power・party_ward のどれかにしてください）");
         }
     }
 
@@ -93,6 +101,9 @@ public record SpecialEffect(Type type, double chance, double percent, double thr
         if (type == Type.EXECUTE && threshold <= 0) {
             throw new DefinitionException(where + "：execute には「threshold」（HPの割合）が要ります");
         }
+        if ((type == Type.ALLY_POWER || type == Type.PARTY_WARD) && threshold <= 0) {
+            throw new DefinitionException(where + "：" + type.id() + " には「threshold」（味方を数える距離）が要ります");
+        }
         return new SpecialEffect(type, chance, percent, threshold, source);
     }
 
@@ -102,7 +113,7 @@ public record SpecialEffect(Type type, double chance, double percent, double thr
         if (type == Type.EXTRA_DAMAGE || type == Type.HEAL_ON_HIT) {
             return Component.translatable(key + (source == Source.ANY ? "" : "." + source.id), number(chance), number(percent));
         }
-        if (type == Type.EXECUTE) {
+        if (type == Type.EXECUTE || type == Type.ALLY_POWER || type == Type.PARTY_WARD) {
             return Component.translatable(key, number(threshold), number(percent));
         }
         return Component.translatable(key, number(percent));

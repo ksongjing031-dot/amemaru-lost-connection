@@ -306,13 +306,28 @@ public final class StoryHud {
             return;
         }
         ResourceLocation id = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(boss.getType());
-        String key = "status." + id.getNamespace() + "." + id.getPath() + "." + boss.status();
-        if (!net.minecraft.client.resources.language.I18n.exists(key)) {
-            return;
-        }
         boolean good = boss.status().startsWith("open");
         int accent = good ? 0xF2C94C : 0x8FA3B8;
-        String text = (good ? "\u25C6 " : "\u25C7 ") + net.minecraft.client.resources.language.I18n.get(key, boss.statusSeconds());
+        String text;
+        if (boss.status().startsWith("song:")) {
+            // 11月24日（4階のボス）：歌った音の並び（白 → 青 → 金 …）。歌っている間だけ出る
+            StringBuilder notes = new StringBuilder();
+            for (String note : boss.status().substring(5).split(",")) {
+                if (notes.length() > 0) {
+                    notes.append(" \u2192 ");
+                }
+                notes.append(net.minecraft.client.resources.language.I18n.get("status.amemaru.note." + note));
+            }
+            accent = 0xC8A8FF;
+            text = "\u266A " + net.minecraft.client.resources.language.I18n.get("status." + id.getNamespace() + "." + id.getPath() + ".song",
+                    notes.toString());
+        } else {
+            String key = "status." + id.getNamespace() + "." + id.getPath() + "." + boss.status();
+            if (!net.minecraft.client.resources.language.I18n.exists(key)) {
+                return;
+            }
+            text = (good ? "\u25C6 " : "\u25C7 ") + net.minecraft.client.resources.language.I18n.get(key, boss.statusSeconds());
+        }
         // 長い文は、画面の幅に合わせて折り返す（小さな画面でも、右のはしの欄と重ならない）
         List<String> lines = UiStyle.wrap(font, text, Math.max(120, Math.min(360, width - 40)));
         int w = 0;

@@ -54,6 +54,9 @@ public final class HealService {
      * @param base ステータス × 係数 × 倍率（回復力などをかける前）
      * @return 実際に戻った量
      */
+    /** 「祈り手の鈴」の防御の上がる時間（5秒）。 */
+    public static final int HEAL_WARD_TICKS = 100;
+
     public static double healBySkill(@Nullable ServerPlayer caster, ServerPlayer target, double base) {
         PlayerData casterData = caster == null ? null : PlayerDataCapability.get(caster).orElse(null);
         double amount = base * healMultiplier(caster, casterData);
@@ -63,6 +66,22 @@ public final class HealService {
         }
         double healed = heal(target, data, amount);
         double overheal = Math.max(0.0, amount - healed);
+        if (caster != null && casterData != null) {
+            // 4階のレア「祈り手の鈴」：回復した味方の防御が、少しのあいだ上がる（11月24日）
+            double ward = jp.amemaru.lostconnection.equipment.GearEffects.healWard(caster, casterData);
+            if (ward > 0) {
+                long now = target.level().getGameTime();
+                jp.amemaru.lostconnection.player.BuffState buffs = data.getBuffs();
+                boolean active = buffs.defenseUp(now) > 0;
+                buffs.defenseUp = Math.max(active ? buffs.defenseUp : 0.0, ward);
+                buffs.defenseUpUntil = Math.max(active ? buffs.defenseUpUntil : 0L, now + HEAL_WARD_TICKS);
+                target.addEffect(new net.minecraft.world.effect.MobEffectInstance(jp.amemaru.lostconnection.core.registry.ModEffects.BLESSING.get(),
+                        (int) (buffs.defenseUpUntil - now), 0, false, false, true), caster);
+                if (!active) {
+                    jp.amemaru.lostconnection.player.LevelService.recompute(target, data);
+                }
+            }
+        }
         if (casterData != null) {
             double aftercare = PassiveService.value(casterData, PassiveDef.Type.AFTERCARE);
             if (aftercare > 0 && healed > 0) {

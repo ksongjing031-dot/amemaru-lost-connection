@@ -71,7 +71,7 @@ public final class GuildGameTests {
                 "称号の定義が読めません（" + TitleDefs.all().size() + "）：" + TitleDefs.loader().errors());
         check(helper, RecordDefs.loader().errors().isEmpty() && RecordDefs.all().size() == 34,
                 "古代記録の定義が読めません（" + RecordDefs.all().size() + "）：" + RecordDefs.loader().errors());
-        check(helper, QuestDefs.loader().errors().isEmpty() && QuestDefs.all().size() == 28,
+        check(helper, QuestDefs.loader().errors().isEmpty() && QuestDefs.all().size() == 30,
                 "クエストの定義が読めません（" + QuestDefs.all().size() + "）：" + QuestDefs.loader().errors());
         check(helper, DialogueDefs.loader().errors().isEmpty(), "会話の定義に問題があります：" + DialogueDefs.loader().errors());
         for (String name : new String[]{"lilia", "gard", "doran", "serena", "ernesto", "noa"}) {

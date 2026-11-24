@@ -152,6 +152,12 @@ public final class ClientModEvents {
         event.registerEntityRenderer(ModEntities.OLD_WARD_KNOT.get(), context -> new AmemaruMobRenderer<>(context, "old_ward_knot", 0.0F));
         // Phase 8 その2：3階の敵
         event.registerEntityRenderer(ModEntities.SUIMON_NEZUMI.get(), context -> new AmemaruMobRenderer<>(context, "suimon_nezumi", 0.35F));
+        // 11月24日：4階の敵とボス
+        event.registerEntityRenderer(ModEntities.SILENT_STATUE.get(), context -> new AmemaruMobRenderer<>(context, "silent_statue", 0.6F));
+        event.registerEntityRenderer(ModEntities.PRAYER_ECHO.get(), context -> new AmemaruMobRenderer<>(context, "prayer_echo", 0.0F, true));
+        event.registerEntityRenderer(ModEntities.CRYSTAL_BEETLE.get(), context -> new AmemaruMobRenderer<>(context, "crystal_beetle", 0.6F));
+        event.registerEntityRenderer(ModEntities.BROKEN_BEAST.get(), context -> new AmemaruMobRenderer<>(context, "broken_beast", 0.6F));
+        event.registerEntityRenderer(ModEntities.CANTARE.get(), context -> new AmemaruMobRenderer<>(context, "cantare", 0.0F));
         event.registerEntityRenderer(ModEntities.YODOMI_SLIME.get(), context -> new AmemaruMobRenderer<>(context, "yodomi_slime", 0.6F));
         event.registerEntityRenderer(ModEntities.SOUJIKIHEI.get(), context -> new AmemaruMobRenderer<>(context, "soujikihei", 0.7F));
         event.registerEntityRenderer(ModEntities.KIBA_NAMAZU.get(), context -> new AmemaruMobRenderer<>(context, "kiba_namazu", 0.6F));

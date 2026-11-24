@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "amemaru:block/knight_relic"
+    },
+    "facing=east": {
+      "model": "amemaru:block/knight_relic",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "amemaru:block/knight_relic",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "amemaru:block/knight_relic",
+      "y": 270
+    }
+  }
+}

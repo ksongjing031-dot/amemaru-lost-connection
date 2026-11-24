@@ -118,7 +118,7 @@ public final class EquipmentGameTests {
         // Phase 6 その2 で、4職業の見習い・古代石の武器（8）と、古代石シリーズ（軽装）の防具（4）が増えた
         // Phase 8 その1 で、2階のボスのレア「古樹の枝杖」が増えた
         // Phase 8 その2 で、3階のボスのレア「水門の鍵盾」と、3階からの職業ごとの装備「流紋シリーズ」（6職業の防具24・武器7・盾1）が増えた
-        check(helper, gear.equipment().size() == 65, "装備の定義が65ではありません：" + gear.equipment().size());
+        check(helper, gear.equipment().size() == 66, "装備の定義が66ではありません：" + gear.equipment().size());
         for (ItemManifest.Category category : new ItemManifest.Category[]{
                 ItemManifest.Category.WEAPON, ItemManifest.Category.SHIELD, ItemManifest.Category.ARMOR}) {
             for (RegistryObject<Item> item : ModItems.MANIFEST.category(category)) {
@@ -138,7 +138,7 @@ public final class EquipmentGameTests {
         // その幹の「光る節」
         // Phase 8 その2：3階の雑魚4種（水門ネズミ・澱みスライムと小さな澱みスライム・水路掃除機兵・牙ナマズ）と名のある魔物3体、
         // ボス「大水門の番人ハイドラム」
-        check(helper, EnemyDefs.all().size() == 23, "敵の定義が23ではありません：" + EnemyDefs.all().keySet());
+        check(helper, EnemyDefs.all().size() == 31, "敵の定義が31ではありません：" + EnemyDefs.all().keySet());
         EnemyDef alpha = EnemyDefs.get(AmemaruMod.id("tsunomofu_alpha"));
         check(helper, alpha != null && AmemaruMod.id("tsunomofu").equals(alpha.entity()) && alpha.behavior().getOrDefault("scale", 1.0) > 1.0,
                 "群れの長が、ツノモフの見た目を借りる大きな個体になっていません");

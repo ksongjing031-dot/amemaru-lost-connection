@@ -81,6 +81,7 @@ RARE_GEAR = {
 FIXED = {
     "amemaru:grassland_horn": 2050,          # Phase 0-A の計算例（1回5分のボスから8% → 62分 × 33）
     "amemaru:elder_branch_staff": 3300,      # 2階のボスから6%（1回6分 → 100分 × 33）【補完】
+    "amemaru:prayer_bell_staff": 4600,       # 4階のボスから5%（1回7分 → 140分 × 33）【補完】
     # 階ごとのレアのお守り（名のある魔物から5〜6%。11月24日）【補完】
     "amemaru:shade_tail_charm": 2400,
     "amemaru:water_mirror_charm": 2600,

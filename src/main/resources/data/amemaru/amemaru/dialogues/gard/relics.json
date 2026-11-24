@@ -1,0 +1,66 @@
+{
+  "_comment": "4日目：結晶騎士団の遺品を見つけた人に、ガルドが15年前の第七次塔遠征を語る（Phase 0-A 9章の4階の物語・12章のガルド「4日目 団員の遺品を受け取り、遠征を語る」・確定設定「第七次塔遠征で5階の古代守護者に挑み、ロストで団員同士が互いを認識できなくなって連携が崩れ、壊滅。副団長ハロルドら11人を失う。騎士団を解散し、冒険者ギルドに改組した」）。冑を預かり（クエスト knight_relics の報告）、認識票をリリアに届けるクエスト harold_tag を渡す。台詞は【補完】",
+  "npc": "amemaru:gard",
+  "priority": 40,
+  "conditions": {
+    "opening": 2,
+    "flags_all": [
+      "amemaru:story/knight_relics_found"
+    ],
+    "flags_none": [
+      "amemaru:story/gard_expedition_told"
+    ]
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "expression": "stern",
+      "text": "……その冑を、どこで見つけた",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "4階の神殿の、地下か。……そうか。あいつらは、あそこまで行っていたのか",
+      "next": "s3"
+    },
+    "s3": {
+      "text": "15年前だ。結晶騎士団は、第七次の塔遠征に出た。5階の祭壇で、古代の守護者に挑んだ",
+      "next": "s4"
+    },
+    "s4": {
+      "text": "戦いの途中で、ロストが来た。……隣で戦っている仲間が、誰だか分からなくなった。呼ぼうにも、名前が出てこない",
+      "next": "s5"
+    },
+    "s5": {
+      "expression": "stern",
+      "text": "連携は崩れた。副団長のハロルドをはじめ、11人を失った",
+      "next": "s6"
+    },
+    "s6": {
+      "text": "騎士団は解散して、ギルドに作り直した。……もう誰も、名前を忘れたまま死なせないためにな",
+      "next": "s7"
+    },
+    "s7": {
+      "text": "その認識票は、ハロルドのものだ。……リリアに届けてやってくれ。あいつの父親だ",
+      "next": "s8"
+    },
+    "s8": {
+      "text": "冑は、俺が預かる。……見つけてくれて、ありがとう"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:report_quest",
+      "quest": "amemaru:knight_relics"
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/gard_expedition_told"
+      ]
+    },
+    {
+      "type": "amemaru:start_quest",
+      "quest": "amemaru:harold_tag"
+    }
+  ]
+}

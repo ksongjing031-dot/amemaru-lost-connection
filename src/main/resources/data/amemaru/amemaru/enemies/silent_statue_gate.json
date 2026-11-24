@@ -1,0 +1,54 @@
+{
+  "_comment": "門の大石像（4階の名のある魔物。地下の納骨堂の、結晶騎士団の野営の跡の前の守り手。大きく、叩きつけの範囲が広い）。数値は【補完】",
+  "name": "門の大石像",
+  "model": "amemaru:silent_statue",
+  "floor": 4,
+  "level": 11,
+  "description": "納骨堂の門を守る、ひときわ大きな石像。その奥には、結晶騎士団の野営の跡がある。叩きつけの揺れは、広い範囲に届く。",
+  "stats": {
+    "hp": 24000,
+    "attack": 96,
+    "defense": 30,
+    "move_speed": 0.18,
+    "follow_range": 22,
+    "aggro_range": 10
+  },
+  "exp": 340,
+  "skills": {
+    "fist": {
+      "power": 1.4,
+      "windup": 1.0,
+      "cooldown": 2.6,
+      "range": 3.6
+    },
+    "quake": {
+      "power": 1.9,
+      "windup": 1.5,
+      "cooldown": 8.0,
+      "range": 5.5
+    }
+  },
+  "behavior": {
+    "wake_range": 7.0,
+    "dormant_taken": 0.3,
+    "stone_taken": 0.8,
+    "scale": 1.5
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/silent_statue",
+    "rare": [
+      {
+        "item": "amemaru:prayer_stone",
+        "chance": 35.0
+      },
+      {
+        "item": "amemaru:broken_seal_charm",
+        "chance": 5.0
+      },
+      {
+        "item": "amemaru:crystal_fruit_crimson",
+        "chance": 6.0
+      }
+    ]
+  }
+}
