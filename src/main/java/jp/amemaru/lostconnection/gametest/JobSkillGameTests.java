@@ -678,6 +678,9 @@ public final class JobSkillGameTests {
     public static void skillDefinitionsAreValid(GameTestHelper helper) {
         SkillRegistry.Snapshot snapshot = SkillRegistry.get();
         check(helper, snapshot.problems().isEmpty(), "職業・スキルの定義に問題があります：" + snapshot.problems());
+        jp.amemaru.lostconnection.job.def.SkillSounds.of(id("knight/call"));
+        check(helper, jp.amemaru.lostconnection.job.def.SkillSounds.loader().errors().isEmpty(),
+                "スキルの重ねる音の定義に問題があります：" + jp.amemaru.lostconnection.job.def.SkillSounds.loader().errors());
         // Phase 6 その2：戦闘職は6つ（ナイト・ウィザード・ヒーラー・アーチャー・ローグ・モンク）
         check(helper, snapshot.jobs().size() == 6, "戦闘職が6つではありません：" + snapshot.jobs().size());
         for (String name : new String[]{"knight", "wizard", "healer", "archer", "rogue", "monk"}) {
@@ -687,8 +690,9 @@ public final class JobSkillGameTests {
             long passives = skills.stream().filter(skill -> skill.kind() == SkillKind.PASSIVE).count();
             long ultimates = skills.stream().filter(SkillDef::isUltimate).count();
             // 仕様S2は4〜6個。11月17日のご指示（スキルが単調）で流派ごとに6つ（計12）、11月22日のご指示（スキルとパッシブを
-            // 増やして多様なビルドに）で流派ごとにアクティブ8・パッシブ5（計16・10）にした（Phase 0-A 19章）
-            check(helper, actives == 16, name + " のアクティブスキルが16個ではありません：" + actives);
+            // 増やして多様なビルドに）で流派ごとにアクティブ8・パッシブ5（計16・10）にした（Phase 0-A 19章）。11月24日のご指示
+            // （スキルツリーでビルドが変わるように、スキルをもっと）で、職業ごとにアクティブを5つ足した（計21）
+            check(helper, actives == 21, name + " のアクティブスキルが21個ではありません：" + actives);
             check(helper, passives == 10, name + " のパッシブスキルが10個ではありません：" + passives);
             // 奥義は流派ごとに1つ（計2つ）から1つを選ぶ（11月17日のご指示。Phase 0-A 19章）
             check(helper, ultimates == 2, name + " の奥義が2つではありません：" + ultimates);
@@ -701,6 +705,9 @@ public final class JobSkillGameTests {
             }
             for (SkillDef skill : skills) {
                 if (skill.isActive()) {
+                    // 11月24日：どのアクティブスキルにも、放ったときに重ねる音がある（「スキルの音が寂しい」）
+                    check(helper, !jp.amemaru.lostconnection.job.def.SkillSounds.of(skill.id()).release().isEmpty(),
+                            skill.id() + " に、放ったときに重ねる音がありません");
                     check(helper, !skill.animation().isEmpty(), skill.id() + " のモーションの名前がありません");
                     check(helper, skill.cooldown(1) > 0, skill.id() + " のクールダウンが0です");
                     check(helper, skill.mpCost(1) > 0 || skill.gaugeCost(1) > 0 || skill.id().getPath().endsWith("mana_thread"),

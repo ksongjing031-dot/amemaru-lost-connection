@@ -591,7 +591,7 @@ public final class EquipmentGameTests {
         FakePlayer player = fake(helper, "accessory");
         PlayerData data = knight(player, 10);
         equip(player, data, ItemStack.EMPTY, ItemStack.EMPTY);
-        expectStat(helper, data, StatType.ATTACK, 28, "何も付けないレベル10のナイト");
+        expectStat(helper, data, StatType.ATTACK, 18, "何も付けないレベル10のナイト");
         ICuriosItemHandler handler = CuriosApi.getCuriosInventory(player).resolve().orElse(null);
         check(helper, handler != null, "Curios の持ち物がありません");
         for (AccessorySlot slot : AccessorySlot.values()) {
@@ -612,17 +612,17 @@ public final class EquipmentGameTests {
         try {
             rings.getStacks().setStackInSlot(0, first);
             LevelService.recompute(player, data);
-            expectStat(helper, data, StatType.ATTACK, 33, "戦いの指輪（攻撃+5）を1つ");
+            expectStat(helper, data, StatType.ATTACK, 23, "戦いの指輪（攻撃+5）を1つ");
             rings.getStacks().setStackInSlot(1, second);
             LevelService.recompute(player, data);
-            expectStat(helper, data, StatType.ATTACK, 38, "戦いの指輪（攻撃+5）を2つ");
+            expectStat(helper, data, StatType.ATTACK, 28, "戦いの指輪（攻撃+5）を2つ");
             check(helper, AccessoryService.equipped(player).size() == 2, "付けているアクセサリーが2つではありません");
         } finally {
             rings.getStacks().setStackInSlot(0, ItemStack.EMPTY);
             rings.getStacks().setStackInSlot(1, ItemStack.EMPTY);
         }
         LevelService.recompute(player, data);
-        expectStat(helper, data, StatType.ATTACK, 28, "指輪を外した後");
+        expectStat(helper, data, StatType.ATTACK, 18, "指輪を外した後");
 
         // 留め具：11日目から1枠
         ICurioStacksHandler clasp = handler.getCurios().get(AccessorySlot.CLASP.curiosId());
@@ -653,7 +653,8 @@ public final class EquipmentGameTests {
         PlayerData data = knight(player, 10);
         data.getAdventure().setFruits(StatType.ATTACK, 0);
         equip(player, data, ItemStack.EMPTY, ItemStack.EMPTY);
-        expectStat(helper, data, StatType.ATTACK, 28, "結晶果を食べる前");
+        // 11月24日：レベル10のナイトの攻撃は18（レベルで上がるのは1レベルにつき0.9）
+        expectStat(helper, data, StatType.ATTACK, 18, "結晶果を食べる前");
         ServerLevel level = helper.getLevel();
         try {
             ItemStack fruits = new ItemStack(item("crystal_fruit_crimson"), 3);
@@ -663,7 +664,7 @@ public final class EquipmentGameTests {
             }
             check(helper, data.getAdventure().fruits(StatType.ATTACK) == 3 && player.getMainHandItem().isEmpty(),
                     "紅の結晶果を3つ食べられていません：" + data.getAdventure().fruits(StatType.ATTACK));
-            expectStat(helper, data, StatType.ATTACK, 31, "紅の結晶果を3つ（攻撃+1ずつ）");
+            expectStat(helper, data, StatType.ATTACK, 21, "紅の結晶果を3つ（攻撃+1ずつ）");
 
             int cap = ServerConfig.FRUIT_CAP.get();
             data.getAdventure().setFruits(StatType.ATTACK, cap);

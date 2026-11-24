@@ -17,6 +17,7 @@ import jp.amemaru.lostconnection.job.def.EffectDef;
 import jp.amemaru.lostconnection.job.def.LinkType;
 import jp.amemaru.lostconnection.job.def.PassiveDef;
 import jp.amemaru.lostconnection.job.def.SkillDef;
+import jp.amemaru.lostconnection.job.def.SkillSounds;
 import jp.amemaru.lostconnection.job.def.SkillRegistry;
 import jp.amemaru.lostconnection.network.s2c.CombatTextS2C;
 import jp.amemaru.lostconnection.network.s2c.SkillFxS2C;
@@ -77,6 +78,8 @@ public final class SkillExecutor {
         Vec3 origin = caster.position();
         prepare(ctx, caster);
         playSound(level, origin, skill.sound(), 1.0F);
+        // 11月24日：重ねる音（放ったとき）
+        SkillSounds.play(level, origin, skill, SkillSounds.Phase.RELEASE);
         float power = fxPower(ctx);
 
         switch (delivery.type()) {
@@ -497,6 +500,10 @@ public final class SkillExecutor {
             }
         }
 
+        // 11月24日：重ねる音（当たったとき。1回の届きにつき1度。当たる相手がいなければ鳴らさない）
+        if (!targets.isEmpty()) {
+            SkillSounds.play(ctx.level, center, skill, SkillSounds.Phase.IMPACT);
+        }
         if (ctx.selfApplied) {
             return;
         }

@@ -941,7 +941,7 @@
   "skill.rogue.binding_threads": {
     "sounds": [
       {
-        "name": "minecraft:block.cobweb.place",
+        "name": "minecraft:block.wool.place",
         "type": "event"
       }
     ],

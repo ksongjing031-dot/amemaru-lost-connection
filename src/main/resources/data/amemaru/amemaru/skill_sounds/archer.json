@@ -1,0 +1,812 @@
+{
+  "_comment": "スキルに重ねて鳴らす音（11月24日。tools/datagen/build_skill_sounds.py が書き出す。手で直さない）。cast：詠唱・溜めの始まり、release：放ったとき、impact：当たったとき。",
+  "skills": {
+    "archer/arrow_fan": {
+      "release": [
+        {
+          "sound": "minecraft:entity.arrow.shoot",
+          "volume": 0.7,
+          "pitch": 1.15,
+          "spread": 0.05,
+          "delay": 2
+        },
+        {
+          "sound": "minecraft:entity.arrow.shoot",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 4
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.arrow.hit",
+          "volume": 0.8,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.hit",
+          "volume": 0.35,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ]
+    },
+    "archer/arrow_rain": {
+      "release": [
+        {
+          "sound": "minecraft:item.crossbow.shoot",
+          "volume": 0.4,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:item.trident.hit",
+          "volume": 0.35,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ]
+    },
+    "archer/arrow_storm": {
+      "release": [
+        {
+          "sound": "minecraft:item.crossbow.shoot",
+          "volume": 0.4,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.phantom.flap",
+          "volume": 0.7,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.elytra.flying",
+          "volume": 0.25,
+          "pitch": 1.6,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.35,
+          "pitch": 1.6,
+          "spread": 0.1,
+          "delay": 2
+        }
+      ]
+    },
+    "archer/back_leap": {
+      "release": [
+        {
+          "sound": "minecraft:entity.phantom.swoop",
+          "volume": 0.6,
+          "pitch": 1.5,
+          "spread": 0.08,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.crossbow.shoot",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.throw",
+          "volume": 0.3,
+          "pitch": 1.8,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.4,
+          "pitch": 1.4,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.arrow.hit",
+          "volume": 0.8,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.hit",
+          "volume": 0.35,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ]
+    },
+    "archer/burst_arrow": {
+      "release": [
+        {
+          "sound": "minecraft:item.crossbow.shoot",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.throw",
+          "volume": 0.3,
+          "pitch": 1.8,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.generic.explode",
+          "volume": 0.6,
+          "pitch": 1.1,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.firework_rocket.large_blast",
+          "volume": 0.4,
+          "pitch": 0.9,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "archer/drill_arrow": {
+      "release": [
+        {
+          "sound": "minecraft:item.crossbow.shoot",
+          "volume": 0.9,
+          "pitch": 0.8,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.riptide_1",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:item.trident.hit",
+          "volume": 0.8,
+          "pitch": 0.9,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.firework_rocket.blast",
+          "volume": 0.35,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "archer/flash_arrow": {
+      "release": [
+        {
+          "sound": "minecraft:item.crossbow.shoot",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.firework_rocket.twinkle",
+          "volume": 0.6,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.throw",
+          "volume": 0.3,
+          "pitch": 1.8,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.chime",
+          "volume": 0.6,
+          "pitch": 1.7,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:block.amethyst_block.break",
+          "volume": 0.6,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.firework_rocket.blast",
+          "volume": 0.4,
+          "pitch": 1.7,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ]
+    },
+    "archer/full_draw": {
+      "cast": [
+        {
+          "sound": "minecraft:item.crossbow.loading_start",
+          "volume": 0.8,
+          "pitch": 0.9,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.crossbow.loading_middle",
+          "volume": 0.6,
+          "pitch": 0.9,
+          "delay": 8
+        }
+      ],
+      "release": [
+        {
+          "sound": "minecraft:item.trident.throw",
+          "volume": 0.6,
+          "pitch": 0.9,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.riptide_1",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:item.trident.hit",
+          "volume": 0.8,
+          "pitch": 0.9,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.firework_rocket.blast",
+          "volume": 0.35,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "archer/gale_dance": {
+      "release": [
+        {
+          "sound": "minecraft:item.elytra.flying",
+          "volume": 0.25,
+          "pitch": 1.6,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.35,
+          "pitch": 1.6,
+          "spread": 0.1,
+          "delay": 2
+        }
+      ]
+    },
+    "archer/hawks_gaze": {
+      "release": [
+        {
+          "sound": "minecraft:item.spyglass.use",
+          "volume": 0.8,
+          "pitch": 1.0,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.respawn_anchor.charge",
+          "volume": 0.4,
+          "pitch": 1.6,
+          "spread": 0.05,
+          "delay": 2
+        },
+        {
+          "sound": "minecraft:block.note_block.pling",
+          "volume": 0.4,
+          "pitch": 1.9,
+          "spread": 0.05,
+          "delay": 4
+        }
+      ]
+    },
+    "archer/hunters_focus": {
+      "release": [
+        {
+          "sound": "minecraft:item.spyglass.use",
+          "volume": 0.8,
+          "pitch": 1.0,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.respawn_anchor.charge",
+          "volume": 0.4,
+          "pitch": 1.6,
+          "spread": 0.05,
+          "delay": 2
+        },
+        {
+          "sound": "minecraft:block.note_block.pling",
+          "volume": 0.4,
+          "pitch": 1.9,
+          "spread": 0.05,
+          "delay": 4
+        }
+      ]
+    },
+    "archer/marking_arrow": {
+      "release": [
+        {
+          "sound": "minecraft:item.crossbow.shoot",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.throw",
+          "volume": 0.3,
+          "pitch": 1.8,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.arrow.hit",
+          "volume": 0.8,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.hit",
+          "volume": 0.35,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ]
+    },
+    "archer/piercing_shot": {
+      "release": [
+        {
+          "sound": "minecraft:item.trident.throw",
+          "volume": 0.6,
+          "pitch": 0.9,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.riptide_1",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:item.trident.hit",
+          "volume": 0.8,
+          "pitch": 0.9,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.firework_rocket.blast",
+          "volume": 0.35,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "archer/pinning_arrow": {
+      "release": [
+        {
+          "sound": "minecraft:item.crossbow.shoot",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.throw",
+          "volume": 0.3,
+          "pitch": 1.8,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.arrow.hit",
+          "volume": 0.8,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.hit",
+          "volume": 0.35,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.chain.hit",
+          "volume": 0.8,
+          "pitch": 0.9,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.player.attack.knockback",
+          "volume": 0.5,
+          "pitch": 1.0,
+          "spread": 0.05,
+          "delay": 1
+        }
+      ]
+    },
+    "archer/quick_draw": {
+      "release": [
+        {
+          "sound": "minecraft:item.trident.throw",
+          "volume": 0.3,
+          "pitch": 1.8,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.arrow.hit",
+          "volume": 0.8,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.hit",
+          "volume": 0.35,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ]
+    },
+    "archer/ricochet": {
+      "release": [
+        {
+          "sound": "minecraft:item.crossbow.shoot",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.throw",
+          "volume": 0.3,
+          "pitch": 1.8,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.arrow.hit",
+          "volume": 0.8,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.hit",
+          "volume": 0.35,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ]
+    },
+    "archer/shooting_star": {
+      "cast": [
+        {
+          "sound": "minecraft:item.crossbow.loading_start",
+          "volume": 0.8,
+          "pitch": 0.9,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.crossbow.loading_middle",
+          "volume": 0.6,
+          "pitch": 0.9,
+          "delay": 8
+        }
+      ],
+      "release": [
+        {
+          "sound": "minecraft:block.beacon.activate",
+          "volume": 0.4,
+          "pitch": 1.8,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.firework_rocket.twinkle",
+          "volume": 0.6,
+          "pitch": 1.0,
+          "delay": 6
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.firework_rocket.large_blast",
+          "volume": 0.5,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.break",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.firework_rocket.twinkle_far",
+          "volume": 0.5,
+          "pitch": 1.1,
+          "spread": 0.1,
+          "delay": 4
+        }
+      ]
+    },
+    "archer/sky_piercer": {
+      "cast": [
+        {
+          "sound": "minecraft:item.crossbow.loading_start",
+          "volume": 0.8,
+          "pitch": 0.9,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.crossbow.loading_middle",
+          "volume": 0.6,
+          "pitch": 0.9,
+          "delay": 8
+        }
+      ],
+      "release": [
+        {
+          "sound": "minecraft:item.crossbow.shoot",
+          "volume": 0.9,
+          "pitch": 0.8,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.throw",
+          "volume": 0.6,
+          "pitch": 0.9,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.riptide_1",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.lightning_bolt.impact",
+          "volume": 0.7,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.firework_rocket.blast_far",
+          "volume": 0.5,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.lightning_bolt.thunder",
+          "volume": 0.25,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 2
+        }
+      ]
+    },
+    "archer/sniper_stance": {
+      "release": [
+        {
+          "sound": "minecraft:item.spyglass.use",
+          "volume": 0.8,
+          "pitch": 1.0,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.respawn_anchor.charge",
+          "volume": 0.4,
+          "pitch": 1.6,
+          "spread": 0.05,
+          "delay": 2
+        },
+        {
+          "sound": "minecraft:block.note_block.pling",
+          "volume": 0.4,
+          "pitch": 1.9,
+          "spread": 0.05,
+          "delay": 4
+        }
+      ]
+    },
+    "archer/spread_arrows": {
+      "release": [
+        {
+          "sound": "minecraft:item.crossbow.shoot",
+          "volume": 0.4,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.arrow.hit",
+          "volume": 0.8,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.hit",
+          "volume": 0.35,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ]
+    },
+    "archer/triple_shot": {
+      "release": [
+        {
+          "sound": "minecraft:item.crossbow.shoot",
+          "volume": 0.4,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.arrow.hit",
+          "volume": 0.8,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.hit",
+          "volume": 0.35,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ]
+    },
+    "archer/whirl_arrows": {
+      "release": [
+        {
+          "sound": "minecraft:entity.phantom.flap",
+          "volume": 0.7,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.elytra.flying",
+          "volume": 0.25,
+          "pitch": 1.6,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.crossbow.shoot",
+          "volume": 0.4,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.arrow.shoot",
+          "volume": 0.7,
+          "pitch": 1.15,
+          "spread": 0.05,
+          "delay": 2
+        },
+        {
+          "sound": "minecraft:entity.arrow.shoot",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 4
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.arrow.hit",
+          "volume": 0.8,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.hit",
+          "volume": 0.35,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ]
+    },
+    "archer/wind_cloak": {
+      "release": [
+        {
+          "sound": "minecraft:entity.phantom.flap",
+          "volume": 0.7,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.35,
+          "pitch": 1.6,
+          "spread": 0.1,
+          "delay": 2
+        }
+      ]
+    }
+  }
+}

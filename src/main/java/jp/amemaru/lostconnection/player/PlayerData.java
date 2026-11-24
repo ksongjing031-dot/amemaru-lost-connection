@@ -425,19 +425,21 @@ public final class PlayerData {
         return treeNodes.contains(node);
     }
 
+    /**
+     * ステータスの節を取った印をつける。ステータスは呼ぶ側で計算し直す（{@code LevelService.recompute}）。ここで計算を
+     * 「やり直し待ち」にすると、最大HPが増えた分を今のHPに足せなくなるため（振り分けと同じく、増えた分だけ今のHPも増やす）。
+     */
     public void addTreeNode(String node) {
         if (treeNodes.add(node)) {
             dirty |= SYNC_SKILLS | SYNC_STATS;
-            invalidateStats();
         }
     }
 
-    /** 取ったステータスの節をすべて消す。 */
+    /** 取ったステータスの節をすべて消す（ステータスは呼ぶ側で計算し直す）。 */
     public void clearTreeNodes() {
         if (!treeNodes.isEmpty()) {
             treeNodes.clear();
             dirty |= SYNC_SKILLS | SYNC_STATS;
-            invalidateStats();
         }
     }
 

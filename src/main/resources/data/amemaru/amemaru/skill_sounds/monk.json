@@ -1,0 +1,817 @@
+{
+  "_comment": "スキルに重ねて鳴らす音（11月24日。tools/datagen/build_skill_sounds.py が書き出す。手で直さない）。cast：詠唱・溜めの始まり、release：放ったとき、impact：当たったとき。",
+  "skills": {
+    "monk/air_palm": {
+      "release": [
+        {
+          "sound": "minecraft:block.respawn_anchor.charge",
+          "volume": 0.4,
+          "pitch": 1.5,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.blaze.shoot",
+          "volume": 0.35,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.phantom.flap",
+          "volume": 0.7,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.elytra.flying",
+          "volume": 0.25,
+          "pitch": 1.6,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.conduit.attack.target",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.35,
+          "pitch": 1.6,
+          "spread": 0.1,
+          "delay": 2
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.warden.attack_impact",
+          "volume": 0.5,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.player.attack.knockback",
+          "volume": 0.6,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ]
+    },
+    "monk/back_strike": {
+      "release": [
+        {
+          "sound": "minecraft:entity.phantom.swoop",
+          "volume": 0.6,
+          "pitch": 1.5,
+          "spread": 0.08,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.blaze.shoot",
+          "volume": 0.2,
+          "pitch": 1.8,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.4,
+          "pitch": 1.4,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.player.attack.strong",
+          "volume": 0.8,
+          "pitch": 0.9,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.iron_golem.attack",
+          "volume": 0.35,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "monk/chain_kicks": {
+      "release": [
+        {
+          "sound": "minecraft:entity.phantom.flap",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.player.attack.knockback",
+          "volume": 0.8,
+          "pitch": 0.9,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.goat.ram_impact",
+          "volume": 0.4,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "monk/collapsing_fist": {
+      "release": [
+        {
+          "sound": "minecraft:entity.phantom.swoop",
+          "volume": 0.6,
+          "pitch": 1.5,
+          "spread": 0.08,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.blaze.shoot",
+          "volume": 0.2,
+          "pitch": 1.8,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.4,
+          "pitch": 1.4,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.player.attack.strong",
+          "volume": 0.8,
+          "pitch": 0.9,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.iron_golem.attack",
+          "volume": 0.35,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "monk/flowing_stance": {
+      "release": [
+        {
+          "sound": "minecraft:ambient.underwater.exit",
+          "volume": 0.5,
+          "pitch": 1.2,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.bubble_column.upwards_inside",
+          "volume": 0.4,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.resonate",
+          "volume": 0.4,
+          "pitch": 1.2,
+          "spread": 0.05,
+          "delay": 3
+        }
+      ]
+    },
+    "monk/hakkei": {
+      "release": [
+        {
+          "sound": "minecraft:block.respawn_anchor.charge",
+          "volume": 0.4,
+          "pitch": 1.5,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.blaze.shoot",
+          "volume": 0.35,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.conduit.attack.target",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.warden.attack_impact",
+          "volume": 0.5,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.player.attack.knockback",
+          "volume": 0.6,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ]
+    },
+    "monk/heaven_earth": {
+      "release": [
+        {
+          "sound": "minecraft:block.respawn_anchor.charge",
+          "volume": 0.6,
+          "pitch": 1.2,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:ambient.underwater.exit",
+          "volume": 0.5,
+          "pitch": 1.2,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.blaze.shoot",
+          "volume": 0.5,
+          "pitch": 0.8,
+          "spread": 0.05,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:block.bubble_column.upwards_inside",
+          "volume": 0.4,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:block.fire.ambient",
+          "volume": 0.6,
+          "pitch": 1.1,
+          "spread": 0.05,
+          "delay": 2
+        },
+        {
+          "sound": "minecraft:block.beacon.power_select",
+          "volume": 0.5,
+          "pitch": 1.4,
+          "spread": 0.05,
+          "delay": 3
+        }
+      ]
+    },
+    "monk/hundred_bond": {
+      "release": [
+        {
+          "sound": "minecraft:entity.player.attack.knockback",
+          "volume": 0.6,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 8
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.player.attack.strong",
+          "volume": 0.8,
+          "pitch": 0.9,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.iron_golem.attack",
+          "volume": 0.35,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "monk/hundred_fists": {
+      "release": [
+        {
+          "sound": "minecraft:entity.player.attack.knockback",
+          "volume": 0.6,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 8
+        }
+      ]
+    },
+    "monk/inch_punch": {
+      "release": [
+        {
+          "sound": "minecraft:entity.player.attack.knockback",
+          "volume": 0.6,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.blaze.shoot",
+          "volume": 0.2,
+          "pitch": 1.8,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.warden.attack_impact",
+          "volume": 0.5,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.player.attack.knockback",
+          "volume": 0.6,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ]
+    },
+    "monk/jab_combo": {
+      "release": [
+        {
+          "sound": "minecraft:entity.player.attack.knockback",
+          "volume": 0.5,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 6
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.player.attack.strong",
+          "volume": 0.8,
+          "pitch": 0.9,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.iron_golem.attack",
+          "volume": 0.35,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "monk/kaisei_fist": {
+      "release": [
+        {
+          "sound": "minecraft:entity.player.attack.knockback",
+          "volume": 0.6,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.blaze.shoot",
+          "volume": 0.2,
+          "pitch": 1.8,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.respawn_anchor.charge",
+          "volume": 0.4,
+          "pitch": 1.4,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.chime",
+          "volume": 0.6,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 2
+        },
+        {
+          "sound": "minecraft:block.note_block.chime",
+          "volume": 0.4,
+          "pitch": 1.6,
+          "spread": 0.05,
+          "delay": 4
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.player.attack.strong",
+          "volume": 0.8,
+          "pitch": 0.9,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.iron_golem.attack",
+          "volume": 0.35,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "monk/ki_bullet": {
+      "release": [
+        {
+          "sound": "minecraft:block.respawn_anchor.charge",
+          "volume": 0.4,
+          "pitch": 1.5,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.conduit.attack.target",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.warden.attack_impact",
+          "volume": 0.5,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.player.attack.knockback",
+          "volume": 0.6,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ]
+    },
+    "monk/ki_share": {
+      "release": [
+        {
+          "sound": "minecraft:block.respawn_anchor.charge",
+          "volume": 0.4,
+          "pitch": 1.4,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.chime",
+          "volume": 0.6,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 2
+        },
+        {
+          "sound": "minecraft:block.note_block.chime",
+          "volume": 0.4,
+          "pitch": 1.6,
+          "spread": 0.05,
+          "delay": 4
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:block.note_block.chime",
+          "volume": 0.5,
+          "pitch": 1.8,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.experience_orb.pickup",
+          "volume": 0.35,
+          "pitch": 1.1,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.resonate",
+          "volume": 0.4,
+          "pitch": 1.6,
+          "spread": 0.05,
+          "delay": 3
+        }
+      ]
+    },
+    "monk/ki_vortex": {
+      "release": [
+        {
+          "sound": "minecraft:item.trident.riptide_2",
+          "volume": 0.5,
+          "pitch": 1.4,
+          "spread": 0.05,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:block.conduit.attack.target",
+          "volume": 0.5,
+          "pitch": 1.1,
+          "spread": 0.05,
+          "delay": 3
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.warden.attack_impact",
+          "volume": 0.5,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.player.attack.knockback",
+          "volume": 0.6,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ]
+    },
+    "monk/kien": {
+      "release": [
+        {
+          "sound": "minecraft:block.respawn_anchor.charge",
+          "volume": 0.6,
+          "pitch": 1.2,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.fire.ambient",
+          "volume": 0.6,
+          "pitch": 1.1,
+          "spread": 0.05,
+          "delay": 2
+        },
+        {
+          "sound": "minecraft:block.beacon.power_select",
+          "volume": 0.5,
+          "pitch": 1.4,
+          "spread": 0.05,
+          "delay": 3
+        }
+      ]
+    },
+    "monk/mountain_breaker": {
+      "release": [
+        {
+          "sound": "minecraft:entity.phantom.swoop",
+          "volume": 0.5,
+          "pitch": 1.4,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.throw",
+          "volume": 0.5,
+          "pitch": 0.8,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.goat.ram_impact",
+          "volume": 0.7,
+          "pitch": 0.9,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.deepslate.break",
+          "volume": 0.7,
+          "pitch": 0.8,
+          "spread": 0.05,
+          "delay": 1
+        }
+      ]
+    },
+    "monk/palm_strike": {
+      "release": [
+        {
+          "sound": "minecraft:entity.blaze.shoot",
+          "volume": 0.2,
+          "pitch": 1.8,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.warden.attack_impact",
+          "volume": 0.5,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.player.attack.knockback",
+          "volume": 0.6,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ]
+    },
+    "monk/rising_dragon": {
+      "release": [
+        {
+          "sound": "minecraft:entity.phantom.flap",
+          "volume": 0.6,
+          "pitch": 1.0,
+          "spread": 0.05,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.ender_dragon.flap",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.player.attack.knockback",
+          "volume": 0.8,
+          "pitch": 0.9,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.goat.ram_impact",
+          "volume": 0.4,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "monk/shrink_step": {
+      "release": [
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.4,
+          "pitch": 1.4,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.player.attack.strong",
+          "volume": 0.8,
+          "pitch": 0.9,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.iron_golem.attack",
+          "volume": 0.35,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "monk/spin_kick": {
+      "release": [
+        {
+          "sound": "minecraft:entity.phantom.flap",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.player.attack.knockback",
+          "volume": 0.8,
+          "pitch": 0.9,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.goat.ram_impact",
+          "volume": 0.4,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "monk/thunder_fist": {
+      "cast": [
+        {
+          "sound": "minecraft:block.respawn_anchor.charge",
+          "volume": 0.5,
+          "pitch": 1.0,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.beacon.ambient",
+          "volume": 0.4,
+          "pitch": 1.4,
+          "delay": 4
+        }
+      ],
+      "release": [
+        {
+          "sound": "minecraft:entity.iron_golem.attack",
+          "volume": 0.7,
+          "pitch": 0.8,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.lightning_bolt.impact",
+          "volume": 0.35,
+          "pitch": 1.5,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.generic.explode",
+          "volume": 0.3,
+          "pitch": 1.6,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.warden.attack_impact",
+          "volume": 0.5,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.player.attack.knockback",
+          "volume": 0.6,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ]
+    },
+    "monk/turning_throw": {
+      "release": [
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.6,
+          "pitch": 0.9,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.player.big_fall",
+          "volume": 0.8,
+          "pitch": 0.9,
+          "spread": 0.05,
+          "delay": 6
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.player.attack.strong",
+          "volume": 0.8,
+          "pitch": 0.9,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.iron_golem.attack",
+          "volume": 0.35,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    }
+  }
+}

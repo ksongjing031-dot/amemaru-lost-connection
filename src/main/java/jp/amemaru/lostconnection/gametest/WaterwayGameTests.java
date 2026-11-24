@@ -369,8 +369,9 @@ public final class WaterwayGameTests {
                 EquipmentDef def = gear.get(item.get());
                 check(helper, def != null, item.getId() + " に装備の定義がありません");
                 check(helper, def.jobs().equals(List.of(jobId)), item.getId() + " が " + job + " だけの防具ではありません：" + def.jobs());
-                check(helper, def.requiredLevel() == 7 && def.series().startsWith("流紋シリーズ"),
-                        item.getId() + " が Lv7 の流紋シリーズではありません");
+                // 11月24日：レベルの上限を上げ、必要レベルも合わせた（Lv7 → Lv15）
+                check(helper, def.requiredLevel() == 15 && def.series().startsWith("流紋シリーズ"),
+                        item.getId() + " が Lv15 の流紋シリーズではありません：Lv" + def.requiredLevel());
                 check(helper, slots.add(def.slot()), item.getId() + " と同じ場所の防具が、ほかにもあります");
                 checkRecipe(helper, recipes, item.getId(), WorkshopType.ARMOR);
             }
@@ -402,16 +403,16 @@ public final class WaterwayGameTests {
                         && shield.stat(StatType.DEFENSE) < rare.stat(StatType.DEFENSE),
                 "流紋の盾が、古代石の盾より強く水門の鍵盾より弱いナイトの盾になっていません");
         checkRecipe(helper, recipes, AmemaruMod.id("ryumon_shield"), WorkshopType.ARMOR);
-        // 着られるかどうか：ナイトの兜は、Lv7のナイトだけ
+        // 着られるかどうか：ナイトの兜は、Lv15のナイトだけ
         EquipmentDef helm = gear.get(AmemaruMod.id("ryumon_knight_helm"));
         PlayerData data = new PlayerData();
-        data.setLevel(7);
+        data.setLevel(15);
         data.setCombatJob(AmemaruMod.id("wizard"));
         check(helper, !GearService.usable(data, helm), "ウィザードが、ナイトの流紋の兜を着られます");
         data.setCombatJob(AmemaruMod.id("knight"));
-        check(helper, GearService.usable(data, helm), "Lv7のナイトが、流紋の兜を着られません");
-        data.setLevel(6);
-        check(helper, !GearService.usable(data, helm), "Lv6で流紋の兜を着られます");
+        check(helper, GearService.usable(data, helm), "Lv15のナイトが、流紋の兜を着られません");
+        data.setLevel(14);
+        check(helper, !GearService.usable(data, helm), "Lv14で流紋の兜を着られます");
         helper.succeed();
     }
 
