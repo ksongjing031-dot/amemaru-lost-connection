@@ -109,15 +109,19 @@ public class OldWardKnot extends AmemaruMob {
                 ward.onSeedMatured(this);
                 discard();
             }
-        } else if (isAlive() && random.nextInt(3) == 0) {
-            level().addParticle(ParticleTypes.GLOW, getRandomX(0.5), getY() + random.nextDouble() * 0.8, getRandomZ(0.5), 0.0, 0.01, 0.0);
-            if (seed()) {
-                // 芽吹きの種：光の柱（遠くからでも見つけられるように）と、まわりから吸い上げられていく緑の芽
-                level().addParticle(ParticleTypes.END_ROD, getX(), getY() + 0.6, getZ(), 0.0, 0.16, 0.0);
+        } else if (isAlive() && seed()) {
+            // 芽吹きの種：光の柱（毎 tick、高さ4ブロックまでの所に光の粒。遠くからでも見つけられるように）
+            level().addParticle(ParticleTypes.END_ROD, getX() + (random.nextDouble() - 0.5) * 0.15, getY() + 0.5 + random.nextDouble() * 4.0,
+                    getZ() + (random.nextDouble() - 0.5) * 0.15, 0.0, 0.03, 0.0);
+            if (random.nextInt(3) == 0) {
+                level().addParticle(ParticleTypes.GLOW, getRandomX(0.5), getY() + random.nextDouble() * 0.8, getRandomZ(0.5), 0.0, 0.01, 0.0);
+                // まわりから吸い上げられていく緑の芽
                 level().addParticle(ParticleTypes.COMPOSTER, getRandomX(1.6), getY() + 0.1, getRandomZ(1.6), 0.0, 0.05, 0.0);
                 level().addParticle(ParticleTypes.HAPPY_VILLAGER, getRandomX(0.6), getY() + 0.6 + random.nextDouble() * 0.6,
                         getRandomZ(0.6), 0.0, 0.02, 0.0);
             }
+        } else if (isAlive() && random.nextInt(3) == 0) {
+            level().addParticle(ParticleTypes.GLOW, getRandomX(0.5), getY() + random.nextDouble() * 0.8, getRandomZ(0.5), 0.0, 0.01, 0.0);
         }
     }
 

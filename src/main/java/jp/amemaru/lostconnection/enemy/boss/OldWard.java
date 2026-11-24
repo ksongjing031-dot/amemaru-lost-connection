@@ -588,6 +588,8 @@ public class OldWard extends AmemaruBoss {
                 continue;
             }
             seed.setSeed(this, grow);
+            // 11月25日（CIの写真で見て足した）：遠くからでも、物のかげでも見つけられるように、ふちを光らせる
+            seed.setGlowingTag(true);
             seed.moveTo(at.x, at.y + 0.2, at.z, random.nextFloat() * 360.0F, 0.0F);
             seed.setTransient(true);
             seed.setHpMultiplier(hpMultiplier() * seedSkill.param("hp_scale", 0.4));

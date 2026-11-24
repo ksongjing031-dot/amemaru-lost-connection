@@ -579,11 +579,12 @@ public final class CiScreenshots {
             {"snap", null, "40", "phase5_boss_gate_open"},
             {"cmd", null, "30", "execute in amemaru:tower run tp @p {f1:192.5,15,107.5} 180 8"},
             {"snap", null, "40", "phase5_tablet"},
-            // 11月25日：石板の前で戦いが始まる → はじまり（上下の黒い帯と、ボスの名前・階の名前）が出たら撮る
+            {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
+            // 11月25日：部屋に入ると戦いが始まる → はじまり（上下の黒い帯と、ボスの名前・階の名前）が出たら撮る
+            // （cmd の数は、コマンドのあとに待つ tick）
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,68.5} 180 4"},
             {"await_intro", null, "0", "phase8_boss_intro"},
             {"p8_bossfx", null, "0", "f1"},
-            {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
-            {"cmd", null, "60", "execute in amemaru:tower run tp @p {f1:192.5,15,68.5} 180 4"},
             {"snap", null, "60", "phase5_boss_fight"},
             // 11月22日：技ごとの当たる所。ボスを出る所（{f1:192.5,15,51.5}。南を向く）に戻し、決まった所に立って、管理者のコマンドで
             // 技を出させ、打つ前に撮る（技は見ている人の方を向いて出る）。跳んでいる途中のボスは戻しても跳び続けるので、先に踏みつけを

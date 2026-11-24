@@ -83,9 +83,9 @@ public class AncientGuardian extends AmemaruBoss {
     private enum Action { NONE, SWEEP, BEAM, SLAM, JUDGE, GATHER, KNEEL, RECOVER, SEVER }
 
     /** 切断判定の輪（白：離れている・赤：近すぎる）。11月25日 */
-    private static final DustParticleOptions SEVER_APART = new DustParticleOptions(new Vector3f(0.95F, 0.97F, 1.0F), 1.6F);
+    private static final DustParticleOptions SEVER_APART = new DustParticleOptions(new Vector3f(0.95F, 0.97F, 1.0F), 2.0F);
     /** 切断判定で、輪の中に人がいる（近すぎる）ときの赤（輪を太く見せる）。 */
-    private static final DustParticleOptions SEVER_CLOSE = new DustParticleOptions(new Vector3f(1.0F, 0.25F, 0.2F), 1.6F);
+    private static final DustParticleOptions SEVER_CLOSE = new DustParticleOptions(new Vector3f(1.0F, 0.25F, 0.2F), 2.0F);
 
     private Action action = Action.NONE;
 
@@ -232,16 +232,18 @@ public class AncientGuardian extends AmemaruBoss {
         EnemyDef.Skill sever = severSkill();
         double range = sever.range();
         List<ServerPlayer> players = targets(level);
-        if (timer % 5 == 0) {
+        if (timer % 3 == 0) {
+            // 11月25日（CIの写真で見て濃くした）：48粒の太い輪を、0.15秒ごとに
             for (ServerPlayer player : players) {
                 boolean close = linked(player, players, range);
-                // 11月25日（CIの写真で見て濃くした）：32粒の太い輪
-                for (int i = 0; i < 32; i++) {
-                    double a = Math.PI * 2.0 * i / 32.0;
+                for (int i = 0; i < 48; i++) {
+                    double a = Math.PI * 2.0 * i / 48.0;
                     level.sendParticles(close ? SEVER_CLOSE : SEVER_APART, player.getX() + Math.cos(a) * range, player.getY() + 0.2,
                             player.getZ() + Math.sin(a) * range, 1, 0.0, 0.0, 0.0, 0.0);
                 }
             }
+        }
+        if (timer % 5 == 0) {
             // 濁った記録核
             level.sendParticles(ParticleTypes.WHITE_ASH, getX(), getY() + getBbHeight() * 0.62, getZ(), 12, 0.6, 0.5, 0.6, 0.02);
             setStatus("sever", (timer + 19) / 20);
