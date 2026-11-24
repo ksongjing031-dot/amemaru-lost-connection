@@ -14,8 +14,9 @@ import java.util.function.Function;
  * <ul>
  *   <li>{@link #glow}：自分で光り、光を足し合わせる（暗い所でも明るい。重なるほど白く光る）。</li>
  *   <li>{@link #translucent}：自分で光る、ふつうの半透明（氷の塊など、向こうが少し暗く見えるもの）。</li>
+ *   <li>{@link #overlay}：ふつうの半透明で、壁やエンティティの向こうでも見える（ロックオンの照準。11月24日）。</li>
  * </ul>
- * <p>どちらも裏表の両方を描き、奥行きの情報は書かない（演出どうしが隠し合わない）。</p>
+ * <p>どれも裏表の両方を描き、奥行きの情報は書かない（演出どうしが隠し合わない）。</p>
  */
 public final class FxRenderTypes extends RenderType {
     private static final Function<ResourceLocation, RenderType> GLOW = Util.memoize(texture -> create("amemaru_fx_glow",
@@ -39,6 +40,18 @@ public final class FxRenderTypes extends RenderType {
                     .setOverlayState(OVERLAY)
                     .createCompositeState(false)));
 
+    private static final Function<ResourceLocation, RenderType> SEE_THROUGH = Util.memoize(texture -> create("amemaru_fx_overlay",
+            DefaultVertexFormat.NEW_ENTITY, VertexFormat.Mode.QUADS, 1024, false, true,
+            CompositeState.builder()
+                    .setShaderState(RENDERTYPE_ENTITY_TRANSLUCENT_EMISSIVE_SHADER)
+                    .setTextureState(new TextureStateShard(texture, false, false))
+                    .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
+                    .setCullState(NO_CULL)
+                    .setDepthTestState(NO_DEPTH_TEST)
+                    .setWriteMaskState(COLOR_WRITE)
+                    .setOverlayState(OVERLAY)
+                    .createCompositeState(false)));
+
     private FxRenderTypes(String name, VertexFormat format, VertexFormat.Mode mode, int bufferSize, boolean affectsCrumbling,
                           boolean sortOnUpload, Runnable setupState, Runnable clearState) {
         super(name, format, mode, bufferSize, affectsCrumbling, sortOnUpload, setupState, clearState);
@@ -50,5 +63,9 @@ public final class FxRenderTypes extends RenderType {
 
     public static RenderType translucent(ResourceLocation texture) {
         return TRANSLUCENT.apply(texture);
+    }
+
+    public static RenderType overlay(ResourceLocation texture) {
+        return SEE_THROUGH.apply(texture);
     }
 }

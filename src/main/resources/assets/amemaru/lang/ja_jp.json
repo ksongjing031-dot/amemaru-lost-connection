@@ -114,6 +114,7 @@
   "message.amemaru.job.need_token": "転職には「転職の証」が%s個要ります",
   "message.amemaru.job.chosen": "大結晶に誓いを立て、「%s」の接続技能を授かりました",
   "message.amemaru.job.chosen_hint": "%sキーでスキルツリーを開き、スキルを覚えてスキル枠に入れられます",
+  "message.amemaru.job.stats_refunded": "職業を変えたので、振ったステータスを戻しました（%sポイント）。%sキーのステータス画面で、一から振り直せます",
   "message.amemaru.job.no_upper": "この職業には上位職がありません",
   "message.amemaru.job.already_promoted": "すでに上位職です",
   "message.amemaru.job.upper_day": "上位職は%s日目からです",
@@ -558,6 +559,7 @@
   "commands.amemaru.city.failed": "うまくいきませんでした：%s",
   "key.amemaru.party": "パーティの画面を開く",
   "key.amemaru.retire": "リタイア（ダウン中に長押し）",
+  "key.amemaru.lock_on": "敵をロックする（押すと次の敵・長押しで外す）",
   "effect.amemaru.weakened": "衰弱",
   "message.amemaru.skill.down": "ダウン中はスキルを使えません",
   "message.amemaru.down.other": "%s がダウンしました（そばでしゃがむと起こせます）",
@@ -683,6 +685,13 @@
   "message.amemaru.tower.not_built": "その階は、まだできていない（管理者が地形を建てると入れる）",
   "message.amemaru.tower.floor_label": "塔",
   "message.amemaru.tower.returning": "塔の門へ戻ります……%s",
+  "message.amemaru.tower.next.going": "%s階へ進みます……%s",
+  "message.amemaru.tower.next.none": "この先の階は、まだない",
+  "message.amemaru.tower.next.locked": "%s階は、まだひらいていない",
+  "message.amemaru.tower.next.scheduled": "%s階は、まだひらいていない（あと%s）",
+  "message.amemaru.tower.next.hours": "%s時間",
+  "message.amemaru.tower.next.minutes": "%s分",
+  "message.amemaru.tower.next.not_built": "%s階は、まだできていない（管理者が地形を建てると進める）",
   "message.amemaru.pillar.label": "石柱・%s",
   "message.amemaru.pillar.activated": "石柱を起動した（%s本目。%s/%s）",
   "message.amemaru.pillar.by_party": "%sが石柱を起動した（%s本目。%s/%s）",
@@ -2357,5 +2366,7 @@
   "item.amemaru.ryumon_monk_headband": "流紋の鉢巻",
   "item.amemaru.ryumon_monk_gi": "流紋の道着",
   "item.amemaru.ryumon_monk_hakama": "流紋の袴",
-  "item.amemaru.ryumon_monk_sandals": "流紋の草鞋"
+  "item.amemaru.ryumon_monk_sandals": "流紋の草鞋",
+  "message.amemaru.lock.none": "ロックできる敵がいません",
+  "hud.amemaru.lock.distance": "%sm"
 }

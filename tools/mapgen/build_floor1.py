@@ -48,6 +48,7 @@ import numpy as np
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from mapgen.world import (DATA_VERSION, World, block, lantern, leaves, log, pane, sign_nbt, slab, stairs, wall)  # noqa: E402
+from mapgen.tower import NEXT_DX, next_circle  # noqa: E402
 
 import nbtlib  # noqa: E402
 from nbtlib.tag import Byte, Compound, Int, List, String  # noqa: E402
@@ -869,6 +870,8 @@ def hall(f):
                 f.put(x, y0, z, block("smooth_quartz"))
             elif d <= 3.3:
                 f.put(x, y0, z, block("polished_diorite"))
+    # 次の階への円（出口の円の東どなり。金の縁。戦いの後、ここに立つと次の階の入口へ進む。11月24日）
+    next_circle(f.put, ex + NEXT_DX, y0, ez)
     # 門の前の広場（半円の敷石）と、道標の石板・一
     tx, tz = TABLET
     for x in range(cx - 14, cx + 15):
@@ -2094,12 +2097,15 @@ def floor_json(cores, seal_cells, f=None):
             "start_radius": 20,
             "respawn_seconds": 120,
             "max_players": 8,
-            # 11月23日：人数補正（1人増えるごとに HP +100%・攻撃 +10%・技の間 −5%）と、10分たつと怒る【補完】
-            "hp_per_extra_player": 1.0,
+            # 11月23日：人数補正（1人増えるごとに HP +60%・攻撃 +10%・技の間 −5%）と、15分たつと怒る【補完】
+            # 11月24日「ソロでは全然倒せない」：ひとりでも2人ぶんのHP【補完】（調整の PR #25 の値）
+            "hp_min_players": 2,
+            "hp_per_extra_player": 0.6,
             "attack_per_extra_player": 0.1,
             "pace_per_extra_player": 0.05,
-            "enrage_seconds": 600,
+            "enrage_seconds": 900,
             "exit": {"center": [hx + 0.5, y, hz - 19.5], "radius": 2.6},
+            "next": {"center": [hx + NEXT_DX + 0.5, y, hz - 19.5], "radius": 2.6},
         },
         "pillars": [dict({"pos": list(c), "line": PILLAR_LINES[i]}, **({"requires": PILLAR_REQUIRES[i]} if PILLAR_REQUIRES[i] else {}))
                     for i, c in enumerate(cores)],

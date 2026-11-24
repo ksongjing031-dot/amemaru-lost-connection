@@ -1,5 +1,6 @@
 package jp.amemaru.lostconnection.network.c2s;
 
+import jp.amemaru.lostconnection.job.LockOnFacing;
 import jp.amemaru.lostconnection.job.SkillService;
 import jp.amemaru.lostconnection.network.ModNetwork;
 import jp.amemaru.lostconnection.network.s2c.SkillResultS2C;
@@ -19,6 +20,8 @@ import java.util.function.Supplier;
  * <p>送るのは「どの枠を・何を狙って・押したか離したか」だけ。射程・視線・クールダウン・MPはサーバーで確かめる。
  * 番号（{@code sequence}）は、結果（{@link SkillResultS2C}）と手元のモーションを結びつけるために使う。
  * 溜めるスキルは、押したとき（{@link #PRESS}）に溜めを始め、離したとき（{@link #RELEASE}）に放つ。</p>
+ * <p>ロックオン（11月24日）している間は、ロックした敵の番号（{@code faceEntity}）も送る。サーバーは使う前に、
+ * その敵のほうへ向きを合わせる（扇・線・飛び道具も、ロックした敵に向かう）。</p>
  */
 public final class UseSkillC2S {
     public static final int PRESS = 0;
@@ -30,17 +33,24 @@ public final class UseSkillC2S {
     private final int targetEntity;
     @Nullable
     private final Vec3 targetPoint;
+    /** ロックした敵（向きを合わせる相手。ないときは -1）。 */
+    private final int faceEntity;
 
     public UseSkillC2S(int sequence, int slot, int targetEntity, @Nullable Vec3 targetPoint) {
-        this(sequence, PRESS, slot, targetEntity, targetPoint);
+        this(sequence, PRESS, slot, targetEntity, targetPoint, -1);
     }
 
     public UseSkillC2S(int sequence, int action, int slot, int targetEntity, @Nullable Vec3 targetPoint) {
+        this(sequence, action, slot, targetEntity, targetPoint, -1);
+    }
+
+    public UseSkillC2S(int sequence, int action, int slot, int targetEntity, @Nullable Vec3 targetPoint, int faceEntity) {
         this.action = action == RELEASE ? RELEASE : PRESS;
         this.sequence = sequence;
         this.slot = slot;
         this.targetEntity = targetEntity;
         this.targetPoint = targetPoint;
+        this.faceEntity = faceEntity;
     }
 
     public void encode(FriendlyByteBuf buf) {
@@ -54,6 +64,7 @@ public final class UseSkillC2S {
             buf.writeDouble(targetPoint.y);
             buf.writeDouble(targetPoint.z);
         }
+        buf.writeVarInt(faceEntity + 1);
     }
 
     public static UseSkillC2S decode(FriendlyByteBuf buf) {
@@ -65,7 +76,8 @@ public final class UseSkillC2S {
         if (buf.readBoolean()) {
             point = new Vec3(buf.readDouble(), buf.readDouble(), buf.readDouble());
         }
-        return new UseSkillC2S(sequence, action, slot, entity, point);
+        int face = buf.readVarInt() - 1;
+        return new UseSkillC2S(sequence, action, slot, entity, point, face);
     }
 
     public void handle(Supplier<NetworkEvent.Context> context) {
@@ -77,6 +89,11 @@ public final class UseSkillC2S {
             return;
         }
         PlayerDataCapability.get(player).ifPresent(data -> {
+            if (faceEntity >= 0) {
+                LockOnFacing.face(player, faceEntity);
+            } else {
+                LockOnFacing.forget(player);
+            }
             SkillService.Result result = action == RELEASE
                     ? SkillService.tryRelease(player, data, slot, targetEntity, targetPoint)
                     : SkillService.tryUse(player, data, slot, targetEntity, targetPoint);

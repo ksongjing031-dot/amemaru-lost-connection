@@ -165,10 +165,14 @@ public record FloorDef(
         }
     }
 
-    /** ボスの部屋。{@code seal} は入口の封印のブロックの範囲（両端を含む）。 */
+    /**
+     * ボスの部屋。{@code seal} は入口の封印のブロックの範囲（両端を含む）。{@code exit} は門へ戻る円、
+     * {@code next} は次の階の入口へ進む円（11月24日のご指示「クリアした層から次の層へそのまま行けるようにする」。ないときは null）。
+     */
     public record BossRoomDef(ResourceLocation boss, Spot spawn, Vec3 arenaCenter, double arenaRadius, int arenaYMin,
                               int arenaYMax, BlockPos sealMin, BlockPos sealMax, double startRadius, int respawnSeconds,
-                              int maxPlayers, double hpPerExtraPlayer, Circle exit, String name, Scaling scaling) {
+                              int maxPlayers, double hpPerExtraPlayer, Circle exit, String name, Scaling scaling,
+                              @Nullable Circle next) {
         /** 戦いの間だけ、部屋の円のまわりに足すはば（門の通路のぶん）。 */
         public static final double FIGHT_MARGIN = 4.0;
 
@@ -399,7 +403,8 @@ public record FloorDef(
                 new Scaling(Json.optionalDouble(json, "attack_per_extra_player", 0.0, 0.0, 5.0),
                         Json.optionalDouble(json, "pace_per_extra_player", 0.0, 0.0, 0.5),
                         Json.optionalInt(json, "enrage_seconds", 0, 0, 7200),
-                        Json.optionalInt(json, "hp_min_players", 1, 1, 64)));
+                        Json.optionalInt(json, "hp_min_players", 1, 1, 64)),
+                json.has("next") ? circle(Json.object(json, "next"), "boss_room.next") : null);
     }
 
     private static Spot spot(JsonObject json, String name) {

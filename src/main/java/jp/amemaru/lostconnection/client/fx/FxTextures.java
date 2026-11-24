@@ -42,6 +42,10 @@ public final class FxTextures {
     public static final ResourceLocation CRACK = tex("crack");
     /** 盾の紋（64x64）。受け流し・盾結び。 */
     public static final ResourceLocation SHIELD = tex("shield");
+    /** ロックオンの照準（四隅の鉤と、真ん中の小さな菱形。11月24日）。 */
+    public static final ResourceLocation LOCK = tex("lock");
+    /** ロックした敵の頭の上の、下向きの矢印。 */
+    public static final ResourceLocation LOCK_ARROW = tex("lock_arrow");
 
     private FxTextures() {
     }

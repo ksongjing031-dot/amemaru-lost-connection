@@ -43,6 +43,8 @@ import java.util.UUID;
  *   <li>塔の門：街の塔の入口の広間の「転移の円」に立つと、行く階を選ぶ画面が開く。開いていて建ててある階にだけ行ける。
  *       同じパーティのメンバーで円の上にいる人は、一緒に行く</li>
  *   <li>階の入口の円に立つと、塔の門（街）へ戻る。ボスの部屋の奥の円は、戦いが終わると使える</li>
+ *   <li>ボスの部屋の「次の階への円」（金の縁）に立つと、次の階の入口へ進む（11月24日）。次の階が開いていて、建ててあり、
+ *       ボスと戦っていないときだけ。進めないときは、その理由を出す</li>
  *   <li>石柱を起動する（本人と、同じパーティのメンバーに数える）。触れるたびに古代文字の一行が出る</li>
  *   <li>人のいる階だけ、敵の湧く所とボスの部屋を動かす（{@link FloorRuntime}）</li>
  * </ul>
@@ -62,6 +64,8 @@ public final class TowerService {
     private static final Map<UUID, Boolean> ON_GATE = new HashMap<>();
     private static final Map<UUID, Long> GATE_COOLDOWN = new HashMap<>();
     private static final Map<UUID, Integer> RETURN_CHARGE = new HashMap<>();
+    /** 次の階への円に立っている時間（11月24日）。 */
+    private static final Map<UUID, Integer> NEXT_CHARGE = new HashMap<>();
 
     private TowerService() {
     }
@@ -325,6 +329,74 @@ public final class TowerService {
         overworld.playSound(null, at.x, at.y, at.z, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.8F, 1.0F);
     }
 
+    // ---------------------------------------------------------------- 次の階への円（11月24日）
+
+    /**
+     * 次の階へ進めない理由（進めるなら null）。次の階が定義にない・開いていない・建ててないとき。
+     *
+     * @param floor 今いる階
+     */
+    @Nullable
+    public static Component nextFloorBlocked(MinecraftServer server, int floor) {
+        int next = floor + 1;
+        FloorDef def = FloorDefs.byNumber(next);
+        if (def == null || next > FloorDefs.FLOOR_COUNT) {
+            return Component.translatable("message.amemaru.tower.next.none").withStyle(ChatFormatting.GRAY);
+        }
+        ProgressionData progress = ProgressionData.get(server);
+        if (!progress.isUnlocked(next)) {
+            ProgressionData.Scheduled scheduled = progress.nextFloorUnlock();
+            if (scheduled != null && scheduled.value() == next) {
+                long minutes = Math.max(1L, (scheduled.atMillis() - System.currentTimeMillis() + 59_999L) / 60_000L);
+                String wait = minutes >= 60 ? Component.translatable("message.amemaru.tower.next.hours", (minutes + 59) / 60).getString()
+                        : Component.translatable("message.amemaru.tower.next.minutes", minutes).getString();
+                return Component.translatable("message.amemaru.tower.next.scheduled", next, wait).withStyle(ChatFormatting.GOLD);
+            }
+            return Component.translatable("message.amemaru.tower.next.locked", next).withStyle(ChatFormatting.GOLD);
+        }
+        if (!TowerData.get(server).isBuilt(next) || FloorDefs.towerLevel(server) == null) {
+            return Component.translatable("message.amemaru.tower.next.not_built", next).withStyle(ChatFormatting.GRAY);
+        }
+        return null;
+    }
+
+    /** 次の階への円に立っている：進めるなら溜めてから進み、進めなければ理由を出す。 */
+    private static void stepOnNextCircle(ServerLevel tower, ServerPlayer player, FloorDef def) {
+        Component blocked = nextFloorBlocked(player.server, def.number());
+        if (blocked != null) {
+            NEXT_CHARGE.remove(player.getUUID());
+            player.displayClientMessage(blocked, true);
+            return;
+        }
+        int charge = NEXT_CHARGE.merge(player.getUUID(), 5, Integer::sum);
+        if (charge >= RETURN_TICKS) {
+            NEXT_CHARGE.remove(player.getUUID());
+            goToNextFloor(player, def.number());
+            return;
+        }
+        player.displayClientMessage(Component.translatable("message.amemaru.tower.next.going", def.number() + 1,
+                Math.max(1, (RETURN_TICKS - charge + 19) / 20)).withStyle(ChatFormatting.YELLOW), true);
+        tower.sendParticles(ParticleTypes.END_ROD, player.getX(), player.getY() + 0.1, player.getZ(), 5, 0.5, 0.0, 0.5, 0.03);
+    }
+
+    /**
+     * 次の階の入口へ進む（ボスの部屋の「次の階への円」から。進めないときは何もせず false）。
+     *
+     * @param floor 今いる階
+     */
+    public static boolean goToNextFloor(ServerPlayer player, int floor) {
+        if (nextFloorBlocked(player.server, floor) != null) {
+            return false;
+        }
+        FloorDef next = FloorDefs.byNumber(floor + 1);
+        if (next == null) {
+            return false;
+        }
+        enterFloor(player, next);
+        AmemaruMod.LOGGER.info("[amemaru] {} went on from floor {} to floor {}", player.getGameProfile().getName(), floor, floor + 1);
+        return true;
+    }
+
     private static void checkReturnCircles(ServerLevel tower, Map<Integer, List<ServerPlayer>> byFloor) {
         for (Map.Entry<Integer, List<ServerPlayer>> entry : byFloor.entrySet()) {
             FloorDef def = FloorDefs.byNumber(entry.getKey());
@@ -333,7 +405,24 @@ public final class TowerService {
                 continue;
             }
             Vec3 origin = def.originVec();
+            boolean bossIdle = def.bossRoom() != null && runtime != null && runtime.bossRoom() != null && runtime.bossRoom().exitOpen();
+            FloorDef.Circle nextCircle = def.bossRoom() == null ? null : def.bossRoom().next();
+            boolean nextOpen = nextCircle != null && bossIdle && nextFloorBlocked(tower.getServer(), def.number()) == null;
+            if (nextOpen && tower.getGameTime() % 10 == 0) {
+                // 次の階が開いていれば、円から金の光が昇る
+                Vec3 c = origin.add(nextCircle.center());
+                tower.sendParticles(ParticleTypes.END_ROD, c.x, c.y + 0.2, c.z, 3, nextCircle.radius() * 0.45, 0.05,
+                        nextCircle.radius() * 0.45, 0.03);
+                tower.sendParticles(ParticleTypes.WAX_OFF, c.x, c.y + 1.2, c.z, 2, nextCircle.radius() * 0.4, 0.6,
+                        nextCircle.radius() * 0.4, 0.0);
+            }
             for (ServerPlayer player : entry.getValue()) {
+                if (nextCircle != null && bossIdle && !player.isSpectator() && nextCircle.contains(player.position(), origin)) {
+                    RETURN_CHARGE.remove(player.getUUID());
+                    stepOnNextCircle(tower, player, def);
+                    continue;
+                }
+                NEXT_CHARGE.remove(player.getUUID());
                 boolean inEntrance = def.returnCircle().contains(player.position(), origin);
                 boolean inExit = def.bossRoom() != null && runtime != null && runtime.bossRoom() != null
                         && runtime.bossRoom().exitOpen() && def.bossRoom().exit().contains(player.position(), origin);
@@ -360,6 +449,7 @@ public final class TowerService {
         ON_GATE.remove(id);
         GATE_COOLDOWN.remove(id);
         RETURN_CHARGE.remove(id);
+        NEXT_CHARGE.remove(id);
         TABLET_SEEN.remove(id);
     }
 

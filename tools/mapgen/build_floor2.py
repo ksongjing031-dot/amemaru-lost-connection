@@ -33,6 +33,7 @@ from scipy import ndimage
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from mapgen.world import DATA_VERSION, World, block, lantern, leaves, log, sign_nbt, slab, stairs, wall  # noqa: E402
+from mapgen.tower import NEXT_DX, next_circle  # noqa: E402
 
 import nbtlib  # noqa: E402
 from nbtlib.tag import Compound, Int, List, String  # noqa: E402
@@ -1100,6 +1101,8 @@ def clearing(f):
                 f.put(x, y0, z, block("smooth_quartz"))
             elif d <= 3.3:
                 f.put(x, y0, z, block("polished_diorite"))
+    # 次の階への円（戻りの円の東どなり。金の縁。11月24日）
+    next_circle(f.put, ex + NEXT_DX, y0, ez)
     # 南の門：2本の巨木の根のアーチ。あいだに封印の光の幕。空き地から門の外までの通り道
     gx0, gx1 = cx - 3, cx + 3
     for x in range(gx0, gx1 + 1):
@@ -1277,11 +1280,15 @@ def floor_json(f, woods_json):
             "start_radius": 20,
             "respawn_seconds": 120,
             "max_players": 8,
-            "hp_per_extra_player": 1.0,
+            # 11月24日「ソロでは全然倒せない」：ひとりでも2人ぶんのHP、1人増えるごとに HP +60%、22分たつと怒る【補完】
+            # （調整の PR #25 の値）
+            "hp_min_players": 2,
+            "hp_per_extra_player": 0.6,
             "attack_per_extra_player": 0.1,
             "pace_per_extra_player": 0.05,
-            "enrage_seconds": 720,
+            "enrage_seconds": 1320,
             "exit": {"center": [cx + 0.5, y, cz - 19.5], "radius": 2.6},
+            "next": {"center": [cx + NEXT_DX + 0.5, y, cz - 19.5], "radius": 2.6},
         },
         "pillars": [],
         "pillars_done": "",

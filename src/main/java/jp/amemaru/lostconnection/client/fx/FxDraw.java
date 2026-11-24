@@ -62,6 +62,11 @@ public final class FxDraw {
         return buffers.getBuffer(FxRenderTypes.translucent(texture));
     }
 
+    /** 壁の向こうでも見える半透明の、書き込み先（ロックオンの照準）。 */
+    public VertexConsumer overlay(ResourceLocation texture) {
+        return buffers.getBuffer(FxRenderTypes.overlay(texture));
+    }
+
     // ---------------------------------------------------------------- 頂点
 
     public void vertex(VertexConsumer vc, double x, double y, double z, float u, float v, int rgb, float alpha) {

@@ -86,6 +86,7 @@ public final class ClientModEvents {
         event.register(KeyBindings.OPEN_SKILL_TREE);
         event.register(KeyBindings.OPEN_PARTY);
         event.register(KeyBindings.RETIRE);
+        event.register(KeyBindings.LOCK_ON);
         for (KeyMapping key : KeyBindings.SKILLS) {
             event.register(key);
         }
@@ -99,6 +100,8 @@ public final class ClientModEvents {
         // Phase 4：パーティのメンバー（左上）と、ダウン（自分が倒れた・仲間を起こしている）
         event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "party", PartyHud.OVERLAY);
         event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "down", DownHud.OVERLAY);
+        // 11月24日：ロックした敵の名前・距離・HP（照準のすぐ下）
+        event.registerAbove(VanillaGuiOverlay.CROSSHAIR.id(), "lock_on", TargetLock.OVERLAY);
         // Phase 3：レアドロップ・工房などの特別な演出の帯
         event.registerAboveAll("special_moment", SpecialMomentFx.OVERLAY);
         // Phase 5：暗転・章題・字幕・古代文字・知らせ・カウントダウン・はじめの手引き

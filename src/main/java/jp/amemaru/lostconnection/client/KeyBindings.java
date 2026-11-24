@@ -50,6 +50,18 @@ public final class KeyBindings {
             GLFW.GLFW_KEY_H,
             CATEGORY);
 
+    /**
+     * 敵をロックする（初期値：B。11月24日のご指示「スキルにターゲットロックオン機能を追加しよう」）。押すたびに右どなりの敵へ移り、
+     * 長押しで外す。B はバニラでは使っていない（Ctrl+B のナレーターとは別）。試作版のスキル枠5の初期値だったが、
+     * 新しい初期値（R・G・V・Z・X・C）に移したので空いている。
+     */
+    public static final KeyMapping LOCK_ON = new KeyMapping(
+            "key.amemaru.lock_on",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_B,
+            CATEGORY);
+
     private static final int[] SKILL_DEFAULTS = {
             GLFW.GLFW_KEY_R, GLFW.GLFW_KEY_G, GLFW.GLFW_KEY_V, GLFW.GLFW_KEY_Z, GLFW.GLFW_KEY_X, GLFW.GLFW_KEY_C};
 

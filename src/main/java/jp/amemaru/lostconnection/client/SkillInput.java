@@ -150,7 +150,10 @@ public final class SkillInput {
         }
         Aim aim = aim(player, skill, ClientPlayerState.get().rank(skillIndex));
         sequence++;
-        ModNetwork.sendToServer(new UseSkillC2S(sequence, UseSkillC2S.RELEASE, slot, aim.entityId, aim.point));
+        ModNetwork.sendToServer(new UseSkillC2S(sequence, UseSkillC2S.RELEASE, slot, aim.entityId, aim.point, aim.faceId));
+        if (aim.faceId >= 0) {
+            TargetLock.beginTurn();
+        }
         if (PlayerAnimations.play(player, skill.animation())) {
             SkillFx.markPredicted(skillIndex);
         }
@@ -222,7 +225,9 @@ public final class SkillInput {
             // 溜め：押したことだけを送り、溜めのモーションを先に始める（狙いは離したときに決める）
             sequence++;
             remember(sequence, skillIndex);
-            ModNetwork.sendToServer(new UseSkillC2S(sequence, UseSkillC2S.PRESS, slot, -1, null));
+            // ロック中は、溜めきって自動で放つときのために、ロックした敵も知らせる（11月24日）
+            LivingEntity locked = TargetLock.targetFor(skill);
+            ModNetwork.sendToServer(new UseSkillC2S(sequence, UseSkillC2S.PRESS, slot, -1, null, locked == null ? -1 : locked.getId()));
             chargingSlot = slot;
             chargingSkill = skillIndex;
             serverCharging = false;
@@ -235,7 +240,11 @@ public final class SkillInput {
         Aim aim = aim(player, skill, rank);
         sequence++;
         remember(sequence, skillIndex);
-        ModNetwork.sendToServer(new UseSkillC2S(sequence, slot, aim.entityId, aim.point));
+        ModNetwork.sendToServer(new UseSkillC2S(sequence, UseSkillC2S.PRESS, slot, aim.entityId, aim.point, aim.faceId));
+        if (aim.faceId >= 0 && casting < 0) {
+            // ロックした敵のほうへ向き直る（サーバーでも向きを合わせる。11月24日）
+            TargetLock.beginTurn();
+        }
 
         // モーションを先に始める（詠唱を止めるための押下のときは始めない）
         if (casting < 0) {
@@ -246,22 +255,39 @@ public final class SkillInput {
         }
     }
 
-    private record Aim(int entityId, @Nullable Vec3 point) {
+    /**
+     * 狙い。
+     *
+     * @param faceId ロックした敵（サーバーに向きを合わせてもらう相手。ロックしていない・敵に向けないスキルは -1）
+     */
+    private record Aim(int entityId, @Nullable Vec3 point, int faceId) {
     }
 
-    /** 届け方に合わせて、狙い（相手・地点）を決める。 */
+    /** 届け方に合わせて、狙い（相手・地点）を決める。ロックしていれば、ロックした敵を狙う（11月24日）。 */
     private static Aim aim(LocalPlayer player, SyncDefinitionsS2C.SkillInfo skill, int rank) {
         int r = Math.max(0, Math.min(rank, skill.maxRank()) - 1);
         double range = r < skill.aimRange().length ? skill.aimRange()[r] : 16.0;
         DeliveryDef.Type delivery = DeliveryDef.Type.byIndex(skill.delivery());
-        if (delivery == DeliveryDef.Type.TARGET || delivery == DeliveryDef.Type.CHAIN) {
+        LivingEntity locked = TargetLock.targetFor(skill);
+        int face = locked == null ? -1 : locked.getId();
+        if (delivery == DeliveryDef.Type.TARGET || delivery == DeliveryDef.Type.CHAIN || delivery == DeliveryDef.Type.BEHIND) {
+            if (locked != null) {
+                return new Aim(locked.getId(), null, face);
+            }
+            if (delivery == DeliveryDef.Type.BEHIND) {
+                return new Aim(-1, null, -1);
+            }
             Entity target = pickEntity(player, range, skill.alliesOnly());
-            return new Aim(target == null ? -1 : target.getId(), null);
+            return new Aim(target == null ? -1 : target.getId(), null, -1);
         }
         if (delivery == DeliveryDef.Type.POINT || delivery == DeliveryDef.Type.LEAP) {
-            return new Aim(-1, pickPoint(player, range));
+            if (locked != null) {
+                // ロックした敵の足もと（射程の外なら、サーバーが敵の方向の射程の端にする）
+                return new Aim(-1, locked.position(), face);
+            }
+            return new Aim(-1, pickPoint(player, range), -1);
         }
-        return new Aim(-1, null);
+        return new Aim(-1, null, face);
     }
 
     private static void remember(int sequence, int skillIndex) {
@@ -293,6 +319,14 @@ public final class SkillInput {
 
     // ---------------------------------------------------------------- 狙い
 
+    /** 自分の敵か（敵・訓練人形・決闘の相手）。ロックオンでも使う。 */
+    public static boolean isFoe(LocalPlayer player, Entity entity) {
+        return entity != player && entity instanceof LivingEntity living && living.isAlive()
+                && (entity instanceof Enemy || entity instanceof TrainingDummy
+                // 決闘の相手（Phase 6 その4）
+                || entity.getId() == ClientSocial.opponentId());
+    }
+
     /** 視線の先の相手（少し外れていても、近いものを選ぶ）。 */
     @Nullable
     public static Entity pickEntity(LocalPlayer player, double range, boolean allies) {
@@ -303,9 +337,7 @@ public final class SkillInput {
         double limit = block.getType() == HitResult.Type.MISS ? range : block.getLocation().distanceTo(eye) + 0.5;
         Predicate<Entity> filter = allies
                 ? entity -> entity instanceof Player other && other != player && other.isAlive() && !other.isSpectator()
-                : entity -> entity instanceof LivingEntity living && living.isAlive() && (entity instanceof Enemy || entity instanceof TrainingDummy
-                        // 決闘の相手（Phase 6 その4）
-                        || entity.getId() == ClientSocial.opponentId());
+                : entity -> isFoe(player, entity);
         AABB box = player.getBoundingBox().expandTowards(look.scale(range)).inflate(2.0);
         Entity best = null;
         double bestDistance = Double.MAX_VALUE;

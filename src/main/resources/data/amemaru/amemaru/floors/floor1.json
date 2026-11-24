@@ -72,6 +72,7 @@
     "start_radius": 20,
     "respawn_seconds": 120,
     "max_players": 8,
+    "hp_min_players": 2,
     "hp_per_extra_player": 0.6,
     "attack_per_extra_player": 0.1,
     "pace_per_extra_player": 0.05,
@@ -84,7 +85,14 @@
       ],
       "radius": 2.6
     },
-    "hp_min_players": 2
+    "next": {
+      "center": [
+        199.5,
+        15,
+        38.5
+      ],
+      "radius": 2.6
+    }
   },
   "pillars": [
     {

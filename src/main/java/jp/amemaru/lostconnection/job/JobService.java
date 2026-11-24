@@ -186,7 +186,11 @@ public final class JobService {
         PlayerSync.syncAll(player, data);
     }
 
-    /** 職業を入れ、スキルを最初の形にし、見習い装備などを渡す。 */
+    /**
+     * 職業を入れ、スキルを最初の形にし、見習い装備などを渡す。
+     * 振ったステータスのポイントも全部戻し、新しい職業に合わせて一から振り直せるようにする
+     * （11月24日のご指示「役職を変えた際に自身のステータスをもう一度、一から振れるようにする」。忘れ水を使ったときと同じ）。
+     */
     private static void apply(ServerPlayer player, PlayerData data, JobDef job) {
         SkillService.cancelCast(player, data, false);
         data.setCombatJob(job.id());
@@ -194,6 +198,10 @@ public final class JobService {
         data.clearCooldowns();
         data.setGauge(0);
         SkillTreeService.resetSkills(player, data);
+        int refunded = data.totalAllocated();
+        if (refunded > 0) {
+            data.clearAllocated();
+        }
 
         if (!data.hasReceivedKit(job.id())) {
             for (JobDef.KitEntry entry : job.starterKit()) {
@@ -219,6 +227,10 @@ public final class JobService {
                 .withStyle(ChatFormatting.GOLD), false);
         player.displayClientMessage(Component.translatable("message.amemaru.job.chosen_hint",
                 Component.keybind("key.amemaru.skill_tree")).withStyle(ChatFormatting.GRAY), false);
+        if (refunded > 0) {
+            player.displayClientMessage(Component.translatable("message.amemaru.job.stats_refunded", refunded,
+                    Component.keybind("key.amemaru.status")).withStyle(ChatFormatting.AQUA), false);
+        }
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), ModSounds.get("job.oath"),
                 SoundSource.PLAYERS, 1.0F, 1.0F);
     }
