@@ -1,0 +1,23 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "accessory",
+  "mastery": 2,
+  "mastery_exp": 12,
+  "ingredients": [
+    {
+      "item": "amemaru:glowcap",
+      "count": 3
+    },
+    {
+      "item": "amemaru:shade_tail",
+      "count": 1
+    },
+    {
+      "item": "amemaru:crystal_shard",
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "amemaru:glowcap_necklace"
+  }
+}

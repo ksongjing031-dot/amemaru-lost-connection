@@ -1,0 +1,10 @@
+{
+  "_comment": "樹皮の智環（2階。11月24日「階層ごとにアクセサリーも追加しましょう」【補完】。tools/datagen/build_floor_accessories.py）",
+  "slot": "ring",
+  "generation": 1,
+  "floor": 2,
+  "rarity": "uncommon",
+  "main": [
+    "magic"
+  ]
+}

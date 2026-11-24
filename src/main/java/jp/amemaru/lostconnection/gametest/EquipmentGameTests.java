@@ -126,7 +126,8 @@ public final class EquipmentGameTests {
             }
         }
         // Phase 5 で、1階のボスのレアのお守り「草原の角笛」が増えた
-        check(helper, AccessoryDefs.all().size() == 6, "アクセサリーの定義が6ではありません：" + AccessoryDefs.all().size());
+        // 11月24日：2〜5階のアクセサリー（階ごとに、作る5つと、名のある魔物が落とすレアのお守り1つ）の24が増えた
+        check(helper, AccessoryDefs.all().size() == 30, "アクセサリーの定義が30ではありません：" + AccessoryDefs.all().size());
         for (RegistryObject<Item> item : ModItems.MANIFEST.category(ItemManifest.Category.ACCESSORY)) {
             check(helper, AccessoryDefs.get(item.get()) != null, "アクセサリーの定義がありません：" + item.getId());
         }
@@ -168,7 +169,8 @@ public final class EquipmentGameTests {
                 .getAllRecipesFor(ModRecipes.WORKSHOP_TYPE.get());
         // Phase 6 その2 で、古代石の鈴杖・弓・双短剣・籠手と、古代石シリーズ（軽装）の4つ（計8）が増えた
         // Phase 8 その2 で、流紋シリーズの32が増えた
-        check(helper, recipes.size() == 57, "工房のレシピが57ではありません：" + recipes.size());
+        // 11月24日：2〜5階のアクセサリーの20が増えた
+        check(helper, recipes.size() == 77, "工房のレシピが77ではありません：" + recipes.size());
         for (WorkshopRecipe recipe : recipes) {
             check(helper, recipe.workshop().accepts(recipe.result()), recipe.getId() + " の品が、その工房で扱う品ではありません");
             check(helper, !recipe.ingredients().isEmpty(), recipe.getId() + " に素材がありません");

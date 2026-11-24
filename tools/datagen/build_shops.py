@@ -46,6 +46,21 @@ MATERIALS = {
     "amemaru:waterway_bronze": 90,      # 水路掃除機兵から60%で1〜2個・番人から3〜5個（めずらしい）
     "amemaru:catfish_whisker": 120,     # 牙ナマズから55%・番人から60%（めずらしい）
     "amemaru:flow_crystal": 600,        # 名のある魔物から35%・番人から60%・宝箱から20%（レア。流紋シリーズの芯）
+    # 2階の素材（11月24日。階ごとのアクセサリーの材料）【補完】。2階の敵は1階の2〜3倍の時間がかかる
+    "amemaru:old_bark": 25,             # 樹皮兵から55%で1〜2個
+    "amemaru:glowcap": 25,              # ポコダケから55%で1〜2個
+    "amemaru:wisp_wick": 60,            # 迷い灯から40%
+    "amemaru:shade_tail": 70,           # 葉影ギツネから40%（素早く、倒しにくい）
+    # 4階・5階の素材（11月24日）【補完】
+    "amemaru:statue_shard": 35,         # 沈黙の石像から60%で1〜2個
+    "amemaru:song_crystal": 45,         # 祈り手の残響から55%
+    "amemaru:beetle_shell": 55,         # 結晶甲虫から50%（硬い）
+    "amemaru:sacred_mane": 90,          # 欠けた聖獣から45%（強い）
+    "amemaru:prayer_stone": 700,        # 名のある魔物から35%・カンターレから60%・宝箱から15%（レア）
+    "amemaru:watcher_lens": 60,         # 監視眼から55%
+    "amemaru:sentinel_plate": 60,       # 防衛兵から60%で1〜2個
+    "amemaru:drone_spring": 70,         # 修復ドローンから50%
+    "amemaru:jade_core_shard": 900,     # 名のある魔物から35%・古代守護者から100%（2〜3個）（レア。守護者シリーズの芯）
 }
 DROPS = {
     "amemaru:ancient_stone": 0.7 * 1.5,
@@ -66,6 +81,11 @@ RARE_GEAR = {
 FIXED = {
     "amemaru:grassland_horn": 2050,          # Phase 0-A の計算例（1回5分のボスから8% → 62分 × 33）
     "amemaru:elder_branch_staff": 3300,      # 2階のボスから6%（1回6分 → 100分 × 33）【補完】
+    # 階ごとのレアのお守り（名のある魔物から5〜6%。11月24日）【補完】
+    "amemaru:shade_tail_charm": 2400,
+    "amemaru:water_mirror_charm": 2600,
+    "amemaru:broken_seal_charm": 2800,
+    "amemaru:altar_knot_charm": 3000,
 }
 # 表にない物：レアリティごとの基準額（×（1＋0.08×装備レベル）はゲームの中で計算する）【補完】
 RARITY_BASE = {"common": 30, "uncommon": 100, "rare": 400, "epic": 1600, "legendary": 6000, "unique": 20000}

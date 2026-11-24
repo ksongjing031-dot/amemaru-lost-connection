@@ -1,0 +1,13 @@
+{
+  "_comment": "水鏡のお守り（3階。11月24日「階層ごとにアクセサリーも追加しましょう」【補完】。tools/datagen/build_floor_accessories.py）",
+  "slot": "charm",
+  "generation": 1,
+  "floor": 3,
+  "rarity": "rare",
+  "effects": [
+    {
+      "type": "damage_reduction",
+      "percent": 3
+    }
+  ]
+}

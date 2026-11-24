@@ -42,6 +42,10 @@
       {
         "item": "amemaru:wavering_crystal",
         "chance": 15.0
+      },
+      {
+        "item": "amemaru:water_mirror_charm",
+        "chance": 5.0
       }
     ]
   }

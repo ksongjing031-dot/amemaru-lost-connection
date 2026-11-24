@@ -1,0 +1,19 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "accessory",
+  "mastery": 3,
+  "mastery_exp": 18,
+  "ingredients": [
+    {
+      "item": "amemaru:statue_shard",
+      "count": 4
+    },
+    {
+      "item": "amemaru:beetle_shell",
+      "count": 2
+    }
+  ],
+  "result": {
+    "item": "amemaru:mural_bracelet"
+  }
+}

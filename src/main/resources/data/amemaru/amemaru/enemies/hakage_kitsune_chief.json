@@ -44,6 +44,10 @@
       {
         "item": "amemaru:wavering_crystal",
         "chance": 20.0
+      },
+      {
+        "item": "amemaru:shade_tail_charm",
+        "chance": 6.0
       }
     ]
   }

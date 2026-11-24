@@ -1,0 +1,23 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "accessory",
+  "mastery": 3,
+  "mastery_exp": 20,
+  "ingredients": [
+    {
+      "item": "amemaru:jade_core_shard",
+      "count": 1
+    },
+    {
+      "item": "amemaru:watcher_lens",
+      "count": 2
+    },
+    {
+      "item": "amemaru:drone_spring",
+      "count": 2
+    }
+  ],
+  "result": {
+    "item": "amemaru:jade_necklace"
+  }
+}

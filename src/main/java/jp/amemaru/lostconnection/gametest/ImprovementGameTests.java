@@ -182,6 +182,48 @@ public final class ImprovementGameTests {
         helper.succeed();
     }
 
+    // ---------------------------------------------------------------- 階ごとのアクセサリー
+
+    /**
+     * 2〜5階に、その階の素材で作る5つ（闘環・智環・首飾り・腕輪・お守り）と、名のある魔物が落とすレアのお守り1つがある。
+     * 奥の階の品ほど、メインステータスの上限が高い（同じ章の中で1階ごとに +5%）。
+     */
+    @GameTest(template = EMPTY)
+    public static void everyFloorHasAccessories(GameTestHelper helper) {
+        java.util.Map<Integer, java.util.List<jp.amemaru.lostconnection.accessory.AccessoryDef>> byFloor = new java.util.HashMap<>();
+        for (jp.amemaru.lostconnection.accessory.AccessoryDef def : jp.amemaru.lostconnection.accessory.AccessoryDefs.all().values()) {
+            byFloor.computeIfAbsent(def.floor(), k -> new java.util.ArrayList<>()).add(def);
+        }
+        double lastFactor = 0.0;
+        for (int floor = 1; floor <= 5; floor++) {
+            java.util.List<jp.amemaru.lostconnection.accessory.AccessoryDef> list = byFloor.getOrDefault(floor, java.util.List.of());
+            long crafted = list.stream().filter(d -> d.rarity() == jp.amemaru.lostconnection.equipment.Rarity.UNCOMMON).count();
+            long rare = list.stream().filter(d -> d.rarity() == jp.amemaru.lostconnection.equipment.Rarity.RARE && !d.effects().isEmpty()).count();
+            check(helper, crafted == 5, floor + "階のアクセサリー（アンコモン）が5つではありません：" + crafted);
+            check(helper, rare == 1, floor + "階のレアのお守り（特殊効果つき）が1つではありません：" + rare);
+            java.util.Set<jp.amemaru.lostconnection.accessory.AccessorySlot> slots = new java.util.HashSet<>();
+            for (jp.amemaru.lostconnection.accessory.AccessoryDef def : list) {
+                slots.add(def.slot());
+                check(helper, def.generation() == 1, def.id() + " が第1章（世代1）の品になっていません");
+            }
+            check(helper, slots.size() == 4, floor + "階に、指輪・首飾り・腕輪・お守りがそろっていません：" + slots);
+            double factor = list.get(0).mainFactor();
+            check(helper, factor > lastFactor, floor + "階の品のメインの上限が、前の階より高くありません：" + factor);
+            lastFactor = factor;
+        }
+        check(helper, Math.abs(lastFactor - 1.2) < 1.0E-9, "5階の品のメインの上限の倍率が 1.2 ではありません：" + lastFactor);
+        // 名のある魔物が、その階のレアのお守りを落とす
+        String[][] named = {{"hakage_kitsune_chief", "shade_tail_charm"}, {"juhihei_captain", "shade_tail_charm"},
+                {"soujikihei_overseer", "water_mirror_charm"}, {"kiba_namazu_lord", "water_mirror_charm"},
+                {"suimon_nezumi_boss", "water_mirror_charm"}};
+        for (String[] pair : named) {
+            jp.amemaru.lostconnection.enemy.EnemyDef def = jp.amemaru.lostconnection.enemy.EnemyDefs.get(AmemaruMod.id(pair[0]));
+            check(helper, def != null && def.rare().stream().anyMatch(r -> r.item().equals(AmemaruMod.id(pair[1]))),
+                    pair[0] + " が " + pair[1] + " を落としません");
+        }
+        helper.succeed();
+    }
+
     // ---------------------------------------------------------------- 道具
 
     private static FakePlayer fake(GameTestHelper helper, String name) {

@@ -1,0 +1,23 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "accessory",
+  "mastery": 3,
+  "mastery_exp": 20,
+  "ingredients": [
+    {
+      "item": "amemaru:sentinel_plate",
+      "count": 3
+    },
+    {
+      "item": "amemaru:watcher_lens",
+      "count": 2
+    },
+    {
+      "item": "amemaru:jade_core_shard",
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "amemaru:brass_wisdom_ring"
+  }
+}

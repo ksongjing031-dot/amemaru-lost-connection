@@ -1,0 +1,23 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "accessory",
+  "mastery": 3,
+  "mastery_exp": 16,
+  "ingredients": [
+    {
+      "item": "amemaru:flow_crystal",
+      "count": 1
+    },
+    {
+      "item": "amemaru:murky_gel",
+      "count": 3
+    },
+    {
+      "item": "amemaru:catfish_whisker",
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "amemaru:clearwater_necklace"
+  }
+}
