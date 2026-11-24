@@ -182,6 +182,13 @@ public class SkillTreeScreen extends Screen {
     private int pressNode = -1;
     private long lastClickTime;
     private int lastClickNode = -1;
+    /**
+     * 開いたときのマウスの位置と、そこから動かしたか。動かすまでは、節を光らせず、ツールチップも出さない
+     * （開いたとたん、画面のまん中にある節の説明が、右のパネルにかぶさっていたため。11月24日「UIがごちゃついている」）。
+     */
+    private int openMouseX = Integer.MIN_VALUE;
+    private int openMouseY;
+    private boolean mouseMoved;
 
     // ---- 選んでいる節と、右のパネル
     @Nullable
@@ -892,7 +899,7 @@ public class SkillTreeScreen extends Screen {
 
     /** マウスの下の節（なければ -1）。 */
     private int nodeAt(double mouseX, double mouseY) {
-        if (tree == null || !inCanvas(mouseX, mouseY) || overCanvasUi(mouseX, mouseY)) {
+        if (tree == null || !inCanvas(mouseX, mouseY) || overCanvasUi(mouseX, mouseY) || mouseY < topStripBottom()) {
             return -1;
         }
         int best = -1;
@@ -960,17 +967,51 @@ public class SkillTreeScreen extends Screen {
             return;
         }
 
-        int hovered = panning && pressMoved ? -1 : nodeAt(mouseX, mouseY);
+        noteMouse(mouseX, mouseY);
+        int hovered = !mouseMoved || panning && pressMoved ? -1 : nodeAt(mouseX, mouseY);
         graphics.enableScissor(canvasX0, canvasY0, canvasX1, canvasY1);
         renderStars(graphics);
         renderLinks(graphics, state, hovered);
         renderNodes(graphics, state, job, hovered);
         graphics.disableScissor();
+        renderTopStrip(graphics);
         renderHelp(graphics);
         int hoveredSlot = renderLoadout(graphics, state, mouseX, mouseY);
         renderPanel(graphics, state, job, mouseX, mouseY);
         super.render(graphics, mouseX, mouseY, partialTick);
-        renderTooltips(graphics, state, job, mouseX, mouseY, hovered, hoveredSlot);
+        if (mouseMoved) {
+            renderTooltips(graphics, state, job, mouseX, mouseY, hovered, hoveredSlot);
+        }
+    }
+
+    /** 開いてからマウスを動かしたかを覚える（{@link #mouseMoved}）。 */
+    private void noteMouse(int mouseX, int mouseY) {
+        if (mouseMoved) {
+            return;
+        }
+        if (openMouseX == Integer.MIN_VALUE) {
+            openMouseX = mouseX;
+            openMouseY = mouseY;
+        } else if (Math.abs(mouseX - openMouseX) + Math.abs(mouseY - openMouseY) > 2) {
+            mouseMoved = true;
+        }
+    }
+
+    /** 上の帯（使い方と3つのボタン）の下の端。 */
+    private int topStripBottom() {
+        return canvasY0 + 5 + TOP_BUTTON_H + 4;
+    }
+
+    /**
+     * 上の帯。木の節が使い方の文字やボタンと重なって読みにくくならないよう、左下のスキル枠の台と同じ暗い帯を敷く
+     * （11月24日「UIがごちゃついている」）。帯の下の節は、選べない（{@link #nodeAt}）。
+     */
+    private void renderTopStrip(GuiGraphics graphics) {
+        int bottom = topStripBottom();
+        graphics.fill(canvasX0, canvasY0, canvasX1, bottom, 0xC8070B16);
+        graphics.fill(canvasX0, bottom, canvasX1, bottom + 1, 0x708FD3FF);
+        // 帯で欠けた、木の枠の上の角の飾りを描き直す
+        UiStyle.panelTopCorners(graphics, canvasX0, canvasY0, canvasX1);
     }
 
     /** 背景の星（木の4分の1の速さで流れ、ゆっくりまたたく）。 */
@@ -1280,7 +1321,8 @@ public class SkillTreeScreen extends Screen {
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         graphics.blit(job.icon(), x - 2, panelY0 + 5, 16, 16, 0, 0, 64, 64, 64, 64);
-        Component points = Component.translatable("screen.amemaru.status.skill_points", state.skillPoints());
+        // 11月24日：職業の名前（ウィザード・アーチャー）が切れないよう、ここは「ポイント」だけ（くわしくはツールチップ）
+        Component points = Component.translatable("screen.amemaru.skill_tree.points", state.skillPoints());
         int pointsX = right - font.width(points);
         graphics.drawString(font, points, pointsX, panelY0 + HEADER_TEXT_Y, state.skillPoints() > 0 ? UiStyle.TEXT_GOLD : UiStyle.TEXT_DIM,
                 true);
@@ -1768,6 +1810,8 @@ public class SkillTreeScreen extends Screen {
 
     @Override
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
+        // 動かさずに押したときも、そこからは節を光らせ、説明を出す
+        mouseMoved = true;
         if (super.mouseClicked(mouseX, mouseY, button)) {
             return true;
         }

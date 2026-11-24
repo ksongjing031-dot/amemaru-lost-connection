@@ -53,6 +53,14 @@ public final class UiStyle {
         graphics.blit(AmemaruHudArt.TEXTURE, x1 - 4, y1 - 4, AmemaruHudArt.U_DIAMOND, AmemaruHudArt.V_DIAMOND, size, size, 256, 256);
     }
 
+    /** パネルの上の2つの角の飾りだけを描き直す（パネルの中の上に帯を敷いたとき、飾りの内側が欠けないように）。 */
+    public static void panelTopCorners(GuiGraphics graphics, int x0, int y0, int x1) {
+        RenderSystem.enableBlend();
+        int size = AmemaruHudArt.DIAMOND_SIZE;
+        graphics.blit(AmemaruHudArt.TEXTURE, x0 - 5, y0 - 5, AmemaruHudArt.U_DIAMOND, AmemaruHudArt.V_DIAMOND, size, size, 256, 256);
+        graphics.blit(AmemaruHudArt.TEXTURE, x1 - 4, y0 - 5, AmemaruHudArt.U_DIAMOND, AmemaruHudArt.V_DIAMOND, size, size, 256, 256);
+    }
+
     /** カード（パネルの中の小さな区切り）。{@code accent} はふちの色。 */
     public static void card(GuiGraphics graphics, int x0, int y0, int x1, int y1, int accent, boolean highlighted) {
         graphics.fill(x0 - 1, y0 - 1, x1 + 1, y1 + 1, highlighted ? (0xFF000000 | accent) : 0xFF26324D);

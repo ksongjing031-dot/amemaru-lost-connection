@@ -179,6 +179,14 @@ public final class StoryHud {
         int h = 16 + lines.size() * 10;
         int x = 6;
         int y = Math.max(6, PartyHud.bottom() + 4);
+        // 上の真ん中の札（ボスの帯・技の名前・ボスの様子・「〇〇まで」）は、小さな画面では左のはしまで広がるので、その下に出す
+        // （11月24日（2回目）：4階のボス戦で、手がかりがボスの様子の札と重なっていた）。下の端は前の絵のもの（この後で描く）
+        if (bossBarShown()) {
+            y = Math.max(y, Math.max(bossBottom, castBottom) + 4);
+        }
+        if (countdownBottom > 0) {
+            y = Math.max(y, countdownBottom + 4);
+        }
         graphics.fill(x, y, x + w, y + h, color(a * 0.75F, 0x0B1022));
         graphics.fill(x, y, x + w, y + 1, color(a, 0xFFF2A8));
         graphics.drawString(font, Component.translatable("hud.amemaru.story.tip"), x + 6, y + 4, color(a, 0xFFF2A8), false);
