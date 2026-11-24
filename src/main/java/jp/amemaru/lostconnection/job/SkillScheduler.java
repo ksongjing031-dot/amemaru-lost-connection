@@ -307,6 +307,7 @@ public final class SkillScheduler {
         ReactiveSkills.clear();
         jp.amemaru.lostconnection.combat.AfflictionService.clear();
         jp.amemaru.lostconnection.combat.GuardianHeart.clear();
+        jp.amemaru.lostconnection.combat.MeleeGuard.clear();
         ComboService.clear();
         HitHooks.clear();
         StarRingService.clear();

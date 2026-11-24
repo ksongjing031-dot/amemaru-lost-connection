@@ -435,6 +435,17 @@ public final class PlayerData {
         }
     }
 
+    /** 条件に合わない節を消す（スキルツリーの形が変わって、なくなった節。ステータスは呼ぶ側で計算し直す）。消した数を返す。 */
+    public int retainTreeNodes(java.util.function.Predicate<String> keep) {
+        int before = treeNodes.size();
+        treeNodes.removeIf(node -> !keep.test(node));
+        int removed = before - treeNodes.size();
+        if (removed > 0) {
+            dirty |= SYNC_SKILLS | SYNC_STATS;
+        }
+        return removed;
+    }
+
     /** 取ったステータスの節をすべて消す（ステータスは呼ぶ側で計算し直す）。 */
     public void clearTreeNodes() {
         if (!treeNodes.isEmpty()) {

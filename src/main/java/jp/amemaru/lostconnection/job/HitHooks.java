@@ -87,6 +87,8 @@ public final class HitHooks {
             chain.stacks = now - chain.lastTick <= ARROW_CHAIN_WINDOW ? Math.min(ARROW_CHAIN_MAX, chain.stacks + 1) : 1;
             chain.lastTick = now;
         }
+        // 11月25日：ローグの影吸い（与えたダメージの一部で癒す）
+        jp.amemaru.lostconnection.combat.MeleeGuard.drain(attacker, data, dealt);
         if (ctx == null || dealt <= 0) {
             return;
         }

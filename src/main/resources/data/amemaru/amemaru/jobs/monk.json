@@ -15,8 +15,8 @@
   "stats": {
     "percent": {
       "attack": 10,
-      "hp": 10,
-      "defense": 5,
+      "hp": 15,
+      "defense": 15,
       "mp": -10,
       "magic": -20
     },

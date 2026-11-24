@@ -1199,6 +1199,31 @@ def k_iron_resolve(c):
     up_arrow(c, 16, 10, FIRE)
 
 
+# ---------------------------------------------------------------- 11月25日：近接職の守りのパッシブ
+def k_last_stand(c):
+    # 傷だらけの盾から、金の光が立ちのぼる（倒れかけて立ち上がる）
+    shield_shape(c, 14, 6, 16, 20, STEEL_DARK, RIM)
+    c.line([(9, 12), (13, 17)], MARK_RED, 1)
+    c.line([(17, 20), (20, 24)], MARK_RED, 1)
+    cross(c, 24, 9, 4, LIFE, LIFE_DARK)
+    up_arrow(c, 24, 22, GOLD_LIGHT)
+
+
+def r_shadow_drain(c):
+    # 刃から赤いしずくが、渦を巻いて自分へ戻る
+    dagger(c, 5, 25, 21, 9)
+    droplet(c, 24, 21, 4, MARK_RED, WHITE)
+    swirl(c, 16, 16, 12, SHADOW, 0.9, 1)
+
+
+def m_adamant_body(c):
+    # 拳を構えた体を、金の菱形の気の殻が包む
+    for r, col in ((13, GOLD_DARK), (11, GOLD_LIGHT)):
+        c.poly([(16, 16 - r), (16 + r, 16), (16, 16 + r), (16 - r, 16)], None, col)
+    person(c, 16, 7, FIST_DARK)
+    fist(c, 22, 19, 3)
+
+
 def w_ice_shard(c):
     for (x, y) in ((8, 22), (16, 15), (24, 8)):
         c.poly([(x, y - 4), (x + 3, y), (x, y + 4), (x - 3, y)], fill=FROST, outline=WHITE)
@@ -1315,6 +1340,9 @@ SKILLS = {
     "knight/sword_pressure": (k_sword_pressure, KNIGHT), "knight/war_cry": (k_war_cry, KNIGHT),
     "knight/shield_rush": (k_shield_rush, KNIGHT), "knight/crushing_blow": (k_crushing_blow, KNIGHT),
     "knight/iron_resolve": (k_iron_resolve, KNIGHT),
+    # 11月25日に足したパッシブ（近接職の守り）
+    "knight/last_stand": (k_last_stand, KNIGHT), "rogue/shadow_drain": (r_shadow_drain, ROGUE),
+    "monk/adamant_body": (m_adamant_body, MONK),
     "wizard/ice_shard": (w_ice_shard, WIZARD), "wizard/star_shield": (w_star_shield, WIZARD),
     "wizard/mana_focus": (w_mana_focus, WIZARD), "wizard/frost_mist": (w_frost_mist, WIZARD),
     "wizard/light_lance": (w_light_lance, WIZARD),

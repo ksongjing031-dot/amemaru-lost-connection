@@ -93,7 +93,9 @@ public final class SkillMechanicsGameTests {
             long passives = skills.stream().filter(skill -> skill.kind() == SkillKind.PASSIVE).count();
             long ultimates = skills.stream().filter(SkillDef::isUltimate).count();
             check(helper, actives == 21, name + " のアクティブスキルが21個ではありません：" + actives);
-            check(helper, passives == 10, name + " のパッシブスキルが10個ではありません：" + passives);
+            // 11月25日：ナイト・ローグ・モンクは、近接職の守りのパッシブを1つ足して11
+            long expectedPassives = List.of("knight", "rogue", "monk").contains(name) ? 11 : 10;
+            check(helper, passives == expectedPassives, name + " のパッシブスキルが" + expectedPassives + "個ではありません：" + passives);
             check(helper, ultimates == 2, name + " の奥義が2つではありません：" + ultimates);
             long ultimateSchools = skills.stream().filter(SkillDef::isUltimate).map(SkillDef::school).distinct().count();
             check(helper, ultimateSchools == 2, name + " の奥義が、2つの流派に1つずつになっていません");
@@ -108,8 +110,9 @@ public final class SkillMechanicsGameTests {
                 int[] count = perSchool.computeIfAbsent(skill.school(), key -> new int[2]);
                 count[skill.isActive() ? 0 : 1]++;
                 check(helper, skill.row() >= 0 && skill.row() <= 5, skill.id() + " の段（row）が0〜5ではありません");
-                check(helper, skill.isActive() ? skill.column() <= 1 || skill.column() == 3 : skill.column() == 2,
-                        skill.id() + " の列（column）が、アクティブは0・1・3、パッシブは2になっていません");
+                // 11月25日：近接職の守りのパッシブ（不屈の再起・影吸い・金剛身）は、パッシブの列の外（1か3）にも置く
+                check(helper, skill.isActive() ? skill.column() <= 1 || skill.column() == 3 : skill.column() >= 1,
+                        skill.id() + " の列（column）が、アクティブは0・1・3、パッシブは1〜3になっていません");
                 for (SkillDef.Requirement requirement : skill.requirements()) {
                     SkillDef required = snapshot.skill(requirement.skill());
                     check(helper, required != null && required.school().equals(skill.school()),
@@ -121,8 +124,9 @@ public final class SkillMechanicsGameTests {
             }
             check(helper, perSchool.size() == 2, name + " の流派が2つではありません：" + perSchool.keySet());
             for (Map.Entry<String, int[]> entry : perSchool.entrySet()) {
-                check(helper, entry.getValue()[0] >= 8 && entry.getValue()[1] == 5,
-                        name + " の流派「" + entry.getKey() + "」が、アクティブ8以上・パッシブ5になっていません：" + entry.getValue()[0] + "・"
+                // 11月25日：近接職の守りのパッシブを足した流派は6
+                check(helper, entry.getValue()[0] >= 8 && entry.getValue()[1] >= 5 && entry.getValue()[1] <= 6,
+                        name + " の流派「" + entry.getKey() + "」が、アクティブ8以上・パッシブ5〜6になっていません：" + entry.getValue()[0] + "・"
                                 + entry.getValue()[1]);
             }
         }

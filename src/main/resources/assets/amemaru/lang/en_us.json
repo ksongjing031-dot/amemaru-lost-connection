@@ -108,6 +108,8 @@
   "message.amemaru.skill.learn.not_connected": "となりの節を先に取ってください（核から道がつながっている節だけ取れます）",
   "message.amemaru.skill.learn.taken": "その節はもう取ってあります",
   "message.amemaru.skill.node_taken": "%s を取りました",
+  "message.amemaru.passive.last_stand": "不屈の再起！ 誓いが体を立ち上がらせる",
+  "message.amemaru.skill.tree_nodes_removed": "スキルツリーの形が少し変わったので、なくなった節の%sポイントを戻しました",
   "message.amemaru.skill.tree_migrated": "スキルツリーが新しくなりました（ステータスもスキルツリーで振る形になりました）。振っていたステータスとスキルのポイントをすべて戻したので、スキルツリー（Jキー）で振り直してください。",
   "message.amemaru.skill.learned": "「%s」を覚えました（%s段）",
   "message.amemaru.skill.loadout.not_learned": "覚えたアクティブスキルだけ、スキル枠に入れられます",

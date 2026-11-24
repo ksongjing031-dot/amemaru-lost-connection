@@ -20,7 +20,8 @@ JOB = {
     "weapons": "amemaru:weapons/monk",
     "weapon_text": "籠手",
     "tags": ["melee", "monk"],
-    "stats": {"percent": {"attack": 10, "hp": 10, "defense": 5, "mp": -10, "magic": -20}, "flat": {"speed": 2}},
+    # 11月25日「近接職がボス戦ですぐに倒れる」：HP +10%→+15%・防御 +5%→+15%【補完】
+    "stats": {"percent": {"attack": 10, "hp": 15, "defense": 15, "mp": -10, "magic": -20}, "flat": {"speed": 2}},
     # 11月23日：近接職は、覚えられるレベルが高いスキルほど消費MPを増やす（1レベルにつき +5%。Lv10 で ×1.45、Lv30 で ×2.45）
     "skill_mp_per_level": 0.05,
     "gauge": {
@@ -201,3 +202,9 @@ active(J, "back_strike", "hard", 4, 3, "背当て",
        "踏み込みざまに背中ごとぶつかり、敵を大きく吹き飛ばしてよろめかせる。【極】",
        mp=22, cd=14, cdpr=-0.5, link="finisher", delivery=d_dash(4, 1.6), effects=[dmg("attack", (2.2, 0.3)), stagger(1.0), kb(1.4)],
        tags=["fist"], combo="finisher", anim="monk_dash_punch", requires="monk/rising_dragon")
+
+# ================================================================ 11月25日に足したパッシブ（近接職の守り）
+# ご指示「近接職がボス戦でのダメージ受けすぎてすぐに倒れてしまう。回復系のスキルや防御力を上げるなどで対策をする」【補完】
+passive(J, "adamant_body", "hard", 1, "金剛身",
+        "気を体の表に張りめぐらせ、打たれても崩れない。受けるダメージが減り、気が満ちているほど、さらに減る。", "adamant_body", (6, 2),
+        col=3)

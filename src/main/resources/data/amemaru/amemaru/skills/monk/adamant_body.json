@@ -1,0 +1,23 @@
+{
+  "job": "monk",
+  "school": "hard",
+  "row": 1,
+  "column": 3,
+  "type": "passive",
+  "name": "金剛身",
+  "description": "気を体の表に張りめぐらせ、打たれても崩れない。受けるダメージが減り、気が満ちているほど、さらに減る。",
+  "max_rank": 5,
+  "rank_costs": [
+    1,
+    1,
+    2,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "passive": {
+    "type": "adamant_body",
+    "value": 6,
+    "value_per_rank": 1.0
+  }
+}
