@@ -856,13 +856,15 @@ def hub(f):
     f.put(hx + 3, g + 2, hz - 2, lantern(False))
     f.put(hx - 3, g + 1, hz + 1, block("crafting_table"))
     f.tablet = (hx - 3, g + 1, hz - 2)
-    f.put(hx + 1, g + 1, hz + 4, block("spruce_sign", rotation=8, waterlogged=False), sign_nbt(["森番の小屋", "", "机の上に", "古い日誌"]))
+    # 11月24日：小屋の壁を向いていたので、広場の側（南）へ向ける
+    f.put(hx + 1, g + 1, hz + 4, block("spruce_sign", rotation=0, waterlogged=False), sign_nbt(["森番の小屋", "", "机の上に", "古い日誌"]))
     # 広場の宝箱（小屋の裏）
     chest(f, hx, hz - 6, "south")
-    # 広場の道標（3つの迷いの森へ）
-    for (sx, sz, rot, lines) in ((cx - 9, cz + 2, 4, ["西：迷いの森・西", "", "胞子の窪地へ"]),
-                                 (cx + 9, cz + 2, 12, ["東：迷いの森・東", "", "管の谷へ"]),
-                                 (cx + 2, cz - 9, 8, ["北：迷いの森・奥", "", "森番の空き地へ"])):
+    # 広場の道標（3つの迷いの森へ）。11月24日：指す道の先を向いていて、南から来る人には裏しか見えなかったので、
+    # 広場へ来る人の側（西の道標は南東・東の道標は南西・北の道標は南）へ向ける
+    for (sx, sz, rot, lines) in ((cx - 9, cz + 2, 14, ["西：迷いの森・西", "", "胞子の窪地へ"]),
+                                 (cx + 9, cz + 2, 2, ["東：迷いの森・東", "", "管の谷へ"]),
+                                 (cx + 2, cz - 9, 0, ["北：迷いの森・奥", "", "森番の空き地へ"])):
         g2 = f.top(sx, sz)
         f.put(sx, g2 + 1, sz, block("spruce_sign", rotation=rot, waterlogged=False), sign_nbt(lines + [""]))
 
@@ -930,7 +932,8 @@ def grove(f):
     # 飛び下りる所（台地のふち。広場の方へ）の目じるしと、崖の下の水たまり（落ちた人を受けとめる）
     sx, sz = PATHS["shortcut"][0]
     g = f.top(sx, sz)
-    f.put(sx - 2, g + 1, sz - 1, block("spruce_sign", rotation=6, waterlogged=False),
+    # 11月24日：台地を南西から来る人にも読めるよう、西へ向ける（読む人は、崖のある東を向く）
+    f.put(sx - 2, g + 1, sz - 1, block("spruce_sign", rotation=4, waterlogged=False),
           sign_nbt(["この先は崖", "", "飛び下りると", "森番の広場へ"]))
     for x in range(SIZE):
         pass

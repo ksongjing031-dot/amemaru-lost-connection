@@ -328,7 +328,8 @@ def entrance(f):
     sign(f, tx + 1, GROUND + 1, tz, 12, ["道しるべの石", "", "触れると、ともした", "中継の灯へ"])
     f.travel_stone = (tx, GROUND + 1, tz)
     sign(f, cx + 2, GROUND + 1, cz + 4, 8, ["塔の門へ戻る円", "", "円の中に立つと", "塔の門へ戻ります"])
-    sign(f, cx + 3, GROUND + 1, cz - 14, 8, ["5階", "古代守護者の祭壇", "", "奈落に落ちると戻される"])
+    # 11月24日：入口から来る人に背を向けていたので、1〜3階と同じく南（入口の側）へ向ける
+    sign(f, cx + 3, GROUND + 1, cz - 14, 0, ["5階", "古代守護者の祭壇", "", "奈落に落ちると戻される"])
     for (dx, dz) in ((-18, -16), (18, -16), (-22, 6), (22, 6)):
         lantern_post(f, cx + dx, cz + dz)
     chest(f, cx + 24, GROUND + 1, cz - 2, "west")
@@ -422,7 +423,8 @@ def side_areas(f):
     f.put(tx, GROUND + 8, tz, block("amemaru:lost_blank"))
     for (x, z) in ((452, 462), (505, 492), (402, 520)):
         chest(f, x, GROUND + 8 if hx0 <= x <= hx1 and hz0 <= z <= hz1 else GROUND + 1, z, "south")
-    sign(f, 473, GROUND + 1, hz1 + 9, 8, ["崩れた見張り台", "", "上の段から、奈落の", "向こうまで見渡せる"])
+    # 11月24日：見張り台の壁（北）を向いていたので、来る人の側（南）へ向ける
+    sign(f, 473, GROUND + 1, hz1 + 9, 0, ["崩れた見張り台", "", "上の段から、奈落の", "向こうまで見渡せる"])
 
 
 # ================================================================ 分かれ道の台
@@ -571,7 +573,8 @@ def forecourt(f):
                     f.put(x, GROUND, z, block("polished_deepslate"))
         f.put(wx, GROUND + 1, wz, block("amemaru:tower_switch", lit=False), thing(i, "shrine"))
         f.switch_stones.append((wx, GROUND + 1, wz))
-    sign(f, 288, GROUND + 1, sz0 - 2, 8, ["接続の祠", "", "東と西の仕掛け石を", "時を合わせて押せ"])
+    # 11月24日：祠の前を西から来る人にも読めるよう、北西へ向ける（北から来る人にも読める）
+    sign(f, 288, GROUND + 1, sz0 - 2, 6, ["接続の祠", "", "東と西の仕掛け石を", "時を合わせて押せ"])
     waypoint(f, "forecourt", "祭壇の前庭", 240, GROUND + 1, 186, 180, look_at=(288, 120))
     for (lx, lz) in ((x0 + 6, z0 + 6), (x1 - 6, z0 + 6), (x0 + 6, z1 - 6), (x1 - 6, z1 - 6)):
         lantern_post(f, lx, lz)
