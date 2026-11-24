@@ -121,11 +121,23 @@ public final class FloorRealPlayGameTests {
         GameTestSequence seq = helper.startSequence()
                 .thenExecute(() -> {
                     resetFloor(server, def, player, data);
+                    // 自動テストのサーバーは tick が速く進むので、建てる順番が区画の読み込みを待ちきれないことがある（5階は広い）。
+                    // 範囲の区画をその場で読み込んでから建て、待ちきれずに順番が落ちたら出し直す
+                    BlockPos origin = def.origin();
+                    for (int cx = origin.getX() >> 4; cx <= (origin.getX() + def.sizeX() - 1) >> 4; cx++) {
+                        for (int cz = origin.getZ() >> 4; cz <= (origin.getZ() + def.sizeZ() - 1) >> 4; cz++) {
+                            tower.getChunk(cx, cz);
+                        }
+                    }
                     builds[0] = FloorBuild.builds;
                     FloorBuild.build(source, floor);
                 })
-                .thenWaitUntil(() -> check(helper, FloorBuild.builds > builds[0],
-                        floor + "階が建ちません（" + (helper.getLevel().getGameTime() - start) + " tick）"))
+                .thenWaitUntil(() -> {
+                    if (FloorBuild.builds == builds[0] && !FloorBuild.pending(floor)) {
+                        FloorBuild.build(source, floor);
+                    }
+                    check(helper, FloorBuild.builds > builds[0], floor + "階が建ちません（" + (helper.getLevel().getGameTime() - start) + " tick）");
+                })
                 .thenIdle(5)
                 .thenExecute(() -> {
                     // 人が来たときと同じく、保存の状態に見えるものを合わせる（3階：水門と水。4階：崩れた壁画のパネル・扉）

@@ -77,6 +77,16 @@ public final class FloorBuild {
         return 1;
     }
 
+    /** その階を、読み込みを待って建てる順番待ちがあるか（自動テストが、待ちきれずに落ちた順番を出し直すのに使う）。 */
+    public static boolean pending(int floor) {
+        for (Job job : JOBS) {
+            if (job.def().number() == floor) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private static void hold(ServerLevel level, FloorDef def) {
         ChunkPos middle = new ChunkPos(new BlockPos(def.origin().getX() + def.sizeX() / 2, def.origin().getY(),
                 def.origin().getZ() + def.sizeZ() / 2));
