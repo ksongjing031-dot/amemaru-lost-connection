@@ -516,6 +516,10 @@ public class Hydram extends AmemaruBoss implements Drains.Listener {
                 }
             }
             level.sendParticles(ParticleTypes.SPLASH, cx, floorY + 0.5, cz, 30, 1.2, 0.3, 1.2, 0.2);
+            // 11月25日（CIの写真で見て足した）：堤のかげ（番人から見て堤の向こう）に、金の円で逃げこむ所を示す
+            Vec3 safe = new Vec3(getX() + Math.cos(a) * (radius + 2.2), floorY, getZ() + Math.sin(a) * (radius + 2.2));
+            jp.amemaru.lostconnection.entity.GroundMarker.place(level, safe, 1.7F, timer,
+                    jp.amemaru.lostconnection.entity.GroundMarker.KIND_SAFE);
         }
         dikeTicks = 0;
         level.playSound(null, getX(), getY(), getZ(), SoundEvents.PISTON_EXTEND, SoundSource.HOSTILE, 2.0F, 0.5F);

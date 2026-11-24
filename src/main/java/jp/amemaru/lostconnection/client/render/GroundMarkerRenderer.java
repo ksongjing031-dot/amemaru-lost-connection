@@ -42,7 +42,8 @@ public class GroundMarkerRenderer extends EntityRenderer<GroundMarker> {
     /** 印の種類の色。 */
     static int kindColor(int kind) {
         return switch (kind) {
-            case GroundMarker.KIND_SEED -> 0x6EE07A;
+            // 種は草の上でも見えるように、桃色（胞子の花の色）
+            case GroundMarker.KIND_SEED -> 0xFF8FE0;
             case GroundMarker.KIND_SEVER -> 0xF0F4FF;
             case GroundMarker.KIND_SAFE -> 0xF2C94C;
             case GroundMarker.KIND_NOTE -> 0xF4F4F4;

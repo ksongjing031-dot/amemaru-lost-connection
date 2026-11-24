@@ -457,7 +457,9 @@ public final class StoryHud {
         guideBottom = 0;
         var story = ClientStory.story();
         if (story.guideIndex() < 0 || story.guideText().isEmpty()
-                || minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.DialogueScreen) {
+                || minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.DialogueScreen
+                // 11月25日：ボス戦の間はしまう（ボスのHPの帯の下の、技の名前と残りの帯に重なっていた）
+                || !BossFx.currentBoss().isEmpty()) {
             return;
         }
         int w = 150;

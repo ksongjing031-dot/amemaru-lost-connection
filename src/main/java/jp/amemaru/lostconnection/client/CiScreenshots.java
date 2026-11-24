@@ -1182,7 +1182,10 @@ public final class CiScreenshots {
             {"cmd", null, "0", "amemaru admin boss skill 2 seeds"},
             {"await_ground", null, "0", "phase8_f2_boss_seeds"},
             {"p8_bossfx", null, "0", "f2"},
-            {"snap", null, "40", "phase8_f2_boss_seeds_rooted"},
+            // 根づいた種（桃色の円と光の柱）を、空き地の上から見下ろして撮り、すぐ地面へ戻る（落ちる前に）
+            {"cmd", null, "36", "execute in amemaru:tower run tp @p {f2:216.5,33,74.5} 180 48"},
+            {"snap", null, "3", "phase8_f2_boss_seeds_rooted"},
+            {"cmd", null, "1", "execute in amemaru:tower run tp @p {f2:216.5,19,70.5} 180 25"},
             // 光る節を3つとも壊すと怯む（傾いた幹が写るように、少し見上げる）
             {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
             {"cmd", null, "10", "execute in amemaru:tower run tp @p {f2:216.5,19,68.5} 180 -14"},
@@ -1285,7 +1288,7 @@ public final class CiScreenshots {
             {"await_ground", null, "0", "phase8_f3_boss_whirl"},
             // 11月25日：固有のギミック「大放水」（番人のまわりに青銅の堤がせり上がる。堤のかげに隠れる）
             {"cmd", null, "50", "amemaru admin debug vitals @a 100 100"},
-            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f3:234.5,15,60.5} 180 25"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f3:240.5,15,58.5} 180 22"},
             {"cmd", null, "0", "amemaru admin boss skill 3 flood"},
             {"snap", null, "30", "phase8_f3_boss_flood"},
             {"p8_bossfx", null, "0", "f3"},
