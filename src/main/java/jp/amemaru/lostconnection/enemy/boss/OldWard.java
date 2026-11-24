@@ -48,12 +48,15 @@ import java.util.UUID;
  *   <li>HP60%：迷い灯を呼ぶ。HP30%：森が暗くなる（灯を持つ人のまわりしか見えない。空き地に「森番の灯」が2つ落ちる。
  *       店の手提げランタンも灯になる）【補完】</li>
  * </ul>
+ * <p>11月25日のご指示「ボスそれぞれの固有のギミックを追加する」【提案】：<b>芽吹きの種</b>。ときどき空き地に光る種をまく
+ * （緑の円のあとに根づく。2つ、3人以上なら3つ）。{@code skills.seeds.grow} 秒たつと若木に育ち、1本ごとに古樹の傷が
+ * 最大HPの {@code heal}% ふさがり、迷い灯が1つ出る。育つ前に壊す（遠くから撃てる人の出番）。</p>
  * 数値は敵の定義（{@code enemies/old_ward.json}）の技で変えられる。
  */
 public class OldWard extends AmemaruBoss {
-    public static final List<String> SKILLS = List.of("sweep", "crack", "cage", "call", "dark");
+    public static final List<String> SKILLS = List.of("sweep", "crack", "cage", "call", "dark", "seeds");
 
-    private enum Action { NONE, SWEEP, CRACK, CAGE, CALL, STUNNED, RECOVER }
+    private enum Action { NONE, SWEEP, CRACK, CAGE, CALL, STUNNED, RECOVER, SEEDS }
 
     private Action action = Action.NONE;
 
@@ -69,6 +72,10 @@ public class OldWard extends AmemaruBoss {
     private double crackLength;
     private final List<Vec3> cageSpots = new ArrayList<>();
     private final List<UUID> knots = new ArrayList<>();
+    /** 芽吹きの種（11月25日）：まく所（緑の円が出ている間）と、根づいた種 */
+    private final List<Vec3> seedSpots = new ArrayList<>();
+    private final List<UUID> seeds = new ArrayList<>();
+    private int fightTicks;
     private final List<UUID> summoned = new ArrayList<>();
     private int regrow;
     private boolean dark;
@@ -160,8 +167,11 @@ public class OldWard extends AmemaruBoss {
         timer = 0;
         cageSpots.clear();
         regrow = 0;
+        fightTicks = 0;
         stopDark();
         discardKnots();
+        discardSeeds();
+        setStatus("", 0);
         discardSummoned();
     }
 
@@ -182,6 +192,10 @@ public class OldWard extends AmemaruBoss {
         }
         placeKnots(level);
         tickCaged(level);
+        fightTicks++;
+        if (tickCount % 10 == 0) {
+            updateSeedStatus(level);
+        }
         if (dark && tickCount % 20 == 0) {
             darkness(level);
         }
@@ -194,6 +208,7 @@ public class OldWard extends AmemaruBoss {
             case CRACK -> tickCrack(level);
             case CAGE -> tickCage(level);
             case CALL -> tickCall(level);
+            case SEEDS -> tickSeeds(level);
             case STUNNED -> tickStunned(level);
             case RECOVER -> {
                 if (--timer <= 0) {
@@ -243,6 +258,12 @@ public class OldWard extends AmemaruBoss {
             if (d > 6.0 && d <= crack.range() && (far == null || random.nextBoolean())) {
                 far = player;
             }
+        }
+        // 芽吹きの種：戦いが始まって少したってから、間をあけて（11月25日）
+        EnemyDef.Skill seedSkill = skill("seeds", 0.0, 1.5, 40.0, 14.0);
+        if (ready("seeds") && fightTicks >= (int) Math.round(seedSkill.param("first", 20.0) * 20) && aliveSeeds(level) == 0) {
+            startSeeds(level, seedSkill);
+            return;
         }
         List<Action> options = new ArrayList<>();
         if (near != null && ready("sweep")) {
@@ -526,6 +547,162 @@ public class OldWard extends AmemaruBoss {
         action = Action.NONE;
     }
 
+    // ---- 芽吹きの種（11月25日）
+
+    private void startSeeds(ServerLevel level, EnemyDef.Skill seedSkill) {
+        action = Action.SEEDS;
+        timer = Math.max(10, seedSkill.windupTicks());
+        setBusy(timer + 5);
+        playAction("skill_call");
+        setCast("seeds", timer);
+        seedSpots.clear();
+        BossRoom room = room();
+        int participants = room == null ? 1 : room.participants().size();
+        int count = (int) seedSkill.param("count", 2.0) + (participants >= 3 ? 1 : 0);
+        Vec3 base = room != null ? room.arenaCenter() : position();
+        double start = random.nextDouble() * Math.PI * 2.0;
+        for (int i = 0; i < count; i++) {
+            // 空き地に散らばる（古樹から 7〜range ブロック。同じ所に重ならないよう、向きを分ける）
+            double a = start + i * Math.PI * 2.0 / count + (random.nextDouble() - 0.5) * 0.6;
+            double r = 7.0 + random.nextDouble() * Math.max(1.0, seedSkill.range() - 7.0);
+            Vec3 at = new Vec3(base.x + Math.cos(a) * r, getY(), base.z + Math.sin(a) * r);
+            seedSpots.add(at);
+            jp.amemaru.lostconnection.entity.GroundMarker.place(level, at, 1.6F, timer, jp.amemaru.lostconnection.entity.GroundMarker.KIND_SEED);
+            level.sendParticles(ParticleTypes.FALLING_SPORE_BLOSSOM, at.x, getY() + 4.0, at.z, 10, 0.4, 0.6, 0.4, 0.0);
+        }
+        line("boss.amemaru.old_ward.line.seeds");
+        tipOnce("seeds");
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.AZALEA_LEAVES_BREAK, SoundSource.HOSTILE, 2.0F, 0.5F);
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.BIG_DRIPLEAF_TILT_DOWN, SoundSource.HOSTILE, 2.0F, 0.6F);
+    }
+
+    private void tickSeeds(ServerLevel level) {
+        if (--timer > 0) {
+            return;
+        }
+        EnemyDef.Skill seedSkill = skill("seeds", 0.0, 1.5, 40.0, 14.0);
+        int grow = (int) Math.round(seedSkill.param("grow", 15.0) * 20);
+        for (Vec3 at : seedSpots) {
+            OldWardKnot seed = ModEntities.OLD_WARD_KNOT.get().create(level);
+            if (seed == null) {
+                continue;
+            }
+            seed.setSeed(this, grow);
+            seed.moveTo(at.x, at.y + 0.2, at.z, random.nextFloat() * 360.0F, 0.0F);
+            seed.setTransient(true);
+            seed.setHpMultiplier(hpMultiplier() * seedSkill.param("hp_scale", 0.4));
+            level.addFreshEntity(seed);
+            seed.setEnemyHp(seed.getEnemyMaxHp());
+            seeds.add(seed.getUUID());
+            level.sendParticles(ParticleTypes.COMPOSTER, at.x, at.y + 0.3, at.z, 16, 0.4, 0.2, 0.4, 0.05);
+        }
+        seedSpots.clear();
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.ROOTED_DIRT_PLACE, SoundSource.HOSTILE, 2.0F, 0.6F);
+        startCooldown("seeds", cooldown(seedSkill));
+        action = Action.NONE;
+        updateSeedStatus(level);
+    }
+
+    private int aliveSeeds(ServerLevel level) {
+        int alive = 0;
+        for (UUID id : seeds) {
+            if (level.getEntity(id) instanceof OldWardKnot seed && seed.isAlive()) {
+                alive++;
+            }
+        }
+        return alive;
+    }
+
+    /** 「若木：あと N 秒で育つ（M本）」。種がなければ消す。 */
+    private void updateSeedStatus(ServerLevel level) {
+        int alive = 0;
+        int soonest = Integer.MAX_VALUE;
+        for (UUID id : seeds) {
+            if (level.getEntity(id) instanceof OldWardKnot seed && seed.isAlive()) {
+                alive++;
+                soonest = Math.min(soonest, seed.growTicks());
+            }
+        }
+        seeds.removeIf(id -> !(level.getEntity(id) instanceof OldWardKnot seed) || !seed.isAlive());
+        if (alive > 0) {
+            setStatus("seeds:" + alive, (soonest + 19) / 20);
+        } else if (status().startsWith("seeds")) {
+            setStatus("", 0);
+        }
+    }
+
+    /** 種が若木に育った：古樹の傷がふさがり、迷い灯が出る。 */
+    public void onSeedMatured(OldWardKnot seed) {
+        if (!(level() instanceof ServerLevel level) || !isAlive()) {
+            return;
+        }
+        EnemyDef.Skill seedSkill = skill("seeds", 0.0, 1.5, 40.0, 14.0);
+        double heal = getEnemyMaxHp() * seedSkill.param("heal", 4.0) / 100.0;
+        setEnemyHp(Math.min(getEnemyMaxHp(), getEnemyHp() + heal));
+        level.sendParticles(ParticleTypes.HAPPY_VILLAGER, seed.getX(), seed.getY() + 1.0, seed.getZ(), 20, 0.6, 1.0, 0.6, 0.1);
+        level.sendParticles(ParticleTypes.HAPPY_VILLAGER, getX(), getY() + 3.0, getZ(), 30, 1.5, 2.0, 1.5, 0.1);
+        level.playSound(null, seed.getX(), seed.getY(), seed.getZ(), SoundEvents.BONE_MEAL_USE, SoundSource.HOSTILE, 2.0F, 0.7F);
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.HOSTILE, 1.6F, 0.6F);
+        MayoiBi light = ModEntities.MAYOI_BI.get().create(level);
+        if (light != null) {
+            light.moveTo(seed.getX(), getY() + 1.5, seed.getZ(), random.nextFloat() * 360.0F, 0.0F);
+            light.setHome(BlockPos.containing(seed.getX(), getY(), seed.getZ()));
+            light.setTransient(true);
+            level.addFreshEntity(light);
+            summoned.add(light.getUUID());
+            List<ServerPlayer> players = targets(level);
+            if (!players.isEmpty()) {
+                light.addThreat(players.get(random.nextInt(players.size())), 5.0);
+            }
+        }
+        BossRoom room = room();
+        if (room != null) {
+            for (ServerPlayer player : room.participants()) {
+                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("boss.amemaru.old_ward.seed_grown")
+                        .withStyle(net.minecraft.ChatFormatting.RED), true);
+            }
+        }
+    }
+
+    /** 種を育つ前に壊した。 */
+    public void onSeedDestroyed(OldWardKnot seed) {
+        if (level() instanceof ServerLevel level) {
+            level.playSound(null, seed.getX(), seed.getY(), seed.getZ(), SoundEvents.AZALEA_LEAVES_BREAK, SoundSource.HOSTILE, 1.6F, 1.4F);
+            level.sendParticles(ParticleTypes.FALLING_SPORE_BLOSSOM, seed.getX(), seed.getY() + 1.0, seed.getZ(), 12, 0.4, 0.4, 0.4, 0.0);
+        }
+    }
+
+    private void discardSeeds() {
+        if (level() instanceof ServerLevel level) {
+            for (UUID id : seeds) {
+                Entity entity = level.getEntity(id);
+                if (entity != null) {
+                    entity.discard();
+                }
+            }
+        }
+        seeds.clear();
+        seedSpots.clear();
+    }
+
+    /** 自動テスト：根づいている種の数。 */
+    public int seedCount() {
+        return level() instanceof ServerLevel level ? aliveSeeds(level) : 0;
+    }
+
+    /** 自動テスト：根づいている種。 */
+    public List<OldWardKnot> seedEntities() {
+        List<OldWardKnot> list = new ArrayList<>();
+        if (level() instanceof ServerLevel level) {
+            for (UUID id : seeds) {
+                if (level.getEntity(id) instanceof OldWardKnot seed && seed.isAlive()) {
+                    list.add(seed);
+                }
+            }
+        }
+        return list;
+    }
+
     // ---- 光る節
 
     private int aliveKnots() {
@@ -759,6 +936,7 @@ public class OldWard extends AmemaruBoss {
                 timer = 1;
             }
             case "dark" -> startDark(level);
+            case "seeds" -> startSeeds(level, skill("seeds", 0.0, 1.5, 40.0, 14.0));
             default -> {
                 return false;
             }

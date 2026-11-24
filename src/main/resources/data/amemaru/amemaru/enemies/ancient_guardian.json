@@ -64,6 +64,13 @@
     "gather": {
       "range": 5.0,
       "timeout": 60.0
+    },
+    "sever": {
+      "power": 1.8,
+      "windup": 4.0,
+      "cooldown": 35.0,
+      "range": 4.0,
+      "first": 25.0
     }
   },
   "behavior": {},

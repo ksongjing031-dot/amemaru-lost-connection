@@ -47,14 +47,19 @@ import java.util.UUID;
  *   <li>HP50%：吠えて、ツノモフを呼ぶ（2匹＋参加者の数。6匹まで）。突進の予兆が短くなり、続けて2回突っ込むことがある。
  *       HP20%：さらに技の間が短くなり、突進は2〜3回続く【提案】</li>
  * </ul>
+ * <p>11月25日のご指示「ボスそれぞれの固有のギミックを追加する」【提案】：<b>大地の咆哮</b>。HP70%と35%で、角を地面に突き立てて
+ * 大地の力を吸い上げる（9秒）。その間にみんなで攻撃を集め、最大HPの {@code skills.earth_roar.break}%（2.5%）を削ると、角が折れて
+ * 倒れ（{@code stun} 秒）、しばらく受けるダメージが {@code weak} 倍。止められないと、部屋じゅうに大地の衝撃（{@code power}）が走り、
+ * 足が重くなる。近くで戦う人が活躍できる「止める」仕掛け。</p>
  * 数値は敵の定義（{@code enemies/veldhorn.json}）の技で変えられる。管理者は {@code /amemaru admin boss skill 1 <技>} で、戦いの間に
  * 技を出させられる（{@link #SKILLS}）。
  */
 public class Veldhorn extends AmemaruBoss {
     /** 技の名前（管理者のコマンドで出させる名前）。 */
-    public static final List<String> SKILLS = List.of("sweep", "upthrust", "kick", "charge", "stomp", "leap", "roots", "roar");
+    public static final List<String> SKILLS = List.of("sweep", "upthrust", "kick", "charge", "stomp", "leap", "roots", "roar", "earth_roar");
 
-    private enum Action { NONE, SWEEP, UPTHRUST, KICK, CHARGE_WINDUP, CHARGING, STUNNED, RECOVER, STOMP, LEAP_WINDUP, LEAPING, ROOTS, ROAR }
+    private enum Action { NONE, SWEEP, UPTHRUST, KICK, CHARGE_WINDUP, CHARGING, STUNNED, RECOVER, STOMP, LEAP_WINDUP, LEAPING, ROOTS, ROAR,
+        EARTH_ROAR }
 
     private Action action = Action.NONE;
 
@@ -90,6 +95,13 @@ public class Veldhorn extends AmemaruBoss {
     private int rootWaves;
     /** HP50%で吠えるのを、跳んでいる・突っ込んでいる技が終わるまで待つ */
     private boolean roarPending;
+    /** 大地の咆哮（11月25日）：出した回数（HP70%・35%で1回ずつ）・構えの間に受けたダメージ・止めるのに要る量・弱っている残り */
+    private int earthRoarsDone;
+    private double roarDamage;
+    private double roarNeeded;
+    private int weakTicks;
+    @Nullable
+    private jp.amemaru.lostconnection.entity.GroundMarker roarMarker;
     private final Set<String> tips = new HashSet<>();
 
     public Veldhorn(EntityType<? extends Veldhorn> type, Level level) {
@@ -150,6 +162,10 @@ public class Veldhorn extends AmemaruBoss {
         return skill("roots", 1.0, 1.0, 13.0, 24.0);
     }
 
+    private EnemyDef.Skill earthRoarSkill() {
+        return skill("earth_roar", 1.6, 9.0, 60.0, 40.0);
+    }
+
     private int cooldown(EnemyDef.Skill skill) {
         double scale = phase() >= 3 ? 0.7 : phase() == 2 ? 0.85 : 1.0;
         // 11月23日：参加の人数が多いほど、長引いて怒るほど、技の間が短い
@@ -194,6 +210,11 @@ public class Veldhorn extends AmemaruBoss {
         rootSpots.clear();
         rootWaves = 0;
         roarPending = false;
+        earthRoarsDone = 0;
+        roarDamage = 0.0;
+        weakTicks = 0;
+        discardRoarMarker();
+        setStatus("", 0);
         discardSummoned();
     }
 
@@ -226,6 +247,10 @@ public class Veldhorn extends AmemaruBoss {
             case LEAPING -> tickLeaping(level);
             case ROOTS -> tickRoots(level);
             case ROAR -> tickRoar(level);
+            case EARTH_ROAR -> tickEarthRoar(level);
+        }
+        if (weakTicks > 0 && --weakTicks == 0) {
+            setStatus("", 0);
         }
     }
 
@@ -237,6 +262,15 @@ public class Veldhorn extends AmemaruBoss {
         if (roarPending) {
             roarPending = false;
             startRoar(level);
+            return;
+        }
+        // 大地の咆哮：HP70%と35%で1回ずつ（11月25日）
+        EnemyDef.Skill earth = earthRoarSkill();
+        double ratio = getEnemyHp() / getEnemyMaxHp();
+        if (earthRoarsDone == 0 && ratio <= earth.param("first_at", 0.7)
+                || earthRoarsDone == 1 && ratio <= earth.param("second_at", 0.35)) {
+            earthRoarsDone++;
+            startEarthRoar(level, earth);
             return;
         }
         List<ServerPlayer> players = targets(level);
@@ -866,6 +900,147 @@ public class Veldhorn extends AmemaruBoss {
         tip("boss.amemaru.veldhorn.tip.call");
     }
 
+    // ---- 大地の咆哮（11月25日。HP70%・35%）
+
+    private void startEarthRoar(ServerLevel level, EnemyDef.Skill earth) {
+        action = Action.EARTH_ROAR;
+        timer = Math.max(20, earth.windupTicks());
+        roarDamage = 0.0;
+        roarNeeded = getEnemyMaxHp() * earth.param("break", 2.5) / 100.0;
+        getNavigation().stop();
+        setBusy(timer + 10);
+        clearTelegraph();
+        setTelegraph(TELEGRAPH_ALERT, timer, getYRot(), 0.0F);
+        playAction("skill_roar");
+        setCast("earth_roar", timer);
+        line("boss.amemaru.veldhorn.line.earth_roar");
+        tipOnce("earth_roar");
+        discardRoarMarker();
+        BossRoom room = room();
+        Vec3 center = room != null ? room.arenaCenter() : position();
+        roarMarker = jp.amemaru.lostconnection.entity.GroundMarker.place(level, new Vec3(center.x, getY(), center.z),
+                (float) Math.min(28.0, earth.range()), timer);
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 2.4F, 0.5F);
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.BEACON_POWER_SELECT, SoundSource.HOSTILE, 2.0F, 0.5F);
+        updateRoarStatus();
+    }
+
+    private void tickEarthRoar(ServerLevel level) {
+        getNavigation().stop();
+        setDeltaMovement(0.0, getDeltaMovement().y, 0.0);
+        Vec3 head = position().add(getLookAngle().multiply(1.0, 0.0, 1.0).scale(1.6)).add(0.0, getBbHeight() * 0.8, 0.0);
+        if (timer % 3 == 0) {
+            level.sendParticles(ParticleTypes.ELECTRIC_SPARK, head.x, head.y, head.z, 6, 0.5, 0.3, 0.5, 0.2);
+            level.sendParticles(ParticleTypes.END_ROD, head.x, head.y + 0.4, head.z, 2, 0.3, 0.3, 0.3, 0.02);
+        }
+        if (timer % 20 == 0) {
+            level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.DIRT.defaultBlockState()), getX(), getY() + 0.1, getZ(),
+                    30, 4.0, 0.1, 4.0, 0.2);
+            level.playSound(null, getX(), getY(), getZ(), SoundEvents.WARDEN_HEARTBEAT, SoundSource.HOSTILE, 2.0F, 0.6F);
+        }
+        if (timer % 5 == 0) {
+            updateRoarStatus();
+        }
+        if (roarDamage >= roarNeeded) {
+            interruptEarthRoar(level);
+            return;
+        }
+        if (--timer > 0) {
+            return;
+        }
+        releaseEarthRoar(level);
+    }
+
+    /** 「大地の咆哮まで N 秒 ― 角を打って止めろ（あと M%）」 */
+    private void updateRoarStatus() {
+        int left = roarNeeded <= 0 ? 0 : (int) Math.ceil(Math.max(0.0, roarNeeded - roarDamage) / roarNeeded * 100.0);
+        setStatus("earth_roar:" + left, (timer + 19) / 20);
+    }
+
+    /** 止めた：角が折れて倒れ、しばらく弱る。 */
+    private void interruptEarthRoar(ServerLevel level) {
+        EnemyDef.Skill earth = earthRoarSkill();
+        discardRoarMarker();
+        clearTelegraph();
+        action = Action.STUNNED;
+        timer = ticks(earth.param("stun", 5.0));
+        weakTicks = ticks(earth.param("weak_seconds", 8.0));
+        setBusy(timer + 5);
+        setStatus("open_horn", (weakTicks + 19) / 20);
+        Vec3 head = position().add(0.0, getBbHeight() * 0.8, 0.0);
+        level.sendParticles(ParticleTypes.EXPLOSION, head.x, head.y, head.z, 2, 0.5, 0.3, 0.5, 0.0);
+        level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.BONE_BLOCK.defaultBlockState()), head.x, head.y, head.z,
+                40, 0.8, 0.5, 0.8, 0.3);
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.ZOMBIE_BREAK_WOODEN_DOOR, SoundSource.HOSTILE, 2.0F, 0.6F);
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.RAVAGER_STUNNED, SoundSource.HOSTILE, 2.0F, 0.8F);
+        line("boss.amemaru.veldhorn.line.horn_broken");
+        BossRoom room = room();
+        if (room != null) {
+            for (ServerPlayer player : room.participants()) {
+                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("boss.amemaru.veldhorn.horn_broken",
+                        Math.round(earth.param("weak", 1.5) * 10.0) / 10.0).withStyle(net.minecraft.ChatFormatting.GOLD,
+                        net.minecraft.ChatFormatting.BOLD), true);
+            }
+        }
+    }
+
+    /** 止められなかった：部屋じゅうに大地の衝撃。 */
+    private void releaseEarthRoar(ServerLevel level) {
+        EnemyDef.Skill earth = earthRoarSkill();
+        discardRoarMarker();
+        clearTelegraph();
+        action = Action.RECOVER;
+        timer = 20;
+        setStatus("", 0);
+        for (ServerPlayer player : targets(level)) {
+            strikeAway(player, earth.power(), 1.1, 0.5);
+            player.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN,
+                    60, 1, false, true, true));
+            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("boss.amemaru.veldhorn.earth_roar_hit")
+                    .withStyle(net.minecraft.ChatFormatting.RED), true);
+        }
+        level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, getX(), getY() + 0.5, getZ(), 1, 0.0, 0.0, 0.0, 0.0);
+        level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.DIRT.defaultBlockState()), getX(), getY() + 0.2, getZ(),
+                120, 10.0, 0.2, 10.0, 0.4);
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 2.4F, 0.6F);
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 2.4F, 0.4F);
+    }
+
+    private void discardRoarMarker() {
+        if (roarMarker != null) {
+            roarMarker.discard();
+            roarMarker = null;
+        }
+    }
+
+    /** 構えの間に受けたダメージを数える（止めるのに要る量へ）。 */
+    @Override
+    public void onDamagedBy(@Nullable net.minecraft.world.entity.Entity attacker, double amount) {
+        super.onDamagedBy(attacker, amount);
+        if (action == Action.EARTH_ROAR && attacker instanceof ServerPlayer) {
+            roarDamage += Math.max(0.0, amount);
+        }
+    }
+
+    /** 角が折れて弱っている間は、受けるダメージが増える。 */
+    @Override
+    public double damageTakenMultiplier(@Nullable net.minecraft.world.entity.Entity attacker) {
+        return weakTicks > 0 ? earthRoarSkill().param("weak", 1.5) : super.damageTakenMultiplier(attacker);
+    }
+
+    /** 自動テスト：大地の咆哮の構えの間か・止めるのに要る量・受けた量・弱っている残り。 */
+    public boolean earthRoaring() {
+        return action == Action.EARTH_ROAR;
+    }
+
+    public double earthRoarNeeded() {
+        return roarNeeded;
+    }
+
+    public int weakTicks() {
+        return weakTicks;
+    }
+
     /** 呼んだツノモフを消す（戦いをはじめからにするとき）。 */
     public void discardSummoned() {
         if (level() instanceof ServerLevel level) {
@@ -897,12 +1072,13 @@ public class Veldhorn extends AmemaruBoss {
             return false;
         }
         List<ServerPlayer> players = targets(level);
-        if (players.isEmpty() || !SKILLS.contains(name)) {
+        // 大地の咆哮は、狙う人がいなくても構える（部屋の外で試すとき）
+        if (!SKILLS.contains(name) || players.isEmpty() && !name.equals("earth_roar")) {
             return false;
         }
         ServerPlayer top = topThreat();
         if (top == null || !players.contains(top)) {
-            top = players.get(0);
+            top = players.isEmpty() ? null : players.get(0);
         }
         clearTelegraph();
         clearBusy();
@@ -928,6 +1104,7 @@ public class Veldhorn extends AmemaruBoss {
             case "stomp" -> startStomp(stompSkill());
             case "leap" -> startLeap(level, top, leapSkill());
             case "roots" -> startRoots(level, rootsSkill());
+            case "earth_roar" -> startEarthRoar(level, earthRoarSkill());
             default -> startRoar(level);
         }
         return true;

@@ -185,18 +185,24 @@ public final class BossMeleeGameTests {
      */
     @GameTest(template = EMPTY)
     public static void bossesAreSlowerAndHaveNoSharedBlow(GameTestHelper helper) {
-        for (String id : List.of("veldhorn", "old_ward", "hydram", "cantare", "ancient_guardian")) {
+        // 予兆を長くした技（打つ・よける技）：予兆は1秒以上で、アニメーションを作ったときの予兆（anim_windup）より長い
+        java.util.Map<String, List<String>> attacks = java.util.Map.of(
+                "veldhorn", List.of("sweep", "upthrust", "kick", "charge", "stomp", "leap", "roots"),
+                "old_ward", List.of("sweep", "crack", "cage"),
+                "hydram", List.of("cannon", "sweep", "whirl"),
+                "cantare", List.of("wave", "pillars"),
+                "ancient_guardian", List.of("sweep", "beam", "slam", "judge"));
+        for (var bossEntry : attacks.entrySet()) {
+            String id = bossEntry.getKey();
             EnemyDef def = EnemyDefs.get(AmemaruMod.id(id));
             check(helper, def != null, id + " の定義がありません");
             check(helper, !def.raid() && !def.skills().containsKey("share"), id + " に、みんなで受ける一撃が残っています（レイドのボスだけ）");
-            for (var entry : def.skills().entrySet()) {
-                EnemyDef.Skill skill = entry.getValue();
-                if (skill.power() <= 0.0 || skill.windup() <= 0.0 || entry.getKey().equals("song")) {
-                    continue;
-                }
-                check(helper, skill.windup() >= 1.0, id + " の技 " + entry.getKey() + " の予兆が1秒より短いです：" + skill.windup());
-                check(helper, skill.param("anim_windup", skill.windup()) <= skill.windup(),
-                        id + " の技 " + entry.getKey() + " の anim_windup が予兆より長いです");
+            for (String name : bossEntry.getValue()) {
+                EnemyDef.Skill skill = def.skills().get(name);
+                check(helper, skill != null, id + " に技 " + name + " がありません");
+                check(helper, skill.windup() >= 1.0, id + " の技 " + name + " の予兆が1秒より短いです：" + skill.windup());
+                double designed = skill.param("anim_windup", -1.0);
+                check(helper, designed > 0.0 && designed < skill.windup(), id + " の技 " + name + " の予兆が、前（anim_windup）より長くなっていません");
             }
         }
         EnemyDef cantare = EnemyDefs.get(AmemaruMod.id("cantare"));
@@ -222,6 +228,128 @@ public final class BossMeleeGameTests {
             boss.discard();
             helper.succeed();
         });
+    }
+
+    // ---------------------------------------------------------------- ボスの固有のギミック（11月25日）
+
+    /** 1階：大地の咆哮。構えの間に最大HPの2.5%を削ると角が折れて倒れ、しばらく受けるダメージが1.5倍。 */
+    @GameTest(template = EMPTY, timeoutTicks = 200)
+    public static void veldhornEarthRoarCanBeBroken(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        FakePlayer player = fake(helper, "earth_roar");
+        withSkill(player, "knight", null, 0);
+        Veldhorn boss = ModEntities.VELDHORN.get().create(level);
+        check(helper, boss != null, "ヴェルドホーンを作れません");
+        Vec3 at = helper.absoluteVec(new Vec3(1.5, 1.0, 1.5));
+        boss.moveTo(at.x + 4.0, at.y, at.z, 0.0F, 0.0F);
+        level.addFreshEntity(boss);
+        helper.runAfterDelay(2, () -> {
+            check(helper, boss.forceSkill("earth_roar") && boss.earthRoaring(), "大地の咆哮の構えに入りません");
+            double needed = boss.earthRoarNeeded();
+            check(helper, Math.abs(needed - boss.getEnemyMaxHp() * 0.025) < 1.0, "止めるのに要る量が最大HPの2.5%ではありません：" + needed);
+            boss.onDamagedBy(player, needed + 1.0);
+        });
+        helper.runAfterDelay(6, () -> {
+            check(helper, !boss.earthRoaring() && boss.weakTicks() > 0, "削っても、角が折れません");
+            check(helper, Math.abs(boss.damageTakenMultiplier(player) - 1.5) < 1.0E-6, "角が折れても、受けるダメージが1.5倍になりません");
+            boss.discard();
+            helper.succeed();
+        });
+    }
+
+    /** 2階：芽吹きの種。根づいた種は、壊せば消え、育つと古樹の傷が最大HPの4%ふさがる。 */
+    @GameTest(template = EMPTY, timeoutTicks = 200)
+    public static void oldWardSeedsSproutAndHeal(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        FakePlayer player = fake(helper, "seeds");
+        withSkill(player, "knight", null, 0);
+        jp.amemaru.lostconnection.enemy.boss.OldWard boss = ModEntities.OLD_WARD.get().create(level);
+        check(helper, boss != null, "オールドウォードを作れません");
+        Vec3 at = helper.absoluteVec(new Vec3(1.5, 1.0, 1.5));
+        boss.moveTo(at.x + 6.0, at.y, at.z + 6.0, 0.0F, 0.0F);
+        level.addFreshEntity(boss);
+        double[] before = new double[1];
+        int[] grown = new int[1];
+        helper.runAfterDelay(2, () -> check(helper, boss.forceSkill("seeds"), "芽吹きの種をまけません"));
+        helper.runAfterDelay(45, () -> {
+            List<jp.amemaru.lostconnection.enemy.boss.OldWardKnot> seeds = boss.seedEntities();
+            check(helper, seeds.size() >= 2 && seeds.stream().allMatch(jp.amemaru.lostconnection.enemy.boss.OldWardKnot::seed),
+                    "芽吹きの種が根づきません：" + seeds.size());
+            jp.amemaru.lostconnection.combat.CombatService.applyDamage(seeds.get(0), 1.0E7, false, level.damageSources().generic());
+            // HP70%（2段階目に入らない所）から、育った種のぶんだけ傷がふさがるかを見る
+            boss.setEnemyHp(boss.getEnemyMaxHp() * 0.7);
+            before[0] = boss.getEnemyHp();
+            for (int i = 1; i < seeds.size(); i++) {
+                seeds.get(i).setGrowTicks(1);
+            }
+            grown[0] = seeds.size() - 1;
+        });
+        helper.runAfterDelay(50, () -> {
+            check(helper, boss.seedCount() == 0, "壊した種・育った種が残っています：" + boss.seedCount());
+            double expected = before[0] + boss.getEnemyMaxHp() * 0.04 * grown[0];
+            check(helper, boss.getEnemyHp() >= expected - 1.0, "種が育っても、古樹の傷がふさがりません：" + boss.getEnemyHp() + " / " + expected);
+            boss.discard();
+            helper.succeed();
+        });
+    }
+
+    /** 3階：大放水。番人との間にブロックがあれば（堤のかげ）無事、なければ当たる。仮のブロックは、空気と水の所にだけ置き、元に戻る。 */
+    @GameTest(template = EMPTY)
+    public static void hydramFloodHidesBehindDikes(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        FakePlayer player = fake(helper, "flood");
+        net.minecraft.core.BlockPos wall = helper.absolutePos(new net.minecraft.core.BlockPos(1, 1, 1));
+        player.moveTo(wall.getX() + 0.5, wall.getY(), wall.getZ() + 1.5, 0.0F, 0.0F);
+        Vec3 from = new Vec3(wall.getX() + 0.5, wall.getY() + 1.0, wall.getZ() - 1.5);
+        check(helper, !jp.amemaru.lostconnection.enemy.boss.Hydram.behindDike(level, from, player), "何もないのに、堤のかげと判定しました");
+        jp.amemaru.lostconnection.enemy.boss.TempBlocks dikes = new jp.amemaru.lostconnection.enemy.boss.TempBlocks();
+        for (int h = 0; h < 3; h++) {
+            dikes.place(level, wall.above(h), net.minecraft.world.level.block.Blocks.WAXED_CUT_COPPER.defaultBlockState());
+        }
+        check(helper, dikes.size() == 3, "堤のブロックを置けません");
+        check(helper, jp.amemaru.lostconnection.enemy.boss.Hydram.behindDike(level, from, player), "堤のかげにいるのに、見えていると判定しました");
+        // 床や仕掛け（空気や水でない所）には置かない。水の所には置き、戻すと水に戻る
+        net.minecraft.core.BlockPos solidRel = new net.minecraft.core.BlockPos(2, 1, 2);
+        net.minecraft.core.BlockPos wetRel = new net.minecraft.core.BlockPos(0, 1, 0);
+        helper.setBlock(solidRel, net.minecraft.world.level.block.Blocks.STONE.defaultBlockState());
+        helper.setBlock(wetRel, net.minecraft.world.level.block.Blocks.WATER.defaultBlockState());
+        net.minecraft.core.BlockPos solid = helper.absolutePos(solidRel);
+        net.minecraft.core.BlockPos wet = helper.absolutePos(wetRel);
+        check(helper, !dikes.place(level, solid, net.minecraft.world.level.block.Blocks.WAXED_CUT_COPPER.defaultBlockState())
+                && level.getBlockState(solid).is(net.minecraft.world.level.block.Blocks.STONE), "床（空気や水でない所）に堤を置きました");
+        check(helper, dikes.place(level, wet, net.minecraft.world.level.block.Blocks.WAXED_CUT_COPPER.defaultBlockState())
+                && level.getBlockState(wet).is(net.minecraft.world.level.block.Blocks.WAXED_CUT_COPPER), "水の所に堤を置けません");
+        dikes.restore(level);
+        check(helper, level.getBlockState(wall).isAir() && level.getBlockState(wall.above(2)).isAir() && dikes.isEmpty(),
+                "堤のブロックが元に戻りません");
+        check(helper, level.getBlockState(wet).is(net.minecraft.world.level.block.Blocks.WATER), "水の所に置いた堤が、水に戻りません");
+        helper.setBlock(solidRel, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
+        helper.setBlock(wetRel, net.minecraft.world.level.block.Blocks.AIR.defaultBlockState());
+        helper.succeed();
+    }
+
+    /** 4階：残響の色（自分の色の床のそば3ブロックなら無事）と、5階：切断判定（4ブロック以内にほかの人がいると打たれる）。 */
+    @GameTest(template = EMPTY)
+    public static void echoAndSeverJudgePositions(GameTestHelper helper) {
+        FakePlayer a = fake(helper, "echo_a");
+        FakePlayer b = fake(helper, "echo_b");
+        net.minecraft.core.BlockPos plate = helper.absolutePos(new net.minecraft.core.BlockPos(1, 1, 1));
+        a.moveTo(plate.getX() + 0.5 + 3.0, plate.getY(), plate.getZ() + 0.5, 0.0F, 0.0F);
+        check(helper, jp.amemaru.lostconnection.enemy.boss.Cantare.echoSafe(a, plate, 3.5), "色の床のそば（3ブロック）にいるのに、外と判定しました");
+        a.moveTo(plate.getX() + 0.5 + 5.0, plate.getY(), plate.getZ() + 0.5, 0.0F, 0.0F);
+        check(helper, !jp.amemaru.lostconnection.enemy.boss.Cantare.echoSafe(a, plate, 3.5), "色の床から5ブロック離れているのに、そばと判定しました");
+        b.moveTo(a.getX() + 3.0, a.getY(), a.getZ(), 0.0F, 0.0F);
+        check(helper, jp.amemaru.lostconnection.enemy.boss.AncientGuardian.linked(a, List.<net.minecraft.server.level.ServerPlayer>of(a, b), 4.0), "3ブロックの2人が、切断判定で近すぎると判定されません");
+        b.moveTo(a.getX() + 5.0, a.getY(), a.getZ(), 0.0F, 0.0F);
+        check(helper, !jp.amemaru.lostconnection.enemy.boss.AncientGuardian.linked(a, List.<net.minecraft.server.level.ServerPlayer>of(a, b), 4.0), "5ブロック離れた2人が、近すぎると判定されました");
+        EnemyDef guardian = EnemyDefs.get(AmemaruMod.id("ancient_guardian"));
+        EnemyDef cantare = EnemyDefs.get(AmemaruMod.id("cantare"));
+        EnemyDef hydram = EnemyDefs.get(AmemaruMod.id("hydram"));
+        EnemyDef oldWard = EnemyDefs.get(AmemaruMod.id("old_ward"));
+        EnemyDef veldhorn = EnemyDefs.get(AmemaruMod.id("veldhorn"));
+        check(helper, guardian.skills().containsKey("sever") && cantare.skills().containsKey("echo") && hydram.skills().containsKey("flood")
+                && oldWard.skills().containsKey("seeds") && veldhorn.skills().containsKey("earth_roar"), "ボスの固有のギミックの定義がそろっていません");
+        helper.succeed();
     }
 
     // ---------------------------------------------------------------- 道具

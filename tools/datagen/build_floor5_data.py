@@ -185,7 +185,10 @@ ENEMIES["ancient_guardian"] = fix_floor(enemy(
      "barrier": {"cooldown": 45.0, "hold": 3.0, "call_every": 15.0, "max_guards": 5, "sentinels": 2, "drones": 1, "stagger": 4.0,
                  "broken": 1.5, "broken_seconds": 10.0},
      "judge": {"power": 2.6, "windup": 3.5, "anim_windup": 3.0, "cooldown": 14.0, "range": 6.0, "linked": 0.12, "first": 6.0},
-     "gather": {"range": 5.0, "timeout": 60.0}},
+     "gather": {"range": 5.0, "timeout": 60.0},
+     # 11月25日：固有のギミック「切断判定」（第1・第2段階・2人以上。windup 秒の予兆のあと、range ブロック以内にほかの人がいる人に
+     # power。接続判定の逆。戦いが始まって first 秒から、cooldown 秒ごと）【提案】
+     "sever": {"power": 1.8, "windup": 4.0, "cooldown": 35.0, "range": 4.0, "first": 25.0}},
     {},
     "ancient_guardian", guardian_rare(), pity=True))
 

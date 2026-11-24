@@ -31,6 +31,14 @@ public class GroundMarker extends Entity {
     public static final int KIND_DANGER = 0;
     /** 青：みんなで集まって受ける所（ボスの「みんなで受ける一撃」）。 */
     public static final int KIND_SHARE = 1;
+    /** 緑：芽吹く所（2階のボスの「芽吹きの種」。11月25日）。 */
+    public static final int KIND_SEED = 2;
+    /** 白：ほかの人から離れる所（5階のボスの「切断判定」。11月25日）。 */
+    public static final int KIND_SEVER = 3;
+    /** 金：逃げこむ所（安全な所。11月25日：4階のボスの「残響の色」の床のまわり）。 */
+    public static final int KIND_SAFE = 4;
+    /** 音の色（白・青・金・紅）の、逃げこむ所（4階のボスの「残響の色」。KIND_NOTE + 音の番号）。 */
+    public static final int KIND_NOTE = 10;
     /** 打ったあと、明るく見せておく長さ（tick） */
     private static final int AFTER_TICKS = 4;
 

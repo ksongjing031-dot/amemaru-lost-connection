@@ -48,6 +48,14 @@
       "count": 2,
       "max": 4,
       "range": 10.0
+    },
+    "echo": {
+      "power": 1.5,
+      "windup": 7.0,
+      "cooldown": 45.0,
+      "range": 30.0,
+      "safe": 3.0,
+      "first": 25.0
     }
   },
   "behavior": {},

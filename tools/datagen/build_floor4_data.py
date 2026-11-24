@@ -162,7 +162,10 @@ ENEMIES = {
          "pillars": {"power": 1.25, "windup": 2.2, "anim_windup": 1.8, "cooldown": 11.0, "range": 30.0, "radius": 2.4, "count": 2},
          "song": {"power": 0.9, "windup": 0.7, "cooldown": 30.0, "first": 8.0, "note_seconds": 1.0, "answer": 20.0,
                   "exposed": 12.0, "open": 2.5, "guarded": 0.34, "retry": 8.0},
-         "call": {"count": 2, "max": 4, "range": 10.0}},
+         "call": {"count": 2, "max": 4, "range": 10.0},
+         # 11月25日：固有のギミック「残響の色」（ひとりひとりに歌い手の色。windup 秒のうちに自分の色の音の床のそば safe ブロックへ。
+         # 行けなかった人に power。戦いが始まって first 秒から、cooldown 秒ごと）【提案】
+         "echo": {"power": 1.5, "windup": 7.0, "cooldown": 45.0, "range": 30.0, "safe": 3.0, "first": 25.0}},
         {},
         "cantare",
         [{"item": "amemaru:prayer_bell_staff", "chance": 5, "rarity": "epic"},

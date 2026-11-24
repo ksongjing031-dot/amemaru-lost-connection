@@ -47,16 +47,28 @@ import java.util.UUID;
  *   <li>HP60%：祈り手の残響を2体呼ぶ（歌で治されるので、先に倒す）。HP30%：歌が5音になり、技が速くなる【補完】</li>
  * </ul>
  * 音の床の場所は、階の定義の {@code boss_marks.sound_plates}（4つ。並びの順が音の番号 0〜3）。
+ *
+ * <p>11月25日のご指示「ボスそれぞれの固有のギミックを追加する」【提案】：<b>残響の色</b>。ときどき、ひとりひとりの頭の上に
+ * 歌い手の色（白・青・金・紅）が灯る。{@code skills.echo.windup} 秒のうちに、自分の色の音の床のそば（{@code safe} ブロック）へ
+ * 行く。行けなかった人に、残響の和音（{@code power}）。選律の歌（順番）とちがい、色と場所の仕掛け。</p>
  */
 public class Cantare extends AmemaruBoss {
-    public static final List<String> SKILLS = List.of("wave", "pillars", "song", "call");
+    public static final List<String> SKILLS = List.of("wave", "pillars", "song", "call", "echo");
     public static final String PLATES = "sound_plates";
     /** 音の名前（言語ファイルのキーの後ろ）。0 白・1 青・2 金・3 紅。 */
     public static final String[] NOTE_KEYS = {"white", "blue", "gold", "red"};
 
     private static final EntityDataAccessor<Boolean> DATA_OPEN = SynchedEntityData.defineId(Cantare.class, EntityDataSerializers.BOOLEAN);
 
-    private enum Action { NONE, WAVE, PILLARS, SONG, ANSWER, CALL, OPEN, RECOVER }
+    private enum Action { NONE, WAVE, PILLARS, SONG, ANSWER, CALL, OPEN, RECOVER, ECHO }
+
+    /** 残響の色の、頭の上の粒の色（白・青・金・紅）。 */
+    private static final net.minecraft.core.particles.DustParticleOptions[] ECHO_DUST = {
+            new net.minecraft.core.particles.DustParticleOptions(new org.joml.Vector3f(1.0F, 1.0F, 1.0F), 1.6F),
+            new net.minecraft.core.particles.DustParticleOptions(new org.joml.Vector3f(0.42F, 0.72F, 1.0F), 1.6F),
+            new net.minecraft.core.particles.DustParticleOptions(new org.joml.Vector3f(0.95F, 0.79F, 0.3F), 1.6F),
+            new net.minecraft.core.particles.DustParticleOptions(new org.joml.Vector3f(1.0F, 0.42F, 0.35F), 1.6F)};
+    private static final ChatFormatting[] ECHO_TEXT = {ChatFormatting.WHITE, ChatFormatting.AQUA, ChatFormatting.GOLD, ChatFormatting.RED};
 
     private Action action = Action.NONE;
 
@@ -71,6 +83,9 @@ public class Cantare extends AmemaruBoss {
     private int[] notes = new int[0];
     private int answered;
     private int songCooldown = -1;
+    /** 残響の色（11月25日）：ひとりひとりの色と、次に出すまで */
+    private final Map<UUID, Integer> echoColors = new java.util.HashMap<>();
+    private int echoCooldown = -1;
     private final List<Vec3> pillarSpots = new ArrayList<>();
     private final List<UUID> summoned = new ArrayList<>();
     private final Set<String> tips = new HashSet<>();
@@ -159,6 +174,7 @@ public class Cantare extends AmemaruBoss {
         setOpen(false);
         exposed = 0;
         songCooldown = (int) Math.round(songSkill().param("first", 8.0) * 20);
+        echoCooldown = (int) Math.round(echoSkill().param("first", 25.0) * 20);
         line("boss.amemaru.cantare.line.start");
         tipOnce("song");
     }
@@ -188,6 +204,8 @@ public class Cantare extends AmemaruBoss {
         action = Action.NONE;
         exposed = 0;
         songCooldown = -1;
+        echoCooldown = -1;
+        echoColors.clear();
         setOpen(false);
         setStatus("", 0);
         discardSummoned();
@@ -231,11 +249,14 @@ public class Cantare extends AmemaruBoss {
                 line("boss.amemaru.cantare.line.recover");
                 songCooldown = cooldown(songSkill());
             }
-        } else if (action != Action.SONG && action != Action.ANSWER && tickCount % 10 == 0) {
+        } else if (action != Action.SONG && action != Action.ANSWER && action != Action.ECHO && tickCount % 10 == 0) {
             setStatus("guarded", Math.max(0, songCooldown) / 20);
         }
         if (songCooldown > 0 && exposed <= 0 && action != Action.SONG && action != Action.ANSWER) {
             songCooldown--;
+        }
+        if (echoCooldown > 0 && exposed <= 0 && action == Action.NONE) {
+            echoCooldown--;
         }
         switch (action) {
             case NONE -> choose(level);
@@ -244,6 +265,7 @@ public class Cantare extends AmemaruBoss {
             case SONG -> tickSong(level);
             case ANSWER -> tickAnswer(level);
             case CALL -> tickCall(level);
+            case ECHO -> tickEcho(level);
             case OPEN -> {
                 if (--timer <= 0) {
                     action = Action.NONE;
@@ -304,6 +326,10 @@ public class Cantare extends AmemaruBoss {
             startSong(level);
             return;
         }
+        if (echoCooldown == 0 && plates().size() == 4) {
+            startEcho(level);
+            return;
+        }
         ServerPlayer target = topThreat();
         if (target == null || !players.contains(target)) {
             target = players.get(random.nextInt(players.size()));
@@ -326,6 +352,106 @@ public class Cantare extends AmemaruBoss {
             default -> {
             }
         }
+    }
+
+    // ---- 残響の色（11月25日）
+
+    private EnemyDef.Skill echoSkill() {
+        return skill("echo", 1.5, 7.0, 45.0, 30.0);
+    }
+
+    private void startEcho(ServerLevel level) {
+        EnemyDef.Skill echo = echoSkill();
+        action = Action.ECHO;
+        timer = Math.max(60, echo.windupTicks());
+        setBusy(timer + 10);
+        playAction("skill_song");
+        setCast("echo", timer);
+        line("boss.amemaru.cantare.line.echo");
+        tipOnce("echo");
+        echoColors.clear();
+        // 色は、なるべく人ごとに分ける（4人より多ければ、また白から）
+        List<Integer> deck = new ArrayList<>(List.of(0, 1, 2, 3));
+        java.util.Collections.shuffle(deck, new java.util.Random(random.nextLong()));
+        int k = 0;
+        for (ServerPlayer player : targets(level)) {
+            int color = deck.get(k++ % deck.size());
+            echoColors.put(player.getUUID(), color);
+            player.displayClientMessage(Component.translatable("boss.amemaru.cantare.echo_you",
+                    Component.translatable("status.amemaru.note." + NOTE_KEYS[color]).withStyle(ECHO_TEXT[color], ChatFormatting.BOLD),
+                    (timer + 19) / 20).withStyle(ECHO_TEXT[color]), true);
+        }
+        List<BlockPos> plates = plates();
+        float safe = (float) echo.param("safe", 3.0);
+        for (int i = 0; i < plates.size(); i++) {
+            BlockPos plate = plates.get(i);
+            GroundMarker.place(level, Vec3.atBottomCenterOf(plate), safe, timer, GroundMarker.KIND_NOTE + i);
+            TempleService.setLit(level, plate, true);
+        }
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.BELL_RESONATE, SoundSource.HOSTILE, 2.0F, 0.8F);
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.HOSTILE, 2.0F, 0.5F);
+        setStatus("echo", (timer + 19) / 20);
+    }
+
+    private void tickEcho(ServerLevel level) {
+        if (timer % 5 == 0) {
+            for (ServerPlayer player : targets(level)) {
+                Integer color = echoColors.get(player.getUUID());
+                if (color == null) {
+                    continue;
+                }
+                level.sendParticles(ECHO_DUST[color], player.getX(), player.getY() + player.getBbHeight() + 0.6, player.getZ(), 6,
+                        0.25, 0.15, 0.25, 0.0);
+                if (timer % 10 == 0) {
+                    player.displayClientMessage(Component.translatable("boss.amemaru.cantare.echo_you",
+                            Component.translatable("status.amemaru.note." + NOTE_KEYS[color]).withStyle(ECHO_TEXT[color], ChatFormatting.BOLD),
+                            (timer + 19) / 20).withStyle(ECHO_TEXT[color]), true);
+                }
+            }
+            setStatus("echo", (timer + 19) / 20);
+        }
+        if (--timer > 0) {
+            return;
+        }
+        EnemyDef.Skill echo = echoSkill();
+        List<BlockPos> plates = plates();
+        double safe = echo.param("safe", 3.0) + 0.5;
+        for (ServerPlayer player : targets(level)) {
+            Integer color = echoColors.get(player.getUUID());
+            if (color == null || color >= plates.size()) {
+                continue;
+            }
+            if (echoSafe(player, plates.get(color), safe)) {
+                level.sendParticles(ParticleTypes.END_ROD, player.getX(), player.getY() + 1.0, player.getZ(), 12, 0.3, 0.5, 0.3, 0.05);
+                player.displayClientMessage(Component.translatable("boss.amemaru.cantare.echo_safe").withStyle(ChatFormatting.AQUA), true);
+            } else if (EnemyCombat.strike(this, player, echo.power(), null)) {
+                player.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN,
+                        50, 1, false, true, true));
+                level.sendParticles(ParticleTypes.SONIC_BOOM, player.getX(), player.getY() + 1.0, player.getZ(), 1, 0.0, 0.0, 0.0, 0.0);
+                player.displayClientMessage(Component.translatable("boss.amemaru.cantare.echo_hit").withStyle(ChatFormatting.RED), true);
+            }
+        }
+        lightAll(level, false);
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.WARDEN_SONIC_BOOM, SoundSource.HOSTILE, 1.4F, 1.2F);
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.BELL_BLOCK, SoundSource.HOSTILE, 2.0F, 0.6F);
+        echoColors.clear();
+        setStatus("", 0);
+        echoCooldown = cooldown(echo);
+        action = Action.RECOVER;
+        timer = 16;
+    }
+
+    /** その人が、自分の色の床のそば（横の距離が {@code safe} まで、高さ3まで）にいるか。 */
+    public static boolean echoSafe(ServerPlayer player, BlockPos plate, double safe) {
+        double dx = player.getX() - (plate.getX() + 0.5);
+        double dz = player.getZ() - (plate.getZ() + 0.5);
+        return dx * dx + dz * dz <= safe * safe && Math.abs(player.getY() - plate.getY()) <= 3.0;
+    }
+
+    /** 自動テスト：その人の残響の色（なければ -1）。 */
+    public int echoColor(ServerPlayer player) {
+        Integer color = echoColors.get(player.getUUID());
+        return color == null ? -1 : color;
     }
 
     // ---- 嘆きの波（前の扇）
@@ -760,6 +886,12 @@ public class Cantare extends AmemaruBoss {
             case "call" -> {
                 action = Action.CALL;
                 timer = 2;
+            }
+            case "echo" -> {
+                if (plates().size() != 4) {
+                    return false;
+                }
+                startEcho(level);
             }
             default -> {
                 return false;

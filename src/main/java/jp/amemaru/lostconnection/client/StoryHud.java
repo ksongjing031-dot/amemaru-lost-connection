@@ -361,11 +361,22 @@ public final class StoryHud {
             text = "\u266A " + net.minecraft.client.resources.language.I18n.get("status." + id.getNamespace() + "." + id.getPath() + ".song",
                     notes.toString());
         } else {
-            String key = "status." + id.getNamespace() + "." + id.getPath() + "." + boss.status();
+            // 11月25日：「様子:数,数」で、秒のほかの数も文に入れる（%1$s が残りの秒、%2$s から先が数）
+            String status = boss.status();
+            Object[] args = {boss.statusSeconds()};
+            int colon = status.indexOf(':');
+            if (colon > 0) {
+                String[] extra = status.substring(colon + 1).split(",");
+                args = new Object[extra.length + 1];
+                args[0] = boss.statusSeconds();
+                System.arraycopy(extra, 0, args, 1, extra.length);
+                status = status.substring(0, colon);
+            }
+            String key = "status." + id.getNamespace() + "." + id.getPath() + "." + status;
             if (!net.minecraft.client.resources.language.I18n.exists(key)) {
                 return;
             }
-            text = (good ? "\u25C6 " : "\u25C7 ") + net.minecraft.client.resources.language.I18n.get(key, boss.statusSeconds());
+            text = (good ? "\u25C6 " : "\u25C7 ") + net.minecraft.client.resources.language.I18n.get(key, args);
         }
         // 長い文は、画面の幅に合わせて折り返す（小さな画面でも、右のはしの欄と重ならない）
         List<String> lines = UiStyle.wrap(font, text, Math.max(120, Math.min(360, width - 40)));
