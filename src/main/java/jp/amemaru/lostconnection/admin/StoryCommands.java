@@ -200,6 +200,29 @@ public final class StoryCommands {
                                             ctx.getSource().sendSuccess(() -> Component.translatable("commands.amemaru.floor.floodgates_reset"), true);
                                             return 1;
                                         }))))
+                // 11月24日（4階）：壁画を戻す・崩す（封印の条件 murals の確かめ用）
+                .then(Commands.literal("murals")
+                        .then(Commands.argument("floor", IntegerArgumentType.integer(1, 99)).suggests(FLOORS)
+                                .then(Commands.literal("solve")
+                                        .executes(ctx -> solveMurals(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"))))
+                                .then(Commands.literal("reset")
+                                        .executes(ctx -> {
+                                            jp.amemaru.lostconnection.tower.temple.TempleService.onDayChanged(ctx.getSource().getServer());
+                                            AdminCommands.log(ctx.getSource(), "floor murals reset");
+                                            ctx.getSource().sendSuccess(() -> Component.translatable("commands.amemaru.floor.murals_reset"), true);
+                                            return 1;
+                                        }))))
+                // 11月24日（5階）：祭壇の警戒を消す・上げる（確かめ用）
+                .then(Commands.literal("alert")
+                        .then(Commands.argument("floor", IntegerArgumentType.integer(1, 99)).suggests(FLOORS)
+                                .then(Commands.literal("clear")
+                                        .executes(ctx -> {
+                                            int floor = IntegerArgumentType.getInteger(ctx, "floor");
+                                            jp.amemaru.lostconnection.tower.altar.AltarService.clearAlert(floor);
+                                            AdminCommands.log(ctx.getSource(), "floor alert " + floor + " clear");
+                                            ctx.getSource().sendSuccess(() -> Component.translatable("commands.amemaru.floor.alert", 0), true);
+                                            return 1;
+                                        }))))
                 // 11月24日：名のある魔物を倒した印をつける・消す（封印の条件 guardians の確かめ用）
                 .then(Commands.literal("guardians")
                         .then(Commands.argument("floor", IntegerArgumentType.integer(1, 99)).suggests(FLOORS)
@@ -232,6 +255,26 @@ public final class StoryCommands {
         int count = opened;
         source.sendSuccess(() -> Component.translatable("commands.amemaru.floor.floodgates_opened", count), true);
         return opened;
+    }
+
+    private static int solveMurals(CommandSourceStack source, int floor) {
+        FloorDef def = FloorDefs.byNumber(floor);
+        if (def == null) {
+            source.sendFailure(Component.translatable("commands.amemaru.map.no_floor", floor));
+            return 0;
+        }
+        int solved = 0;
+        for (jp.amemaru.lostconnection.tower.FloorFeatures.Mural mural : def.features().murals()) {
+            if (mural.display() || jp.amemaru.lostconnection.tower.temple.TempleService.solved(source.getServer(), floor, mural.id())) {
+                continue;
+            }
+            jp.amemaru.lostconnection.tower.temple.TempleService.solve(source.getServer(), def, mural, null);
+            solved++;
+        }
+        AdminCommands.log(source, "floor murals " + floor + " solve");
+        int count = solved;
+        source.sendSuccess(() -> Component.translatable("commands.amemaru.floor.murals_solved", count), true);
+        return solved;
     }
 
     private static int setGuardians(CommandSourceStack source, int floor, Collection<ServerPlayer> players, boolean done) {

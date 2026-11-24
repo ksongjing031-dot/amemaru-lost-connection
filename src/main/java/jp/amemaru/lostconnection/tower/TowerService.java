@@ -474,6 +474,11 @@ public final class TowerService {
                 && !jp.amemaru.lostconnection.tower.waterway.FloodgateService.allOpen(player.server, def)) {
             return false;
         }
+        // 11月24日（4階）：崩れた壁画をすべて元に戻したら（みんな）。前は数えておらず、壁画を戻さなくても封印が開いた
+        if (features.requires(FloorFeatures.SEAL_MURALS)
+                && !jp.amemaru.lostconnection.tower.temple.TempleService.allSolved(player.server, def)) {
+            return false;
+        }
         if (!features.requires(FloorFeatures.SEAL_PILLARS) || def.pillars().isEmpty()) {
             return true;
         }

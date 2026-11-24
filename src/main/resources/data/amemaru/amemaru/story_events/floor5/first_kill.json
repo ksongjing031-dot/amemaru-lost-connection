@@ -1,0 +1,73 @@
+{
+  "_comment": "5階のボス（第1章の章ボス）の初撃破（倒したパーティの画面だけ。サーバー全体には知らせが出る）。古代文明の滅亡とリンク・コアの存在が判明（確定）。台詞の細かいところは【補完】",
+  "title": "古代守護者",
+  "trigger": {
+    "type": "amemaru:floor_first_kill",
+    "floor": 5
+  },
+  "scope": "party",
+  "once": true,
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:wait",
+      "ticks": 60
+    },
+    {
+      "type": "amemaru:hud",
+      "hide": true
+    },
+    {
+      "type": "amemaru:sound",
+      "sound": "minecraft:block.beacon.deactivate",
+      "volume": 1.0,
+      "pitch": 0.6
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "none",
+      "to": "white",
+      "ticks": 30
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "white",
+      "to": "none",
+      "ticks": 60
+    },
+    {
+      "type": "amemaru:title",
+      "title": "古代守護者の祭壇　踏破",
+      "subtitle": "第1章　失われた古代領域",
+      "ticks": 110
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "守護者の胸の記録核が、翠の光をこぼしながら開いた。",
+      "ticks": 100,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "「全域同期実験、失敗」「大断絶」――そして、中枢装置「リンク・コア」。",
+      "ticks": 130,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "古代の人々は、すべてをつなごうとして、すべてを失ったのだ。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "大扉の向こうへ、道が上へ続いている。……街へ戻って、ガルドに知らせよう。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:hud",
+      "hide": false
+    }
+  ]
+}

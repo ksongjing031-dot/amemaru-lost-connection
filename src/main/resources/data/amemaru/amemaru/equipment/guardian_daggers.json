@@ -1,0 +1,35 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "守護者シリーズ（ローグ）",
+  "rarity": "epic",
+  "required_level": 10,
+  "jobs": [
+    "amemaru:rogue"
+  ],
+  "stats": {
+    "attack": 25,
+    "crit": 4
+  },
+  "durability": 620,
+  "binding": "on_equip",
+  "effects": [
+    {
+      "type": "ally_power",
+      "threshold": 8,
+      "percent": 3
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:jade_core_shard",
+      "count": 1
+    },
+    {
+      "item": "amemaru:sentinel_plate",
+      "count": 2
+    }
+  ],
+  "description": "守護者の指の刃を、二本の短剣に打ち直したもの。二つの柄の翠の核が、近くの仲間の数だけ脈打つ。"
+}

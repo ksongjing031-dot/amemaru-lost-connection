@@ -66,11 +66,18 @@ public record EnemyDef(ResourceLocation id, String name, String description, int
      * （Phase 0-A 20章「同じボスでレアが出なかった回数ごとに」はボスのレア装備のこと。ボスの結晶果は {@code "pity": false} にして、
      * 出ても天井の数を戻さない。Phase 5で足した【補完】）。
      */
-    public record RareDrop(ResourceLocation item, double chance, int count, @Nullable String rarity, boolean pity) {
+    /**
+     * レアドロップ。{@code jobMatch}（11月24日：5階の守護者シリーズは職業ごと）なら、その装備を使える職業の人だけが引く
+     * （今の戦闘職が装備の {@code jobs} にあるとき）。
+     */
+    public record RareDrop(ResourceLocation item, double chance, int count, @Nullable String rarity, boolean pity, boolean jobMatch) {
         public RareDrop(ResourceLocation item, double chance, int count, @Nullable String rarity) {
-            this(item, chance, count, rarity, true);
+            this(item, chance, count, rarity, true, false);
         }
 
+        public RareDrop(ResourceLocation item, double chance, int count, @Nullable String rarity, boolean pity) {
+            this(item, chance, count, rarity, pity, false);
+        }
     }
 
     /** 技の数値（定義になければ、渡した値で作る）。 */
@@ -143,7 +150,7 @@ public record EnemyDef(ResourceLocation id, String name, String description, int
                 String rarity = Json.optionalString(one, "rarity", "");
                 rare.add(new RareDrop(Json.id(one, "item"), Json.doubleInRange(one, "chance", 0.0, 100.0),
                         Json.optionalInt(one, "count", 1, 1, 64), rarity.isEmpty() ? null : rarity,
-                        Json.optionalBoolean(one, "pity", true)));
+                        Json.optionalBoolean(one, "pity", true), Json.optionalBoolean(one, "job_match", false)));
             }
         }
         if (attack <= 0 && !skills.isEmpty()) {

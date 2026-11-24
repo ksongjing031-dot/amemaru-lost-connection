@@ -1,0 +1,34 @@
+{
+  "_comment": "初めて5階に入ったとき（本人だけ）。深い奈落の上の円形の祭壇（Phase 0-A 9章の5階の地形・環境）。台詞は【補完】",
+  "title": "古代守護者の祭壇",
+  "trigger": {
+    "type": "amemaru:floor_enter",
+    "floor": 5
+  },
+  "scope": "player",
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:wait",
+      "ticks": 70
+    },
+    {
+      "type": "amemaru:sound",
+      "sound": "minecraft:ambient.basalt_deltas.mood",
+      "volume": 1.0,
+      "pitch": 0.6
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "足もとから、底の見えない奈落が口を開けている。遠い闇の向こうに、円い祭壇が浮かんでいた……。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "その手前を、いくつもの眼が見張っている。見つかれば、祭壇の主に知られてしまうだろう。",
+      "ticks": 110,
+      "wait": false
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "slot": "chest",
+  "generation": 1,
+  "series": "守護者シリーズ（モンク）",
+  "rarity": "epic",
+  "required_level": 10,
+  "jobs": [
+    "amemaru:monk"
+  ],
+  "stats": {
+    "defense": 7,
+    "hp": 42,
+    "speed": 2
+  },
+  "durability": 440,
+  "binding": "on_equip",
+  "effects": [
+    {
+      "type": "damage_reduction",
+      "percent": 5
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:jade_core_shard",
+      "count": 1
+    },
+    {
+      "item": "amemaru:sentinel_plate",
+      "count": 2
+    }
+  ],
+  "description": "守護者の装甲の帯を、道着の胸と腰に巻いたもの。帯の翠の線が、受けた一撃の重さを地面へ逃がす。"
+}

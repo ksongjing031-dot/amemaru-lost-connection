@@ -1,0 +1,34 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "守護者シリーズ（ナイト）",
+  "rarity": "epic",
+  "required_level": 10,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "attack": 42
+  },
+  "durability": 620,
+  "binding": "on_equip",
+  "effects": [
+    {
+      "type": "ally_power",
+      "threshold": 8,
+      "percent": 3
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:jade_core_shard",
+      "count": 1
+    },
+    {
+      "item": "amemaru:sentinel_plate",
+      "count": 2
+    }
+  ],
+  "description": "古代守護者の腕から削り出した、白い石と青銅の大剣。刃の根元に翠の核の欠片が埋めこまれ、近くにいる仲間の気配が増えるほど、刃の光が強くなる。"
+}

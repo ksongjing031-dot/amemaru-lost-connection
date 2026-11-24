@@ -27,15 +27,18 @@ import java.util.List;
  *       きっかけ {@code floor_zone}（{@code zone} が同じもの）が起きる。2階の「霧の奥でノアが初めて目撃される」など</li>
  *   <li>{@code murals}：壁画パズル（4階のギミック。Phase 0-A 9章「回転するパネルを正しく並べると、第一時代から第二時代までの
  *       歴史が一枚の絵になる」）。{@code songs}：音の順番の仕掛け（同じ表の「音の順番」）。{@code relics}：物語の品を拾う所
- *       （4階の結晶騎士団の遺品）。{@code boss_marks}：ボスが使う場所の組（4階の音の床・5階の結び台など。名前 → 場所の並び）</li>
+ *       （4階の結晶騎士団の遺品）。{@code boss_marks}：ボスが使う場所の組（4階の音の床・5階の結び台など。名前 → 場所の並び）。
+ *       {@code abyss_y}：奈落（5階。階の中のこの高さより下へ落ちた人は、中継の灯か入口へ戻される）</li>
  * </ul>
  */
 public record FloorFeatures(@Nullable Environment environment, List<LostWoods> lostWoods, List<Waypoint> waypoints,
                             @Nullable BlockPos travelStone, String sealRequires, List<StoryZone> storyZones,
                             List<Floodgate> floodgates, List<WaterSection> waterSections, List<Mural> murals, List<Song> songs,
-                            List<Relic> relics, java.util.Map<String, List<BlockPos>> bossMarks) {
+                            List<Relic> relics, java.util.Map<String, List<BlockPos>> bossMarks, int abyssY) {
+    /** 奈落のない階の {@link #abyssY}。 */
+    public static final int NO_ABYSS = Integer.MIN_VALUE;
     public static final FloorFeatures NONE = new FloorFeatures(null, List.of(), List.of(), null, "pillars", List.of(), List.of(),
-            List.of(), List.of(), List.of(), List.of(), java.util.Map.<String, List<BlockPos>>of());
+            List.of(), List.of(), List.of(), List.of(), java.util.Map.<String, List<BlockPos>>of(), NO_ABYSS);
     /** 11月24日（4階）：その階の壁画をすべて元に戻した（みんなで同じ。その日のうち）。 */
     public static final String SEAL_MURALS = "murals";
 
@@ -396,8 +399,10 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
         if (requires(seal, SEAL_MURALS) && murals.stream().noneMatch(m -> !m.display())) {
             throw new DefinitionException("「seal_requires」が murals なのに、「murals」がありません");
         }
+        // 11月24日（5階）：奈落。階の中のこの高さ（y）より下へ落ちた人は、ともした中継の灯（なければ入口）へ戻される
+        int abyss = json.has("abyss_y") ? Json.optionalInt(json, "abyss_y", 0, -64, 384) : NO_ABYSS;
         return new FloorFeatures(env, List.copyOf(woods), List.copyOf(waypoints), travel, seal, List.copyOf(zones), List.copyOf(gates),
-                List.copyOf(sections), List.copyOf(murals), List.copyOf(songs), List.copyOf(relics), java.util.Map.copyOf(marks));
+                List.copyOf(sections), List.copyOf(murals), List.copyOf(songs), List.copyOf(relics), java.util.Map.copyOf(marks), abyss);
     }
 
     @Nullable

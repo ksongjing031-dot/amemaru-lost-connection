@@ -141,6 +141,12 @@ public final class ModBlocks {
             new jp.amemaru.lostconnection.tower.temple.TempleBlocks.KnightRelic(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.METAL).strength(-1.0F, 3600000.0F).sound(SoundType.METAL).lightLevel(state -> 3)
                     .noOcclusion().pushReaction(PushReaction.BLOCK)));
+    /** 結び台（5階の祭壇。古代守護者の結界を解く台）。 */
+    public static final RegistryObject<Block> BINDING_DAIS = BLOCKS.register("binding_dais", () ->
+            new jp.amemaru.lostconnection.tower.altar.AltarBlocks.BindingDais(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.QUARTZ).strength(-1.0F, 3600000.0F).sound(SoundType.STONE)
+                    .lightLevel(state -> state.getValue(jp.amemaru.lostconnection.tower.altar.AltarBlocks.LIT) ? 12 : 5)
+                    .noOcclusion().pushReaction(PushReaction.BLOCK)));
     /** 入口の道しるべの石（ともした中継の灯へ連れていく）。 */
     public static final RegistryObject<Block> TRAVEL_STONE = BLOCKS.register("travel_stone", () ->
             new jp.amemaru.lostconnection.tower.forest.ForestBlocks.TravelStone(BlockBehaviour.Properties.of()

@@ -158,6 +158,11 @@ public final class ClientModEvents {
         event.registerEntityRenderer(ModEntities.CRYSTAL_BEETLE.get(), context -> new AmemaruMobRenderer<>(context, "crystal_beetle", 0.6F));
         event.registerEntityRenderer(ModEntities.BROKEN_BEAST.get(), context -> new AmemaruMobRenderer<>(context, "broken_beast", 0.6F));
         event.registerEntityRenderer(ModEntities.CANTARE.get(), context -> new AmemaruMobRenderer<>(context, "cantare", 0.0F));
+        // 11月24日：5階の敵とボス
+        event.registerEntityRenderer(ModEntities.WATCHER.get(), context -> new AmemaruMobRenderer<>(context, "watcher", 0.0F));
+        event.registerEntityRenderer(ModEntities.SENTINEL.get(), context -> new AmemaruMobRenderer<>(context, "sentinel", 0.6F));
+        event.registerEntityRenderer(ModEntities.REPAIR_DRONE.get(), context -> new AmemaruMobRenderer<>(context, "repair_drone", 0.0F));
+        event.registerEntityRenderer(ModEntities.ANCIENT_GUARDIAN.get(), context -> new AmemaruMobRenderer<>(context, "ancient_guardian", 1.4F));
         event.registerEntityRenderer(ModEntities.YODOMI_SLIME.get(), context -> new AmemaruMobRenderer<>(context, "yodomi_slime", 0.6F));
         event.registerEntityRenderer(ModEntities.SOUJIKIHEI.get(), context -> new AmemaruMobRenderer<>(context, "soujikihei", 0.7F));
         event.registerEntityRenderer(ModEntities.KIBA_NAMAZU.get(), context -> new AmemaruMobRenderer<>(context, "kiba_namazu", 0.6F));

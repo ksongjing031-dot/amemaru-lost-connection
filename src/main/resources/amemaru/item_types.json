@@ -57,6 +57,30 @@
       "model": "geckolib"
     },
     {
+      "id": "guardian_greatsword",
+      "kind": "greatsword"
+    },
+    {
+      "id": "guardian_staff",
+      "kind": "staff"
+    },
+    {
+      "id": "guardian_bell_staff",
+      "kind": "bell_staff"
+    },
+    {
+      "id": "guardian_bow",
+      "kind": "bow"
+    },
+    {
+      "id": "guardian_daggers",
+      "kind": "daggers"
+    },
+    {
+      "id": "guardian_gauntlets",
+      "kind": "fist"
+    },
+    {
       "id": "apprentice_bell_staff",
       "kind": "bell_staff"
     },
@@ -212,6 +236,42 @@
         "legs": "ryumon_monk_hakama",
         "feet": "ryumon_monk_sandals"
       }
+    },
+    {
+      "series": "guardian_knight",
+      "pieces": {
+        "chest": "guardian_knight_shell"
+      }
+    },
+    {
+      "series": "guardian_wizard",
+      "pieces": {
+        "chest": "guardian_wizard_shell"
+      }
+    },
+    {
+      "series": "guardian_healer",
+      "pieces": {
+        "chest": "guardian_healer_shell"
+      }
+    },
+    {
+      "series": "guardian_archer",
+      "pieces": {
+        "chest": "guardian_archer_shell"
+      }
+    },
+    {
+      "series": "guardian_rogue",
+      "pieces": {
+        "chest": "guardian_rogue_shell"
+      }
+    },
+    {
+      "series": "guardian_monk",
+      "pieces": {
+        "chest": "guardian_monk_shell"
+      }
     }
   ],
   "accessories": [
@@ -348,6 +408,10 @@
     },
     {
       "id": "altar_knot_charm",
+      "slot": "charm"
+    },
+    {
+      "id": "seventh_gate_key",
       "slot": "charm"
     }
   ],

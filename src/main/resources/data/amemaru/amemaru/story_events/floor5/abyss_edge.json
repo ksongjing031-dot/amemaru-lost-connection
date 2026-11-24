@@ -1,0 +1,37 @@
+{
+  "_comment": "入口の岩棚のふち（本人だけ。一人一度）。奈落に落ちると、ともした中継の灯（なければ入口）へ戻される【補完】",
+  "title": "奈落",
+  "trigger": {
+    "type": "amemaru:floor_zone",
+    "floor": 5,
+    "zone": "abyss_edge"
+  },
+  "scope": "player",
+  "once": false,
+  "replayable": true,
+  "conditions": {
+    "flags_none": [
+      "amemaru:story/abyss_seen"
+    ]
+  },
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "底の見えない奈落。踏み外せば、どこまでも落ちていきそうだ。",
+      "ticks": 100,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "……落ちても、塔の糸が、ともした灯まで引き戻してくれる。ただし、無傷ではすまない。",
+      "ticks": 110,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/abyss_seen"
+      ]
+    }
+  ]
+}

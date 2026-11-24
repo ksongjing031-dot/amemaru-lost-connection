@@ -1,0 +1,35 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "守護者シリーズ（ウィザード）",
+  "rarity": "epic",
+  "required_level": 10,
+  "jobs": [
+    "amemaru:wizard"
+  ],
+  "stats": {
+    "magic": 33,
+    "mp": 70
+  },
+  "durability": 620,
+  "binding": "on_equip",
+  "effects": [
+    {
+      "type": "ally_power",
+      "threshold": 8,
+      "percent": 3
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:jade_core_shard",
+      "count": 1
+    },
+    {
+      "item": "amemaru:sentinel_plate",
+      "count": 2
+    }
+  ],
+  "description": "翠の核の欠片を、青銅の輪で杖の先に留めたもの。仲間の詠唱の気配に共鳴して、魔力の流れが太くなる。"
+}

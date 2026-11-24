@@ -1,0 +1,943 @@
+{
+  "_comment": "塔の5階「古代守護者の祭壇」（tools/mapgen/build_floor5.py が書き出す。手で直すときは、スクリプトを直して作り直す）",
+  "floor": 5,
+  "chapter": 1,
+  "name": "古代守護者の祭壇",
+  "chapter_title": "第1章　失われた古代領域",
+  "recommended_level": [
+    9,
+    12
+  ],
+  "origin": [
+    20192,
+    40,
+    -288
+  ],
+  "size": [
+    576,
+    96,
+    576
+  ],
+  "structure": "amemaru:map/floor5/",
+  "piece_size": 48,
+  "entrance": {
+    "pos": [
+      288.5,
+      49,
+      540.5
+    ],
+    "yaw": 180
+  },
+  "return_circle": {
+    "center": [
+      288.5,
+      49,
+      548.5
+    ],
+    "radius": 2.6
+  },
+  "boss_room": {
+    "boss": "amemaru:ancient_guardian",
+    "name": "円形の祭壇",
+    "spawn": {
+      "pos": [
+        288.5,
+        49,
+        63.5
+      ],
+      "yaw": 0
+    },
+    "arena": {
+      "center": [
+        288.5,
+        49,
+        72.5
+      ],
+      "radius": 35.0,
+      "y_min": 46,
+      "y_max": 72
+    },
+    "seal": [
+      [
+        284,
+        49,
+        112
+      ],
+      [
+        292,
+        54,
+        112
+      ]
+    ],
+    "start_radius": 26,
+    "respawn_seconds": 150,
+    "max_players": 8,
+    "hp_min_players": 2,
+    "hp_per_extra_player": 0.6,
+    "attack_per_extra_player": 0.1,
+    "pace_per_extra_player": 0.05,
+    "enrage_seconds": 2100,
+    "exit": {
+      "center": [
+        288.5,
+        49,
+        48.5
+      ],
+      "radius": 2.6
+    },
+    "next": {
+      "center": [
+        295.5,
+        49,
+        48.5
+      ],
+      "radius": 2.6
+    }
+  },
+  "pillars": [
+    {
+      "pos": [
+        161,
+        49,
+        466
+      ],
+      "line": "見張る眼は、つなぐ手の数を数えている",
+      "requires": {
+        "type": "guardian",
+        "guardian": "great_eye",
+        "hint": "柱の核は、まだ眠っている。西の台の大きな眼が、ずっとこちらを見張っている……"
+      }
+    },
+    {
+      "pos": [
+        446,
+        49,
+        313
+      ],
+      "line": "盾は、背にいる者のためにある",
+      "requires": {
+        "type": "guardian",
+        "guardian": "captain",
+        "hint": "柱の核は、まだ眠っている。砦の内郭で、隊長の盾が道をふさいでいる……"
+      }
+    },
+    {
+      "pos": [
+        183,
+        49,
+        346
+      ],
+      "line": "直すことは、忘れないことだ",
+      "requires": {
+        "type": "items",
+        "item": "amemaru:drone_spring",
+        "count": 3,
+        "hint": "柱の核の歯車が止まっている。修復ドローンのぜんまいが3つあれば、動きそうだ"
+      }
+    },
+    {
+      "pos": [
+        288,
+        49,
+        194
+      ],
+      "line": "四つの柱が灯るとき、祭壇は試しの場となる"
+    }
+  ],
+  "pillars_done": "四本の接続の柱が灯った。祭壇への封印が、静かにほどけていく……",
+  "spawns": [
+    {
+      "id": "gallery_eyes_a",
+      "enemy": "amemaru:watcher",
+      "center": [
+        270,
+        52,
+        492
+      ],
+      "radius": 10,
+      "max": 2,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "gallery_eyes_b",
+      "enemy": "amemaru:watcher",
+      "center": [
+        222,
+        52,
+        444
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "gallery_eyes_c",
+      "enemy": "amemaru:watcher",
+      "center": [
+        256,
+        52,
+        416
+      ],
+      "radius": 10,
+      "max": 2,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "gallery_east",
+      "enemy": "amemaru:sentinel",
+      "center": [
+        352,
+        49,
+        470
+      ],
+      "radius": 6,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "gallery_drones",
+      "enemy": "amemaru:repair_drone",
+      "center": [
+        246,
+        52,
+        480
+      ],
+      "radius": 8,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 44
+    },
+    {
+      "id": "junction_eyes",
+      "enemy": "amemaru:watcher",
+      "center": [
+        288,
+        52,
+        380
+      ],
+      "radius": 10,
+      "max": 2,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "bastion_gate",
+      "enemy": "amemaru:sentinel",
+      "center": [
+        380,
+        49,
+        362
+      ],
+      "radius": 8,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "bastion_yard_w",
+      "enemy": "amemaru:sentinel",
+      "center": [
+        400,
+        49,
+        320
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "bastion_yard_e",
+      "enemy": "amemaru:sentinel",
+      "center": [
+        485,
+        49,
+        370
+      ],
+      "radius": 8,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "bastion_drones",
+      "enemy": "amemaru:repair_drone",
+      "center": [
+        450,
+        52,
+        372
+      ],
+      "radius": 8,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "bastion_eyes",
+      "enemy": "amemaru:watcher",
+      "center": [
+        440,
+        56,
+        300
+      ],
+      "radius": 10,
+      "max": 2,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 44
+    },
+    {
+      "id": "workshop_drones_a",
+      "enemy": "amemaru:repair_drone",
+      "center": [
+        98,
+        52,
+        362
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "workshop_drones_b",
+      "enemy": "amemaru:repair_drone",
+      "center": [
+        166,
+        52,
+        350
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "workshop_guards",
+      "enemy": "amemaru:sentinel",
+      "center": [
+        140,
+        49,
+        358
+      ],
+      "radius": 8,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "workshop_eyes",
+      "enemy": "amemaru:watcher",
+      "center": [
+        110,
+        54,
+        316
+      ],
+      "radius": 12,
+      "max": 2,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "bridge_east",
+      "enemy": "amemaru:watcher",
+      "center": [
+        400,
+        52,
+        245
+      ],
+      "radius": 10,
+      "max": 2,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "bridge_west",
+      "enemy": "amemaru:watcher",
+      "center": [
+        187,
+        52,
+        252
+      ],
+      "radius": 10,
+      "max": 2,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "archive_eyes",
+      "enemy": "amemaru:watcher",
+      "center": [
+        120,
+        54,
+        480
+      ],
+      "radius": 12,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "archive_guards",
+      "enemy": "amemaru:sentinel",
+      "center": [
+        150,
+        49,
+        505
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "archive_drones",
+      "enemy": "amemaru:repair_drone",
+      "center": [
+        95,
+        52,
+        500
+      ],
+      "radius": 10,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 44
+    },
+    {
+      "id": "lookout_guards",
+      "enemy": "amemaru:sentinel",
+      "center": [
+        470,
+        56,
+        476
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "lookout_eyes",
+      "enemy": "amemaru:watcher",
+      "center": [
+        420,
+        52,
+        480
+      ],
+      "radius": 12,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "forecourt_guards",
+      "enemy": "amemaru:sentinel",
+      "center": [
+        288,
+        49,
+        160
+      ],
+      "radius": 12,
+      "max": 4,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "forecourt_drones",
+      "enemy": "amemaru:repair_drone",
+      "center": [
+        240,
+        52,
+        165
+      ],
+      "radius": 8,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 44
+    },
+    {
+      "id": "forecourt_eyes",
+      "enemy": "amemaru:watcher",
+      "center": [
+        340,
+        54,
+        170
+      ],
+      "radius": 10,
+      "max": 2,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    }
+  ],
+  "guardians": [
+    {
+      "id": "great_eye",
+      "enemy": "amemaru:watcher",
+      "variant": "amemaru:watcher_great",
+      "pos": [
+        170.5,
+        52,
+        474.5
+      ],
+      "respawn_seconds": 300,
+      "activation": 30,
+      "pillar": 0
+    },
+    {
+      "id": "captain",
+      "enemy": "amemaru:sentinel",
+      "variant": "amemaru:sentinel_captain",
+      "pos": [
+        446.5,
+        49,
+        326.5
+      ],
+      "respawn_seconds": 300,
+      "activation": 28,
+      "pillar": 1
+    }
+  ],
+  "switches": [
+    {
+      "id": "shrine",
+      "stones": [
+        [
+          266,
+          49,
+          168
+        ],
+        [
+          310,
+          49,
+          168
+        ]
+      ],
+      "window_seconds": 12,
+      "open_seconds": 60,
+      "gate": [
+        [
+          286,
+          49,
+          182
+        ],
+        [
+          290,
+          52,
+          182
+        ]
+      ]
+    }
+  ],
+  "chests": [
+    {
+      "pos": [
+        312,
+        49,
+        546
+      ],
+      "loot": "amemaru:chests/floor5_ancient"
+    },
+    {
+      "pos": [
+        356,
+        49,
+        474
+      ],
+      "loot": "amemaru:chests/floor5_ancient"
+    },
+    {
+      "pos": [
+        176,
+        49,
+        480
+      ],
+      "loot": "amemaru:chests/floor5_ancient",
+      "guardian": "great_eye"
+    },
+    {
+      "pos": [
+        90,
+        49,
+        528
+      ],
+      "loot": "amemaru:chests/floor5_ancient"
+    },
+    {
+      "pos": [
+        140,
+        49,
+        468
+      ],
+      "loot": "amemaru:chests/floor5_ancient"
+    },
+    {
+      "pos": [
+        186,
+        49,
+        530
+      ],
+      "loot": "amemaru:chests/floor5_ancient"
+    },
+    {
+      "pos": [
+        452,
+        56,
+        462
+      ],
+      "loot": "amemaru:chests/floor5_ancient"
+    },
+    {
+      "pos": [
+        505,
+        56,
+        492
+      ],
+      "loot": "amemaru:chests/floor5_ancient"
+    },
+    {
+      "pos": [
+        402,
+        49,
+        520
+      ],
+      "loot": "amemaru:chests/floor5_ancient"
+    },
+    {
+      "pos": [
+        469,
+        49,
+        307
+      ],
+      "loot": "amemaru:chests/floor5_ancient",
+      "guardian": "captain"
+    },
+    {
+      "pos": [
+        366,
+        49,
+        294
+      ],
+      "loot": "amemaru:chests/floor5_ancient"
+    },
+    {
+      "pos": [
+        494,
+        49,
+        386
+      ],
+      "loot": "amemaru:chests/floor5_ancient"
+    },
+    {
+      "pos": [
+        96,
+        49,
+        374
+      ],
+      "loot": "amemaru:chests/floor5_ancient"
+    },
+    {
+      "pos": [
+        140,
+        49,
+        368
+      ],
+      "loot": "amemaru:chests/floor5_ancient"
+    },
+    {
+      "pos": [
+        108,
+        49,
+        327
+      ],
+      "loot": "amemaru:chests/floor5_ancient"
+    },
+    {
+      "pos": [
+        164,
+        49,
+        320
+      ],
+      "loot": "amemaru:chests/floor5_ancient"
+    },
+    {
+      "pos": [
+        207,
+        49,
+        151
+      ],
+      "loot": "amemaru:chests/floor5_ancient"
+    },
+    {
+      "pos": [
+        369,
+        49,
+        151
+      ],
+      "loot": "amemaru:chests/floor5_ancient"
+    }
+  ],
+  "environment": {
+    "fog": [
+      24,
+      150
+    ],
+    "fog_color": "#16242E"
+  },
+  "waypoints": [
+    {
+      "id": "junction",
+      "name": "分かれ道の台",
+      "pos": [
+        288,
+        49,
+        398
+      ],
+      "arrive": {
+        "pos": [
+          288.5,
+          49,
+          400.5
+        ],
+        "yaw": 179.0
+      }
+    },
+    {
+      "id": "bastion",
+      "name": "防衛兵の砦",
+      "pos": [
+        374,
+        49,
+        372
+      ],
+      "arrive": {
+        "pos": [
+          376.5,
+          49,
+          372.5
+        ],
+        "yaw": -128.5
+      }
+    },
+    {
+      "id": "workshop",
+      "name": "修復の工廠",
+      "pos": [
+        102,
+        49,
+        358
+      ],
+      "arrive": {
+        "pos": [
+          102.5,
+          49,
+          356.5
+        ],
+        "yaw": -87.8
+      }
+    },
+    {
+      "id": "forecourt",
+      "name": "祭壇の前庭",
+      "pos": [
+        240,
+        49,
+        186
+      ],
+      "arrive": {
+        "pos": [
+          240.5,
+          49,
+          184.5
+        ],
+        "yaw": -143.6
+      }
+    }
+  ],
+  "travel_stone": [
+    279,
+    49,
+    542
+  ],
+  "seal_requires": "pillars",
+  "abyss_y": 24,
+  "boss_marks": {
+    "binding_daises": [
+      [
+        288,
+        49,
+        54
+      ],
+      [
+        306,
+        49,
+        72
+      ],
+      [
+        288,
+        49,
+        90
+      ],
+      [
+        270,
+        49,
+        72
+      ]
+    ],
+    "altar_center": [
+      [
+        288,
+        49,
+        72
+      ]
+    ],
+    "barrier_pillars": [
+      [
+        309,
+        66,
+        93
+      ],
+      [
+        267,
+        66,
+        93
+      ],
+      [
+        267,
+        66,
+        51
+      ],
+      [
+        309,
+        66,
+        51
+      ]
+    ]
+  },
+  "story_zones": [
+    {
+      "id": "abyss_edge",
+      "box": [
+        258,
+        48,
+        522,
+        318,
+        54,
+        532
+      ]
+    },
+    {
+      "id": "lattice_sky",
+      "box": [
+        204,
+        48,
+        148,
+        372,
+        56,
+        204
+      ]
+    }
+  ]
+}

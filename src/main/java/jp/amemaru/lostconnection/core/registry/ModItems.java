@@ -146,6 +146,17 @@ public final class ModItems {
             new ForgeSpawnEggItem(ModEntities.BROKEN_BEAST, 0xE0DACB, 0xDCBC64, new Item.Properties()));
     public static final RegistryObject<Item> CANTARE_SPAWN_EGG = ITEMS.register("cantare_spawn_egg", () ->
             new ForgeSpawnEggItem(ModEntities.CANTARE, 0xF4EEDC, 0x8478C0, new Item.Properties()));
+    public static final RegistryObject<Item> WATCHER_SPAWN_EGG = ITEMS.register("watcher_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.WATCHER, 0xE8D9A8, 0xC8342C, new Item.Properties()));
+    public static final RegistryObject<Item> SENTINEL_SPAWN_EGG = ITEMS.register("sentinel_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.SENTINEL, 0xD8D4C8, 0x3E8C6E, new Item.Properties()));
+    public static final RegistryObject<Item> REPAIR_DRONE_SPAWN_EGG = ITEMS.register("repair_drone_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.REPAIR_DRONE, 0xA07A3C, 0x5CE0A4, new Item.Properties()));
+    public static final RegistryObject<Item> ANCIENT_GUARDIAN_SPAWN_EGG = ITEMS.register("ancient_guardian_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.ANCIENT_GUARDIAN, 0xE6E2D6, 0x4CD69A, new Item.Properties()));
+    // 11月24日：5階の結び台
+    public static final RegistryObject<Item> BINDING_DAIS = ITEMS.register("binding_dais", () ->
+            new BlockItem(ModBlocks.BINDING_DAIS.get(), new Item.Properties().rarity(Rarity.RARE)));
     // 11月24日：4階の仕掛けのブロック
     public static final RegistryObject<Item> MURAL_PANEL = ITEMS.register("mural_panel", () ->
             new BlockItem(ModBlocks.MURAL_PANEL.get(), new Item.Properties().rarity(Rarity.RARE)));

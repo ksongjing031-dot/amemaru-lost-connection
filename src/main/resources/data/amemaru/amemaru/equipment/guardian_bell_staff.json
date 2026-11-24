@@ -1,0 +1,36 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "守護者シリーズ（ヒーラー）",
+  "rarity": "epic",
+  "required_level": 10,
+  "jobs": [
+    "amemaru:healer"
+  ],
+  "stats": {
+    "magic": 30,
+    "mp": 70,
+    "heal_power": 7
+  },
+  "durability": 620,
+  "binding": "on_equip",
+  "effects": [
+    {
+      "type": "ally_power",
+      "threshold": 8,
+      "percent": 3
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:jade_core_shard",
+      "count": 1
+    },
+    {
+      "item": "amemaru:sentinel_plate",
+      "count": 2
+    }
+  ],
+  "description": "白い石の輪に、翠の核の欠片の鈴をさげた鈴杖。仲間が近くにいるほど、鈴の音が澄んで遠くまで届く。"
+}

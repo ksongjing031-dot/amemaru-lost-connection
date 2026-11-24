@@ -1,0 +1,47 @@
+{
+  "_comment": "修復ドローン（5階の雑魚。Phase 0-A 9章「守護者を回復するので最優先」）。repair：近くのいちばん傷ついた祭壇の機械へ光の糸を伸ばし、windup 秒のあと最大HPの power を直す（古代守護者は boss_heal 倍）。糸の間に最大HPの interrupt の傷で止まる。人が近いと離れる。zap：弱い電撃。数値は【補完】",
+  "name": "修復ドローン",
+  "floor": 5,
+  "level": 9,
+  "description": "青銅の小さな球に、四枚の羽根と翠に光る修理の腕。傷ついた祭壇の機械を見つけると、光の糸で直してしまう。もろいので、先に落としたい。",
+  "stats": {
+    "hp": 1200,
+    "attack": 40,
+    "defense": 4,
+    "move_speed": 0.22,
+    "follow_range": 20,
+    "aggro_range": 11
+  },
+  "exp": 30,
+  "skills": {
+    "repair": {
+      "power": 0.08,
+      "windup": 1.5,
+      "cooldown": 6.0,
+      "range": 12.0
+    },
+    "zap": {
+      "power": 0.7,
+      "windup": 0.6,
+      "cooldown": 2.5,
+      "range": 2.5
+    }
+  },
+  "behavior": {
+    "boss_heal": 0.1,
+    "interrupt": 0.2
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/repair_drone",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_amber",
+        "chance": 0.6
+      },
+      {
+        "item": "amemaru:crystal_fruit_azure",
+        "chance": 0.3
+      }
+    ]
+  }
+}

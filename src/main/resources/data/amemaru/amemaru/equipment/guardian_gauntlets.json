@@ -1,0 +1,35 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "守護者シリーズ（モンク）",
+  "rarity": "epic",
+  "required_level": 10,
+  "jobs": [
+    "amemaru:monk"
+  ],
+  "stats": {
+    "attack": 25,
+    "hp": 40
+  },
+  "durability": 620,
+  "binding": "on_equip",
+  "effects": [
+    {
+      "type": "ally_power",
+      "threshold": 8,
+      "percent": 3
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:jade_core_shard",
+      "count": 1
+    },
+    {
+      "item": "amemaru:sentinel_plate",
+      "count": 2
+    }
+  ],
+  "description": "守護者の拳の青銅を、籠手に打ち直したもの。拳の甲の翠の核が、仲間と息を合わせるほど熱を帯びる。"
+}

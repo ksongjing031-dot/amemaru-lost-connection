@@ -1,0 +1,35 @@
+{
+  "slot": "chest",
+  "generation": 1,
+  "series": "守護者シリーズ（アーチャー）",
+  "rarity": "epic",
+  "required_level": 10,
+  "jobs": [
+    "amemaru:archer"
+  ],
+  "stats": {
+    "defense": 7,
+    "hp": 35,
+    "crit": 2
+  },
+  "durability": 440,
+  "binding": "on_equip",
+  "effects": [
+    {
+      "type": "damage_reduction",
+      "percent": 5
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:jade_core_shard",
+      "count": 1
+    },
+    {
+      "item": "amemaru:sentinel_plate",
+      "count": 2
+    }
+  ],
+  "description": "守護者の装甲の小さな板を、革の胴着に鱗のように重ねたもの。動きを妨げずに、受けた矢と刃を散らす。"
+}
