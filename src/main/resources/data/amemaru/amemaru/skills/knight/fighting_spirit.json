@@ -6,9 +6,11 @@
   "type": "passive",
   "name": "闘志",
   "description": "追い詰められるほど、誓いは強く燃える。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -22,6 +24,6 @@
   "passive": {
     "type": "fighting_spirit",
     "value": 10,
-    "value_per_rank": 5
+    "value_per_rank": 2.5
   }
 }

@@ -1,13 +1,16 @@
 package jp.amemaru.lostconnection.job;
 
+import jp.amemaru.lostconnection.AmemaruMod;
 import jp.amemaru.lostconnection.core.registry.ModSounds;
 import jp.amemaru.lostconnection.job.def.JobDef;
 import jp.amemaru.lostconnection.job.def.SkillDef;
 import jp.amemaru.lostconnection.job.def.SkillRegistry;
+import jp.amemaru.lostconnection.job.def.SkillTreeDef;
 import jp.amemaru.lostconnection.player.GrowthDef;
 import jp.amemaru.lostconnection.player.GrowthRules;
 import jp.amemaru.lostconnection.player.LevelService;
 import jp.amemaru.lostconnection.player.PlayerData;
+import jp.amemaru.lostconnection.player.StatType;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -36,6 +39,10 @@ public final class SkillTreeService {
         UPPER("message.amemaru.skill.learn.upper"),
         /** 奥義は職業ごとに1つだけ。もう一方を覚えている（選び直すには、白紙の誓約書でやり直す）。 */
         ULTIMATE_CHOSEN("message.amemaru.skill.learn.ultimate_chosen"),
+        /** 11月24日：スキルツリーで、となりの節がまだ取れていない（道がつながっていない）。 */
+        NOT_CONNECTED("message.amemaru.skill.learn.not_connected"),
+        /** 11月24日：その節はもう取ってある。 */
+        TAKEN("message.amemaru.skill.learn.taken"),
         POINTS("message.amemaru.skill.learn.points");
 
         private final String key;
@@ -54,11 +61,16 @@ public final class SkillTreeService {
 
     // ---------------------------------------------------------------- ポイント
 
-    /** 習得に使ったスキルポイントの合計（無料で覚えた1段目は含めない）。 */
+    /** 習得に使ったポイントの合計（無料で覚えた1段目は含めない。11月24日からは、スキルツリーのステータスの節も含める）。 */
     public static int spentPoints(PlayerData data) {
         SkillRegistry.Snapshot snapshot = SkillRegistry.get();
         JobDef job = snapshot.job(data.getCombatJob());
         int spent = 0;
+        SkillTreeDef tree = snapshot.tree(data.getCombatJob());
+        for (String id : data.getTreeNodes()) {
+            SkillTreeDef.Node node = tree == null ? null : tree.node(id);
+            spent += node == null ? SkillTreeDef.STAT_NODE_COST : node.cost();
+        }
         for (Map.Entry<ResourceLocation, Integer> entry : data.getLearnedSkills().entrySet()) {
             SkillDef skill = snapshot.skill(entry.getKey());
             if (skill == null) {
@@ -98,9 +110,18 @@ public final class SkillTreeService {
         if (data.getLevel() < skill.minLevel()) {
             return Blocker.LEVEL;
         }
-        for (SkillDef.Requirement requirement : skill.requirements()) {
-            if (data.getSkillRank(requirement.skill()) < requirement.rank()) {
-                return Blocker.REQUIREMENT;
+        SkillTreeDef tree = SkillRegistry.get().tree(skill.job());
+        if (tree != null) {
+            // 11月24日：スキルツリーのある職業は、前提のスキルの代わりに、となりの節が取れていること（段階を上げるときは見ない）
+            SkillTreeDef.Node node = tree.nodeOf(skill.id());
+            if (node == null || current == 0 && !connected(data, tree, node.id())) {
+                return Blocker.NOT_CONNECTED;
+            }
+        } else {
+            for (SkillDef.Requirement requirement : skill.requirements()) {
+                if (data.getSkillRank(requirement.skill()) < requirement.rank()) {
+                    return Blocker.REQUIREMENT;
+                }
             }
         }
         if ((skill.isUltimate() || next >= skill.upperRank()) && !data.isPromoted()) {
@@ -110,6 +131,146 @@ public final class SkillTreeService {
             return Blocker.POINTS;
         }
         return Blocker.NONE;
+    }
+
+    // ---------------------------------------------------------------- スキルツリー（11月24日）
+
+    /** その節が取れているか（核はいつも。スキルの節は1段目以上を覚えていれば。ステータスの節は取ったもの）。 */
+    public static boolean taken(PlayerData data, SkillTreeDef tree, String id) {
+        SkillTreeDef.Node node = tree.node(id);
+        if (node == null) {
+            return false;
+        }
+        return switch (node.kind()) {
+            case CORE -> true;
+            case SKILL -> node.skill() != null && data.getSkillRank(node.skill()) > 0;
+            default -> data.hasTreeNode(id);
+        };
+    }
+
+    /** となりの節のどれかが取れているか。 */
+    public static boolean connected(PlayerData data, SkillTreeDef tree, String id) {
+        for (String neighbor : tree.neighbors(id)) {
+            if (taken(data, tree, neighbor)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** ステータスの節（小さな節・大きな節）を取れるか。 */
+    public static Blocker canTakeNode(PlayerData data, SkillTreeDef tree, String id) {
+        if (!data.hasCombatJob()) {
+            return Blocker.NO_JOB;
+        }
+        SkillTreeDef.Node node = tree.node(id);
+        if (node == null || !node.isStatNode()) {
+            return Blocker.UNKNOWN;
+        }
+        if (!tree.job().equals(data.getCombatJob())) {
+            return Blocker.OTHER_JOB;
+        }
+        if (data.hasTreeNode(id)) {
+            return Blocker.TAKEN;
+        }
+        if (!connected(data, tree, id)) {
+            return Blocker.NOT_CONNECTED;
+        }
+        if (availablePoints(data, GrowthRules.current()) < node.cost()) {
+            return Blocker.POINTS;
+        }
+        return Blocker.NONE;
+    }
+
+    /**
+     * スキルツリーの節を取る（スキルの節なら、次の段階を覚える）。
+     *
+     * @return 取れたか（取れなければ、本人に理由を出す）
+     */
+    public static boolean takeNode(ServerPlayer player, PlayerData data, String id) {
+        SkillTreeDef tree = SkillRegistry.get().tree(data.getCombatJob());
+        SkillTreeDef.Node node = tree == null ? null : tree.node(id);
+        if (node == null) {
+            tell(player, Component.translatable(Blocker.UNKNOWN.key()));
+            return false;
+        }
+        if (node.kind() == SkillTreeDef.Kind.SKILL && node.skill() != null) {
+            return learn(player, data, node.skill());
+        }
+        Blocker blocker = canTakeNode(data, tree, id);
+        if (blocker != Blocker.NONE) {
+            tell(player, blocker == Blocker.POINTS ? Component.translatable(blocker.key(), node.cost())
+                    : Component.translatable(blocker.key()));
+            return false;
+        }
+        data.addTreeNode(id);
+        LevelService.recompute(player, data);
+        data.markDirty(PlayerData.SYNC_GROWTH | PlayerData.SYNC_SKILLS);
+        player.displayClientMessage(Component.translatable("message.amemaru.skill.node_taken", nodeLabel(node))
+                .withStyle(ChatFormatting.AQUA), true);
+        player.level().playSound(null, player.getX(), player.getY(), player.getZ(), ModSounds.get("skill.learn"),
+                SoundSource.PLAYERS, 0.6F, node.kind() == SkillTreeDef.Kind.NOTABLE ? 1.25F : 1.5F);
+        return true;
+    }
+
+    /** 節の、画面に出す短い説明（大きな節は名前、小さな節は「攻撃+2」のように。言葉はクライアントで訳す）。 */
+    public static Component nodeLabel(SkillTreeDef.Node node) {
+        if (!node.name().isEmpty()) {
+            return Component.literal(node.name());
+        }
+        net.minecraft.network.chat.MutableComponent text = Component.empty();
+        boolean[] first = {true};
+        java.util.function.BiConsumer<StatType, String> add = (type, value) -> {
+            if (!first[0]) {
+                text.append("・");
+            }
+            first[0] = false;
+            text.append(Component.translatable("stat.amemaru." + type.id())).append("+" + value);
+        };
+        node.flat().forEach((type, value) -> add.accept(type, trim(value) + (type.isPercent() ? "%" : "")));
+        node.percent().forEach((type, value) -> add.accept(type, trim(value) + "%"));
+        return text;
+    }
+
+    private static String trim(double value) {
+        return Math.abs(value - Math.rint(value)) < 1.0E-9 ? String.valueOf((long) Math.rint(value)) : String.valueOf(value);
+    }
+
+    /** ツリーで取ったステータスの節が上げるステータス（数・%）を、足し合わせる。 */
+    public static void treeStats(PlayerData data, Map<StatType, Double> flat, Map<StatType, Double> percent) {
+        SkillTreeDef tree = SkillRegistry.get().tree(data.getCombatJob());
+        if (tree == null) {
+            return;
+        }
+        for (String id : data.getTreeNodes()) {
+            SkillTreeDef.Node node = tree.node(id);
+            if (node == null) {
+                continue;
+            }
+            node.flat().forEach((type, value) -> flat.merge(type, value, Double::sum));
+            node.percent().forEach((type, value) -> percent.merge(type, value, Double::sum));
+        }
+    }
+
+    /**
+     * 11月24日より前のデータ（ステータスとスキルを別に振っていた）を、新しいスキルツリーに移す：振ったステータスと覚えたスキルを
+     * すべて戻し（職業の最初のスキルは残す）、本人に伝える。ログインのとき。
+     *
+     * @return 移したか
+     */
+    public static boolean migrate(ServerPlayer player, PlayerData data) {
+        if (data.getTreeVersion() >= PlayerData.TREE_VERSION) {
+            return false;
+        }
+        boolean hadPoints = data.totalAllocated() > 0 || spentPoints(data) > 0;
+        data.clearAllocated();
+        resetSkills(player, data);
+        data.setTreeVersion(PlayerData.TREE_VERSION);
+        if (hadPoints && data.hasCombatJob()) {
+            player.sendSystemMessage(Component.translatable("message.amemaru.skill.tree_migrated").withStyle(ChatFormatting.GOLD));
+        }
+        AmemaruMod.LOGGER.info("[amemaru] {} moved to the new skill tree (points returned: {})", player.getGameProfile().getName(), hadPoints);
+        return true;
     }
 
     /**
@@ -190,6 +351,7 @@ public final class SkillTreeService {
             case LEVEL -> Component.translatable(blocker.key(), skill.minLevel());
             case POINTS -> Component.translatable(blocker.key(), skill.rankCost(data.getSkillRank(skill.id()) + 1));
             case REQUIREMENT -> Component.translatable(blocker.key(), requirementText(skill));
+            case NOT_CONNECTED, TAKEN -> Component.translatable(blocker.key());
             case ULTIMATE_CHOSEN -> {
                 SkillDef chosen = chosenUltimate(data, skill);
                 yield Component.translatable(blocker.key(), chosen == null ? "" : chosen.name());
@@ -246,6 +408,8 @@ public final class SkillTreeService {
             SkillService.cancelCast(player, data, false);
         }
         data.clearSkills();
+        // 11月24日：スキルツリーのステータスの節も戻す
+        data.clearTreeNodes();
         JobDef job = SkillRegistry.get().job(data.getCombatJob());
         if (job != null) {
             int slot = 0;

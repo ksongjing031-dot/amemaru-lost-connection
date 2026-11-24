@@ -54,7 +54,7 @@ public final class ShopGameTests {
     /**
      * 店の定義（13軒）と相場の表が読み込め、どの品もあり、値段がつく。買い取り値は、どの店の売値よりも安い（買って売るだけでは
      * 増えない）。基準価格は Phase 0-A の計算例のとおり（苔鉄40・古代石の剣500・草原の角笛2,050）。表にない装備は
-     * レアリティの基準額 ×（1＋0.08×装備レベル）、アクセサリーは品質の倍率をかける。
+     * レアリティの基準額 ×（1＋0.035×装備レベル。11月24日にレベルの上限を上げたため0.08から）、アクセサリーは品質の倍率をかける。
      */
     @GameTest(template = EMPTY)
     public static void shopDefinitionsAndPrices(GameTestHelper helper) {
@@ -112,9 +112,9 @@ public final class ShopGameTests {
                 + MarketPrices.base(new ItemStack(item("ancient_stone_sword"))));
         check(helper, MarketPrices.base(new ItemStack(item("grassland_horn"))) == 2050, "草原の角笛の基準価格が2,050ではありません");
         check(helper, MarketPrices.base(new ItemStack(item("healing_potion_small"))) == 80, "回復薬（小）の基準価格が、売値の80%ではありません");
-        // 表にない装備：水門の鍵盾（エピック・装備レベル7）は 1,600 ×（1＋0.08×7）＝ 2,496
+        // 表にない装備：水門の鍵盾（エピック・装備レベル15）は 1,600 ×（1＋0.035×15）＝ 2,440（11月24日。前は Lv7・0.08 で 2,496）
         long shield = MarketPrices.base(new ItemStack(item("floodgate_key_shield")));
-        check(helper, shield == 2496, "表にない装備の基準価格が、レアリティの基準額 ×（1＋0.08×装備レベル）ではありません：" + shield);
+        check(helper, shield == 2440, "表にない装備の基準価格が、レアリティの基準額 ×（1＋0.035×装備レベル）ではありません：" + shield);
         // アクセサリーの品質：★5 は×3.0、★1 は×0.6
         ItemStack charm = new ItemStack(item("waystone_charm"));
         long plain = MarketPrices.base(charm);

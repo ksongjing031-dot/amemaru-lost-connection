@@ -538,8 +538,9 @@ public final class ServerConfig {
                 .defineInRange("firstMeetDaily", 5, 0, 100);
         LEAD_LEVEL_GAP = b
                 .comment("先導者：サーバーの中央値より、このレベル以上低い人と組むと、先導する側に報酬（Phase 0-A 15章：10レベル）。",
-                        "途中参加者（来てから3日のうち）と組んだときも同じ")
-                .defineInRange("leadLevelGap", 10, 1, 200);
+                        "途中参加者（来てから3日のうち）と組んだときも同じ。11月24日にレベルの上限を50から100にしたため、初期値は20",
+                        "（最大レベルに対する割合を、設計書の10レベルと同じにした）")
+                .defineInRange("leadLevelGap", 20, 1, 200);
         PARTNER_ENABLED = b
                 .comment("今日の相棒（Phase 0-A 15章：毎日ログインしたときに、まだ組んだことのない人を1人「今日の相棒」として示す）")
                 .define("partnerEnabled", true);

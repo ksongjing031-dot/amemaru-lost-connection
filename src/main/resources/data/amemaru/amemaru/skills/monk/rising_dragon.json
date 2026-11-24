@@ -6,9 +6,11 @@
   "type": "active",
   "name": "昇龍脚",
   "description": "地を蹴って跳び上がりながら、まわりの敵を蹴り上げる。【継】",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -32,7 +34,7 @@
       "type": "damage",
       "stat": "attack",
       "coefficient": 1.5,
-      "coefficient_per_rank": 0.25
+      "coefficient_per_rank": 0.125
     },
     {
       "type": "launch",

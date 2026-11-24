@@ -6,9 +6,11 @@
   "type": "active",
   "name": "三連矢",
   "description": "息つく間もなく、三本の矢を続けて放つ。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -37,7 +39,7 @@
       "type": "damage",
       "stat": "attack",
       "coefficient": 0.9,
-      "coefficient_per_rank": 0.15
+      "coefficient_per_rank": 0.075
     }
   ],
   "tags": [

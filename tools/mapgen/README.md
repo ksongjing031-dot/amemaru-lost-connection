@@ -43,6 +43,7 @@ python3 tools/mapgen/build_city.py /tmp/out --render /tmp/out    # 別の所に�
 python3 tools/mapgen/build_floor1.py                      # 塔の1階「始まりの草原」（384×384）を map/floor1/p*_*.nbt と floors/floor1.json に書き直す
 python3 tools/mapgen/build_floor1.py /tmp/out --render /tmp/out  # 見本の絵も描く（上から見た地図・ボスの広間・石柱・入口・西の丘・洞・東の遺跡・林など）
 python3 tools/mapgen/check_floor1.py                     # 塔の1階を歩いて確かめる（石柱・仕掛け石・宝箱へ行ける・奥の院・巻き道・湧く所・洞の明るさ。15秒ほど）
+python3 tools/mapgen/check_signs.py [階 ...]               # 塔の階の看板が読める向きか（壁を向いていない・人が来る側を向いている）確かめる（1〜5階で1分半ほど）
 python3 tools/mapgen/check_city.py                        # 街並みと11の施設の構造物を世界の座標に並べて、街全体を通しで確かめる（はじめの形と育ったあとの形。30秒ほど）
 python3 tools/mapgen/check_city.py --render /tmp/city     # 結果（city_check.json）と、上から見た街・南から見た高さ・夜の灯り・つながる道の絵も書く
 python3 tools/mapgen/check_city.py --render /tmp/city --aerial   # 鳥瞰の絵も描く（光線で描くので1〜2分）
@@ -126,6 +127,7 @@ python3 -I tools/mapgen/import_edits.py <フォルダ> --dry-run       # 確か�
 | `build_city.py` | コネリアの街並み（Phase 5）。11の施設の構造物（`check_city.City("grown", town=False)`）が置かれていない所を、建築の文書 Tab 1 の都市のルールで埋める：道と中央広場の舗装（`paving`・`plaza`。大結晶）、城壁と3つの門と門の塔・斜めの4つの塔（`wall_and_gates`。城壁の上の通路は見張りの所で、上がる階段は作らない）、結界の柱8本、家50軒（`house`。2階＋屋根裏、平入りと妻入り、**内装なし**。扉は手で開かない `amemaru:house_door_*`、中は空洞で見えない灯り）・倉庫3棟（`warehouse`）・小広場と井戸6か所・裏庭の木と花の畑（`yards`）・灯り（`street_lamps`）・案内板（`signposts`）。暗くて湧ける所は、見えない灯り（`minecraft:light`）で埋める（`fill_dark`。街が光をさえぎって暗くなった施設の足もとも、そばの空いたマスで）。街の箱（x −144〜135、z −184〜127）を 48×48 の区画 `town/t<i>_<j>.nbt` に、空気を書かずに書き出し、置く所を `town/placements.txt` に書く。施設の書くマスは書かない（`Town.put`）ので、施設より先に置く |
 | `build_floor1.py` | 塔の1階「始まりの草原」（Phase 5。384×48×384）。丘で囲んだ草原・小川と石橋・古代の道・3本の石柱・封印の門・草原の主の広間（ボスの部屋）・道標の石板・湧く所。11月22日から、西の丘の台地と巻き道と洞（`hill_terrain`・`hill_features`・`hill_cave`）・東の遺跡と奥の院と仕掛け石と格子（`ruins_compound`）・北西の林（`woods`）・2本目の小川・生け垣と石積みの垣（`hedgerows`）・飛び石（`fords`）・結晶の窪み・古代の宝箱10（`chest`）も。48×48 の区画64個（`map/floor1/p<i>_<j>.nbt`）と、階の定義 `floors/floor1.json`（入口・戻りの円・ボスの部屋・石柱と課題・湧く所・石板・守り手・仕掛け石と門・宝箱・階の中だけのドロップ）を書き出す |
 | `check_floor1.py` | 塔の1階を、ゲームに近い歩き方（1段は跳んで上がる・2段は上がれない・下りは何段でも・水は泳ぐ・つるは上る）で確かめる：入口から石柱の核・仕掛け石・宝箱・広間の前へ行けるか、門が閉じている間は奥の院に入れないか（ひらくと入れるか）、奥の院の中から出られるか、巻き道をふさぐと台地へ上がれないか、湧く所と巡回の点と守り手の出る所に立てるか、洞に暗い所がないか |
+| `check_signs.py` | 塔の階の看板の向き（11月24日）。構造物ファイルを読み、看板ごとに字の面（立て看板は `rotation`、壁の看板は `facing`。字は表にだけ書く）が、すぐ前・3マスのうちの壁を向いていないか、仕掛けをすべて解いた形（扉・門・封印を開けた形）で入口から歩いて看板のまわり（看板から見える所）にはじめて着くあたりの側（正面から70度のうち）を向いているかを見る。おかしい看板は、直す向き（人が来る側にいちばん近く、前の3マスに壁のない向き）を添えて出す。看板を置く・動かすときは、ここで確かめてから向きを決める |
 | `floor_figures.py` | 階の見本の絵（`build_floor1.py --render` から呼ぶ） |
 | `build_tower.py` | コネリアの塔の入口（PHASE 11 の設計。入口 45×48×30・塔前広場 47×18×32、正面は南）。世界の座標（x・z）と高さ y（道のブロックが 0）で、入口と広場を1つの合わせた形（47×50×62）に組み立て、書き出すときに2つの箱に切り分ける（`split()`。箱からはみ出すブロックがあれば止まる）。塔の基部の丸い壁は `base_face()`（3つの帯の半径 `BANDS`）、門のアーチは `arch_open()`、転移門の輪は `ring_cell()`・`ring_open()`、左右の塔のらせん階段は `spiral()`、広場の段は `terrace()`。重ねる形は記念碑（`M`）。確かめの写し `checked_world()` は、建物の下と外にゲームの地面（y 0）を足す |
 

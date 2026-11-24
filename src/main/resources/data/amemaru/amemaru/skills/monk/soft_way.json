@@ -6,9 +6,11 @@
   "type": "passive",
   "name": "柔の理",
   "description": "力に力で逆らわない。回避が上がり、かわすたびに気がたまる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -22,6 +24,6 @@
   "passive": {
     "type": "soft_way",
     "value": 5,
-    "value_per_rank": 2.5
+    "value_per_rank": 1.25
   }
 }

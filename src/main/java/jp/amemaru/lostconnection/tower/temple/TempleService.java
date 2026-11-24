@@ -67,7 +67,11 @@ public final class TempleService {
     /** 鳴らしている・答えを待っている順番（「階:組」）。 */
     private static final Map<String, Performance> SONGS = new HashMap<>();
     /** 最後に踏んだ床（同じ床を踏み続けても、1回と数える）。 */
-    private static final Map<UUID, BlockPos> LAST_STEP = new HashMap<>();
+    /** 人ごとに、今乗っている音の床（降りると消える。乗っている間は数えない）。人は、抜けた・生き返った（別の人の入れ物）で消す。 */
+    private static final Map<UUID, Standing> LAST_STEP = new HashMap<>();
+
+    private record Standing(ServerPlayer player, BlockPos plate) {
+    }
 
     private static final class Performance {
         final int[] notes;
@@ -397,14 +401,44 @@ public final class TempleService {
         player.displayClientMessage(Component.translatable("message.amemaru.song.listen", song.length()).withStyle(ChatFormatting.AQUA), true);
     }
 
-    /** 床を踏んだ（{@link TempleBlocks.SoundPlate}）。 */
+    /** 自動テスト用：数えた踏みの数（同じ床に乗り続けている間は数えない）。 */
+    private static int countedSteps;
+
+    public static int countedSteps() {
+        return countedSteps;
+    }
+
+    /** 自動テスト用：鳴らしている（答えを待っている）音の順番（床の番号。鳴らしていなければ空）。 */
+    public static int[] songNotes(int floor, String songId) {
+        Performance perf = SONGS.get(floor + ":" + songId);
+        return perf == null ? new int[0] : perf.notes.clone();
+    }
+
+    /** その人が、その音の床の上に立っているか（足の真ん中のマスがその床で、足が床の上から半ブロックまで。観戦中の人は数えない）。 */
+    public static boolean standingOn(ServerPlayer player, BlockPos plate) {
+        return !player.isSpectator() && player.blockPosition().equals(plate) && player.getY() <= plate.getY() + 0.5;
+    }
+
+    /** 自動テスト用：その人が今乗っている音の床（なければ null）。 */
+    @Nullable
+    public static BlockPos lastStep(ServerPlayer player) {
+        Standing standing = LAST_STEP.get(player.getUUID());
+        return standing == null ? null : standing.plate();
+    }
+
+    /**
+     * 床を踏んだ（{@link TempleBlocks.SoundPlate}。体が床のマスに入っている間、動くたびに呼ばれる）。同じ床に乗っている間は1回だけ
+     * 数え、いちど降りて（{@link #onServerTick} が、乗っていた床から離れたのを見て消す）また乗れば、同じ床でももう1回数える
+     * （「紅 → 白 → 紅」のような歌のため）。
+     */
     public static void step(ServerPlayer player, BlockPos pos, int note) {
-        BlockPos last = LAST_STEP.get(player.getUUID());
-        if (pos.equals(last)) {
+        ServerLevel level = player.serverLevel();
+        Standing last = LAST_STEP.get(player.getUUID());
+        if (last != null && last.player() == player && pos.equals(last.plate())) {
             return;
         }
-        LAST_STEP.put(player.getUUID(), pos.immutable());
-        ServerLevel level = player.serverLevel();
+        LAST_STEP.put(player.getUUID(), new Standing(player, pos.immutable()));
+        countedSteps++;
         // ボスの音の床（4階のボス。近くにいれば、ボスが受け取る）
         for (jp.amemaru.lostconnection.enemy.boss.Cantare boss : level.getEntitiesOfClass(jp.amemaru.lostconnection.enemy.boss.Cantare.class,
                 new AABB(pos).inflate(40.0))) {
@@ -541,9 +575,9 @@ public final class TempleService {
                 }
             }
         }
-        if (now % 200 == 0) {
-            LAST_STEP.keySet().removeIf(id -> server.getPlayerList().getPlayer(id) == null);
-        }
+        // 乗っていた音の床から降りた人の印を消す（次に同じ床へ乗ったとき、また数える）
+        LAST_STEP.values().removeIf(standing -> standing.player().isRemoved() || standing.player().hasDisconnected()
+                || !standingOn(standing.player(), standing.plate()));
     }
 
     /** 鳴らしている順番：1音ずつ床を光らせて鳴らす。 */

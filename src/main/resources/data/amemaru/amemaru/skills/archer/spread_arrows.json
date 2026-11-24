@@ -6,9 +6,11 @@
   "type": "active",
   "name": "拡散矢",
   "description": "矢を扇に広げて一度に放つ。段が上がると矢が増える。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -24,7 +26,7 @@
     "speed": 2.6,
     "radius": 0.25,
     "count": 3,
-    "count_per_rank": 1,
+    "count_per_rank": 0.5,
     "spread": 40
   },
   "effects": [
@@ -32,7 +34,7 @@
       "type": "damage",
       "stat": "attack",
       "coefficient": 0.8,
-      "coefficient_per_rank": 0.12
+      "coefficient_per_rank": 0.06
     }
   ],
   "tags": [

@@ -2,6 +2,7 @@ package jp.amemaru.lostconnection.item;
 
 import jp.amemaru.lostconnection.core.config.ServerConfig;
 import jp.amemaru.lostconnection.equipment.Rarity;
+import jp.amemaru.lostconnection.player.GrowthRules;
 import jp.amemaru.lostconnection.player.LevelService;
 import jp.amemaru.lostconnection.player.PlayerData;
 import jp.amemaru.lostconnection.player.PlayerDataCapability;
@@ -31,6 +32,9 @@ import java.util.List;
  * <p>右クリックで食べると、そのステータスに「ステータスポイントを1つ振ったのと同じだけ」ずっと上がる【補完】
  * （「1つで+1」を、ポイント1つ分と読んだ。HPなら+12、会心なら+0.3%）。ステータスごとに上限は15個
  * （config の {@code fruitCap}）。取引はできない【確定】（雑魚から低確率、ボスから中確率で落ちる）。</p>
+ *
+ * <p>11月24日（2回目）：ステータスの振り分けはスキルツリーに変わり、「ポイント1つ分」が伝わらなくなったので、上がる数
+ * （成長の決まりの {@code per_point}）をそのまま説明に出す。上がる数は前と同じ。</p>
  */
 public class CrystalFruitItem extends Item {
     private final StatType stat;
@@ -85,7 +89,9 @@ public class CrystalFruitItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> lines, TooltipFlag flag) {
-        lines.add(Component.translatable("tooltip.amemaru.fruit", Component.translatable(stat.translationKey()))
+        // 成長の決まりは、ひとりで遊ぶときは読みこんだ値、サーバーにつないだときは同じ数の初期値（GrowthDef.FALLBACK）
+        String amount = stat.format(GrowthRules.current().perPoint(stat));
+        lines.add(Component.translatable("tooltip.amemaru.fruit", Component.translatable(stat.translationKey()), amount)
                 .withStyle(ChatFormatting.GREEN));
         lines.add(Component.translatable(getDescriptionId() + ".desc").withStyle(ChatFormatting.GRAY));
         lines.add(Component.translatable("tooltip.amemaru.untradeable").withStyle(ChatFormatting.DARK_RED));

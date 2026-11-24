@@ -6,9 +6,11 @@
   "type": "passive",
   "name": "余韻",
   "description": "鈴の音は、鳴りやんでも残る。自分が癒した仲間は、その後も少しずつ傷が癒え続ける。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -22,6 +24,6 @@
   "passive": {
     "type": "aftercare",
     "value": 30,
-    "value_per_rank": 10
+    "value_per_rank": 5.0
   }
 }

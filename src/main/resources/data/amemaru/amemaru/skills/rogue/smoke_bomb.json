@@ -6,9 +6,11 @@
   "type": "active",
   "name": "煙玉",
   "description": "足もとに煙玉をたたきつける。煙の中の敵は狙いが定まらず（攻撃が外れやすい）、自分は敵に見失われる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -41,7 +43,7 @@
         {
           "type": "blind",
           "value": 30,
-          "value_per_rank": 10,
+          "value_per_rank": 5.0,
           "duration": 1.0
         }
       ]

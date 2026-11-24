@@ -1,0 +1,994 @@
+{
+  "_comment": "スキルに重ねて鳴らす音（11月24日。tools/datagen/build_skill_sounds.py が書き出す。手で直さない）。cast：詠唱・溜めの始まり、release：放ったとき、impact：当たったとき。",
+  "skills": {
+    "wizard/absolute_zero": {
+      "release": [
+        {
+          "sound": "minecraft:block.powder_snow.break",
+          "volume": 0.8,
+          "pitch": 0.9,
+          "spread": 0.08,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.powder_snow.place",
+          "volume": 0.8,
+          "pitch": 0.8,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.elytra.flying",
+          "volume": 0.2,
+          "pitch": 1.6,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_cluster.break",
+          "volume": 0.6,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.player.hurt_freeze",
+          "volume": 0.4,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 2
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.resonate",
+          "volume": 0.6,
+          "pitch": 1.4,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:block.glass.break",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.powder_snow.step",
+          "volume": 0.6,
+          "pitch": 1.0,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.break",
+          "volume": 0.5,
+          "pitch": 1.6,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "wizard/blink": {
+      "release": [
+        {
+          "sound": "minecraft:entity.illusioner.mirror_move",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.chime",
+          "volume": 0.6,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.ender_eye.death",
+          "volume": 0.4,
+          "pitch": 1.4,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ]
+    },
+    "wizard/blizzard": {
+      "release": [
+        {
+          "sound": "minecraft:block.powder_snow.place",
+          "volume": 0.8,
+          "pitch": 0.8,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.resonate",
+          "volume": 0.6,
+          "pitch": 1.4,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ]
+    },
+    "wizard/chain_lightning": {
+      "release": [
+        {
+          "sound": "minecraft:block.respawn_anchor.charge",
+          "volume": 0.6,
+          "pitch": 1.6,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.firework_rocket.blast",
+          "volume": 0.5,
+          "pitch": 1.6,
+          "spread": 0.05,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.lightning_bolt.impact",
+          "volume": 0.4,
+          "pitch": 1.5,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.lightning_bolt.impact",
+          "volume": 0.7,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.firework_rocket.blast_far",
+          "volume": 0.5,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.lightning_bolt.thunder",
+          "volume": 0.25,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 2
+        }
+      ]
+    },
+    "wizard/comet": {
+      "cast": [
+        {
+          "sound": "minecraft:block.beacon.ambient",
+          "volume": 0.5,
+          "pitch": 1.5,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.resonate",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "delay": 3
+        }
+      ],
+      "release": [
+        {
+          "sound": "minecraft:entity.firework_rocket.twinkle",
+          "volume": 0.6,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.illusioner.cast_spell",
+          "volume": 0.35,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.resonate",
+          "volume": 0.6,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.generic.explode",
+          "volume": 0.6,
+          "pitch": 1.1,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.break",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.firework_rocket.large_blast",
+          "volume": 0.4,
+          "pitch": 0.9,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.firework_rocket.twinkle_far",
+          "volume": 0.5,
+          "pitch": 1.1,
+          "spread": 0.1,
+          "delay": 4
+        }
+      ]
+    },
+    "wizard/frost_circle": {
+      "release": [
+        {
+          "sound": "minecraft:block.powder_snow.break",
+          "volume": 0.8,
+          "pitch": 0.9,
+          "spread": 0.08,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_cluster.break",
+          "volume": 0.6,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.player.hurt_freeze",
+          "volume": 0.4,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:block.glass.break",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.powder_snow.step",
+          "volume": 0.6,
+          "pitch": 1.0,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.break",
+          "volume": 0.5,
+          "pitch": 1.6,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "wizard/frost_mist": {
+      "release": [
+        {
+          "sound": "minecraft:item.elytra.flying",
+          "volume": 0.2,
+          "pitch": 1.6,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.resonate",
+          "volume": 0.6,
+          "pitch": 1.4,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ]
+    },
+    "wizard/frost_wave": {
+      "release": [
+        {
+          "sound": "minecraft:block.amethyst_cluster.break",
+          "volume": 0.6,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.player.hurt_freeze",
+          "volume": 0.4,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:block.glass.break",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.powder_snow.step",
+          "volume": 0.6,
+          "pitch": 1.0,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.break",
+          "volume": 0.5,
+          "pitch": 1.6,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "wizard/ice_garden": {
+      "cast": [
+        {
+          "sound": "minecraft:block.beacon.ambient",
+          "volume": 0.4,
+          "pitch": 1.6,
+          "delay": 2
+        },
+        {
+          "sound": "minecraft:block.powder_snow.step",
+          "volume": 0.5,
+          "pitch": 0.8,
+          "delay": 6
+        }
+      ],
+      "release": [
+        {
+          "sound": "minecraft:block.powder_snow.break",
+          "volume": 0.8,
+          "pitch": 0.9,
+          "spread": 0.08,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_cluster.break",
+          "volume": 0.6,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.player.hurt_freeze",
+          "volume": 0.4,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:block.powder_snow.step",
+          "volume": 0.6,
+          "pitch": 1.0,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.break",
+          "volume": 0.5,
+          "pitch": 1.6,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "wizard/ice_shard": {
+      "release": [
+        {
+          "sound": "minecraft:block.powder_snow.break",
+          "volume": 0.8,
+          "pitch": 0.9,
+          "spread": 0.08,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_cluster.break",
+          "volume": 0.6,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.player.hurt_freeze",
+          "volume": 0.4,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:block.glass.break",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.powder_snow.step",
+          "volume": 0.6,
+          "pitch": 1.0,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.break",
+          "volume": 0.5,
+          "pitch": 1.6,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "wizard/icicle": {
+      "release": [
+        {
+          "sound": "minecraft:block.powder_snow.break",
+          "volume": 0.8,
+          "pitch": 0.9,
+          "spread": 0.08,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_cluster.break",
+          "volume": 0.6,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.player.hurt_freeze",
+          "volume": 0.4,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:block.glass.break",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.powder_snow.step",
+          "volume": 0.6,
+          "pitch": 1.0,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.break",
+          "volume": 0.5,
+          "pitch": 1.6,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "wizard/lamp_barrage": {
+      "cast": [
+        {
+          "sound": "minecraft:block.respawn_anchor.charge",
+          "volume": 0.5,
+          "pitch": 1.0,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.beacon.ambient",
+          "volume": 0.4,
+          "pitch": 1.4,
+          "delay": 4
+        }
+      ],
+      "release": [
+        {
+          "sound": "minecraft:entity.blaze.shoot",
+          "volume": 0.6,
+          "pitch": 1.1,
+          "spread": 0.08,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.ghast.shoot",
+          "volume": 0.25,
+          "pitch": 1.5,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.fire.ambient",
+          "volume": 0.7,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.generic.burn",
+          "volume": 0.5,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.firework_rocket.blast",
+          "volume": 0.35,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.fire.extinguish",
+          "volume": 0.35,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "wizard/lamp_bolt": {
+      "release": [
+        {
+          "sound": "minecraft:entity.blaze.shoot",
+          "volume": 0.6,
+          "pitch": 1.1,
+          "spread": 0.08,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.ghast.shoot",
+          "volume": 0.25,
+          "pitch": 1.5,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.fire.ambient",
+          "volume": 0.7,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.generic.burn",
+          "volume": 0.5,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.firework_rocket.blast",
+          "volume": 0.35,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.fire.extinguish",
+          "volume": 0.35,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "wizard/light_lance": {
+      "release": [
+        {
+          "sound": "minecraft:item.trident.riptide_1",
+          "volume": 0.5,
+          "pitch": 1.5,
+          "spread": 0.05,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.chime",
+          "volume": 0.7,
+          "pitch": 1.6,
+          "spread": 0.1,
+          "delay": 2
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:block.amethyst_block.break",
+          "volume": 0.6,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.firework_rocket.blast",
+          "volume": 0.4,
+          "pitch": 1.7,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ]
+    },
+    "wizard/light_veil": {
+      "release": [
+        {
+          "sound": "minecraft:block.amethyst_cluster.place",
+          "volume": 0.8,
+          "pitch": 1.0,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.respawn_anchor.charge",
+          "volume": 0.45,
+          "pitch": 1.5,
+          "spread": 0.05,
+          "delay": 2
+        },
+        {
+          "sound": "minecraft:block.beacon.power_select",
+          "volume": 0.4,
+          "pitch": 1.6,
+          "spread": 0.05,
+          "delay": 4
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:block.amethyst_cluster.place",
+          "volume": 0.5,
+          "pitch": 1.4,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.note_block.chime",
+          "volume": 0.4,
+          "pitch": 1.8,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ]
+    },
+    "wizard/mana_focus": {
+      "release": [
+        {
+          "sound": "minecraft:block.enchantment_table.use",
+          "volume": 0.8,
+          "pitch": 1.1,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.resonate",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 2
+        },
+        {
+          "sound": "minecraft:block.respawn_anchor.charge",
+          "volume": 0.4,
+          "pitch": 1.5,
+          "spread": 0.05,
+          "delay": 4
+        }
+      ]
+    },
+    "wizard/mana_thread": {
+      "release": [
+        {
+          "sound": "minecraft:block.amethyst_block.chime",
+          "volume": 0.6,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.enchantment_table.use",
+          "volume": 0.5,
+          "pitch": 1.4,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ]
+    },
+    "wizard/meteor_shower": {
+      "cast": [
+        {
+          "sound": "minecraft:block.beacon.ambient",
+          "volume": 0.7,
+          "pitch": 1.0,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.illusioner.prepare_blindness",
+          "volume": 0.3,
+          "pitch": 1.2,
+          "delay": 6
+        },
+        {
+          "sound": "minecraft:block.respawn_anchor.charge",
+          "volume": 0.5,
+          "pitch": 0.8,
+          "delay": 12
+        }
+      ],
+      "release": [
+        {
+          "sound": "minecraft:entity.firework_rocket.twinkle",
+          "volume": 0.6,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.illusioner.cast_spell",
+          "volume": 0.35,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.resonate",
+          "volume": 0.6,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.dragon_fireball.explode",
+          "volume": 0.5,
+          "pitch": 0.9,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.firework_rocket.large_blast",
+          "volume": 0.5,
+          "pitch": 0.8,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:block.deepslate.break",
+          "volume": 0.6,
+          "pitch": 0.7,
+          "spread": 0.1,
+          "delay": 2
+        }
+      ]
+    },
+    "wizard/star_burst": {
+      "release": [
+        {
+          "sound": "minecraft:entity.illusioner.cast_spell",
+          "volume": 0.35,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.resonate",
+          "volume": 0.6,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.firework_rocket.large_blast",
+          "volume": 0.5,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.break",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.firework_rocket.twinkle_far",
+          "volume": 0.5,
+          "pitch": 1.1,
+          "spread": 0.1,
+          "delay": 4
+        }
+      ]
+    },
+    "wizard/star_ring": {
+      "release": [
+        {
+          "sound": "minecraft:block.enchantment_table.use",
+          "volume": 0.8,
+          "pitch": 1.1,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.firework_rocket.twinkle",
+          "volume": 0.6,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.illusioner.cast_spell",
+          "volume": 0.35,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.resonate",
+          "volume": 0.6,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.resonate",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 2
+        },
+        {
+          "sound": "minecraft:block.respawn_anchor.charge",
+          "volume": 0.4,
+          "pitch": 1.5,
+          "spread": 0.05,
+          "delay": 4
+        }
+      ]
+    },
+    "wizard/star_shield": {
+      "release": [
+        {
+          "sound": "minecraft:block.amethyst_cluster.place",
+          "volume": 0.8,
+          "pitch": 1.0,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.respawn_anchor.charge",
+          "volume": 0.45,
+          "pitch": 1.5,
+          "spread": 0.05,
+          "delay": 2
+        },
+        {
+          "sound": "minecraft:block.beacon.power_select",
+          "volume": 0.4,
+          "pitch": 1.6,
+          "spread": 0.05,
+          "delay": 4
+        }
+      ]
+    },
+    "wizard/starfall": {
+      "cast": [
+        {
+          "sound": "minecraft:entity.illusioner.prepare_blindness",
+          "volume": 0.3,
+          "pitch": 1.2,
+          "delay": 6
+        },
+        {
+          "sound": "minecraft:block.respawn_anchor.charge",
+          "volume": 0.5,
+          "pitch": 0.8,
+          "delay": 12
+        }
+      ],
+      "release": [
+        {
+          "sound": "minecraft:entity.firework_rocket.twinkle",
+          "volume": 0.6,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.illusioner.cast_spell",
+          "volume": 0.35,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.amethyst_block.resonate",
+          "volume": 0.6,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.dragon_fireball.explode",
+          "volume": 0.5,
+          "pitch": 0.9,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.firework_rocket.large_blast",
+          "volume": 0.5,
+          "pitch": 0.8,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:block.deepslate.break",
+          "volume": 0.6,
+          "pitch": 0.7,
+          "spread": 0.1,
+          "delay": 2
+        }
+      ]
+    },
+    "wizard/thunderbolt": {
+      "release": [
+        {
+          "sound": "minecraft:entity.firework_rocket.blast",
+          "volume": 0.5,
+          "pitch": 1.6,
+          "spread": 0.05,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.lightning_bolt.impact",
+          "volume": 0.4,
+          "pitch": 1.5,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.firework_rocket.blast_far",
+          "volume": 0.5,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.lightning_bolt.thunder",
+          "volume": 0.25,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 2
+        }
+      ]
+    }
+  }
+}

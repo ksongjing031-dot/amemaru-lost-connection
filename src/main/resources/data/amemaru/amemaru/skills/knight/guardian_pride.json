@@ -6,9 +6,11 @@
   "type": "passive",
   "name": "守る者の誇り",
   "description": "守るべき仲間がそばにいると、体が自然と固くなる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -22,7 +24,7 @@
   "passive": {
     "type": "guardian_pride",
     "value": 10,
-    "value_per_rank": 5,
+    "value_per_rank": 2.5,
     "radius": 8
   }
 }

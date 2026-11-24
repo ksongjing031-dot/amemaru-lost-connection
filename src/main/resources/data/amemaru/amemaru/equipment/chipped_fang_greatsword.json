@@ -3,7 +3,7 @@
   "generation": 1,
   "series": "1階のレア装備",
   "rarity": "rare",
-  "required_level": 5,
+  "required_level": 10,
   "jobs": [
     "amemaru:knight"
   ],

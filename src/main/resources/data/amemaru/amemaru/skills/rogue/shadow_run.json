@@ -6,9 +6,11 @@
   "type": "active",
   "name": "影走り",
   "description": "影の中を走り抜け、向いている方へ一気に駆ける。走っている間は、敵の攻撃をすり抜ける。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -23,11 +25,11 @@
     "mp": 8
   },
   "cooldown": 8,
-  "cooldown_per_rank": -1,
+  "cooldown_per_rank": -0.5,
   "delivery": {
     "type": "dash",
     "distance": 8,
-    "distance_per_rank": 1,
+    "distance_per_rank": 0.5,
     "width": 1.2
   },
   "effects": [

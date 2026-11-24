@@ -63,10 +63,10 @@ ENEMIES = {
         "沈黙の石像（4階の雑魚。Phase 0-A 9章「近づくと動き出す」）。眠っている間は動かず、behavior.wake_range まで近づく・叩くと"
         "目覚める。眠っている間の受けるダメージ dormant_taken、起きている間 stone_taken。拳（fist。前）と叩きつけ（quake。まわりの円）。"
         "しばらく誰もいないと元の場所で像に戻る。数値は【補完】",
-        "沈黙の石像", 9,
+        "沈黙の石像", 19,
         "顔を削り取られた、白い大理石の神殿の像。ふだんはただの像のように立っているが、近づく者があると、石をきしませて動き出す。"
         "眠っている間の石の肌は、ひどく硬い。",
-        st(4200, 82, 26, 0.17, 18, 8), 46,
+        st(2130, 127, 26, 0.17, 18, 8), 46,
         {"fist": {"power": 1.2, "windup": 0.9, "cooldown": 2.4, "range": 2.8},
          "quake": {"power": 1.6, "windup": 1.4, "cooldown": 9.0, "range": 3.5}},
         {"wake_range": 5.0, "dormant_taken": 0.3, "stone_taken": 0.85},
@@ -75,10 +75,10 @@ ENEMIES = {
         "祈り手の残響（4階の雑魚。Phase 0-A 9章「祈りの歌で仲間を回復させるので先に倒す」）。hymn：少し離れて windup 秒歌い、"
         "range の神殿の敵のHPを power（最大HPの割合）回復。歌の間に最大HPの behavior.interrupt の傷を受けると止まる。"
         "wail：まわりへの声（円）。宙に浮く。数値は【補完】",
-        "祈り手の残響", 8,
+        "祈り手の残響", 17,
         "神殿で祈っていた人の、声だけが残った淡い姿。いまも祈りの歌を口ずさみ、まわりの神殿の魔物の傷をふさぐ。"
         "体はもろいので、歌い出す前に倒したい。",
-        st(1800, 58, 6, 0.2, 20, 11), 36,
+        st(910, 90, 6, 0.2, 20, 11), 36,
         {"wail": {"power": 0.9, "windup": 0.8, "cooldown": 2.6, "range": 3.0},
          "hymn": {"power": 0.12, "windup": 3.0, "cooldown": 12.0, "range": 9.0}},
         {"interrupt": 0.12},
@@ -86,9 +86,9 @@ ENEMIES = {
     "crystal_beetle": enemy(
         "結晶甲虫（4階の雑魚。Phase 0-A 9章「硬いが魔法に弱い」）。魔力でないダメージは physical_taken、魔力のダメージは"
         "magic_taken（スキルの効果が魔力で決まるか）。噛みつき（bite。前）と体当たり（charge。短い線）。数値は【補完】",
-        "結晶甲虫", 8,
+        "結晶甲虫", 17,
         "背中の殻から青白い結晶を生やした、大きな甲虫。殻は剣も矢も弾くほど硬いが、魔力には弱く、魔法が当たると殻にひびが走る。",
-        st(3200, 70, 30, 0.19, 18, 9), 40,
+        st(1620, 109, 30, 0.19, 18, 9), 40,
         {"bite": {"power": 1.1, "windup": 0.6, "cooldown": 1.8, "range": 2.4},
          "charge": {"power": 1.6, "windup": 1.2, "cooldown": 8.0, "range": 10.0, "min_range": 4.0, "width": 1.4, "speed": 0.8,
                     "recover": 1.2}},
@@ -98,10 +98,10 @@ ENEMIES = {
         "欠けた聖獣（4階の雑魚。Phase 0-A 9章「神殿の守護獣がロストで欠けたもの」）。爪（claw。前の扇）と跳びかかり（charge）。"
         "HPが半分を下回ると roars 回吠えて、roar_radius の神殿の敵の攻撃を roar_attack 倍（roar_seconds 秒）。"
         "ときどき forget_chance で、守るものを忘れて立ち止まる（ロスト）。数値は【補完】",
-        "欠けた聖獣", 9,
+        "欠けた聖獣", 19,
         "神殿を守っていた、白い石の毛並みと金のたてがみの守護獣。ロストに体のところどころを白く削られ、ときどき、何を守っていた"
         "のかを忘れて立ち尽くす。傷つくと吠えて、仲間を奮い立たせる。",
-        st(3600, 84, 12, 0.24, 22, 11), 46,
+        st(1830, 130, 12, 0.24, 22, 11), 46,
         {"claw": {"power": 1.15, "windup": 0.7, "cooldown": 2.0, "range": 3.0, "angle": 110},
          "charge": {"power": 1.5, "windup": 1.0, "cooldown": 7.0, "range": 12.0, "min_range": 4.0, "width": 1.6, "speed": 0.95,
                     "recover": 1.0}},
@@ -110,9 +110,9 @@ ENEMIES = {
     # ---- 名のある魔物（中ボス。宝箱と封印の守り手）
     "prayer_echo_leader": enemy(
         "祈りの導き手（4階の名のある魔物。祈りの間の奥の院の守り手。祈り手の残響の大きいもの。歌が速く、よく治す）。数値は【補完】",
-        "祈りの導き手", 10,
+        "祈りの導き手", 22,
         "祈り手たちの歌を導いていた、ひときわ大きな残響。その歌は速く、深い傷さえふさいでしまう。奥の院の祭壇を、いまも離れない。",
-        st(18000, 72, 10, 0.21, 24, 13), 300,
+        st(9800, 112, 10, 0.21, 24, 13), 300,
         {"wail": {"power": 1.1, "windup": 0.8, "cooldown": 2.4, "range": 3.8},
          "hymn": {"power": 0.18, "windup": 2.2, "cooldown": 9.0, "range": 12.0}},
         {"interrupt": 0.06, "scale": 1.35},
@@ -122,9 +122,9 @@ ENEMIES = {
         model="amemaru:prayer_echo"),
     "broken_beast_elder": enemy(
         "古き番獣（4階の名のある魔物。聖獣の庭の守り手。大きく、咆哮が2回）。数値は【補完】",
-        "古き番獣", 11,
+        "古き番獣", 24,
         "聖獣の庭の主。誰よりも長く神殿を守ってきたが、その体の半分は、もう白い。二度吠えて、庭の獣たちを奮い立たせる。",
-        st(26000, 98, 16, 0.25, 28, 14), 360,
+        st(12700, 152, 16, 0.25, 28, 14), 360,
         {"claw": {"power": 1.35, "windup": 0.8, "cooldown": 2.2, "range": 4.0, "angle": 120},
          "charge": {"power": 1.8, "windup": 1.1, "cooldown": 6.0, "range": 16.0, "min_range": 4.0, "width": 2.2, "speed": 1.0,
                     "recover": 1.0}},
@@ -135,9 +135,9 @@ ENEMIES = {
         model="amemaru:broken_beast"),
     "silent_statue_gate": enemy(
         "門の大石像（4階の名のある魔物。地下の納骨堂の、結晶騎士団の野営の跡の前の守り手。大きく、叩きつけの範囲が広い）。数値は【補完】",
-        "門の大石像", 11,
+        "門の大石像", 24,
         "納骨堂の門を守る、ひときわ大きな石像。その奥には、結晶騎士団の野営の跡がある。叩きつけの揺れは、広い範囲に届く。",
-        st(24000, 96, 30, 0.18, 22, 10), 340,
+        st(9800, 149, 30, 0.18, 22, 10), 340,
         {"fist": {"power": 1.4, "windup": 1.0, "cooldown": 2.6, "range": 3.6},
          "quake": {"power": 1.9, "windup": 1.5, "cooldown": 8.0, "range": 5.5}},
         {"wake_range": 7.0, "dormant_taken": 0.3, "stone_taken": 0.8, "scale": 1.5},
@@ -152,10 +152,10 @@ ENEMIES = {
         "（階の定義の boss_marks.sound_plates）を踏むと、exposed 秒無防備（song.open 倍）。違う床・時間切れは不協和音（全員に power）、retry 秒で"
         "また歌う。技：嘆きの波（wave。前の扇）・高音の柱（pillars。何人かの足もとの円）・祈りの合唱（share。みんなで受ける一撃）。"
         "HP60%で祈り手の残響を2体呼ぶ（call）。HPは2人のときの基準（ひとりでも2人ぶん）。数値は【補完】（2人で18分・4人で14分ほど）",
-        "祈りの残響カンターレ", 12,
+        "祈りの残響カンターレ", 26,
         "歌の大広間で、いまも祈りの歌を指揮し続ける、顔のない残響。まわりを回る4人の歌い手（白・青・金・紅）の歌に守られている。"
         "歌い手が歌った順番どおりに4つの音の床を踏むと、歌がそろって、守りが解ける。",
-        st(80000, 120, 12, 0.14, 64, 28), 1500,
+        st(62000, 186, 12, 0.14, 64, 28), 1500,
         {"wave": {"power": 1.3, "windup": 1.2, "cooldown": 5.0, "range": 12.0, "angle": 120, "push": 1.0},
          "pillars": {"power": 1.25, "windup": 1.8, "cooldown": 9.0, "range": 30.0, "radius": 2.4, "count": 2},
          "song": {"power": 0.9, "windup": 0.7, "cooldown": 30.0, "first": 8.0, "note_seconds": 0.9, "answer": 12.0,
@@ -375,7 +375,7 @@ QUESTS = {
 # ================================================================ 品と装備
 
 PRAYER_BELL = OrderedDict([
-    ("slot", "weapon"), ("generation", 1), ("series", "4階のレア装備"), ("rarity", "epic"), ("required_level", 8),
+    ("slot", "weapon"), ("generation", 1), ("series", "4階のレア装備"), ("rarity", "epic"), ("required_level", 17),
     ("jobs", ["amemaru:healer"]), ("stats", {"magic": 26, "mp": 60, "heal_power": 7}), ("durability", 560),
     ("binding", "on_equip"), ("effects", [{"type": "heal_ward", "percent": 8}]), ("rare", True),
     ("repair", [{"item": "amemaru:song_crystal", "count": 2}, {"item": "amemaru:crystal_shard", "count": 2}]),

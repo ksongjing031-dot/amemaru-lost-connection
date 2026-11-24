@@ -212,6 +212,9 @@ public final class SkillService {
         SoundEvent sound = ModSounds.byId(skill.castSound());
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), sound != null ? sound : ModSounds.get("skill.charge"),
                 SoundSource.PLAYERS, 0.8F, 1.0F);
+        // 11月24日：重ねる音（溜めを始めたとき）
+        jp.amemaru.lostconnection.job.def.SkillSounds.play(player.serverLevel(), player.position(), skill,
+                jp.amemaru.lostconnection.job.def.SkillSounds.Phase.CAST);
     }
 
     /**
@@ -310,6 +313,9 @@ public final class SkillService {
         if (sound != null) {
             player.level().playSound(null, player.getX(), player.getY(), player.getZ(), sound, SoundSource.PLAYERS, 1.0F, 1.0F);
         }
+        // 11月24日：重ねる音（詠唱を始めたとき）
+        jp.amemaru.lostconnection.job.def.SkillSounds.play(player.serverLevel(), player.position(), skill,
+                jp.amemaru.lostconnection.job.def.SkillSounds.Phase.CAST);
     }
 
     /** 詠唱（溜め）をやめる。 */

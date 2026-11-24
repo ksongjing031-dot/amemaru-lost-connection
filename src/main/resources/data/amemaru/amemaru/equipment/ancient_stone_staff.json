@@ -3,7 +3,7 @@
   "generation": 1,
   "series": "古代石シリーズ",
   "rarity": "common",
-  "required_level": 5,
+  "required_level": 10,
   "jobs": [
     "amemaru:wizard"
   ],

@@ -6,9 +6,11 @@
   "type": "active",
   "name": "射抜き",
   "description": "集中を矢に込めて、一点を射抜く。集中を残らず使い、使った分だけ威力が上がる（集中が30以上ないと射てない）。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -41,7 +43,7 @@
       "type": "damage",
       "stat": "attack",
       "coefficient": 2.2,
-      "coefficient_per_rank": 0.35
+      "coefficient_per_rank": 0.175
     }
   ],
   "tags": [

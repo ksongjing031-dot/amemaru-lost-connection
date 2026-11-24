@@ -6,9 +6,11 @@
   "type": "active",
   "name": "乱れ刃",
   "description": "二本の短剣で、目にも止まらぬ三連撃を浴びせる。気配が2たまる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -27,7 +29,7 @@
       "type": "damage",
       "stat": "attack",
       "coefficient": 0.55,
-      "coefficient_per_rank": 0.1,
+      "coefficient_per_rank": 0.05,
       "hits": 3,
       "hit_interval": 3
     },

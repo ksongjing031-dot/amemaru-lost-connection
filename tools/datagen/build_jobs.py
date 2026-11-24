@@ -25,6 +25,9 @@ import rogue  # noqa: E402
 import monk  # noqa: E402
 import knight_wizard  # noqa: E402,F401
 
+# 近接職の消費MPの倍率を数える、覚えられるレベルの上限（SkillRegistry.MP_SCALE_LEVEL_CAP と同じ。11月24日）
+MP_SCALE_LEVEL_CAP = 30
+
 ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
 DATA = os.path.join(ROOT, "src/main/resources/data/amemaru/amemaru")
 ASSETS = os.path.join(ROOT, "src/main/resources/assets/amemaru")
@@ -93,7 +96,8 @@ SOUNDS = {
     "skill.rogue.numbing_needle": ("minecraft:entity.arrow.shoot", "痺れ針"),
     "skill.rogue.toxic_burst": ("minecraft:entity.slime.squish", "毒爆の合図"),
     "skill.rogue.toxic_burst_impact": ("minecraft:entity.slime.jump", "毒が弾ける"),
-    "skill.rogue.binding_threads": ("minecraft:block.cobweb.place", "絡め糸"),
+    # 11月24日：1.20.1 には block.cobweb.place がない（音が鳴らない）ので、羊毛を置く音にした
+    "skill.rogue.binding_threads": ("minecraft:block.wool.place", "絡め糸"),
     "skill.rogue.envenom": ("minecraft:item.bottle.empty", "毒を塗る"),
     "skill.rogue.corroding_edge": ("minecraft:block.lava.extinguish", "腐蝕の刃"),
     "skill.rogue.poison_bloom": ("minecraft:block.chorus_flower.grow", "毒華が咲く"),
@@ -117,6 +121,37 @@ SOUNDS = {
     "skill.monk.ki_vortex": ("minecraft:entity.evoker.cast_spell", "気の渦"),
     "skill.monk.inch_punch": ("minecraft:entity.iron_golem.attack", "寸勁"),
     "skill.monk.heaven_earth": ("minecraft:block.conduit.activate", "天地流転"),
+    # 11月24日に足したスキル（音の重ね方は sound_layers。ここは主な音）
+    "skill.archer.quick_draw": ("minecraft:item.crossbow.shoot", "速射の矢"),
+    "skill.archer.flash_arrow": ("minecraft:block.amethyst_block.resonate", "閃光の矢"),
+    "skill.archer.wind_cloak": ("minecraft:item.elytra.flying", "風をまとう"),
+    "skill.archer.hunters_focus": ("minecraft:block.beacon.power_select", "狩人の集中"),
+    "skill.archer.arrow_fan": ("minecraft:item.crossbow.shoot", "扇射の矢"),
+    "skill.healer.bell_strike": ("minecraft:block.bell.use", "鈴打ち"),
+    "skill.healer.mending_light": ("minecraft:block.amethyst_block.chime", "手当ての灯"),
+    "skill.healer.chorus_bell": ("minecraft:block.bell.resonate", "輪唱の鈴"),
+    "skill.healer.swift_prayer": ("minecraft:block.enchantment_table.use", "疾き祈り"),
+    "skill.healer.judgment_bell": ("minecraft:block.bell.use", "裁きの鐘"),
+    "skill.rogue.throwing_knife": ("minecraft:entity.snowball.throw", "刃を投げる"),
+    "skill.rogue.twin_fangs": ("minecraft:entity.player.attack.sweep", "双牙"),
+    "skill.rogue.venom_veil": ("minecraft:block.fire.extinguish", "毒の霧"),
+    "skill.rogue.shadow_dance": ("minecraft:entity.phantom.flap", "影の舞"),
+    "skill.rogue.hamstring": ("minecraft:entity.player.attack.knockback", "足払い刃"),
+    "skill.monk.kaisei_fist": ("minecraft:entity.player.attack.strong", "回生拳"),
+    "skill.monk.kien": ("minecraft:entity.blaze.shoot", "気炎"),
+    "skill.monk.air_palm": ("minecraft:entity.ender_dragon.flap", "空掌"),
+    "skill.monk.chain_kicks": ("minecraft:entity.player.attack.sweep", "連環脚"),
+    "skill.monk.back_strike": ("minecraft:entity.player.attack.knockback", "背当て"),
+    "skill.knight.sword_pressure": ("minecraft:entity.player.attack.sweep", "剣圧"),
+    "skill.knight.war_cry": ("minecraft:entity.ravager.roar", "鬨の声"),
+    "skill.knight.shield_rush": ("minecraft:item.shield.block", "盾突進"),
+    "skill.knight.crushing_blow": ("minecraft:entity.player.attack.crit", "砕骨撃"),
+    "skill.knight.iron_resolve": ("minecraft:item.armor.equip_netherite", "不動の構え"),
+    "skill.wizard.ice_shard": ("minecraft:block.glass.break", "氷礫"),
+    "skill.wizard.star_shield": ("minecraft:block.amethyst_block.resonate", "星屑の盾"),
+    "skill.wizard.mana_focus": ("minecraft:block.beacon.power_select", "魔力集中"),
+    "skill.wizard.frost_mist": ("minecraft:block.powder_snow.place", "氷霧"),
+    "skill.wizard.light_lance": ("minecraft:block.beacon.activate", "光槍"),
     "combat.chain": ("minecraft:block.note_block.pling", "連撃"),
     "combat.chain_finish": ("minecraft:entity.player.attack.crit", "連撃の締め"),
     # ナイト・ウィザード（足した段）
@@ -182,8 +217,9 @@ def check(all_skills):
             actives = [s for s in group if s.get("type", "active") == "active" and not s.get("ultimate")]
             passives = [s for s in group if s.get("type") == "passive"]
             ults = [s for s in group if s.get("ultimate")]
-            if (len(actives), len(passives), len(ults)) != (8, 5, 1):
-                errors.append(f"{job}/{school}: アクティブ{len(actives)}・パッシブ{len(passives)}・奥義{len(ults)}（8・5・1 のはず）")
+            # 11月24日：スキルツリーの作り直しで、流派ごとにアクティブを2〜3つ足した（8 → 10〜11）
+            if len(actives) < 8 or (len(passives), len(ults)) != (5, 1):
+                errors.append(f"{job}/{school}: アクティブ{len(actives)}・パッシブ{len(passives)}・奥義{len(ults)}（8以上・5・1 のはず）")
     return errors
 
 
@@ -228,12 +264,17 @@ def write_lang():
 
 
 def table(all_skills):
+    row_levels = "・".join(str(common.ROW_LEVEL[r]) for r in sorted(common.ROW_LEVEL))
     lines = ["# スキルの一覧（全職業）", "",
-             "`tools/datagen/build_jobs.py` が書き出す表です（数値はデータパックの JSON と同じ。段は Lv1・5・10・15・20・25、奥義は上位職・Lv30）。",
-             "【新】は11月22日のご指示（スキルとパッシブを増やす）で足したもの、それ以外は Phase 0-A 19章の設計のとおりです。",
+             "`tools/datagen/build_jobs.py` が書き出す表です（数値はデータパックの JSON と同じ。段は Lv" + row_levels
+             + f"、奥義は上位職・Lv{common.ULTIMATE_LEVEL}）。",
+             "【新】は11月22日・11月24日のご指示（スキルとパッシブを増やす）で足したもの、それ以外は Phase 0-A 19章の設計のとおりです。",
              "連携は、起点・追撃・支援（Phase 0-A 13章）。モンクの【起】【継】【極】は連撃（Phase 6 その2）。",
              "MPは、ゲームの中で使う値。近接職（ナイト・ローグ・モンク）は、覚えられるレベルが高いスキルほど消費MPを増やす"
-             "（11月23日。職業の `skill_mp_per_level`、1レベルにつき +5%）。", ""]
+             f"（11月23日。職業の `skill_mp_per_level`、1レベルにつき +5%。数えるのは Lv{MP_SCALE_LEVEL_CAP} まで）。",
+             "11月24日から、スキルとステータスはスキルツリー（`skill_trees/<職業>.json`）で一緒に取ります。すべては取れないので、"
+             f"ビルドによって使えるスキルが変わります。段階は最大{common.MAX_RANK}段（第{common.MAX_RANK}段は上位職から）、"
+             "段階ごとのポイントは " + "・".join(str(c) for c in common.RANK_COSTS) + "。", ""]
     original = original_names()
     for job in ["knight", "wizard", "healer", "archer", "rogue", "monk"]:
         lines.append(f"## {JOB_NAMES[job]}")
@@ -251,7 +292,7 @@ def table(all_skills):
             group.sort(key=lambda s: (1 if s.get("ultimate") else 0, s["row"], s.get("column", 0)))
             for s in group:
                 kind = "奥義" if s.get("ultimate") else ("パッシブ" if s.get("type") == "passive" else "アクティブ")
-                level = "Lv30" if s.get("ultimate") else f"Lv{s.get('min_level', 1)}"
+                level = f"Lv{s.get('min_level', common.ULTIMATE_LEVEL)}" if s.get("ultimate") else f"Lv{s.get('min_level', 1)}"
                 new = "" if s["name"] in original else "【新】"
                 if s.get("ultimate") and s["name"] not in original:
                     new = "【新・提案】"
@@ -260,7 +301,7 @@ def table(all_skills):
                 link = ""
                 if s.get("type", "active") == "active":
                     c = s.get("cost", {})
-                    cost = mp_text(c.get("mp", 0), job, 30 if s.get("ultimate") else s.get("min_level", 1))
+                    cost = mp_text(c.get("mp", 0), job, s.get("min_level", common.ULTIMATE_LEVEL if s.get("ultimate") else 1))
                     if c.get("gauge"):
                         cost += f"・ゲージ{c['gauge']}"
                     cd = f"{s.get('cooldown')}秒"
@@ -277,7 +318,7 @@ def table(all_skills):
 
 
 def mp_scale(job, min_level):
-    """ゲームの中の消費MPの倍率（SkillRegistry と同じ：1 ＋ 職業の skill_mp_per_level ×（覚えられるレベル − 1））。"""
+    """ゲームの中の消費MPの倍率（SkillRegistry と同じ：1 ＋ 職業の skill_mp_per_level ×（min(覚えられるレベル, 30) − 1））。"""
     path = os.path.join(DATA, "jobs", job + ".json")
     per = 0.0
     if os.path.exists(path):
@@ -285,7 +326,7 @@ def mp_scale(job, min_level):
             per = json.load(f).get("skill_mp_per_level", 0.0)
     if job in NEW_JOBS:
         per = NEW_JOBS[job].get("skill_mp_per_level", per)
-    return 1.0 + per * max(0, min_level - 1)
+    return 1.0 + per * max(0, min(MP_SCALE_LEVEL_CAP, min_level) - 1)
 
 
 def mp_text(mp, job, min_level):

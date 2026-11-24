@@ -6,9 +6,11 @@
   "type": "active",
   "name": "癒しの鈴",
   "description": "鈴杖を鳴らし、狙った仲間の傷をふさぐ。狙った先に仲間がいなければ、まわりでいちばん傷ついた仲間（いなければ自分）を癒す。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -29,7 +31,7 @@
       "type": "heal",
       "stat": "magic",
       "coefficient": 3.0,
-      "coefficient_per_rank": 0.4
+      "coefficient_per_rank": 0.2
     }
   ],
   "tags": [

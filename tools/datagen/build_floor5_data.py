@@ -67,7 +67,7 @@ def guardian_gear():
     for job, (jp_name, kind, wname, wstats, aname, astats, wdesc, adesc) in JOBS.items():
         wid = WEAPON_IDS[kind]
         out[wid] = OrderedDict([
-            ("slot", "weapon"), ("generation", 1), ("series", "守護者シリーズ（%s）" % jp_name), ("rarity", "epic"), ("required_level", 10),
+            ("slot", "weapon"), ("generation", 1), ("series", "守護者シリーズ（%s）" % jp_name), ("rarity", "epic"), ("required_level", 22),
             ("jobs", ["amemaru:" + job]), ("stats", wstats), ("durability", 620), ("binding", "on_equip"),
             ("effects", [{"type": "ally_power", "threshold": 8, "percent": 3}]), ("rare", True),
             ("repair", [{"item": "amemaru:jade_core_shard", "count": 1}, {"item": "amemaru:sentinel_plate", "count": 2}]),
@@ -75,7 +75,7 @@ def guardian_gear():
         ])
         aid = "guardian_%s_shell" % job
         out[aid] = OrderedDict([
-            ("slot", "chest"), ("generation", 1), ("series", "守護者シリーズ（%s）" % jp_name), ("rarity", "epic"), ("required_level", 10),
+            ("slot", "chest"), ("generation", 1), ("series", "守護者シリーズ（%s）" % jp_name), ("rarity", "epic"), ("required_level", 22),
             ("jobs", ["amemaru:" + job]), ("stats", astats), ("durability", 600 if job == "knight" else 440), ("binding", "on_equip"),
             ("effects", [{"type": "damage_reduction", "percent": 5}]), ("rare", True),
             ("repair", [{"item": "amemaru:jade_core_shard", "count": 1}, {"item": "amemaru:sentinel_plate", "count": 2}]),
@@ -103,18 +103,18 @@ ENEMIES = {
     "watcher": fix_floor(enemy(
         "監視眼ウォッチャー（5階の雑魚。Phase 0-A 9章「浮かぶ目。見つかると守護者が強くなる」）。はじめて人を見つけると階の警戒を behavior.alert "
         "上げる（同じ目は alert_cooldown 秒に1度）。光線（ray。一直線の予兆のあと撃つ）。宙に浮く。数値は【補完】",
-        "監視眼ウォッチャー", 10,
+        "監視眼ウォッチャー", 22,
         "金の枠に囲まれた、宙に浮かぶ大きな目。祭壇へ近づく者を見張り続け、見つけると赤く光って、祭壇の守護者に知らせる。",
-        st(2200, 66, 8, 0.2, 22, 13), 44,
+        st(1160, 132, 8, 0.2, 22, 13), 44,
         {"ray": {"power": 1.2, "windup": 1.0, "cooldown": 3.5, "range": 14.0, "width": 1.2}},
         {"alert": 1, "alert_cooldown": 60.0},
         "watcher", FRUITS)),
     "sentinel": fix_floor(enemy(
         "防衛兵センチネル（5階の雑魚。Phase 0-A 9章「盾持ち」）。前（shield_angle の内）からのダメージは shield_taken。盾打ち（bash。前の扇）と"
         "槍の突進（charge）。数値は【補完】",
-        "防衛兵センチネル", 10,
+        "防衛兵センチネル", 22,
         "白い石と青銅の、祭壇の兵。左腕に大きな塔の盾、右手に槍。盾の正面からの攻撃は、ほとんど通らない。後ろか横から攻めたい。",
-        st(4800, 86, 28, 0.19, 20, 10), 52,
+        st(2530, 172, 28, 0.19, 20, 10), 52,
         {"bash": {"power": 1.2, "windup": 0.8, "cooldown": 2.4, "range": 3.0, "angle": 100, "push": 0.8},
          "charge": {"power": 1.5, "windup": 1.0, "cooldown": 8.0, "range": 10.0, "min_range": 4.0, "width": 1.4, "speed": 0.9,
                     "recover": 1.2}},
@@ -124,27 +124,27 @@ ENEMIES = {
         "修復ドローン（5階の雑魚。Phase 0-A 9章「守護者を回復するので最優先」）。repair：近くのいちばん傷ついた祭壇の機械へ光の糸を伸ばし、"
         "windup 秒のあと最大HPの power を直す（古代守護者は boss_heal 倍）。糸の間に最大HPの interrupt の傷で止まる。人が近いと離れる。"
         "zap：弱い電撃。数値は【補完】",
-        "修復ドローン", 9,
+        "修復ドローン", 19,
         "青銅の小さな球に、四枚の羽根と翠に光る修理の腕。傷ついた祭壇の機械を見つけると、光の糸で直してしまう。もろいので、先に落としたい。",
-        st(1200, 40, 4, 0.22, 20, 11), 30,
+        st(630, 80, 4, 0.22, 20, 11), 30,
         {"repair": {"power": 0.08, "windup": 1.5, "cooldown": 6.0, "range": 12.0},
          "zap": {"power": 0.7, "windup": 0.6, "cooldown": 2.5, "range": 2.5}},
         {"boss_heal": 0.1, "interrupt": 0.2},
         "repair_drone", FRUITS)),
     "watcher_great": fix_floor(enemy(
         "監視の大眼（5階の名のある魔物。監視の回廊の西の台・接続の柱 A の守り手。大きく、遠くまで見え、一度に警戒を2つ上げる）。数値は【補完】",
-        "監視の大眼", 12,
+        "監視の大眼", 26,
         "祭壇の見張りを束ねる、ひときわ大きな目。そのまなざしは奈落の向こうまで届き、見つけた者のことを、守護者へ二度知らせる。",
-        st(22000, 84, 12, 0.18, 30, 18), 380,
+        st(11600, 168, 12, 0.18, 30, 18), 380,
         {"ray": {"power": 1.5, "windup": 1.1, "cooldown": 3.0, "range": 18.0, "width": 2.0}},
         {"alert": 2, "alert_cooldown": 45.0, "scale": 1.8},
         "watcher", NAMED_RARE, model="amemaru:watcher")),
     "sentinel_captain": fix_floor(enemy(
         "防衛隊長（5階の名のある魔物。防衛兵の砦の内郭・接続の柱 B の守り手。大きく、盾がさらに硬い。HPが半分を下回ると一度、防衛兵を call 体呼ぶ）。"
         "数値は【補完】",
-        "防衛隊長", 12,
+        "防衛隊長", 26,
         "砦の内郭を守る、防衛兵たちの隊長。塔の盾には古代の紋が刻まれ、正面からの攻めはまず通らない。傷つくと角笛を吹いて、兵を呼ぶ。",
-        st(30000, 104, 34, 0.2, 26, 12), 420,
+        st(13300, 188, 34, 0.2, 26, 12), 420,
         {"bash": {"power": 1.45, "windup": 0.9, "cooldown": 2.4, "range": 3.8, "angle": 120, "push": 1.1},
          "charge": {"power": 1.9, "windup": 1.1, "cooldown": 6.0, "range": 14.0, "min_range": 4.0, "width": 2.0, "speed": 1.0,
                     "recover": 1.0}},
@@ -172,10 +172,10 @@ ENEMIES["ancient_guardian"] = fix_floor(enemy(
     "第3段階（35〜0%）：接続判定（judge。windup 秒の予兆のあと、range 以内に味方がいない人に power、いる人は linked 倍。ひとりのときは"
     "判定しない）。最後：HPが尽きると止まり、全員が祭壇の中央（gather.range）に集まると膝をつく（timeout 秒で膝をつく）。"
     "祈りの合唱と同じ「みんなで受ける一撃」（share）。HPは2人のときの基準（ひとりでも2人ぶん）。数値は【補完】（4人で20分・6人で16分ほど）",
-    "古代守護者", 14,
+    "古代守護者", 31,
     "奈落の上の祭壇を守り続ける、白い石と青銅の巨人。胸の翠の記録核には、古代の終わりの記録が眠っている。左腕はロストに白く欠け、"
     "その動きは、ときどき狂う。挑む者たちが互いにつながっているかを、試すように戦う。",
-    st(120000, 132, 16, 0.12, 64, 30), 2400,
+    st(72000, 183, 16, 0.12, 64, 30), 2400,
     {"sweep": {"power": 1.3, "windup": 1.2, "cooldown": 5.0, "range": 9.0, "angle": 140, "push": 1.1, "flip_chance": 0.3,
                "flip_at": 0.45},
      "beam": {"power": 1.5, "windup": 1.6, "cooldown": 8.0, "range": 30.0, "width": 2.4},

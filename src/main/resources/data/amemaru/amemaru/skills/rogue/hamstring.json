@@ -1,0 +1,51 @@
+{
+  "job": "rogue",
+  "school": "venom",
+  "row": 3,
+  "column": 3,
+  "type": "active",
+  "name": "足払い刃",
+  "description": "足の腱を狙って斬る。敵はしばらくその場から動けず、攻撃も弱まる。",
+  "max_rank": 5,
+  "rank_costs": [
+    1,
+    1,
+    2,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "rogue/poison_mist",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 14
+  },
+  "cooldown": 12,
+  "delivery": {
+    "type": "target",
+    "range": 4.5
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 1.2,
+      "coefficient_per_rank": 0.1
+    },
+    {
+      "type": "root",
+      "duration": 2
+    },
+    {
+      "type": "weaken",
+      "value": 15,
+      "duration": 6
+    }
+  ],
+  "animation": "rogue_slash",
+  "sound": "amemaru:skill.rogue.hamstring"
+}

@@ -6,13 +6,15 @@
   "type": "active",
   "name": "寸勁",
   "description": "拳を敵に当てたまま、一寸の間合いから気を打ちこむ。打った後、しばらく自分を気の膜が包む。【極】",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 25,
+  "min_level": 26,
   "requires": [
     {
       "skill": "monk/ki_vortex",
@@ -33,13 +35,13 @@
       "type": "damage",
       "stat": "attack",
       "coefficient": 2.0,
-      "coefficient_per_rank": 0.3
+      "coefficient_per_rank": 0.15
     },
     {
       "type": "barrier",
       "stat": "attack",
       "coefficient": 1.0,
-      "coefficient_per_rank": 0.2,
+      "coefficient_per_rank": 0.1,
       "duration": 6,
       "self": true
     }

@@ -17,6 +17,7 @@ import jp.amemaru.lostconnection.job.def.EffectDef;
 import jp.amemaru.lostconnection.job.def.LinkType;
 import jp.amemaru.lostconnection.job.def.PassiveDef;
 import jp.amemaru.lostconnection.job.def.SkillDef;
+import jp.amemaru.lostconnection.job.def.SkillSounds;
 import jp.amemaru.lostconnection.job.def.SkillRegistry;
 import jp.amemaru.lostconnection.network.s2c.CombatTextS2C;
 import jp.amemaru.lostconnection.network.s2c.SkillFxS2C;
@@ -77,6 +78,8 @@ public final class SkillExecutor {
         Vec3 origin = caster.position();
         prepare(ctx, caster);
         playSound(level, origin, skill.sound(), 1.0F);
+        // 11月24日：重ねる音（放ったとき）
+        SkillSounds.play(level, origin, skill, SkillSounds.Phase.RELEASE);
         float power = fxPower(ctx);
 
         switch (delivery.type()) {
@@ -497,6 +500,10 @@ public final class SkillExecutor {
             }
         }
 
+        // 11月24日：重ねる音（当たったとき。1回の届きにつき1度。当たる相手がいなければ鳴らさない）
+        if (!targets.isEmpty()) {
+            SkillSounds.play(ctx.level, center, skill, SkillSounds.Phase.IMPACT);
+        }
         if (ctx.selfApplied) {
             return;
         }
@@ -1238,7 +1245,8 @@ public final class SkillExecutor {
                 player.addEffect(new MobEffectInstance(ModEffects.VENOM_COAT.get(), ticks, 0, false, false, true));
                 StatusService.sync(player, StatusFxS2C.Event.NONE);
             });
-            default -> applyBuff(player, kind, ticks, Math.min(95.0, value * (kind == BuffKind.CRIT_UP ? 1.0 : multiplier)), now, caster);
+            default -> applyBuff(player, kind, ticks,
+                    Math.min(95.0, value * (kind == BuffKind.CRIT_UP || kind == BuffKind.POWER_UP ? 1.0 : multiplier)), now, caster);
         }
     }
 
@@ -1328,6 +1336,15 @@ public final class SkillExecutor {
                 case EVADE -> {
                     buffs.evadeUntil = Math.max(buffs.evadeUntil, now + ticks);
                     player.addEffect(new MobEffectInstance(ModEffects.EVADE.get(), ticks, 0, false, false, true), source);
+                }
+                case POWER_UP -> {
+                    // 重なったら大きい方・長い方（11月24日）
+                    boolean active = buffs.powerUp(now) > 0;
+                    buffs.powerUp = Math.max(active ? buffs.powerUp : 0.0, value);
+                    buffs.powerUpUntil = Math.max(active ? buffs.powerUpUntil : 0L, now + ticks);
+                    player.addEffect(new MobEffectInstance(ModEffects.POWER_UP.get(), (int) (buffs.powerUpUntil - now), 0, false, false, true),
+                            source);
+                    fresh = !active;
                 }
                 case ENDLESS_FLOW -> {
                     buffs.endlessFlowUntil = now + ticks;

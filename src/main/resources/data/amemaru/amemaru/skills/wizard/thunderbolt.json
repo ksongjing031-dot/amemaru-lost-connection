@@ -6,9 +6,11 @@
   "type": "active",
   "name": "雷霆",
   "description": "空を裂く雷を、狙った地点に落とす。打たれた敵は感電し、次の雷鎖を大きく呼び込む。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -23,13 +25,13 @@
     "mp": 22
   },
   "cooldown": 9,
-  "cooldown_per_rank": -0.5,
+  "cooldown_per_rank": -0.25,
   "link": "starter",
   "delivery": {
     "type": "point",
     "range": 20,
     "radius": 2.5,
-    "radius_per_rank": 0.3,
+    "radius_per_rank": 0.15,
     "impact_delay": 0.4
   },
   "effects": [
@@ -37,7 +39,7 @@
       "type": "damage",
       "stat": "magic",
       "coefficient": 2.0,
-      "coefficient_per_rank": 0.3
+      "coefficient_per_rank": 0.15
     },
     {
       "type": "shock",

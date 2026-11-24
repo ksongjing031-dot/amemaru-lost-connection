@@ -6,9 +6,11 @@
   "type": "active",
   "name": "灯火の連弾",
   "description": "杖の先に灯火をいくつも灯し、扇のように一度に放つ。溜めるほど灯火が増え、当たるたびに星痕を刻む。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -23,7 +25,7 @@
     "mp": 16
   },
   "cooldown": 6,
-  "cooldown_per_rank": -0.5,
+  "cooldown_per_rank": -0.25,
   "link": "starter",
   "charge": {
     "time": 1.2,
@@ -44,7 +46,7 @@
       "type": "damage",
       "stat": "magic",
       "coefficient": 0.7,
-      "coefficient_per_rank": 0.1
+      "coefficient_per_rank": 0.05
     },
     {
       "type": "brand",

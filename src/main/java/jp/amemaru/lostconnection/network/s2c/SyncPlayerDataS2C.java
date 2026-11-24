@@ -55,6 +55,8 @@ public final class SyncPlayerDataS2C {
     private int[] learnedSkills = new int[0];
     private int[] learnedRanks = new int[0];
     private int[] loadout = new int[0];
+    /** スキルツリーで取ったステータスの節（11月24日）。 */
+    private String[] treeNodes = new String[0];
     // ゲージ
     private float gauge;
     private int gaugeMax;
@@ -136,6 +138,7 @@ public final class SyncPlayerDataS2C {
         for (int i = 0; i < PlayerData.LOADOUT_SIZE; i++) {
             message.loadout[i] = snapshot.skillIndex(data.getLoadout(i));
         }
+        message.treeNodes = data.getTreeNodes().toArray(new String[0]);
 
         message.gauge = (float) data.getGauge();
         message.gaugeMax = GaugeService.max(data);
@@ -212,6 +215,10 @@ public final class SyncPlayerDataS2C {
             buf.writeVarInt(loadout.length);
             for (int value : loadout) {
                 buf.writeVarInt(value + 1);
+            }
+            buf.writeVarInt(treeNodes.length);
+            for (String node : treeNodes) {
+                buf.writeUtf(node, 64);
             }
         }
         if ((sections & PlayerData.SYNC_GAUGE) != 0) {
@@ -296,6 +303,11 @@ public final class SyncPlayerDataS2C {
             message.loadout = new int[slots];
             for (int i = 0; i < slots; i++) {
                 message.loadout[i] = buf.readVarInt() - 1;
+            }
+            int nodes = checkLength(buf.readVarInt(), 1024);
+            message.treeNodes = new String[nodes];
+            for (int i = 0; i < nodes; i++) {
+                message.treeNodes[i] = buf.readUtf(64);
             }
         }
         if ((sections & PlayerData.SYNC_GAUGE) != 0) {
@@ -414,6 +426,10 @@ public final class SyncPlayerDataS2C {
 
     public int[] learnedRanks() {
         return learnedRanks;
+    }
+
+    public String[] treeNodes() {
+        return treeNodes;
     }
 
     public int[] loadout() {

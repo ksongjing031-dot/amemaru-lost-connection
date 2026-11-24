@@ -116,7 +116,7 @@ public final class AmemaruHud {
         }
         drawBarrier(graphics, state, now);
         drawBar(graphics, MP_X, AmemaruHudArt.V_MP_FRAME, AmemaruHudArt.V_MP_FILL, AmemaruHudArt.V_MP_GHOST, MP_ANIM);
-        drawGem(graphics, state.statPoints() > 0, now);
+        drawGem(graphics, state.skillPoints() > 0, now);
 
         if (numbers) {
             String hpText = I18n.get("hud.amemaru.hp", ceil(state.hp()), ceil(state.maxHp()));
@@ -282,7 +282,7 @@ public final class AmemaruHud {
         String text = Integer.toString(state.level());
         int x = -font.width(text) / 2 + 1;
         int y = GEM_Y + AmemaruHudArt.GEM_HEX_TOP + 6;
-        int color = state.statPoints() > 0 ? LEVEL_POINTS_COLOR : LEVEL_COLOR;
+        int color = state.skillPoints() > 0 ? LEVEL_POINTS_COLOR : LEVEL_COLOR;
         graphics.drawString(font, text, x + 1, y, 0x0A0F1C, false);
         graphics.drawString(font, text, x - 1, y, 0x0A0F1C, false);
         graphics.drawString(font, text, x, y + 1, 0x0A0F1C, false);

@@ -80,6 +80,7 @@ Phase 7 は Phase 0-B 13章の「**釣り、カジノ（右クリックでGUIを
 
 - **途中参加者**：オープニングを見る前に初めて入った日が2日目から後の人で、来てから3日のうち（14章の「途中参加・見逃し対策」）。この版より前から遊んでいる人は、1日目に来たことにします。
 - **先導の相手**：途中参加者か、レベルが「サーバーの中央値 − 10」以下の人（15章。差の10は config `leadLevelGap`）。
+  11月24日に最大レベルを50から100にしたため、`leadLevelGap` の初期値は20にした【補完】（最大レベルに対する割合は設計書の10と同じ）。
 - 14章の「双方に報酬とコネクション」：先導する側には先導者のCP、組まれた側には「初めての人とパーティ」のCPと、はじめましてボーナスが入ります。
 
 ### はじめましてボーナス
@@ -114,7 +115,7 @@ Phase 7 は Phase 0-B 13章の「**釣り、カジノ（右クリックでGUIを
 | `connection sample <人> <名前>` | 縁帳に見本の人（パーティを1回組んだ、いない人）を足す（結び札の確かめ用） |
 | `connection partner <人> [相手]` | 今日の相棒を見る・ふたりお互いに決める |
 
-config（`amemaru-server.toml` の `[connection]`）：`enabled`・`multiplier`（1.0）・`dailyTotal`（600）・`dailyCategory`（150）・`basePlayers`（25）・`scaleMin`（0.4）・`scaleMax`（2.0）・`activeDays`（3）・`resetHour`（4）・`firstMeetStep`（10）・`firstMeetMax`（30）・`firstMeetDaily`（5）・`leadLevelGap`（10）・`partnerEnabled`・`partnerGoal`（10）・`partnerKnots`（150）。
+config（`amemaru-server.toml` の `[connection]`）：`enabled`・`multiplier`（1.0）・`dailyTotal`（600）・`dailyCategory`（150）・`basePlayers`（25）・`scaleMin`（0.4）・`scaleMax`（2.0）・`activeDays`（3）・`resetHour`（4）・`firstMeetStep`（10）・`firstMeetMax`（30）・`firstMeetDaily`（5）・`leadLevelGap`（20。11月24日から）・`partnerEnabled`・`partnerGoal`（10）・`partnerKnots`（150）。
 
 ## 4. 確かめ方
 

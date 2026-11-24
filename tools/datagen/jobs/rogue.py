@@ -36,8 +36,8 @@ JOB = {
     "starter_kit": [{"item": "amemaru:apprentice_daggers"}],
     "upper": {
         "name": "影結び",
-        "description": "影と影を結んで渡り歩く者。奥義（影の「千の刃」か、毒の「毒華」）と、各スキルの第3段が開く。",
-        "min_level": 30,
+        "description": "影と影を結んで渡り歩く者。奥義（影の「千の刃」か、毒の「毒華」）と、各スキルの第5段が開く。",
+        "min_level": 60,
         "min_day": 11,
     },
 }
@@ -152,3 +152,25 @@ ultimate(J, "poison_bloom", "venom", "毒華",
          mp=50, cd=100, delivery=d_around(8),
          effects=[gauge_burst(0.2), poison(0.3, 8, 5, 5), zone(8, 8, 1.0, [poison(0.3, 8, 1, 5)])],
          requires="rogue/toxic_burst", tags=["poison"], anim="rogue_bloom")
+
+# ================================================================ 11月24日に足したスキル（スキルツリーの作り直し）
+active(J, "throwing_knife", "shadow", 1, 3, "投げ刃",
+       "袖に隠した短い刃を、離れた敵へ投げつける。",
+       mp=8, cd=4, delivery=d_projectile(18, speed=2.0, kind="needle"), effects=[dmg("attack", (1.0, 0.15))],
+       anim="rogue_throw", requires="rogue/flurry")
+active(J, "twin_fangs", "shadow", 2, 3, "双牙",
+       "左右の刃で、同じ所を2度続けて斬る。背後からなら深く入る。",
+       mp=12, cd=6, delivery=MELEE, effects=[dmg("attack", (0.8, 0.12), hits=2, interval=3, backstab=1.5)], anim="rogue_cross",
+       requires="rogue/shadow_run")
+active(J, "venom_veil", "venom", 2, 3, "毒の帳",
+       "狙った所に毒の霧の帳を下ろす。中にいる敵に毒が重なっていく。",
+       mp=22, cd=18, cdpr=-1, delivery=d_point(14, 4), effects=[zone(4, 6, 1.0, [poison((0.25, 0.05), 6)])], anim="rogue_throw_wide",
+       requires="rogue/smoke_bomb")
+active(J, "shadow_dance", "shadow", 3, 3, "影の舞",
+       "影のように軽く舞う。しばらく足が速くなり、与えるダメージも上がる。",
+       mp=20, cd=36, cdpr=-2, delivery=d_self(), effects=[buff("power_up", (8, 1), (15, 4)), buff("haste", (8, 1), (15, 3))],
+       anim="rogue_spin", requires="rogue/vital_strike")
+active(J, "hamstring", "venom", 3, 3, "足払い刃",
+       "足の腱を狙って斬る。敵はしばらくその場から動けず、攻撃も弱まる。",
+       mp=14, cd=12, delivery=MELEE, effects=[dmg("attack", (1.2, 0.2)), root(2), weaken(15, 6)], anim="rogue_slash",
+       requires="rogue/poison_mist")

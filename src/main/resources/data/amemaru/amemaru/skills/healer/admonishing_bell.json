@@ -6,9 +6,11 @@
   "type": "active",
   "name": "戒めの鈴",
   "description": "敵の頭の上で、戒めの鈴を鳴らす。鈴が鳴っている間、その敵の攻撃が弱まる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -33,12 +35,12 @@
       "type": "damage",
       "stat": "magic",
       "coefficient": 0.8,
-      "coefficient_per_rank": 0.15
+      "coefficient_per_rank": 0.075
     },
     {
       "type": "weaken",
       "value": 15,
-      "value_per_rank": 5,
+      "value_per_rank": 2.5,
       "duration": 8
     }
   ],

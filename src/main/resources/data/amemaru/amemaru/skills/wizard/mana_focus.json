@@ -1,0 +1,44 @@
+{
+  "job": "wizard",
+  "school": "starlight",
+  "row": 2,
+  "column": 3,
+  "type": "active",
+  "name": "魔力集中",
+  "description": "息を整え、魔力をひとところに集める。しばらく自分の与えるダメージが上がる。",
+  "max_rank": 5,
+  "rank_costs": [
+    1,
+    1,
+    2,
+    2,
+    3
+  ],
+  "min_level": 10,
+  "requires": [
+    {
+      "skill": "wizard/meteor_shower",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 18
+  },
+  "cooldown": 36,
+  "cooldown_per_rank": -1.0,
+  "delivery": {
+    "type": "self"
+  },
+  "effects": [
+    {
+      "type": "buff",
+      "buff": "power_up",
+      "duration": 10,
+      "duration_per_rank": 0.5,
+      "value": 15,
+      "value_per_rank": 2.0
+    }
+  ],
+  "animation": "wizard_light_veil",
+  "sound": "amemaru:skill.wizard.mana_focus"
+}

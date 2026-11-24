@@ -4,8 +4,10 @@ import com.mojang.authlib.GameProfile;
 import jp.amemaru.lostconnection.AmemaruMod;
 import jp.amemaru.lostconnection.job.JobService;
 import jp.amemaru.lostconnection.job.LockOnFacing;
+import jp.amemaru.lostconnection.job.SkillTreeService;
 import jp.amemaru.lostconnection.job.def.JobDef;
 import jp.amemaru.lostconnection.job.def.SkillRegistry;
+import jp.amemaru.lostconnection.job.def.SkillTreeDef;
 import jp.amemaru.lostconnection.player.LevelService;
 import jp.amemaru.lostconnection.player.PlayerData;
 import jp.amemaru.lostconnection.player.PlayerDataCapability;
@@ -154,7 +156,10 @@ public final class ImprovementGameTests {
 
     // ---------------------------------------------------------------- 転職と振り直し
 
-    /** 転職すると、振ったステータスのポイントが全部戻る（一から振り直せる）。 */
+    /**
+     * 転職すると、スキルツリーで取った節（ステータスの節もスキルも）が全部戻り、一から振り直せる（11月23日のご指示。
+     * 11月24日からは、ステータスもスキルツリーで振る）。
+     */
     @GameTest(template = EMPTY)
     public static void jobChangeRefundsStatPoints(GameTestHelper helper) {
         FakePlayer player = fake(helper, "job_refund");
@@ -165,18 +170,24 @@ public final class ImprovementGameTests {
             progression.setDay(1);
             LevelService.setLevel(player, data, 10);
             check(helper, JobService.changeJob(player, data, job("knight")), "ナイトを選べません");
-            LevelService.resetAllocation(player, data);
-            int before = LevelService.availableStatPoints(data, GrowthRules.current());
-            int used = LevelService.allocate(player, data, StatType.ATTACK, 4) + LevelService.allocate(player, data, StatType.HP, 3);
-            check(helper, used == 7 && data.totalAllocated() == 7, "7ポイント振れません：" + used);
+            int before = LevelService.availableSkillPoints(data, GrowthRules.current());
+            SkillTreeDef knightTree = TreeTestUtil.tree(job("knight").id());
+            TreeTestUtil.takePath(helper, player, data, knightTree,
+                    TreeTestUtil.nodeOf(knightTree, AmemaruMod.id("knight/shield_bond")));
+            TreeTestUtil.take(helper, player, data, knightTree, TreeTestUtil.statNextToCore(knightTree));
+            int spent = before - LevelService.availableSkillPoints(data, GrowthRules.current());
+            check(helper, spent == 3 && data.getTreeNodes().size() == 2,
+                    "3ポイント（ステータスの節2つとスキル1つ）を使えません：" + spent + "・" + data.getTreeNodes());
             check(helper, JobService.changeJob(player, data, job("wizard")), "ウィザードに変えられません");
-            check(helper, data.totalAllocated() == 0, "転職したのに、振ったポイントが残っています：" + data.totalAllocated());
-            check(helper, data.getAllocated(StatType.ATTACK) == 0 && data.getAllocated(StatType.HP) == 0, "攻撃・HPの振り分けが残っています");
-            int after = LevelService.availableStatPoints(data, GrowthRules.current());
+            check(helper, data.getTreeNodes().isEmpty(), "転職したのに、取った節が残っています：" + data.getTreeNodes());
+            check(helper, data.getSkillRank(AmemaruMod.id("knight/shield_bond")) == 0, "転職したのに、ナイトのスキルが残っています");
+            int after = LevelService.availableSkillPoints(data, GrowthRules.current());
             check(helper, after == before, "戻ったポイントの数が合いません：" + after + "（" + before + "）");
-            check(helper, LevelService.allocate(player, data, StatType.MAGIC, 5) == 5, "振り直せません");
+            SkillTreeDef wizardTree = TreeTestUtil.tree(job("wizard").id());
+            TreeTestUtil.take(helper, player, data, wizardTree, TreeTestUtil.statNextToCore(wizardTree));
+            check(helper, data.getTreeNodes().size() == 1, "ウィザードのツリーで振り直せません：" + data.getTreeNodes());
         } finally {
-            LevelService.resetAllocation(player, data);
+            SkillTreeService.resetSkills(player, data);
             progression.setDay(originalDay);
         }
         helper.succeed();

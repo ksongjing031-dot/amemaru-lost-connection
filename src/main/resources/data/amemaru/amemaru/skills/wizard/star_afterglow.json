@@ -6,9 +6,11 @@
   "type": "passive",
   "name": "星の残光",
   "description": "弾けた星の光を、糸でたぐり寄せて魔力に戻す。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -22,6 +24,6 @@
   "passive": {
     "type": "star_afterglow",
     "value": 2,
-    "value_per_rank": 1
+    "value_per_rank": 0.5
   }
 }

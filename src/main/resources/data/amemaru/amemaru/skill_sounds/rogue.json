@@ -1,0 +1,884 @@
+{
+  "_comment": "スキルに重ねて鳴らす音（11月24日。tools/datagen/build_skill_sounds.py が書き出す。手で直さない）。cast：詠唱・溜めの始まり、release：放ったとき、impact：当たったとき。",
+  "skills": {
+    "rogue/binding_threads": {
+      "release": [
+        {
+          "sound": "minecraft:block.wool.break",
+          "volume": 0.6,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.wool.hit",
+          "volume": 0.6,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.spider.ambient",
+          "volume": 0.25,
+          "pitch": 1.6,
+          "spread": 0.1,
+          "delay": 2
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:block.wool.place",
+          "volume": 0.6,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.wool.break",
+          "volume": 0.4,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "rogue/corroding_edge": {
+      "release": [
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.7,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.chain.hit",
+          "volume": 0.35,
+          "pitch": 1.9,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.5,
+          "pitch": 1.6,
+          "spread": 0.1,
+          "delay": 3
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.slime.squish",
+          "volume": 0.6,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.puffer_fish.sting",
+          "volume": 0.4,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.honey_block.slide",
+          "volume": 0.5,
+          "pitch": 0.8,
+          "spread": 0.05,
+          "delay": 1
+        }
+      ]
+    },
+    "rogue/envenom": {
+      "release": [
+        {
+          "sound": "minecraft:item.bottle.fill",
+          "volume": 0.6,
+          "pitch": 1.1,
+          "spread": 0.05,
+          "delay": 2
+        },
+        {
+          "sound": "minecraft:block.brewing_stand.brew",
+          "volume": 0.6,
+          "pitch": 1.2,
+          "spread": 0.05,
+          "delay": 4
+        }
+      ]
+    },
+    "rogue/flurry": {
+      "release": [
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.6,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 2
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 4
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.6,
+          "pitch": 1.7,
+          "spread": 0.1,
+          "delay": 6
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.player.attack.crit",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.hit",
+          "volume": 0.3,
+          "pitch": 1.8,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "rogue/hamstring": {
+      "release": [
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.7,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.chain.hit",
+          "volume": 0.35,
+          "pitch": 1.9,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.5,
+          "pitch": 1.6,
+          "spread": 0.1,
+          "delay": 3
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.player.attack.crit",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.hit",
+          "volume": 0.3,
+          "pitch": 1.8,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "rogue/numbing_needle": {
+      "release": [
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.4,
+          "pitch": 1.8,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.throw",
+          "volume": 0.5,
+          "pitch": 1.7,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.slime.squish",
+          "volume": 0.6,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.puffer_fish.sting",
+          "volume": 0.4,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.honey_block.slide",
+          "volume": 0.5,
+          "pitch": 0.8,
+          "spread": 0.05,
+          "delay": 1
+        }
+      ]
+    },
+    "rogue/phantom_blades": {
+      "release": [
+        {
+          "sound": "minecraft:entity.illusioner.mirror_move",
+          "volume": 0.5,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.vex.charge",
+          "volume": 0.4,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.phantom.swoop",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:block.chain.hit",
+          "volume": 0.35,
+          "pitch": 1.9,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.5,
+          "pitch": 1.6,
+          "spread": 0.1,
+          "delay": 3
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.player.attack.crit",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.hit",
+          "volume": 0.3,
+          "pitch": 1.8,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "rogue/poison_bloom": {
+      "release": [
+        {
+          "sound": "minecraft:entity.splash_potion.throw",
+          "volume": 0.5,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.splash_potion.break",
+          "volume": 0.6,
+          "pitch": 0.8,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.brewing_stand.brew",
+          "volume": 0.5,
+          "pitch": 1.4,
+          "spread": 0.05,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:block.fire.extinguish",
+          "volume": 0.5,
+          "pitch": 0.7,
+          "spread": 0.05,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.slime.squish",
+          "volume": 0.4,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 2
+        },
+        {
+          "sound": "minecraft:entity.puffer_fish.blow_up",
+          "volume": 0.4,
+          "pitch": 0.8,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.slime.squish",
+          "volume": 0.6,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.puffer_fish.sting",
+          "volume": 0.4,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.honey_block.slide",
+          "volume": 0.5,
+          "pitch": 0.8,
+          "spread": 0.05,
+          "delay": 1
+        }
+      ]
+    },
+    "rogue/poison_mist": {
+      "release": [
+        {
+          "sound": "minecraft:block.fire.extinguish",
+          "volume": 0.5,
+          "pitch": 0.7,
+          "spread": 0.05,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.puffer_fish.blow_up",
+          "volume": 0.4,
+          "pitch": 0.8,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ]
+    },
+    "rogue/shadow_burial": {
+      "release": [
+        {
+          "sound": "minecraft:entity.illusioner.mirror_move",
+          "volume": 0.5,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.vex.charge",
+          "volume": 0.4,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.phantom.swoop",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.player.attack.crit",
+          "volume": 0.7,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.evoker_fangs.attack",
+          "volume": 0.4,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "rogue/shadow_dance": {
+      "release": [
+        {
+          "sound": "minecraft:entity.illusioner.mirror_move",
+          "volume": 0.5,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.vex.charge",
+          "volume": 0.4,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.phantom.swoop",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "rogue/shadow_double": {
+      "release": [
+        {
+          "sound": "minecraft:entity.vex.charge",
+          "volume": 0.4,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.phantom.swoop",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "rogue/shadow_run": {
+      "release": [
+        {
+          "sound": "minecraft:entity.illusioner.mirror_move",
+          "volume": 0.5,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.vex.charge",
+          "volume": 0.4,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.phantom.swoop",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.4,
+          "pitch": 1.4,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ]
+    },
+    "rogue/shadow_stitch": {
+      "release": [
+        {
+          "sound": "minecraft:entity.illusioner.mirror_move",
+          "volume": 0.5,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.vex.charge",
+          "volume": 0.4,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.phantom.swoop",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.player.attack.crit",
+          "volume": 0.7,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.evoker_fangs.attack",
+          "volume": 0.4,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "rogue/shadow_strike": {
+      "release": [
+        {
+          "sound": "minecraft:entity.illusioner.mirror_move",
+          "volume": 0.5,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.vex.charge",
+          "volume": 0.4,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.phantom.swoop",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.player.attack.crit",
+          "volume": 0.7,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.evoker_fangs.attack",
+          "volume": 0.4,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "rogue/smoke_bomb": {
+      "release": [
+        {
+          "sound": "minecraft:block.fire.extinguish",
+          "volume": 0.7,
+          "pitch": 0.9,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.puffer_fish.blow_up",
+          "volume": 0.5,
+          "pitch": 0.7,
+          "spread": 0.05,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.phantom.flap",
+          "volume": 0.4,
+          "pitch": 1.4,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ]
+    },
+    "rogue/thousand_blades": {
+      "release": [
+        {
+          "sound": "minecraft:entity.illusioner.mirror_move",
+          "volume": 0.4,
+          "pitch": 1.2,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.7,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 3
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.7,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 6
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.7,
+          "pitch": 1.7,
+          "spread": 0.1,
+          "delay": 9
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.player.attack.crit",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.hit",
+          "volume": 0.3,
+          "pitch": 1.8,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "rogue/throwing_knife": {
+      "release": [
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.4,
+          "pitch": 1.8,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.throw",
+          "volume": 0.5,
+          "pitch": 1.7,
+          "spread": 0.1,
+          "delay": 0
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.player.attack.crit",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.hit",
+          "volume": 0.3,
+          "pitch": 1.8,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "rogue/toxic_burst": {
+      "release": [
+        {
+          "sound": "minecraft:entity.splash_potion.throw",
+          "volume": 0.5,
+          "pitch": 1.2,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.brewing_stand.brew",
+          "volume": 0.5,
+          "pitch": 1.4,
+          "spread": 0.05,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.slime.squish",
+          "volume": 0.4,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 2
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.slime.squish",
+          "volume": 0.6,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.puffer_fish.sting",
+          "volume": 0.4,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.generic.explode",
+          "volume": 0.6,
+          "pitch": 1.1,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.honey_block.slide",
+          "volume": 0.5,
+          "pitch": 0.8,
+          "spread": 0.05,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.firework_rocket.large_blast",
+          "volume": 0.4,
+          "pitch": 0.9,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "rogue/twin_fangs": {
+      "release": [
+        {
+          "sound": "minecraft:block.chain.hit",
+          "volume": 0.35,
+          "pitch": 1.9,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.5,
+          "pitch": 1.6,
+          "spread": 0.1,
+          "delay": 3
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.player.attack.crit",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:item.trident.hit",
+          "volume": 0.3,
+          "pitch": 1.8,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    },
+    "rogue/venom_blade": {
+      "release": [
+        {
+          "sound": "minecraft:block.chain.hit",
+          "volume": 0.35,
+          "pitch": 1.9,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.5,
+          "pitch": 1.6,
+          "spread": 0.1,
+          "delay": 3
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.slime.squish",
+          "volume": 0.6,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.puffer_fish.sting",
+          "volume": 0.4,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.honey_block.slide",
+          "volume": 0.5,
+          "pitch": 0.8,
+          "spread": 0.05,
+          "delay": 1
+        }
+      ]
+    },
+    "rogue/venom_veil": {
+      "release": [
+        {
+          "sound": "minecraft:entity.splash_potion.break",
+          "volume": 0.6,
+          "pitch": 0.8,
+          "spread": 0.05,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.fire.extinguish",
+          "volume": 0.5,
+          "pitch": 0.7,
+          "spread": 0.05,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.puffer_fish.blow_up",
+          "volume": 0.4,
+          "pitch": 0.8,
+          "spread": 0.05,
+          "delay": 2
+        }
+      ]
+    },
+    "rogue/vital_strike": {
+      "release": [
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.7,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:block.chain.hit",
+          "volume": 0.35,
+          "pitch": 1.9,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.5,
+          "pitch": 1.6,
+          "spread": 0.1,
+          "delay": 3
+        }
+      ],
+      "impact": [
+        {
+          "sound": "minecraft:entity.player.attack.crit",
+          "volume": 0.7,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.evoker_fangs.attack",
+          "volume": 0.4,
+          "pitch": 1.4,
+          "spread": 0.1,
+          "delay": 1
+        }
+      ]
+    }
+  }
+}

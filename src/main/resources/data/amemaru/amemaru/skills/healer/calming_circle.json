@@ -6,9 +6,11 @@
   "type": "active",
   "name": "鎮めの陣",
   "description": "地面に鈴の紋の陣を描く。陣の中の敵は鈴の音に打たれて足が鈍り、陣の中の仲間は守られる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -27,13 +29,13 @@
     "type": "point",
     "range": 18,
     "radius": 4,
-    "radius_per_rank": 0.5
+    "radius_per_rank": 0.25
   },
   "effects": [
     {
       "type": "zone",
       "radius": 4,
-      "radius_per_rank": 0.5,
+      "radius_per_rank": 0.25,
       "duration": 6,
       "interval": 1.0,
       "effects": [
@@ -41,7 +43,7 @@
           "type": "damage",
           "stat": "magic",
           "coefficient": 0.5,
-          "coefficient_per_rank": 0.1
+          "coefficient_per_rank": 0.05
         },
         {
           "type": "status",

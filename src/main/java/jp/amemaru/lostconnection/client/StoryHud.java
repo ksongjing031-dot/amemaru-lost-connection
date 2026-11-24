@@ -173,12 +173,20 @@ public final class StoryHud {
         if (a <= 0.02F) {
             return;
         }
-        List<String> lines = UiStyle.wrap(font, text.text(), 230);
-        int w = 250;
+        // 11月24日のご指示「UIがごちゃついている」：戦いの場の真ん中をふさがないよう、左上（パーティの枠の下）に寄せた
+        int w = Math.min(200, Math.max(140, width / 2 - 20));
+        List<String> lines = UiStyle.wrap(font, text.text(), w - 16);
         int h = 16 + lines.size() * 10;
-        int x = (width - w) / 2;
-        // ボスの帯・技の名前・状態・「〇〇まで」の札の下に出す（重ならないように。前の絵の位置を使う）
-        int y = Math.max(56, Math.max(countdownBottom, castBottom) + 4);
+        int x = 6;
+        int y = Math.max(6, PartyHud.bottom() + 4);
+        // 上の真ん中の札（ボスの帯・技の名前・ボスの様子・「〇〇まで」）は、小さな画面では左のはしまで広がるので、その下に出す
+        // （11月24日（2回目）：4階のボス戦で、手がかりがボスの様子の札と重なっていた）。下の端は前の絵のもの（この後で描く）
+        if (bossBarShown()) {
+            y = Math.max(y, Math.max(bossBottom, castBottom) + 4);
+        }
+        if (countdownBottom > 0) {
+            y = Math.max(y, countdownBottom + 4);
+        }
         graphics.fill(x, y, x + w, y + h, color(a * 0.75F, 0x0B1022));
         graphics.fill(x, y, x + w, y + 1, color(a, 0xFFF2A8));
         graphics.drawString(font, Component.translatable("hud.amemaru.story.tip"), x + 6, y + 4, color(a, 0xFFF2A8), false);
@@ -233,6 +241,13 @@ public final class StoryHud {
 
     private static void renderCountdowns(GuiGraphics graphics, Font font, int width) {
         WorldStateS2C world = ClientStory.world();
+        countdownBottom = 0;
+        // 11月24日のご指示「UIがごちゃついている」：戦っている間とボス戦の間は出さない
+        if (ClientPlayerState.get().inCombat(5000L) || bossBarShown()) {
+            return;
+        }
+        // 右上の手引き・クエストの一覧と重ならないよう、出ているときは、その左の幅の中のまん中に出す
+        int right = guideBottom > 0 || GuildHud.shownRecently() ? width - GuildHud.WIDTH - 12 : width;
         int y = 4;
         // ボスのHPの帯が出ているときは、その下に出す（ボスの技の名前が出ていれば、さらにその下）
         if (System.currentTimeMillis() - bossSeen < 250L) {
@@ -241,13 +256,13 @@ public final class StoryHud {
         if (castBottom > 0) {
             y = Math.max(y, castBottom + 2);
         }
-        countdownBottom = 0;
         for (WorldStateS2C.Countdown countdown : world.countdowns()) {
             long left = ClientStory.remaining(countdown) / 1000L;
             String text = Component.translatable("hud.amemaru.story.countdown", countdown.text(),
                     String.format(java.util.Locale.ROOT, "%d:%02d", left / 60, left % 60)).getString();
+            text = UiStyle.clip(font, text, Math.max(40, right - 18));
             int w = font.width(text) + 12;
-            int x = (width - w) / 2;
+            int x = w <= right - 12 && (width - w) / 2 + w <= right ? (width - w) / 2 : Math.max(6, (right - w) / 2);
             graphics.fill(x, y, x + w, y + 12, 0xB00B1022);
             graphics.drawString(font, text, x + 6, y + 2, 0xFFFFE9A8, false);
             countdownBottom = y + 12;

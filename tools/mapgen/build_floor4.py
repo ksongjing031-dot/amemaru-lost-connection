@@ -368,7 +368,8 @@ def entrance(f):
     for k in range(8):
         f.put(cx - 6 + k, GROUND + 1, cz - 12 + (k // 3), block("smooth_quartz"))
     sign(f, cx + 2, GROUND + 1, cz + 4, 8, ["塔の門へ戻る円", "", "円の中に立つと", "塔の門へ戻ります"])
-    sign(f, cx + 3, GROUND + 1, cz - 14, 8, ["4階", "崩壊した神殿", "", "参道は北へ"])
+    # 11月24日：入口から来る人に背を向けていたので、1〜3階と同じく南（入口の側）へ向ける
+    sign(f, cx + 3, GROUND + 1, cz - 14, 0, ["4階", "崩壊した神殿", "", "参道は北へ"])
     tx, tz = cx - 8, cz - 6
     f.put(tx, GROUND + 1, tz, block("amemaru:travel_stone"), thing(0, "travel"))
     sign(f, tx + 1, GROUND + 1, tz, 12, ["道しるべの石", "", "触れると、ともした", "中継の灯へ"])
@@ -534,7 +535,8 @@ def gallery(f):
     # 壁画「第一時代」（3枚。南を向く）と、祈りの間へ上る通路の扉
     mural(f, "first", [(x1 - 14 + k, GROUND + 3, z0) for k in range(3)], "south",
           door=((410, GROUND + 1, 214), (418, GROUND + 5, 216)))
-    sign(f, x1 - 13, GROUND + 1, z0 + 2, 8, ["第一時代の壁画", "", "パネルを右クリックで", "回して、絵を戻そう"])
+    # 11月24日：壁画の壁（北）を向いていたので、回廊を来る人の側（南）へ向ける
+    sign(f, x1 - 13, GROUND + 1, z0 + 2, 0, ["第一時代の壁画", "", "パネルを右クリックで", "回して、絵を戻そう"])
     # 祈りの間への通路（扉の北）。回廊の北の壁に入口
     for x in range(410, 419):
         for y in range(GROUND + 1, GROUND + 6):
@@ -599,7 +601,8 @@ def chapel(f):
     for x in range(410, 431):
         f.put(x, GROUND + 1, z0 + 3, block("smooth_quartz"))
     mural(f, "sunder", [(418 + k, GROUND + 3, z0) for k in range(4)], "south")
-    sign(f, 417, GROUND + 1, z0 + 5, 8, ["大断絶の壁画", "", "パネルを回して", "絵を戻そう"])
+    # 11月24日：壁画の壁（北）を向いていたので、奥の院へ入って来る人の側（南）へ向ける
+    sign(f, 417, GROUND + 1, z0 + 5, 0, ["大断絶の壁画", "", "パネルを回して", "絵を戻そう"])
     f.guardians.append({"id": "lead_echo", "enemy": "amemaru:prayer_echo", "variant": "amemaru:prayer_echo_leader",
                         "pos": [420.5, GROUND + 2, z0 + 9.5], "respawn_seconds": 300, "activation": 24, "pillar": -1})
     chest(f, 404, GROUND + 1, z0 + 4, "south", guardian="lead_echo")
@@ -736,7 +739,8 @@ def terrace(f):
     mural(f, "second", [(mx - 2 + k, HIGH + 3, sz0 + 5) for k in range(5)], "south",
           door=((mx - 1, HIGH + 1, sz0 + 5), (mx + 1, HIGH + 2, sz0 + 5)))
     chest(f, mx, HIGH + 1, sz0 + 2, "south")
-    sign(f, mx + 3, HIGH + 1, sz0 + 7, 8, ["第二時代の壁画", "", "パネルを回して", "絵を戻そう"])
+    # 11月24日：壁画の壁（北）を向いていたので、庭を来る人の側（南）へ向ける
+    sign(f, mx + 3, HIGH + 1, sz0 + 7, 0, ["第二時代の壁画", "", "パネルを回して", "絵を戻そう"])
     f.guardians.append({"id": "old_beast", "enemy": "amemaru:broken_beast", "variant": "amemaru:broken_beast_elder",
                         "pos": [mx + 0.5, HIGH + 1, mz + 0.5], "respawn_seconds": 300, "activation": 30, "pillar": -1})
     chest(f, mx - 8, HIGH + 1, mz + 8, "east", guardian="old_beast")
@@ -1325,7 +1329,7 @@ def floor_json(f):
         "chapter": 1,
         "name": "崩壊した神殿",
         "chapter_title": "第1章　失われた古代領域",
-        "recommended_level": [7, 10],
+        "recommended_level": [15, 22],
         "origin": list(ORIGIN),
         "size": [SIZE, HEIGHT, SIZE],
         "structure": "amemaru:map/floor4/",

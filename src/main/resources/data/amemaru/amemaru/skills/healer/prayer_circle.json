@@ -6,9 +6,11 @@
   "type": "active",
   "name": "祈りの輪",
   "description": "鈴を高く掲げて祈り、自分のまわりに癒しの輪を広げる。輪の中の仲間（自分も）の傷がふさがる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -26,7 +28,7 @@
   "delivery": {
     "type": "around",
     "radius": 7,
-    "radius_per_rank": 1,
+    "radius_per_rank": 0.5,
     "affects": "allies",
     "include_self": true
   },
@@ -35,7 +37,7 @@
       "type": "heal",
       "stat": "magic",
       "coefficient": 1.8,
-      "coefficient_per_rank": 0.3
+      "coefficient_per_rank": 0.15
     }
   ],
   "tags": [

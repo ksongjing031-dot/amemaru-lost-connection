@@ -6,13 +6,15 @@
   "type": "active",
   "name": "地裂斬",
   "description": "大地ごと断ち割る一撃。地を走る裂け目が前の敵を打ち上げ、よろめいている敵には深く入る。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 25,
+  "min_level": 26,
   "requires": [
     {
       "skill": "knight/great_wheel",
@@ -35,7 +37,7 @@
       "type": "damage",
       "stat": "attack",
       "coefficient": 2.4,
-      "coefficient_per_rank": 0.35,
+      "coefficient_per_rank": 0.175,
       "bonus_status": "amemaru:stagger",
       "bonus": 1.3
     },

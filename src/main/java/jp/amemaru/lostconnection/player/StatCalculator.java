@@ -8,7 +8,7 @@ import net.minecraftforge.common.MinecraftForge;
  *
  * <ul>
  *   <li>基礎：成長の定義の {@code base} ＋ {@code per_level} ×（レベル−1）</li>
- *   <li>振り分け：{@code per_point} × 振り分けたポイント</li>
+ *   <li>振り分け：{@code per_point} × 振り分けたポイント（11月24日からは振り分けはなく、スキルツリーのステータスの節）</li>
  *   <li>装備と効果：{@link CollectStatsEvent} で集めた上乗せ（Phase 2以降）</li>
  * </ul>
  */
@@ -19,6 +19,12 @@ public final class StatCalculator {
     public static StatBlock compute(ServerPlayer player, PlayerData data, GrowthDef growth) {
         CollectStatsEvent bonus = new CollectStatsEvent(player, data);
         MinecraftForge.EVENT_BUS.post(bonus);
+        // 11月24日：スキルツリーで取ったステータスの節（数と%）
+        java.util.Map<StatType, Double> treeFlat = new java.util.EnumMap<>(StatType.class);
+        java.util.Map<StatType, Double> treePercent = new java.util.EnumMap<>(StatType.class);
+        jp.amemaru.lostconnection.job.SkillTreeService.treeStats(data, treeFlat, treePercent);
+        treeFlat.forEach(bonus::addFlat);
+        treePercent.forEach(bonus::addPercent);
 
         int levelsGained = Math.max(0, data.getLevel() - 1);
         StatBlock block = new StatBlock();

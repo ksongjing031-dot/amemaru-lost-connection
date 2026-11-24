@@ -6,13 +6,15 @@
   "type": "passive",
   "name": "弱点看破",
   "description": "動けない敵、標のある敵の急所が見える。標のある敵と、縫い止められた敵への会心ダメージが上がる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 20,
+  "min_level": 21,
   "requires": [
     {
       "skill": "archer/long_shot",
@@ -22,6 +24,6 @@
   "passive": {
     "type": "weak_point",
     "value": 15,
-    "value_per_rank": 5
+    "value_per_rank": 2.5
   }
 }

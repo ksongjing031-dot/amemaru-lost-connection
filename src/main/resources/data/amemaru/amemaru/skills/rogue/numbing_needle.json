@@ -6,9 +6,11 @@
   "type": "active",
   "name": "痺れ針",
   "description": "痺れ薬を塗った細い針を投げる。当たった敵は体がしびれてよろめき、しばらく足が鈍る。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -36,13 +38,13 @@
       "type": "damage",
       "stat": "attack",
       "coefficient": 0.7,
-      "coefficient_per_rank": 0.1
+      "coefficient_per_rank": 0.05
     },
     {
       "type": "status",
       "effect": "amemaru:stagger",
       "duration": 1.0,
-      "duration_per_rank": 0.25
+      "duration_per_rank": 0.125
     },
     {
       "type": "status",

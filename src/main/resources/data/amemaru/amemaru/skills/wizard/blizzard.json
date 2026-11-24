@@ -6,13 +6,15 @@
   "type": "active",
   "name": "吹雪",
   "description": "狙った地点に吹雪を起こす（6秒）。吹雪の中の敵を打ち続け、凍えを重ねていく（吹雪だけでは4つまで）。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 20,
+  "min_level": 21,
   "requires": [
     {
       "skill": "wizard/thunderbolt",
@@ -27,13 +29,13 @@
     "type": "point",
     "range": 20,
     "radius": 5,
-    "radius_per_rank": 0.5
+    "radius_per_rank": 0.25
   },
   "effects": [
     {
       "type": "zone",
       "radius": 5,
-      "radius_per_rank": 0.5,
+      "radius_per_rank": 0.25,
       "duration": 6,
       "interval": 0.5,
       "effects": [
@@ -41,7 +43,7 @@
           "type": "damage",
           "stat": "magic",
           "coefficient": 0.3,
-          "coefficient_per_rank": 0.05
+          "coefficient_per_rank": 0.025
         },
         {
           "type": "chill",

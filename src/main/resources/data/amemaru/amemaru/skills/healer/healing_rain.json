@@ -6,9 +6,11 @@
   "type": "active",
   "name": "癒しの雨",
   "description": "狙った地点に、やわらかな光の雨を降らせる。雨の中にいる仲間は、少しずつ傷が癒えていく。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -23,18 +25,18 @@
     "mp": 28
   },
   "cooldown": 16,
-  "cooldown_per_rank": -1,
+  "cooldown_per_rank": -0.5,
   "delivery": {
     "type": "point",
     "range": 20,
     "radius": 4,
-    "radius_per_rank": 0.5
+    "radius_per_rank": 0.25
   },
   "effects": [
     {
       "type": "zone",
       "radius": 4,
-      "radius_per_rank": 0.5,
+      "radius_per_rank": 0.25,
       "duration": 6,
       "interval": 1.0,
       "effects": [
@@ -42,7 +44,7 @@
           "type": "heal",
           "stat": "magic",
           "coefficient": 0.5,
-          "coefficient_per_rank": 0.08,
+          "coefficient_per_rank": 0.04,
           "to": "allies"
         }
       ]

@@ -15,6 +15,7 @@ public final class ClientDefinitions {
     private int version = -1;
     private List<SyncDefinitionsS2C.JobInfo> jobs = List.of();
     private List<SyncDefinitionsS2C.SkillInfo> skills = List.of();
+    private List<SyncDefinitionsS2C.TreeInfo> trees = List.of();
 
     private ClientDefinitions() {
     }
@@ -27,12 +28,25 @@ public final class ClientDefinitions {
         version = message.version();
         jobs = List.copyOf(message.jobs());
         skills = List.copyOf(message.skills());
+        trees = List.copyOf(message.trees());
     }
 
     public void reset() {
         version = -1;
         jobs = List.of();
         skills = List.of();
+        trees = List.of();
+    }
+
+    /** その職業のスキルツリー（11月24日。なければ null）。 */
+    @Nullable
+    public SyncDefinitionsS2C.TreeInfo tree(int jobIndex) {
+        for (SyncDefinitionsS2C.TreeInfo tree : trees) {
+            if (tree.jobIndex() == jobIndex) {
+                return tree;
+            }
+        }
+        return null;
     }
 
     public boolean received() {

@@ -6,9 +6,11 @@
   "type": "passive",
   "name": "砕きの心得",
   "description": "崩れた相手の、どこを打てば効くかを体が覚えている。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -22,6 +24,6 @@
   "passive": {
     "type": "breaker",
     "value": 10,
-    "value_per_rank": 5
+    "value_per_rank": 2.5
   }
 }

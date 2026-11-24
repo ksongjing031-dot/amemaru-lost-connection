@@ -6,9 +6,11 @@
   "type": "passive",
   "name": "魔力の共鳴",
   "description": "近くで魔法を使う仲間の糸と響き合い、魔力が高まる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -22,7 +24,7 @@
   "passive": {
     "type": "mana_resonance",
     "value": 8,
-    "value_per_rank": 4,
+    "value_per_rank": 2,
     "radius": 12
   }
 }

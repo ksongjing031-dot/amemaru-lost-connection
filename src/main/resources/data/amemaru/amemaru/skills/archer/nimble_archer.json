@@ -6,9 +6,11 @@
   "type": "passive",
   "name": "身軽な射手",
   "description": "軽い装いで、戦場を駆ける。弓を持っていると、移動が速くなる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -22,6 +24,6 @@
   "passive": {
     "type": "nimble_archer",
     "value": 4,
-    "value_per_rank": 3
+    "value_per_rank": 1.5
   }
 }

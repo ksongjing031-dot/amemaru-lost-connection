@@ -1,0 +1,48 @@
+{
+  "job": "knight",
+  "school": "greatsword",
+  "row": 1,
+  "column": 3,
+  "type": "active",
+  "name": "剣圧",
+  "description": "大剣を振り下ろし、その風圧で前の敵をまとめて打つ。少し押し返す。",
+  "max_rank": 5,
+  "rank_costs": [
+    1,
+    1,
+    2,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "requires": [
+    {
+      "skill": "knight/charge_slash",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 14
+  },
+  "cooldown": 7,
+  "link": "starter",
+  "delivery": {
+    "type": "line",
+    "range": 10,
+    "width": 1.6
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 1.2,
+      "coefficient_per_rank": 0.1
+    },
+    {
+      "type": "knockback",
+      "strength": 0.4
+    }
+  ],
+  "animation": "knight_heavy_slash",
+  "sound": "amemaru:skill.knight.sword_pressure"
+}

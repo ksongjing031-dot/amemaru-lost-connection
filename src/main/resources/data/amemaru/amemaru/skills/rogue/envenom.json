@@ -6,13 +6,15 @@
   "type": "active",
   "name": "毒塗り",
   "description": "二本の刃に毒をたっぷり塗る。しばらく、通常の攻撃とスキルが当たるたびに、毒が重なる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 20,
+  "min_level": 21,
   "requires": [
     {
       "skill": "rogue/toxic_burst",
@@ -31,9 +33,9 @@
       "type": "buff",
       "buff": "venom",
       "duration": 10,
-      "duration_per_rank": 2,
+      "duration_per_rank": 1.0,
       "value": 0.25,
-      "value_per_rank": 0.05
+      "value_per_rank": 0.025
     }
   ],
   "tags": [

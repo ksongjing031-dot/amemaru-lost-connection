@@ -37,6 +37,8 @@ public final class ClientPlayerState {
     private boolean promoted;
     private boolean promotedOnce;
     private final Map<Integer, Integer> learned = new HashMap<>();
+    /** スキルツリーで取ったステータスの節（11月24日）。 */
+    private final java.util.Set<String> treeNodes = new java.util.HashSet<>();
     private final int[] loadout = new int[PlayerData.LOADOUT_SIZE];
     private float gauge;
     private int gaugeMax;
@@ -84,6 +86,10 @@ public final class ClientPlayerState {
             statsReceived = true;
         }
         if ((sections & PlayerData.SYNC_VITALS) != 0) {
+            if (vitalsReceived && message.hp() < hp - 0.5) {
+                // 11月24日：HPが減った（戦っている）。右上のクエストの一覧を、戦いの間はしまうため
+                noteCombat();
+            }
             hp = message.hp();
             mp = message.mp();
             vitalsReceived = true;
@@ -107,6 +113,8 @@ public final class ClientPlayerState {
             for (int i = 0; i < loadout.length; i++) {
                 loadout[i] = i < received.length ? received[i] : -1;
             }
+            treeNodes.clear();
+            java.util.Collections.addAll(treeNodes, message.treeNodes());
         }
         if ((sections & PlayerData.SYNC_GAUGE) != 0) {
             gauge = message.gauge();
@@ -127,6 +135,19 @@ public final class ClientPlayerState {
             castTotal = message.castTotal();
             castCharging = castSkill >= 0 && message.castCharging();
         }
+    }
+
+    /** 最後に戦った時刻（HPが減った・スキルを使った。{@link net.minecraft.Util#getMillis()}）。 */
+    private long lastCombatMillis;
+
+    /** 戦った印（HPが減った・スキルを使った）。11月24日：戦いの間は、右上のクエストの一覧などをしまう。 */
+    public void noteCombat() {
+        lastCombatMillis = net.minecraft.Util.getMillis();
+    }
+
+    /** 戦っている最中か（最後に戦ってから {@code windowMillis} のうち、または狙いを固定している間）。 */
+    public boolean inCombat(long windowMillis) {
+        return net.minecraft.Util.getMillis() - lastCombatMillis < windowMillis || TargetLock.locked();
     }
 
     /** クライアントのゲーム内の時刻（ワールドに入っていなければ0）。 */
@@ -165,6 +186,7 @@ public final class ClientPlayerState {
         jobIndex = -1;
         promoted = false;
         promotedOnce = false;
+        treeNodes.clear();
         learned.clear();
         Arrays.fill(loadout, -1);
         gauge = 0;
@@ -207,6 +229,15 @@ public final class ClientPlayerState {
             return 1.0F;
         }
         return Math.max(0.0F, Math.min(1.0F, (float) exp / expToNext));
+    }
+
+    /** スキルツリーで、そのステータスの節を取っているか（11月24日）。 */
+    public boolean hasTreeNode(String node) {
+        return treeNodes.contains(node);
+    }
+
+    public int treeNodeCount() {
+        return treeNodes.size();
     }
 
     public int statPoints() {

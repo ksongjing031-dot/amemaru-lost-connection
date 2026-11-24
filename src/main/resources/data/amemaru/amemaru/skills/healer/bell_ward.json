@@ -6,9 +6,11 @@
   "type": "passive",
   "name": "鈴の守り",
   "description": "鈴の音が届く所では、仲間の体が少しだけ守られる。まわりの仲間（自分も）の受けるダメージが減る。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -22,7 +24,7 @@
   "passive": {
     "type": "bell_guard",
     "value": 3,
-    "value_per_rank": 2,
+    "value_per_rank": 1.0,
     "radius": 8
   }
 }

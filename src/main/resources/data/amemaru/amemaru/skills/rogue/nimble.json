@@ -6,9 +6,11 @@
   "type": "passive",
   "name": "身軽",
   "description": "身のこなしが軽く、攻撃をひらりとかわす。回避が上がる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -22,6 +24,6 @@
   "passive": {
     "type": "nimble",
     "value": 5,
-    "value_per_rank": 3
+    "value_per_rank": 1.5
   }
 }

@@ -74,3 +74,46 @@ active(W, "absolute_zero", "frost", 5, 0, "絶対零度",
 passive(W, "permafrost", "frost", 5, "凍土",
         "砕けた氷は、まわりも凍らせる。凍結を砕くと、氷がまわりの敵に飛び散ってダメージを与え、凍えを重ねる。", "permafrost",
         (0.8, 0.2), requires="wizard/thunder_mastery")
+
+# ================================================================ 11月24日に足したスキル（スキルツリーの作り直し）
+MELEE_K = d_target(4.5)
+active(K, "sword_pressure", "greatsword", 1, 3, "剣圧",
+       "大剣を振り下ろし、その風圧で前の敵をまとめて打つ。少し押し返す。",
+       mp=14, cd=7, link="starter", delivery=d_line(10, 1.6), effects=[dmg("attack", (1.2, 0.2)), kb(0.4)],
+       anim="knight_heavy_slash", requires="knight/charge_slash")
+active(K, "war_cry", "guardian", 1, 3, "鬨の声",
+       "腹の底から鬨の声を上げる。まわりの仲間（自分も）の与えるダメージが、しばらく上がる。",
+       mp=20, cd=32, cdpr=-2, link="support", delivery=d_around(10, allies=True), effects=[buff("power_up", (12, 1), (10, 3))],
+       anim="knight_call", requires="knight/call")
+active(K, "shield_rush", "guardian", 2, 3, "盾突進",
+       "盾を構えたまま突き進み、ぶつかった敵をよろめかせて、狙いを自分に向ける。",
+       mp=14, cd=10, delivery=d_dash(6, 1.6), effects=[dmg("attack", (1.0, 0.15)), stagger(0.8), taunt(3)],
+       anim="knight_charge_slash", requires="knight/binding_chain")
+active(K, "crushing_blow", "greatsword", 3, 3, "砕骨撃",
+       "全身の重さを乗せた一撃。敵の守りを砕く。",
+       mp=20, cd=12, cdpr=-0.5, link="finisher", delivery=MELEE_K, effects=[dmg("attack", (2.1, 0.3)), armor_break(6)],
+       anim="knight_heavy_slash", requires="knight/heavy_slash")
+active(K, "iron_resolve", "guardian", 4, 3, "不動の構え",
+       "足を地に縫いとめるように構える。しばらく受けるダメージが減り、与えるダメージも少し上がる。",
+       mp=22, cd=36, cdpr=-2, delivery=d_self(), effects=[buff("protect", (8, 1), (20, 4)), buff("power_up", (8, 1), (8, 2))],
+       anim="knight_vow", requires="knight/oath_circle")
+active(W, "ice_shard", "frost", 1, 3, "氷礫",
+       "小さな氷のつぶてを撃ち出す。当たった敵を少し凍えさせる。",
+       mp=8, cd=3, delivery=d_projectile(18, speed=2.2, kind="lamp"), effects=[dmg("magic", (0.9, 0.15)), chill(1)],
+       anim="wizard_icicle", requires="wizard/frost_circle")
+active(W, "star_shield", "starlight", 1, 3, "星屑の盾",
+       "星屑を集めた薄い盾で、自分を包む。盾がダメージを受け止める。",
+       mp=16, cd=24, cdpr=-1, delivery=d_self(), effects=[barrier((1.6, 0.4), 8, stat="magic")], anim="wizard_light_veil",
+       requires="wizard/lamp_bolt")
+active(W, "mana_focus", "starlight", 2, 3, "魔力集中",
+       "息を整え、魔力をひとところに集める。しばらく自分の与えるダメージが上がる。",
+       mp=18, cd=36, cdpr=-2, delivery=d_self(), effects=[buff("power_up", (10, 1), (15, 4))], anim="wizard_light_veil",
+       requires="wizard/meteor_shower")
+active(W, "frost_mist", "frost", 3, 3, "氷霧",
+       "狙った所に凍てつく霧を広げる。中にいる敵に少しずつダメージを与え、凍えさせていく。",
+       mp=24, cd=18, cdpr=-1, delivery=d_point(16, 4), effects=[zone(4, 6, 1.0, [dmg("magic", (0.3, 0.05)), chill(1)])],
+       anim="wizard_frost_wave", requires="wizard/icicle")
+active(W, "light_lance", "starlight", 4, 3, "光槍",
+       "光を槍のように細くのばし、まっすぐ遠くまで貫く。敵の守りを一部つらぬく。",
+       mp=28, cd=13, cdpr=-0.5, delivery=d_line(20, 1.4), effects=[dmg("magic", (2.0, 0.3), pierce=30)],
+       anim="wizard_thunderbolt", requires="wizard/star_burst")

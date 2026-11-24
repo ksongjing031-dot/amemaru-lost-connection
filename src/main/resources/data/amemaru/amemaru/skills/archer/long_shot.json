@@ -6,9 +6,11 @@
   "type": "passive",
   "name": "遠矢",
   "description": "遠くから射るほど、矢は重くなる。6ブロックより遠い敵へのダメージが、1ブロックごとに1%上がる（上限あり）。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -22,6 +24,6 @@
   "passive": {
     "type": "long_shot",
     "value": 15,
-    "value_per_rank": 5
+    "value_per_rank": 2.5
   }
 }

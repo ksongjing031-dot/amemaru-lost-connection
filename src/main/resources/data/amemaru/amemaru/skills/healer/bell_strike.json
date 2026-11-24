@@ -1,0 +1,44 @@
+{
+  "job": "healer",
+  "school": "blessing",
+  "row": 1,
+  "column": 3,
+  "type": "active",
+  "name": "鈴打ち",
+  "description": "鈴杖で打ち、鳴った鈴の音が自分の傷をふさぐ。与えたダメージの一部だけHPが戻る。",
+  "max_rank": 5,
+  "rank_costs": [
+    1,
+    1,
+    2,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "requires": [
+    {
+      "skill": "healer/purifying_chime",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 8
+  },
+  "cooldown": 5,
+  "delivery": {
+    "type": "target",
+    "range": 4.5
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "magic",
+      "coefficient": 1.1,
+      "coefficient_per_rank": 0.09,
+      "lifesteal": 40,
+      "lifesteal_per_rank": 2.5
+    }
+  ],
+  "animation": "healer_slam",
+  "sound": "amemaru:skill.healer.bell_strike"
+}

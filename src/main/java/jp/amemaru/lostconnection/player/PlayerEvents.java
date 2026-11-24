@@ -59,6 +59,8 @@ public final class PlayerEvents {
     public static void onLoggedIn(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
             PlayerDataCapability.get(player).ifPresent(data -> {
+                // 11月24日：ステータスとスキルを別に振っていたころのデータは、新しいスキルツリーへ（ポイントをすべて戻す）
+                jp.amemaru.lostconnection.job.SkillTreeService.migrate(player, data);
                 LevelService.recompute(player, data);
                 // 追いつき補正の中央値に入れる（Phase 3）
                 LevelService.recordLevel(player, data);

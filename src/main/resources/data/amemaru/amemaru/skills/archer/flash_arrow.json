@@ -1,0 +1,54 @@
+{
+  "job": "archer",
+  "school": "sniping",
+  "row": 2,
+  "column": 3,
+  "type": "active",
+  "name": "閃光矢",
+  "description": "鏃に光る石を付けた矢。当たると強く光り、敵の目をくらませる（攻撃が当たりにくくなる）。",
+  "max_rank": 5,
+  "rank_costs": [
+    1,
+    1,
+    2,
+    2,
+    3
+  ],
+  "min_level": 10,
+  "requires": [
+    {
+      "skill": "archer/piercing_shot",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 14
+  },
+  "cooldown": 10,
+  "delivery": {
+    "type": "projectile",
+    "kind": "arrow",
+    "range": 24,
+    "speed": 2.2,
+    "radius": 0.25
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 1.1,
+      "coefficient_per_rank": 0.09
+    },
+    {
+      "type": "blind",
+      "value": 30,
+      "value_per_rank": 2.5,
+      "duration": 4
+    }
+  ],
+  "tags": [
+    "arrow"
+  ],
+  "animation": "archer_shot",
+  "sound": "amemaru:skill.archer.flash_arrow"
+}

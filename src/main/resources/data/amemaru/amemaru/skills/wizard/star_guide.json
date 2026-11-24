@@ -6,13 +6,15 @@
   "type": "passive",
   "name": "星の導き",
   "description": "星痕は、仲間の攻撃も導く。星痕のある敵は、星痕1つにつき、誰から受けるダメージも上がる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 20,
+  "min_level": 21,
   "requires": [
     {
       "skill": "wizard/star_afterglow",
@@ -22,6 +24,6 @@
   "passive": {
     "type": "star_guide",
     "value": 2,
-    "value_per_rank": 1
+    "value_per_rank": 0.5
   }
 }

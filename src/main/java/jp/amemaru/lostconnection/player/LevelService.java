@@ -148,11 +148,11 @@ public final class LevelService {
                 data.setMp(data.getStats().maxMp());
                 VitalsService.pushVanillaHealth(player, data);
             }
-            int statGain = growth.totalStatPoints(newLevel) - growth.totalStatPoints(oldLevel);
-            int skillGain = growth.totalSkillPoints(newLevel) - growth.totalSkillPoints(oldLevel);
-            // 最後の引数は、ステータス画面を開くキー（割り当てを変えていれば、変えた後のキーが出る）
-            player.displayClientMessage(Component.translatable("message.amemaru.level_up", newLevel, statGain, skillGain,
-                            Component.keybind("key.amemaru.status"))
+            // 11月24日：ステータスもスキルも、スキルツリーのポイントで振る（最後の引数は、スキルツリーを開くキー）
+            int gain = growth.totalStatPoints(newLevel) - growth.totalStatPoints(oldLevel)
+                    + growth.totalSkillPoints(newLevel) - growth.totalSkillPoints(oldLevel);
+            player.displayClientMessage(Component.translatable("message.amemaru.level_up", newLevel, gain,
+                            Component.keybind("key.amemaru.skill_tree"))
                     .withStyle(ChatFormatting.GOLD), false);
             player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                     SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 0.8F, 1.0F);

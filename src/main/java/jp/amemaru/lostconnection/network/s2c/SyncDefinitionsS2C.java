@@ -6,6 +6,7 @@ import jp.amemaru.lostconnection.job.def.Affects;
 import jp.amemaru.lostconnection.job.def.JobDef;
 import jp.amemaru.lostconnection.job.def.SkillDef;
 import jp.amemaru.lostconnection.job.def.SkillRegistry;
+import jp.amemaru.lostconnection.job.def.SkillTreeDef;
 import jp.amemaru.lostconnection.player.StatType;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;
@@ -66,14 +67,34 @@ public final class SyncDefinitionsS2C {
         }
     }
 
+    /**
+     * スキルツリーの節（11月24日）。{@code kind} は {@link SkillTreeDef.Kind} の番号、{@code skill} はスキルの番号（スキルの節でなければ -1）、
+     * {@code flat}・{@code percent} は「ステータスの番号, 値」を並べたもの。
+     */
+    public record TreeNodeInfo(String id, int kind, float x, float y, int skill, boolean start, String name, float[] flat, float[] percent,
+                               int cost) {
+        public SkillTreeDef.Kind kindEnum() {
+            return SkillTreeDef.Kind.values()[Math.max(0, Math.min(kind, SkillTreeDef.Kind.values().length - 1))];
+        }
+    }
+
+    /** スキルツリー（職業の番号ごと）。{@code links} は節の番号の組（2つずつ）。 */
+    public record TreeInfo(int jobIndex, List<TreeNodeInfo> nodes, int[] links) {
+    }
+
     private final int version;
     private final List<JobInfo> jobs;
     private final List<SkillInfo> skills;
+    private List<TreeInfo> trees = List.of();
 
     public SyncDefinitionsS2C(int version, List<JobInfo> jobs, List<SkillInfo> skills) {
         this.version = version;
         this.jobs = jobs;
         this.skills = skills;
+    }
+
+    public List<TreeInfo> trees() {
+        return trees;
     }
 
     /** サーバーで、今の一覧から作る。 */
@@ -147,7 +168,40 @@ public final class SyncDefinitionsS2C {
                     aim, radius, skill.animation(), skill.castAnimation(), skill.fx(), details, (float) skill.chargeTime(),
                     skill.chargeAnimation(), angle, count, countCharged, skill.combo().ordinal(), skill.tags()));
         }
-        return new SyncDefinitionsS2C(snapshot.version(), jobs, skills);
+        SyncDefinitionsS2C message = new SyncDefinitionsS2C(snapshot.version(), jobs, skills);
+        List<TreeInfo> trees = new ArrayList<>();
+        for (int i = 0; i < snapshot.jobs().size(); i++) {
+            SkillTreeDef tree = snapshot.tree(snapshot.jobs().get(i).id());
+            if (tree == null) {
+                continue;
+            }
+            List<TreeNodeInfo> nodes = new ArrayList<>();
+            java.util.Map<String, Integer> index = new java.util.HashMap<>();
+            for (SkillTreeDef.Node node : tree.nodes()) {
+                index.put(node.id(), nodes.size());
+                nodes.add(new TreeNodeInfo(node.id(), node.kind().ordinal(), node.x(), node.y(),
+                        node.skill() == null ? -1 : snapshot.skillIndex(node.skill()), node.start(), node.name(), pairs(node.flat()),
+                        pairs(node.percent()), node.cost()));
+            }
+            int[] links = new int[tree.links().size() * 2];
+            for (int k = 0; k < tree.links().size(); k++) {
+                links[k * 2] = index.get(tree.links().get(k)[0]);
+                links[k * 2 + 1] = index.get(tree.links().get(k)[1]);
+            }
+            trees.add(new TreeInfo(i, nodes, links));
+        }
+        message.trees = trees;
+        return message;
+    }
+
+    private static float[] pairs(java.util.Map<StatType, Double> stats) {
+        float[] out = new float[stats.size() * 2];
+        int i = 0;
+        for (java.util.Map.Entry<StatType, Double> entry : stats.entrySet()) {
+            out[i++] = entry.getKey().ordinal();
+            out[i++] = entry.getValue().floatValue();
+        }
+        return out;
     }
 
     // ---------------------------------------------------------------- 書き出し・読み込み
@@ -244,6 +298,24 @@ public final class SyncDefinitionsS2C {
             for (String tag : skill.tags()) {
                 buf.writeUtf(tag);
             }
+        }
+        buf.writeVarInt(trees.size());
+        for (TreeInfo tree : trees) {
+            buf.writeVarInt(tree.jobIndex());
+            buf.writeVarInt(tree.nodes().size());
+            for (TreeNodeInfo node : tree.nodes()) {
+                buf.writeUtf(node.id(), 64);
+                buf.writeVarInt(node.kind());
+                buf.writeFloat(node.x());
+                buf.writeFloat(node.y());
+                buf.writeVarInt(node.skill() + 1);
+                buf.writeBoolean(node.start());
+                buf.writeUtf(node.name(), 64);
+                writeFloats(buf, node.flat());
+                writeFloats(buf, node.percent());
+                buf.writeVarInt(node.cost());
+            }
+            buf.writeVarIntArray(tree.links());
         }
     }
 
@@ -355,7 +427,31 @@ public final class SyncDefinitionsS2C {
                     aim, radius, animation, castAnimation, fx, details, chargeTime, chargeAnimation, angle, count, countCharged, combo,
                     tags));
         }
-        return new SyncDefinitionsS2C(version, jobs, skills);
+        SyncDefinitionsS2C message = new SyncDefinitionsS2C(version, jobs, skills);
+        int treeCount = check(buf.readVarInt(), MAX_ENTRIES);
+        List<TreeInfo> trees = new ArrayList<>();
+        for (int t = 0; t < treeCount; t++) {
+            int jobIndex = buf.readVarInt();
+            int nodeCount = check(buf.readVarInt(), 2048);
+            List<TreeNodeInfo> nodes = new ArrayList<>();
+            for (int n = 0; n < nodeCount; n++) {
+                String id = buf.readUtf(64);
+                int kind = buf.readVarInt();
+                float x = buf.readFloat();
+                float y = buf.readFloat();
+                int skill = buf.readVarInt() - 1;
+                boolean start = buf.readBoolean();
+                String name = buf.readUtf(64);
+                float[] flat = readFloatPairs(buf);
+                float[] percent = readFloatPairs(buf);
+                int cost = buf.readVarInt();
+                nodes.add(new TreeNodeInfo(id, kind, x, y, skill, start, name, flat, percent, cost));
+            }
+            int[] links = buf.readVarIntArray(8192);
+            trees.add(new TreeInfo(jobIndex, nodes, links));
+        }
+        message.trees = trees;
+        return message;
     }
 
     private static void writeFloats(FriendlyByteBuf buf, float[] values) {
@@ -367,6 +463,15 @@ public final class SyncDefinitionsS2C {
 
     private static float[] readFloats(FriendlyByteBuf buf) {
         int count = check(buf.readVarInt(), 16);
+        float[] values = new float[count];
+        for (int i = 0; i < count; i++) {
+            values[i] = buf.readFloat();
+        }
+        return values;
+    }
+
+    private static float[] readFloatPairs(FriendlyByteBuf buf) {
+        int count = check(buf.readVarInt(), 64);
         float[] values = new float[count];
         for (int i = 0; i < count; i++) {
             values[i] = buf.readFloat();

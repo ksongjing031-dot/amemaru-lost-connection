@@ -1,0 +1,50 @@
+{
+  "job": "archer",
+  "school": "rapid",
+  "row": 1,
+  "column": 3,
+  "type": "active",
+  "name": "速射",
+  "description": "弦を引ききらずに、狙った敵へ3本の矢をたて続けに放つ。",
+  "max_rank": 5,
+  "rank_costs": [
+    1,
+    1,
+    2,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "requires": [
+    {
+      "skill": "archer/spread_arrows",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 9
+  },
+  "cooldown": 4,
+  "delivery": {
+    "type": "projectile",
+    "kind": "arrow",
+    "range": 26,
+    "speed": 2.4,
+    "radius": 0.25,
+    "burst": 3,
+    "burst_interval": 3
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 0.55,
+      "coefficient_per_rank": 0.04
+    }
+  ],
+  "tags": [
+    "arrow"
+  ],
+  "animation": "archer_triple",
+  "sound": "amemaru:skill.archer.quick_draw"
+}

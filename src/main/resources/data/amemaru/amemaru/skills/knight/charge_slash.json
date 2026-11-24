@@ -6,9 +6,11 @@
   "type": "active",
   "name": "突進斬り",
   "description": "前へ大きく踏み込み、最初に触れた敵を斬ってよろめかせる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -17,12 +19,12 @@
     "mp": 10
   },
   "cooldown": 6,
-  "cooldown_per_rank": -0.5,
+  "cooldown_per_rank": -0.25,
   "link": "starter",
   "delivery": {
     "type": "dash",
     "distance": 6,
-    "distance_per_rank": 1,
+    "distance_per_rank": 0.5,
     "width": 1.6
   },
   "effects": [
@@ -30,13 +32,13 @@
       "type": "damage",
       "stat": "attack",
       "coefficient": 1.6,
-      "coefficient_per_rank": 0.25
+      "coefficient_per_rank": 0.125
     },
     {
       "type": "status",
       "effect": "amemaru:stagger",
       "duration": 1.0,
-      "duration_per_rank": 0.25
+      "duration_per_rank": 0.125
     }
   ],
   "animation": "knight_charge_slash",

@@ -1,0 +1,48 @@
+{
+  "job": "knight",
+  "school": "guardian",
+  "row": 1,
+  "column": 3,
+  "type": "active",
+  "name": "鬨の声",
+  "description": "腹の底から鬨の声を上げる。まわりの仲間（自分も）の与えるダメージが、しばらく上がる。",
+  "max_rank": 5,
+  "rank_costs": [
+    1,
+    1,
+    2,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "requires": [
+    {
+      "skill": "knight/call",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 20
+  },
+  "cooldown": 32,
+  "cooldown_per_rank": -1.0,
+  "link": "support",
+  "delivery": {
+    "type": "around",
+    "radius": 10,
+    "affects": "allies",
+    "include_self": true
+  },
+  "effects": [
+    {
+      "type": "buff",
+      "buff": "power_up",
+      "duration": 12,
+      "duration_per_rank": 0.5,
+      "value": 10,
+      "value_per_rank": 1.5
+    }
+  ],
+  "animation": "knight_call",
+  "sound": "amemaru:skill.knight.war_cry"
+}

@@ -6,9 +6,11 @@
   "type": "active",
   "name": "命の糸",
   "description": "仲間と自分を、命の糸でつなぐ。糸がつながっている間は少しずつ傷が癒え、仲間のHPが大きく減ると、糸が一度だけ強く光って大きく癒す。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -37,9 +39,9 @@
       "buff": "life_thread",
       "duration": 10,
       "value": 0.25,
-      "value_per_rank": 0.05,
+      "value_per_rank": 0.025,
       "burst": 3.0,
-      "burst_per_rank": 0.4,
+      "burst_per_rank": 0.2,
       "threshold": 35
     }
   ],

@@ -103,6 +103,11 @@ public final class ModNetwork {
                 .decoder(LearnSkillC2S::decode)
                 .consumerMainThread(LearnSkillC2S::handle)
                 .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.c2s.TakeTreeNodeC2S.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(jp.amemaru.lostconnection.network.c2s.TakeTreeNodeC2S::encode)
+                .decoder(jp.amemaru.lostconnection.network.c2s.TakeTreeNodeC2S::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.c2s.TakeTreeNodeC2S::handle)
+                .add();
         CHANNEL.messageBuilder(SetLoadoutC2S.class, id++, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(SetLoadoutC2S::encode)
                 .decoder(SetLoadoutC2S::decode)

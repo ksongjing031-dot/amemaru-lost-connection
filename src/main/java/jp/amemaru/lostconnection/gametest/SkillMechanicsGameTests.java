@@ -24,6 +24,7 @@ import jp.amemaru.lostconnection.job.def.JobDef;
 import jp.amemaru.lostconnection.job.def.SkillDef;
 import jp.amemaru.lostconnection.job.def.SkillKind;
 import jp.amemaru.lostconnection.job.def.SkillRegistry;
+import jp.amemaru.lostconnection.job.def.SkillTreeDef;
 import jp.amemaru.lostconnection.player.CastState;
 import jp.amemaru.lostconnection.player.LevelService;
 import jp.amemaru.lostconnection.player.PlayerData;
@@ -77,8 +78,9 @@ public final class SkillMechanicsGameTests {
     // ================================================================ 定義
 
     /**
-     * 各職業：アクティブ16（流派ごとに8）・パッシブ10（流派ごとに5）・奥義2（流派ごとに1）。木は6段×3列で、前提は同じ流派。
-     * 説明文が作れる（Phase 6 その2 で、戦闘職が6つ・木が6段になった）。
+     * 各職業：アクティブ21（流派ごとに8と、11月24日に足した5つ）・パッシブ10（流派ごとに5）・奥義2（流派ごとに1）。段は0〜5、
+     * 列はアクティブ0・1・3（3は11月24日に足したスキルの列）・パッシブ2で、前提は同じ流派。説明文が作れる
+     * （Phase 6 その2 で、戦闘職が6つ・木が6段になった。11月24日から、スキルツリーの形は skill_trees の定義）。
      */
     @GameTest(template = EMPTY)
     public static void expandedSkillTrees(GameTestHelper helper) {
@@ -90,7 +92,7 @@ public final class SkillMechanicsGameTests {
             long actives = skills.stream().filter(skill -> skill.isActive() && !skill.isUltimate()).count();
             long passives = skills.stream().filter(skill -> skill.kind() == SkillKind.PASSIVE).count();
             long ultimates = skills.stream().filter(SkillDef::isUltimate).count();
-            check(helper, actives == 16, name + " のアクティブスキルが16個ではありません：" + actives);
+            check(helper, actives == 21, name + " のアクティブスキルが21個ではありません：" + actives);
             check(helper, passives == 10, name + " のパッシブスキルが10個ではありません：" + passives);
             check(helper, ultimates == 2, name + " の奥義が2つではありません：" + ultimates);
             long ultimateSchools = skills.stream().filter(SkillDef::isUltimate).map(SkillDef::school).distinct().count();
@@ -106,8 +108,8 @@ public final class SkillMechanicsGameTests {
                 int[] count = perSchool.computeIfAbsent(skill.school(), key -> new int[2]);
                 count[skill.isActive() ? 0 : 1]++;
                 check(helper, skill.row() >= 0 && skill.row() <= 5, skill.id() + " の段（row）が0〜5ではありません");
-                check(helper, skill.isActive() ? skill.column() <= 1 : skill.column() == 2,
-                        skill.id() + " の列（column）が、アクティブは0か1、パッシブは2になっていません");
+                check(helper, skill.isActive() ? skill.column() <= 1 || skill.column() == 3 : skill.column() == 2,
+                        skill.id() + " の列（column）が、アクティブは0・1・3、パッシブは2になっていません");
                 for (SkillDef.Requirement requirement : skill.requirements()) {
                     SkillDef required = snapshot.skill(requirement.skill());
                     check(helper, required != null && required.school().equals(skill.school()),
@@ -119,8 +121,8 @@ public final class SkillMechanicsGameTests {
             }
             check(helper, perSchool.size() == 2, name + " の流派が2つではありません：" + perSchool.keySet());
             for (Map.Entry<String, int[]> entry : perSchool.entrySet()) {
-                check(helper, entry.getValue()[0] == 8 && entry.getValue()[1] == 5,
-                        name + " の流派「" + entry.getKey() + "」が、アクティブ8・パッシブ5になっていません：" + entry.getValue()[0] + "・"
+                check(helper, entry.getValue()[0] >= 8 && entry.getValue()[1] == 5,
+                        name + " の流派「" + entry.getKey() + "」が、アクティブ8以上・パッシブ5になっていません：" + entry.getValue()[0] + "・"
                                 + entry.getValue()[1]);
             }
         }
@@ -280,19 +282,24 @@ public final class SkillMechanicsGameTests {
 
     /**
      * 奥義は2つのうち1つだけ（11月17日のご指示）。1つを覚えると、もう一方は覚えられない。上位職を外して奥義が消えたり、
-     * 白紙の誓約書でやり直したりすると、もう一方を選べる。
+     * 白紙の誓約書でやり直したりすると、もう一方を選べる。11月24日からは、奥義はスキルツリーの流派の先端（Lv60・上位職から）にあり、
+     * 核から道をのばしてとなりの節を取ってから覚える。
      */
     @GameTest(template = EMPTY)
     public static void ultimateIsAChoice(GameTestHelper helper) {
         FakePlayer player = fake(helper, "ultimate");
         PlayerData data = knight(helper, player);
-        LevelService.setLevel(player, data, 30);
+        LevelService.setLevel(player, data, 60);
         check(helper, JobService.promote(player, data, true), "上位職に昇格できません");
         SkillDef castle = skill("knight/unfallen_castle");
         SkillDef cleave = skill("knight/heaven_cleave");
-        for (String path : new String[]{"knight/rampart", "knight/whirlwind", "knight/heavy_slash"}) {
-            SkillTreeService.forceRank(player, data, skill(path), 1);
-        }
+        SkillTreeDef tree = TreeTestUtil.tree(AmemaruMod.id("knight"));
+        String castleNode = TreeTestUtil.nodeOf(tree, castle.id());
+        String cleaveNode = TreeTestUtil.nodeOf(tree, cleave.id());
+        check(helper, SkillTreeService.canLearn(data, castle) == SkillTreeService.Blocker.NOT_CONNECTED,
+                "道をのばす前から、不落の城を覚えられます：" + SkillTreeService.canLearn(data, castle));
+        takeRoadBefore(helper, player, data, tree, castleNode);
+        takeRoadBefore(helper, player, data, tree, cleaveNode);
         check(helper, SkillTreeService.canLearn(data, castle) == SkillTreeService.Blocker.NONE,
                 "不落の城を覚えられません：" + SkillTreeService.canLearn(data, castle));
         check(helper, SkillTreeService.canLearn(data, cleave) == SkillTreeService.Blocker.NONE,
@@ -311,14 +318,22 @@ public final class SkillMechanicsGameTests {
         check(helper, SkillTreeService.learn(player, data, castle.id()), "不落の城を覚えられません");
         check(helper, SkillTreeService.canLearn(data, cleave) == SkillTreeService.Blocker.ULTIMATE_CHOSEN,
                 "不落の城を覚えたのに、天断ちも覚えられます");
-        // 白紙の誓約書と同じやり直し：どちらも選べる状態に戻る
+        // 白紙の誓約書と同じやり直し：取った節もすべて戻り、道をのばし直せば、どちらも選べる状態に戻る
         SkillTreeService.resetSkills(player, data);
-        for (String path : new String[]{"knight/rampart", "knight/whirlwind", "knight/heavy_slash"}) {
-            SkillTreeService.forceRank(player, data, skill(path), 1);
-        }
+        check(helper, SkillTreeService.canLearn(data, cleave) == SkillTreeService.Blocker.NOT_CONNECTED,
+                "やり直した後も、天断ちへの道が残っています：" + SkillTreeService.canLearn(data, cleave));
+        takeRoadBefore(helper, player, data, tree, cleaveNode);
         check(helper, SkillTreeService.canLearn(data, cleave) == SkillTreeService.Blocker.NONE,
                 "やり直した後に、天断ちを選べません：" + SkillTreeService.canLearn(data, cleave));
         helper.succeed();
+    }
+
+    /** 取れている節から、その節の手前まで道の節を取る（その節は取らない）。 */
+    private static void takeRoadBefore(GameTestHelper helper, ServerPlayer player, PlayerData data, SkillTreeDef tree, String target) {
+        java.util.List<String> road = TreeTestUtil.path(tree, data, target);
+        for (int i = 0; i < road.size() - 1; i++) {
+            TreeTestUtil.take(helper, player, data, tree, road.get(i));
+        }
     }
 
     /**

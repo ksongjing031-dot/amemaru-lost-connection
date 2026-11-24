@@ -1,0 +1,1409 @@
+{
+  "_comment": "スキルツリー（tools/datagen/build_skill_trees.py が書き出す。手で直さない）。節（core：職業の核・skill：スキル・stat：ステータスの小さな節・notable：大きな節）と、つながり（links）。x・y はツリーの単位（右・下が正）",
+  "job": "amemaru:rogue",
+  "nodes": [
+    {
+      "id": "core",
+      "kind": "core",
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "id": "s:rogue/throwing_knife",
+      "kind": "skill",
+      "skill": "amemaru:rogue/throwing_knife",
+      "x": -167.8,
+      "y": -49.7,
+      "start": false
+    },
+    {
+      "id": "s:rogue/twin_fangs",
+      "kind": "skill",
+      "skill": "amemaru:rogue/twin_fangs",
+      "x": -244.5,
+      "y": -72.4,
+      "start": false
+    },
+    {
+      "id": "s:rogue/shadow_dance",
+      "kind": "skill",
+      "skill": "amemaru:rogue/shadow_dance",
+      "x": -321.2,
+      "y": -95.1,
+      "start": false
+    },
+    {
+      "id": "g:shadow:4:3",
+      "kind": "stat",
+      "x": -397.9,
+      "y": -117.9,
+      "stats": {
+        "speed": 2
+      }
+    },
+    {
+      "id": "n:shadow:3",
+      "kind": "notable",
+      "name": "闇の足",
+      "x": -474.6,
+      "y": -140.6,
+      "stats": {
+        "speed": 4,
+        "crit": 2
+      }
+    },
+    {
+      "id": "s:rogue/flurry",
+      "kind": "skill",
+      "skill": "amemaru:rogue/flurry",
+      "x": -79.2,
+      "y": -52.4,
+      "start": true
+    },
+    {
+      "id": "s:rogue/shadow_run",
+      "kind": "skill",
+      "skill": "amemaru:rogue/shadow_run",
+      "x": -145.9,
+      "y": -96.6,
+      "start": false
+    },
+    {
+      "id": "s:rogue/vital_strike",
+      "kind": "skill",
+      "skill": "amemaru:rogue/vital_strike",
+      "x": -212.6,
+      "y": -140.7,
+      "start": false
+    },
+    {
+      "id": "s:rogue/shadow_stitch",
+      "kind": "skill",
+      "skill": "amemaru:rogue/shadow_stitch",
+      "x": -279.4,
+      "y": -184.9,
+      "start": false
+    },
+    {
+      "id": "s:rogue/shadow_burial",
+      "kind": "skill",
+      "skill": "amemaru:rogue/shadow_burial",
+      "x": -346.1,
+      "y": -229.1,
+      "start": false
+    },
+    {
+      "id": "s:rogue/shadow_double",
+      "kind": "skill",
+      "skill": "amemaru:rogue/shadow_double",
+      "x": -412.8,
+      "y": -273.2,
+      "start": false
+    },
+    {
+      "id": "s:rogue/shadow_strike",
+      "kind": "skill",
+      "skill": "amemaru:rogue/shadow_strike",
+      "x": -162.2,
+      "y": -196.8,
+      "start": false
+    },
+    {
+      "id": "s:rogue/phantom_blades",
+      "kind": "skill",
+      "skill": "amemaru:rogue/phantom_blades",
+      "x": -213.1,
+      "y": -258.5,
+      "start": false
+    },
+    {
+      "id": "g:shadow:4:1",
+      "kind": "stat",
+      "x": -264.0,
+      "y": -320.2,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "n:shadow:1",
+      "kind": "notable",
+      "name": "急所の心得",
+      "x": -314.9,
+      "y": -382.0,
+      "stats": {
+        "crit_damage": 15
+      }
+    },
+    {
+      "id": "s:rogue/backstab_mastery",
+      "kind": "skill",
+      "skill": "amemaru:rogue/backstab_mastery",
+      "x": -67.0,
+      "y": -161.7,
+      "start": false
+    },
+    {
+      "id": "s:rogue/nimble",
+      "kind": "skill",
+      "skill": "amemaru:rogue/nimble",
+      "x": -97.6,
+      "y": -235.6,
+      "start": false
+    },
+    {
+      "id": "s:rogue/fade",
+      "kind": "skill",
+      "skill": "amemaru:rogue/fade",
+      "x": -128.2,
+      "y": -309.5,
+      "start": false
+    },
+    {
+      "id": "s:rogue/shadow_footwork",
+      "kind": "skill",
+      "skill": "amemaru:rogue/shadow_footwork",
+      "x": -158.8,
+      "y": -383.4,
+      "start": false
+    },
+    {
+      "id": "s:rogue/dark_edge",
+      "kind": "skill",
+      "skill": "amemaru:rogue/dark_edge",
+      "x": -189.4,
+      "y": -457.3,
+      "start": false
+    },
+    {
+      "id": "b21",
+      "kind": "stat",
+      "x": -206.2,
+      "y": -61.1,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b22",
+      "kind": "stat",
+      "x": -282.9,
+      "y": -83.8,
+      "stats": {
+        "speed": 1
+      }
+    },
+    {
+      "id": "b23",
+      "kind": "stat",
+      "x": -359.5,
+      "y": -106.5,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b24",
+      "kind": "stat",
+      "x": -436.2,
+      "y": -129.2,
+      "stats": {
+        "speed": 2
+      }
+    },
+    {
+      "id": "b25",
+      "kind": "stat",
+      "x": -112.6,
+      "y": -74.5,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b26",
+      "kind": "stat",
+      "x": -179.2,
+      "y": -118.6,
+      "stats": {
+        "crit": 1.0
+      }
+    },
+    {
+      "id": "b27",
+      "kind": "stat",
+      "x": -246.0,
+      "y": -162.8,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b28",
+      "kind": "stat",
+      "x": -312.8,
+      "y": -207.0,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "b29",
+      "kind": "stat",
+      "x": -379.5,
+      "y": -251.1,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b30",
+      "kind": "stat",
+      "x": -187.6,
+      "y": -227.7,
+      "stats": {
+        "speed": 1
+      }
+    },
+    {
+      "id": "b31",
+      "kind": "stat",
+      "x": -238.6,
+      "y": -289.4,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "b32",
+      "kind": "stat",
+      "x": -289.4,
+      "y": -351.1,
+      "stats": {
+        "speed": 2
+      }
+    },
+    {
+      "id": "b33",
+      "kind": "stat",
+      "x": -82.3,
+      "y": -198.6,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b34",
+      "kind": "stat",
+      "x": -112.9,
+      "y": -272.6,
+      "stats": {
+        "defense": 2
+      }
+    },
+    {
+      "id": "b35",
+      "kind": "stat",
+      "x": -143.5,
+      "y": -346.4,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b36",
+      "kind": "stat",
+      "x": -174.1,
+      "y": -420.4,
+      "stats": {
+        "defense": 3
+      }
+    },
+    {
+      "id": "b37",
+      "kind": "stat",
+      "x": -39.6,
+      "y": -26.2,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b38",
+      "kind": "stat",
+      "x": -106.5,
+      "y": -129.1,
+      "stats": {
+        "crit": 0.8
+      }
+    },
+    {
+      "id": "b39",
+      "kind": "stat",
+      "x": -300.3,
+      "y": -140.0,
+      "stats": {
+        "crit": 1.0
+      }
+    },
+    {
+      "id": "b40",
+      "kind": "stat",
+      "x": -246.2,
+      "y": -221.7,
+      "stats": {
+        "crit": 1.0
+      }
+    },
+    {
+      "id": "b41",
+      "kind": "stat",
+      "x": -170.6,
+      "y": -284.0,
+      "stats": {
+        "crit": 1.0
+      }
+    },
+    {
+      "id": "b42",
+      "kind": "stat",
+      "x": -454.0,
+      "y": -184.8,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "b43",
+      "kind": "stat",
+      "x": -433.4,
+      "y": -229.0,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "b44",
+      "kind": "stat",
+      "x": -380.2,
+      "y": -309.5,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "b45",
+      "kind": "stat",
+      "x": -347.5,
+      "y": -345.7,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "b46",
+      "kind": "stat",
+      "x": -273.1,
+      "y": -407.1,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "b47",
+      "kind": "stat",
+      "x": -231.2,
+      "y": -432.2,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "s:rogue/thousand_blades",
+      "kind": "skill",
+      "skill": "amemaru:rogue/thousand_blades",
+      "x": -492.0,
+      "y": -325.6,
+      "start": false
+    },
+    {
+      "id": "b49",
+      "kind": "stat",
+      "x": -452.4,
+      "y": -299.4,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "s:rogue/venom_veil",
+      "kind": "skill",
+      "skill": "amemaru:rogue/venom_veil",
+      "x": 244.5,
+      "y": -72.4,
+      "start": false
+    },
+    {
+      "id": "s:rogue/hamstring",
+      "kind": "skill",
+      "skill": "amemaru:rogue/hamstring",
+      "x": 321.2,
+      "y": -95.1,
+      "start": false
+    },
+    {
+      "id": "g:venom:4:3",
+      "kind": "stat",
+      "x": 397.9,
+      "y": -117.9,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "n:venom:3",
+      "kind": "notable",
+      "name": "毒の手練",
+      "x": 474.6,
+      "y": -140.6,
+      "percent": {
+        "attack": 6
+      }
+    },
+    {
+      "id": "s:rogue/venom_blade",
+      "kind": "skill",
+      "skill": "amemaru:rogue/venom_blade",
+      "x": 79.2,
+      "y": -52.4,
+      "start": true
+    },
+    {
+      "id": "s:rogue/smoke_bomb",
+      "kind": "skill",
+      "skill": "amemaru:rogue/smoke_bomb",
+      "x": 145.9,
+      "y": -96.6,
+      "start": false
+    },
+    {
+      "id": "s:rogue/poison_mist",
+      "kind": "skill",
+      "skill": "amemaru:rogue/poison_mist",
+      "x": 212.6,
+      "y": -140.7,
+      "start": false
+    },
+    {
+      "id": "s:rogue/toxic_burst",
+      "kind": "skill",
+      "skill": "amemaru:rogue/toxic_burst",
+      "x": 279.4,
+      "y": -184.9,
+      "start": false
+    },
+    {
+      "id": "s:rogue/envenom",
+      "kind": "skill",
+      "skill": "amemaru:rogue/envenom",
+      "x": 346.1,
+      "y": -229.1,
+      "start": false
+    },
+    {
+      "id": "s:rogue/corroding_edge",
+      "kind": "skill",
+      "skill": "amemaru:rogue/corroding_edge",
+      "x": 412.8,
+      "y": -273.2,
+      "start": false
+    },
+    {
+      "id": "s:rogue/numbing_needle",
+      "kind": "skill",
+      "skill": "amemaru:rogue/numbing_needle",
+      "x": 162.2,
+      "y": -196.8,
+      "start": false
+    },
+    {
+      "id": "s:rogue/binding_threads",
+      "kind": "skill",
+      "skill": "amemaru:rogue/binding_threads",
+      "x": 213.1,
+      "y": -258.5,
+      "start": false
+    },
+    {
+      "id": "g:venom:4:1",
+      "kind": "stat",
+      "x": 264.0,
+      "y": -320.2,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "n:venom:1",
+      "kind": "notable",
+      "name": "しぶとさ",
+      "x": 314.9,
+      "y": -382.0,
+      "stats": {
+        "hp": 60
+      },
+      "percent": {
+        "defense": 5
+      }
+    },
+    {
+      "id": "s:rogue/toxin_mastery",
+      "kind": "skill",
+      "skill": "amemaru:rogue/toxin_mastery",
+      "x": 67.0,
+      "y": -161.7,
+      "start": false
+    },
+    {
+      "id": "s:rogue/corrosion",
+      "kind": "skill",
+      "skill": "amemaru:rogue/corrosion",
+      "x": 97.6,
+      "y": -235.6,
+      "start": false
+    },
+    {
+      "id": "s:rogue/deep_toxin",
+      "kind": "skill",
+      "skill": "amemaru:rogue/deep_toxin",
+      "x": 128.2,
+      "y": -309.5,
+      "start": false
+    },
+    {
+      "id": "s:rogue/exploit",
+      "kind": "skill",
+      "skill": "amemaru:rogue/exploit",
+      "x": 158.8,
+      "y": -383.4,
+      "start": false
+    },
+    {
+      "id": "s:rogue/contagion",
+      "kind": "skill",
+      "skill": "amemaru:rogue/contagion",
+      "x": 189.4,
+      "y": -457.3,
+      "start": false
+    },
+    {
+      "id": "b69",
+      "kind": "stat",
+      "x": 282.9,
+      "y": -83.8,
+      "stats": {
+        "mp": 12
+      }
+    },
+    {
+      "id": "b70",
+      "kind": "stat",
+      "x": 359.5,
+      "y": -106.5,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b71",
+      "kind": "stat",
+      "x": 436.2,
+      "y": -129.2,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b72",
+      "kind": "stat",
+      "x": 112.6,
+      "y": -74.5,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b73",
+      "kind": "stat",
+      "x": 179.2,
+      "y": -118.6,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b74",
+      "kind": "stat",
+      "x": 246.0,
+      "y": -162.8,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b75",
+      "kind": "stat",
+      "x": 312.8,
+      "y": -207.0,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b76",
+      "kind": "stat",
+      "x": 379.5,
+      "y": -251.1,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b77",
+      "kind": "stat",
+      "x": 187.6,
+      "y": -227.7,
+      "stats": {
+        "crit": 1.0
+      }
+    },
+    {
+      "id": "b78",
+      "kind": "stat",
+      "x": 238.6,
+      "y": -289.4,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b79",
+      "kind": "stat",
+      "x": 289.4,
+      "y": -351.1,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "b80",
+      "kind": "stat",
+      "x": 82.3,
+      "y": -198.6,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b81",
+      "kind": "stat",
+      "x": 112.9,
+      "y": -272.6,
+      "stats": {
+        "mp": 12
+      }
+    },
+    {
+      "id": "b82",
+      "kind": "stat",
+      "x": 143.5,
+      "y": -346.4,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b83",
+      "kind": "stat",
+      "x": 174.1,
+      "y": -420.4,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b84",
+      "kind": "stat",
+      "x": 39.6,
+      "y": -26.2,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b85",
+      "kind": "stat",
+      "x": 106.5,
+      "y": -129.1,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b86",
+      "kind": "stat",
+      "x": 300.3,
+      "y": -140.0,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b87",
+      "kind": "stat",
+      "x": 246.2,
+      "y": -221.7,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b88",
+      "kind": "stat",
+      "x": 170.6,
+      "y": -284.0,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b89",
+      "kind": "stat",
+      "x": 454.0,
+      "y": -184.8,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b90",
+      "kind": "stat",
+      "x": 433.4,
+      "y": -229.0,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b91",
+      "kind": "stat",
+      "x": 380.2,
+      "y": -309.5,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b92",
+      "kind": "stat",
+      "x": 347.5,
+      "y": -345.7,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b93",
+      "kind": "stat",
+      "x": 273.1,
+      "y": -407.1,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b94",
+      "kind": "stat",
+      "x": 231.2,
+      "y": -432.2,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "s:rogue/poison_bloom",
+      "kind": "skill",
+      "skill": "amemaru:rogue/poison_bloom",
+      "x": 492.0,
+      "y": -325.6,
+      "start": false
+    },
+    {
+      "id": "b96",
+      "kind": "stat",
+      "x": 452.4,
+      "y": -299.4,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "n:bridge:2",
+      "kind": "notable",
+      "name": "影と毒",
+      "x": 0.0,
+      "y": -255.0,
+      "percent": {
+        "attack": 4,
+        "hp": 3
+      }
+    },
+    {
+      "id": "b98",
+      "kind": "stat",
+      "x": -48.8,
+      "y": -245.3,
+      "stats": {
+        "speed": 1
+      }
+    },
+    {
+      "id": "b99",
+      "kind": "stat",
+      "x": 48.8,
+      "y": -245.3,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "n:bridge:4",
+      "kind": "notable",
+      "name": "忍ぶ刃",
+      "x": 0.0,
+      "y": -415.0,
+      "stats": {
+        "crit": 3,
+        "speed": 2
+      }
+    },
+    {
+      "id": "b101",
+      "kind": "stat",
+      "x": -105.9,
+      "y": -393.9,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b102",
+      "kind": "stat",
+      "x": -52.9,
+      "y": -404.5,
+      "stats": {
+        "speed": 2
+      }
+    },
+    {
+      "id": "b103",
+      "kind": "stat",
+      "x": 105.9,
+      "y": -393.9,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b104",
+      "kind": "stat",
+      "x": 52.9,
+      "y": -404.5,
+      "stats": {
+        "hp": 28
+      }
+    }
+  ],
+  "links": [
+    [
+      "b101",
+      "b102"
+    ],
+    [
+      "b101",
+      "s:rogue/shadow_footwork"
+    ],
+    [
+      "b102",
+      "n:bridge:4"
+    ],
+    [
+      "b103",
+      "b104"
+    ],
+    [
+      "b103",
+      "s:rogue/exploit"
+    ],
+    [
+      "b104",
+      "n:bridge:4"
+    ],
+    [
+      "b21",
+      "s:rogue/throwing_knife"
+    ],
+    [
+      "b21",
+      "s:rogue/twin_fangs"
+    ],
+    [
+      "b22",
+      "s:rogue/shadow_dance"
+    ],
+    [
+      "b22",
+      "s:rogue/twin_fangs"
+    ],
+    [
+      "b23",
+      "g:shadow:4:3"
+    ],
+    [
+      "b23",
+      "s:rogue/shadow_dance"
+    ],
+    [
+      "b24",
+      "g:shadow:4:3"
+    ],
+    [
+      "b24",
+      "n:shadow:3"
+    ],
+    [
+      "b25",
+      "s:rogue/flurry"
+    ],
+    [
+      "b25",
+      "s:rogue/shadow_run"
+    ],
+    [
+      "b26",
+      "s:rogue/shadow_run"
+    ],
+    [
+      "b26",
+      "s:rogue/vital_strike"
+    ],
+    [
+      "b27",
+      "s:rogue/shadow_stitch"
+    ],
+    [
+      "b27",
+      "s:rogue/vital_strike"
+    ],
+    [
+      "b28",
+      "s:rogue/shadow_burial"
+    ],
+    [
+      "b28",
+      "s:rogue/shadow_stitch"
+    ],
+    [
+      "b29",
+      "s:rogue/shadow_burial"
+    ],
+    [
+      "b29",
+      "s:rogue/shadow_double"
+    ],
+    [
+      "b30",
+      "s:rogue/phantom_blades"
+    ],
+    [
+      "b30",
+      "s:rogue/shadow_strike"
+    ],
+    [
+      "b31",
+      "g:shadow:4:1"
+    ],
+    [
+      "b31",
+      "s:rogue/phantom_blades"
+    ],
+    [
+      "b32",
+      "g:shadow:4:1"
+    ],
+    [
+      "b32",
+      "n:shadow:1"
+    ],
+    [
+      "b33",
+      "s:rogue/backstab_mastery"
+    ],
+    [
+      "b33",
+      "s:rogue/nimble"
+    ],
+    [
+      "b34",
+      "s:rogue/fade"
+    ],
+    [
+      "b34",
+      "s:rogue/nimble"
+    ],
+    [
+      "b35",
+      "s:rogue/fade"
+    ],
+    [
+      "b35",
+      "s:rogue/shadow_footwork"
+    ],
+    [
+      "b36",
+      "s:rogue/dark_edge"
+    ],
+    [
+      "b36",
+      "s:rogue/shadow_footwork"
+    ],
+    [
+      "b37",
+      "core"
+    ],
+    [
+      "b37",
+      "s:rogue/flurry"
+    ],
+    [
+      "b38",
+      "s:rogue/backstab_mastery"
+    ],
+    [
+      "b38",
+      "s:rogue/shadow_run"
+    ],
+    [
+      "b39",
+      "s:rogue/shadow_dance"
+    ],
+    [
+      "b39",
+      "s:rogue/shadow_stitch"
+    ],
+    [
+      "b40",
+      "s:rogue/phantom_blades"
+    ],
+    [
+      "b40",
+      "s:rogue/shadow_stitch"
+    ],
+    [
+      "b41",
+      "s:rogue/fade"
+    ],
+    [
+      "b41",
+      "s:rogue/phantom_blades"
+    ],
+    [
+      "b42",
+      "b43"
+    ],
+    [
+      "b42",
+      "n:shadow:3"
+    ],
+    [
+      "b43",
+      "s:rogue/shadow_double"
+    ],
+    [
+      "b44",
+      "b45"
+    ],
+    [
+      "b44",
+      "s:rogue/shadow_double"
+    ],
+    [
+      "b45",
+      "n:shadow:1"
+    ],
+    [
+      "b46",
+      "b47"
+    ],
+    [
+      "b46",
+      "n:shadow:1"
+    ],
+    [
+      "b47",
+      "s:rogue/dark_edge"
+    ],
+    [
+      "b49",
+      "s:rogue/shadow_double"
+    ],
+    [
+      "b49",
+      "s:rogue/thousand_blades"
+    ],
+    [
+      "b69",
+      "s:rogue/hamstring"
+    ],
+    [
+      "b69",
+      "s:rogue/venom_veil"
+    ],
+    [
+      "b70",
+      "g:venom:4:3"
+    ],
+    [
+      "b70",
+      "s:rogue/hamstring"
+    ],
+    [
+      "b71",
+      "g:venom:4:3"
+    ],
+    [
+      "b71",
+      "n:venom:3"
+    ],
+    [
+      "b72",
+      "s:rogue/smoke_bomb"
+    ],
+    [
+      "b72",
+      "s:rogue/venom_blade"
+    ],
+    [
+      "b73",
+      "s:rogue/poison_mist"
+    ],
+    [
+      "b73",
+      "s:rogue/smoke_bomb"
+    ],
+    [
+      "b74",
+      "s:rogue/poison_mist"
+    ],
+    [
+      "b74",
+      "s:rogue/toxic_burst"
+    ],
+    [
+      "b75",
+      "s:rogue/envenom"
+    ],
+    [
+      "b75",
+      "s:rogue/toxic_burst"
+    ],
+    [
+      "b76",
+      "s:rogue/corroding_edge"
+    ],
+    [
+      "b76",
+      "s:rogue/envenom"
+    ],
+    [
+      "b77",
+      "s:rogue/binding_threads"
+    ],
+    [
+      "b77",
+      "s:rogue/numbing_needle"
+    ],
+    [
+      "b78",
+      "g:venom:4:1"
+    ],
+    [
+      "b78",
+      "s:rogue/binding_threads"
+    ],
+    [
+      "b79",
+      "g:venom:4:1"
+    ],
+    [
+      "b79",
+      "n:venom:1"
+    ],
+    [
+      "b80",
+      "s:rogue/corrosion"
+    ],
+    [
+      "b80",
+      "s:rogue/toxin_mastery"
+    ],
+    [
+      "b81",
+      "s:rogue/corrosion"
+    ],
+    [
+      "b81",
+      "s:rogue/deep_toxin"
+    ],
+    [
+      "b82",
+      "s:rogue/deep_toxin"
+    ],
+    [
+      "b82",
+      "s:rogue/exploit"
+    ],
+    [
+      "b83",
+      "s:rogue/contagion"
+    ],
+    [
+      "b83",
+      "s:rogue/exploit"
+    ],
+    [
+      "b84",
+      "core"
+    ],
+    [
+      "b84",
+      "s:rogue/venom_blade"
+    ],
+    [
+      "b85",
+      "s:rogue/smoke_bomb"
+    ],
+    [
+      "b85",
+      "s:rogue/toxin_mastery"
+    ],
+    [
+      "b86",
+      "s:rogue/hamstring"
+    ],
+    [
+      "b86",
+      "s:rogue/toxic_burst"
+    ],
+    [
+      "b87",
+      "s:rogue/binding_threads"
+    ],
+    [
+      "b87",
+      "s:rogue/toxic_burst"
+    ],
+    [
+      "b88",
+      "s:rogue/binding_threads"
+    ],
+    [
+      "b88",
+      "s:rogue/deep_toxin"
+    ],
+    [
+      "b89",
+      "b90"
+    ],
+    [
+      "b89",
+      "n:venom:3"
+    ],
+    [
+      "b90",
+      "s:rogue/corroding_edge"
+    ],
+    [
+      "b91",
+      "b92"
+    ],
+    [
+      "b91",
+      "s:rogue/corroding_edge"
+    ],
+    [
+      "b92",
+      "n:venom:1"
+    ],
+    [
+      "b93",
+      "b94"
+    ],
+    [
+      "b93",
+      "n:venom:1"
+    ],
+    [
+      "b94",
+      "s:rogue/contagion"
+    ],
+    [
+      "b96",
+      "s:rogue/corroding_edge"
+    ],
+    [
+      "b96",
+      "s:rogue/poison_bloom"
+    ],
+    [
+      "b98",
+      "n:bridge:2"
+    ],
+    [
+      "b98",
+      "s:rogue/nimble"
+    ],
+    [
+      "b99",
+      "n:bridge:2"
+    ],
+    [
+      "b99",
+      "s:rogue/corrosion"
+    ],
+    [
+      "s:rogue/corrosion",
+      "s:rogue/numbing_needle"
+    ],
+    [
+      "s:rogue/nimble",
+      "s:rogue/shadow_strike"
+    ],
+    [
+      "s:rogue/numbing_needle",
+      "s:rogue/poison_mist"
+    ],
+    [
+      "s:rogue/poison_mist",
+      "s:rogue/venom_veil"
+    ],
+    [
+      "s:rogue/shadow_run",
+      "s:rogue/throwing_knife"
+    ],
+    [
+      "s:rogue/shadow_strike",
+      "s:rogue/vital_strike"
+    ]
+  ]
+}

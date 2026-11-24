@@ -6,9 +6,11 @@
   "type": "active",
   "name": "百裂拳",
   "description": "前の敵に、数えきれないほどの拳を浴びせる（1.5秒）。【起】",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -40,7 +42,7 @@
           "type": "damage",
           "stat": "attack",
           "coefficient": 0.25,
-          "coefficient_per_rank": 0.04
+          "coefficient_per_rank": 0.02
         }
       ]
     }

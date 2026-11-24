@@ -318,6 +318,7 @@ public final class SkillDescriber {
                     + "つ巡らせる。近づいた敵に、魔力の" + percent(value) + "のダメージと星痕");
             case SHADOW_CLONE -> lines.add(prefix + num(duration) + "秒、スキルが当たるたびに、影がもう一度斬る（ダメージの" + num(value) + "%）");
             case VENOM -> lines.add(prefix + num(duration) + "秒、攻撃が当たるたびに毒が1つ重なる（毎秒、攻撃の" + percent(value) + "）");
+            case POWER_UP -> lines.add(prefix + num(duration) + "秒、与えるダメージ+" + num(value) + "%");
             case BOW_DANCE -> lines.add(prefix + num(duration) + "秒、足・矢のダメージ+" + num(value) + "%、クールダウンが" + num(value) + "%早く戻る");
             case EVADE -> lines.add(prefix + num(duration) + "秒、敵の攻撃をすり抜ける");
             case ENDLESS_FLOW -> lines.add(prefix + num(duration) + "秒、【極】の技を使っても連撃が消えない");

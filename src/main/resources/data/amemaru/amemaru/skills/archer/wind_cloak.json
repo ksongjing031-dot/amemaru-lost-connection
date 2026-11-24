@@ -1,0 +1,52 @@
+{
+  "job": "archer",
+  "school": "rapid",
+  "row": 3,
+  "column": 3,
+  "type": "active",
+  "name": "風纏い",
+  "description": "風を身にまとい、しばらく足が速くなり、与えるダメージも少し上がる。",
+  "max_rank": 5,
+  "rank_costs": [
+    1,
+    1,
+    2,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "archer/triple_shot",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 16
+  },
+  "cooldown": 28,
+  "cooldown_per_rank": -0.75,
+  "delivery": {
+    "type": "self"
+  },
+  "effects": [
+    {
+      "type": "buff",
+      "buff": "haste",
+      "duration": 6,
+      "duration_per_rank": 0.5,
+      "value": 20,
+      "value_per_rank": 2.0
+    },
+    {
+      "type": "buff",
+      "buff": "power_up",
+      "duration": 6,
+      "duration_per_rank": 0.5,
+      "value": 8,
+      "value_per_rank": 1.0
+    }
+  ],
+  "animation": "archer_dance",
+  "sound": "amemaru:skill.archer.wind_cloak"
+}

@@ -15,14 +15,21 @@ import java.util.List;
 
 /**
  * 受けているクエストの一覧（画面の右上。はじめの手引きが出ていれば、その下。Phase 6 その3）。
- * 掲示板で「追う」にしたクエストだけ、3つまで出す。目標を果たしたものは緑、報告できるものには印を付ける。
+ * 掲示板で「追う」にしたクエストだけ出す。目標を果たしたものは緑、報告できるものには印を付ける。
+ *
+ * <p>11月24日のご指示「全体的にUIがごちゃついている」：出すのは2つまで・1つの目標は3行まで（まだの目標を先に。残りは1行に
+ * まとめる）にし、戦っている間（HPが減った・スキルを使ってから5秒・狙いを固定している間）はしまう。</p>
  */
 public final class GuildHud {
     public static final IGuiOverlay OVERLAY = GuildHud::render;
-    private static final int WIDTH = 150;
-    private static final int MAX_QUESTS = 3;
+    static final int WIDTH = 150;
+    /** 最後に一覧を描いた時刻（上の「〇〇まで」の札を、一覧と重ならないように置くため。11月24日）。 */
+    private static long lastShown;
+    private static final int MAX_QUESTS = 2;
     /** 1つのクエストに出す目標の行の数。これより多いときは、まだの目標を先に（元の順で）出して、残りを1行にまとめる。 */
-    private static final int MAX_LINES = 5;
+    private static final int MAX_LINES = 3;
+    /** 戦いが終わってから、一覧を出し直すまで。 */
+    private static final long COMBAT_HIDE_MILLIS = 5000L;
 
     private GuildHud() {
     }
@@ -36,10 +43,12 @@ public final class GuildHud {
         }
         List<CompoundTag> quests = ClientGuild.trackedQuests();
         // ボス戦の間と、知らせ（初撃破・物語など）が出ている間は出さない（重なって読めないため）
-        if (quests.isEmpty() || StoryHud.bossBarShown() || StoryHud.announcementShown()) {
+        if (quests.isEmpty() || StoryHud.bossBarShown() || StoryHud.announcementShown()
+                || ClientPlayerState.get().inCombat(COMBAT_HIDE_MILLIS)) {
             return;
         }
         Font font = minecraft.font;
+        lastShown = net.minecraft.Util.getMillis();
         int x = width - WIDTH - 6;
         int y = Math.max(6, StoryHud.guideBottom() + 4);
         int shown = 0;
@@ -100,6 +109,11 @@ public final class GuildHud {
             }
             y += h + 3;
         }
+    }
+
+    /** 一覧を出しているか（さっき描いたか）。 */
+    public static boolean shownRecently() {
+        return net.minecraft.Util.getMillis() - lastShown < 250L;
     }
 
     private static boolean complete(CompoundTag objective) {

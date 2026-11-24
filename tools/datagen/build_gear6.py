@@ -86,7 +86,7 @@ def main():
             "jobs": ["amemaru:" + job], "stats": app_stats, "fixed": True, "durability": 0, "binding": "bound",
             "description": app_desc})
         write(os.path.join(DATA, "amemaru/equipment", anc + ".json"), {
-            "slot": "weapon", "generation": 1, "series": "古代石シリーズ", "rarity": "common", "required_level": 5,
+            "slot": "weapon", "generation": 1, "series": "古代石シリーズ", "rarity": "common", "required_level": 10,
             "jobs": ["amemaru:" + job], "stats": anc_stats, "durability": 400, "binding": "none", "repair": repair,
             "description": anc_desc})
         write(os.path.join(DATA, "recipes/workshop", anc + ".json"), {
@@ -103,7 +103,7 @@ def main():
     pieces = {}
     for item, slot, name, stats, recipe, repair, desc, mastery, exp in LIGHT:
         write(os.path.join(DATA, "amemaru/equipment", item + ".json"), {
-            "slot": slot, "generation": 1, "series": "古代石シリーズ（軽装）", "rarity": "common", "required_level": 5,
+            "slot": slot, "generation": 1, "series": "古代石シリーズ（軽装）", "rarity": "common", "required_level": 10,
             "jobs": LIGHT_JOBS, "stats": stats, "durability": 280, "binding": "none", "repair": repair, "description": desc})
         write(os.path.join(DATA, "recipes/workshop", item + ".json"), {
             "type": "amemaru:workshop", "workshop": "armor", "mastery": mastery, "mastery_exp": exp, "ingredients": recipe,

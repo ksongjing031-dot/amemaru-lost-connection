@@ -6,13 +6,15 @@
   "type": "active",
   "name": "狙撃の構え",
   "description": "片ひざをつき、狙いを定める。しばらく足が遅くなるかわりに、次に放つ矢3本（スキルと通常の射撃）の威力が上がり、集中が10たまる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 20,
+  "min_level": 21,
   "requires": [
     {
       "skill": "archer/hawks_gaze",
@@ -32,7 +34,7 @@
       "buff": "aim",
       "duration": 8,
       "value": 40,
-      "value_per_rank": 10,
+      "value_per_rank": 5.0,
       "count": 3
     },
     {

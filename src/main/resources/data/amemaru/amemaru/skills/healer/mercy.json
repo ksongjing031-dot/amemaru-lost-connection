@@ -6,9 +6,11 @@
   "type": "passive",
   "name": "慈愛",
   "description": "癒す手に、ためらいがない。回復の量が上がる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -22,6 +24,6 @@
   "passive": {
     "type": "heal_power",
     "value": 8,
-    "value_per_rank": 4
+    "value_per_rank": 2.0
   }
 }

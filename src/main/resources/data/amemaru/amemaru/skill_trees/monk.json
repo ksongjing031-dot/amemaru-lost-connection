@@ -1,0 +1,1413 @@
+{
+  "_comment": "スキルツリー（tools/datagen/build_skill_trees.py が書き出す。手で直さない）。節（core：職業の核・skill：スキル・stat：ステータスの小さな節・notable：大きな節）と、つながり（links）。x・y はツリーの単位（右・下が正）",
+  "job": "amemaru:monk",
+  "nodes": [
+    {
+      "id": "core",
+      "kind": "core",
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "id": "s:monk/kien",
+      "kind": "skill",
+      "skill": "amemaru:monk/kien",
+      "x": -244.5,
+      "y": -72.4,
+      "start": false
+    },
+    {
+      "id": "s:monk/chain_kicks",
+      "kind": "skill",
+      "skill": "amemaru:monk/chain_kicks",
+      "x": -321.2,
+      "y": -95.1,
+      "start": false
+    },
+    {
+      "id": "s:monk/back_strike",
+      "kind": "skill",
+      "skill": "amemaru:monk/back_strike",
+      "x": -397.9,
+      "y": -117.9,
+      "start": false
+    },
+    {
+      "id": "n:hard:3",
+      "kind": "notable",
+      "name": "剛の拳",
+      "x": -474.6,
+      "y": -140.6,
+      "percent": {
+        "attack": 6
+      }
+    },
+    {
+      "id": "s:monk/jab_combo",
+      "kind": "skill",
+      "skill": "amemaru:monk/jab_combo",
+      "x": -79.2,
+      "y": -52.4,
+      "start": true
+    },
+    {
+      "id": "s:monk/spin_kick",
+      "kind": "skill",
+      "skill": "amemaru:monk/spin_kick",
+      "x": -145.9,
+      "y": -96.6,
+      "start": false
+    },
+    {
+      "id": "s:monk/hakkei",
+      "kind": "skill",
+      "skill": "amemaru:monk/hakkei",
+      "x": -212.6,
+      "y": -140.7,
+      "start": false
+    },
+    {
+      "id": "s:monk/rising_dragon",
+      "kind": "skill",
+      "skill": "amemaru:monk/rising_dragon",
+      "x": -279.4,
+      "y": -184.9,
+      "start": false
+    },
+    {
+      "id": "s:monk/mountain_breaker",
+      "kind": "skill",
+      "skill": "amemaru:monk/mountain_breaker",
+      "x": -346.1,
+      "y": -229.1,
+      "start": false
+    },
+    {
+      "id": "s:monk/thunder_fist",
+      "kind": "skill",
+      "skill": "amemaru:monk/thunder_fist",
+      "x": -412.8,
+      "y": -273.2,
+      "start": false
+    },
+    {
+      "id": "s:monk/collapsing_fist",
+      "kind": "skill",
+      "skill": "amemaru:monk/collapsing_fist",
+      "x": -162.2,
+      "y": -196.8,
+      "start": false
+    },
+    {
+      "id": "s:monk/hundred_fists",
+      "kind": "skill",
+      "skill": "amemaru:monk/hundred_fists",
+      "x": -213.1,
+      "y": -258.5,
+      "start": false
+    },
+    {
+      "id": "g:hard:4:1",
+      "kind": "stat",
+      "x": -264.0,
+      "y": -320.2,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "n:hard:1",
+      "kind": "notable",
+      "name": "鉄の芯",
+      "x": -314.9,
+      "y": -382.0,
+      "stats": {
+        "crit": 2
+      },
+      "percent": {
+        "hp": 6
+      }
+    },
+    {
+      "id": "s:monk/combo_mastery",
+      "kind": "skill",
+      "skill": "amemaru:monk/combo_mastery",
+      "x": -67.0,
+      "y": -161.7,
+      "start": false
+    },
+    {
+      "id": "s:monk/iron_body",
+      "kind": "skill",
+      "skill": "amemaru:monk/iron_body",
+      "x": -97.6,
+      "y": -235.6,
+      "start": false
+    },
+    {
+      "id": "s:monk/battle_aura",
+      "kind": "skill",
+      "skill": "amemaru:monk/battle_aura",
+      "x": -128.2,
+      "y": -309.5,
+      "start": false
+    },
+    {
+      "id": "s:monk/flowing_ki",
+      "kind": "skill",
+      "skill": "amemaru:monk/flowing_ki",
+      "x": -158.8,
+      "y": -383.4,
+      "start": false
+    },
+    {
+      "id": "s:monk/finishing_blow",
+      "kind": "skill",
+      "skill": "amemaru:monk/finishing_blow",
+      "x": -189.4,
+      "y": -457.3,
+      "start": false
+    },
+    {
+      "id": "b20",
+      "kind": "stat",
+      "x": -282.9,
+      "y": -83.8,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b21",
+      "kind": "stat",
+      "x": -359.5,
+      "y": -106.5,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "b22",
+      "kind": "stat",
+      "x": -436.2,
+      "y": -129.2,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b23",
+      "kind": "stat",
+      "x": -112.6,
+      "y": -74.5,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b24",
+      "kind": "stat",
+      "x": -179.2,
+      "y": -118.6,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b25",
+      "kind": "stat",
+      "x": -246.0,
+      "y": -162.8,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b26",
+      "kind": "stat",
+      "x": -312.8,
+      "y": -207.0,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b27",
+      "kind": "stat",
+      "x": -379.5,
+      "y": -251.1,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b28",
+      "kind": "stat",
+      "x": -187.6,
+      "y": -227.7,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b29",
+      "kind": "stat",
+      "x": -238.6,
+      "y": -289.4,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "b30",
+      "kind": "stat",
+      "x": -289.4,
+      "y": -351.1,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b31",
+      "kind": "stat",
+      "x": -82.3,
+      "y": -198.6,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b32",
+      "kind": "stat",
+      "x": -112.9,
+      "y": -272.6,
+      "stats": {
+        "defense": 2
+      }
+    },
+    {
+      "id": "b33",
+      "kind": "stat",
+      "x": -143.5,
+      "y": -346.4,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b34",
+      "kind": "stat",
+      "x": -174.1,
+      "y": -420.4,
+      "stats": {
+        "defense": 3
+      }
+    },
+    {
+      "id": "b35",
+      "kind": "stat",
+      "x": -39.6,
+      "y": -26.2,
+      "stats": {
+        "hp": 20
+      }
+    },
+    {
+      "id": "b36",
+      "kind": "stat",
+      "x": -106.5,
+      "y": -129.1,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b37",
+      "kind": "stat",
+      "x": -300.3,
+      "y": -140.0,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b38",
+      "kind": "stat",
+      "x": -246.2,
+      "y": -221.7,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b39",
+      "kind": "stat",
+      "x": -170.6,
+      "y": -284.0,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b40",
+      "kind": "stat",
+      "x": -454.0,
+      "y": -184.8,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b41",
+      "kind": "stat",
+      "x": -433.4,
+      "y": -229.0,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b42",
+      "kind": "stat",
+      "x": -380.2,
+      "y": -309.5,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b43",
+      "kind": "stat",
+      "x": -347.5,
+      "y": -345.7,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b44",
+      "kind": "stat",
+      "x": -273.1,
+      "y": -407.1,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b45",
+      "kind": "stat",
+      "x": -231.2,
+      "y": -432.2,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "s:monk/hundred_bond",
+      "kind": "skill",
+      "skill": "amemaru:monk/hundred_bond",
+      "x": -492.0,
+      "y": -325.6,
+      "start": false
+    },
+    {
+      "id": "b47",
+      "kind": "stat",
+      "x": -452.4,
+      "y": -299.4,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "s:monk/kaisei_fist",
+      "kind": "skill",
+      "skill": "amemaru:monk/kaisei_fist",
+      "x": 167.8,
+      "y": -49.7,
+      "start": false
+    },
+    {
+      "id": "s:monk/air_palm",
+      "kind": "skill",
+      "skill": "amemaru:monk/air_palm",
+      "x": 244.5,
+      "y": -72.4,
+      "start": false
+    },
+    {
+      "id": "g:soft:3:3",
+      "kind": "stat",
+      "x": 321.2,
+      "y": -95.1,
+      "stats": {
+        "speed": 1
+      }
+    },
+    {
+      "id": "g:soft:4:3",
+      "kind": "stat",
+      "x": 397.9,
+      "y": -117.9,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "n:soft:3",
+      "kind": "notable",
+      "name": "柔の体",
+      "x": 474.6,
+      "y": -140.6,
+      "percent": {
+        "hp": 6,
+        "defense": 4
+      }
+    },
+    {
+      "id": "s:monk/palm_strike",
+      "kind": "skill",
+      "skill": "amemaru:monk/palm_strike",
+      "x": 79.2,
+      "y": -52.4,
+      "start": true
+    },
+    {
+      "id": "s:monk/flowing_stance",
+      "kind": "skill",
+      "skill": "amemaru:monk/flowing_stance",
+      "x": 145.9,
+      "y": -96.6,
+      "start": false
+    },
+    {
+      "id": "s:monk/ki_share",
+      "kind": "skill",
+      "skill": "amemaru:monk/ki_share",
+      "x": 212.6,
+      "y": -140.7,
+      "start": false
+    },
+    {
+      "id": "s:monk/ki_bullet",
+      "kind": "skill",
+      "skill": "amemaru:monk/ki_bullet",
+      "x": 279.4,
+      "y": -184.9,
+      "start": false
+    },
+    {
+      "id": "s:monk/ki_vortex",
+      "kind": "skill",
+      "skill": "amemaru:monk/ki_vortex",
+      "x": 346.1,
+      "y": -229.1,
+      "start": false
+    },
+    {
+      "id": "s:monk/inch_punch",
+      "kind": "skill",
+      "skill": "amemaru:monk/inch_punch",
+      "x": 412.8,
+      "y": -273.2,
+      "start": false
+    },
+    {
+      "id": "s:monk/shrink_step",
+      "kind": "skill",
+      "skill": "amemaru:monk/shrink_step",
+      "x": 162.2,
+      "y": -196.8,
+      "start": false
+    },
+    {
+      "id": "s:monk/turning_throw",
+      "kind": "skill",
+      "skill": "amemaru:monk/turning_throw",
+      "x": 213.1,
+      "y": -258.5,
+      "start": false
+    },
+    {
+      "id": "g:soft:4:1",
+      "kind": "stat",
+      "x": 264.0,
+      "y": -320.2,
+      "stats": {
+        "defense": 3
+      }
+    },
+    {
+      "id": "n:soft:1",
+      "kind": "notable",
+      "name": "流れる気",
+      "x": 314.9,
+      "y": -382.0,
+      "stats": {
+        "speed": 3,
+        "cooldown_reduction": 3
+      }
+    },
+    {
+      "id": "s:monk/allied_fists",
+      "kind": "skill",
+      "skill": "amemaru:monk/allied_fists",
+      "x": 67.0,
+      "y": -161.7,
+      "start": false
+    },
+    {
+      "id": "s:monk/receiving_art",
+      "kind": "skill",
+      "skill": "amemaru:monk/receiving_art",
+      "x": 97.6,
+      "y": -235.6,
+      "start": false
+    },
+    {
+      "id": "s:monk/soft_way",
+      "kind": "skill",
+      "skill": "amemaru:monk/soft_way",
+      "x": 128.2,
+      "y": -309.5,
+      "start": false
+    },
+    {
+      "id": "s:monk/calm_breath",
+      "kind": "skill",
+      "skill": "amemaru:monk/calm_breath",
+      "x": 158.8,
+      "y": -383.4,
+      "start": false
+    },
+    {
+      "id": "s:monk/reading_flow",
+      "kind": "skill",
+      "skill": "amemaru:monk/reading_flow",
+      "x": 189.4,
+      "y": -457.3,
+      "start": false
+    },
+    {
+      "id": "b68",
+      "kind": "stat",
+      "x": 206.2,
+      "y": -61.1,
+      "stats": {
+        "speed": 1
+      }
+    },
+    {
+      "id": "b69",
+      "kind": "stat",
+      "x": 282.9,
+      "y": -83.8,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b70",
+      "kind": "stat",
+      "x": 359.5,
+      "y": -106.5,
+      "stats": {
+        "speed": 2
+      }
+    },
+    {
+      "id": "b71",
+      "kind": "stat",
+      "x": 436.2,
+      "y": -129.2,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b72",
+      "kind": "stat",
+      "x": 112.6,
+      "y": -74.5,
+      "stats": {
+        "hp": 20
+      }
+    },
+    {
+      "id": "b73",
+      "kind": "stat",
+      "x": 179.2,
+      "y": -118.6,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b74",
+      "kind": "stat",
+      "x": 246.0,
+      "y": -162.8,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b75",
+      "kind": "stat",
+      "x": 312.8,
+      "y": -207.0,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b76",
+      "kind": "stat",
+      "x": 379.5,
+      "y": -251.1,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b77",
+      "kind": "stat",
+      "x": 187.6,
+      "y": -227.7,
+      "stats": {
+        "speed": 1
+      }
+    },
+    {
+      "id": "b78",
+      "kind": "stat",
+      "x": 238.6,
+      "y": -289.4,
+      "stats": {
+        "defense": 3
+      }
+    },
+    {
+      "id": "b79",
+      "kind": "stat",
+      "x": 289.4,
+      "y": -351.1,
+      "stats": {
+        "speed": 2
+      }
+    },
+    {
+      "id": "b80",
+      "kind": "stat",
+      "x": 82.3,
+      "y": -198.6,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b81",
+      "kind": "stat",
+      "x": 112.9,
+      "y": -272.6,
+      "stats": {
+        "mp": 12
+      }
+    },
+    {
+      "id": "b82",
+      "kind": "stat",
+      "x": 143.5,
+      "y": -346.4,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b83",
+      "kind": "stat",
+      "x": 174.1,
+      "y": -420.4,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b84",
+      "kind": "stat",
+      "x": 39.6,
+      "y": -26.2,
+      "stats": {
+        "hp": 20
+      }
+    },
+    {
+      "id": "b85",
+      "kind": "stat",
+      "x": 106.5,
+      "y": -129.1,
+      "stats": {
+        "hp": 20
+      }
+    },
+    {
+      "id": "b86",
+      "kind": "stat",
+      "x": 300.3,
+      "y": -140.0,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b87",
+      "kind": "stat",
+      "x": 246.2,
+      "y": -221.7,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b88",
+      "kind": "stat",
+      "x": 170.6,
+      "y": -284.0,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b89",
+      "kind": "stat",
+      "x": 454.0,
+      "y": -184.8,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b90",
+      "kind": "stat",
+      "x": 433.4,
+      "y": -229.0,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b91",
+      "kind": "stat",
+      "x": 380.2,
+      "y": -309.5,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b92",
+      "kind": "stat",
+      "x": 347.5,
+      "y": -345.7,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b93",
+      "kind": "stat",
+      "x": 273.1,
+      "y": -407.1,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b94",
+      "kind": "stat",
+      "x": 231.2,
+      "y": -432.2,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "s:monk/heaven_earth",
+      "kind": "skill",
+      "skill": "amemaru:monk/heaven_earth",
+      "x": 492.0,
+      "y": -325.6,
+      "start": false
+    },
+    {
+      "id": "b96",
+      "kind": "stat",
+      "x": 452.4,
+      "y": -299.4,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "n:bridge:2",
+      "kind": "notable",
+      "name": "剛柔一体",
+      "x": 0.0,
+      "y": -255.0,
+      "percent": {
+        "attack": 3,
+        "hp": 4
+      }
+    },
+    {
+      "id": "b98",
+      "kind": "stat",
+      "x": -48.8,
+      "y": -245.3,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b99",
+      "kind": "stat",
+      "x": 48.8,
+      "y": -245.3,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "n:bridge:4",
+      "kind": "notable",
+      "name": "練気",
+      "x": 0.0,
+      "y": -415.0,
+      "stats": {
+        "defense": 5
+      },
+      "percent": {
+        "attack": 3,
+        "mp": 5
+      }
+    },
+    {
+      "id": "b101",
+      "kind": "stat",
+      "x": -105.9,
+      "y": -393.9,
+      "stats": {
+        "speed": 2
+      }
+    },
+    {
+      "id": "b102",
+      "kind": "stat",
+      "x": -52.9,
+      "y": -404.5,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b103",
+      "kind": "stat",
+      "x": 105.9,
+      "y": -393.9,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b104",
+      "kind": "stat",
+      "x": 52.9,
+      "y": -404.5,
+      "stats": {
+        "speed": 2
+      }
+    }
+  ],
+  "links": [
+    [
+      "b101",
+      "b102"
+    ],
+    [
+      "b101",
+      "s:monk/flowing_ki"
+    ],
+    [
+      "b102",
+      "n:bridge:4"
+    ],
+    [
+      "b103",
+      "b104"
+    ],
+    [
+      "b103",
+      "s:monk/calm_breath"
+    ],
+    [
+      "b104",
+      "n:bridge:4"
+    ],
+    [
+      "b20",
+      "s:monk/chain_kicks"
+    ],
+    [
+      "b20",
+      "s:monk/kien"
+    ],
+    [
+      "b21",
+      "s:monk/back_strike"
+    ],
+    [
+      "b21",
+      "s:monk/chain_kicks"
+    ],
+    [
+      "b22",
+      "n:hard:3"
+    ],
+    [
+      "b22",
+      "s:monk/back_strike"
+    ],
+    [
+      "b23",
+      "s:monk/jab_combo"
+    ],
+    [
+      "b23",
+      "s:monk/spin_kick"
+    ],
+    [
+      "b24",
+      "s:monk/hakkei"
+    ],
+    [
+      "b24",
+      "s:monk/spin_kick"
+    ],
+    [
+      "b25",
+      "s:monk/hakkei"
+    ],
+    [
+      "b25",
+      "s:monk/rising_dragon"
+    ],
+    [
+      "b26",
+      "s:monk/mountain_breaker"
+    ],
+    [
+      "b26",
+      "s:monk/rising_dragon"
+    ],
+    [
+      "b27",
+      "s:monk/mountain_breaker"
+    ],
+    [
+      "b27",
+      "s:monk/thunder_fist"
+    ],
+    [
+      "b28",
+      "s:monk/collapsing_fist"
+    ],
+    [
+      "b28",
+      "s:monk/hundred_fists"
+    ],
+    [
+      "b29",
+      "g:hard:4:1"
+    ],
+    [
+      "b29",
+      "s:monk/hundred_fists"
+    ],
+    [
+      "b30",
+      "g:hard:4:1"
+    ],
+    [
+      "b30",
+      "n:hard:1"
+    ],
+    [
+      "b31",
+      "s:monk/combo_mastery"
+    ],
+    [
+      "b31",
+      "s:monk/iron_body"
+    ],
+    [
+      "b32",
+      "s:monk/battle_aura"
+    ],
+    [
+      "b32",
+      "s:monk/iron_body"
+    ],
+    [
+      "b33",
+      "s:monk/battle_aura"
+    ],
+    [
+      "b33",
+      "s:monk/flowing_ki"
+    ],
+    [
+      "b34",
+      "s:monk/finishing_blow"
+    ],
+    [
+      "b34",
+      "s:monk/flowing_ki"
+    ],
+    [
+      "b35",
+      "core"
+    ],
+    [
+      "b35",
+      "s:monk/jab_combo"
+    ],
+    [
+      "b36",
+      "s:monk/combo_mastery"
+    ],
+    [
+      "b36",
+      "s:monk/spin_kick"
+    ],
+    [
+      "b37",
+      "s:monk/chain_kicks"
+    ],
+    [
+      "b37",
+      "s:monk/rising_dragon"
+    ],
+    [
+      "b38",
+      "s:monk/hundred_fists"
+    ],
+    [
+      "b38",
+      "s:monk/rising_dragon"
+    ],
+    [
+      "b39",
+      "s:monk/battle_aura"
+    ],
+    [
+      "b39",
+      "s:monk/hundred_fists"
+    ],
+    [
+      "b40",
+      "b41"
+    ],
+    [
+      "b40",
+      "n:hard:3"
+    ],
+    [
+      "b41",
+      "s:monk/thunder_fist"
+    ],
+    [
+      "b42",
+      "b43"
+    ],
+    [
+      "b42",
+      "s:monk/thunder_fist"
+    ],
+    [
+      "b43",
+      "n:hard:1"
+    ],
+    [
+      "b44",
+      "b45"
+    ],
+    [
+      "b44",
+      "n:hard:1"
+    ],
+    [
+      "b45",
+      "s:monk/finishing_blow"
+    ],
+    [
+      "b47",
+      "s:monk/hundred_bond"
+    ],
+    [
+      "b47",
+      "s:monk/thunder_fist"
+    ],
+    [
+      "b68",
+      "s:monk/air_palm"
+    ],
+    [
+      "b68",
+      "s:monk/kaisei_fist"
+    ],
+    [
+      "b69",
+      "g:soft:3:3"
+    ],
+    [
+      "b69",
+      "s:monk/air_palm"
+    ],
+    [
+      "b70",
+      "g:soft:3:3"
+    ],
+    [
+      "b70",
+      "g:soft:4:3"
+    ],
+    [
+      "b71",
+      "g:soft:4:3"
+    ],
+    [
+      "b71",
+      "n:soft:3"
+    ],
+    [
+      "b72",
+      "s:monk/flowing_stance"
+    ],
+    [
+      "b72",
+      "s:monk/palm_strike"
+    ],
+    [
+      "b73",
+      "s:monk/flowing_stance"
+    ],
+    [
+      "b73",
+      "s:monk/ki_share"
+    ],
+    [
+      "b74",
+      "s:monk/ki_bullet"
+    ],
+    [
+      "b74",
+      "s:monk/ki_share"
+    ],
+    [
+      "b75",
+      "s:monk/ki_bullet"
+    ],
+    [
+      "b75",
+      "s:monk/ki_vortex"
+    ],
+    [
+      "b76",
+      "s:monk/inch_punch"
+    ],
+    [
+      "b76",
+      "s:monk/ki_vortex"
+    ],
+    [
+      "b77",
+      "s:monk/shrink_step"
+    ],
+    [
+      "b77",
+      "s:monk/turning_throw"
+    ],
+    [
+      "b78",
+      "g:soft:4:1"
+    ],
+    [
+      "b78",
+      "s:monk/turning_throw"
+    ],
+    [
+      "b79",
+      "g:soft:4:1"
+    ],
+    [
+      "b79",
+      "n:soft:1"
+    ],
+    [
+      "b80",
+      "s:monk/allied_fists"
+    ],
+    [
+      "b80",
+      "s:monk/receiving_art"
+    ],
+    [
+      "b81",
+      "s:monk/receiving_art"
+    ],
+    [
+      "b81",
+      "s:monk/soft_way"
+    ],
+    [
+      "b82",
+      "s:monk/calm_breath"
+    ],
+    [
+      "b82",
+      "s:monk/soft_way"
+    ],
+    [
+      "b83",
+      "s:monk/calm_breath"
+    ],
+    [
+      "b83",
+      "s:monk/reading_flow"
+    ],
+    [
+      "b84",
+      "core"
+    ],
+    [
+      "b84",
+      "s:monk/palm_strike"
+    ],
+    [
+      "b85",
+      "s:monk/allied_fists"
+    ],
+    [
+      "b85",
+      "s:monk/flowing_stance"
+    ],
+    [
+      "b86",
+      "g:soft:3:3"
+    ],
+    [
+      "b86",
+      "s:monk/ki_bullet"
+    ],
+    [
+      "b87",
+      "s:monk/ki_bullet"
+    ],
+    [
+      "b87",
+      "s:monk/turning_throw"
+    ],
+    [
+      "b88",
+      "s:monk/soft_way"
+    ],
+    [
+      "b88",
+      "s:monk/turning_throw"
+    ],
+    [
+      "b89",
+      "b90"
+    ],
+    [
+      "b89",
+      "n:soft:3"
+    ],
+    [
+      "b90",
+      "s:monk/inch_punch"
+    ],
+    [
+      "b91",
+      "b92"
+    ],
+    [
+      "b91",
+      "s:monk/inch_punch"
+    ],
+    [
+      "b92",
+      "n:soft:1"
+    ],
+    [
+      "b93",
+      "b94"
+    ],
+    [
+      "b93",
+      "n:soft:1"
+    ],
+    [
+      "b94",
+      "s:monk/reading_flow"
+    ],
+    [
+      "b96",
+      "s:monk/heaven_earth"
+    ],
+    [
+      "b96",
+      "s:monk/inch_punch"
+    ],
+    [
+      "b98",
+      "n:bridge:2"
+    ],
+    [
+      "b98",
+      "s:monk/iron_body"
+    ],
+    [
+      "b99",
+      "n:bridge:2"
+    ],
+    [
+      "b99",
+      "s:monk/receiving_art"
+    ],
+    [
+      "s:monk/collapsing_fist",
+      "s:monk/hakkei"
+    ],
+    [
+      "s:monk/collapsing_fist",
+      "s:monk/iron_body"
+    ],
+    [
+      "s:monk/flowing_stance",
+      "s:monk/kaisei_fist"
+    ],
+    [
+      "s:monk/hakkei",
+      "s:monk/kien"
+    ],
+    [
+      "s:monk/ki_share",
+      "s:monk/shrink_step"
+    ],
+    [
+      "s:monk/receiving_art",
+      "s:monk/shrink_step"
+    ]
+  ]
+}

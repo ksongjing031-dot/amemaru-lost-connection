@@ -6,9 +6,11 @@
   "type": "active",
   "name": "標の矢",
   "description": "敵に光の標を射込む。標のある敵は、仲間みんなから受けるダメージが上がる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -30,14 +32,14 @@
       "type": "damage",
       "stat": "attack",
       "coefficient": 1.0,
-      "coefficient_per_rank": 0.15
+      "coefficient_per_rank": 0.075
     },
     {
       "type": "mark",
       "value": 10,
-      "value_per_rank": 3,
+      "value_per_rank": 1.5,
       "duration": 10,
-      "duration_per_rank": 2
+      "duration_per_rank": 1.0
     }
   ],
   "tags": [

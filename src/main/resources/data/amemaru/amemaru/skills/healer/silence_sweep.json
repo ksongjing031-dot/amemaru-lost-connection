@@ -6,9 +6,11 @@
   "type": "active",
   "name": "静寂払い",
   "description": "鈴を一度だけ静かに鳴らし、まわりの空気を澄ませる。まわりの仲間（自分も）の悪い状態をまとめてほどき、少し癒す。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -23,12 +25,12 @@
     "mp": 20
   },
   "cooldown": 14,
-  "cooldown_per_rank": -1,
+  "cooldown_per_rank": -0.5,
   "link": "support",
   "delivery": {
     "type": "around",
     "radius": 8,
-    "radius_per_rank": 1,
+    "radius_per_rank": 0.5,
     "affects": "allies",
     "include_self": true
   },
@@ -41,7 +43,7 @@
       "type": "heal",
       "stat": "magic",
       "coefficient": 0.8,
-      "coefficient_per_rank": 0.15
+      "coefficient_per_rank": 0.075
     }
   ],
   "tags": [

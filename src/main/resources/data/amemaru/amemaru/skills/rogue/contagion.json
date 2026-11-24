@@ -6,13 +6,15 @@
   "type": "passive",
   "name": "毒の連鎖",
   "description": "毒は倒れた体から、まわりへ移っていく。毒にかかった敵が倒れると、まわりの敵に毒が移る。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
-  "min_level": 25,
+  "min_level": 26,
   "requires": [
     {
       "skill": "rogue/exploit",
@@ -22,7 +24,7 @@
   "passive": {
     "type": "contagion",
     "value": 2,
-    "value_per_rank": 1,
+    "value_per_rank": 0.5,
     "radius": 4
   }
 }

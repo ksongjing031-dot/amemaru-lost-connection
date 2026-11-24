@@ -28,6 +28,7 @@ import jp.amemaru.lostconnection.job.def.LinkType;
 import jp.amemaru.lostconnection.job.def.SkillDef;
 import jp.amemaru.lostconnection.job.def.SkillKind;
 import jp.amemaru.lostconnection.job.def.SkillRegistry;
+import jp.amemaru.lostconnection.job.def.SkillTreeDef;
 import jp.amemaru.lostconnection.player.CastState;
 import jp.amemaru.lostconnection.player.GrowthRules;
 import jp.amemaru.lostconnection.player.LevelService;
@@ -116,25 +117,27 @@ public final class JobSkillGameTests {
         expectLoadout(helper, data, "knight/call", "knight/charge_slash", null, null, null, null);
         check(helper, SkillTreeService.spentPoints(data) == 0, "最初のスキルにポイントが使われています");
         int points = LevelService.availableSkillPoints(data, GrowthRules.current());
-        check(helper, points == 11, "レベル10のスキルポイントが11ではありません：" + points);
+        // 11月24日：ポイントは1レベルごとに2、5の倍数のレベルでさらに1（レベル10で20）
+        check(helper, points == 20, "レベル10のスキルポイントが20ではありません：" + points);
         check(helper, Math.abs(data.getHp() - data.getStats().maxHp()) < EPSILON, "職業を選んだ後のHPが満タンではありません");
         check(helper, Math.abs(data.getMp() - data.getStats().maxMp()) < EPSILON, "職業を選んだ後のMPが満タンではありません");
 
-        // 何も持たないナイト：HP+20%・MP-10%・魔力-20%・防御+30%
+        // 何も持たないナイト：HP+20%・MP-10%・魔力-20%・防御+30%（11月24日：レベルで上がる分は HP18・MP4・攻撃0.9・魔力0.9・防御0.45。
+        // ほかはスキルツリーのステータスの節で上げる）
         equip(player, data, ItemStack.EMPTY, ItemStack.EMPTY);
-        expectStat(helper, data, StatType.HP, 672);
-        expectStat(helper, data, StatType.MP, 171);
-        expectStat(helper, data, StatType.ATTACK, 28);
-        expectStat(helper, data, StatType.MAGIC, 22);
-        expectStat(helper, data, StatType.DEFENSE, 18);
+        expectStat(helper, data, StatType.HP, 434);
+        expectStat(helper, data, StatType.MP, 122);
+        expectStat(helper, data, StatType.ATTACK, 18);
+        expectStat(helper, data, StatType.MAGIC, 14);
+        expectStat(helper, data, StatType.DEFENSE, 11);
         // 片手剣と盾：攻撃+6、防御+3（11月24日のバランスの調節で4→3。防御は職業の+30%の前に足す）
         equip(player, data, new ItemStack(ModItems.APPRENTICE_SWORD.get()), new ItemStack(ModItems.APPRENTICE_SHIELD.get()));
-        expectStat(helper, data, StatType.ATTACK, 34);
-        expectStat(helper, data, StatType.DEFENSE, 22);
+        expectStat(helper, data, StatType.ATTACK, 24);
+        expectStat(helper, data, StatType.DEFENSE, 15);
         // 両手剣：攻撃+10。もう片方の手の盾は効かない
         equip(player, data, new ItemStack(ModItems.APPRENTICE_GREATSWORD.get()), new ItemStack(ModItems.APPRENTICE_SHIELD.get()));
-        expectStat(helper, data, StatType.ATTACK, 38);
-        expectStat(helper, data, StatType.DEFENSE, 18);
+        expectStat(helper, data, StatType.ATTACK, 28);
+        expectStat(helper, data, StatType.DEFENSE, 11);
 
         // ウィザードに変える：杖は渡す。やり直しのアイテムは2回目は渡さない
         player.getInventory().clearContent();
@@ -147,11 +150,11 @@ public final class JobSkillGameTests {
         expectLoadout(helper, data, "wizard/lamp_bolt", "wizard/frost_circle", null, null, null, null);
         // 杖を持つウィザード：MP+50%・魔力+20%・HP-10%・防御-10%・攻撃-20%、杖は魔力+8・MP+20
         equip(player, data, new ItemStack(ModItems.APPRENTICE_STAFF.get()), ItemStack.EMPTY);
-        expectStat(helper, data, StatType.HP, 504);
-        expectStat(helper, data, StatType.MP, 315);
-        expectStat(helper, data, StatType.ATTACK, 22);
-        expectStat(helper, data, StatType.MAGIC, 43);
-        expectStat(helper, data, StatType.DEFENSE, 12);
+        expectStat(helper, data, StatType.HP, 325);
+        expectStat(helper, data, StatType.MP, 234);
+        expectStat(helper, data, StatType.ATTACK, 14);
+        expectStat(helper, data, StatType.MAGIC, 31);
+        expectStat(helper, data, StatType.DEFENSE, 8);
 
         // ナイトに戻す：見習い装備は2回目は渡さない
         player.getInventory().clearContent();
@@ -198,73 +201,104 @@ public final class JobSkillGameTests {
 
     // ================================================================ 習得
 
-    /** レベル・前提・上位職・ポイントの決まりどおりに覚えられ、やり直しと上位職を外すことができる。 */
+    /**
+     * スキルツリーの決まり（11月24日）：となりの節が取れていること・レベル・上位職（第5段と奥義）・ポイント（段階ごとに1・1・2・2・3、
+     * ステータスの節は1）。奥義は2つから1つ。スキル枠・上位職を外す・やり直し（取った節がすべて戻る）。
+     */
     @GameTest(template = EMPTY)
     public static void learningFollowsTreeRules(GameTestHelper helper) {
         FakePlayer player = fake(helper, "learn_rules");
         PlayerData data = data(helper, player);
         LevelService.setLevel(player, data, 1);
         JobService.setJobForced(player, data, job("knight"));
+        SkillTreeDef tree = TreeTestUtil.tree(id("knight"));
+        String callNode = TreeTestUtil.nodeOf(tree, id("knight/call"));
+        String bondNode = TreeTestUtil.nodeOf(tree, id("knight/shield_bond"));
+        String rampartNode = TreeTestUtil.nodeOf(tree, id("knight/rampart"));
 
+        expectPoints(helper, data, 0);
         expectBlocker(helper, data, "knight/shield_bond", SkillTreeService.Blocker.LEVEL);
         expectBlocker(helper, data, "knight/call", SkillTreeService.Blocker.POINTS);
         expectBlocker(helper, data, "wizard/lamp_bolt", SkillTreeService.Blocker.OTHER_JOB);
 
-        // レベル5：ポイント5
+        // レベル5：ポイント9（1レベルごとに2・5の倍数のレベルでさらに1）
         LevelService.setLevel(player, data, 5);
-        expectPoints(helper, data, 5);
+        expectPoints(helper, data, 9);
         expectBlocker(helper, data, "knight/rampart", SkillTreeService.Blocker.LEVEL);
+        // 呼び声と守りの絆の間のステータスの節を取るまで、守りの絆は覚えられない（道がつながっていない）
+        expectBlocker(helper, data, "knight/shield_bond", SkillTreeService.Blocker.NOT_CONNECTED);
+        String bead = TreeTestUtil.between(tree, callNode, bondNode);
+        String beyond = TreeTestUtil.between(tree, bondNode, rampartNode);
+        check(helper, SkillTreeService.canTakeNode(data, tree, beyond) == SkillTreeService.Blocker.NOT_CONNECTED,
+                "道のつながっていない節が取れる判定です：" + SkillTreeService.canTakeNode(data, tree, beyond));
+        double hpBefore = data.getStats().maxHp();
+        TreeTestUtil.take(helper, player, data, tree, bead);
+        check(helper, data.hasTreeNode(bead), "取った節が記録されていません");
+        check(helper, SkillTreeService.canTakeNode(data, tree, bead) == SkillTreeService.Blocker.TAKEN, "同じ節をもう一度取れる判定です");
+        check(helper, data.getStats().maxHp() >= hpBefore, "ステータスの節を取ったのに、HPが減りました");
+        expectPoints(helper, data, 8);
         expectBlocker(helper, data, "knight/shield_bond", SkillTreeService.Blocker.NONE);
         learn(helper, player, data, "knight/shield_bond");
         expectRank(helper, data, "knight/shield_bond", 1);
         expectLoadout(helper, data, "knight/call", "knight/charge_slash", "knight/shield_bond", null, null, null);
+        expectPoints(helper, data, 7);
+        check(helper, SkillTreeService.canTakeNode(data, tree, beyond) == SkillTreeService.Blocker.NONE,
+                "守りの絆の先の節が取れる判定になりません：" + SkillTreeService.canTakeNode(data, tree, beyond));
+        // 段階を上げるポイント：2段目1・3段目2・4段目2（段階を上げるときは、となりは見ない）
+        learn(helper, player, data, "knight/call");
+        expectPoints(helper, data, 6);
+        learn(helper, player, data, "knight/call");
         expectPoints(helper, data, 4);
         learn(helper, player, data, "knight/call");
-        expectRank(helper, data, "knight/call", 2);
+        expectRank(helper, data, "knight/call", 4);
         expectPoints(helper, data, 2);
-        // 第3段は上位職から
+        // 第5段は上位職から
         expectBlocker(helper, data, "knight/call", SkillTreeService.Blocker.UPPER);
         check(helper, JobService.promote(player, data, true), "上位職に昇格できません");
         check(helper, data.isPromoted() && data.hasPromotedOnce(), "昇格が記録されていません");
         expectBlocker(helper, data, "knight/call", SkillTreeService.Blocker.POINTS);
 
-        // レベル10：ポイントは11 − 使った3
+        // レベル10：ポイントは20 − 使った7
         LevelService.setLevel(player, data, 10);
-        expectPoints(helper, data, 8);
+        expectPoints(helper, data, 13);
         learn(helper, player, data, "knight/call");
-        expectRank(helper, data, "knight/call", 3);
-        expectPoints(helper, data, 5);
+        expectRank(helper, data, "knight/call", 5);
+        expectPoints(helper, data, 10);
         expectBlocker(helper, data, "knight/call", SkillTreeService.Blocker.MAX_RANK);
         expectBlocker(helper, data, "knight/unfallen_castle", SkillTreeService.Blocker.LEVEL);
 
-        // レベル30：奥義は「城壁の構え」が前提
-        LevelService.setLevel(player, data, 30);
-        expectBlocker(helper, data, "knight/unfallen_castle", SkillTreeService.Blocker.REQUIREMENT);
-        learn(helper, player, data, "knight/rampart");
+        // レベル60：奥義は、核から道をのばした先（流派の先端）にある。2つから1つ
+        LevelService.setLevel(player, data, 60);
+        expectPoints(helper, data, GrowthRules.current().totalSkillPoints(60) - 10);
+        expectBlocker(helper, data, "knight/unfallen_castle", SkillTreeService.Blocker.NOT_CONNECTED);
+        String castle = TreeTestUtil.nodeOf(tree, id("knight/unfallen_castle"));
+        List<String> road = TreeTestUtil.path(tree, data, castle);
+        check(helper, road.size() >= 3, "奥義までの道が短すぎます：" + road);
+        TreeTestUtil.takePath(helper, player, data, tree, road.get(road.size() - 2));
         expectBlocker(helper, data, "knight/unfallen_castle", SkillTreeService.Blocker.NONE);
         int before = LevelService.availableSkillPoints(data, GrowthRules.current());
         learn(helper, player, data, "knight/unfallen_castle");
         expectPoints(helper, data, before - skill("knight/unfallen_castle").rankCost(1));
-        expectLoadout(helper, data, "knight/call", "knight/charge_slash", "knight/shield_bond", "knight/rampart",
-                "knight/unfallen_castle", null);
+        expectBlocker(helper, data, "knight/heaven_cleave", SkillTreeService.Blocker.ULTIMATE_CHOSEN);
 
         // スキル枠：習得していないスキルは入れられない。入れ替えると前の枠は空く
         check(helper, !SkillTreeService.setLoadout(player, data, 5, id("knight/whirlwind")), "習得していないスキルが枠に入りました");
         check(helper, SkillTreeService.setLoadout(player, data, 5, id("knight/call")), "スキル枠に入れられません");
-        expectLoadout(helper, data, null, "knight/charge_slash", "knight/shield_bond", "knight/rampart", "knight/unfallen_castle",
-                "knight/call");
+        check(helper, data.getLoadout(0) == null && id("knight/call").equals(data.getLoadout(5)), "入れ替えた前の枠が空いていません");
+        check(helper, SkillTreeService.setLoadout(player, data, 4, id("knight/unfallen_castle")), "奥義をスキル枠に入れられません");
 
-        // 上位職を外す：第3段は第2段に、奥義は消える
+        // 上位職を外す：第5段は第4段に、奥義は消える
         JobService.demote(player, data);
-        expectRank(helper, data, "knight/call", 2);
+        expectRank(helper, data, "knight/call", 4);
         expectRank(helper, data, "knight/unfallen_castle", 0);
         check(helper, data.loadoutSlotOf(id("knight/unfallen_castle")) < 0, "外した奥義がスキル枠に残っています");
 
-        // 白紙の誓約書と同じやり直し：最初のスキルだけが1段目で残る
+        // 白紙の誓約書と同じやり直し：最初のスキルだけが1段目で残り、取った節もすべて戻る
         SkillTreeService.resetSkills(player, data);
         check(helper, data.getLearnedSkills().size() == 2, "やり直した後のスキルが2つではありません：" + data.getLearnedSkills());
+        check(helper, data.getTreeNodes().isEmpty(), "やり直した後も、取った節が残っています：" + data.getTreeNodes());
         expectLoadout(helper, data, "knight/call", "knight/charge_slash", null, null, null, null);
-        expectPoints(helper, data, GrowthRules.current().totalSkillPoints(30));
+        expectPoints(helper, data, GrowthRules.current().totalSkillPoints(60));
         helper.succeed();
     }
 
@@ -415,7 +449,7 @@ public final class JobSkillGameTests {
         check(helper, !GaugeService.consume(player, data, 30), "誓気が足りないのに使えました");
         check(helper, Math.abs(data.getGauge() - 10) < EPSILON, "使えなかったのに誓気が減りました");
 
-        // 誓気の循環：1段目50%、2段目60%
+        // 誓気の循環：1段目50%、2段目55%（11月24日：段階を5つにし、1段ごとの伸びを半分に）
         SkillTreeService.forceRank(player, data, skill("knight/oath_cycle"), 1);
         data.setGauge(40);
         data.setMp(100);
@@ -425,7 +459,7 @@ public final class JobSkillGameTests {
         data.setGauge(30);
         data.setMp(100);
         GaugeService.consume(player, data, 30);
-        check(helper, Math.abs(data.getMp() - 118) < EPSILON, "誓気の循環（2段目）でMPが18戻っていません：" + data.getMp());
+        check(helper, Math.abs(data.getMp() - 116.5) < EPSILON, "誓気の循環（2段目）でMPが16.5戻っていません：" + data.getMp());
 
         // ウィザードには専用ゲージがない
         JobService.setJobForced(player, data, job("wizard"));
@@ -567,8 +601,10 @@ public final class JobSkillGameTests {
         PlayerData data = data(helper, oldBody);
         LevelService.setLevel(oldBody, data, 10);
         JobService.setJobForced(oldBody, data, job("knight"));
-        learn(helper, oldBody, data, "knight/shield_bond");
+        SkillTreeDef tree = TreeTestUtil.tree(id("knight"));
+        TreeTestUtil.takePath(helper, oldBody, data, tree, TreeTestUtil.nodeOf(tree, id("knight/shield_bond")));
         learn(helper, oldBody, data, "knight/call");
+        check(helper, !data.getTreeNodes().isEmpty(), "スキルツリーのステータスの節を取れていません");
         JobService.promote(oldBody, data, true);
         data.countJobChange();
         long now = helper.getLevel().getGameTime();
@@ -642,6 +678,9 @@ public final class JobSkillGameTests {
     public static void skillDefinitionsAreValid(GameTestHelper helper) {
         SkillRegistry.Snapshot snapshot = SkillRegistry.get();
         check(helper, snapshot.problems().isEmpty(), "職業・スキルの定義に問題があります：" + snapshot.problems());
+        jp.amemaru.lostconnection.job.def.SkillSounds.of(id("knight/call"));
+        check(helper, jp.amemaru.lostconnection.job.def.SkillSounds.loader().errors().isEmpty(),
+                "スキルの重ねる音の定義に問題があります：" + jp.amemaru.lostconnection.job.def.SkillSounds.loader().errors());
         // Phase 6 その2：戦闘職は6つ（ナイト・ウィザード・ヒーラー・アーチャー・ローグ・モンク）
         check(helper, snapshot.jobs().size() == 6, "戦闘職が6つではありません：" + snapshot.jobs().size());
         for (String name : new String[]{"knight", "wizard", "healer", "archer", "rogue", "monk"}) {
@@ -651,8 +690,9 @@ public final class JobSkillGameTests {
             long passives = skills.stream().filter(skill -> skill.kind() == SkillKind.PASSIVE).count();
             long ultimates = skills.stream().filter(SkillDef::isUltimate).count();
             // 仕様S2は4〜6個。11月17日のご指示（スキルが単調）で流派ごとに6つ（計12）、11月22日のご指示（スキルとパッシブを
-            // 増やして多様なビルドに）で流派ごとにアクティブ8・パッシブ5（計16・10）にした（Phase 0-A 19章）
-            check(helper, actives == 16, name + " のアクティブスキルが16個ではありません：" + actives);
+            // 増やして多様なビルドに）で流派ごとにアクティブ8・パッシブ5（計16・10）にした（Phase 0-A 19章）。11月24日のご指示
+            // （スキルツリーでビルドが変わるように、スキルをもっと）で、職業ごとにアクティブを5つ足した（計21）
+            check(helper, actives == 21, name + " のアクティブスキルが21個ではありません：" + actives);
             check(helper, passives == 10, name + " のパッシブスキルが10個ではありません：" + passives);
             // 奥義は流派ごとに1つ（計2つ）から1つを選ぶ（11月17日のご指示。Phase 0-A 19章）
             check(helper, ultimates == 2, name + " の奥義が2つではありません：" + ultimates);
@@ -665,6 +705,9 @@ public final class JobSkillGameTests {
             }
             for (SkillDef skill : skills) {
                 if (skill.isActive()) {
+                    // 11月24日：どのアクティブスキルにも、放ったときに重ねる音がある（「スキルの音が寂しい」）
+                    check(helper, !jp.amemaru.lostconnection.job.def.SkillSounds.of(skill.id()).release().isEmpty(),
+                            skill.id() + " に、放ったときに重ねる音がありません");
                     check(helper, !skill.animation().isEmpty(), skill.id() + " のモーションの名前がありません");
                     check(helper, skill.cooldown(1) > 0, skill.id() + " のクールダウンが0です");
                     check(helper, skill.mpCost(1) > 0 || skill.gaugeCost(1) > 0 || skill.id().getPath().endsWith("mana_thread"),
@@ -790,6 +833,7 @@ public final class JobSkillGameTests {
         check(helper, actual.isPromoted() && actual.hasPromotedOnce(), label + "上位職が外れています");
         check(helper, expected.getLearnedSkills().equals(actual.getLearnedSkills()),
                 label + "習得が違います：" + actual.getLearnedSkills());
+        check(helper, expected.getTreeNodes().equals(actual.getTreeNodes()), label + "スキルツリーの節が違います：" + actual.getTreeNodes());
         for (int slot = 0; slot < PlayerData.LOADOUT_SIZE; slot++) {
             ResourceLocation a = expected.getLoadout(slot);
             ResourceLocation b = actual.getLoadout(slot);

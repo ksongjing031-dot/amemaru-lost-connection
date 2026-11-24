@@ -941,7 +941,7 @@
   "skill.rogue.binding_threads": {
     "sounds": [
       {
-        "name": "minecraft:block.cobweb.place",
+        "name": "minecraft:block.wool.place",
         "type": "event"
       }
     ],
@@ -1243,5 +1243,275 @@
       }
     ],
     "subtitle": "subtitles.amemaru.skill.wizard.absolute_zero"
+  },
+  "skill.archer.quick_draw": {
+    "sounds": [
+      {
+        "name": "minecraft:item.crossbow.shoot",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.archer.quick_draw"
+  },
+  "skill.archer.flash_arrow": {
+    "sounds": [
+      {
+        "name": "minecraft:block.amethyst_block.resonate",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.archer.flash_arrow"
+  },
+  "skill.archer.wind_cloak": {
+    "sounds": [
+      {
+        "name": "minecraft:item.elytra.flying",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.archer.wind_cloak"
+  },
+  "skill.archer.hunters_focus": {
+    "sounds": [
+      {
+        "name": "minecraft:block.beacon.power_select",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.archer.hunters_focus"
+  },
+  "skill.archer.arrow_fan": {
+    "sounds": [
+      {
+        "name": "minecraft:item.crossbow.shoot",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.archer.arrow_fan"
+  },
+  "skill.healer.bell_strike": {
+    "sounds": [
+      {
+        "name": "minecraft:block.bell.use",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.healer.bell_strike"
+  },
+  "skill.healer.mending_light": {
+    "sounds": [
+      {
+        "name": "minecraft:block.amethyst_block.chime",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.healer.mending_light"
+  },
+  "skill.healer.chorus_bell": {
+    "sounds": [
+      {
+        "name": "minecraft:block.bell.resonate",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.healer.chorus_bell"
+  },
+  "skill.healer.swift_prayer": {
+    "sounds": [
+      {
+        "name": "minecraft:block.enchantment_table.use",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.healer.swift_prayer"
+  },
+  "skill.healer.judgment_bell": {
+    "sounds": [
+      {
+        "name": "minecraft:block.bell.use",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.healer.judgment_bell"
+  },
+  "skill.rogue.throwing_knife": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.snowball.throw",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.rogue.throwing_knife"
+  },
+  "skill.rogue.twin_fangs": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.player.attack.sweep",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.rogue.twin_fangs"
+  },
+  "skill.rogue.venom_veil": {
+    "sounds": [
+      {
+        "name": "minecraft:block.fire.extinguish",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.rogue.venom_veil"
+  },
+  "skill.rogue.shadow_dance": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.phantom.flap",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.rogue.shadow_dance"
+  },
+  "skill.rogue.hamstring": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.player.attack.knockback",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.rogue.hamstring"
+  },
+  "skill.monk.kaisei_fist": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.player.attack.strong",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.monk.kaisei_fist"
+  },
+  "skill.monk.kien": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.blaze.shoot",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.monk.kien"
+  },
+  "skill.monk.air_palm": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.ender_dragon.flap",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.monk.air_palm"
+  },
+  "skill.monk.chain_kicks": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.player.attack.sweep",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.monk.chain_kicks"
+  },
+  "skill.monk.back_strike": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.player.attack.knockback",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.monk.back_strike"
+  },
+  "skill.knight.sword_pressure": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.player.attack.sweep",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.knight.sword_pressure"
+  },
+  "skill.knight.war_cry": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.ravager.roar",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.knight.war_cry"
+  },
+  "skill.knight.shield_rush": {
+    "sounds": [
+      {
+        "name": "minecraft:item.shield.block",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.knight.shield_rush"
+  },
+  "skill.knight.crushing_blow": {
+    "sounds": [
+      {
+        "name": "minecraft:entity.player.attack.crit",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.knight.crushing_blow"
+  },
+  "skill.knight.iron_resolve": {
+    "sounds": [
+      {
+        "name": "minecraft:item.armor.equip_netherite",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.knight.iron_resolve"
+  },
+  "skill.wizard.ice_shard": {
+    "sounds": [
+      {
+        "name": "minecraft:block.glass.break",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.wizard.ice_shard"
+  },
+  "skill.wizard.star_shield": {
+    "sounds": [
+      {
+        "name": "minecraft:block.amethyst_block.resonate",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.wizard.star_shield"
+  },
+  "skill.wizard.mana_focus": {
+    "sounds": [
+      {
+        "name": "minecraft:block.beacon.power_select",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.wizard.mana_focus"
+  },
+  "skill.wizard.frost_mist": {
+    "sounds": [
+      {
+        "name": "minecraft:block.powder_snow.place",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.wizard.frost_mist"
+  },
+  "skill.wizard.light_lance": {
+    "sounds": [
+      {
+        "name": "minecraft:block.beacon.activate",
+        "type": "event"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.skill.wizard.light_lance"
   }
 }

@@ -1,0 +1,1447 @@
+{
+  "_comment": "スキルツリー（tools/datagen/build_skill_trees.py が書き出す。手で直さない）。節（core：職業の核・skill：スキル・stat：ステータスの小さな節・notable：大きな節）と、つながり（links）。x・y はツリーの単位（右・下が正）",
+  "job": "amemaru:knight",
+  "nodes": [
+    {
+      "id": "core",
+      "kind": "core",
+      "x": 0.0,
+      "y": 0.0
+    },
+    {
+      "id": "s:knight/war_cry",
+      "kind": "skill",
+      "skill": "amemaru:knight/war_cry",
+      "x": -167.8,
+      "y": -49.7,
+      "start": false
+    },
+    {
+      "id": "s:knight/shield_rush",
+      "kind": "skill",
+      "skill": "amemaru:knight/shield_rush",
+      "x": -244.5,
+      "y": -72.4,
+      "start": false
+    },
+    {
+      "id": "g:guardian:3:3",
+      "kind": "stat",
+      "x": -321.2,
+      "y": -95.1,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "s:knight/iron_resolve",
+      "kind": "skill",
+      "skill": "amemaru:knight/iron_resolve",
+      "x": -397.9,
+      "y": -117.9,
+      "start": false
+    },
+    {
+      "id": "n:guardian:3",
+      "kind": "notable",
+      "name": "城塞の心得",
+      "x": -474.6,
+      "y": -140.6,
+      "percent": {
+        "defense": 8,
+        "hp": 4
+      }
+    },
+    {
+      "id": "s:knight/call",
+      "kind": "skill",
+      "skill": "amemaru:knight/call",
+      "x": -79.2,
+      "y": -52.4,
+      "start": true
+    },
+    {
+      "id": "s:knight/shield_bond",
+      "kind": "skill",
+      "skill": "amemaru:knight/shield_bond",
+      "x": -145.9,
+      "y": -96.6,
+      "start": false
+    },
+    {
+      "id": "s:knight/rampart",
+      "kind": "skill",
+      "skill": "amemaru:knight/rampart",
+      "x": -212.6,
+      "y": -140.7,
+      "start": false
+    },
+    {
+      "id": "s:knight/oath_circle",
+      "kind": "skill",
+      "skill": "amemaru:knight/oath_circle",
+      "x": -279.4,
+      "y": -184.9,
+      "start": false
+    },
+    {
+      "id": "s:knight/iron_pledge",
+      "kind": "skill",
+      "skill": "amemaru:knight/iron_pledge",
+      "x": -346.1,
+      "y": -229.1,
+      "start": false
+    },
+    {
+      "id": "s:knight/shield_bash",
+      "kind": "skill",
+      "skill": "amemaru:knight/shield_bash",
+      "x": -412.8,
+      "y": -273.2,
+      "start": false
+    },
+    {
+      "id": "s:knight/binding_chain",
+      "kind": "skill",
+      "skill": "amemaru:knight/binding_chain",
+      "x": -111.3,
+      "y": -135.0,
+      "start": false
+    },
+    {
+      "id": "s:knight/parry",
+      "kind": "skill",
+      "skill": "amemaru:knight/parry",
+      "x": -162.2,
+      "y": -196.8,
+      "start": false
+    },
+    {
+      "id": "g:guardian:3:1",
+      "kind": "stat",
+      "x": -213.1,
+      "y": -258.5,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "g:guardian:4:1",
+      "kind": "stat",
+      "x": -264.0,
+      "y": -320.2,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "n:guardian:1",
+      "kind": "notable",
+      "name": "揺るがぬ礎",
+      "x": -314.9,
+      "y": -382.0,
+      "stats": {
+        "hp": 60
+      },
+      "percent": {
+        "defense": 6
+      }
+    },
+    {
+      "id": "s:knight/guardian_pride",
+      "kind": "skill",
+      "skill": "amemaru:knight/guardian_pride",
+      "x": -67.0,
+      "y": -161.7,
+      "start": false
+    },
+    {
+      "id": "s:knight/iron_wall",
+      "kind": "skill",
+      "skill": "amemaru:knight/iron_wall",
+      "x": -97.6,
+      "y": -235.6,
+      "start": false
+    },
+    {
+      "id": "s:knight/taunt_mastery",
+      "kind": "skill",
+      "skill": "amemaru:knight/taunt_mastery",
+      "x": -128.2,
+      "y": -309.5,
+      "start": false
+    },
+    {
+      "id": "s:knight/steadfast_shield",
+      "kind": "skill",
+      "skill": "amemaru:knight/steadfast_shield",
+      "x": -158.8,
+      "y": -383.4,
+      "start": false
+    },
+    {
+      "id": "s:knight/guardians_heart",
+      "kind": "skill",
+      "skill": "amemaru:knight/guardians_heart",
+      "x": -189.4,
+      "y": -457.3,
+      "start": false
+    },
+    {
+      "id": "b22",
+      "kind": "stat",
+      "x": -206.2,
+      "y": -61.1,
+      "stats": {
+        "defense": 2
+      }
+    },
+    {
+      "id": "b23",
+      "kind": "stat",
+      "x": -282.9,
+      "y": -83.8,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b24",
+      "kind": "stat",
+      "x": -359.5,
+      "y": -106.5,
+      "stats": {
+        "defense": 3
+      }
+    },
+    {
+      "id": "b25",
+      "kind": "stat",
+      "x": -436.2,
+      "y": -129.2,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b26",
+      "kind": "stat",
+      "x": -112.6,
+      "y": -74.5,
+      "stats": {
+        "defense": 2
+      }
+    },
+    {
+      "id": "b27",
+      "kind": "stat",
+      "x": -179.2,
+      "y": -118.6,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b28",
+      "kind": "stat",
+      "x": -246.0,
+      "y": -162.8,
+      "stats": {
+        "defense": 2
+      }
+    },
+    {
+      "id": "b29",
+      "kind": "stat",
+      "x": -312.8,
+      "y": -207.0,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b30",
+      "kind": "stat",
+      "x": -379.5,
+      "y": -251.1,
+      "stats": {
+        "defense": 3
+      }
+    },
+    {
+      "id": "b31",
+      "kind": "stat",
+      "x": -136.8,
+      "y": -165.9,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b32",
+      "kind": "stat",
+      "x": -187.6,
+      "y": -227.7,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b33",
+      "kind": "stat",
+      "x": -238.6,
+      "y": -289.4,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b34",
+      "kind": "stat",
+      "x": -289.4,
+      "y": -351.1,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b35",
+      "kind": "stat",
+      "x": -82.3,
+      "y": -198.6,
+      "stats": {
+        "defense": 2
+      }
+    },
+    {
+      "id": "b36",
+      "kind": "stat",
+      "x": -112.9,
+      "y": -272.6,
+      "stats": {
+        "mp": 12
+      }
+    },
+    {
+      "id": "b37",
+      "kind": "stat",
+      "x": -143.5,
+      "y": -346.4,
+      "stats": {
+        "defense": 3
+      }
+    },
+    {
+      "id": "b38",
+      "kind": "stat",
+      "x": -174.1,
+      "y": -420.4,
+      "stats": {
+        "mp": 14
+      }
+    },
+    {
+      "id": "b39",
+      "kind": "stat",
+      "x": -39.6,
+      "y": -26.2,
+      "stats": {
+        "hp": 20
+      }
+    },
+    {
+      "id": "b40",
+      "kind": "stat",
+      "x": -300.3,
+      "y": -140.0,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b41",
+      "kind": "stat",
+      "x": -246.2,
+      "y": -221.7,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b42",
+      "kind": "stat",
+      "x": -170.6,
+      "y": -284.0,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b43",
+      "kind": "stat",
+      "x": -454.0,
+      "y": -184.8,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b44",
+      "kind": "stat",
+      "x": -433.4,
+      "y": -229.0,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b45",
+      "kind": "stat",
+      "x": -380.2,
+      "y": -309.5,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b46",
+      "kind": "stat",
+      "x": -347.5,
+      "y": -345.7,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b47",
+      "kind": "stat",
+      "x": -273.1,
+      "y": -407.1,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b48",
+      "kind": "stat",
+      "x": -231.2,
+      "y": -432.2,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "s:knight/unfallen_castle",
+      "kind": "skill",
+      "skill": "amemaru:knight/unfallen_castle",
+      "x": -492.0,
+      "y": -325.6,
+      "start": false
+    },
+    {
+      "id": "b50",
+      "kind": "stat",
+      "x": -452.4,
+      "y": -299.4,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "s:knight/sword_pressure",
+      "kind": "skill",
+      "skill": "amemaru:knight/sword_pressure",
+      "x": 167.8,
+      "y": -49.7,
+      "start": false
+    },
+    {
+      "id": "g:greatsword:2:3",
+      "kind": "stat",
+      "x": 244.5,
+      "y": -72.4,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "s:knight/crushing_blow",
+      "kind": "skill",
+      "skill": "amemaru:knight/crushing_blow",
+      "x": 321.2,
+      "y": -95.1,
+      "start": false
+    },
+    {
+      "id": "g:greatsword:4:3",
+      "kind": "stat",
+      "x": 397.9,
+      "y": -117.9,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "n:greatsword:3",
+      "kind": "notable",
+      "name": "剛力",
+      "x": 474.6,
+      "y": -140.6,
+      "percent": {
+        "attack": 6
+      }
+    },
+    {
+      "id": "s:knight/charge_slash",
+      "kind": "skill",
+      "skill": "amemaru:knight/charge_slash",
+      "x": 79.2,
+      "y": -52.4,
+      "start": true
+    },
+    {
+      "id": "s:knight/whirlwind",
+      "kind": "skill",
+      "skill": "amemaru:knight/whirlwind",
+      "x": 145.9,
+      "y": -96.6,
+      "start": false
+    },
+    {
+      "id": "s:knight/unyielding_vow",
+      "kind": "skill",
+      "skill": "amemaru:knight/unyielding_vow",
+      "x": 212.6,
+      "y": -140.7,
+      "start": false
+    },
+    {
+      "id": "s:knight/oath_release",
+      "kind": "skill",
+      "skill": "amemaru:knight/oath_release",
+      "x": 279.4,
+      "y": -184.9,
+      "start": false
+    },
+    {
+      "id": "s:knight/great_wheel",
+      "kind": "skill",
+      "skill": "amemaru:knight/great_wheel",
+      "x": 346.1,
+      "y": -229.1,
+      "start": false
+    },
+    {
+      "id": "s:knight/earth_splitter",
+      "kind": "skill",
+      "skill": "amemaru:knight/earth_splitter",
+      "x": 412.8,
+      "y": -273.2,
+      "start": false
+    },
+    {
+      "id": "s:knight/heavy_slash",
+      "kind": "skill",
+      "skill": "amemaru:knight/heavy_slash",
+      "x": 162.2,
+      "y": -196.8,
+      "start": false
+    },
+    {
+      "id": "s:knight/leap_slash",
+      "kind": "skill",
+      "skill": "amemaru:knight/leap_slash",
+      "x": 213.1,
+      "y": -258.5,
+      "start": false
+    },
+    {
+      "id": "g:greatsword:4:1",
+      "kind": "stat",
+      "x": 264.0,
+      "y": -320.2,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "n:greatsword:1",
+      "kind": "notable",
+      "name": "断ち切る型",
+      "x": 314.9,
+      "y": -382.0,
+      "stats": {
+        "crit": 3,
+        "crit_damage": 10
+      }
+    },
+    {
+      "id": "s:knight/oath_cycle",
+      "kind": "skill",
+      "skill": "amemaru:knight/oath_cycle",
+      "x": 67.0,
+      "y": -161.7,
+      "start": false
+    },
+    {
+      "id": "s:knight/breaker",
+      "kind": "skill",
+      "skill": "amemaru:knight/breaker",
+      "x": 97.6,
+      "y": -235.6,
+      "start": false
+    },
+    {
+      "id": "s:knight/fighting_spirit",
+      "kind": "skill",
+      "skill": "amemaru:knight/fighting_spirit",
+      "x": 128.2,
+      "y": -309.5,
+      "start": false
+    },
+    {
+      "id": "s:knight/greatsword_mastery",
+      "kind": "skill",
+      "skill": "amemaru:knight/greatsword_mastery",
+      "x": 158.8,
+      "y": -383.4,
+      "start": false
+    },
+    {
+      "id": "s:knight/blade_chain",
+      "kind": "skill",
+      "skill": "amemaru:knight/blade_chain",
+      "x": 189.4,
+      "y": -457.3,
+      "start": false
+    },
+    {
+      "id": "b71",
+      "kind": "stat",
+      "x": 206.2,
+      "y": -61.1,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b72",
+      "kind": "stat",
+      "x": 282.9,
+      "y": -83.8,
+      "stats": {
+        "crit": 1.0
+      }
+    },
+    {
+      "id": "b73",
+      "kind": "stat",
+      "x": 359.5,
+      "y": -106.5,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b74",
+      "kind": "stat",
+      "x": 436.2,
+      "y": -129.2,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "b75",
+      "kind": "stat",
+      "x": 112.6,
+      "y": -74.5,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b76",
+      "kind": "stat",
+      "x": 179.2,
+      "y": -118.6,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b77",
+      "kind": "stat",
+      "x": 246.0,
+      "y": -162.8,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b78",
+      "kind": "stat",
+      "x": 312.8,
+      "y": -207.0,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b79",
+      "kind": "stat",
+      "x": 379.5,
+      "y": -251.1,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b80",
+      "kind": "stat",
+      "x": 187.6,
+      "y": -227.7,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b81",
+      "kind": "stat",
+      "x": 238.6,
+      "y": -289.4,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "b82",
+      "kind": "stat",
+      "x": 289.4,
+      "y": -351.1,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b83",
+      "kind": "stat",
+      "x": 82.3,
+      "y": -198.6,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b84",
+      "kind": "stat",
+      "x": 112.9,
+      "y": -272.6,
+      "stats": {
+        "defense": 2
+      }
+    },
+    {
+      "id": "b85",
+      "kind": "stat",
+      "x": 143.5,
+      "y": -346.4,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b86",
+      "kind": "stat",
+      "x": 174.1,
+      "y": -420.4,
+      "stats": {
+        "defense": 3
+      }
+    },
+    {
+      "id": "b87",
+      "kind": "stat",
+      "x": 39.6,
+      "y": -26.2,
+      "stats": {
+        "hp": 20
+      }
+    },
+    {
+      "id": "b88",
+      "kind": "stat",
+      "x": 106.5,
+      "y": -129.1,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b89",
+      "kind": "stat",
+      "x": 300.3,
+      "y": -140.0,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b90",
+      "kind": "stat",
+      "x": 246.2,
+      "y": -221.7,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b91",
+      "kind": "stat",
+      "x": 170.6,
+      "y": -284.0,
+      "stats": {
+        "attack": 2
+      }
+    },
+    {
+      "id": "b92",
+      "kind": "stat",
+      "x": 454.0,
+      "y": -184.8,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b93",
+      "kind": "stat",
+      "x": 433.4,
+      "y": -229.0,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b94",
+      "kind": "stat",
+      "x": 380.2,
+      "y": -309.5,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b95",
+      "kind": "stat",
+      "x": 347.5,
+      "y": -345.7,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b96",
+      "kind": "stat",
+      "x": 273.1,
+      "y": -407.1,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b97",
+      "kind": "stat",
+      "x": 231.2,
+      "y": -432.2,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "s:knight/heaven_cleave",
+      "kind": "skill",
+      "skill": "amemaru:knight/heaven_cleave",
+      "x": 492.0,
+      "y": -325.6,
+      "start": false
+    },
+    {
+      "id": "b99",
+      "kind": "stat",
+      "x": 452.4,
+      "y": -299.4,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "n:bridge:2",
+      "kind": "notable",
+      "name": "騎士の均衡",
+      "x": 0.0,
+      "y": -255.0,
+      "percent": {
+        "hp": 4,
+        "attack": 3
+      }
+    },
+    {
+      "id": "b101",
+      "kind": "stat",
+      "x": -48.8,
+      "y": -245.3,
+      "stats": {
+        "hp": 24
+      }
+    },
+    {
+      "id": "b102",
+      "kind": "stat",
+      "x": 48.8,
+      "y": -245.3,
+      "stats": {
+        "defense": 2
+      }
+    },
+    {
+      "id": "n:bridge:4",
+      "kind": "notable",
+      "name": "誓いの重み",
+      "x": 0.0,
+      "y": -415.0,
+      "stats": {
+        "defense": 6
+      },
+      "percent": {
+        "hp": 5
+      }
+    },
+    {
+      "id": "b104",
+      "kind": "stat",
+      "x": -105.9,
+      "y": -393.9,
+      "stats": {
+        "attack": 3
+      }
+    },
+    {
+      "id": "b105",
+      "kind": "stat",
+      "x": -52.9,
+      "y": -404.5,
+      "stats": {
+        "hp": 28
+      }
+    },
+    {
+      "id": "b106",
+      "kind": "stat",
+      "x": 105.9,
+      "y": -393.9,
+      "stats": {
+        "defense": 3
+      }
+    },
+    {
+      "id": "b107",
+      "kind": "stat",
+      "x": 52.9,
+      "y": -404.5,
+      "stats": {
+        "attack": 3
+      }
+    }
+  ],
+  "links": [
+    [
+      "b101",
+      "n:bridge:2"
+    ],
+    [
+      "b101",
+      "s:knight/iron_wall"
+    ],
+    [
+      "b102",
+      "n:bridge:2"
+    ],
+    [
+      "b102",
+      "s:knight/breaker"
+    ],
+    [
+      "b104",
+      "b105"
+    ],
+    [
+      "b104",
+      "s:knight/steadfast_shield"
+    ],
+    [
+      "b105",
+      "n:bridge:4"
+    ],
+    [
+      "b106",
+      "b107"
+    ],
+    [
+      "b106",
+      "s:knight/greatsword_mastery"
+    ],
+    [
+      "b107",
+      "n:bridge:4"
+    ],
+    [
+      "b22",
+      "s:knight/shield_rush"
+    ],
+    [
+      "b22",
+      "s:knight/war_cry"
+    ],
+    [
+      "b23",
+      "g:guardian:3:3"
+    ],
+    [
+      "b23",
+      "s:knight/shield_rush"
+    ],
+    [
+      "b24",
+      "g:guardian:3:3"
+    ],
+    [
+      "b24",
+      "s:knight/iron_resolve"
+    ],
+    [
+      "b25",
+      "n:guardian:3"
+    ],
+    [
+      "b25",
+      "s:knight/iron_resolve"
+    ],
+    [
+      "b26",
+      "s:knight/call"
+    ],
+    [
+      "b26",
+      "s:knight/shield_bond"
+    ],
+    [
+      "b27",
+      "s:knight/rampart"
+    ],
+    [
+      "b27",
+      "s:knight/shield_bond"
+    ],
+    [
+      "b28",
+      "s:knight/oath_circle"
+    ],
+    [
+      "b28",
+      "s:knight/rampart"
+    ],
+    [
+      "b29",
+      "s:knight/iron_pledge"
+    ],
+    [
+      "b29",
+      "s:knight/oath_circle"
+    ],
+    [
+      "b30",
+      "s:knight/iron_pledge"
+    ],
+    [
+      "b30",
+      "s:knight/shield_bash"
+    ],
+    [
+      "b31",
+      "s:knight/binding_chain"
+    ],
+    [
+      "b31",
+      "s:knight/parry"
+    ],
+    [
+      "b32",
+      "g:guardian:3:1"
+    ],
+    [
+      "b32",
+      "s:knight/parry"
+    ],
+    [
+      "b33",
+      "g:guardian:3:1"
+    ],
+    [
+      "b33",
+      "g:guardian:4:1"
+    ],
+    [
+      "b34",
+      "g:guardian:4:1"
+    ],
+    [
+      "b34",
+      "n:guardian:1"
+    ],
+    [
+      "b35",
+      "s:knight/guardian_pride"
+    ],
+    [
+      "b35",
+      "s:knight/iron_wall"
+    ],
+    [
+      "b36",
+      "s:knight/iron_wall"
+    ],
+    [
+      "b36",
+      "s:knight/taunt_mastery"
+    ],
+    [
+      "b37",
+      "s:knight/steadfast_shield"
+    ],
+    [
+      "b37",
+      "s:knight/taunt_mastery"
+    ],
+    [
+      "b38",
+      "s:knight/guardians_heart"
+    ],
+    [
+      "b38",
+      "s:knight/steadfast_shield"
+    ],
+    [
+      "b39",
+      "core"
+    ],
+    [
+      "b39",
+      "s:knight/call"
+    ],
+    [
+      "b40",
+      "g:guardian:3:3"
+    ],
+    [
+      "b40",
+      "s:knight/oath_circle"
+    ],
+    [
+      "b41",
+      "g:guardian:3:1"
+    ],
+    [
+      "b41",
+      "s:knight/oath_circle"
+    ],
+    [
+      "b42",
+      "g:guardian:3:1"
+    ],
+    [
+      "b42",
+      "s:knight/taunt_mastery"
+    ],
+    [
+      "b43",
+      "b44"
+    ],
+    [
+      "b43",
+      "n:guardian:3"
+    ],
+    [
+      "b44",
+      "s:knight/shield_bash"
+    ],
+    [
+      "b45",
+      "b46"
+    ],
+    [
+      "b45",
+      "s:knight/shield_bash"
+    ],
+    [
+      "b46",
+      "n:guardian:1"
+    ],
+    [
+      "b47",
+      "b48"
+    ],
+    [
+      "b47",
+      "n:guardian:1"
+    ],
+    [
+      "b48",
+      "s:knight/guardians_heart"
+    ],
+    [
+      "b50",
+      "s:knight/shield_bash"
+    ],
+    [
+      "b50",
+      "s:knight/unfallen_castle"
+    ],
+    [
+      "b71",
+      "g:greatsword:2:3"
+    ],
+    [
+      "b71",
+      "s:knight/sword_pressure"
+    ],
+    [
+      "b72",
+      "g:greatsword:2:3"
+    ],
+    [
+      "b72",
+      "s:knight/crushing_blow"
+    ],
+    [
+      "b73",
+      "g:greatsword:4:3"
+    ],
+    [
+      "b73",
+      "s:knight/crushing_blow"
+    ],
+    [
+      "b74",
+      "g:greatsword:4:3"
+    ],
+    [
+      "b74",
+      "n:greatsword:3"
+    ],
+    [
+      "b75",
+      "s:knight/charge_slash"
+    ],
+    [
+      "b75",
+      "s:knight/whirlwind"
+    ],
+    [
+      "b76",
+      "s:knight/unyielding_vow"
+    ],
+    [
+      "b76",
+      "s:knight/whirlwind"
+    ],
+    [
+      "b77",
+      "s:knight/oath_release"
+    ],
+    [
+      "b77",
+      "s:knight/unyielding_vow"
+    ],
+    [
+      "b78",
+      "s:knight/great_wheel"
+    ],
+    [
+      "b78",
+      "s:knight/oath_release"
+    ],
+    [
+      "b79",
+      "s:knight/earth_splitter"
+    ],
+    [
+      "b79",
+      "s:knight/great_wheel"
+    ],
+    [
+      "b80",
+      "s:knight/heavy_slash"
+    ],
+    [
+      "b80",
+      "s:knight/leap_slash"
+    ],
+    [
+      "b81",
+      "g:greatsword:4:1"
+    ],
+    [
+      "b81",
+      "s:knight/leap_slash"
+    ],
+    [
+      "b82",
+      "g:greatsword:4:1"
+    ],
+    [
+      "b82",
+      "n:greatsword:1"
+    ],
+    [
+      "b83",
+      "s:knight/breaker"
+    ],
+    [
+      "b83",
+      "s:knight/oath_cycle"
+    ],
+    [
+      "b84",
+      "s:knight/breaker"
+    ],
+    [
+      "b84",
+      "s:knight/fighting_spirit"
+    ],
+    [
+      "b85",
+      "s:knight/fighting_spirit"
+    ],
+    [
+      "b85",
+      "s:knight/greatsword_mastery"
+    ],
+    [
+      "b86",
+      "s:knight/blade_chain"
+    ],
+    [
+      "b86",
+      "s:knight/greatsword_mastery"
+    ],
+    [
+      "b87",
+      "core"
+    ],
+    [
+      "b87",
+      "s:knight/charge_slash"
+    ],
+    [
+      "b88",
+      "s:knight/oath_cycle"
+    ],
+    [
+      "b88",
+      "s:knight/whirlwind"
+    ],
+    [
+      "b89",
+      "s:knight/crushing_blow"
+    ],
+    [
+      "b89",
+      "s:knight/oath_release"
+    ],
+    [
+      "b90",
+      "s:knight/leap_slash"
+    ],
+    [
+      "b90",
+      "s:knight/oath_release"
+    ],
+    [
+      "b91",
+      "s:knight/fighting_spirit"
+    ],
+    [
+      "b91",
+      "s:knight/leap_slash"
+    ],
+    [
+      "b92",
+      "b93"
+    ],
+    [
+      "b92",
+      "n:greatsword:3"
+    ],
+    [
+      "b93",
+      "s:knight/earth_splitter"
+    ],
+    [
+      "b94",
+      "b95"
+    ],
+    [
+      "b94",
+      "s:knight/earth_splitter"
+    ],
+    [
+      "b95",
+      "n:greatsword:1"
+    ],
+    [
+      "b96",
+      "b97"
+    ],
+    [
+      "b96",
+      "n:greatsword:1"
+    ],
+    [
+      "b97",
+      "s:knight/blade_chain"
+    ],
+    [
+      "b99",
+      "s:knight/earth_splitter"
+    ],
+    [
+      "b99",
+      "s:knight/heaven_cleave"
+    ],
+    [
+      "s:knight/binding_chain",
+      "s:knight/guardian_pride"
+    ],
+    [
+      "s:knight/binding_chain",
+      "s:knight/shield_bond"
+    ],
+    [
+      "s:knight/breaker",
+      "s:knight/heavy_slash"
+    ],
+    [
+      "s:knight/heavy_slash",
+      "s:knight/unyielding_vow"
+    ],
+    [
+      "s:knight/shield_bond",
+      "s:knight/war_cry"
+    ],
+    [
+      "s:knight/sword_pressure",
+      "s:knight/whirlwind"
+    ]
+  ]
+}

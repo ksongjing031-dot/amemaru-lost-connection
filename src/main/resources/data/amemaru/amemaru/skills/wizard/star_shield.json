@@ -1,0 +1,43 @@
+{
+  "job": "wizard",
+  "school": "starlight",
+  "row": 1,
+  "column": 3,
+  "type": "active",
+  "name": "星屑の盾",
+  "description": "星屑を集めた薄い盾で、自分を包む。盾がダメージを受け止める。",
+  "max_rank": 5,
+  "rank_costs": [
+    1,
+    1,
+    2,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "requires": [
+    {
+      "skill": "wizard/lamp_bolt",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 16
+  },
+  "cooldown": 24,
+  "cooldown_per_rank": -0.5,
+  "delivery": {
+    "type": "self"
+  },
+  "effects": [
+    {
+      "type": "barrier",
+      "stat": "magic",
+      "coefficient": 1.6,
+      "coefficient_per_rank": 0.2,
+      "duration": 8
+    }
+  ],
+  "animation": "wizard_light_veil",
+  "sound": "amemaru:skill.wizard.star_shield"
+}

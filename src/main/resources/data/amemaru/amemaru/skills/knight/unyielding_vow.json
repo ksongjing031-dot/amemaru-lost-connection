@@ -6,9 +6,11 @@
   "type": "active",
   "name": "不屈の誓い",
   "description": "ためた誓気を燃やし、決して倒れないと誓う。しばらくの間、HPが1より下がらない。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -24,7 +26,7 @@
     "gauge": 50
   },
   "cooldown": 90,
-  "cooldown_per_rank": -10,
+  "cooldown_per_rank": -5,
   "delivery": {
     "type": "self"
   },
@@ -33,7 +35,7 @@
       "type": "buff",
       "buff": "unyielding",
       "duration": 10,
-      "duration_per_rank": 1
+      "duration_per_rank": 0.5
     }
   ],
   "animation": "knight_unyielding_vow",

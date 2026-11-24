@@ -6,9 +6,11 @@
   "type": "active",
   "name": "呼び声",
   "description": "糸を震わせて名乗りを上げ、まわりの敵の狙いを自分に集める。引きつけた敵の数だけ誓気がたまる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -17,25 +19,25 @@
     "mp": 12
   },
   "cooldown": 12,
-  "cooldown_per_rank": -1,
+  "cooldown_per_rank": -0.5,
   "link": "starter",
   "delivery": {
     "type": "around",
     "radius": 8,
-    "radius_per_rank": 1,
+    "radius_per_rank": 0.5,
     "affects": "enemies"
   },
   "effects": [
     {
       "type": "taunt",
       "duration": 5,
-      "duration_per_rank": 1
+      "duration_per_rank": 0.5
     },
     {
       "type": "gauge",
       "per_target": 5,
       "max": 20,
-      "max_per_rank": 5
+      "max_per_rank": 2.5
     }
   ],
   "animation": "knight_call",

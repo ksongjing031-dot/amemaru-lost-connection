@@ -6,9 +6,11 @@
   "type": "passive",
   "name": "鋼の肉体",
   "description": "鍛えぬいた体は、刃も通しにくい。防御が上がる。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -22,6 +24,6 @@
   "passive": {
     "type": "iron_body",
     "value": 6,
-    "value_per_rank": 3
+    "value_per_rank": 1.5
   }
 }

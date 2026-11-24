@@ -6,9 +6,11 @@
   "type": "active",
   "name": "影縫い",
   "description": "味方の影に飛び込み、その人のそばへ移る。守りに行くときにも、逃げるときにも使える。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],

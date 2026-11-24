@@ -92,7 +92,8 @@ public final class ConnectionSocial {
     }
 
     /**
-     * 先導の相手（後輩）か：途中参加者（来てから3日のうち）か、サーバーの中央値より10レベル以上低い人（Phase 0-A 15章）。
+     * 先導の相手（後輩）か：途中参加者（来てから3日のうち）か、サーバーの中央値より {@code leadLevelGap}（初期値20。設計書の10レベルを、
+     * 11月24日に最大レベルを倍にしたのに合わせた）以上低い人（Phase 0-A 15章）。
      */
     public static boolean isJunior(ServerPlayer player) {
         PlayerData data = PlayerDataCapability.get(player).orElse(null);

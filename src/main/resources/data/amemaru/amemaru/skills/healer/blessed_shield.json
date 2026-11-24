@@ -6,9 +6,11 @@
   "type": "active",
   "name": "祝福の盾",
   "description": "祝福の光で、狙った仲間を包む盾を作る。盾は受けるダメージを吸い、消えるとき（砕けても、時間が切れても）、盾の大きさの半分だけ傷を癒す。",
-  "max_rank": 3,
+  "max_rank": 5,
   "rank_costs": [
     1,
+    1,
+    2,
     2,
     3
   ],
@@ -36,7 +38,7 @@
       "type": "barrier",
       "stat": "magic",
       "coefficient": 2.5,
-      "coefficient_per_rank": 0.4,
+      "coefficient_per_rank": 0.2,
       "duration": 8,
       "heal_on_end": 50
     }

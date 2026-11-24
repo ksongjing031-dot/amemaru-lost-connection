@@ -42,7 +42,10 @@ public enum BuffKind {
     /** 影走り：敵の攻撃をすり抜ける。 */
     EVADE("evade"),
     /** 天地流転：【極】の技を使っても連撃が消えない。 */
-    ENDLESS_FLOW("endless_flow");
+    ENDLESS_FLOW("endless_flow"),
+    // ---------------------------------------------------------------- 11月24日（スキルツリーの作り直し）
+    /** 気炎・魔力集中・鬨の声など：しばらく与えるダメージが上がる（値は%。いくつ重なっても大きい方）。 */
+    POWER_UP("power_up");
 
     private final String id;
 
