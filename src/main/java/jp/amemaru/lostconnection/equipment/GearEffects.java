@@ -94,6 +94,10 @@ public final class GearEffects {
         }
         double multiplier = 1.0;
         for (SpecialEffect effect : active(attacker, data)) {
+            if (effect.type() == SpecialEffect.Type.ALLY_POWER && effect.source().matches(skill)) {
+                // 味方が近いほど強い（5階のレア。5人まで）
+                multiplier *= 1.0 + effect.percent() / 100.0 * Math.min(5, alliesNear(attacker, effect.threshold()));
+            }
             if (effect.type() == SpecialEffect.Type.EXECUTE && effect.source().matches(skill)) {
                 double maxHp = TargetVitals.maxHp(target);
                 if (maxHp > 0 && TargetVitals.hp(target) / maxHp * 100.0 <= effect.threshold()) {
@@ -147,7 +151,7 @@ public final class GearEffects {
 
     // ---------------------------------------------------------------- 受ける
 
-    /** 受けるダメージ（敵から）にかける倍率（被ダメージ減少）。 */
+    /** 受けるダメージ（敵から）にかける倍率（被ダメージ減少と、近くの味方の「第七の門鍵」）。 */
     public static double incomingMultiplier(ServerPlayer player, PlayerData data) {
         double multiplier = 1.0;
         for (SpecialEffect effect : active(player, data)) {
@@ -155,7 +159,59 @@ public final class GearEffects {
                 multiplier *= Math.max(0.0, 1.0 - effect.percent() / 100.0);
             }
         }
+        multiplier *= Math.max(0.0, 1.0 - partyWard(player) / 100.0);
         return multiplier;
+    }
+
+    /** 自分のまわり（{@code radius} ブロック）の、ほかのプレイヤー（味方）の数。決闘の相手は数えない。 */
+    public static int alliesNear(ServerPlayer player, double radius) {
+        int count = 0;
+        for (ServerPlayer other : player.serverLevel().players()) {
+            if (other != player && other.isAlive() && !other.isSpectator() && other.distanceToSqr(player) <= radius * radius
+                    && !jp.amemaru.lostconnection.player.DownHandler.isDown(other)
+                    && !jp.amemaru.lostconnection.social.DuelService.areOpponents(player, other)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /**
+     * 「第七の門鍵」（5階のユニーク。11月24日）：近くに、門鍵を付けていて、まわりに味方が3人以上いる人がいれば、受けるダメージの
+     * 減る割合（%。いなければ 0。いくつあっても1つ分）。
+     */
+    public static double partyWard(ServerPlayer player) {
+        double best = 0.0;
+        for (ServerPlayer wearer : player.serverLevel().players()) {
+            if (!wearer.isAlive() || wearer.isSpectator()) {
+                continue;
+            }
+            PlayerData data = PlayerDataCapability.get(wearer).orElse(null);
+            if (data == null) {
+                continue;
+            }
+            for (SpecialEffect effect : active(wearer, data)) {
+                if (effect.type() != SpecialEffect.Type.PARTY_WARD || effect.percent() <= best) {
+                    continue;
+                }
+                double radius = effect.threshold();
+                if (wearer.distanceToSqr(player) <= radius * radius && alliesNear(wearer, radius) >= 3) {
+                    best = effect.percent();
+                }
+            }
+        }
+        return best;
+    }
+
+    /** 回復の守り（4階のレア「祈り手の鈴」）：使い手の、回復したときの防御の上がり（%。なければ 0）。 */
+    public static double healWard(ServerPlayer caster, PlayerData data) {
+        double best = 0.0;
+        for (SpecialEffect effect : active(caster, data)) {
+            if (effect.type() == SpecialEffect.Type.HEAL_WARD) {
+                best = Math.max(best, effect.percent());
+            }
+        }
+        return best;
     }
 
     // ---------------------------------------------------------------- 時間

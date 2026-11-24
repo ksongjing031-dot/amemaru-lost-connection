@@ -396,6 +396,7 @@ public final class BossRoom {
             AmemaruMod.LOGGER.info("[amemaru] First kill of floor {} by {}", floor.number(), names);
             StoryEventManager.trigger(level.getServer(), "floor_first_kill", floor.number(), winners);
         }
+        boss.onVictory(level, winners, first);
         // Phase 6 その3：クエスト・称号・冒険日誌（初撃破なら限定称号「最初の一歩」など）
         jp.amemaru.lostconnection.guild.GuildHooks.onBossDefeated(winners, floor.number(),
                 boss.def() == null ? AmemaruMod.id("unknown") : boss.def().id(), name, floor.title(),

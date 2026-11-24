@@ -1,0 +1,35 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "4階のレア装備",
+  "rarity": "epic",
+  "required_level": 8,
+  "jobs": [
+    "amemaru:healer"
+  ],
+  "stats": {
+    "magic": 26,
+    "mp": 60,
+    "heal_power": 7
+  },
+  "durability": 560,
+  "binding": "on_equip",
+  "effects": [
+    {
+      "type": "heal_ward",
+      "percent": 8
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:song_crystal",
+      "count": 2
+    },
+    {
+      "item": "amemaru:crystal_shard",
+      "count": 2
+    }
+  ],
+  "description": "祈りの残響カンターレの歌い手たちが鳴らしていた、四つの音の鈴。白い石の輪に、白・青・金・紅の結晶の鈴がさがる。癒やしの祈りに鈴の音が重なると、受けた人のまわりに、ほんの少しの間、守りの光の膜が残る。"
+}

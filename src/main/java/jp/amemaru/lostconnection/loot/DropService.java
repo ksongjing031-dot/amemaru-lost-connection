@@ -185,6 +185,9 @@ public final class DropService {
         int misses = def.pity() ? data.getAdventure().pity(def.id()) : 0;
         boolean any = false;
         for (EnemyDef.RareDrop rare : def.rare()) {
+            if (rare.jobMatch() && !forJob(rare.item(), data)) {
+                continue;
+            }
             double chance = rareChance(rare, rare.pity() ? misses : 0) * bonus;
             if (level.random.nextDouble() * 100.0 >= chance) {
                 continue;
@@ -208,6 +211,16 @@ public final class DropService {
         if (def.pity()) {
             data.getAdventure().setPity(def.id(), nextPity(misses, any));
         }
+    }
+
+    /** その装備を、今の戦闘職で使えるか（職業の決まっていない装備は、だれでも）。11月24日：5階の守護者シリーズ。 */
+    public static boolean forJob(ResourceLocation item, PlayerData data) {
+        jp.amemaru.lostconnection.equipment.EquipmentDef gear = jp.amemaru.lostconnection.equipment.EquipmentDefs.server().get(item);
+        if (gear == null || gear.jobs().isEmpty()) {
+            return true;
+        }
+        ResourceLocation job = data.getCombatJob();
+        return job != null && gear.jobs().contains(job);
     }
 
     // ---------------------------------------------------------------- 計算（自動テストでも使う）

@@ -1,0 +1,34 @@
+{
+  "slot": "chest",
+  "generation": 1,
+  "series": "守護者シリーズ（ナイト）",
+  "rarity": "epic",
+  "required_level": 10,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "defense": 9,
+    "hp": 42
+  },
+  "durability": 600,
+  "binding": "on_equip",
+  "effects": [
+    {
+      "type": "damage_reduction",
+      "percent": 5
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:jade_core_shard",
+      "count": 1
+    },
+    {
+      "item": "amemaru:sentinel_plate",
+      "count": 2
+    }
+  ],
+  "description": "守護者の胸を覆っていた白い石の装甲を、騎士の胴に合わせて組み直したもの。継ぎ目を翠の光がめぐり、受けた衝撃を散らす。"
+}

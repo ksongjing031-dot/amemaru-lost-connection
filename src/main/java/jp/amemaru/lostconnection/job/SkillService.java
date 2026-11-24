@@ -348,6 +348,8 @@ public final class SkillService {
         }
         SkillTargeting.Aim aim = null;
         if (failure == null) {
+            // 詠唱の間に向きを変えても、ロックしていた敵に向き直して放つ（11月24日）
+            LockOnFacing.refresh(player);
             aim = SkillTargeting.recheck(player, skill, casting.rank(), casting.targetEntity(), casting.targetPoint());
             failure = aim.failure();
         }
@@ -465,7 +467,9 @@ public final class SkillService {
                 cancelCast(player, data, false);
             } else if (casting.charging()) {
                 if (now >= casting.endTick() + CHARGE_HOLD_TICKS) {
-                    releaseCharge(player, data, casting, now, -1, null);
+                    // 溜めきって自動で放つ：ロックしていれば、その敵に向き直して狙う（11月24日）
+                    LockOnFacing.refresh(player);
+                    releaseCharge(player, data, casting, now, LockOnFacing.lockedId(player), null);
                 }
             } else if (now >= casting.endTick()) {
                 finishCast(player, data, casting, now);

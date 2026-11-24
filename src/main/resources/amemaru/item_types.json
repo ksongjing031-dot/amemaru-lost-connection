@@ -52,6 +52,35 @@
       "model": "geckolib"
     },
     {
+      "id": "prayer_bell_staff",
+      "kind": "bell_staff",
+      "model": "geckolib"
+    },
+    {
+      "id": "guardian_greatsword",
+      "kind": "greatsword"
+    },
+    {
+      "id": "guardian_staff",
+      "kind": "staff"
+    },
+    {
+      "id": "guardian_bell_staff",
+      "kind": "bell_staff"
+    },
+    {
+      "id": "guardian_bow",
+      "kind": "bow"
+    },
+    {
+      "id": "guardian_daggers",
+      "kind": "daggers"
+    },
+    {
+      "id": "guardian_gauntlets",
+      "kind": "fist"
+    },
+    {
       "id": "apprentice_bell_staff",
       "kind": "bell_staff"
     },
@@ -207,6 +236,42 @@
         "legs": "ryumon_monk_hakama",
         "feet": "ryumon_monk_sandals"
       }
+    },
+    {
+      "series": "guardian_knight",
+      "pieces": {
+        "chest": "guardian_knight_shell"
+      }
+    },
+    {
+      "series": "guardian_wizard",
+      "pieces": {
+        "chest": "guardian_wizard_shell"
+      }
+    },
+    {
+      "series": "guardian_healer",
+      "pieces": {
+        "chest": "guardian_healer_shell"
+      }
+    },
+    {
+      "series": "guardian_archer",
+      "pieces": {
+        "chest": "guardian_archer_shell"
+      }
+    },
+    {
+      "series": "guardian_rogue",
+      "pieces": {
+        "chest": "guardian_rogue_shell"
+      }
+    },
+    {
+      "series": "guardian_monk",
+      "pieces": {
+        "chest": "guardian_monk_shell"
+      }
     }
   ],
   "accessories": [
@@ -236,6 +301,119 @@
     {
       "id": "grassland_horn",
       "slot": "charm"
+    },
+    {
+      "id": "bark_battle_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "bark_wisdom_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "glowcap_necklace",
+      "slot": "necklace",
+      "model": "geckolib"
+    },
+    {
+      "id": "rootknot_bracelet",
+      "slot": "bracelet",
+      "model": "geckolib"
+    },
+    {
+      "id": "wisp_charm",
+      "slot": "charm",
+      "model": "geckolib"
+    },
+    {
+      "id": "shade_tail_charm",
+      "slot": "charm"
+    },
+    {
+      "id": "bronze_battle_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "bronze_wisdom_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "clearwater_necklace",
+      "slot": "necklace",
+      "model": "geckolib"
+    },
+    {
+      "id": "cogwheel_bracelet",
+      "slot": "bracelet",
+      "model": "geckolib"
+    },
+    {
+      "id": "whisker_charm",
+      "slot": "charm",
+      "model": "geckolib"
+    },
+    {
+      "id": "water_mirror_charm",
+      "slot": "charm"
+    },
+    {
+      "id": "prayer_battle_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "prayer_wisdom_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "chime_necklace",
+      "slot": "necklace",
+      "model": "geckolib"
+    },
+    {
+      "id": "mural_bracelet",
+      "slot": "bracelet",
+      "model": "geckolib"
+    },
+    {
+      "id": "mane_charm",
+      "slot": "charm",
+      "model": "geckolib"
+    },
+    {
+      "id": "broken_seal_charm",
+      "slot": "charm"
+    },
+    {
+      "id": "brass_battle_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "brass_wisdom_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "jade_necklace",
+      "slot": "necklace",
+      "model": "geckolib"
+    },
+    {
+      "id": "sentinel_bracelet",
+      "slot": "bracelet",
+      "model": "geckolib"
+    },
+    {
+      "id": "lens_charm",
+      "slot": "charm",
+      "model": "geckolib"
+    },
+    {
+      "id": "altar_knot_charm",
+      "slot": "charm"
+    },
+    {
+      "id": "seventh_gate_key",
+      "slot": "charm",
+      "model": "geckolib"
     }
   ],
   "materials": [
@@ -305,6 +483,60 @@
     },
     {
       "id": "flow_crystal",
+      "rarity": "rare"
+    },
+    {
+      "id": "old_bark"
+    },
+    {
+      "id": "glowcap"
+    },
+    {
+      "id": "wisp_wick",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "shade_tail",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "statue_shard"
+    },
+    {
+      "id": "song_crystal"
+    },
+    {
+      "id": "beetle_shell",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "sacred_mane",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "prayer_stone",
+      "rarity": "rare"
+    },
+    {
+      "id": "knight_helm_relic",
+      "rarity": "rare"
+    },
+    {
+      "id": "harold_tag",
+      "rarity": "rare"
+    },
+    {
+      "id": "watcher_lens"
+    },
+    {
+      "id": "sentinel_plate"
+    },
+    {
+      "id": "drone_spring",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "jade_core_shard",
       "rarity": "rare"
     }
   ],

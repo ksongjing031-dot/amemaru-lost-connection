@@ -34,3 +34,6 @@ __pycache__/
 
 # python
 __pycache__/
+
+# javac が落ちたときに書き出す引数のファイル（手元の確かめで出ることがある）
+javac.*.args

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "amemaru:block/binding_dais/unlit"
+    },
+    "lit=true": {
+      "model": "amemaru:block/binding_dais/lit"
+    }
+  }
+}

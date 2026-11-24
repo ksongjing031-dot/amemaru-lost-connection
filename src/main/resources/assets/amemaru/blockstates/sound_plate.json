@@ -1,0 +1,28 @@
+{
+  "variants": {
+    "lit=false,note=0": {
+      "model": "amemaru:block/sound_plate/white"
+    },
+    "lit=true,note=0": {
+      "model": "amemaru:block/sound_plate/white_lit"
+    },
+    "lit=false,note=1": {
+      "model": "amemaru:block/sound_plate/blue"
+    },
+    "lit=true,note=1": {
+      "model": "amemaru:block/sound_plate/blue_lit"
+    },
+    "lit=false,note=2": {
+      "model": "amemaru:block/sound_plate/gold"
+    },
+    "lit=true,note=2": {
+      "model": "amemaru:block/sound_plate/gold_lit"
+    },
+    "lit=false,note=3": {
+      "model": "amemaru:block/sound_plate/red"
+    },
+    "lit=true,note=3": {
+      "model": "amemaru:block/sound_plate/red_lit"
+    }
+  }
+}

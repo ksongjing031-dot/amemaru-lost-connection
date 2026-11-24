@@ -244,6 +244,15 @@ public final class GearTooltips {
                 .append(Component.translatable(item.slot().translationKey()).withStyle(ChatFormatting.GRAY))
                 .append(Component.literal(" ・ ").withStyle(ChatFormatting.DARK_GRAY))
                 .append(Component.translatable("tooltip.amemaru.generation", AccessoryData.generation(stack)).withStyle(ChatFormatting.GRAY)));
+        // 11月24日：固有の特殊効果と、品の説明（何階の品か）。言語ファイルの .effect・.desc（tools/datagen/build_floor_accessories.py）
+        String base = stack.getDescriptionId();
+        if (net.minecraft.client.resources.language.I18n.exists(base + ".effect")) {
+            lines.add(Component.translatable("tooltip.amemaru.effect", Component.translatable(base + ".effect"))
+                    .withStyle(ChatFormatting.LIGHT_PURPLE));
+        }
+        if (net.minecraft.client.resources.language.I18n.exists(base + ".desc")) {
+            lines.add(Component.translatable(base + ".desc").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
+        }
         if (!AccessoryData.isRolled(stack)) {
             lines.add(Component.translatable("tooltip.amemaru.unrolled").withStyle(ChatFormatting.DARK_GRAY));
             return;

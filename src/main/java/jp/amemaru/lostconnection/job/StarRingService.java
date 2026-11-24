@@ -59,7 +59,9 @@ public final class StarRingService {
         }
         LivingEntity target = near.get(0);
         buffs.starRingCount--;
+        ctx.currentMagic = true; // 星の環は魔力のダメージ
         double dealt = CombatService.dealSkillDamage(ctx, target, buffs.starRingPower * ctx.passiveDamageMultiplier(target), null);
+        ctx.currentMagic = false;
         if (dealt > 0) {
             StatusService.addBrand(target, 1, 160, player);
         }

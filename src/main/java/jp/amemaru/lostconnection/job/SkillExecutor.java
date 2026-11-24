@@ -653,7 +653,9 @@ public final class SkillExecutor {
                         double coefficient = effect.value("base", rank) + effect.value("per_stack", rank) * stacks;
                         double power = ctx.stat(effect.stat()) * coefficient * multiplier * ctx.passiveDamageMultiplier(target);
                         ctx.currentPierce = 0.0;
+                        ctx.currentMagic = effect.stat() == StatType.MAGIC;
                         CombatService.dealSkillDamage(ctx, target, power, direct);
+                        ctx.currentMagic = false;
                         if (ctx.afterglowMp > 0 && caster != null) {
                             restoreMp(caster, ctx.afterglowMp * stacks);
                         }
@@ -806,8 +808,10 @@ public final class SkillExecutor {
         }
         power *= ctx.passiveDamageMultiplier(target);
         ctx.currentPierce = effect.value("pierce", rank);
+        ctx.currentMagic = effect.stat() == StatType.MAGIC;
         double dealt = CombatService.dealSkillDamage(ctx, target, power, direct);
         ctx.currentPierce = 0.0;
+        ctx.currentMagic = false;
         if (bonus && effect.consumeStatus()) {
             StatusService.consume(target, effect.bonusStatus());
             if (ModEffects.FROZEN.getId().equals(effect.bonusStatus())) {
@@ -885,7 +889,9 @@ public final class SkillExecutor {
             double coefficient = effect.value("base", rank) + effect.value("per_stack", rank) * stacks;
             double power = ctx.stat(effect.stat()) * coefficient * multiplier * ctx.passiveDamageMultiplier(victim);
             ctx.currentPierce = 0.0;
+            ctx.currentMagic = effect.stat() == StatType.MAGIC;
             CombatService.dealSkillDamage(ctx, victim, power, direct);
+            ctx.currentMagic = false;
         }
     }
 

@@ -170,6 +170,7 @@ public final class FxWorld {
                 visual.render(draw, level);
             }
             StatusVisuals.render(draw, level);
+            jp.amemaru.lostconnection.client.TargetLock.render(draw, level);
         } catch (RuntimeException e) {
             AmemaruMod.LOGGER.warn("[amemaru] Drawing skill visuals failed", e);
         }

@@ -1,0 +1,52 @@
+{
+  "_comment": "祈りの導き手（4階の名のある魔物。祈りの間の奥の院の守り手。祈り手の残響の大きいもの。歌が速く、よく治す）。数値は【補完】",
+  "name": "祈りの導き手",
+  "model": "amemaru:prayer_echo",
+  "floor": 4,
+  "level": 10,
+  "description": "祈り手たちの歌を導いていた、ひときわ大きな残響。その歌は速く、深い傷さえふさいでしまう。奥の院の祭壇を、いまも離れない。",
+  "stats": {
+    "hp": 18000,
+    "attack": 72,
+    "defense": 10,
+    "move_speed": 0.21,
+    "follow_range": 24,
+    "aggro_range": 13
+  },
+  "exp": 300,
+  "skills": {
+    "wail": {
+      "power": 1.1,
+      "windup": 0.8,
+      "cooldown": 2.4,
+      "range": 3.8
+    },
+    "hymn": {
+      "power": 0.18,
+      "windup": 2.2,
+      "cooldown": 9.0,
+      "range": 12.0
+    }
+  },
+  "behavior": {
+    "interrupt": 0.06,
+    "scale": 1.35
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/prayer_echo",
+    "rare": [
+      {
+        "item": "amemaru:prayer_stone",
+        "chance": 35.0
+      },
+      {
+        "item": "amemaru:broken_seal_charm",
+        "chance": 5.0
+      },
+      {
+        "item": "amemaru:crystal_fruit_crimson",
+        "chance": 6.0
+      }
+    ]
+  }
+}

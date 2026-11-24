@@ -137,24 +137,34 @@ public final class StoryHud {
         if (!text.speaker().isEmpty()) {
             graphics.drawString(font, text.speaker(), (width - font.width(text.speaker())) / 2, y - 14, color(a * 0.8F, 0x9CFFB0), true);
         }
+        // 11月24日：長い文（4階の壁画の歴史・5階の守護者の記録核など）は、画面の幅に合わせて折り返す
+        // （前は1行のままで、画面の左右からはみ出して読めなかった）
+        float scale = 1.4F;
+        int lineH = 15;
+        List<String> lines = UiStyle.wrap(font, text.text(), Math.max(80, (int) ((width - 60) / scale)));
         // はじめの1.2秒は古代の文字。そのあと、大結晶の仲立ちで読める字に変わる
         float morph = Mth.clamp((text.age() - 0.9F) / 0.6F, 0.0F, 1.0F);
         if (morph < 1.0F) {
-            StringBuilder glyphs = new StringBuilder();
-            int n = Math.max(6, text.text().length() * 2);
-            long seed = text.start();
-            for (int i = 0; i < n; i++) {
-                glyphs.append(GLYPHS.charAt((int) Math.abs((seed * 31 + i * 7919L) % GLYPHS.length())));
+            for (int line = 0; line < lines.size(); line++) {
+                StringBuilder glyphs = new StringBuilder();
+                int n = Math.max(6, lines.get(line).length() * 2);
+                long seed = text.start() + line * 977L;
+                for (int i = 0; i < n; i++) {
+                    glyphs.append(GLYPHS.charAt((int) Math.abs((seed * 31 + i * 7919L) % GLYPHS.length())));
+                }
+                Component alt = Component.literal(glyphs.toString()).withStyle(ALT);
+                graphics.drawString(font, alt, (width - font.width(alt)) / 2, y + line * lineH, color(a * (1.0F - morph), 0x9CFFB0), true);
             }
-            Component alt = Component.literal(glyphs.toString()).withStyle(ALT);
-            graphics.drawString(font, alt, (width - font.width(alt)) / 2, y, color(a * (1.0F - morph), 0x9CFFB0), true);
         }
         if (morph > 0.0F) {
-            graphics.pose().pushPose();
-            graphics.pose().translate(width / 2.0F, y - 2, 0.0F);
-            graphics.pose().scale(1.4F, 1.4F, 1.0F);
-            graphics.drawString(font, text.text(), -font.width(text.text()) / 2, 0, color(a * morph, 0xE8FFF0), true);
-            graphics.pose().popPose();
+            for (int line = 0; line < lines.size(); line++) {
+                String one = lines.get(line);
+                graphics.pose().pushPose();
+                graphics.pose().translate(width / 2.0F, y - 2 + line * lineH, 0.0F);
+                graphics.pose().scale(scale, scale, 1.0F);
+                graphics.drawString(font, one, -font.width(one) / 2, 0, color(a * morph, 0xE8FFF0), true);
+                graphics.pose().popPose();
+            }
         }
     }
 
@@ -175,6 +185,20 @@ public final class StoryHud {
         for (int i = 0; i < lines.size(); i++) {
             graphics.drawString(font, lines.get(i), x + 10, y + 15 + i * 10, color(a, 0xFFFFFF), false);
         }
+    }
+
+    /**
+     * 知らせ（初撃破・物語など）が出ているか。11月24日：右上のクエストの一覧と重なって読めなかったので、出ている間は一覧をしまう
+     * （{@link GuildHud}）。
+     */
+    public static boolean announcementShown() {
+        long now = Util.getMillis();
+        for (ClientStory.ShownAnnouncement shown : ClientStory.announcements()) {
+            if (now - shown.start() < ClientStory.ANNOUNCE_MILLIS) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static void renderAnnouncements(GuiGraphics graphics, Font font, int width) {
@@ -306,13 +330,28 @@ public final class StoryHud {
             return;
         }
         ResourceLocation id = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(boss.getType());
-        String key = "status." + id.getNamespace() + "." + id.getPath() + "." + boss.status();
-        if (!net.minecraft.client.resources.language.I18n.exists(key)) {
-            return;
-        }
         boolean good = boss.status().startsWith("open");
         int accent = good ? 0xF2C94C : 0x8FA3B8;
-        String text = (good ? "\u25C6 " : "\u25C7 ") + net.minecraft.client.resources.language.I18n.get(key, boss.statusSeconds());
+        String text;
+        if (boss.status().startsWith("song:")) {
+            // 11月24日（4階のボス）：歌った音の並び（白 → 青 → 金 …）。歌っている間だけ出る
+            StringBuilder notes = new StringBuilder();
+            for (String note : boss.status().substring(5).split(",")) {
+                if (notes.length() > 0) {
+                    notes.append(" \u2192 ");
+                }
+                notes.append(net.minecraft.client.resources.language.I18n.get("status.amemaru.note." + note));
+            }
+            accent = 0xC8A8FF;
+            text = "\u266A " + net.minecraft.client.resources.language.I18n.get("status." + id.getNamespace() + "." + id.getPath() + ".song",
+                    notes.toString());
+        } else {
+            String key = "status." + id.getNamespace() + "." + id.getPath() + "." + boss.status();
+            if (!net.minecraft.client.resources.language.I18n.exists(key)) {
+                return;
+            }
+            text = (good ? "\u25C6 " : "\u25C7 ") + net.minecraft.client.resources.language.I18n.get(key, boss.statusSeconds());
+        }
         // 長い文は、画面の幅に合わせて折り返す（小さな画面でも、右のはしの欄と重ならない）
         List<String> lines = UiStyle.wrap(font, text, Math.max(120, Math.min(360, width - 40)));
         int w = 0;

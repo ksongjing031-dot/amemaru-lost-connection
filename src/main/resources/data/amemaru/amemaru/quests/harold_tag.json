@@ -1,0 +1,31 @@
+{
+  "_comment": "4日目（4階）：副団長ハロルドの認識票を、娘のリリアに届ける（Phase 0-A 9章の4階の物語。確定）【補完】",
+  "name": "父の認識票",
+  "kind": "story",
+  "giver": "amemaru:gard",
+  "report": "amemaru:lilia",
+  "board": false,
+  "description": "ハロルドの認識票を、リリアに届けてくれ。あいつの父親だ。",
+  "requires": {},
+  "objectives": [
+    {
+      "type": "collect",
+      "item": "amemaru:harold_tag",
+      "count": 1,
+      "consume": true,
+      "label": "ハロルドの認識票をリリアに届ける"
+    }
+  ],
+  "rewards": {
+    "knots": 300,
+    "exp": 300,
+    "affinity": {
+      "amemaru:lilia": 25,
+      "amemaru:gard": 10
+    },
+    "flags": [
+      "amemaru:story/harold_tag_delivered"
+    ]
+  },
+  "order": 131
+}

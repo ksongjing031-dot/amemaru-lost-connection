@@ -49,6 +49,10 @@
       {
         "item": "amemaru:echo_fragment",
         "chance": 40.0
+      },
+      {
+        "item": "amemaru:shade_tail_charm",
+        "chance": 6.0
       }
     ]
   }

@@ -26,7 +26,9 @@ public final class ModBlockEntities {
     public static final RegistryObject<BlockEntityType<jp.amemaru.lostconnection.tower.FloorThingBlockEntity>> FLOOR_THING =
             BLOCK_ENTITIES.register("floor_thing", () -> BlockEntityType.Builder.of(jp.amemaru.lostconnection.tower.FloorThingBlockEntity::new,
                     ModBlocks.TOWER_SWITCH.get(), ModBlocks.TOWER_CHEST.get(), ModBlocks.FOREST_BELL.get(), ModBlocks.KNOT_POST.get(),
-                    ModBlocks.WAYPOINT.get(), ModBlocks.TRAVEL_STONE.get(), ModBlocks.FLOODGATE_VALVE.get()).build(null));
+                    ModBlocks.WAYPOINT.get(), ModBlocks.TRAVEL_STONE.get(), ModBlocks.FLOODGATE_VALVE.get(),
+                    // 11月24日：4階の壁画のパネル・鈴の石・騎士団の遺品
+                    ModBlocks.MURAL_PANEL.get(), ModBlocks.CHIME_STONE.get(), ModBlocks.KNIGHT_RELIC.get()).build(null));
 
     /** 店のカウンターの呼び鈴（どの店か。Phase 6）。 */
     @SuppressWarnings("DataFlowIssue")

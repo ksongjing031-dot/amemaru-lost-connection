@@ -1,6 +1,7 @@
 {
   "slot": "ring",
   "generation": 1,
+  "floor": 1,
   "rarity": "uncommon",
   "main": [
     "magic"

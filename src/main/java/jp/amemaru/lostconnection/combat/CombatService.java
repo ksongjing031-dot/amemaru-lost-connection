@@ -117,7 +117,7 @@ public final class CombatService {
             critChance = 100.0;
         }
         // 結晶の加護（その階のボスへの与ダメージ。Phase 5）
-        power *= TargetVitals.takenMultiplier(target, owner);
+        power *= TargetVitals.takenMultiplier(target, owner, ctx.currentMagic);
         double defense = TargetVitals.defense(target) * (1.0 - Math.max(0.0, Math.min(100.0, ctx.currentPierce)) / 100.0);
         DamageCalculator.Result result = DamageCalculator.compute(power, critChance, critDamage, defense,
                 ServerConfig.DAMAGE_VARIANCE.get(), ctx.random());

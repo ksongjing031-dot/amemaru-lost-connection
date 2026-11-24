@@ -36,6 +36,7 @@ from scipy import ndimage
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from mapgen.world import DATA_VERSION, block, lantern, sign_nbt  # noqa: E402
+from mapgen.tower import NEXT_DX, next_circle  # noqa: E402
 
 import nbtlib  # noqa: E402
 from nbtlib.tag import Compound, Int, List, String  # noqa: E402
@@ -1084,8 +1085,9 @@ def arena(f):
     for k in range(6):
         a = k / 6 * math.tau + 0.5
         hang_lamp(f, int(round(cx + math.cos(a) * 15)), LOW + 19, int(round(cz + math.sin(a) * 15)), 4)
-    # 戻りの円（北）
+    # 戻りの円（北）と、その東どなりの次の階への円（金の縁。11月24日）
     return_circle(f, cx, LOW, cz - 20)
+    next_circle(f.solid, cx + NEXT_DX, LOW, cz - 20)
     # 部屋の水（1マス。排水で引く）
     f.sections.append(("arena", cx - ARENA_R, gz - 3, cx + ARENA_R, SEAL_Z - 1, LOW, LOW + 1))
 
@@ -1284,6 +1286,7 @@ def floor_json(f):
             "pace_per_extra_player": 0.05,
             "enrage_seconds": 1500,
             "exit": {"center": [cx + 0.5, LOW + 1, cz - 19.5], "radius": 2.6},
+            "next": {"center": [cx + NEXT_DX + 0.5, LOW + 1, cz - 19.5], "radius": 2.6},
         },
         "pillars": [],
         "pillars_done": "",

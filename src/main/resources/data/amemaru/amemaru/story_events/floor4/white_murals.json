@@ -1,0 +1,43 @@
+{
+  "_comment": "Phase 0-A 9章の4階のロストの侵食：壁画の人物が何人か白く消されている（崩れた鐘楼の白い壁画の間。階の定義の story_zones のwhite_murals）。入った人に、一人一度だけ（本人の物語フラグ white_murals_seen）。台詞の2行目は確定の言葉",
+  "title": "白い壁画",
+  "trigger": {
+    "type": "amemaru:floor_zone",
+    "floor": 4,
+    "zone": "white_murals"
+  },
+  "scope": "player",
+  "once": false,
+  "replayable": true,
+  "conditions": {
+    "flags_none": [
+      "amemaru:story/white_murals_seen"
+    ]
+  },
+  "steps": [
+    {
+      "type": "amemaru:sound",
+      "sound": "minecraft:block.amethyst_block.chime",
+      "volume": 1.0,
+      "pitch": 0.5
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "壁画の人物が、何人か白く消されている。削られたのではない。はじめから、そこにいなかったかのように。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "誰かが、誰かを忘れた跡――。",
+      "ticks": 100,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/white_murals_seen"
+      ]
+    }
+  ]
+}

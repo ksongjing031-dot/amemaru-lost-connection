@@ -1,0 +1,23 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "accessory",
+  "mastery": 3,
+  "mastery_exp": 18,
+  "ingredients": [
+    {
+      "item": "amemaru:sacred_mane",
+      "count": 2
+    },
+    {
+      "item": "amemaru:song_crystal",
+      "count": 1
+    },
+    {
+      "item": "amemaru:echo_fragment",
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "amemaru:mane_charm"
+  }
+}

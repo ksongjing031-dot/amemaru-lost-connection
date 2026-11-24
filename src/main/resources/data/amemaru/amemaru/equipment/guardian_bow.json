@@ -1,0 +1,35 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "守護者シリーズ（アーチャー）",
+  "rarity": "epic",
+  "required_level": 10,
+  "jobs": [
+    "amemaru:archer"
+  ],
+  "stats": {
+    "attack": 25,
+    "crit": 4
+  },
+  "durability": 620,
+  "binding": "on_equip",
+  "effects": [
+    {
+      "type": "ally_power",
+      "threshold": 8,
+      "percent": 3
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:jade_core_shard",
+      "count": 1
+    },
+    {
+      "item": "amemaru:sentinel_plate",
+      "count": 2
+    }
+  ],
+  "description": "守護者の腕の青銅の筋を、弓の背に張ったもの。握りの翠の核が、仲間の狙いと重なると強く光る。"
+}

@@ -1,0 +1,29 @@
+{
+  "_comment": "地下の納骨堂の、結晶騎士団の野営の跡で遺品を見つけたとき（本人だけ。階の定義の relics の event。遺品のブロックを右クリックすると、冑と認識票をもらい、フラグ knight_relics_found が立ち、クエスト knight_relics が始まる）。Phase 0-A 9章の4階の物語。台詞は【補完】",
+  "title": "結晶騎士団の遺品",
+  "trigger": {
+    "type": "amemaru:admin"
+  },
+  "scope": "player",
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:sound",
+      "sound": "minecraft:item.armor.equip_iron",
+      "volume": 1.0,
+      "pitch": 0.8
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "古い野営の跡に、白い冑がひとつ。そばに、鎖のついた小さな認識票が落ちていた。",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "認識票には「結晶騎士団　副団長　ハロルド」と刻まれている。……ガルドに見せよう。",
+      "ticks": 120,
+      "wait": false
+    }
+  ]
+}

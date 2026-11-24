@@ -65,13 +65,22 @@ public final class TargetVitals {
      * （{@link AmemaruMob#damageTakenMultiplier}：正面の装甲・水の中・ボスの炉心）も掛ける。
      */
     public static double takenMultiplier(LivingEntity entity, @javax.annotation.Nullable net.minecraft.world.entity.Entity attacker) {
+        return takenMultiplier(entity, attacker, false);
+    }
+
+    /**
+     * 受けるダメージの倍率。{@code magic} は魔力のダメージか（スキルの効果が魔力で決まるとき。11月24日：4階の結晶甲虫
+     * 「硬いが魔法に弱い」）。
+     */
+    public static double takenMultiplier(LivingEntity entity, @javax.annotation.Nullable net.minecraft.world.entity.Entity attacker,
+                                         boolean magic) {
         double multiplier = 1.0;
         if (entity instanceof jp.amemaru.lostconnection.enemy.boss.AmemaruBoss boss && boss.room() != null && boss.getServer() != null) {
             multiplier *= jp.amemaru.lostconnection.progression.ProgressionService.blessingMultiplier(boss.getServer(),
                     boss.room().floor().number());
         }
         if (entity instanceof AmemaruMob mob) {
-            multiplier *= mob.damageTakenMultiplier(attacker);
+            multiplier *= mob.damageTakenMultiplier(attacker, magic);
         }
         return multiplier;
     }

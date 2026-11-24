@@ -36,7 +36,9 @@ public final class AccessoryRoller {
     public static void roll(ItemStack stack, AccessoryDef def, AccessoryRules rules, RandomSource random, boolean great,
                             @Nullable Player crafter, int subCount) {
         StatType mainType = def.main().get(random.nextInt(def.main().size()));
-        AccessoryData.StatLine main = rollLine(mainType, rules.mainCap(mainType, def.generation()), rules.mainMinRatio(), random);
+        // 奥の階の品ほど、メインの上限が少し高い（11月24日【補完】。AccessoryDef#mainFactor）
+        AccessoryData.StatLine main = rollLine(mainType, rules.mainCap(mainType, def.generation()) * def.mainFactor(),
+                rules.mainMinRatio(), random);
 
         int count = subCount > 0 ? Math.min(4, subCount) : pickCount(rules.subCountWeights(), random) + (great ? 1 : 0);
         count = Math.min(4, Math.max(1, count));

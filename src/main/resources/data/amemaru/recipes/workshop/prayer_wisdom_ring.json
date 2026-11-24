@@ -1,0 +1,23 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "accessory",
+  "mastery": 3,
+  "mastery_exp": 18,
+  "ingredients": [
+    {
+      "item": "amemaru:statue_shard",
+      "count": 3
+    },
+    {
+      "item": "amemaru:song_crystal",
+      "count": 2
+    },
+    {
+      "item": "amemaru:prayer_stone",
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "amemaru:prayer_wisdom_ring"
+  }
+}

@@ -51,6 +51,8 @@ public final class SkillContext {
     public boolean forceCrit;
     /** いま与えているダメージが無視する防御の割合（%。ダメージの効果ごとに決める）。 */
     public double currentPierce;
+    /** いま与えているダメージが魔力のダメージか（4階の結晶甲虫「硬いが魔法に弱い」など。11月24日）。 */
+    public boolean currentMagic;
     /** 連ね斬り：このスキルの倍率をもう決めたか（1回のスキルで1回だけ）。 */
     boolean bladeChecked;
     /** ゲージ・陣・使った人にかける効果を、もう出したか（弾が何発当たっても1回だけ）。 */

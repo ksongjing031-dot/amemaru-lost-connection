@@ -162,6 +162,61 @@ public final class ModEntities {
                             MobCategory.MONSTER)
                     .sized(3.2F, 6.4F).clientTrackingRange(16).updateInterval(2).build(AmemaruMod.id("hydram").toString()));
 
+    // ---- 11月24日：4階「崩壊した神殿」の敵（Phase 0-A 9章）
+    /** 沈黙の石像（近づくと動き出す）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.temple.SilentStatue>> SILENT_STATUE =
+            ENTITIES.register("silent_statue", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.temple.SilentStatue>of(jp.amemaru.lostconnection.enemy.temple.SilentStatue::new,
+                            MobCategory.MONSTER)
+                    .sized(1.1F, 2.6F).clientTrackingRange(10).build(AmemaruMod.id("silent_statue").toString()));
+    /** 祈り手の残響（仲間を歌で治す）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.temple.PrayerEcho>> PRAYER_ECHO =
+            ENTITIES.register("prayer_echo", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.temple.PrayerEcho>of(jp.amemaru.lostconnection.enemy.temple.PrayerEcho::new,
+                            MobCategory.MONSTER)
+                    .sized(0.8F, 1.9F).clientTrackingRange(10).build(AmemaruMod.id("prayer_echo").toString()));
+    /** 結晶甲虫（硬いが魔法に弱い）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.temple.CrystalBeetle>> CRYSTAL_BEETLE =
+            ENTITIES.register("crystal_beetle", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.temple.CrystalBeetle>of(jp.amemaru.lostconnection.enemy.temple.CrystalBeetle::new,
+                            MobCategory.MONSTER)
+                    .sized(1.4F, 1.0F).clientTrackingRange(10).build(AmemaruMod.id("crystal_beetle").toString()));
+    /** 欠けた聖獣（神殿の守護獣がロストで欠けたもの）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.temple.BrokenBeast>> BROKEN_BEAST =
+            ENTITIES.register("broken_beast", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.temple.BrokenBeast>of(jp.amemaru.lostconnection.enemy.temple.BrokenBeast::new,
+                            MobCategory.MONSTER)
+                    .sized(1.3F, 1.5F).clientTrackingRange(10).build(AmemaruMod.id("broken_beast").toString()));
+    /** 4階のボス、祈りの残響カンターレ（Phase 0-A 9章）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.boss.Cantare>> CANTARE = ENTITIES.register("cantare", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.boss.Cantare>of(jp.amemaru.lostconnection.enemy.boss.Cantare::new,
+                            MobCategory.MONSTER)
+                    .sized(2.4F, 4.2F).clientTrackingRange(16).updateInterval(2).build(AmemaruMod.id("cantare").toString()));
+
+    // ---- 11月24日：5階「古代守護者の祭壇」の敵（Phase 0-A 9章）
+    /** 監視眼ウォッチャー（浮かぶ目。見つかると守護者が強くなる）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.altar.Watcher>> WATCHER = ENTITIES.register("watcher", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.altar.Watcher>of(jp.amemaru.lostconnection.enemy.altar.Watcher::new,
+                            MobCategory.MONSTER)
+                    .sized(1.0F, 1.0F).clientTrackingRange(10).build(AmemaruMod.id("watcher").toString()));
+    /** 防衛兵センチネル（盾持ち）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.altar.Sentinel>> SENTINEL = ENTITIES.register("sentinel", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.altar.Sentinel>of(jp.amemaru.lostconnection.enemy.altar.Sentinel::new,
+                            MobCategory.MONSTER)
+                    .sized(1.0F, 2.3F).clientTrackingRange(10).build(AmemaruMod.id("sentinel").toString()));
+    /** 修復ドローン（守護者を回復する）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.altar.RepairDrone>> REPAIR_DRONE =
+            ENTITIES.register("repair_drone", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.altar.RepairDrone>of(jp.amemaru.lostconnection.enemy.altar.RepairDrone::new,
+                            MobCategory.MONSTER)
+                    .sized(0.7F, 0.6F).clientTrackingRange(10).build(AmemaruMod.id("repair_drone").toString()));
+    /** 5階のボス、古代守護者（第1章の章ボス。Phase 0-A 9章・10章）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.boss.AncientGuardian>> ANCIENT_GUARDIAN =
+            ENTITIES.register("ancient_guardian", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.boss.AncientGuardian>of(jp.amemaru.lostconnection.enemy.boss.AncientGuardian::new,
+                            MobCategory.MONSTER)
+                    .sized(2.6F, 5.2F).clientTrackingRange(16).updateInterval(2).build(AmemaruMod.id("ancient_guardian").toString()));
+
     /** 1階のボス、草原の主ヴェルドホーン（Phase 0-A 9章）。 */
     public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.boss.Veldhorn>> VELDHORN = ENTITIES.register("veldhorn", () ->
             EntityType.Builder.<jp.amemaru.lostconnection.enemy.boss.Veldhorn>of(jp.amemaru.lostconnection.enemy.boss.Veldhorn::new,
@@ -207,5 +262,19 @@ public final class ModEntities {
                 net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE, 0.7).build());
         event.put(KIBA_NAMAZU.get(), AmemaruMob.createAttributes().build());
         event.put(HYDRAM.get(), jp.amemaru.lostconnection.enemy.boss.AmemaruBoss.createBossAttributes().build());
+        // 11月24日：4階
+        event.put(SILENT_STATUE.get(), AmemaruMob.createAttributes().add(
+                net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE, 0.9).build());
+        event.put(PRAYER_ECHO.get(), jp.amemaru.lostconnection.enemy.temple.PrayerEcho.createEchoAttributes().build());
+        event.put(CRYSTAL_BEETLE.get(), AmemaruMob.createAttributes().add(
+                net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE, 0.6).build());
+        event.put(BROKEN_BEAST.get(), AmemaruMob.createAttributes().build());
+        event.put(CANTARE.get(), jp.amemaru.lostconnection.enemy.boss.AmemaruBoss.createBossAttributes().build());
+        // 11月24日：5階
+        event.put(WATCHER.get(), jp.amemaru.lostconnection.enemy.altar.Watcher.createWatcherAttributes().build());
+        event.put(SENTINEL.get(), AmemaruMob.createAttributes().add(
+                net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE, 0.8).build());
+        event.put(REPAIR_DRONE.get(), jp.amemaru.lostconnection.enemy.altar.RepairDrone.createDroneAttributes().build());
+        event.put(ANCIENT_GUARDIAN.get(), jp.amemaru.lostconnection.enemy.boss.AmemaruBoss.createBossAttributes().build());
     }
 }

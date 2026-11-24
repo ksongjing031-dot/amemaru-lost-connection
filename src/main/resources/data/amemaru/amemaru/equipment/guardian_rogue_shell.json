@@ -1,0 +1,36 @@
+{
+  "slot": "chest",
+  "generation": 1,
+  "series": "守護者シリーズ（ローグ）",
+  "rarity": "epic",
+  "required_level": 10,
+  "jobs": [
+    "amemaru:rogue"
+  ],
+  "stats": {
+    "defense": 6,
+    "hp": 31,
+    "speed": 2,
+    "crit": 1
+  },
+  "durability": 440,
+  "binding": "on_equip",
+  "effects": [
+    {
+      "type": "damage_reduction",
+      "percent": 5
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:jade_core_shard",
+      "count": 1
+    },
+    {
+      "item": "amemaru:sentinel_plate",
+      "count": 2
+    }
+  ],
+  "description": "黒い布の下に、守護者の装甲の薄い板を隠した装束。板の翠の光は、布の内側でだけ灯る。"
+}

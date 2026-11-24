@@ -1,0 +1,48 @@
+{
+  "_comment": "監視の大眼（5階の名のある魔物。監視の回廊の西の台・接続の柱 A の守り手。大きく、遠くまで見え、一度に警戒を2つ上げる）。数値は【補完】",
+  "name": "監視の大眼",
+  "model": "amemaru:watcher",
+  "floor": 5,
+  "level": 12,
+  "description": "祭壇の見張りを束ねる、ひときわ大きな目。そのまなざしは奈落の向こうまで届き、見つけた者のことを、守護者へ二度知らせる。",
+  "stats": {
+    "hp": 22000,
+    "attack": 84,
+    "defense": 12,
+    "move_speed": 0.18,
+    "follow_range": 30,
+    "aggro_range": 18
+  },
+  "exp": 380,
+  "skills": {
+    "ray": {
+      "power": 1.5,
+      "windup": 1.1,
+      "cooldown": 3.0,
+      "range": 18.0,
+      "width": 2.0
+    }
+  },
+  "behavior": {
+    "alert": 2,
+    "alert_cooldown": 45.0,
+    "scale": 1.8
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/watcher",
+    "rare": [
+      {
+        "item": "amemaru:jade_core_shard",
+        "chance": 35.0
+      },
+      {
+        "item": "amemaru:altar_knot_charm",
+        "chance": 5.0
+      },
+      {
+        "item": "amemaru:crystal_fruit_crimson",
+        "chance": 6.0
+      }
+    ]
+  }
+}

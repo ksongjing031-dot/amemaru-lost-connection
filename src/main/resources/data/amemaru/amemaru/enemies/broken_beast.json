@@ -1,0 +1,55 @@
+{
+  "_comment": "欠けた聖獣（4階の雑魚。Phase 0-A 9章「神殿の守護獣がロストで欠けたもの」）。爪（claw。前の扇）と跳びかかり（charge）。HPが半分を下回ると roars 回吠えて、roar_radius の神殿の敵の攻撃を roar_attack 倍（roar_seconds 秒）。ときどき forget_chance で、守るものを忘れて立ち止まる（ロスト）。数値は【補完】",
+  "name": "欠けた聖獣",
+  "floor": 4,
+  "level": 9,
+  "description": "神殿を守っていた、白い石の毛並みと金のたてがみの守護獣。ロストに体のところどころを白く削られ、ときどき、何を守っていたのかを忘れて立ち尽くす。傷つくと吠えて、仲間を奮い立たせる。",
+  "stats": {
+    "hp": 3600,
+    "attack": 84,
+    "defense": 12,
+    "move_speed": 0.24,
+    "follow_range": 22,
+    "aggro_range": 11
+  },
+  "exp": 46,
+  "skills": {
+    "claw": {
+      "power": 1.15,
+      "windup": 0.7,
+      "cooldown": 2.0,
+      "range": 3.0,
+      "angle": 110
+    },
+    "charge": {
+      "power": 1.5,
+      "windup": 1.0,
+      "cooldown": 7.0,
+      "range": 12.0,
+      "min_range": 4.0,
+      "width": 1.6,
+      "speed": 0.95,
+      "recover": 1.0
+    }
+  },
+  "behavior": {
+    "roars": 1,
+    "roar_radius": 10.0,
+    "roar_attack": 1.25,
+    "roar_seconds": 10.0,
+    "forget_chance": 0.04
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/broken_beast",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_amber",
+        "chance": 0.6
+      },
+      {
+        "item": "amemaru:crystal_fruit_azure",
+        "chance": 0.3
+      }
+    ]
+  }
+}

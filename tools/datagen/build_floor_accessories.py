@@ -1,0 +1,269 @@
+"""階ごとのアクセサリーと、その材料の素材を書き出す（11月24日のご指示「階層ごとにアクセサリーも追加しましょう」）。
+
+  python3 -I tools/datagen/build_floor_accessories.py
+
+決め方【補完】：
+  - 1階の品（苔鉄の闘環・智環・草原の首飾り・石くれの腕輪・道標のお守り。Phase 0-A 21章の第1章の一覧）のあとに、
+    2〜5階でも、その階の素材で作る5つ（闘環・智環・首飾り・腕輪・お守り）を装飾師が作れるようにする。
+    メインステータスの上限は、章の1つ目の階を1倍として、1階ごとに +5%（AccessoryDef#mainFactor）。サブの幅・厳選・強化は章のまま
+  - 2〜5階の名のある魔物（中ボス）が、その階の「レアのお守り」（固有の特殊効果つき。光らないお守りで、体には出さない）を落とす
+  - 2階には素材が無かったので、4種類の敵から1つずつ素材を足す（古樹の樹皮・光茸のかさ・迷い灯の芯・葉影の尾）
+  - 4階・5階の素材もここで決める（敵のドロップは、4階・5階の敵を作るときに入れる）
+
+書き出すもの：
+  data/amemaru/amemaru/accessories/<ID>.json・data/amemaru/recipes/workshop/<ID>.json・
+  src/main/resources/amemaru/item_types.json（アクセサリーと素材の一覧に足す）・言語ファイル（日本語と同じものを en_us にも）・
+  models/item/<ID>.json（持ち物の絵は tools/artgen/make_floor_accessory_art.py）
+"""
+import json
+import os
+
+ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+RES = os.path.join(ROOT, "src", "main", "resources")
+DATA = os.path.join(RES, "data", "amemaru")
+ASSETS = os.path.join(RES, "assets", "amemaru")
+
+# ---------------------------------------------------------------- 素材
+# (ID, 名前, レアリティ, 階, 説明)
+MATERIALS = [
+    ("old_bark", "古樹の樹皮", "common", 2,
+     "樹皮兵の体からはがれた、古い樹の皮。古代の管の錆が染みて、ところどころ赤い。2階のアクセサリーの材料になる。"),
+    ("glowcap", "光茸のかさ", "common", 2,
+     "ポコダケの頭の、霧の中で淡く光るかさ。乾かしても、しばらく光が消えない。2階のアクセサリーの材料になる。"),
+    ("wisp_wick", "迷い灯の芯", "uncommon", 2,
+     "迷い灯の奥で燃えていた、細い光の芯。持つと、少しだけ道が分かる気がする。2階のアクセサリーの材料になる。"),
+    ("shade_tail", "葉影の尾", "uncommon", 2,
+     "葉影ギツネのふさふさした尾の毛。光を吸う、黒みがかった緑。2階のアクセサリーの材料になる。"),
+    ("statue_shard", "石像のかけら", "common", 4,
+     "動き出した石像から欠け落ちた、白い石のかけら。表面に、古代の祈りの文字が薄く残る。4階の装備とアクセサリーの材料になる。"),
+    ("song_crystal", "歌声の結晶", "common", 4,
+     "祈り手の残響が消えたあとに残る、小さな結晶。耳を近づけると、かすかに歌が聞こえる。4階のアクセサリーの材料になる。"),
+    ("beetle_shell", "甲虫の結晶殻", "uncommon", 4,
+     "結晶甲虫の背中の殻。刃は通さないが、魔力には弱い。4階のアクセサリーの材料になる。"),
+    ("sacred_mane", "聖獣のたてがみ", "uncommon", 4,
+     "神殿の守護獣の、金色のたてがみ。ところどころ、白く色が抜けている。4階のアクセサリーの材料になる。"),
+    ("prayer_stone", "祈り石", "rare", 4,
+     "神殿の祭壇に長く置かれていた、乳白色の石。手のひらにのせると、温かい。4階の名のある魔物とボスが持つ。"),
+    ("watcher_lens", "監視眼のレンズ", "common", 5,
+     "監視眼ウォッチャーの目の奥にあった、薄い水晶のレンズ。のぞくと、遠くの物が少し近く見える。5階のアクセサリーの材料になる。"),
+    ("sentinel_plate", "防衛兵の装甲片", "common", 5,
+     "防衛兵センチネルの盾と体をおおっていた、真鍮の板。古代の継ぎ目の模様がある。5階の装備とアクセサリーの材料になる。"),
+    ("drone_spring", "修復ドローンのぜんまい", "uncommon", 5,
+     "修復ドローンの中で回っていた、細いぜんまい。まだ少しだけ、ほどけようとする力が残っている。5階のアクセサリーの材料になる。"),
+    ("jade_core_shard", "翠の核片", "rare", 5,
+     "古代の防衛兵器の胸にはまる、翠の結晶のかけら。中で、細い光の糸が結び目を作っている。5階の名のある魔物とボスが持つ。"),
+]
+
+# ---------------------------------------------------------------- アクセサリー
+# 効き目の説明（言語ファイルの .effect。数値は effects と同じにする）
+
+
+def effect_text(effect):
+    kind = effect["type"]
+    if kind == "extra_damage":
+        return "攻撃が当たると%d%%の確率で、与えたダメージの%d%%を追加で与える" % (effect["chance"], effect["percent"])
+    if kind == "damage_reduction":
+        return "敵から受けるダメージ −%s%%" % fmt(effect["percent"])
+    if kind == "heal_on_hit":
+        return "攻撃が当たると%d%%の確率で、与えたダメージの%d%%だけHPが回復する" % (effect["chance"], effect["percent"])
+    if kind == "execute":
+        return "HPが%d%%以下の敵に与えるダメージ +%d%%" % (effect["threshold"], effect["percent"])
+    if kind == "move_speed":
+        return "移動の速さ +%s%%" % fmt(effect["percent"])
+    if kind == "regen":
+        return "5秒ごとに、最大HPの%s%%だけHPが回復する" % fmt(effect["percent"])
+    raise ValueError(kind)
+
+
+def fmt(value):
+    return ("%d" % value) if abs(value - round(value)) < 1e-9 else ("%.1f" % value)
+
+
+def ing(*pairs):
+    return [{"item": "amemaru:" + name, "count": count} for name, count in pairs]
+
+
+# (ID, 名前, 枠, メイン（None は枠のとおり）, 階, レアリティ, 体に出すか, レシピ（None は作れない）, 熟練度, 熟練の経験, 効き目, 説明)
+ACCESSORIES = [
+    # 2階「忘れられた森」：古樹の樹皮と光茸の、森の灯のひと揃い
+    ("bark_battle_ring", "樹皮の闘環", "ring", ["attack"], 2, "uncommon", False,
+     ing(("old_bark", 3), ("moss_iron", 2), ("glowcap", 1)), 2, 12, [],
+     "古樹の樹皮を苔鉄の芯に巻きつけた指輪。光茸の粉で、継ぎ目が淡く光る。"),
+    ("bark_wisdom_ring", "樹皮の智環", "ring", ["magic"], 2, "uncommon", False,
+     ing(("old_bark", 3), ("moss_iron", 2), ("wisp_wick", 1)), 2, 12, [],
+     "樹皮の指輪の内側に、迷い灯の芯を一筋だけ通したもの。魔力の流れを、迷わず指先へ導く。"),
+    ("glowcap_necklace", "光茸の首飾り", "necklace", None, 2, "uncommon", True,
+     ing(("glowcap", 3), ("shade_tail", 1), ("crystal_shard", 1)), 2, 12, [],
+     "葉影の尾の毛を撚った紐に、光茸のかさを3つ下げた首飾り。霧の中でも、仲間に自分の場所を知らせる。"),
+    ("rootknot_bracelet", "根結びの腕輪", "bracelet", None, 2, "uncommon", True,
+     ing(("old_bark", 4), ("ancient_stone", 2), ("moss_iron", 1)), 2, 12, [],
+     "古代の管に巻きついていた根の形を写して、樹皮と石で編んだ腕輪。ほどけにくい結び目が、腕を守る。"),
+    ("wisp_charm", "迷い灯のお守り", "charm", None, 2, "uncommon", True,
+     ing(("wisp_wick", 2), ("shade_tail", 1), ("echo_fragment", 1)), 2, 12, [],
+     "小さな灯籠に迷い灯の芯を入れ、腰に下げるお守り。もう道に迷わないように、という願いを込めて作る。"),
+    ("shade_tail_charm", "葉隠れの尾飾り", "charm", None, 2, "rare", False, None, 0, 0,
+     [{"type": "extra_damage", "chance": 10, "percent": 25}],
+     "葉隠れの長の尾の先の、ひときわ濃い毛を束ねた飾り。死角からの一撃が、ときどき深く入る。2階の名のある魔物が落とす。"),
+    # 3階「古代の水路」：水路の青銅と流水の結晶のひと揃い
+    ("bronze_battle_ring", "水路銅の闘環", "ring", ["attack"], 3, "uncommon", False,
+     ing(("waterway_bronze", 3), ("gnawed_cog", 2), ("catfish_whisker", 1)), 2, 14, [],
+     "水路の青銅を打ち延ばした指輪。歯車の歯の形の刻みが、握りを確かにする。"),
+    ("bronze_wisdom_ring", "水路銅の智環", "ring", ["magic"], 3, "uncommon", False,
+     ing(("waterway_bronze", 3), ("murky_gel", 2), ("catfish_whisker", 1)), 2, 14, [],
+     "澱みのゼリーで磨いた、緑青の青い指輪。指にはめると、魔力の水がゆっくり巡る。"),
+    ("clearwater_necklace", "澄み水の首飾り", "necklace", None, 3, "uncommon", True,
+     ing(("flow_crystal", 1), ("murky_gel", 3), ("catfish_whisker", 1)), 3, 16, [],
+     "ナマズのひげを撚った紐に、流水の結晶の雫を下げた首飾り。結晶の中の水は、決して濁らない。"),
+    ("cogwheel_bracelet", "歯車の腕輪", "bracelet", None, 3, "uncommon", True,
+     ing(("gnawed_cog", 4), ("waterway_bronze", 2)), 2, 14, [],
+     "かじられた歯車を4つ噛み合わせた、ごつい腕輪。歯がそろうと、ぴたりと止まる。"),
+    ("whisker_charm", "ナマズひげのお守り", "charm", None, 3, "uncommon", True,
+     ing(("catfish_whisker", 2), ("murky_gel", 2), ("echo_fragment", 1)), 3, 16, [],
+     "青銅の小さな水門の札に、ナマズのひげを結んだお守り。水の流れを読む、水路の番人の守り。"),
+    ("water_mirror_charm", "水鏡のお守り", "charm", None, 3, "rare", False, None, 0, 0,
+     [{"type": "damage_reduction", "percent": 3}],
+     "水門の底で見つかる、鏡のように澄んだ水の膜を閉じこめた札。受けた一撃の、ほんの少しを水が受け流す。3階の名のある魔物が落とす。"),
+    # 4階「崩壊した神殿」：祈り石と鈴の音のひと揃い
+    ("prayer_battle_ring", "祈り石の闘環", "ring", ["attack"], 4, "uncommon", False,
+     ing(("statue_shard", 3), ("beetle_shell", 2), ("prayer_stone", 1)), 3, 18, [],
+     "祈り石を石像のかけらの台に埋めた指輪。拳を握ると、石が少し温かくなる。"),
+    ("prayer_wisdom_ring", "祈り石の智環", "ring", ["magic"], 4, "uncommon", False,
+     ing(("statue_shard", 3), ("song_crystal", 2), ("prayer_stone", 1)), 3, 18, [],
+     "祈り石のまわりに、歌声の結晶を細かくはめた指輪。耳をすますと、祈りの歌が聞こえる。"),
+    ("chime_necklace", "鈴音の首飾り", "necklace", None, 4, "uncommon", True,
+     ing(("song_crystal", 3), ("sacred_mane", 1), ("crystal_shard", 1)), 3, 18, [],
+     "聖獣のたてがみの紐に、歌声の結晶で作った小さな鈴を下げた首飾り。歩くたびに、澄んだ音がする。"),
+    ("mural_bracelet", "壁画の腕輪", "bracelet", None, 4, "uncommon", True,
+     ing(("statue_shard", 4), ("beetle_shell", 2)), 3, 18, [],
+     "手をつなぐ古代の人の壁画を、石像のかけらに彫って輪にした腕輪。輪の上で、人の列がどこまでも続く。"),
+    ("mane_charm", "聖獣の毛のお守り", "charm", None, 4, "uncommon", True,
+     ing(("sacred_mane", 2), ("song_crystal", 1), ("echo_fragment", 1)), 3, 18, [],
+     "聖獣のたてがみを、白い石の輪に巻いて下げるお守り。神殿を守った獣の、最後の勇気をもらう。"),
+    ("broken_seal_charm", "欠けた聖印", "charm", None, 4, "rare", False, None, 0, 0,
+     [{"type": "heal_on_hit", "chance": 12, "percent": 5}],
+     "神殿の祈り手が首にかけていた、欠けた石の聖印。打つたびに、祈りの残り香が傷をふさぐ。4階の名のある魔物が落とす。"),
+    # 5階「古代守護者の祭壇」：真鍮と翠のひと揃い
+    ("brass_battle_ring", "真鍮の闘環", "ring", ["attack"], 5, "uncommon", False,
+     ing(("sentinel_plate", 3), ("drone_spring", 2), ("jade_core_shard", 1)), 3, 20, [],
+     "防衛兵の装甲を打ち直した真鍮の指輪。翠の核片の粒が、継ぎ目に光る。"),
+    ("brass_wisdom_ring", "真鍮の智環", "ring", ["magic"], 5, "uncommon", False,
+     ing(("sentinel_plate", 3), ("watcher_lens", 2), ("jade_core_shard", 1)), 3, 20, [],
+     "監視眼のレンズを、真鍮の輪に小さくはめた指輪。のぞくと、魔力の結び目が見える。"),
+    ("jade_necklace", "翠核の首飾り", "necklace", None, 5, "uncommon", True,
+     ing(("jade_core_shard", 1), ("watcher_lens", 2), ("drone_spring", 2)), 3, 20, [],
+     "翠の核片を真鍮の枠で包み、細い鎖で下げた首飾り。守護者の胸の結晶と、同じ色で光る。"),
+    ("sentinel_bracelet", "防衛兵の腕輪", "bracelet", None, 5, "uncommon", True,
+     ing(("sentinel_plate", 4), ("drone_spring", 2)), 3, 20, [],
+     "防衛兵の盾の縁を、手首に合わせて曲げた腕輪。古代の兵の、ゆるがない守り。"),
+    ("lens_charm", "監視眼のお守り", "charm", None, 5, "uncommon", True,
+     ing(("watcher_lens", 2), ("drone_spring", 1), ("echo_fragment", 2)), 3, 20, [],
+     "レンズをはめた真鍮の目玉のお守り。もう見つからないように、ではなく、仲間を見失わないように。"),
+    ("altar_knot_charm", "結び台の欠片", "charm", None, 5, "rare", False, None, 0, 0,
+     [{"type": "execute", "threshold": 30, "percent": 10}],
+     "祭壇の結び台から欠け落ちた、真鍮と翠の小さなかけら。弱った敵への最後の一撃に、力を添える。5階の名のある魔物が落とす。"),
+]
+
+# 1階の品（Phase 3 からある）：階の印と、効き目の説明だけ足す
+FLOOR1 = ["moss_iron_battle_ring", "moss_iron_wisdom_ring", "grassland_necklace", "ishikure_bracelet", "waystone_charm",
+          "grassland_horn"]
+
+
+def write_json(path, data):
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    with open(path, "w", encoding="utf-8") as fp:
+        json.dump(data, fp, ensure_ascii=False, indent=2)
+        fp.write("\n")
+
+
+def read_json(path):
+    with open(path, encoding="utf-8") as fp:
+        return json.load(fp)
+
+
+def add_lang(entries):
+    for name in ("ja_jp", "en_us"):
+        path = os.path.join(ASSETS, "lang", name + ".json")
+        data = read_json(path)
+        for key, value in entries.items():
+            data[key] = value
+        write_json(path, data)
+
+
+def main():
+    lang = {}
+    manifest_path = os.path.join(RES, "amemaru", "item_types.json")
+    manifest = read_json(manifest_path)
+
+    # 素材
+    known = {m["id"] for m in manifest["materials"]}
+    for mid, name, rarity, floor, desc in MATERIALS:
+        if mid not in known:
+            entry = {"id": mid}
+            if rarity != "common":
+                entry["rarity"] = rarity
+            manifest["materials"].append(entry)
+        lang["item.amemaru." + mid] = name
+        lang["item.amemaru." + mid + ".desc"] = desc
+        write_json(os.path.join(ASSETS, "models", "item", mid + ".json"),
+                   {"parent": "minecraft:item/generated", "textures": {"layer0": "amemaru:item/" + mid}})
+
+    # アクセサリー
+    known = {a["id"] for a in manifest["accessories"]}
+    for (aid, name, slot, main, floor, rarity, body, recipe, mastery, exp, effects, desc) in ACCESSORIES:
+        if aid not in known:
+            entry = {"id": aid, "slot": slot}
+            if body:
+                entry["model"] = "geckolib"
+            manifest["accessories"].append(entry)
+        definition = {
+            "_comment": "%s（%d階。11月24日「階層ごとにアクセサリーも追加しましょう」【補完】。tools/datagen/build_floor_accessories.py）"
+                        % (name, floor),
+            "slot": slot,
+            "generation": (floor - 1) // 5 + 1,
+            "floor": floor,
+            "rarity": rarity,
+        }
+        if main:
+            definition["main"] = main
+        if effects:
+            definition["effects"] = effects
+        write_json(os.path.join(DATA, "amemaru", "accessories", aid + ".json"), definition)
+        if recipe:
+            write_json(os.path.join(DATA, "recipes", "workshop", aid + ".json"), {
+                "type": "amemaru:workshop",
+                "workshop": "accessory",
+                "mastery": mastery,
+                "mastery_exp": exp,
+                "ingredients": recipe,
+                "result": {"item": "amemaru:" + aid},
+            })
+        lang["item.amemaru." + aid] = name
+        lang["item.amemaru." + aid + ".desc"] = desc + ("（%d階の品）" % floor)
+        if effects:
+            lang["item.amemaru." + aid + ".effect"] = "・".join(effect_text(e) for e in effects)
+        write_json(os.path.join(ASSETS, "models", "item", aid + ".json"),
+                   {"parent": "minecraft:item/generated", "textures": {"layer0": "amemaru:item/" + aid}})
+
+    # 1階の品：階の印
+    for aid in FLOOR1:
+        path = os.path.join(DATA, "amemaru", "accessories", aid + ".json")
+        data = read_json(path)
+        if data.get("floor") != 1:
+            items = list(data.items())
+            out = {}
+            for key, value in items:
+                out[key] = value
+                if key == "generation":
+                    out["floor"] = 1
+            if "floor" not in out:
+                out["floor"] = 1
+            write_json(path, out)
+        if "effects" in data:
+            lang["item.amemaru." + aid + ".effect"] = "・".join(effect_text(e) for e in data["effects"])
+    write_json(manifest_path, manifest)
+    add_lang(lang)
+    print("素材", len(MATERIALS), "アクセサリー", len(ACCESSORIES))
+
+
+if __name__ == "__main__":
+    main()

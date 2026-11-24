@@ -866,6 +866,16 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
     }
 
     /**
+     * 受けるダメージの倍率（魔力のダメージかどうかで変わる敵のため。11月24日：4階の結晶甲虫「硬いが魔法に弱い」）。
+     * ふつうは {@link #damageTakenMultiplier(net.minecraft.world.entity.Entity)} と同じ。
+     *
+     * @param magic 魔力のダメージか（スキルの効果が魔力で決まるとき）
+     */
+    public double damageTakenMultiplier(@Nullable net.minecraft.world.entity.Entity attacker, boolean magic) {
+        return damageTakenMultiplier(attacker);
+    }
+
+    /**
      * 見た目で、見せる・隠すを切りかえるボーン（クライアントで読む。キーはボーンの名前、値は見せるか）。Phase 8 その2：
      * 3階のボスの水の外套（水が引くと消え、炉心が見える）。
      */

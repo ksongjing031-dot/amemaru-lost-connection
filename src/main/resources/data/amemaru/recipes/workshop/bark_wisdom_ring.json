@@ -1,0 +1,23 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "accessory",
+  "mastery": 2,
+  "mastery_exp": 12,
+  "ingredients": [
+    {
+      "item": "amemaru:old_bark",
+      "count": 3
+    },
+    {
+      "item": "amemaru:moss_iron",
+      "count": 2
+    },
+    {
+      "item": "amemaru:wisp_wick",
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "amemaru:bark_wisdom_ring"
+  }
+}

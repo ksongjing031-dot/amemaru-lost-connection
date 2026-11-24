@@ -417,6 +417,13 @@ public abstract class AmemaruBoss extends AmemaruMob {
         return List.of();
     }
 
+    /**
+     * 倒されたあと（{@link jp.amemaru.lostconnection.tower.BossRoom} から。{@code winners} は戦った人、{@code first} は
+     * サーバーで初めて倒したとき）。11月24日：5階の古代守護者の「第七の門鍵」。ふつうは何もしない。
+     */
+    public void onVictory(ServerLevel level, List<ServerPlayer> winners, boolean first) {
+    }
+
     /** 管理者：技を出させる（戦いの間だけ）。出せたら true。 */
     public boolean forceSkill(String name) {
         return false;

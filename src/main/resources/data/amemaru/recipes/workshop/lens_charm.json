@@ -1,0 +1,23 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "accessory",
+  "mastery": 3,
+  "mastery_exp": 20,
+  "ingredients": [
+    {
+      "item": "amemaru:watcher_lens",
+      "count": 2
+    },
+    {
+      "item": "amemaru:drone_spring",
+      "count": 1
+    },
+    {
+      "item": "amemaru:echo_fragment",
+      "count": 2
+    }
+  ],
+  "result": {
+    "item": "amemaru:lens_charm"
+  }
+}

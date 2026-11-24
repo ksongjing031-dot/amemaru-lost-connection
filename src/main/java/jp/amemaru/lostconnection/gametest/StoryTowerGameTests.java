@@ -72,9 +72,11 @@ public final class StoryTowerGameTests {
         // その4のペトラ）・会話43
         // （Phase 5 の11と、その3の親密度・ノア・エルネストの29、ポッカ爺の1）・ストーリーイベント4（目覚め・2度目の目覚め・1階に入る・初撃破）
         check(helper, NpcDefs.all().size() == 10, "NPCの数が10ではありません：" + NpcDefs.all().keySet());
-        check(helper, DialogueDefs.all().size() == 43, "会話の数が43ではありません：" + DialogueDefs.all().size() + " " + DialogueDefs.all().keySet());
-        // Phase 8 その1：2階に入る・2階の初撃破・霧の奥の少女（ノアの初目撃）。その2：3階に入る・3階の初撃破・白い流れ
-        check(helper, StoryEventManager.all().size() == 10, "ストーリーイベントの数が10ではありません");
+        // 11月24日：4階のガルドの「騎士団の遺品」・リリアの「ハロルドの認識票」、5階のガルドの「昇格式」で46
+        check(helper, DialogueDefs.all().size() == 46, "会話の数が46ではありません：" + DialogueDefs.all().size() + " " + DialogueDefs.all().keySet());
+        // Phase 8 その1：2階に入る・2階の初撃破・霧の奥の少女（ノアの初目撃）。その2：3階に入る・3階の初撃破・白い流れ。
+        // 11月24日：4階に入る・初撃破・騎士団の野営の跡・遺品・白い壁画、5階に入る・初撃破・奈落のふち・格子の空で19
+        check(helper, StoryEventManager.all().size() == 19, "ストーリーイベントの数が19ではありません：" + StoryEventManager.all().size());
         for (DialogueDef dialogue : DialogueDefs.all().values()) {
             check(helper, NpcDefs.get(dialogue.npc()) != null, "会話 " + dialogue.id() + " のNPC " + dialogue.npc() + " の定義がありません");
         }

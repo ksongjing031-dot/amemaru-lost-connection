@@ -1,0 +1,37 @@
+{
+  "_comment": "祭壇の前庭（本人だけ。一人一度）。Phase 0-A 9章の5階「天井の星は、よく見ると格子の結び目」。台詞は【補完】",
+  "title": "格子の空",
+  "trigger": {
+    "type": "amemaru:floor_zone",
+    "floor": 5,
+    "zone": "lattice_sky"
+  },
+  "scope": "player",
+  "once": false,
+  "replayable": true,
+  "conditions": {
+    "flags_none": [
+      "amemaru:story/lattice_seen"
+    ]
+  },
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "見上げると、天井いっぱいに星が光っている。",
+      "ticks": 90,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "……いや、よく見ると、星は格子の結び目に並んでいる。誰かがこの空を、糸で編んだかのように。",
+      "ticks": 130,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/lattice_seen"
+      ]
+    }
+  ]
+}

@@ -31,10 +31,24 @@ import software.bernie.geckolib.renderer.GeoEntityRenderer;
  */
 public class AmemaruMobRenderer<T extends AmemaruMob> extends GeoEntityRenderer<T> {
 
+    /** 半透明で描くか（4階の祈り手の残響：声だけが残った、淡い姿。11月24日）。 */
+    private final boolean translucent;
+
     public AmemaruMobRenderer(EntityRendererProvider.Context context, String name, float shadow) {
+        this(context, name, shadow, false);
+    }
+
+    public AmemaruMobRenderer(EntityRendererProvider.Context context, String name, float shadow, boolean translucent) {
         super(context, new AssetGeoModel<>("entity", name));
         addRenderLayer(new OptionalGlowLayer<>(this));
         shadowRadius = shadow;
+        this.translucent = translucent;
+    }
+
+    @Override
+    public RenderType getRenderType(T animatable, ResourceLocation texture, @javax.annotation.Nullable MultiBufferSource bufferSource,
+                                    float partialTick) {
+        return translucent ? RenderType.entityTranslucent(texture) : super.getRenderType(animatable, texture, bufferSource, partialTick);
     }
 
     @Override

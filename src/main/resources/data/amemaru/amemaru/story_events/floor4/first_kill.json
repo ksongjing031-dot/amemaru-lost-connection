@@ -1,0 +1,61 @@
+{
+  "_comment": "4階のボスの初撃破（倒したパーティの画面だけ。サーバー全体には知らせが出る）。2行目は古代記録「神殿の碑文」の壁画と同じ。台詞は【補完】",
+  "title": "祈りの残響",
+  "trigger": {
+    "type": "amemaru:floor_first_kill",
+    "floor": 4
+  },
+  "scope": "party",
+  "once": true,
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:wait",
+      "ticks": 50
+    },
+    {
+      "type": "amemaru:hud",
+      "hide": true
+    },
+    {
+      "type": "amemaru:sound",
+      "sound": "minecraft:block.bell.resonate",
+      "volume": 1.0,
+      "pitch": 1.2
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "none",
+      "to": "white",
+      "ticks": 25
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "white",
+      "to": "none",
+      "ticks": 50
+    },
+    {
+      "type": "amemaru:title",
+      "title": "崩壊した神殿　踏破",
+      "subtitle": "4階",
+      "ticks": 90
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "歌がやんだ。四人の歌い手は、最後に声をそろえて一つの和音を響かせ、光になって消えた……。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "大広間の奥の壁に、高い塔と、その根元の輪のような装置の絵。名前を記した所だけが、削れて読めない。",
+      "ticks": 130,
+      "wait": true
+    },
+    {
+      "type": "amemaru:hud",
+      "hide": false
+    }
+  ]
+}

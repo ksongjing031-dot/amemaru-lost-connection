@@ -1,0 +1,56 @@
+{
+  "_comment": "5日目：昇格式。古代守護者を倒した人を、ガルドが正式な冒険者と認める（Phase 0-A 9章の5階の物語・12章のガルド「5日目 正式に認める（昇格式）」。確定）。称号「コネリアの冒険者」を渡す。台詞は【補完】",
+  "npc": "amemaru:gard",
+  "priority": 45,
+  "conditions": {
+    "opening": 2,
+    "flags_all": [
+      "amemaru:story/guardian_defeated"
+    ],
+    "flags_none": [
+      "amemaru:story/promotion_ceremony_done"
+    ]
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "expression": "stern",
+      "text": "……古代守護者を、倒したそうだな",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "15年前、俺たちが越えられなかった祭壇だ。お前たちは、最後まで互いの名を呼び合えたんだな",
+      "next": "s3"
+    },
+    "s3": {
+      "text": "迷い人と呼ぶのは、今日で終わりだ",
+      "next": "s4"
+    },
+    "s4": {
+      "expression": "stern",
+      "text": "{player}。今日から、お前はこの街の冒険者だ。冒険者ギルドの長として、ここに認める",
+      "next": "s5"
+    },
+    "s5": {
+      "expression": "smile",
+      "text": "……よく、生きて戻った"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:grant_title",
+      "title": "amemaru:conelia_adventurer"
+    },
+    {
+      "type": "amemaru:bond",
+      "npc": "amemaru:gard",
+      "amount": 20
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/promotion_ceremony_done"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "slot": "chest",
+  "generation": 1,
+  "series": "守護者シリーズ（ヒーラー）",
+  "rarity": "epic",
+  "required_level": 10,
+  "jobs": [
+    "amemaru:healer"
+  ],
+  "stats": {
+    "defense": 6,
+    "mp": 42,
+    "hp": 21,
+    "heal_power": 3
+  },
+  "durability": 440,
+  "binding": "on_equip",
+  "effects": [
+    {
+      "type": "damage_reduction",
+      "percent": 5
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:jade_core_shard",
+      "count": 1
+    },
+    {
+      "item": "amemaru:sentinel_plate",
+      "count": 2
+    }
+  ],
+  "description": "守護者の装甲の白い板を、白衣の胸当てにしたもの。翠の線の模様が、傷を受けたときだけ淡く光る。"
+}

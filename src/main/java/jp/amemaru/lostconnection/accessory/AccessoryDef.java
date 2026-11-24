@@ -21,10 +21,23 @@ import java.util.List;
  *   <li>{@code rarity}：レアリティ（説明文と名前の色）</li>
  *   <li>{@code main}：メインステータスになれる種類（省くと枠の決まりのとおり。お守りなら5種類からランダム）</li>
  *   <li>{@code effects}：固有の特殊効果（ボスのレアアクセサリーなど。例：草原の角笛「移動速度+5%」）</li>
+ *   <li>{@code floor}：作れる・手に入る階（11月24日のご指示「階層ごとにアクセサリーも追加しましょう」。省くと 0）。
+ *       同じ章（世代）の中で、奥の階の品ほどメインステータスの上限が少し高い（章の1つ目の階を1倍として、1階ごとに
+ *       +{@value #FLOOR_STEP_PERCENT}%。{@link #mainFactor()}）【補完】。サブの幅と、厳選・強化の決まりは章のまま</li>
  * </ul>
  */
 public record AccessoryDef(ResourceLocation id, AccessorySlot slot, int generation, Rarity rarity, List<StatType> main,
-                           List<SpecialEffect> effects) {
+                           List<SpecialEffect> effects, int floor) {
+    /** 同じ章の中で、1階奥へ進むごとに、メインステータスの上限を何%上げるか。 */
+    public static final int FLOOR_STEP_PERCENT = 5;
+
+    /** メインステータスの上限の倍率（章の1つ目の階と、階を決めていない品は 1）。 */
+    public double mainFactor() {
+        if (floor <= 0) {
+            return 1.0;
+        }
+        return 1.0 + FLOOR_STEP_PERCENT / 100.0 * ((floor - 1) % 5);
+    }
 
     public static AccessoryDef parse(ResourceLocation id, JsonObject json) {
         AccessorySlot slot = AccessorySlot.byId(Json.string(json, "slot"));
@@ -56,6 +69,10 @@ public record AccessoryDef(ResourceLocation id, AccessorySlot slot, int generati
             String where = "effects[" + i + "]";
             effects.add(SpecialEffect.parse(Json.asObject(effectArray.get(i), where), where));
         }
-        return new AccessoryDef(id, slot, generation, rarity, List.copyOf(main), List.copyOf(effects));
+        int floor = Json.optionalInt(json, "floor", 0, 0, 20);
+        if (floor > 0 && (floor - 1) / 5 + 1 != generation) {
+            throw new DefinitionException("「floor」（" + floor + "階）と「generation」（第" + generation + "章）が合いません");
+        }
+        return new AccessoryDef(id, slot, generation, rarity, List.copyOf(main), List.copyOf(effects), floor);
     }
 }

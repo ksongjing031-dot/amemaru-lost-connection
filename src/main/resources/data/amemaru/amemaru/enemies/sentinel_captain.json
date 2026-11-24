@@ -1,0 +1,60 @@
+{
+  "_comment": "防衛隊長（5階の名のある魔物。防衛兵の砦の内郭・接続の柱 B の守り手。大きく、盾がさらに硬い。HPが半分を下回ると一度、防衛兵を call 体呼ぶ）。数値は【補完】",
+  "name": "防衛隊長",
+  "model": "amemaru:sentinel",
+  "floor": 5,
+  "level": 12,
+  "description": "砦の内郭を守る、防衛兵たちの隊長。塔の盾には古代の紋が刻まれ、正面からの攻めはまず通らない。傷つくと角笛を吹いて、兵を呼ぶ。",
+  "stats": {
+    "hp": 30000,
+    "attack": 104,
+    "defense": 34,
+    "move_speed": 0.2,
+    "follow_range": 26,
+    "aggro_range": 12
+  },
+  "exp": 420,
+  "skills": {
+    "bash": {
+      "power": 1.45,
+      "windup": 0.9,
+      "cooldown": 2.4,
+      "range": 3.8,
+      "angle": 120,
+      "push": 1.1
+    },
+    "charge": {
+      "power": 1.9,
+      "windup": 1.1,
+      "cooldown": 6.0,
+      "range": 14.0,
+      "min_range": 4.0,
+      "width": 2.0,
+      "speed": 1.0,
+      "recover": 1.0
+    }
+  },
+  "behavior": {
+    "shield_angle": 140.0,
+    "shield_taken": 0.2,
+    "call": 2,
+    "scale": 1.4
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/sentinel",
+    "rare": [
+      {
+        "item": "amemaru:jade_core_shard",
+        "chance": 35.0
+      },
+      {
+        "item": "amemaru:altar_knot_charm",
+        "chance": 5.0
+      },
+      {
+        "item": "amemaru:crystal_fruit_crimson",
+        "chance": 6.0
+      }
+    ]
+  }
+}

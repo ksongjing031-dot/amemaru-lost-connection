@@ -1,0 +1,53 @@
+{
+  "_comment": "防衛兵センチネル（5階の雑魚。Phase 0-A 9章「盾持ち」）。前（shield_angle の内）からのダメージは shield_taken。盾打ち（bash。前の扇）と槍の突進（charge）。数値は【補完】",
+  "name": "防衛兵センチネル",
+  "floor": 5,
+  "level": 10,
+  "description": "白い石と青銅の、祭壇の兵。左腕に大きな塔の盾、右手に槍。盾の正面からの攻撃は、ほとんど通らない。後ろか横から攻めたい。",
+  "stats": {
+    "hp": 4800,
+    "attack": 86,
+    "defense": 28,
+    "move_speed": 0.19,
+    "follow_range": 20,
+    "aggro_range": 10
+  },
+  "exp": 52,
+  "skills": {
+    "bash": {
+      "power": 1.2,
+      "windup": 0.8,
+      "cooldown": 2.4,
+      "range": 3.0,
+      "angle": 100,
+      "push": 0.8
+    },
+    "charge": {
+      "power": 1.5,
+      "windup": 1.0,
+      "cooldown": 8.0,
+      "range": 10.0,
+      "min_range": 4.0,
+      "width": 1.4,
+      "speed": 0.9,
+      "recover": 1.2
+    }
+  },
+  "behavior": {
+    "shield_angle": 120.0,
+    "shield_taken": 0.25
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/sentinel",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_amber",
+        "chance": 0.6
+      },
+      {
+        "item": "amemaru:crystal_fruit_azure",
+        "chance": 0.3
+      }
+    ]
+  }
+}

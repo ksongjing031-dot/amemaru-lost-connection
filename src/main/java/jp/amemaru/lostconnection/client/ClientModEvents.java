@@ -86,6 +86,7 @@ public final class ClientModEvents {
         event.register(KeyBindings.OPEN_SKILL_TREE);
         event.register(KeyBindings.OPEN_PARTY);
         event.register(KeyBindings.RETIRE);
+        event.register(KeyBindings.LOCK_ON);
         for (KeyMapping key : KeyBindings.SKILLS) {
             event.register(key);
         }
@@ -99,6 +100,8 @@ public final class ClientModEvents {
         // Phase 4：パーティのメンバー（左上）と、ダウン（自分が倒れた・仲間を起こしている）
         event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "party", PartyHud.OVERLAY);
         event.registerAbove(VanillaGuiOverlay.HOTBAR.id(), "down", DownHud.OVERLAY);
+        // 11月24日：ロックした敵の名前・距離・HP（照準のすぐ下）
+        event.registerAbove(VanillaGuiOverlay.CROSSHAIR.id(), "lock_on", TargetLock.OVERLAY);
         // Phase 3：レアドロップ・工房などの特別な演出の帯
         event.registerAboveAll("special_moment", SpecialMomentFx.OVERLAY);
         // Phase 5：暗転・章題・字幕・古代文字・知らせ・カウントダウン・はじめの手引き
@@ -149,6 +152,17 @@ public final class ClientModEvents {
         event.registerEntityRenderer(ModEntities.OLD_WARD_KNOT.get(), context -> new AmemaruMobRenderer<>(context, "old_ward_knot", 0.0F));
         // Phase 8 その2：3階の敵
         event.registerEntityRenderer(ModEntities.SUIMON_NEZUMI.get(), context -> new AmemaruMobRenderer<>(context, "suimon_nezumi", 0.35F));
+        // 11月24日：4階の敵とボス
+        event.registerEntityRenderer(ModEntities.SILENT_STATUE.get(), context -> new AmemaruMobRenderer<>(context, "silent_statue", 0.6F));
+        event.registerEntityRenderer(ModEntities.PRAYER_ECHO.get(), context -> new AmemaruMobRenderer<>(context, "prayer_echo", 0.0F, true));
+        event.registerEntityRenderer(ModEntities.CRYSTAL_BEETLE.get(), context -> new AmemaruMobRenderer<>(context, "crystal_beetle", 0.6F));
+        event.registerEntityRenderer(ModEntities.BROKEN_BEAST.get(), context -> new AmemaruMobRenderer<>(context, "broken_beast", 0.6F));
+        event.registerEntityRenderer(ModEntities.CANTARE.get(), context -> new AmemaruMobRenderer<>(context, "cantare", 0.0F));
+        // 11月24日：5階の敵とボス
+        event.registerEntityRenderer(ModEntities.WATCHER.get(), context -> new AmemaruMobRenderer<>(context, "watcher", 0.0F));
+        event.registerEntityRenderer(ModEntities.SENTINEL.get(), context -> new AmemaruMobRenderer<>(context, "sentinel", 0.6F));
+        event.registerEntityRenderer(ModEntities.REPAIR_DRONE.get(), context -> new AmemaruMobRenderer<>(context, "repair_drone", 0.0F));
+        event.registerEntityRenderer(ModEntities.ANCIENT_GUARDIAN.get(), context -> new AmemaruMobRenderer<>(context, "ancient_guardian", 1.4F));
         event.registerEntityRenderer(ModEntities.YODOMI_SLIME.get(), context -> new AmemaruMobRenderer<>(context, "yodomi_slime", 0.6F));
         event.registerEntityRenderer(ModEntities.SOUJIKIHEI.get(), context -> new AmemaruMobRenderer<>(context, "soujikihei", 0.7F));
         event.registerEntityRenderer(ModEntities.KIBA_NAMAZU.get(), context -> new AmemaruMobRenderer<>(context, "kiba_namazu", 0.6F));

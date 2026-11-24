@@ -1,0 +1,30 @@
+{
+  "_comment": "4日目（4階）：結晶騎士団の遺品の冑を、ガルドに見せる（遺品を見つけると始まる。ガルドの会話で報告）【補完】",
+  "name": "結晶騎士団の遺品",
+  "kind": "story",
+  "giver": "amemaru:gard",
+  "report": "amemaru:gard",
+  "board": false,
+  "description": "4階の神殿の地下で、結晶騎士団の冑と認識票を見つけた。ガルドに見せよう。",
+  "requires": {},
+  "objectives": [
+    {
+      "type": "collect",
+      "item": "amemaru:knight_helm_relic",
+      "count": 1,
+      "consume": true,
+      "label": "結晶騎士団の冑をガルドに見せる"
+    }
+  ],
+  "rewards": {
+    "knots": 300,
+    "exp": 300,
+    "affinity": {
+      "amemaru:gard": 20
+    },
+    "flags": [
+      "amemaru:story/knight_relics_reported"
+    ]
+  },
+  "order": 130
+}
