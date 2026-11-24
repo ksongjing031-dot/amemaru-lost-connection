@@ -66,7 +66,7 @@ public final class BalanceGameTests {
         helper.succeed();
     }
 
-    /** ボス：ひとりでも2人ぶんのHP・みんなで受ける一撃（ひとりで受けると倒れる）・怒るまでの時間。 */
+    /** ボス：ひとりでも2人ぶんのHP・怒るまでの時間。みんなで受ける一撃はレイドのボスだけ（11月25日。1〜5階のボスにはない）。 */
     @GameTest(template = EMPTY)
     public static void bossesNeedAParty(GameTestHelper helper) {
         for (int floor = 1; floor <= 3; floor++) {
@@ -82,13 +82,14 @@ public final class BalanceGameTests {
             check(helper, scaling.enrageSeconds() >= 900, floor + "階のボスが、すぐに怒ります：" + scaling.enrageSeconds() + "秒");
             EnemyDef boss = EnemyDefs.get(room.boss());
             check(helper, boss != null, floor + "階のボスの定義がありません");
-            EnemyDef.Skill share = boss.skills().get("share");
-            check(helper, share != null, floor + "階のボスに、みんなで受ける一撃がありません");
-            check(helper, SharedBlow.split(share.power(), 1) >= 1.0, floor + "階のみんなで受ける一撃が、ひとりで受けても倒れない強さです");
-            check(helper, SharedBlow.split(share.power(), 2) < 1.0, floor + "階のみんなで受ける一撃が、2人で分けても倒れる強さです");
-            check(helper, share.windupTicks() >= 60, floor + "階のみんなで受ける一撃の予兆が短すぎます（集まる間がない）");
+            // 11月25日のご指示「みんなで受ける一撃はレイドボス限定に」：1〜5階のボスは使わない
+            check(helper, !boss.raid() && !boss.skills().containsKey("share"), floor + "階のボスに、みんなで受ける一撃が残っています");
             check(helper, boss.hp() * two >= (floor == 1 ? 24000 : floor == 2 ? 50000 : 58000), floor + "階のボスのHP（2人）が少なすぎます："
                     + boss.hp() * two);
+        }
+        for (String id : List.of("cantare", "ancient_guardian")) {
+            EnemyDef boss = EnemyDefs.get(AmemaruMod.id(id));
+            check(helper, boss != null && !boss.raid() && !boss.skills().containsKey("share"), id + " に、みんなで受ける一撃が残っています");
         }
         check(helper, Math.abs(SharedBlow.split(160, 4) - 0.4) < EPSILON, "4人で分けると、ひとり最大HPの40%ではありません");
         check(helper, SharedBlow.split(160, 0) == 1.6, "円に誰もいないとき、狙われた人がひとりで受けていません");

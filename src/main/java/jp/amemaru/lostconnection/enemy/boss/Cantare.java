@@ -59,6 +59,13 @@ public class Cantare extends AmemaruBoss {
     private enum Action { NONE, WAVE, PILLARS, SONG, ANSWER, CALL, OPEN, RECOVER }
 
     private Action action = Action.NONE;
+
+    /** 技を出している途中か（技が終わったら、ボスは少し息つぎをする。{@link AmemaruBoss#breatheTicks}）。 */
+    @Override
+    protected boolean acting() {
+        return action != Action.NONE;
+    }
+
     private int timer;
     private float lockedYaw;
     private int[] notes = new int[0];
@@ -549,16 +556,60 @@ public class Cantare extends AmemaruBoss {
         if (--timer > 0) {
             return;
         }
+        beginAnswer(level, null);
+    }
+
+    /** 最後の音を歌った（このあと踏めば、答えとして数える）。 */
+    private boolean lastNoteSung() {
+        EnemyDef.Skill song = songSkill();
+        int noteTicks = Math.max(6, (int) Math.round(song.param("note_seconds", 0.9) * 20));
+        int total = noteTicks * notes.length + 10;
+        return notes.length > 0 && total - timer >= noteTicks * (notes.length - 1);
+    }
+
+    /**
+     * 答えを待ちはじめる。11月25日のご指示「音の通りに床を踏んでも失敗になる」：前は、歌い終えて少したってから受け付け、それより
+     * 前に乗った床は数えなかった（乗ったままだと、次の床が「1音目」になって外れた）。最後の音を歌ったら受け付け、そのときもう
+     * 床に乗っている人は、その床が次の音なら数える（違っても外れにしない）。{@code skip} は、この答えを始めた踏み（あとで数える）。
+     */
+    private void beginAnswer(ServerLevel level, @javax.annotation.Nullable ServerPlayer skip) {
+        EnemyDef.Skill song = songSkill();
         lightAll(level, false);
         action = Action.ANSWER;
         timer = (int) Math.round(song.param("answer", 12.0) * 20);
         setBusy(4);
         tipOnce("answer");
         BossRoom room = room();
-        if (room != null) {
-            for (ServerPlayer player : room.participants()) {
-                player.displayClientMessage(Component.translatable("boss.amemaru.cantare.answer", notes.length)
-                        .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD), true);
+        if (room == null) {
+            return;
+        }
+        for (ServerPlayer player : room.participants()) {
+            player.displayClientMessage(Component.translatable("boss.amemaru.cantare.answer", notes.length)
+                    .withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD), true);
+        }
+        List<BlockPos> plates = plates();
+        for (ServerPlayer player : room.participants()) {
+            if (player == skip || action != Action.ANSWER || answered >= notes.length) {
+                continue;
+            }
+            BlockPos on = TempleService.countedPlate(player);
+            if (on != null && plates.indexOf(on) == notes[answered]) {
+                countNote(level, on, notes[answered]);
+            }
+        }
+    }
+
+    /** 正しい床を踏んだ：1音進める（そろえば無防備に）。 */
+    private void countNote(ServerLevel level, BlockPos pos, int index) {
+        TempleService.playNote(level, pos, index);
+        answered++;
+        BossRoom room = room();
+        if (answered >= notes.length) {
+            expose(level);
+        } else if (room != null) {
+            for (ServerPlayer p : room.participants()) {
+                p.displayClientMessage(Component.translatable("boss.amemaru.cantare.progress", answered, notes.length)
+                        .withStyle(ChatFormatting.AQUA), true);
             }
         }
     }
@@ -601,24 +652,24 @@ public class Cantare extends AmemaruBoss {
         if (index < 0) {
             return false;
         }
-        TempleService.playNote(level, pos, index);
+        if (action == Action.SONG && lastNoteSung()) {
+            beginAnswer(level, player);
+        }
+        if (action == Action.SONG) {
+            // 歌っている間：床を光らせない（歌の光とまぎれないように）。数えもしない（歌い終えてから、乗っていれば数える）
+            level.playSound(null, pos, net.minecraft.sounds.SoundEvents.NOTE_BLOCK_HAT.value(), SoundSource.BLOCKS, 0.5F, 1.4F);
+            return true;
+        }
         if (action != Action.ANSWER || notes.length == 0) {
+            TempleService.playNote(level, pos, index);
             return true;
         }
         if (notes[answered] != index) {
+            TempleService.playNote(level, pos, index);
             discord(level);
             return true;
         }
-        answered++;
-        BossRoom room = room();
-        if (answered >= notes.length) {
-            expose(level);
-        } else if (room != null) {
-            for (ServerPlayer p : room.participants()) {
-                p.displayClientMessage(Component.translatable("boss.amemaru.cantare.progress", answered, notes.length)
-                        .withStyle(ChatFormatting.AQUA), true);
-            }
-        }
+        countNote(level, pos, index);
         return true;
     }
 

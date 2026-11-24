@@ -439,6 +439,11 @@ class Validator:
                 elif (skill.get("type", "active") != "active" or skill.get("ultimate") or skill.get("requires")
                       or skill.get("min_level", 1) > 1):
                     self.problems.append(f"jobs/{job_id}：最初から使えるスキル「{start_id}」は、前提のない・レベル1のアクティブにしてください")
+        # 武器のタグ（スキルを使うときに見る）と、装備の定義の jobs が合っているか（11月25日：古樹の枝杖などが抜けていた）
+        import weapon_tags
+        for job, items in sorted(weapon_tags.missing().items()):
+            self.problems.append(f"tags/items/weapons/{job}.json：{', '.join(items)} がありません（装備の定義では {job} の武器。"
+                                 f"python3 tools/datagen/weapon_tags.py で足せます）")
         for warning in self.warnings:
             print("注意：" + warning)
         for problem in self.problems:

@@ -60,6 +60,13 @@ public class Hydram extends AmemaruBoss implements Drains.Listener {
     private enum Action { NONE, CANNON, SWEEP, WHIRL, CALL, STAGGER, RECOVER }
 
     private Action action = Action.NONE;
+
+    /** 技を出している途中か（技が終わったら、ボスは少し息つぎをする。{@link AmemaruBoss#breatheTicks}）。 */
+    @Override
+    protected boolean acting() {
+        return action != Action.NONE;
+    }
+
     private int timer;
     private float lockedYaw;
     private Vec3 cannonDir = Vec3.ZERO;

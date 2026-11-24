@@ -539,7 +539,10 @@ public final class StoryCommands {
         jp.amemaru.lostconnection.enemy.boss.AmemaruBoss boss = currentBoss(floor);
         java.util.List<String> names = new java.util.ArrayList<>(boss != null ? boss.skillNames()
                 : jp.amemaru.lostconnection.enemy.boss.Veldhorn.SKILLS);
-        names.add("share");
+        // 11月25日：みんなで受ける一撃は、レイドのボスだけ
+        if (boss != null && boss.def() != null && boss.def().raid()) {
+            names.add("share");
+        }
         return names;
     }
 
@@ -549,7 +552,7 @@ public final class StoryCommands {
             source.sendFailure(Component.translatable("commands.amemaru.boss.none", floor));
             return 0;
         }
-        // 11月24日：みんなで受ける一撃（どのボスにもある。敵の定義の技 share）
+        // 11月24日：みんなで受ける一撃（敵の定義の技 share）。11月25日からは、レイドのボスだけ（ほかのボスでは出せない）
         if ("share".equals(name) ? !boss.forceShare() : !boss.forceSkill(name)) {
             source.sendFailure(Component.translatable("commands.amemaru.boss.skill_failed", floor, String.join("・", boss.skillNames())));
             return 0;

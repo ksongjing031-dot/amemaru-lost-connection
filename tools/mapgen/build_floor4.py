@@ -591,12 +591,14 @@ def chapel(f):
     f.put(420, GROUND + 1, cz + 4, block("amemaru:chime_stone"), thing(0, "prayer"))
     plates = []
     for k in range(4):
-        px = 414 + k * 4
-        f.put(px, GROUND + 1, cz, block("amemaru:sound_plate", note=k, lit=False))
-        plates.append([px, GROUND + 1, cz])
+        # 11月25日：一列に並べると、離れた床へ歩くと間の床を通って「違う床」になったので、前後に互い違いにする
+        # （どの2枚の間をまっすぐ歩いても、ほかの床を通らない）
+        px, pz = 414 + k * 4, cz + (-1 if k % 2 == 0 else 1)
+        f.put(px, GROUND + 1, pz, block("amemaru:sound_plate", note=k, lit=False))
+        plates.append([px, GROUND + 1, pz])
     f.songs.append({"id": "prayer", "name": "祈りの歌", "chime": [420, GROUND + 1, cz + 4], "plates": plates, "length": 3,
                     "door": {"box": [dx0, dy0, dz0, dx1, dy1, dz1], "block": "minecraft:chiseled_stone_bricks"}})
-    sign(f, 422, GROUND + 1, cz + 4, 0, ["祈りの歌", "", "鈴の石を鳴らして", "同じ順番に床を踏む"])
+    sign(f, 422, GROUND + 1, cz + 4, 0, ["祈りの歌", "鈴の石を鳴らし", "鳴った順に床へ", "乗ると音が鳴る"])
     # 奥の院：祭壇・名のある魔物（祈りの導き手）・宝箱・壁画「大断絶」
     for x in range(410, 431):
         f.put(x, GROUND + 1, z0 + 3, block("smooth_quartz"))

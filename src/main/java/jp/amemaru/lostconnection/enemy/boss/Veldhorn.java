@@ -57,6 +57,19 @@ public class Veldhorn extends AmemaruBoss {
     private enum Action { NONE, SWEEP, UPTHRUST, KICK, CHARGE_WINDUP, CHARGING, STUNNED, RECOVER, STOMP, LEAP_WINDUP, LEAPING, ROOTS, ROAR }
 
     private Action action = Action.NONE;
+
+    /** 技を出している途中か（技が終わったら、ボスは少し息つぎをする。{@link AmemaruBoss#breatheTicks}）。 */
+    @Override
+    protected boolean acting() {
+        return action != Action.NONE;
+    }
+
+    /** 角の薙ぎ払いは「attack」のアニメーション。 */
+    @Override
+    protected String skillOfAction(String action) {
+        return "attack".equals(action) ? "sweep" : super.skillOfAction(action);
+    }
+
     private int timer;
     private float chargeYaw;
     private Vec3 chargeDir = Vec3.ZERO;

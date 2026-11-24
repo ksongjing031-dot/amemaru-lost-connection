@@ -38,6 +38,7 @@ import net.minecraftforge.registries.ForgeRegistries;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -63,6 +64,12 @@ public final class TempleService {
     public static final int NOTE_TICKS = 14;
     /** 鳴らし終えてから、踏み終えるまでの時間（tick）。 */
     public static final int ANSWER_TICKS = 20 * 20;
+    /**
+     * 床に乗ってから、踏んだと数えるまで（tick）。11月25日のご指示「音の通りに床を踏んでも失敗になる」：祈りの間の床は一列に
+     * 並んでいて、離れた床へ歩くと間の床を通り、そこで「違う床」になっていた。歩いて通り過ぎる間（1マスでおよそ5 tick）は
+     * 数えず、乗って止まったら数える（音が鳴ったら数えた合図）。
+     */
+    public static final int DWELL_TICKS = 6;
 
     /** 鳴らしている・答えを待っている順番（「階:組」）。 */
     private static final Map<String, Performance> SONGS = new HashMap<>();
@@ -70,7 +77,11 @@ public final class TempleService {
     /** 人ごとに、今乗っている音の床（降りると消える。乗っている間は数えない）。人は、抜けた・生き返った（別の人の入れ物）で消す。 */
     private static final Map<UUID, Standing> LAST_STEP = new HashMap<>();
 
-    private record Standing(ServerPlayer player, BlockPos plate) {
+    /** 乗っている人（{@code counted}：もう踏んだと数えた）。 */
+    private record Standing(ServerPlayer player, BlockPos plate, int note, long since, boolean counted) {
+        Standing countedNow() {
+            return new Standing(player, plate, note, since, true);
+        }
     }
 
     private static final class Performance {
@@ -401,11 +412,36 @@ public final class TempleService {
         player.displayClientMessage(Component.translatable("message.amemaru.song.listen", song.length()).withStyle(ChatFormatting.AQUA), true);
     }
 
-    /** 自動テスト用：数えた踏みの数（同じ床に乗り続けている間は数えない）。 */
+    /** 自動テスト用：床に乗った回数（同じ床に乗り続けている間は数えない）。 */
     private static int countedSteps;
+    /** 自動テスト用：踏んだと数えた回数（乗って {@link #DWELL_TICKS} たった）。 */
+    private static int confirmedSteps;
 
     public static int countedSteps() {
         return countedSteps;
+    }
+
+    public static int confirmedSteps() {
+        return confirmedSteps;
+    }
+
+    /** その人が乗って、踏んだと数えた床（乗っていない・まだ数えていなければ null）。ボスの歌の答えで使う。 */
+    @Nullable
+    public static BlockPos countedPlate(ServerPlayer player) {
+        Standing standing = LAST_STEP.get(player.getUUID());
+        return standing != null && standing.counted() && standing.player() == player && standingOn(player, standing.plate())
+                ? standing.plate() : null;
+    }
+
+    /** 答えを受け付けはじめる時（最後の音が鳴り始めた時。11月25日：前は鳴り終えて少したってからで、すぐ踏むと数えなかった）。 */
+    private static long answerFrom(Performance perf) {
+        return perf.startedAt + (long) Math.max(0, perf.notes.length - 1) * NOTE_TICKS;
+    }
+
+    /** 自動テスト用：今の答えの進み（いくつ正しく踏んだか。鳴らしていなければ -1）。 */
+    public static int songAnswered(int floor, String songId) {
+        Performance perf = SONGS.get(floor + ":" + songId);
+        return perf == null ? -1 : perf.answered;
     }
 
     /** 自動テスト用：鳴らしている（答えを待っている）音の順番（床の番号。鳴らしていなければ空）。 */
@@ -427,9 +463,10 @@ public final class TempleService {
     }
 
     /**
-     * 床を踏んだ（{@link TempleBlocks.SoundPlate}。体が床のマスに入っている間、動くたびに呼ばれる）。同じ床に乗っている間は1回だけ
-     * 数え、いちど降りて（{@link #onServerTick} が、乗っていた床から離れたのを見て消す）また乗れば、同じ床でももう1回数える
-     * （「紅 → 白 → 紅」のような歌のため）。
+     * 床に乗った（{@link TempleBlocks.SoundPlate}。体が床のマスに入っている間、動くたびに呼ばれる）。乗ったことを覚えるだけで、
+     * 踏んだと数えるのは、乗ったまま {@link #DWELL_TICKS} たってから（{@link #onServerTick}。歩いて通り過ぎた床は数えない）。
+     * 同じ床に乗っている間は1回だけ数え、いちど降りて（{@link #onServerTick} が、乗っていた床から離れたのを見て消す）また乗れば、
+     * 同じ床でももう1回数える（「紅 → 白 → 紅」のような歌のため）。
      */
     public static void step(ServerPlayer player, BlockPos pos, int note) {
         ServerLevel level = player.serverLevel();
@@ -437,8 +474,14 @@ public final class TempleService {
         if (last != null && last.player() == player && pos.equals(last.plate())) {
             return;
         }
-        LAST_STEP.put(player.getUUID(), new Standing(player, pos.immutable()));
+        LAST_STEP.put(player.getUUID(), new Standing(player, pos.immutable(), note, level.getGameTime(), false));
         countedSteps++;
+    }
+
+    /** 乗ってから {@link #DWELL_TICKS} たった床を、踏んだと数える（音が鳴る）。 */
+    private static void confirm(ServerPlayer player, BlockPos pos, int note) {
+        ServerLevel level = player.serverLevel();
+        confirmedSteps++;
         // ボスの音の床（4階のボス。近くにいれば、ボスが受け取る）
         for (jp.amemaru.lostconnection.enemy.boss.Cantare boss : level.getEntitiesOfClass(jp.amemaru.lostconnection.enemy.boss.Cantare.class,
                 new AABB(pos).inflate(40.0))) {
@@ -461,13 +504,17 @@ public final class TempleService {
             if (index < 0) {
                 continue;
             }
-            answer(player, level, def, song, index);
+            answer(player, level, def, song, index, false);
             return;
         }
         level.playSound(null, pos, SoundEvents.NOTE_BLOCK_CHIME.value(), SoundSource.BLOCKS, 0.8F, pitch(note));
     }
 
-    private static void answer(ServerPlayer player, ServerLevel level, FloorDef def, FloorFeatures.Song song, int index) {
+    /**
+     * 踏んだ床で答える。{@code lenient} は、鳴り終える前から乗っていた人を、鳴り終えたときに数えるとき
+     * （次の音の床なら数え、違えば外れにしない）。
+     */
+    private static void answer(ServerPlayer player, ServerLevel level, FloorDef def, FloorFeatures.Song song, int index, boolean lenient) {
         BlockPos plate = def.world(song.plates().get(index));
         playNote(level, plate, index);
         if (Data.get(player.server).sung(def.number(), song.id())) {
@@ -476,8 +523,7 @@ public final class TempleService {
         String key = def.number() + ":" + song.id();
         Performance perf = SONGS.get(key);
         long now = level.getGameTime();
-        long playEnd = perf == null ? 0 : perf.startedAt + (long) perf.notes.length * NOTE_TICKS;
-        if (perf == null || now > perf.deadline || now < playEnd) {
+        if (perf == null || now > perf.deadline || now < answerFrom(perf)) {
             return; // まだ鳴らしていない・鳴らしている途中・時間切れ：ただ鳴るだけ
         }
         if (perf.notes[perf.answered] == index) {
@@ -500,6 +546,9 @@ public final class TempleService {
                         .withStyle(ChatFormatting.AQUA), true);
             }
             return;
+        }
+        if (lenient) {
+            return; // 鳴り終える前から乗っていた床が、次の音でなかった：数えないだけ（外れにしない）
         }
         // 外れ：はじめから（もう一度鈴を鳴らす）
         perf.answered = 0;
@@ -575,9 +624,21 @@ public final class TempleService {
                 }
             }
         }
-        // 乗っていた音の床から降りた人の印を消す（次に同じ床へ乗ったとき、また数える）
-        LAST_STEP.values().removeIf(standing -> standing.player().isRemoved() || standing.player().hasDisconnected()
-                || !standingOn(standing.player(), standing.plate()));
+        // 乗っていた音の床から降りた人の印を消す（次に同じ床へ乗ったとき、また数える）。乗って DWELL_TICKS たった人は、数える
+        List<Standing> confirm = new ArrayList<>();
+        for (Iterator<Map.Entry<UUID, Standing>> it = LAST_STEP.entrySet().iterator(); it.hasNext(); ) {
+            Map.Entry<UUID, Standing> entry = it.next();
+            Standing standing = entry.getValue();
+            if (standing.player().isRemoved() || standing.player().hasDisconnected() || !standingOn(standing.player(), standing.plate())) {
+                it.remove();
+            } else if (!standing.counted() && standing.player().serverLevel().getGameTime() - standing.since() >= DWELL_TICKS) {
+                entry.setValue(standing.countedNow());
+                confirm.add(standing);
+            }
+        }
+        for (Standing standing : confirm) {
+            confirm(standing.player(), standing.plate(), standing.note());
+        }
     }
 
     /** 鳴らしている順番：1音ずつ床を光らせて鳴らす。 */
@@ -594,6 +655,19 @@ public final class TempleService {
             if (t >= 0 && t % NOTE_TICKS == 0 && t / NOTE_TICKS < perf.notes.length) {
                 int note = perf.notes[(int) (t / NOTE_TICKS)];
                 playNote(level, def.world(song.plates().get(note)), note);
+            }
+            if (t == (long) perf.notes.length * NOTE_TICKS && perf.answered == 0) {
+                // 鳴り終えた：鳴っている間から床に乗って待っていた人を、乗っている床で数える（11月25日）
+                for (Standing standing : new ArrayList<>(LAST_STEP.values())) {
+                    if (!standing.counted() || standing.player().level() != level || !standingOn(standing.player(), standing.plate())) {
+                        continue;
+                    }
+                    for (int i = 0; i < song.plates().size(); i++) {
+                        if (def.world(song.plates().get(i)).equals(standing.plate())) {
+                            answer(standing.player(), level, def, song, i, true);
+                        }
+                    }
+                }
             }
             if (t >= 0 && t % NOTE_TICKS == NOTE_TICKS - 2) {
                 for (BlockPos p : song.plates()) {

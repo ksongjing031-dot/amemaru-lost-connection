@@ -87,6 +87,12 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
     private static final EntityDataAccessor<String> DATA_VARIANT = SynchedEntityData.defineId(AmemaruMob.class, EntityDataSerializers.STRING);
     /** 見た目と当たりの大きさ（定義の behavior の scale。11月22日） */
     private static final EntityDataAccessor<Float> DATA_SCALE = SynchedEntityData.defineId(AmemaruMob.class, EntityDataSerializers.FLOAT);
+    /**
+     * 技のアニメーションの速さ（1 がふつう）。11月25日のご指示「ボスのモーションが早く近接職が辛いので技を出すまでの間隔を
+     * 遅くする」：予兆を長くした分だけ、技の動きもゆっくり見せる（打つ瞬間と、当たる時をそろえる）。
+     */
+    private static final EntityDataAccessor<Float> DATA_ACTION_SPEED = SynchedEntityData.defineId(AmemaruMob.class,
+            EntityDataSerializers.FLOAT);
 
     /** 倒れてから消えるまで（死ぬアニメーションの長さ）。 */
     private static final int DEATH_TICKS = 30;
@@ -170,6 +176,7 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
         entityData.define(DATA_RETURNING, false);
         entityData.define(DATA_VARIANT, "");
         entityData.define(DATA_SCALE, 1.0F);
+        entityData.define(DATA_ACTION_SPEED, 1.0F);
     }
 
     // ---------------------------------------------------------------- 定義と数値
@@ -834,6 +841,7 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
         animDeath = RawAnimation.begin().thenPlayAndHold(prefix + "death");
         controllers.add(new AnimationController<>(this, "main", 4, this::mainAnimation));
         AnimationController<AmemaruMob> action = new AnimationController<>(this, "action", 2, state -> PlayState.STOP);
+        action.setAnimationSpeedHandler(mob -> (double) mob.actionSpeed());
         action.triggerableAnim("attack", RawAnimation.begin().thenPlay(prefix + "attack"));
         for (String skill : actionNames()) {
             action.triggerableAnim(skill, RawAnimation.begin().thenPlay(prefix + skill));
@@ -885,7 +893,21 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
 
     /** 技のアニメーションを流す（サーバーから。まわりのクライアントに届く）。 */
     public void playAction(String name) {
+        playAction(name, 1.0F);
+    }
+
+    /** 技のアニメーションを、{@code speed} 倍の速さで流す（{@link #DATA_ACTION_SPEED}）。 */
+    public void playAction(String name, float speed) {
+        float clamped = Mth.clamp(speed, 0.3F, 2.0F);
+        if (entityData.get(DATA_ACTION_SPEED) != clamped) {
+            entityData.set(DATA_ACTION_SPEED, clamped);
+        }
         triggerAnim("action", name);
+    }
+
+    /** 技のアニメーションの速さ。 */
+    public float actionSpeed() {
+        return entityData.get(DATA_ACTION_SPEED);
     }
 
     @Override

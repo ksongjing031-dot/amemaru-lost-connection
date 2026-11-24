@@ -56,6 +56,13 @@ public class OldWard extends AmemaruBoss {
     private enum Action { NONE, SWEEP, CRACK, CAGE, CALL, STUNNED, RECOVER }
 
     private Action action = Action.NONE;
+
+    /** 技を出している途中か（技が終わったら、ボスは少し息つぎをする。{@link AmemaruBoss#breatheTicks}）。 */
+    @Override
+    protected boolean acting() {
+        return action != Action.NONE;
+    }
+
     private int timer;
     private float lockedYaw;
     private Vec3 crackDir = Vec3.ZERO;

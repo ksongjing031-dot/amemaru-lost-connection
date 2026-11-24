@@ -151,17 +151,18 @@ ENEMIES = {
         "song.guarded 倍。歌（song）：歌い手が1人ずつ歌い（note_seconds 秒ずつ。HP30%から5音）、answer 秒のうちに同じ順番で部屋の音の床"
         "（階の定義の boss_marks.sound_plates）を踏むと、exposed 秒無防備（song.open 倍）。違う床・時間切れは不協和音（全員に power）、retry 秒で"
         "また歌う。技：嘆きの波（wave。前の扇）・高音の柱（pillars。何人かの足もとの円）・祈りの合唱（share。みんなで受ける一撃）。"
-        "HP60%で祈り手の残響を2体呼ぶ（call）。HPは2人のときの基準（ひとりでも2人ぶん）。数値は【補完】（2人で18分・4人で14分ほど）",
+        "HP60%で祈り手の残響を2体呼ぶ（call）。HPは2人のときの基準（ひとりでも2人ぶん）。数値は【補完】（2人で18分・4人で14分ほど）。"
+        "11月25日：みんなで受ける一撃（share）はレイドのボスだけにしたので外した。予兆（windup）と間（cooldown）を長くし（anim_windup は"
+        "前の予兆で、アニメーションの速さに使う）、歌は1音1秒・答えは20秒に（順番どおりに踏んでも失敗になったのを直したとき）",
         "祈りの残響カンターレ", 26,
         "歌の大広間で、いまも祈りの歌を指揮し続ける、顔のない残響。まわりを回る4人の歌い手（白・青・金・紅）の歌に守られている。"
         "歌い手が歌った順番どおりに4つの音の床を踏むと、歌がそろって、守りが解ける。",
         st(62000, 186, 12, 0.14, 64, 28), 1500,
-        {"wave": {"power": 1.3, "windup": 1.2, "cooldown": 5.0, "range": 12.0, "angle": 120, "push": 1.0},
-         "pillars": {"power": 1.25, "windup": 1.8, "cooldown": 9.0, "range": 30.0, "radius": 2.4, "count": 2},
-         "song": {"power": 0.9, "windup": 0.7, "cooldown": 30.0, "first": 8.0, "note_seconds": 0.9, "answer": 12.0,
+        {"wave": {"power": 1.3, "windup": 1.7, "anim_windup": 1.2, "cooldown": 6.5, "range": 12.0, "angle": 120, "push": 1.0},
+         "pillars": {"power": 1.25, "windup": 2.2, "anim_windup": 1.8, "cooldown": 11.0, "range": 30.0, "radius": 2.4, "count": 2},
+         "song": {"power": 0.9, "windup": 0.7, "cooldown": 30.0, "first": 8.0, "note_seconds": 1.0, "answer": 20.0,
                   "exposed": 12.0, "open": 2.5, "guarded": 0.34, "retry": 8.0},
-         "call": {"count": 2, "max": 4, "range": 10.0},
-         "share": {"power": 180, "windup": 3.4, "cooldown": 40, "range": 3.5, "first": 30}},
+         "call": {"count": 2, "max": 4, "range": 10.0}},
         {},
         "cantare",
         [{"item": "amemaru:prayer_bell_staff", "chance": 5, "rarity": "epic"},
@@ -528,6 +529,9 @@ def main():
     write(os.path.join(DEFS, "equipment", "prayer_bell_staff.json"), PRAYER_BELL)
     merge_item_types()
     merge_lang()
+    # 11月25日：新しい武器を、その職業の武器のタグに足す（足し忘れると、持ってもスキルが使えない）
+    import weapon_tags
+    weapon_tags.sync()
     print("enemies", len(ENEMIES), "story", len(STORY), "dialogues", len(DIALOGUES), "quests", len(QUESTS))
 
 
