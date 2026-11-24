@@ -35,7 +35,8 @@ public final class GuildHud {
             return;
         }
         List<CompoundTag> quests = ClientGuild.trackedQuests();
-        if (quests.isEmpty() || StoryHud.bossBarShown()) {
+        // ボス戦の間と、知らせ（初撃破・物語など）が出ている間は出さない（重なって読めないため）
+        if (quests.isEmpty() || StoryHud.bossBarShown() || StoryHud.announcementShown()) {
             return;
         }
         Font font = minecraft.font;

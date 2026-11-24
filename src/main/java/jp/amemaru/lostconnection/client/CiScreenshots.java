@@ -1520,7 +1520,11 @@ public final class CiScreenshots {
             {"snap", null, "20", "phase8_f5_guardian_wizard"},
             {"cmd", null, "3", "item replace entity @a armor.chest with minecraft:air"},
             {"cmd", null, "3", "item replace entity @a weapon.mainhand with minecraft:air"},
-            // 第七の門鍵（お守りの枠）：左の腰に下がる翠の立方体と、まわりを回る細い環
+            // 第七の門鍵（お守りの枠）：左の腰に下がる翠の立方体と、まわりを回る細い環。広場の台に腰が隠れないよう、
+            // 40ブロック上の空に小さな床を作って、その上で撮る（前と後ろ）
+            {"cmd", null, "5", "time set noon"},
+            {"cmd", null, "20", "execute as @p at @p run fill ~-4 ~39 ~-4 ~4 ~39 ~4 minecraft:smooth_stone"},
+            {"cmd", null, "20", "execute as @p at @p run tp @s ~ ~40 ~ 180 0"},
             {"p8_charm", null, "10", "seventh_gate_key"},
             {"p6_front", null, "10"},
             {"snap", null, "30", "phase8_f5_gate_key"},
@@ -1528,6 +1532,7 @@ public final class CiScreenshots {
             {"snap", null, "20", "phase8_f5_gate_key_back"},
             {"view", null, "5", "first"},
             {"p8_charm", null, "5", "-"},
+            {"cmd", null, "10", "execute as @p at @p run tp @s ~ ~-40 ~"},
             {"screen", null, "10", "hold"},
             {"cmd", null, "10", "gamemode spectator @p"},
             {"hud", null, "5", "off"}};

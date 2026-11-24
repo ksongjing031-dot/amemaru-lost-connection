@@ -836,7 +836,8 @@ def floor_json(f):
                       "gate": [list(f.gate[0]), list(f.gate[1])]}],
         "chests": [dict({"pos": list(p), "loot": CHEST_LOOT}, **({"guardian": g} if g else {})) for p, g in f.chests],
         # 奈落の洞（暗い青緑。遠くは闇に沈む）
-        "environment": {"fog": [24, 150], "fog_color": "#16242E"},
+        # 11月24日：CIの写真で遠くの砦や工廠が黒い影にしか見えなかったので、霧を少し明るい夜の青に（奈落の暗さは残す）
+        "environment": {"fog": [28, 170], "fog_color": "#24394B"},
         "waypoints": f.waypoints,
         "travel_stone": list(f.travel_stone),
         "seal_requires": "pillars",
