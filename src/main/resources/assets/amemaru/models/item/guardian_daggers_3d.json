@@ -1,5 +1,5 @@
 {
-  "credit": "AMEMARU: 5階（tools/artgen/make_altar_things.py で生成）：流紋の形を、守護者の色に塗り替えた",
+  "credit": "AMEMARU: 5階（tools/artgen/make_altar_things.py で生成）：流紋の形を、守護者の色に塗り替えた（翠の部品は光る）",
   "texture_size": [
     64,
     64
@@ -736,6 +736,10 @@
           ],
           "texture": "#0"
         }
+      },
+      "forge_data": {
+        "block_light": 15,
+        "sky_light": 15
       }
     }
   ],

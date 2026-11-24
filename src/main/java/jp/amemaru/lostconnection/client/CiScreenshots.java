@@ -1520,6 +1520,14 @@ public final class CiScreenshots {
             {"snap", null, "20", "phase8_f5_guardian_wizard"},
             {"cmd", null, "3", "item replace entity @a armor.chest with minecraft:air"},
             {"cmd", null, "3", "item replace entity @a weapon.mainhand with minecraft:air"},
+            // 第七の門鍵（お守りの枠）：左の腰に下がる翠の立方体と、まわりを回る細い環
+            {"p8_charm", null, "10", "seventh_gate_key"},
+            {"p6_front", null, "10"},
+            {"snap", null, "30", "phase8_f5_gate_key"},
+            {"view", null, "5", "third"},
+            {"snap", null, "20", "phase8_f5_gate_key_back"},
+            {"view", null, "5", "first"},
+            {"p8_charm", null, "5", "-"},
             {"screen", null, "10", "hold"},
             {"cmd", null, "10", "gamemode spectator @p"},
             {"hud", null, "5", "off"}};

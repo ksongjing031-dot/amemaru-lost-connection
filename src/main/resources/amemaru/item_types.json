@@ -412,7 +412,8 @@
     },
     {
       "id": "seventh_gate_key",
-      "slot": "charm"
+      "slot": "charm",
+      "model": "geckolib"
     }
   ],
   "materials": [

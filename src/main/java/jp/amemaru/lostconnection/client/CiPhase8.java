@@ -25,7 +25,7 @@ final class CiPhase8 {
     /** その種類の行なら true（first のときだけ動かす）。 */
     static boolean action(Minecraft minecraft, String[] shot, boolean first) {
         String kind = shot[0];
-        if (!List.of("p8_bell", "p8_listen", "p8_knot", "p8_hold", "p8_valve", "p8_bench", "p8_bench_open").contains(kind)) {
+        if (!List.of("p8_bell", "p8_listen", "p8_knot", "p8_hold", "p8_valve", "p8_bench", "p8_bench_open", "p8_charm").contains(kind)) {
             return false;
         }
         if (!first) {
@@ -56,6 +56,10 @@ final class CiPhase8 {
                 LostWoodsService.placeKnot(player, def.number(), woods.id(), woods.exits().indexOf(exit), post);
             }));
             case "p8_hold" -> CiPhase3.onServer(minecraft, player -> CiGear.hold(player, "-".equals(shot[3]) ? null : shot[3], null));
+            // 11月24日：お守りの枠に付ける（「-」で外す）。5階のユニーク「第七の門鍵」の、体に表示するモデルを撮る
+            case "p8_charm" -> CiPhase3.onServer(minecraft, player -> CiPhase3.setCurio(player,
+                    jp.amemaru.lostconnection.accessory.AccessorySlot.CHARM,
+                    "-".equals(shot[3]) ? net.minecraft.world.item.ItemStack.EMPTY : CiPhase3.accessory(shot[3], 1, 1.0)));
             // Phase 8 その2：3階の水門のハンドルの前（2マス）に立って、回す（「組:0か1」）
             case "p8_valve" -> CiPhase3.onServer(minecraft, player -> turnValve(player, shot[3]));
             // Phase 8 その2：目の前（北へ1ブロック）に工房の作業台（armor・weapon・accessory）を置き、次の行で開く

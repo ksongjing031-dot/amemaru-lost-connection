@@ -411,7 +411,8 @@ def merge_item_types():
         armor.append(OrderedDict([("series", "guardian_" + job), ("pieces", OrderedDict([("chest", "guardian_%s_shell" % job)]))]))
     d["armor"] = armor
     acc = [a for a in d["accessories"] if a["id"] != "seventh_gate_key"]
-    acc.append(OrderedDict([("id", "seventh_gate_key"), ("slot", "charm")]))
+    # 11月24日：ユニークなので、体にも表示する（専用のモデルと回る環。tools/artgen/make_gate_key.py）
+    acc.append(OrderedDict([("id", "seventh_gate_key"), ("slot", "charm"), ("model", "geckolib")]))
     d["accessories"] = acc
     with open(path, "w", encoding="utf-8") as fp:
         fp.write(json.dumps(d, ensure_ascii=False, indent=2) + "\n")

@@ -90,7 +90,9 @@ public final class AltarGameTests {
         check(helper, fx.bossMarks(AncientGuardian.DAISES).size() == 4 && fx.bossMarks(AncientGuardian.CENTER).size() == 1
                 && fx.bossMarks(AncientGuardian.PILLARS).size() == 4, "祭壇の結び台・中央・結界の柱が足りません");
         check(helper, fx.waypoints().size() == 4 && fx.travelStone() != null, "中継の灯が4つ・道しるべの石がありません");
-        check(helper, TowerService.namedGuardians(def).size() == 2, "名のある魔物が2体ではありません");
+        // 5階の名のある魔物（監視の大眼・防衛隊長）は、どちらも接続の柱の守り手（封印は柱で開く。guardians の数には入らない）
+        check(helper, def.extras().guardians().size() == 2 && def.extras().guardians().stream().allMatch(g -> g.pillar() >= 0)
+                && TowerService.namedGuardians(def).isEmpty(), "名のある魔物が、2体とも接続の柱の守り手になっていません");
         check(helper, fx.storyZones().stream().anyMatch(z -> z.id().equals("lattice_sky")), "格子の空の物語の場所がありません");
         check(helper, def.extras().chests().size() >= 15, "5階の宝箱が少なすぎます：" + def.extras().chests().size());
         check(helper, RecordDefs.get(AmemaruMod.id("f05_guardian_core")) != null, "古代記録「守護者の記録核」がありません");

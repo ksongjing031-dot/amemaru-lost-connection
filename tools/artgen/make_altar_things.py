@@ -67,6 +67,64 @@ def recolor(img):
     return Image.fromarray((out * 255).astype(np.uint8), "RGBA")
 
 
+def jade_mask(img):
+    """塗り替えた絵のうち、翠（流紋の青緑・青から塗り替えた所）の画素。エピックの「光る部分」にする（11月24日）。"""
+    a = np.asarray(img.convert("RGBA")).astype(float) / 255.0
+    mask = np.zeros(a.shape[:2], dtype=bool)
+    for y in range(a.shape[0]):
+        for x in range(a.shape[1]):
+            r, g, b, al = a[y, x]
+            if al == 0:
+                continue
+            hh, ss, vv = colorsys.rgb_to_hsv(r, g, b)
+            if 140 <= hh * 360 <= 165 and ss > 0.3 and vv > 0.35:
+                mask[y, x] = True
+    return mask
+
+
+def armor_glow_mask(original, painted, least=12, most=40):
+    """防具の光る所：もとの流紋の絵の、明るい水色（流水の結晶の粒）。少なすぎるときは、塗り替えた翠のうち明るい方から most まで。"""
+    a = np.asarray(original.convert("RGBA")).astype(float) / 255.0
+    mask = np.zeros(a.shape[:2], dtype=bool)
+    for y in range(a.shape[0]):
+        for x in range(a.shape[1]):
+            r, g, b, al = a[y, x]
+            if al == 0:
+                continue
+            hh, ss, vv = colorsys.rgb_to_hsv(r, g, b)
+            if 180 <= hh * 360 <= 215 and ss > 0.3 and vv > 0.8:
+                mask[y, x] = True
+    if mask.sum() >= least:
+        return mask
+    jade = jade_mask(painted)
+    p = np.asarray(painted.convert("RGBA")).astype(float)
+    value = p[..., :3].max(axis=2)
+    ys, xs = np.nonzero(jade)
+    order = np.argsort(-value[ys, xs])[:most]
+    mask[ys[order], xs[order]] = True
+    return mask
+
+
+def glow_elements(model, mask, tex_w, tex_h, share=0.5):
+    """Java のモデルの部品のうち、見える面の半分より多くが翠の部品を光らせる（forge_data の明るさ15）。"""
+    lit = 0
+    for e in model.get("elements", []):
+        total = jade = 0
+        for face in e.get("faces", {}).values():
+            u0, v0, u1, v1 = face["uv"]
+            x0, x1 = sorted((int(round(u0 / 16 * tex_w)), int(round(u1 / 16 * tex_w))))
+            y0, y1 = sorted((int(round(v0 / 16 * tex_h)), int(round(v1 / 16 * tex_h))))
+            sub = mask[y0:max(y1, y0 + 1), x0:max(x1, x0 + 1)]
+            total += sub.size
+            jade += int(sub.sum())
+        if total and jade / total > share:
+            e["forge_data"] = {"block_light": 15, "sky_light": 15}
+            lit += 1
+        else:
+            e.pop("forge_data", None)
+    return lit
+
+
 def guardian_series(base):
     item = os.path.join(base, "models/item")
     tex = os.path.join(base, "textures/item")
@@ -74,11 +132,14 @@ def guardian_series(base):
     for kind, gid in WEAPONS.items():
         src = "ryumon_" + kind
         recolor(Image.open(os.path.join(tex, src + ".png"))).save(os.path.join(tex, gid + ".png"))
-        recolor(Image.open(os.path.join(tex, src + "_model.png"))).save(os.path.join(tex, gid + "_model.png"))
+        painted = recolor(Image.open(os.path.join(tex, src + "_model.png")))
+        painted.save(os.path.join(tex, gid + "_model.png"))
         with open(os.path.join(item, src + "_3d.json"), encoding="utf-8") as fp:
             model = json.load(fp)
-        model["credit"] = CREDIT + "：流紋の形を、守護者の色に塗り替えた"
+        model["credit"] = CREDIT + "：流紋の形を、守護者の色に塗り替えた（翠の部品は光る）"
         model["textures"] = {k: "amemaru:item/" + gid + "_model" for k in model["textures"]}
+        tw, th = model.get("texture_size", painted.size)
+        print(gid, "光る部品", glow_elements(model, jade_mask(painted), tw, th))
         write_json(os.path.join(item, gid + "_3d.json"), model)
         with open(os.path.join(item, src + ".json"), encoding="utf-8") as fp:
             outer = json.load(fp)
@@ -95,7 +156,14 @@ def guardian_series(base):
         for g in geo.get("minecraft:geometry", []):
             g["description"]["identifier"] = "geometry." + series
         write_json(os.path.join(armor_geo, series + ".geo.json"), geo)
-        recolor(Image.open(os.path.join(armor_tex, "ryumon_%s.png" % job))).save(os.path.join(armor_tex, series + ".png"))
+        original = Image.open(os.path.join(armor_tex, "ryumon_%s.png" % job))
+        painted = recolor(original)
+        painted.save(os.path.join(armor_tex, series + ".png"))
+        # 光る所だけの絵：OptionalGlowLayer が <絵>_glowmask.png を重ねる。服じゅうが光らないよう、流紋の「流水の結晶」の
+        # 明るい水色の粒だけ（なければ、翠のうち明るい方から少し）。エピックの「光る部分」
+        glow = np.asarray(painted).copy()
+        glow[~armor_glow_mask(original, painted)] = 0
+        Image.fromarray(glow, "RGBA").save(os.path.join(armor_tex, series + "_glowmask.png"))
         shell = "guardian_%s_shell" % job
         recolor(Image.open(os.path.join(tex, chest + ".png"))).save(os.path.join(tex, shell + ".png"))
         with open(os.path.join(item, chest + ".json"), encoding="utf-8") as fp:
@@ -187,7 +255,7 @@ def main():
     out = sys.argv[2] if len(sys.argv) > 2 else None
     base = os.path.join(repo, "src/main/resources/assets/amemaru")
     build_dais(base)
-    paint_rows(GATE_KEY, GATE_KEY_PAL).save(os.path.join(base, "textures/item/seventh_gate_key.png"))
+    # 第七の門鍵の持ち物の絵・体に表示するモデルは tools/artgen/make_gate_key.py（11月24日。ユニークの専用のモデル）
     write_json(os.path.join(base, "models/item/seventh_gate_key.json"),
                {"parent": "minecraft:item/generated", "textures": {"layer0": "amemaru:item/seventh_gate_key"}})
     for name in ("watcher", "sentinel", "repair_drone", "ancient_guardian"):
