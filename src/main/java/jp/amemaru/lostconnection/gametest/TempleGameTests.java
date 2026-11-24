@@ -121,6 +121,42 @@ public final class TempleGameTests {
         helper.succeed();
     }
 
+    // ---------------------------------------------------------------- 音の床（11月24日の直し）
+
+    /**
+     * 音の床は、体を動かして乗ると踏んだことになる（前は stepOn で受けていて、高さ2ピクセルの床では一度も呼ばれなかった）。
+     * 2枚の床の境目に立っても、足の真ん中の床だけを数え、乗ったまま動いても数え直さない。となりの床へ移れば、そちらを数える。
+     */
+    @GameTest(template = EMPTY)
+    public static void soundPlateCountsTheCenterPlate(GameTestHelper helper) {
+        for (int x = 0; x < 3; x++) {
+            helper.setBlock(new BlockPos(x, 0, 1), net.minecraft.world.level.block.Blocks.STONE);
+        }
+        net.minecraft.world.level.block.state.BlockState plate = jp.amemaru.lostconnection.core.registry.ModBlocks.SOUND_PLATE.get()
+                .defaultBlockState();
+        helper.setBlock(new BlockPos(0, 1, 1), plate.setValue(jp.amemaru.lostconnection.tower.temple.TempleBlocks.NOTE, 0));
+        helper.setBlock(new BlockPos(1, 1, 1), plate.setValue(jp.amemaru.lostconnection.tower.temple.TempleBlocks.NOTE, 1));
+        BlockPos a = helper.absolutePos(new BlockPos(0, 1, 1));
+        BlockPos b = helper.absolutePos(new BlockPos(1, 1, 1));
+        FakePlayer player = fake(helper, "plate_edge");
+        // A の上の、B との境目の近く（体の幅は 0.6 なので、B のマスにも重なる）へ、上から降りる
+        player.setPos(a.getX() + 0.85, a.getY() + 0.7, a.getZ() + 0.5);
+        player.setOnGround(false);
+        int before = TempleService.countedSteps();
+        player.move(net.minecraft.world.entity.MoverType.PLAYER, new Vec3(0.0, -0.6, 0.0));
+        check(helper, a.equals(TempleService.lastStep(player)) && TempleService.countedSteps() == before + 1,
+                "音の床に上から乗っても、踏んだことになりません（踏んだ床：" + TempleService.lastStep(player) + "）");
+        check(helper, Math.abs(player.getY() - (a.getY() + 0.125)) < 0.01, "音の床の上に立てません：" + player.getY());
+        player.move(net.minecraft.world.entity.MoverType.PLAYER, new Vec3(0.05, 0.0, 0.0));
+        player.move(net.minecraft.world.entity.MoverType.PLAYER, new Vec3(-0.05, 0.0, 0.0));
+        check(helper, a.equals(TempleService.lastStep(player)) && TempleService.countedSteps() == before + 1,
+                "2枚の床の境目で動いただけで、となりの床や同じ床を、もう一度数えました");
+        player.move(net.minecraft.world.entity.MoverType.PLAYER, new Vec3(0.4, 0.0, 0.0));
+        check(helper, b.equals(TempleService.lastStep(player)) && TempleService.countedSteps() == before + 2,
+                "となりの音の床へ移っても、そちらを踏んだことになりません");
+        helper.succeed();
+    }
+
     // ---------------------------------------------------------------- 壁画と封印
 
     @GameTest(template = EMPTY)

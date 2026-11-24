@@ -88,12 +88,20 @@ public final class TempleBlocks {
             return SHAPE;
         }
 
+        /*
+         * 11月24日の直し：前は stepOn で受けていたが、stepOn は「足もとから0.2下のブロック」にしか呼ばれない（Entity#getOnPosLegacy）。
+         * この床は高さ2ピクセルなので、乗っても下の石の stepOn が呼ばれ、音の床は一度も反応しなかった（祈りの間の音の順番も、
+         * カンターレの選律の歌も）。感圧板と同じく、体がこのマスに重なって動くたびに呼ばれる entityInside で受ける。体の幅で隣の床にも
+         * 重なるので、足の真ん中がこの床のマスにあって、足が床の上（半ブロックまで）にあるときだけ数える（同じ床に乗っている間は1回。
+         * TempleService#step）。pos は動く入れ物なので、固定してから渡す。
+         */
+        @SuppressWarnings("deprecation")
         @Override
-        public void stepOn(Level level, BlockPos pos, BlockState state, Entity entity) {
-            if (!level.isClientSide() && entity instanceof ServerPlayer player) {
-                TempleService.step(player, pos, state.getValue(NOTE));
+        public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+            if (!level.isClientSide() && entity instanceof ServerPlayer player && TempleService.standingOn(player, pos)) {
+                TempleService.step(player, pos.immutable(), state.getValue(NOTE));
             }
-            super.stepOn(level, pos, state, entity);
+            super.entityInside(state, level, pos, entity);
         }
 
         @Override
