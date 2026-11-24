@@ -1184,9 +1184,10 @@ public final class CiScreenshots {
             {"cmd", null, "0", "amemaru admin boss skill 2 seeds"},
             {"await_ground", null, "0", "phase8_f2_boss_seeds"},
             {"p8_bossfx", null, "0", "f2"},
-            // 根づいた種（桃色の円と光の柱）を、空き地の上から見下ろして撮り、すぐ地面へ戻る（落ちる前に）
-            {"cmd", null, "36", "execute in amemaru:tower run tp @p {f2:216.5,33,74.5} 180 48"},
-            {"snap", null, "3", "phase8_f2_boss_seeds_rooted"},
+            // 根づいた種（光る種と光の柱）を、空き地の上から見下ろして撮り、すぐ地面へ戻る（落ちる前に。cmd の数はコマンドのあとに待つ tick）
+            {"cmd", null, "36", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f2:216.5,33,74.5} 180 48"},
+            {"snap", null, "0", "phase8_f2_boss_seeds_rooted"},
             {"cmd", null, "1", "execute in amemaru:tower run tp @p {f2:216.5,19,70.5} 180 25"},
             // 光る節を3つとも壊すと怯む（傾いた幹が写るように、少し見上げる）
             {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
