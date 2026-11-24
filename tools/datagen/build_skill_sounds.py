@@ -7,7 +7,7 @@
 スキルの定義の sound（放ったとき）・cast_sound（詠唱・溜めの始まり）・impact_sound（当たったとき）は1つずつしか鳴らないため、
 その上に重ねる音を、技の種類ごとの「音の型」（MOTIFS）から組み立てる【補完】。
   - cast：詠唱・溜めを始めたとき / release：放ったとき / impact：当たったとき（1回の届きにつき1度）
-  - スキルの定義の音と同じ音は重ねない（同じ音が2つ鳴ってうるさくならないように）
+  - スキルの定義の音と同じ音は、同じときには重ねない（同じ音が2つ鳴ってうるさくならないように。遅れて鳴らす連打の音は重ねる）
   - 1つのときに重ねるのは6つまで（SkillSounds.MAX_LAYERS）
 音はバニラ（Minecraft 1.20.1）の音の名前（minecraft: を省いたもの）。--check に音の名前の一覧（1行に1つ）を渡すと、ない音を探す。
 """
@@ -331,7 +331,8 @@ def build_layers(motifs, avoid):
     out = []
     for motif in motifs:
         for sound, volume, pitch, spread, delay in MOTIFS[motif]:
-            if sound in avoid or any(l["sound"] == "minecraft:" + sound and l["delay"] == delay for l in out):
+            # スキルの定義の音と同じ音を、同じときに重ねない（遅れて鳴らす連打の音は重ねる）
+            if (sound in avoid and delay == 0) or any(l["sound"] == "minecraft:" + sound and l["delay"] == delay for l in out):
                 continue
             layer = OrderedDict([("sound", "minecraft:" + sound), ("volume", volume), ("pitch", pitch)])
             if spread:
@@ -379,6 +380,8 @@ def main():
         for phase, avoid in (("cast", avoid_cast), ("release", avoid_release), ("impact", avoid_impact)):
             if plan.get(phase):
                 entry[phase] = build_layers(plan[phase], avoid)
+                if not entry[phase]:
+                    sys.exit("%s の %s に重ねる音が残りません（スキルの定義の音と同じ音ばかり）" % (skill, phase))
                 total += len(entry[phase])
         by_job.setdefault(job, OrderedDict())[skill] = entry
     for job, skills in by_job.items():

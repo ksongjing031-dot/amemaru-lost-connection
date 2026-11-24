@@ -180,6 +180,8 @@ public final class SkillInput {
 
     /** スキル枠のスキルを使う。 */
     static void use(Minecraft minecraft, LocalPlayer player, int slot) {
+        // 11月24日：スキルを使った（戦っている）。右上のクエストの一覧を、戦いの間はしまうため
+        ClientPlayerState.get().noteCombat();
         ClientPlayerState state = ClientPlayerState.get();
         if (!state.hasData()) {
             return;

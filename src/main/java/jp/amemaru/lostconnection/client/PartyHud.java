@@ -51,6 +51,7 @@ public final class PartyHud {
         Font font = minecraft.font;
         UUID self = minecraft.player.getUUID();
         int y = Y;
+        bottom = 0;
         if (state.inParty()) {
             for (PartyStateS2C.Member member : state.members()) {
                 if (member.id().equals(self)) {
@@ -72,6 +73,14 @@ public final class PartyHud {
             graphics.drawString(font, text, X + 2, y, 0xFF8FD3FF, true);
             y += 15;
         }
+        bottom = y > Y ? y : 0;
+    }
+
+    /** パーティの枠（と誘い）の下の端（出していなければ0。戦い方の手がかりを、その下に出すため。11月24日）。 */
+    private static int bottom;
+
+    public static int bottom() {
+        return bottom;
     }
 
     private static void drawMember(GuiGraphics graphics, Font font, PartyStateS2C.Member member, int y) {

@@ -43,6 +43,20 @@
           "pitch": 1.4,
           "spread": 0.1,
           "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.arrow.shoot",
+          "volume": 0.7,
+          "pitch": 1.15,
+          "spread": 0.05,
+          "delay": 2
+        },
+        {
+          "sound": "minecraft:entity.arrow.shoot",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 4
         }
       ],
       "impact": [
@@ -78,11 +92,25 @@
           "delay": 0
         },
         {
+          "sound": "minecraft:entity.arrow.shoot",
+          "volume": 0.7,
+          "pitch": 1.15,
+          "spread": 0.05,
+          "delay": 2
+        },
+        {
           "sound": "minecraft:entity.player.attack.sweep",
           "volume": 0.35,
           "pitch": 1.6,
           "spread": 0.1,
           "delay": 2
+        },
+        {
+          "sound": "minecraft:entity.arrow.shoot",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 4
         }
       ]
     },
@@ -690,6 +718,20 @@
           "pitch": 1.4,
           "spread": 0.1,
           "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.arrow.shoot",
+          "volume": 0.7,
+          "pitch": 1.15,
+          "spread": 0.05,
+          "delay": 2
+        },
+        {
+          "sound": "minecraft:entity.arrow.shoot",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 4
         }
       ],
       "impact": [
@@ -717,6 +759,20 @@
           "pitch": 1.4,
           "spread": 0.1,
           "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.arrow.shoot",
+          "volume": 0.7,
+          "pitch": 1.15,
+          "spread": 0.05,
+          "delay": 2
+        },
+        {
+          "sound": "minecraft:entity.arrow.shoot",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.05,
+          "delay": 4
         }
       ],
       "impact": [
@@ -757,6 +813,13 @@
           "pitch": 1.4,
           "spread": 0.1,
           "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.35,
+          "pitch": 1.6,
+          "spread": 0.1,
+          "delay": 2
         },
         {
           "sound": "minecraft:entity.arrow.shoot",

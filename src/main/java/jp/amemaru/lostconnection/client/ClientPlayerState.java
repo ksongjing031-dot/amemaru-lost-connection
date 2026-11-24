@@ -86,6 +86,10 @@ public final class ClientPlayerState {
             statsReceived = true;
         }
         if ((sections & PlayerData.SYNC_VITALS) != 0) {
+            if (vitalsReceived && message.hp() < hp - 0.5) {
+                // 11月24日：HPが減った（戦っている）。右上のクエストの一覧を、戦いの間はしまうため
+                noteCombat();
+            }
             hp = message.hp();
             mp = message.mp();
             vitalsReceived = true;
@@ -131,6 +135,19 @@ public final class ClientPlayerState {
             castTotal = message.castTotal();
             castCharging = castSkill >= 0 && message.castCharging();
         }
+    }
+
+    /** 最後に戦った時刻（HPが減った・スキルを使った。{@link net.minecraft.Util#getMillis()}）。 */
+    private long lastCombatMillis;
+
+    /** 戦った印（HPが減った・スキルを使った）。11月24日：戦いの間は、右上のクエストの一覧などをしまう。 */
+    public void noteCombat() {
+        lastCombatMillis = net.minecraft.Util.getMillis();
+    }
+
+    /** 戦っている最中か（最後に戦ってから {@code windowMillis} のうち、または狙いを固定している間）。 */
+    public boolean inCombat(long windowMillis) {
+        return net.minecraft.Util.getMillis() - lastCombatMillis < windowMillis || TargetLock.locked();
     }
 
     /** クライアントのゲーム内の時刻（ワールドに入っていなければ0）。 */

@@ -109,7 +109,29 @@
       ]
     },
     "rogue/flurry": {
-      "release": [],
+      "release": [
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.6,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 2
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.6,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 4
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.6,
+          "pitch": 1.7,
+          "spread": 0.1,
+          "delay": 6
+        }
+      ],
       "impact": [
         {
           "sound": "minecraft:entity.player.attack.crit",
@@ -238,6 +260,13 @@
           "pitch": 1.9,
           "spread": 0.1,
           "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.5,
+          "pitch": 1.6,
+          "spread": 0.1,
+          "delay": 3
         }
       ],
       "impact": [
@@ -445,6 +474,13 @@
           "delay": 0
         },
         {
+          "sound": "minecraft:entity.phantom.swoop",
+          "volume": 0.5,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 1
+        },
+        {
           "sound": "minecraft:entity.player.attack.sweep",
           "volume": 0.4,
           "pitch": 1.4,
@@ -567,6 +603,27 @@
           "volume": 0.4,
           "pitch": 1.2,
           "delay": 0
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.7,
+          "pitch": 1.5,
+          "spread": 0.1,
+          "delay": 3
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.7,
+          "pitch": 1.0,
+          "spread": 0.1,
+          "delay": 6
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.7,
+          "pitch": 1.7,
+          "spread": 0.1,
+          "delay": 9
         }
       ],
       "impact": [
@@ -635,6 +692,13 @@
           "pitch": 1.4,
           "spread": 0.05,
           "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.slime.squish",
+          "volume": 0.4,
+          "pitch": 1.3,
+          "spread": 0.1,
+          "delay": 2
         }
       ],
       "impact": [
@@ -683,6 +747,13 @@
           "pitch": 1.9,
           "spread": 0.1,
           "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.5,
+          "pitch": 1.6,
+          "spread": 0.1,
+          "delay": 3
         }
       ],
       "impact": [
@@ -710,6 +781,13 @@
           "pitch": 1.9,
           "spread": 0.1,
           "delay": 1
+        },
+        {
+          "sound": "minecraft:entity.player.attack.sweep",
+          "volume": 0.5,
+          "pitch": 1.6,
+          "spread": 0.1,
+          "delay": 3
         }
       ],
       "impact": [
@@ -744,6 +822,13 @@
           "pitch": 0.8,
           "spread": 0.05,
           "delay": 0
+        },
+        {
+          "sound": "minecraft:block.fire.extinguish",
+          "volume": 0.5,
+          "pitch": 0.7,
+          "spread": 0.05,
+          "delay": 1
         },
         {
           "sound": "minecraft:entity.puffer_fish.blow_up",
