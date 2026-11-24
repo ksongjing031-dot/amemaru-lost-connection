@@ -693,7 +693,9 @@ public final class JobSkillGameTests {
             // 増やして多様なビルドに）で流派ごとにアクティブ8・パッシブ5（計16・10）にした（Phase 0-A 19章）。11月24日のご指示
             // （スキルツリーでビルドが変わるように、スキルをもっと）で、職業ごとにアクティブを5つ足した（計21）
             check(helper, actives == 21, name + " のアクティブスキルが21個ではありません：" + actives);
-            check(helper, passives == 10, name + " のパッシブスキルが10個ではありません：" + passives);
+            // 11月25日のご指示（近接職がボス戦ですぐ倒れる）で、ナイト・ローグ・モンクに守りのパッシブを1つずつ足した（計11）
+            long expectedPassives = List.of("knight", "rogue", "monk").contains(name) ? 11 : 10;
+            check(helper, passives == expectedPassives, name + " のパッシブスキルが" + expectedPassives + "個ではありません：" + passives);
             // 奥義は流派ごとに1つ（計2つ）から1つを選ぶ（11月17日のご指示。Phase 0-A 19章）
             check(helper, ultimates == 2, name + " の奥義が2つではありません：" + ultimates);
             check(helper, job.startingSkills().size() == 2, name + " の最初のスキルが2つではありません");

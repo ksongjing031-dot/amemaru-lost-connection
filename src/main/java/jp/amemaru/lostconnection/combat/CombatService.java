@@ -540,6 +540,10 @@ public final class CombatService {
         }
         long now = player.level().getGameTime();
         HealService.checkThread(player, data, now);
+        if (maxHp > 0 && hpAfter < maxHp * MeleeGuard.LAST_STAND_HP) {
+            // 11月25日：ナイトの不屈の再起（HPが3割を切ると、急に戻る）
+            MeleeGuard.onLowHp(player, data, now);
+        }
         if (maxHp > 0 && hpAfter < maxHp * 0.3) {
             GuardianHeart.onAllyLow(player, now);
         }
@@ -605,6 +609,11 @@ public final class CombatService {
         double ironWall = PassiveService.ironWallReduction(player, data);
         if (ironWall > 0) {
             result *= 1.0 - ironWall / 100.0;
+        }
+        // 11月25日：モンクの金剛身
+        double adamant = MeleeGuard.adamantReduction(data);
+        if (adamant > 0) {
+            result *= 1.0 - Math.min(60.0, adamant) / 100.0;
         }
         return result;
     }

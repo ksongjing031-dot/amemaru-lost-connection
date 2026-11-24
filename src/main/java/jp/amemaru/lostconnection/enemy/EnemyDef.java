@@ -33,12 +33,15 @@ import java.util.Map;
  *   <li>{@code model}：見た目を借りる敵（エンティティ）のID。同じ見た目で数値だけ別の個体（1階の「群れの長」など。11月22日【補完】）に使う。
  *       ないときは、この定義と同じIDの敵の見た目</li>
  *   <li>{@code bestiary}：図鑑に載せるか（ないときは載せる）。ボスの体の一部（2階のボスの「光る節」など。Phase 8 その1【補完】）は載せない</li>
+ *   <li>{@code raid}：レイドのボスか（10階・15階など）。「みんなで受ける一撃」（技 share）は、レイドのボスだけが使う
+ *       （11月25日に決定）</li>
  * </ul>
  */
 public record EnemyDef(ResourceLocation id, String name, String description, int floor, int level, double hp, double attack,
                        double defense, double moveSpeed, double followRange, double aggroRange, int exp,
                        Map<String, Skill> skills, Map<String, Double> behavior, @Nullable ResourceLocation lootTable,
-                       List<RareDrop> rare, boolean pity, boolean lost, @Nullable ResourceLocation model, boolean bestiary) {
+                       List<RareDrop> rare, boolean pity, boolean lost, @Nullable ResourceLocation model, boolean bestiary,
+                       boolean raid) {
 
     /** 見た目（エンティティ）のID：{@code model} があればそれ、なければこの定義のID。 */
     public ResourceLocation entity() {
@@ -159,9 +162,10 @@ public record EnemyDef(ResourceLocation id, String name, String description, int
         boolean lost = Json.optionalBoolean(json, "lost", false);
         ResourceLocation model = Json.optionalId(json, "model");
         boolean bestiary = Json.optionalBoolean(json, "bestiary", true);
+        boolean raid = Json.optionalBoolean(json, "raid", false);
         return new EnemyDef(id, name, description, floor, level, hp, attack, defense, moveSpeed, followRange, aggroRange, exp,
                 Collections.unmodifiableMap(skills), Collections.unmodifiableMap(behavior), lootTable, List.copyOf(rare), pity, lost,
-                model == null || model.equals(id) ? null : model, bestiary);
+                model == null || model.equals(id) ? null : model, bestiary, raid);
     }
 
     // ---------------------------------------------------------------- 図鑑に要る分をクライアントへ

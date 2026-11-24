@@ -260,6 +260,7 @@ public final class SkillTreeService {
      */
     public static boolean migrate(ServerPlayer player, PlayerData data) {
         if (data.getTreeVersion() >= PlayerData.TREE_VERSION) {
+            dropRemovedNodes(player, data);
             return false;
         }
         boolean hadPoints = data.totalAllocated() > 0 || spentPoints(data) > 0;
@@ -271,6 +272,27 @@ public final class SkillTreeService {
         }
         AmemaruMod.LOGGER.info("[amemaru] {} moved to the new skill tree (points returned: {})", player.getGameProfile().getName(), hadPoints);
         return true;
+    }
+
+    /**
+     * スキルツリーの形が変わって、なくなった節を外す（使ったポイントは戻る。11月25日：守りのパッシブを置いた所の小さな節など）。
+     * ログインのとき。外した数を返す。
+     */
+    public static int dropRemovedNodes(ServerPlayer player, PlayerData data) {
+        SkillTreeDef tree = SkillRegistry.get().tree(data.getCombatJob());
+        if (tree == null || data.getTreeNodes().isEmpty()) {
+            return 0;
+        }
+        int removed = data.retainTreeNodes(id -> tree.node(id) != null);
+        if (removed > 0) {
+            LevelService.recompute(player, data);
+            data.markDirty(PlayerData.SYNC_GROWTH | PlayerData.SYNC_SKILLS);
+            player.sendSystemMessage(Component.translatable("message.amemaru.skill.tree_nodes_removed", removed)
+                    .withStyle(ChatFormatting.GOLD));
+            AmemaruMod.LOGGER.info("[amemaru] {}: removed {} skill tree nodes that no longer exist", player.getGameProfile().getName(),
+                    removed);
+        }
+        return removed;
     }
 
     /**

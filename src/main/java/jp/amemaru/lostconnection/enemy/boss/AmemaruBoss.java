@@ -50,6 +50,18 @@ public abstract class AmemaruBoss extends AmemaruMob {
     private static final EntityDataAccessor<Integer> DATA_STATUS_SECONDS = SynchedEntityData.defineId(AmemaruBoss.class,
             EntityDataSerializers.INT);
     /**
+     * 11月25日：戦いの様子（クライアントの、ボスの曲と演出）。{@link #FIGHT_NONE}・{@link #FIGHT_ON}・{@link #FIGHT_INTENSE}
+     * （HPが {@link #INTENSE_RATIO} 以下か、怒った）。
+     */
+    private static final EntityDataAccessor<Byte> DATA_FIGHT = SynchedEntityData.defineId(AmemaruBoss.class, EntityDataSerializers.BYTE);
+    /** 11月25日：今の段階（クライアントで、段階が変わった演出を出す）。 */
+    private static final EntityDataAccessor<Byte> DATA_PHASE = SynchedEntityData.defineId(AmemaruBoss.class, EntityDataSerializers.BYTE);
+    public static final int FIGHT_NONE = 0;
+    public static final int FIGHT_ON = 1;
+    public static final int FIGHT_INTENSE = 2;
+    /** 追いこんだ（曲が少し速く高くなり、ボスのまわりに赤い気配）と見るHPの割合。 */
+    public static final double INTENSE_RATIO = 0.3;
+    /**
      * 管理者・CIの写真：みんなで受ける一撃を、印と演出だけにする（ダメージなし）。保存しない
      * （{@code /amemaru admin boss share safe}）。
      */
@@ -64,6 +76,8 @@ public abstract class AmemaruBoss extends AmemaruMob {
         super(type, level);
         bossEvent = new ServerBossEvent(Component.empty(), color, BossEvent.BossBarOverlay.NOTCHED_10);
         bossEvent.setDarkenScreen(false);
+        // 11月25日：HPの帯を見ている人（戦いの参加者）のクライアントが、このボスの曲を流す（BossFx）。バニラでは、ジ・エンドの外では何もしない
+        bossEvent.setPlayBossMusic(true);
         setTransient(true);
         setPersistenceRequired();
     }
@@ -74,6 +88,8 @@ public abstract class AmemaruBoss extends AmemaruMob {
         entityData.define(DATA_CAST, "");
         entityData.define(DATA_STATUS, "");
         entityData.define(DATA_STATUS_SECONDS, 0);
+        entityData.define(DATA_FIGHT, (byte) FIGHT_NONE);
+        entityData.define(DATA_PHASE, (byte) 1);
     }
 
     public static AttributeSupplier.Builder createBossAttributes() {
@@ -142,6 +158,34 @@ public abstract class AmemaruBoss extends AmemaruMob {
     /** 今の段階（1から）。 */
     public int phase() {
         return phase;
+    }
+
+    /** 11月25日：戦いの様子と段階を、クライアントへ（変わったときだけ）。 */
+    private void syncFight(double ratio) {
+        boolean on = room != null && room.fighting() && room.owns(this);
+        byte fight = (byte) (!on ? FIGHT_NONE : enraged || ratio <= INTENSE_RATIO ? FIGHT_INTENSE : FIGHT_ON);
+        if (entityData.get(DATA_FIGHT) != fight) {
+            entityData.set(DATA_FIGHT, fight);
+        }
+        byte shown = (byte) Math.max(1, Math.min(9, phase));
+        if (entityData.get(DATA_PHASE) != shown) {
+            entityData.set(DATA_PHASE, shown);
+        }
+    }
+
+    /** 戦いの様子（{@link #FIGHT_NONE}・{@link #FIGHT_ON}・{@link #FIGHT_INTENSE}。クライアントでも読める）。 */
+    public int fightState() {
+        return entityData.get(DATA_FIGHT);
+    }
+
+    /** 段階（クライアントでも読める）。 */
+    public int shownPhase() {
+        return entityData.get(DATA_PHASE);
+    }
+
+    /** 自動テスト：HPの帯を見ている人のクライアントで、ボスの曲を流す印が立っているか。 */
+    public boolean barPlaysMusic() {
+        return bossEvent.shouldPlayBossMusic();
     }
 
     /** HPの割合（0〜1）から段階を決める（ボスごとに上書きする）。 */
@@ -224,6 +268,60 @@ public abstract class AmemaruBoss extends AmemaruMob {
 
     private int castClear;
 
+    // ---------------------------------------------------------------- 息つぎ（11月25日）
+
+    /**
+     * 技と技の間の息つぎ（秒。ひとりで戦うとき）。11月25日のご指示「ボスのモーションが早く近接職が辛いので技を出すまでの間隔を
+     * 遅くするべき」【補完】：前は技が終わるとすぐ次の技を選び、近くで戦う人が打ち返す間がなかった。技が終わったら、この間は
+     * 次の技を出さない（打ち返す好機）。人数が多い・怒っているときは少し短い（0.6倍まで）。
+     */
+    public static final double BREATHE_SECONDS = 1.4;
+    private boolean wasActing;
+
+    /** 技を出している途中か（各ボスが返す。技が終わったのを見て、息つぎをはさむ）。 */
+    protected boolean acting() {
+        return false;
+    }
+
+    /** 息つぎの長さ（tick）。 */
+    public int breatheTicks() {
+        return (int) Math.round(BREATHE_SECONDS * 20.0 * Math.max(0.6, pace()));
+    }
+
+    private void tickBreathe() {
+        boolean now = acting();
+        if (wasActing && !now && room != null && room.fighting()) {
+            setBusy(breatheTicks());
+        }
+        wasActing = now;
+    }
+
+    /**
+     * 技のアニメーションを流す（{@code skill_<技>} なら、技の名前も出す）。予兆を長くした技（定義の技の {@code anim_windup}：
+     * アニメーションを作ったときの予兆の秒）は、長くした分だけゆっくり流し、腕を振り下ろす瞬間と当たる時をそろえる（11月25日）。
+     */
+    @Override
+    public void playAction(String name) {
+        EnemyDef def = def();
+        String skillName = skillOfAction(name);
+        EnemyDef.Skill skill = def == null || skillName == null ? null : def.skills().get(skillName);
+        float speed = 1.0F;
+        if (skill != null && skill.windup() > 0.0) {
+            double designed = skill.param("anim_windup", skill.windup());
+            speed = (float) Math.max(0.3, Math.min(1.0, designed / skill.windup()));
+        }
+        super.playAction(name, speed);
+        if (!level().isClientSide() && name.startsWith("skill_")) {
+            setCast(name.substring("skill_".length()), 30);
+        }
+    }
+
+    /** アニメーションの名前から、技の名前（{@code skill_sweep} → {@code sweep}）。ボスごとに上書きできる。 */
+    @Nullable
+    protected String skillOfAction(String action) {
+        return action.startsWith("skill_") ? action.substring("skill_".length()) : null;
+    }
+
     /** 今出している技（{@code sweep} など。なければ ""）。クライアントは {@code cast.amemaru.<ボス>.<技>} の名前を出す。 */
     public String cast() {
         return entityData.get(DATA_CAST);
@@ -256,14 +354,6 @@ public abstract class AmemaruBoss extends AmemaruMob {
         }
     }
 
-    /** 技のアニメーション（{@code skill_<技>}）を流すときに、技の名前も出す。 */
-    @Override
-    public void playAction(String name) {
-        super.playAction(name);
-        if (!level().isClientSide() && name.startsWith("skill_")) {
-            setCast(name.substring("skill_".length()), 30);
-        }
-    }
 
     // ---------------------------------------------------------------- みんなで受ける一撃（11月24日）
 
@@ -289,10 +379,14 @@ public abstract class AmemaruBoss extends AmemaruMob {
         shareTipShown = false;
     }
 
+    /**
+     * みんなで受ける一撃の数値。11月25日のご指示「「みんなで受ける一撃」はレイドボス限定にしましょう」で、レイドのボス
+     * （敵の定義の {@code raid}。10階・15階など）だけが使う。1〜5階のボスは使わない（定義からも外した）。
+     */
     @Nullable
     private EnemyDef.Skill shareSkill() {
         EnemyDef def = def();
-        return def == null ? null : def.skills().get("share");
+        return def == null || !def.raid() ? null : def.skills().get("share");
     }
 
     /** 青い円が出ている（打つ前）。 */
@@ -479,6 +573,8 @@ public abstract class AmemaruBoss extends AmemaruMob {
             }
             tickFightTimer(level);
             tickShare(level);
+            tickBreathe();
+            syncFight(ratio);
             if (castClear > 0 && tickCount >= castClear) {
                 castClear = 0;
                 entityData.set(DATA_CAST, "");

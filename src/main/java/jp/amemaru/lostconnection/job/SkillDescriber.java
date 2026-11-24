@@ -402,6 +402,12 @@ public final class SkillDescriber {
             case STARRY_SKY -> lines.add("星痕を弾けさせると、星痕1つにつき、この流派のスキルのクールダウンが" + value + "秒縮む");
             case THUNDER_MASTERY -> lines.add("感電した敵へのダメージ+" + value + "%。感電が2秒長く続く");
             case PERMAFROST -> lines.add("凍結を砕くと、まわりの敵に魔力の" + Ranked.trim(passive.value(rank) * 100.0) + "%のダメージと凍え");
+            case LAST_STAND -> {
+                lines.add("HPが3割を切ると、すぐに最大HPの" + value + "%が戻る");
+                lines.add("そのあと5秒かけて、さらに" + value + "%戻る（" + gaugeName + "+20・90秒に1回）");
+            }
+            case LIFE_DRAIN -> lines.add("与えたダメージの" + value + "%だけHPが戻る（1回で最大HPの3%まで）");
+            case ADAMANT_BODY -> lines.add("受けるダメージ-" + value + "%。" + gaugeName + "が50以上の間は、さらに-" + value + "%");
         }
     }
 

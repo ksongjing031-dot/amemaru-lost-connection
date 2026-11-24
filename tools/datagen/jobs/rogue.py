@@ -14,7 +14,8 @@ JOB = {
     "weapons": "amemaru:weapons/rogue",
     "weapon_text": "二刀の短剣",
     "tags": ["melee", "rogue"],
-    "stats": {"percent": {"attack": 20, "speed": 15, "hp": -10, "defense": -15, "magic": -20}, "flat": {"crit": 5}},
+    # 11月25日「近接職がボス戦ですぐに倒れる」：HP -10%→0%・防御 -15%→-5%【補完】
+    "stats": {"percent": {"attack": 20, "speed": 15, "hp": 0, "defense": -5, "magic": -20}, "flat": {"crit": 5}},
     # 11月23日：近接職は、覚えられるレベルが高いスキルほど消費MPを増やす（1レベルにつき +5%。Lv10 で ×1.45、Lv30 で ×2.45）
     "skill_mp_per_level": 0.05,
     "gauge": {
@@ -174,3 +175,8 @@ active(J, "hamstring", "venom", 3, 3, "足払い刃",
        "足の腱を狙って斬る。敵はしばらくその場から動けず、攻撃も弱まる。",
        mp=14, cd=12, delivery=MELEE, effects=[dmg("attack", (1.2, 0.2)), root(2), weaken(15, 6)], anim="rogue_slash",
        requires="rogue/poison_mist")
+
+# ================================================================ 11月25日に足したパッシブ（近接職の守り）
+# ご指示「近接職がボス戦でのダメージ受けすぎてすぐに倒れてしまう。回復系のスキルや防御力を上げるなどで対策をする」【補完】
+passive(J, "shadow_drain", "shadow", 1, "影吸い",
+        "刃が吸った力は、影を通って自分の命になる。与えたダメージの一部だけHPが戻る。", "life_drain", (6, 2), col=1)

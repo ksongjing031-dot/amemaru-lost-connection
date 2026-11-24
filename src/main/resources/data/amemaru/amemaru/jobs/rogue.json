@@ -16,8 +16,8 @@
     "percent": {
       "attack": 20,
       "speed": 15,
-      "hp": -10,
-      "defense": -15,
+      "hp": 0,
+      "defense": -5,
       "magic": -20
     },
     "flat": {

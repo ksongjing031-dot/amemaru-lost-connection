@@ -218,8 +218,9 @@ def check(all_skills):
             passives = [s for s in group if s.get("type") == "passive"]
             ults = [s for s in group if s.get("ultimate")]
             # 11月24日：スキルツリーの作り直しで、流派ごとにアクティブを2〜3つ足した（8 → 10〜11）
-            if len(actives) < 8 or (len(passives), len(ults)) != (5, 1):
-                errors.append(f"{job}/{school}: アクティブ{len(actives)}・パッシブ{len(passives)}・奥義{len(ults)}（8以上・5・1 のはず）")
+            # 11月25日：近接職の守りのパッシブを、ナイト・ローグ・モンクの1つの流派に1つずつ足した（5 → 6）
+            if len(actives) < 8 or not 5 <= len(passives) <= 6 or len(ults) != 1:
+                errors.append(f"{job}/{school}: アクティブ{len(actives)}・パッシブ{len(passives)}・奥義{len(ults)}（8以上・5〜6・1 のはず）")
     return errors
 
 

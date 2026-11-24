@@ -9,6 +9,14 @@
       "y": 0.0
     },
     {
+      "id": "s:monk/adamant_body",
+      "kind": "skill",
+      "skill": "amemaru:monk/adamant_body",
+      "x": -167.8,
+      "y": -49.7,
+      "start": false
+    },
+    {
       "id": "s:monk/kien",
       "kind": "skill",
       "skill": "amemaru:monk/kien",
@@ -169,34 +177,43 @@
       "start": false
     },
     {
-      "id": "b20",
+      "id": "b21",
       "kind": "stat",
-      "x": -282.9,
-      "y": -83.8,
+      "x": -206.2,
+      "y": -61.1,
       "stats": {
         "attack": 2
       }
     },
     {
-      "id": "b21",
+      "id": "b22",
       "kind": "stat",
-      "x": -359.5,
-      "y": -106.5,
+      "x": -282.9,
+      "y": -83.8,
       "stats": {
-        "crit": 1.2
+        "crit": 1.0
       }
     },
     {
-      "id": "b22",
+      "id": "b23",
       "kind": "stat",
-      "x": -436.2,
-      "y": -129.2,
+      "x": -359.5,
+      "y": -106.5,
       "stats": {
         "attack": 3
       }
     },
     {
-      "id": "b23",
+      "id": "b24",
+      "kind": "stat",
+      "x": -436.2,
+      "y": -129.2,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "b25",
       "kind": "stat",
       "x": -112.6,
       "y": -74.5,
@@ -205,7 +222,7 @@
       }
     },
     {
-      "id": "b24",
+      "id": "b26",
       "kind": "stat",
       "x": -179.2,
       "y": -118.6,
@@ -214,7 +231,7 @@
       }
     },
     {
-      "id": "b25",
+      "id": "b27",
       "kind": "stat",
       "x": -246.0,
       "y": -162.8,
@@ -223,7 +240,7 @@
       }
     },
     {
-      "id": "b26",
+      "id": "b28",
       "kind": "stat",
       "x": -312.8,
       "y": -207.0,
@@ -232,7 +249,7 @@
       }
     },
     {
-      "id": "b27",
+      "id": "b29",
       "kind": "stat",
       "x": -379.5,
       "y": -251.1,
@@ -241,7 +258,7 @@
       }
     },
     {
-      "id": "b28",
+      "id": "b30",
       "kind": "stat",
       "x": -187.6,
       "y": -227.7,
@@ -250,7 +267,7 @@
       }
     },
     {
-      "id": "b29",
+      "id": "b31",
       "kind": "stat",
       "x": -238.6,
       "y": -289.4,
@@ -259,7 +276,7 @@
       }
     },
     {
-      "id": "b30",
+      "id": "b32",
       "kind": "stat",
       "x": -289.4,
       "y": -351.1,
@@ -268,7 +285,7 @@
       }
     },
     {
-      "id": "b31",
+      "id": "b33",
       "kind": "stat",
       "x": -82.3,
       "y": -198.6,
@@ -277,7 +294,7 @@
       }
     },
     {
-      "id": "b32",
+      "id": "b34",
       "kind": "stat",
       "x": -112.9,
       "y": -272.6,
@@ -286,7 +303,7 @@
       }
     },
     {
-      "id": "b33",
+      "id": "b35",
       "kind": "stat",
       "x": -143.5,
       "y": -346.4,
@@ -295,7 +312,7 @@
       }
     },
     {
-      "id": "b34",
+      "id": "b36",
       "kind": "stat",
       "x": -174.1,
       "y": -420.4,
@@ -304,7 +321,7 @@
       }
     },
     {
-      "id": "b35",
+      "id": "b37",
       "kind": "stat",
       "x": -39.6,
       "y": -26.2,
@@ -313,7 +330,7 @@
       }
     },
     {
-      "id": "b36",
+      "id": "b38",
       "kind": "stat",
       "x": -106.5,
       "y": -129.1,
@@ -322,7 +339,7 @@
       }
     },
     {
-      "id": "b37",
+      "id": "b39",
       "kind": "stat",
       "x": -300.3,
       "y": -140.0,
@@ -331,7 +348,7 @@
       }
     },
     {
-      "id": "b38",
+      "id": "b40",
       "kind": "stat",
       "x": -246.2,
       "y": -221.7,
@@ -340,7 +357,7 @@
       }
     },
     {
-      "id": "b39",
+      "id": "b41",
       "kind": "stat",
       "x": -170.6,
       "y": -284.0,
@@ -349,7 +366,7 @@
       }
     },
     {
-      "id": "b40",
+      "id": "b42",
       "kind": "stat",
       "x": -454.0,
       "y": -184.8,
@@ -358,7 +375,7 @@
       }
     },
     {
-      "id": "b41",
+      "id": "b43",
       "kind": "stat",
       "x": -433.4,
       "y": -229.0,
@@ -367,7 +384,7 @@
       }
     },
     {
-      "id": "b42",
+      "id": "b44",
       "kind": "stat",
       "x": -380.2,
       "y": -309.5,
@@ -376,7 +393,7 @@
       }
     },
     {
-      "id": "b43",
+      "id": "b45",
       "kind": "stat",
       "x": -347.5,
       "y": -345.7,
@@ -385,7 +402,7 @@
       }
     },
     {
-      "id": "b44",
+      "id": "b46",
       "kind": "stat",
       "x": -273.1,
       "y": -407.1,
@@ -394,7 +411,7 @@
       }
     },
     {
-      "id": "b45",
+      "id": "b47",
       "kind": "stat",
       "x": -231.2,
       "y": -432.2,
@@ -411,7 +428,7 @@
       "start": false
     },
     {
-      "id": "b47",
+      "id": "b49",
       "kind": "stat",
       "x": -452.4,
       "y": -299.4,
@@ -589,7 +606,7 @@
       "start": false
     },
     {
-      "id": "b68",
+      "id": "b70",
       "kind": "stat",
       "x": 206.2,
       "y": -61.1,
@@ -598,7 +615,7 @@
       }
     },
     {
-      "id": "b69",
+      "id": "b71",
       "kind": "stat",
       "x": 282.9,
       "y": -83.8,
@@ -607,7 +624,7 @@
       }
     },
     {
-      "id": "b70",
+      "id": "b72",
       "kind": "stat",
       "x": 359.5,
       "y": -106.5,
@@ -616,7 +633,7 @@
       }
     },
     {
-      "id": "b71",
+      "id": "b73",
       "kind": "stat",
       "x": 436.2,
       "y": -129.2,
@@ -625,7 +642,7 @@
       }
     },
     {
-      "id": "b72",
+      "id": "b74",
       "kind": "stat",
       "x": 112.6,
       "y": -74.5,
@@ -634,7 +651,7 @@
       }
     },
     {
-      "id": "b73",
+      "id": "b75",
       "kind": "stat",
       "x": 179.2,
       "y": -118.6,
@@ -643,7 +660,7 @@
       }
     },
     {
-      "id": "b74",
+      "id": "b76",
       "kind": "stat",
       "x": 246.0,
       "y": -162.8,
@@ -652,7 +669,7 @@
       }
     },
     {
-      "id": "b75",
+      "id": "b77",
       "kind": "stat",
       "x": 312.8,
       "y": -207.0,
@@ -661,7 +678,7 @@
       }
     },
     {
-      "id": "b76",
+      "id": "b78",
       "kind": "stat",
       "x": 379.5,
       "y": -251.1,
@@ -670,7 +687,7 @@
       }
     },
     {
-      "id": "b77",
+      "id": "b79",
       "kind": "stat",
       "x": 187.6,
       "y": -227.7,
@@ -679,7 +696,7 @@
       }
     },
     {
-      "id": "b78",
+      "id": "b80",
       "kind": "stat",
       "x": 238.6,
       "y": -289.4,
@@ -688,7 +705,7 @@
       }
     },
     {
-      "id": "b79",
+      "id": "b81",
       "kind": "stat",
       "x": 289.4,
       "y": -351.1,
@@ -697,7 +714,7 @@
       }
     },
     {
-      "id": "b80",
+      "id": "b82",
       "kind": "stat",
       "x": 82.3,
       "y": -198.6,
@@ -706,7 +723,7 @@
       }
     },
     {
-      "id": "b81",
+      "id": "b83",
       "kind": "stat",
       "x": 112.9,
       "y": -272.6,
@@ -715,7 +732,7 @@
       }
     },
     {
-      "id": "b82",
+      "id": "b84",
       "kind": "stat",
       "x": 143.5,
       "y": -346.4,
@@ -724,7 +741,7 @@
       }
     },
     {
-      "id": "b83",
+      "id": "b85",
       "kind": "stat",
       "x": 174.1,
       "y": -420.4,
@@ -733,7 +750,7 @@
       }
     },
     {
-      "id": "b84",
+      "id": "b86",
       "kind": "stat",
       "x": 39.6,
       "y": -26.2,
@@ -742,7 +759,7 @@
       }
     },
     {
-      "id": "b85",
+      "id": "b87",
       "kind": "stat",
       "x": 106.5,
       "y": -129.1,
@@ -751,7 +768,7 @@
       }
     },
     {
-      "id": "b86",
+      "id": "b88",
       "kind": "stat",
       "x": 300.3,
       "y": -140.0,
@@ -760,7 +777,7 @@
       }
     },
     {
-      "id": "b87",
+      "id": "b89",
       "kind": "stat",
       "x": 246.2,
       "y": -221.7,
@@ -769,7 +786,7 @@
       }
     },
     {
-      "id": "b88",
+      "id": "b90",
       "kind": "stat",
       "x": 170.6,
       "y": -284.0,
@@ -778,7 +795,7 @@
       }
     },
     {
-      "id": "b89",
+      "id": "b91",
       "kind": "stat",
       "x": 454.0,
       "y": -184.8,
@@ -787,7 +804,7 @@
       }
     },
     {
-      "id": "b90",
+      "id": "b92",
       "kind": "stat",
       "x": 433.4,
       "y": -229.0,
@@ -796,7 +813,7 @@
       }
     },
     {
-      "id": "b91",
+      "id": "b93",
       "kind": "stat",
       "x": 380.2,
       "y": -309.5,
@@ -805,7 +822,7 @@
       }
     },
     {
-      "id": "b92",
+      "id": "b94",
       "kind": "stat",
       "x": 347.5,
       "y": -345.7,
@@ -814,7 +831,7 @@
       }
     },
     {
-      "id": "b93",
+      "id": "b95",
       "kind": "stat",
       "x": 273.1,
       "y": -407.1,
@@ -823,7 +840,7 @@
       }
     },
     {
-      "id": "b94",
+      "id": "b96",
       "kind": "stat",
       "x": 231.2,
       "y": -432.2,
@@ -840,7 +857,7 @@
       "start": false
     },
     {
-      "id": "b96",
+      "id": "b98",
       "kind": "stat",
       "x": 452.4,
       "y": -299.4,
@@ -860,7 +877,7 @@
       }
     },
     {
-      "id": "b98",
+      "id": "b100",
       "kind": "stat",
       "x": -48.8,
       "y": -245.3,
@@ -869,7 +886,7 @@
       }
     },
     {
-      "id": "b99",
+      "id": "b101",
       "kind": "stat",
       "x": 48.8,
       "y": -245.3,
@@ -892,7 +909,7 @@
       }
     },
     {
-      "id": "b101",
+      "id": "b103",
       "kind": "stat",
       "x": -105.9,
       "y": -393.9,
@@ -901,7 +918,7 @@
       }
     },
     {
-      "id": "b102",
+      "id": "b104",
       "kind": "stat",
       "x": -52.9,
       "y": -404.5,
@@ -910,7 +927,7 @@
       }
     },
     {
-      "id": "b103",
+      "id": "b105",
       "kind": "stat",
       "x": 105.9,
       "y": -393.9,
@@ -919,7 +936,7 @@
       }
     },
     {
-      "id": "b104",
+      "id": "b106",
       "kind": "stat",
       "x": 52.9,
       "y": -404.5,
@@ -930,16 +947,20 @@
   ],
   "links": [
     [
-      "b101",
-      "b102"
+      "b100",
+      "n:bridge:2"
+    ],
+    [
+      "b100",
+      "s:monk/iron_body"
     ],
     [
       "b101",
-      "s:monk/flowing_ki"
+      "n:bridge:2"
     ],
     [
-      "b102",
-      "n:bridge:4"
+      "b101",
+      "s:monk/receiving_art"
     ],
     [
       "b103",
@@ -947,183 +968,191 @@
     ],
     [
       "b103",
-      "s:monk/calm_breath"
+      "s:monk/flowing_ki"
     ],
     [
       "b104",
       "n:bridge:4"
     ],
     [
-      "b20",
-      "s:monk/chain_kicks"
+      "b105",
+      "b106"
     ],
     [
-      "b20",
+      "b105",
+      "s:monk/calm_breath"
+    ],
+    [
+      "b106",
+      "n:bridge:4"
+    ],
+    [
+      "b21",
+      "s:monk/adamant_body"
+    ],
+    [
+      "b21",
       "s:monk/kien"
     ],
     [
-      "b21",
-      "s:monk/back_strike"
-    ],
-    [
-      "b21",
+      "b22",
       "s:monk/chain_kicks"
     ],
     [
       "b22",
-      "n:hard:3"
+      "s:monk/kien"
     ],
     [
-      "b22",
+      "b23",
       "s:monk/back_strike"
     ],
     [
       "b23",
+      "s:monk/chain_kicks"
+    ],
+    [
+      "b24",
+      "n:hard:3"
+    ],
+    [
+      "b24",
+      "s:monk/back_strike"
+    ],
+    [
+      "b25",
       "s:monk/jab_combo"
     ],
     [
-      "b23",
+      "b25",
       "s:monk/spin_kick"
     ],
     [
-      "b24",
+      "b26",
       "s:monk/hakkei"
     ],
     [
-      "b24",
+      "b26",
       "s:monk/spin_kick"
     ],
     [
-      "b25",
+      "b27",
       "s:monk/hakkei"
     ],
     [
-      "b25",
-      "s:monk/rising_dragon"
-    ],
-    [
-      "b26",
-      "s:monk/mountain_breaker"
-    ],
-    [
-      "b26",
-      "s:monk/rising_dragon"
-    ],
-    [
       "b27",
-      "s:monk/mountain_breaker"
-    ],
-    [
-      "b27",
-      "s:monk/thunder_fist"
+      "s:monk/rising_dragon"
     ],
     [
       "b28",
+      "s:monk/mountain_breaker"
+    ],
+    [
+      "b28",
+      "s:monk/rising_dragon"
+    ],
+    [
+      "b29",
+      "s:monk/mountain_breaker"
+    ],
+    [
+      "b29",
+      "s:monk/thunder_fist"
+    ],
+    [
+      "b30",
       "s:monk/collapsing_fist"
     ],
     [
-      "b28",
+      "b30",
       "s:monk/hundred_fists"
     ],
     [
-      "b29",
+      "b31",
       "g:hard:4:1"
     ],
     [
-      "b29",
+      "b31",
       "s:monk/hundred_fists"
     ],
     [
-      "b30",
+      "b32",
       "g:hard:4:1"
     ],
     [
-      "b30",
+      "b32",
       "n:hard:1"
     ],
     [
-      "b31",
+      "b33",
       "s:monk/combo_mastery"
     ],
     [
-      "b31",
-      "s:monk/iron_body"
-    ],
-    [
-      "b32",
-      "s:monk/battle_aura"
-    ],
-    [
-      "b32",
-      "s:monk/iron_body"
-    ],
-    [
       "b33",
-      "s:monk/battle_aura"
-    ],
-    [
-      "b33",
-      "s:monk/flowing_ki"
+      "s:monk/iron_body"
     ],
     [
       "b34",
+      "s:monk/battle_aura"
+    ],
+    [
+      "b34",
+      "s:monk/iron_body"
+    ],
+    [
+      "b35",
+      "s:monk/battle_aura"
+    ],
+    [
+      "b35",
+      "s:monk/flowing_ki"
+    ],
+    [
+      "b36",
       "s:monk/finishing_blow"
     ],
     [
-      "b34",
+      "b36",
       "s:monk/flowing_ki"
     ],
     [
-      "b35",
+      "b37",
       "core"
     ],
     [
-      "b35",
+      "b37",
       "s:monk/jab_combo"
     ],
     [
-      "b36",
+      "b38",
       "s:monk/combo_mastery"
     ],
     [
-      "b36",
+      "b38",
       "s:monk/spin_kick"
     ],
     [
-      "b37",
+      "b39",
       "s:monk/chain_kicks"
     ],
     [
-      "b37",
+      "b39",
       "s:monk/rising_dragon"
     ],
     [
-      "b38",
-      "s:monk/hundred_fists"
-    ],
-    [
-      "b38",
-      "s:monk/rising_dragon"
-    ],
-    [
-      "b39",
-      "s:monk/battle_aura"
-    ],
-    [
-      "b39",
+      "b40",
       "s:monk/hundred_fists"
     ],
     [
       "b40",
-      "b41"
-    ],
-    [
-      "b40",
-      "n:hard:3"
+      "s:monk/rising_dragon"
     ],
     [
       "b41",
-      "s:monk/thunder_fist"
+      "s:monk/battle_aura"
+    ],
+    [
+      "b41",
+      "s:monk/hundred_fists"
     ],
     [
       "b42",
@@ -1131,11 +1160,11 @@
     ],
     [
       "b42",
-      "s:monk/thunder_fist"
+      "n:hard:3"
     ],
     [
       "b43",
-      "n:hard:1"
+      "s:monk/thunder_fist"
     ],
     [
       "b44",
@@ -1143,199 +1172,199 @@
     ],
     [
       "b44",
-      "n:hard:1"
-    ],
-    [
-      "b45",
-      "s:monk/finishing_blow"
-    ],
-    [
-      "b47",
-      "s:monk/hundred_bond"
-    ],
-    [
-      "b47",
       "s:monk/thunder_fist"
     ],
     [
-      "b68",
+      "b45",
+      "n:hard:1"
+    ],
+    [
+      "b46",
+      "b47"
+    ],
+    [
+      "b46",
+      "n:hard:1"
+    ],
+    [
+      "b47",
+      "s:monk/finishing_blow"
+    ],
+    [
+      "b49",
+      "s:monk/hundred_bond"
+    ],
+    [
+      "b49",
+      "s:monk/thunder_fist"
+    ],
+    [
+      "b70",
       "s:monk/air_palm"
     ],
     [
-      "b68",
+      "b70",
       "s:monk/kaisei_fist"
     ],
     [
-      "b69",
+      "b71",
       "g:soft:3:3"
     ],
     [
-      "b69",
+      "b71",
       "s:monk/air_palm"
     ],
     [
-      "b70",
+      "b72",
       "g:soft:3:3"
     ],
     [
-      "b70",
+      "b72",
       "g:soft:4:3"
     ],
     [
-      "b71",
+      "b73",
       "g:soft:4:3"
     ],
     [
-      "b71",
+      "b73",
       "n:soft:3"
     ],
     [
-      "b72",
+      "b74",
       "s:monk/flowing_stance"
     ],
     [
-      "b72",
+      "b74",
       "s:monk/palm_strike"
     ],
     [
-      "b73",
+      "b75",
       "s:monk/flowing_stance"
     ],
     [
-      "b73",
+      "b75",
       "s:monk/ki_share"
     ],
     [
-      "b74",
+      "b76",
       "s:monk/ki_bullet"
     ],
     [
-      "b74",
+      "b76",
       "s:monk/ki_share"
-    ],
-    [
-      "b75",
-      "s:monk/ki_bullet"
-    ],
-    [
-      "b75",
-      "s:monk/ki_vortex"
-    ],
-    [
-      "b76",
-      "s:monk/inch_punch"
-    ],
-    [
-      "b76",
-      "s:monk/ki_vortex"
     ],
     [
       "b77",
+      "s:monk/ki_bullet"
+    ],
+    [
+      "b77",
+      "s:monk/ki_vortex"
+    ],
+    [
+      "b78",
+      "s:monk/inch_punch"
+    ],
+    [
+      "b78",
+      "s:monk/ki_vortex"
+    ],
+    [
+      "b79",
       "s:monk/shrink_step"
     ],
     [
-      "b77",
+      "b79",
       "s:monk/turning_throw"
     ],
     [
-      "b78",
+      "b80",
       "g:soft:4:1"
     ],
     [
-      "b78",
+      "b80",
       "s:monk/turning_throw"
     ],
     [
-      "b79",
+      "b81",
       "g:soft:4:1"
     ],
     [
-      "b79",
+      "b81",
       "n:soft:1"
     ],
     [
-      "b80",
+      "b82",
       "s:monk/allied_fists"
     ],
     [
-      "b80",
+      "b82",
       "s:monk/receiving_art"
     ],
     [
-      "b81",
+      "b83",
       "s:monk/receiving_art"
     ],
     [
-      "b81",
+      "b83",
       "s:monk/soft_way"
     ],
     [
-      "b82",
+      "b84",
       "s:monk/calm_breath"
     ],
     [
-      "b82",
+      "b84",
       "s:monk/soft_way"
     ],
     [
-      "b83",
+      "b85",
       "s:monk/calm_breath"
     ],
     [
-      "b83",
+      "b85",
       "s:monk/reading_flow"
     ],
     [
-      "b84",
+      "b86",
       "core"
     ],
     [
-      "b84",
+      "b86",
       "s:monk/palm_strike"
     ],
     [
-      "b85",
+      "b87",
       "s:monk/allied_fists"
     ],
     [
-      "b85",
+      "b87",
       "s:monk/flowing_stance"
     ],
     [
-      "b86",
+      "b88",
       "g:soft:3:3"
     ],
     [
-      "b86",
+      "b88",
       "s:monk/ki_bullet"
     ],
     [
-      "b87",
+      "b89",
       "s:monk/ki_bullet"
     ],
     [
-      "b87",
-      "s:monk/turning_throw"
-    ],
-    [
-      "b88",
-      "s:monk/soft_way"
-    ],
-    [
-      "b88",
-      "s:monk/turning_throw"
-    ],
-    [
       "b89",
-      "b90"
-    ],
-    [
-      "b89",
-      "n:soft:3"
+      "s:monk/turning_throw"
     ],
     [
       "b90",
-      "s:monk/inch_punch"
+      "s:monk/soft_way"
+    ],
+    [
+      "b90",
+      "s:monk/turning_throw"
     ],
     [
       "b91",
@@ -1343,11 +1372,11 @@
     ],
     [
       "b91",
-      "s:monk/inch_punch"
+      "n:soft:3"
     ],
     [
       "b92",
-      "n:soft:1"
+      "s:monk/inch_punch"
     ],
     [
       "b93",
@@ -1355,35 +1384,35 @@
     ],
     [
       "b93",
-      "n:soft:1"
-    ],
-    [
-      "b94",
-      "s:monk/reading_flow"
-    ],
-    [
-      "b96",
-      "s:monk/heaven_earth"
-    ],
-    [
-      "b96",
       "s:monk/inch_punch"
     ],
     [
-      "b98",
-      "n:bridge:2"
+      "b94",
+      "n:soft:1"
+    ],
+    [
+      "b95",
+      "b96"
+    ],
+    [
+      "b95",
+      "n:soft:1"
+    ],
+    [
+      "b96",
+      "s:monk/reading_flow"
     ],
     [
       "b98",
-      "s:monk/iron_body"
+      "s:monk/heaven_earth"
     ],
     [
-      "b99",
-      "n:bridge:2"
+      "b98",
+      "s:monk/inch_punch"
     ],
     [
-      "b99",
-      "s:monk/receiving_art"
+      "s:monk/adamant_body",
+      "s:monk/spin_kick"
     ],
     [
       "s:monk/collapsing_fist",
@@ -1396,10 +1425,6 @@
     [
       "s:monk/flowing_stance",
       "s:monk/kaisei_fist"
-    ],
-    [
-      "s:monk/hakkei",
-      "s:monk/kien"
     ],
     [
       "s:monk/ki_share",

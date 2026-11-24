@@ -140,7 +140,17 @@ public final class PassiveDef {
         /** 雷の心得：感電した敵へのダメージ +value%、感電 +2秒。 */
         THUNDER_MASTERY("thunder_mastery", false),
         /** 凍土：凍結を砕くと、まわりの敵に魔力×value のダメージと凍え。 */
-        PERMAFROST("permafrost", false);
+        PERMAFROST("permafrost", false),
+        // ---------------------------------------------------------------- 近接職の守り（11月25日）
+        /**
+         * 不屈の再起（ナイト）：HPが3割を切ると、すぐに最大HPの value% が戻り、5秒かけてさらに value% 戻る（90秒に1回）。
+         * 11月25日のご指示「剣士は後半のパッシブで体力が少なくなると体力が急激に回復するなどを追加する」。
+         */
+        LAST_STAND("last_stand", false),
+        /** 影吸い（ローグ）：与えたダメージの value% だけHPが戻る（1回で最大HPの3%まで）。 */
+        LIFE_DRAIN("life_drain", false),
+        /** 金剛身（モンク）：受けるダメージ -value%。気が50以上の間は、さらに -value%。 */
+        ADAMANT_BODY("adamant_body", false);
 
         private final String id;
         private final boolean usesRadius;

@@ -92,8 +92,13 @@ def main():
         write(os.path.join(DATA, "recipes/workshop", anc + ".json"), {
             "type": "amemaru:workshop", "workshop": "weapon", "mastery": 1, "mastery_exp": 10, "ingredients": recipe,
             "result": {"item": "amemaru:" + anc}})
-        write(os.path.join(DATA, "tags/items/weapons", job + ".json"), {
-            "replace": False, "values": ["amemaru:" + app, "amemaru:" + anc]})
+        # 11月25日：タグを上書きすると、あとで足した流紋・守護者の武器が消えるので、足りないものだけ足す
+        tag_path = os.path.join(DATA, "tags/items/weapons", job + ".json")
+        tag = json.load(open(tag_path, encoding="utf-8")) if os.path.exists(tag_path) else {"replace": False, "values": []}
+        for item in ("amemaru:" + app, "amemaru:" + anc):
+            if item not in tag["values"]:
+                tag["values"].append(item)
+        write(tag_path, tag)
         for item in (app, anc):
             if item not in weapon_ids:
                 manifest["weapons"].append({"id": item, "kind": kind})

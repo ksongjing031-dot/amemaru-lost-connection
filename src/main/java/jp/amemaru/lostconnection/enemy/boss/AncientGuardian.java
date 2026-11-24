@@ -72,7 +72,7 @@ public class AncientGuardian extends AmemaruBoss {
     public static final String PILLARS = "barrier_pillars";
     public static final ResourceLocation GATE_KEY = AmemaruMod.id("seventh_gate_key");
     /** 管理者のコマンドで出させられる技（{@code /amemaru admin boss skill 5 <技>}）。 */
-    public static final List<String> SKILLS = List.of("sweep", "beam", "slam", "barrier", "judge", "gather");
+    public static final List<String> SKILLS = List.of("sweep", "beam", "slam", "barrier", "judge", "gather", "sever");
 
     private static final EntityDataAccessor<Boolean> DATA_BARRIER = SynchedEntityData.defineId(AncientGuardian.class, EntityDataSerializers.BOOLEAN);
     private static final EntityDataAccessor<Boolean> DATA_KNEEL = SynchedEntityData.defineId(AncientGuardian.class, EntityDataSerializers.BOOLEAN);
@@ -80,9 +80,21 @@ public class AncientGuardian extends AmemaruBoss {
     private static final DustParticleOptions LINKED = new DustParticleOptions(new Vector3f(0.4F, 1.0F, 0.6F), 1.0F);
     private static final DustParticleOptions ALONE = new DustParticleOptions(new Vector3f(1.0F, 0.3F, 0.25F), 1.0F);
 
-    private enum Action { NONE, SWEEP, BEAM, SLAM, JUDGE, GATHER, KNEEL, RECOVER }
+    private enum Action { NONE, SWEEP, BEAM, SLAM, JUDGE, GATHER, KNEEL, RECOVER, SEVER }
+
+    /** 切断判定の輪（白：離れている・赤：近すぎる）。11月25日 */
+    private static final DustParticleOptions SEVER_APART = new DustParticleOptions(new Vector3f(0.95F, 0.97F, 1.0F), 2.0F);
+    /** 切断判定で、輪の中に人がいる（近すぎる）ときの赤（輪を太く見せる）。 */
+    private static final DustParticleOptions SEVER_CLOSE = new DustParticleOptions(new Vector3f(1.0F, 0.25F, 0.2F), 2.0F);
 
     private Action action = Action.NONE;
+
+    /** 技を出している途中か（技が終わったら、ボスは少し息つぎをする。{@link AmemaruBoss#breatheTicks}）。 */
+    @Override
+    protected boolean acting() {
+        return action != Action.NONE;
+    }
+
     private int timer;
     private float lockedYaw;
     private boolean flip;
@@ -94,6 +106,8 @@ public class AncientGuardian extends AmemaruBoss {
     private int barrierCooldown = -1;
     private int callTimer;
     private int judgeCooldown = -1;
+    /** 切断判定（11月25日。第1・第2段階）の、次に出すまで */
+    private int severCooldown = -1;
     private int vulnerable;
     private boolean allowDeath;
     private final Map<UUID, Integer> daisTicks = new HashMap<>();
@@ -189,6 +203,70 @@ public class AncientGuardian extends AmemaruBoss {
         return skill("judge", 2.6, 3.0, 14.0, 6.0);
     }
 
+    private EnemyDef.Skill severSkill() {
+        return skill("sever", 1.8, 4.0, 35.0, 4.0);
+    }
+
+    // ---- 切断判定（11月25日。接続判定の逆：近すぎる人を打つ）
+
+    /**
+     * 11月25日のご指示「ボスそれぞれの固有のギミックを追加する」【提案】：<b>切断判定</b>。ロストに欠けた左腕の記録核が白く濁り、
+     * 「接続」を逆に判定する。予兆（{@code skills.sever.windup} 秒）のあいだ、ひとりひとりのまわりに {@code range} ブロックの白い輪が
+     * 出て、ほかの人が中にいると赤くなる。終わったとき、近すぎる人に {@code power}。第1・第2段階で、2人以上のとき。
+     * 第3段階の接続判定（寄り添え）と逆なので、どちらの判定かを見て動く。
+     */
+    private void startSever(ServerLevel level) {
+        EnemyDef.Skill sever = severSkill();
+        action = Action.SEVER;
+        timer = Math.max(40, sever.windupTicks());
+        setBusy(timer + 10);
+        playAction("skill_judge");
+        setCast("sever", timer);
+        line("boss.amemaru.ancient_guardian.line.sever");
+        tipOnce("sever");
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.ELDER_GUARDIAN_CURSE, SoundSource.HOSTILE, 2.0F, 1.3F);
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.GLASS_BREAK, SoundSource.HOSTILE, 1.6F, 0.5F);
+    }
+
+    private void tickSever(ServerLevel level) {
+        EnemyDef.Skill sever = severSkill();
+        double range = sever.range();
+        List<ServerPlayer> players = targets(level);
+        if (timer % 3 == 0) {
+            // 11月25日（CIの写真で見て濃くした）：48粒の太い輪を、0.15秒ごとに
+            for (ServerPlayer player : players) {
+                boolean close = linked(player, players, range);
+                for (int i = 0; i < 48; i++) {
+                    double a = Math.PI * 2.0 * i / 48.0;
+                    level.sendParticles(close ? SEVER_CLOSE : SEVER_APART, player.getX() + Math.cos(a) * range, player.getY() + 0.2,
+                            player.getZ() + Math.sin(a) * range, 1, 0.0, 0.0, 0.0, 0.0);
+                }
+            }
+        }
+        if (timer % 5 == 0) {
+            // 濁った記録核
+            level.sendParticles(ParticleTypes.WHITE_ASH, getX(), getY() + getBbHeight() * 0.62, getZ(), 12, 0.6, 0.5, 0.6, 0.02);
+            setStatus("sever", (timer + 19) / 20);
+        }
+        if (--timer > 0) {
+            return;
+        }
+        for (ServerPlayer player : players) {
+            if (players.size() >= 2 && linked(player, players, range)) {
+                EnemyCombat.strike(this, player, sever.power(), null);
+                level.sendParticles(ParticleTypes.FLASH, player.getX(), player.getY() + 1.0, player.getZ(), 1, 0.0, 0.0, 0.0, 0.0);
+                player.displayClientMessage(Component.translatable("boss.amemaru.ancient_guardian.severed").withStyle(ChatFormatting.RED), true);
+            } else {
+                player.displayClientMessage(Component.translatable("boss.amemaru.ancient_guardian.sever_safe").withStyle(ChatFormatting.AQUA), true);
+            }
+        }
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.WARDEN_SONIC_BOOM, SoundSource.HOSTILE, 1.4F, 1.4F);
+        setStatus("", 0);
+        severCooldown = cooldown(sever);
+        action = Action.RECOVER;
+        timer = 16;
+    }
+
     private int cooldown(EnemyDef.Skill skill) {
         double scale = phase() >= 3 ? 0.8 : phase() == 2 ? 0.9 : 1.0;
         return (int) Math.round(skill.cooldownTicks() * scale * pace());
@@ -235,6 +313,7 @@ public class AncientGuardian extends AmemaruBoss {
         allowDeath = false;
         judgeCooldown = -1;
         barrierCooldown = -1;
+        severCooldown = (int) Math.round(severSkill().param("first", 25.0) * 20);
         line("boss.amemaru.ancient_guardian.line.start");
         tipOnce("start");
     }
@@ -269,6 +348,7 @@ public class AncientGuardian extends AmemaruBoss {
         barrierHold = 0;
         barrierCooldown = -1;
         judgeCooldown = -1;
+        severCooldown = -1;
         vulnerable = 0;
         allowDeath = false;
         daisTicks.clear();
@@ -312,12 +392,16 @@ public class AncientGuardian extends AmemaruBoss {
         if (phase() >= 3 && judgeCooldown > 0 && action == Action.NONE) {
             judgeCooldown--;
         }
+        if (phase() <= 2 && severCooldown > 0 && action == Action.NONE && !barrier()) {
+            severCooldown--;
+        }
         switch (action) {
             case NONE -> choose(level);
             case SWEEP -> tickSweep(level);
             case BEAM -> tickBeam(level);
             case SLAM -> tickSlam(level);
             case JUDGE -> tickJudge(level);
+            case SEVER -> tickSever(level);
             case GATHER -> tickGather(level);
             case KNEEL -> tickKneel(level);
             case RECOVER -> {
@@ -384,6 +468,11 @@ public class AncientGuardian extends AmemaruBoss {
         }
         if (phase() >= 3 && judgeCooldown == 0 && players.size() >= 1) {
             startJudge(level, players);
+            return;
+        }
+        // 切断判定：第1・第2段階で、2人以上のとき（11月25日）
+        if (phase() <= 2 && severCooldown == 0 && !barrier() && players.size() >= 2) {
+            startSever(level);
             return;
         }
         ServerPlayer top = topThreat();
@@ -888,6 +977,7 @@ public class AncientGuardian extends AmemaruBoss {
                 }
             }
             case "judge" -> startJudge(level, players);
+            case "sever" -> startSever(level);
             case "gather" -> startGather(level);
             default -> {
                 return false;

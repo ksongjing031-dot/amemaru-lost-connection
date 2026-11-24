@@ -324,7 +324,9 @@ public final class WaterwayGameTests {
         check(helper, small != null && small.behavior("scale", 1.0) < 1.0 && small.behavior("split", 0.0) == 0.0,
                 "小さな澱みスライムが、小さくないか、また分かれます");
         EnemyDef hydram = EnemyDefs.get(AmemaruMod.id("hydram"));
-        for (String skill : List.of("cannon", "sweep", "whirl", "call", "drain", "share")) {
+        // 11月25日：みんなで受ける一撃（share）はレイドのボスだけになったので、3階のボスにはない
+        check(helper, !hydram.skills().containsKey("share") && !hydram.raid(), "大水門の番人に、みんなで受ける一撃が残っています");
+        for (String skill : List.of("cannon", "sweep", "whirl", "call", "drain")) {
             check(helper, hydram.skills().containsKey(skill), "大水門の番人に技 " + skill + " がありません");
         }
         boolean shield = hydram.rare().stream().anyMatch(r -> r.item().equals(AmemaruMod.id("floodgate_key_shield")) && r.chance() == 6.0);

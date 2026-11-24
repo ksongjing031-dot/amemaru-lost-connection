@@ -171,20 +171,24 @@ ENEMIES["ancient_guardian"] = fix_floor(enemy(
     "結界の間は call_every 秒ごとに防衛兵 sentinels・ドローン drones を呼ぶ（max_guards まで）。第2段階のうちは cooldown 秒ごとに張り直す。"
     "第3段階（35〜0%）：接続判定（judge。windup 秒の予兆のあと、range 以内に味方がいない人に power、いる人は linked 倍。ひとりのときは"
     "判定しない）。最後：HPが尽きると止まり、全員が祭壇の中央（gather.range）に集まると膝をつく（timeout 秒で膝をつく）。"
-    "祈りの合唱と同じ「みんなで受ける一撃」（share）。HPは2人のときの基準（ひとりでも2人ぶん）。数値は【補完】（4人で20分・6人で16分ほど）",
+    "祈りの合唱と同じ「みんなで受ける一撃」（share）。HPは2人のときの基準（ひとりでも2人ぶん）。数値は【補完】（4人で20分・6人で16分ほど）。"
+    "11月25日：みんなで受ける一撃（share）はレイドのボスだけにしたので外した。予兆（windup）と間（cooldown）を長くした（anim_windup は"
+    "前の予兆で、アニメーションの速さに使う）",
     "古代守護者", 31,
     "奈落の上の祭壇を守り続ける、白い石と青銅の巨人。胸の翠の記録核には、古代の終わりの記録が眠っている。左腕はロストに白く欠け、"
     "その動きは、ときどき狂う。挑む者たちが互いにつながっているかを、試すように戦う。",
     st(72000, 183, 16, 0.12, 64, 30), 2400,
-    {"sweep": {"power": 1.3, "windup": 1.2, "cooldown": 5.0, "range": 9.0, "angle": 140, "push": 1.1, "flip_chance": 0.3,
-               "flip_at": 0.45},
-     "beam": {"power": 1.5, "windup": 1.6, "cooldown": 8.0, "range": 30.0, "width": 2.4},
-     "slam": {"power": 1.8, "windup": 1.4, "cooldown": 9.0, "range": 30.0, "radius": 3.2},
+    {"sweep": {"power": 1.3, "windup": 1.7, "anim_windup": 1.2, "cooldown": 6.5, "range": 9.0, "angle": 140, "push": 1.1,
+               "flip_chance": 0.3, "flip_at": 0.45},
+     "beam": {"power": 1.5, "windup": 2.0, "anim_windup": 1.6, "cooldown": 10.0, "range": 30.0, "width": 2.4},
+     "slam": {"power": 1.8, "windup": 1.9, "anim_windup": 1.4, "cooldown": 11.0, "range": 30.0, "radius": 3.2},
      "barrier": {"cooldown": 45.0, "hold": 3.0, "call_every": 15.0, "max_guards": 5, "sentinels": 2, "drones": 1, "stagger": 4.0,
                  "broken": 1.5, "broken_seconds": 10.0},
-     "judge": {"power": 2.6, "windup": 3.0, "cooldown": 14.0, "range": 6.0, "linked": 0.12, "first": 6.0},
+     "judge": {"power": 2.6, "windup": 3.5, "anim_windup": 3.0, "cooldown": 14.0, "range": 6.0, "linked": 0.12, "first": 6.0},
      "gather": {"range": 5.0, "timeout": 60.0},
-     "share": {"power": 240, "windup": 3.4, "cooldown": 40, "range": 3.5, "first": 30}},
+     # 11月25日：固有のギミック「切断判定」（第1・第2段階・2人以上。windup 秒の予兆のあと、range ブロック以内にほかの人がいる人に
+     # power。接続判定の逆。戦いが始まって first 秒から、cooldown 秒ごと）【提案】
+     "sever": {"power": 1.8, "windup": 4.0, "cooldown": 35.0, "range": 4.0, "first": 25.0}},
     {},
     "ancient_guardian", guardian_rare(), pity=True))
 
@@ -432,6 +436,9 @@ def main():
         write(os.path.join(DEFS, "equipment", gid + ".json"), data)
     write(os.path.join(DEFS, "accessories", "seventh_gate_key.json"), GATE_KEY)
     merge_item_types()
+    # 11月25日：新しい武器を、その職業の武器のタグに足す（足し忘れると、持ってもスキルが使えない）
+    import weapon_tags
+    weapon_tags.sync()
     merge_lang()
     print("enemies", len(ENEMIES), "gear", len(GEAR_NAMES), "story", len(STORY))
 

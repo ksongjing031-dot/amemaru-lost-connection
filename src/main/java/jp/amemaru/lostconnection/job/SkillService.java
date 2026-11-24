@@ -277,12 +277,28 @@ public final class SkillService {
         return new Result(failure);
     }
 
-    /** 職業の武器を持っているか（configで確かめないこともできる）。 */
+    /**
+     * 職業の武器を持っているか（configで確かめないこともできる）。職業の武器のタグにあるか、武器の定義（equipment の jobs）に
+     * その職業が書いてあれば持っている。11月25日：2階・4階・5階の武器（古樹の枝杖・祈り手の鈴・守護者シリーズ）がタグに
+     * 抜けていて、その職業で持ってもスキルが使えなかった（タグも直した。定義からも見るので、足し忘れても使える）。
+     */
     public static boolean hasWeapon(ServerPlayer player, JobDef job) {
         if (!ServerConfig.REQUIRE_JOB_WEAPON.get() || job.weapons() == null) {
             return true;
         }
-        return player.getMainHandItem().is(job.weapons());
+        return isJobWeapon(player.getMainHandItem(), job);
+    }
+
+    /** その品が、職業の武器か（タグか、武器の定義の jobs）。 */
+    public static boolean isJobWeapon(net.minecraft.world.item.ItemStack stack, JobDef job) {
+        if (stack.isEmpty()) {
+            return false;
+        }
+        if (job.weapons() != null && stack.is(job.weapons())) {
+            return true;
+        }
+        jp.amemaru.lostconnection.equipment.EquipmentDef def = jp.amemaru.lostconnection.equipment.EquipmentDefs.server().get(stack);
+        return def != null && def.slot() == jp.amemaru.lostconnection.equipment.GearSlot.WEAPON && def.jobs().contains(job.id());
     }
 
     // ---------------------------------------------------------------- 詠唱

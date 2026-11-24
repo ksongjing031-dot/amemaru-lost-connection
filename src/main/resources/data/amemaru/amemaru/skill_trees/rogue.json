@@ -101,6 +101,14 @@
       "start": false
     },
     {
+      "id": "s:rogue/shadow_drain",
+      "kind": "skill",
+      "skill": "amemaru:rogue/shadow_drain",
+      "x": -111.3,
+      "y": -135.0,
+      "start": false
+    },
+    {
       "id": "s:rogue/shadow_strike",
       "kind": "skill",
       "skill": "amemaru:rogue/shadow_strike",
@@ -176,7 +184,7 @@
       "start": false
     },
     {
-      "id": "b21",
+      "id": "b22",
       "kind": "stat",
       "x": -206.2,
       "y": -61.1,
@@ -185,7 +193,7 @@
       }
     },
     {
-      "id": "b22",
+      "id": "b23",
       "kind": "stat",
       "x": -282.9,
       "y": -83.8,
@@ -194,7 +202,7 @@
       }
     },
     {
-      "id": "b23",
+      "id": "b24",
       "kind": "stat",
       "x": -359.5,
       "y": -106.5,
@@ -203,7 +211,7 @@
       }
     },
     {
-      "id": "b24",
+      "id": "b25",
       "kind": "stat",
       "x": -436.2,
       "y": -129.2,
@@ -212,7 +220,7 @@
       }
     },
     {
-      "id": "b25",
+      "id": "b26",
       "kind": "stat",
       "x": -112.6,
       "y": -74.5,
@@ -221,7 +229,7 @@
       }
     },
     {
-      "id": "b26",
+      "id": "b27",
       "kind": "stat",
       "x": -179.2,
       "y": -118.6,
@@ -230,7 +238,7 @@
       }
     },
     {
-      "id": "b27",
+      "id": "b28",
       "kind": "stat",
       "x": -246.0,
       "y": -162.8,
@@ -239,7 +247,7 @@
       }
     },
     {
-      "id": "b28",
+      "id": "b29",
       "kind": "stat",
       "x": -312.8,
       "y": -207.0,
@@ -248,7 +256,7 @@
       }
     },
     {
-      "id": "b29",
+      "id": "b30",
       "kind": "stat",
       "x": -379.5,
       "y": -251.1,
@@ -257,34 +265,43 @@
       }
     },
     {
-      "id": "b30",
+      "id": "b31",
       "kind": "stat",
-      "x": -187.6,
-      "y": -227.7,
+      "x": -136.8,
+      "y": -165.9,
       "stats": {
         "speed": 1
       }
     },
     {
-      "id": "b31",
+      "id": "b32",
       "kind": "stat",
-      "x": -238.6,
-      "y": -289.4,
+      "x": -187.6,
+      "y": -227.7,
       "stats": {
-        "crit": 1.2
+        "crit": 1.0
       }
     },
     {
-      "id": "b32",
+      "id": "b33",
       "kind": "stat",
-      "x": -289.4,
-      "y": -351.1,
+      "x": -238.6,
+      "y": -289.4,
       "stats": {
         "speed": 2
       }
     },
     {
-      "id": "b33",
+      "id": "b34",
+      "kind": "stat",
+      "x": -289.4,
+      "y": -351.1,
+      "stats": {
+        "crit": 1.2
+      }
+    },
+    {
+      "id": "b35",
       "kind": "stat",
       "x": -82.3,
       "y": -198.6,
@@ -293,7 +310,7 @@
       }
     },
     {
-      "id": "b34",
+      "id": "b36",
       "kind": "stat",
       "x": -112.9,
       "y": -272.6,
@@ -302,7 +319,7 @@
       }
     },
     {
-      "id": "b35",
+      "id": "b37",
       "kind": "stat",
       "x": -143.5,
       "y": -346.4,
@@ -311,7 +328,7 @@
       }
     },
     {
-      "id": "b36",
+      "id": "b38",
       "kind": "stat",
       "x": -174.1,
       "y": -420.4,
@@ -320,7 +337,7 @@
       }
     },
     {
-      "id": "b37",
+      "id": "b39",
       "kind": "stat",
       "x": -39.6,
       "y": -26.2,
@@ -329,16 +346,7 @@
       }
     },
     {
-      "id": "b38",
-      "kind": "stat",
-      "x": -106.5,
-      "y": -129.1,
-      "stats": {
-        "crit": 0.8
-      }
-    },
-    {
-      "id": "b39",
+      "id": "b40",
       "kind": "stat",
       "x": -300.3,
       "y": -140.0,
@@ -347,7 +355,7 @@
       }
     },
     {
-      "id": "b40",
+      "id": "b41",
       "kind": "stat",
       "x": -246.2,
       "y": -221.7,
@@ -356,7 +364,7 @@
       }
     },
     {
-      "id": "b41",
+      "id": "b42",
       "kind": "stat",
       "x": -170.6,
       "y": -284.0,
@@ -365,7 +373,7 @@
       }
     },
     {
-      "id": "b42",
+      "id": "b43",
       "kind": "stat",
       "x": -454.0,
       "y": -184.8,
@@ -374,7 +382,7 @@
       }
     },
     {
-      "id": "b43",
+      "id": "b44",
       "kind": "stat",
       "x": -433.4,
       "y": -229.0,
@@ -383,7 +391,7 @@
       }
     },
     {
-      "id": "b44",
+      "id": "b45",
       "kind": "stat",
       "x": -380.2,
       "y": -309.5,
@@ -392,7 +400,7 @@
       }
     },
     {
-      "id": "b45",
+      "id": "b46",
       "kind": "stat",
       "x": -347.5,
       "y": -345.7,
@@ -401,7 +409,7 @@
       }
     },
     {
-      "id": "b46",
+      "id": "b47",
       "kind": "stat",
       "x": -273.1,
       "y": -407.1,
@@ -410,7 +418,7 @@
       }
     },
     {
-      "id": "b47",
+      "id": "b48",
       "kind": "stat",
       "x": -231.2,
       "y": -432.2,
@@ -427,7 +435,7 @@
       "start": false
     },
     {
-      "id": "b49",
+      "id": "b50",
       "kind": "stat",
       "x": -452.4,
       "y": -299.4,
@@ -597,7 +605,7 @@
       "start": false
     },
     {
-      "id": "b69",
+      "id": "b70",
       "kind": "stat",
       "x": 282.9,
       "y": -83.8,
@@ -606,7 +614,7 @@
       }
     },
     {
-      "id": "b70",
+      "id": "b71",
       "kind": "stat",
       "x": 359.5,
       "y": -106.5,
@@ -615,7 +623,7 @@
       }
     },
     {
-      "id": "b71",
+      "id": "b72",
       "kind": "stat",
       "x": 436.2,
       "y": -129.2,
@@ -624,7 +632,7 @@
       }
     },
     {
-      "id": "b72",
+      "id": "b73",
       "kind": "stat",
       "x": 112.6,
       "y": -74.5,
@@ -633,7 +641,7 @@
       }
     },
     {
-      "id": "b73",
+      "id": "b74",
       "kind": "stat",
       "x": 179.2,
       "y": -118.6,
@@ -642,7 +650,7 @@
       }
     },
     {
-      "id": "b74",
+      "id": "b75",
       "kind": "stat",
       "x": 246.0,
       "y": -162.8,
@@ -651,7 +659,7 @@
       }
     },
     {
-      "id": "b75",
+      "id": "b76",
       "kind": "stat",
       "x": 312.8,
       "y": -207.0,
@@ -660,7 +668,7 @@
       }
     },
     {
-      "id": "b76",
+      "id": "b77",
       "kind": "stat",
       "x": 379.5,
       "y": -251.1,
@@ -669,7 +677,7 @@
       }
     },
     {
-      "id": "b77",
+      "id": "b78",
       "kind": "stat",
       "x": 187.6,
       "y": -227.7,
@@ -678,7 +686,7 @@
       }
     },
     {
-      "id": "b78",
+      "id": "b79",
       "kind": "stat",
       "x": 238.6,
       "y": -289.4,
@@ -687,7 +695,7 @@
       }
     },
     {
-      "id": "b79",
+      "id": "b80",
       "kind": "stat",
       "x": 289.4,
       "y": -351.1,
@@ -696,7 +704,7 @@
       }
     },
     {
-      "id": "b80",
+      "id": "b81",
       "kind": "stat",
       "x": 82.3,
       "y": -198.6,
@@ -705,7 +713,7 @@
       }
     },
     {
-      "id": "b81",
+      "id": "b82",
       "kind": "stat",
       "x": 112.9,
       "y": -272.6,
@@ -714,7 +722,7 @@
       }
     },
     {
-      "id": "b82",
+      "id": "b83",
       "kind": "stat",
       "x": 143.5,
       "y": -346.4,
@@ -723,7 +731,7 @@
       }
     },
     {
-      "id": "b83",
+      "id": "b84",
       "kind": "stat",
       "x": 174.1,
       "y": -420.4,
@@ -732,7 +740,7 @@
       }
     },
     {
-      "id": "b84",
+      "id": "b85",
       "kind": "stat",
       "x": 39.6,
       "y": -26.2,
@@ -741,7 +749,7 @@
       }
     },
     {
-      "id": "b85",
+      "id": "b86",
       "kind": "stat",
       "x": 106.5,
       "y": -129.1,
@@ -750,7 +758,7 @@
       }
     },
     {
-      "id": "b86",
+      "id": "b87",
       "kind": "stat",
       "x": 300.3,
       "y": -140.0,
@@ -759,7 +767,7 @@
       }
     },
     {
-      "id": "b87",
+      "id": "b88",
       "kind": "stat",
       "x": 246.2,
       "y": -221.7,
@@ -768,7 +776,7 @@
       }
     },
     {
-      "id": "b88",
+      "id": "b89",
       "kind": "stat",
       "x": 170.6,
       "y": -284.0,
@@ -777,7 +785,7 @@
       }
     },
     {
-      "id": "b89",
+      "id": "b90",
       "kind": "stat",
       "x": 454.0,
       "y": -184.8,
@@ -786,7 +794,7 @@
       }
     },
     {
-      "id": "b90",
+      "id": "b91",
       "kind": "stat",
       "x": 433.4,
       "y": -229.0,
@@ -795,7 +803,7 @@
       }
     },
     {
-      "id": "b91",
+      "id": "b92",
       "kind": "stat",
       "x": 380.2,
       "y": -309.5,
@@ -804,7 +812,7 @@
       }
     },
     {
-      "id": "b92",
+      "id": "b93",
       "kind": "stat",
       "x": 347.5,
       "y": -345.7,
@@ -813,7 +821,7 @@
       }
     },
     {
-      "id": "b93",
+      "id": "b94",
       "kind": "stat",
       "x": 273.1,
       "y": -407.1,
@@ -822,7 +830,7 @@
       }
     },
     {
-      "id": "b94",
+      "id": "b95",
       "kind": "stat",
       "x": 231.2,
       "y": -432.2,
@@ -839,7 +847,7 @@
       "start": false
     },
     {
-      "id": "b96",
+      "id": "b97",
       "kind": "stat",
       "x": 452.4,
       "y": -299.4,
@@ -859,7 +867,7 @@
       }
     },
     {
-      "id": "b98",
+      "id": "b99",
       "kind": "stat",
       "x": -48.8,
       "y": -245.3,
@@ -868,7 +876,7 @@
       }
     },
     {
-      "id": "b99",
+      "id": "b100",
       "kind": "stat",
       "x": 48.8,
       "y": -245.3,
@@ -888,7 +896,7 @@
       }
     },
     {
-      "id": "b101",
+      "id": "b102",
       "kind": "stat",
       "x": -105.9,
       "y": -393.9,
@@ -897,7 +905,7 @@
       }
     },
     {
-      "id": "b102",
+      "id": "b103",
       "kind": "stat",
       "x": -52.9,
       "y": -404.5,
@@ -906,7 +914,7 @@
       }
     },
     {
-      "id": "b103",
+      "id": "b104",
       "kind": "stat",
       "x": 105.9,
       "y": -393.9,
@@ -915,7 +923,7 @@
       }
     },
     {
-      "id": "b104",
+      "id": "b105",
       "kind": "stat",
       "x": 52.9,
       "y": -404.5,
@@ -926,52 +934,52 @@
   ],
   "links": [
     [
-      "b101",
-      "b102"
+      "b100",
+      "n:bridge:2"
     ],
     [
-      "b101",
-      "s:rogue/shadow_footwork"
+      "b100",
+      "s:rogue/corrosion"
     ],
     [
       "b102",
+      "b103"
+    ],
+    [
+      "b102",
+      "s:rogue/shadow_footwork"
+    ],
+    [
+      "b103",
       "n:bridge:4"
-    ],
-    [
-      "b103",
-      "b104"
-    ],
-    [
-      "b103",
-      "s:rogue/exploit"
     ],
     [
       "b104",
+      "b105"
+    ],
+    [
+      "b104",
+      "s:rogue/exploit"
+    ],
+    [
+      "b105",
       "n:bridge:4"
     ],
     [
-      "b21",
+      "b22",
       "s:rogue/throwing_knife"
     ],
     [
-      "b21",
-      "s:rogue/twin_fangs"
-    ],
-    [
-      "b22",
-      "s:rogue/shadow_dance"
-    ],
-    [
       "b22",
       "s:rogue/twin_fangs"
     ],
     [
       "b23",
-      "g:shadow:4:3"
+      "s:rogue/shadow_dance"
     ],
     [
       "b23",
-      "s:rogue/shadow_dance"
+      "s:rogue/twin_fangs"
     ],
     [
       "b24",
@@ -979,27 +987,27 @@
     ],
     [
       "b24",
+      "s:rogue/shadow_dance"
+    ],
+    [
+      "b25",
+      "g:shadow:4:3"
+    ],
+    [
+      "b25",
       "n:shadow:3"
     ],
     [
-      "b25",
+      "b26",
       "s:rogue/flurry"
     ],
     [
-      "b25",
-      "s:rogue/shadow_run"
-    ],
-    [
       "b26",
       "s:rogue/shadow_run"
-    ],
-    [
-      "b26",
-      "s:rogue/vital_strike"
     ],
     [
       "b27",
-      "s:rogue/shadow_stitch"
+      "s:rogue/shadow_run"
     ],
     [
       "b27",
@@ -1007,131 +1015,131 @@
     ],
     [
       "b28",
-      "s:rogue/shadow_burial"
-    ],
-    [
-      "b28",
       "s:rogue/shadow_stitch"
     ],
     [
+      "b28",
+      "s:rogue/vital_strike"
+    ],
+    [
       "b29",
       "s:rogue/shadow_burial"
     ],
     [
       "b29",
+      "s:rogue/shadow_stitch"
+    ],
+    [
+      "b30",
+      "s:rogue/shadow_burial"
+    ],
+    [
+      "b30",
       "s:rogue/shadow_double"
     ],
     [
-      "b30",
-      "s:rogue/phantom_blades"
+      "b31",
+      "s:rogue/shadow_drain"
     ],
     [
-      "b30",
+      "b31",
       "s:rogue/shadow_strike"
     ],
     [
-      "b31",
-      "g:shadow:4:1"
-    ],
-    [
-      "b31",
+      "b32",
       "s:rogue/phantom_blades"
     ],
     [
       "b32",
+      "s:rogue/shadow_strike"
+    ],
+    [
+      "b33",
       "g:shadow:4:1"
     ],
     [
-      "b32",
+      "b33",
+      "s:rogue/phantom_blades"
+    ],
+    [
+      "b34",
+      "g:shadow:4:1"
+    ],
+    [
+      "b34",
       "n:shadow:1"
     ],
     [
-      "b33",
+      "b35",
       "s:rogue/backstab_mastery"
     ],
     [
-      "b33",
-      "s:rogue/nimble"
-    ],
-    [
-      "b34",
-      "s:rogue/fade"
-    ],
-    [
-      "b34",
-      "s:rogue/nimble"
-    ],
-    [
       "b35",
-      "s:rogue/fade"
-    ],
-    [
-      "b35",
-      "s:rogue/shadow_footwork"
+      "s:rogue/nimble"
     ],
     [
       "b36",
+      "s:rogue/fade"
+    ],
+    [
+      "b36",
+      "s:rogue/nimble"
+    ],
+    [
+      "b37",
+      "s:rogue/fade"
+    ],
+    [
+      "b37",
+      "s:rogue/shadow_footwork"
+    ],
+    [
+      "b38",
       "s:rogue/dark_edge"
     ],
     [
-      "b36",
+      "b38",
       "s:rogue/shadow_footwork"
     ],
     [
-      "b37",
+      "b39",
       "core"
     ],
     [
-      "b37",
+      "b39",
       "s:rogue/flurry"
     ],
     [
-      "b38",
-      "s:rogue/backstab_mastery"
-    ],
-    [
-      "b38",
-      "s:rogue/shadow_run"
-    ],
-    [
-      "b39",
+      "b40",
       "s:rogue/shadow_dance"
     ],
     [
-      "b39",
-      "s:rogue/shadow_stitch"
-    ],
-    [
-      "b40",
-      "s:rogue/phantom_blades"
-    ],
-    [
       "b40",
       "s:rogue/shadow_stitch"
     ],
     [
       "b41",
+      "s:rogue/phantom_blades"
+    ],
+    [
+      "b41",
+      "s:rogue/shadow_stitch"
+    ],
+    [
+      "b42",
       "s:rogue/fade"
     ],
     [
-      "b41",
+      "b42",
       "s:rogue/phantom_blades"
     ],
     [
-      "b42",
-      "b43"
-    ],
-    [
-      "b42",
-      "n:shadow:3"
+      "b43",
+      "b44"
     ],
     [
       "b43",
-      "s:rogue/shadow_double"
-    ],
-    [
-      "b44",
-      "b45"
+      "n:shadow:3"
     ],
     [
       "b44",
@@ -1139,11 +1147,11 @@
     ],
     [
       "b45",
-      "n:shadow:1"
+      "b46"
     ],
     [
-      "b46",
-      "b47"
+      "b45",
+      "s:rogue/shadow_double"
     ],
     [
       "b46",
@@ -1151,165 +1159,165 @@
     ],
     [
       "b47",
+      "b48"
+    ],
+    [
+      "b47",
+      "n:shadow:1"
+    ],
+    [
+      "b48",
       "s:rogue/dark_edge"
     ],
     [
-      "b49",
+      "b50",
       "s:rogue/shadow_double"
     ],
     [
-      "b49",
+      "b50",
       "s:rogue/thousand_blades"
     ],
     [
-      "b69",
+      "b70",
       "s:rogue/hamstring"
     ],
     [
-      "b69",
+      "b70",
       "s:rogue/venom_veil"
     ],
     [
-      "b70",
+      "b71",
       "g:venom:4:3"
     ],
     [
-      "b70",
+      "b71",
       "s:rogue/hamstring"
     ],
     [
-      "b71",
+      "b72",
       "g:venom:4:3"
     ],
     [
-      "b71",
+      "b72",
       "n:venom:3"
     ],
     [
-      "b72",
+      "b73",
       "s:rogue/smoke_bomb"
     ],
     [
-      "b72",
+      "b73",
       "s:rogue/venom_blade"
     ],
     [
-      "b73",
+      "b74",
       "s:rogue/poison_mist"
     ],
     [
-      "b73",
+      "b74",
       "s:rogue/smoke_bomb"
     ],
     [
-      "b74",
+      "b75",
       "s:rogue/poison_mist"
     ],
     [
-      "b74",
-      "s:rogue/toxic_burst"
-    ],
-    [
-      "b75",
-      "s:rogue/envenom"
-    ],
-    [
       "b75",
       "s:rogue/toxic_burst"
     ],
     [
       "b76",
+      "s:rogue/envenom"
+    ],
+    [
+      "b76",
+      "s:rogue/toxic_burst"
+    ],
+    [
+      "b77",
       "s:rogue/corroding_edge"
     ],
     [
-      "b76",
+      "b77",
       "s:rogue/envenom"
     ],
     [
-      "b77",
+      "b78",
       "s:rogue/binding_threads"
     ],
     [
-      "b77",
+      "b78",
       "s:rogue/numbing_needle"
     ],
     [
-      "b78",
+      "b79",
       "g:venom:4:1"
     ],
     [
-      "b78",
+      "b79",
       "s:rogue/binding_threads"
     ],
     [
-      "b79",
+      "b80",
       "g:venom:4:1"
     ],
     [
-      "b79",
+      "b80",
       "n:venom:1"
     ],
     [
-      "b80",
+      "b81",
       "s:rogue/corrosion"
     ],
     [
-      "b80",
+      "b81",
       "s:rogue/toxin_mastery"
     ],
     [
-      "b81",
+      "b82",
       "s:rogue/corrosion"
     ],
     [
-      "b81",
-      "s:rogue/deep_toxin"
-    ],
-    [
       "b82",
       "s:rogue/deep_toxin"
-    ],
-    [
-      "b82",
-      "s:rogue/exploit"
     ],
     [
       "b83",
+      "s:rogue/deep_toxin"
+    ],
+    [
+      "b83",
+      "s:rogue/exploit"
+    ],
+    [
+      "b84",
       "s:rogue/contagion"
     ],
     [
-      "b83",
+      "b84",
       "s:rogue/exploit"
     ],
     [
-      "b84",
+      "b85",
       "core"
     ],
     [
-      "b84",
+      "b85",
       "s:rogue/venom_blade"
     ],
     [
-      "b85",
+      "b86",
       "s:rogue/smoke_bomb"
     ],
     [
-      "b85",
+      "b86",
       "s:rogue/toxin_mastery"
     ],
     [
-      "b86",
+      "b87",
       "s:rogue/hamstring"
     ],
     [
-      "b86",
-      "s:rogue/toxic_burst"
-    ],
-    [
-      "b87",
-      "s:rogue/binding_threads"
-    ],
-    [
       "b87",
       "s:rogue/toxic_burst"
     ],
@@ -1319,23 +1327,23 @@
     ],
     [
       "b88",
+      "s:rogue/toxic_burst"
+    ],
+    [
+      "b89",
+      "s:rogue/binding_threads"
+    ],
+    [
+      "b89",
       "s:rogue/deep_toxin"
     ],
     [
-      "b89",
-      "b90"
-    ],
-    [
-      "b89",
-      "n:venom:3"
+      "b90",
+      "b91"
     ],
     [
       "b90",
-      "s:rogue/corroding_edge"
-    ],
-    [
-      "b91",
-      "b92"
+      "n:venom:3"
     ],
     [
       "b91",
@@ -1343,11 +1351,11 @@
     ],
     [
       "b92",
-      "n:venom:1"
+      "b93"
     ],
     [
-      "b93",
-      "b94"
+      "b92",
+      "s:rogue/corroding_edge"
     ],
     [
       "b93",
@@ -1355,39 +1363,39 @@
     ],
     [
       "b94",
+      "b95"
+    ],
+    [
+      "b94",
+      "n:venom:1"
+    ],
+    [
+      "b95",
       "s:rogue/contagion"
     ],
     [
-      "b96",
+      "b97",
       "s:rogue/corroding_edge"
     ],
     [
-      "b96",
+      "b97",
       "s:rogue/poison_bloom"
     ],
     [
-      "b98",
+      "b99",
       "n:bridge:2"
     ],
     [
-      "b98",
+      "b99",
       "s:rogue/nimble"
     ],
     [
-      "b99",
-      "n:bridge:2"
-    ],
-    [
-      "b99",
-      "s:rogue/corrosion"
+      "s:rogue/backstab_mastery",
+      "s:rogue/shadow_drain"
     ],
     [
       "s:rogue/corrosion",
       "s:rogue/numbing_needle"
-    ],
-    [
-      "s:rogue/nimble",
-      "s:rogue/shadow_strike"
     ],
     [
       "s:rogue/numbing_needle",
@@ -1398,12 +1406,12 @@
       "s:rogue/venom_veil"
     ],
     [
-      "s:rogue/shadow_run",
-      "s:rogue/throwing_knife"
+      "s:rogue/shadow_drain",
+      "s:rogue/shadow_run"
     ],
     [
-      "s:rogue/shadow_strike",
-      "s:rogue/vital_strike"
+      "s:rogue/shadow_run",
+      "s:rogue/throwing_knife"
     ]
   ]
 }

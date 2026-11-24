@@ -1,0 +1,23 @@
+{
+  "job": "rogue",
+  "school": "shadow",
+  "row": 1,
+  "column": 1,
+  "type": "passive",
+  "name": "影吸い",
+  "description": "刃が吸った力は、影を通って自分の命になる。与えたダメージの一部だけHPが戻る。",
+  "max_rank": 5,
+  "rank_costs": [
+    1,
+    1,
+    2,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "passive": {
+    "type": "life_drain",
+    "value": 6,
+    "value_per_rank": 1.0
+  }
+}

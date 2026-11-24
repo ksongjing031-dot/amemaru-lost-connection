@@ -51,15 +51,25 @@ import java.util.UUID;
  *       大放流（みんなで受ける一撃。{@link AmemaruBoss} の share）</li>
  *   <li>HP60%：水門ネズミを呼ぶ。HP30%：大砲を2連で撃ち、渦が1つ増え、炉心がむき出しの時間が短くなる【補完】</li>
  * </ul>
+ * <p>11月25日のご指示「ボスそれぞれの固有のギミックを追加する」【提案】：<b>大放水</b>。HP65%と30%で、大水門をひらく構え
+ * （{@code skills.flood.windup} 秒）。番人のまわりに青銅の堤（{@code walls} 枚）がせり上がり、構えが終わると部屋じゅうを
+ * 大水が走る。番人から見て堤のかげにいる人は無事、見えている人は押し流される（{@code power}）。堤は少しあとで崩れる。</p>
  * 数値は敵の定義（{@code enemies/hydram.json}）の技で変えられる。
  */
 public class Hydram extends AmemaruBoss implements Drains.Listener {
-    public static final List<String> SKILLS = List.of("cannon", "sweep", "whirl", "call", "drain", "refill");
+    public static final List<String> SKILLS = List.of("cannon", "sweep", "whirl", "call", "drain", "refill", "flood");
     private static final EntityDataAccessor<Boolean> DATA_DRAINED = SynchedEntityData.defineId(Hydram.class, EntityDataSerializers.BOOLEAN);
 
-    private enum Action { NONE, CANNON, SWEEP, WHIRL, CALL, STAGGER, RECOVER }
+    private enum Action { NONE, CANNON, SWEEP, WHIRL, CALL, STAGGER, RECOVER, FLOOD }
 
     private Action action = Action.NONE;
+
+    /** 技を出している途中か（技が終わったら、ボスは少し息つぎをする。{@link AmemaruBoss#breatheTicks}）。 */
+    @Override
+    protected boolean acting() {
+        return action != Action.NONE;
+    }
+
     private int timer;
     private float lockedYaw;
     private Vec3 cannonDir = Vec3.ZERO;
@@ -71,6 +81,14 @@ public class Hydram extends AmemaruBoss implements Drains.Listener {
     private final Set<String> tips = new HashSet<>();
     /** 水が引いている（炉心がむき出し）残りの tick。 */
     private int exposed;
+    /** 大放水（11月25日）：出した回数（HP65%・30%）・堤のブロック・堤が崩れるまで */
+    private int floodsDone;
+    private final TempBlocks dikes = new TempBlocks();
+    private int dikeTicks;
+    /** 大放水の、堤のかげ（逃げこむ所。金の円と、金の光の粒）。 */
+    private final List<Vec3> floodSafeSpots = new ArrayList<>();
+    private static final net.minecraft.core.particles.DustParticleOptions SAFE_GOLD =
+            new net.minecraft.core.particles.DustParticleOptions(new org.joml.Vector3f(1.0F, 0.82F, 0.3F), 1.4F);
     /** 水が戻ってから、排水のハンドルがまた回るまでの tick。 */
     private int drainCooldown;
     private int repath;
@@ -196,6 +214,11 @@ public class Hydram extends AmemaruBoss implements Drains.Listener {
         }
         setDrained(false);
         setStatus("", 0);
+        floodsDone = 0;
+        dikeTicks = 0;
+        if (level() instanceof ServerLevel level) {
+            dikes.restore(level);
+        }
         discardSummoned();
     }
 
@@ -228,12 +251,17 @@ public class Hydram extends AmemaruBoss implements Drains.Listener {
             return;
         }
         tickWater(level);
+        if (dikeTicks > 0 && --dikeTicks == 0) {
+            dikes.restore(level);
+            level.playSound(null, getX(), getY(), getZ(), SoundEvents.COPPER_BREAK, SoundSource.HOSTILE, 1.6F, 0.6F);
+        }
         switch (action) {
             case NONE -> choose(level);
             case CANNON -> tickCannon(level);
             case SWEEP -> tickSweep(level);
             case WHIRL -> tickWhirl(level);
             case CALL -> tickCall(level);
+            case FLOOD -> tickFlood(level);
             case STAGGER -> {
                 getNavigation().stop();
                 if (timer % 6 == 0) {
@@ -272,10 +300,10 @@ public class Hydram extends AmemaruBoss implements Drains.Listener {
         }
         if (drainCooldown > 0) {
             drainCooldown--;
-            if (tickCount % 10 == 0) {
+            if (tickCount % 10 == 0 && action != Action.FLOOD) {
                 setStatus("refilled", (drainCooldown + 19) / 20);
             }
-        } else if (tickCount % 10 == 0) {
+        } else if (tickCount % 10 == 0 && action != Action.FLOOD) {
             setStatus("flooded", 0);
         }
         if (tickCount % 4 == 0) {
@@ -397,6 +425,15 @@ public class Hydram extends AmemaruBoss implements Drains.Listener {
             getNavigation().stop();
             return;
         }
+        // 大放水：HP65%と30%で1回ずつ（水が引いている間は出さない。11月25日）
+        EnemyDef.Skill flood = floodSkill();
+        double ratio = getEnemyHp() / getEnemyMaxHp();
+        if (!drained() && (floodsDone == 0 && ratio <= flood.param("first_at", 0.65)
+                || floodsDone == 1 && ratio <= flood.param("second_at", 0.3))) {
+            floodsDone++;
+            startFlood(level, flood);
+            return;
+        }
         EnemyDef.Skill sweep = sweepSkill();
         EnemyDef.Skill cannon = cannonSkill();
         ServerPlayer near = null;
@@ -434,6 +471,131 @@ public class Hydram extends AmemaruBoss implements Drains.Listener {
             default -> {
             }
         }
+    }
+
+    // ---- 大放水（11月25日。HP65%・30%）
+
+    private EnemyDef.Skill floodSkill() {
+        EnemyDef def = def();
+        return def == null ? new EnemyDef.Skill(2.2, 6.0, 60.0, 30.0, Map.of()) : def.skill("flood", 2.2, 6.0, 60.0, 30.0);
+    }
+
+    private void startFlood(ServerLevel level, EnemyDef.Skill flood) {
+        cancelAction();
+        action = Action.FLOOD;
+        timer = Math.max(40, flood.windupTicks());
+        getNavigation().stop();
+        setBusy(timer + 10);
+        setTelegraph(TELEGRAPH_ALERT, timer, getYRot(), 0.0F, 0.0F);
+        playAction("skill_cannon");
+        setCast("flood", timer);
+        line("boss.amemaru.hydram.line.flood");
+        tipOnce("flood");
+        raiseDikes(level, flood);
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.CONDUIT_ACTIVATE, SoundSource.HOSTILE, 2.0F, 0.5F);
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.IRON_DOOR_OPEN, SoundSource.HOSTILE, 2.0F, 0.4F);
+        setStatus("flood", (timer + 19) / 20);
+    }
+
+    /** 番人のまわりに、青銅の堤をせり上げる（輪の上に、外を向いた幅3・高さ3の壁）。 */
+    private void raiseDikes(ServerLevel level, EnemyDef.Skill flood) {
+        dikes.restore(level);
+        floodSafeSpots.clear();
+        int count = Math.max(3, (int) flood.param("walls", 4.0));
+        double radius = flood.param("wall_radius", 7.0);
+        double start = random.nextDouble() * Math.PI * 2.0;
+        net.minecraft.world.level.block.state.BlockState bronze = net.minecraft.world.level.block.Blocks.WAXED_CUT_COPPER.defaultBlockState();
+        net.minecraft.world.level.block.state.BlockState top = net.minecraft.world.level.block.Blocks.WAXED_EXPOSED_CUT_COPPER.defaultBlockState();
+        int floorY = BlockPos.containing(position()).getY();
+        for (int i = 0; i < count; i++) {
+            double a = start + i * Math.PI * 2.0 / count;
+            double cx = getX() + Math.cos(a) * radius;
+            double cz = getZ() + Math.sin(a) * radius;
+            // 輪に沿った向き（番人を向く向きと直角）に、3ブロック並べる
+            double tx = -Math.sin(a);
+            double tz = Math.cos(a);
+            for (int k = -1; k <= 1; k++) {
+                BlockPos base = BlockPos.containing(cx + tx * k, floorY, cz + tz * k);
+                for (int h = 0; h < 3; h++) {
+                    dikes.place(level, base.above(h), h == 2 ? top : bronze);
+                }
+            }
+            level.sendParticles(ParticleTypes.SPLASH, cx, floorY + 0.5, cz, 30, 1.2, 0.3, 1.2, 0.2);
+            // 11月25日（CIの写真で見て足した）：堤のかげ（番人から見て堤の向こう）に、金の円で逃げこむ所を示す
+            Vec3 safe = new Vec3(getX() + Math.cos(a) * (radius + 2.2), floorY, getZ() + Math.sin(a) * (radius + 2.2));
+            jp.amemaru.lostconnection.entity.GroundMarker.place(level, safe, 1.7F, timer,
+                    jp.amemaru.lostconnection.entity.GroundMarker.KIND_SAFE);
+            floodSafeSpots.add(safe);
+        }
+        dikeTicks = 0;
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.PISTON_EXTEND, SoundSource.HOSTILE, 2.0F, 0.5F);
+    }
+
+    private void tickFlood(ServerLevel level) {
+        getNavigation().stop();
+        setDeltaMovement(0.0, getDeltaMovement().y, 0.0);
+        if (timer % 5 == 0) {
+            // 堤のかげ（逃げこむ所）に、金の光の粒が立ちのぼる（暗い水の中でも見つけられるように）
+            for (Vec3 safe : floodSafeSpots) {
+                level.sendParticles(SAFE_GOLD, safe.x, safe.y + 0.6, safe.z, 6, 0.5, 0.6, 0.5, 0.0);
+            }
+        }
+        if (timer % 10 == 0) {
+            setStatus("flood", (timer + 19) / 20);
+            Vec3 core = corePos();
+            level.sendParticles(ParticleTypes.BUBBLE_COLUMN_UP, core.x, core.y, core.z, 20, 1.0, 0.6, 1.0, 0.1);
+            level.playSound(null, getX(), getY(), getZ(), SoundEvents.WATER_AMBIENT, SoundSource.HOSTILE, 2.0F, 0.5F);
+        }
+        if (--timer > 0) {
+            return;
+        }
+        EnemyDef.Skill flood = floodSkill();
+        Vec3 from = position().add(0.0, getBbHeight() * 0.6, 0.0);
+        for (ServerPlayer player : targets(level)) {
+            if (player.distanceTo(this) > flood.range()) {
+                continue;
+            }
+            if (behindDike(level, from, player)) {
+                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("boss.amemaru.hydram.flood_safe")
+                        .withStyle(net.minecraft.ChatFormatting.AQUA), true);
+                continue;
+            }
+            if (EnemyCombat.strike(this, player, flood.power(), null)) {
+                Vec3 away = player.position().subtract(position()).multiply(1, 0, 1);
+                Vec3 push = away.lengthSqr() < 1.0E-4 ? Vec3.ZERO : away.normalize().scale(1.6);
+                player.push(push.x, 0.45, push.z);
+                player.hurtMarked = true;
+                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("boss.amemaru.hydram.flood_hit")
+                        .withStyle(net.minecraft.ChatFormatting.RED), true);
+            }
+        }
+        level.sendParticles(ParticleTypes.SPLASH, getX(), getY() + 0.5, getZ(), 300, 12.0, 0.5, 12.0, 0.4);
+        level.sendParticles(ParticleTypes.CLOUD, getX(), getY() + 0.5, getZ(), 60, 10.0, 0.4, 10.0, 0.1);
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.GENERIC_SPLASH, SoundSource.HOSTILE, 2.4F, 0.5F);
+        level.playSound(null, getX(), getY(), getZ(), SoundEvents.TRIDENT_THUNDER, SoundSource.HOSTILE, 1.6F, 0.6F);
+        clearTelegraph();
+        setStatus("", 0);
+        dikeTicks = 30;
+        action = Action.RECOVER;
+        timer = 16;
+    }
+
+    /** 番人から見て、その人との間に堤（壁）があるか（体の高さの2か所のどちらも見えなければ、かげにいる）。 */
+    public static boolean behindDike(ServerLevel level, Vec3 from, ServerPlayer player) {
+        for (double y : new double[]{player.getEyeHeight() * 0.9, 0.6}) {
+            Vec3 to = player.position().add(0.0, y, 0.0);
+            net.minecraft.world.phys.BlockHitResult hit = level.clip(new net.minecraft.world.level.ClipContext(from, to,
+                    net.minecraft.world.level.ClipContext.Block.COLLIDER, net.minecraft.world.level.ClipContext.Fluid.NONE, player));
+            if (hit.getType() == net.minecraft.world.phys.HitResult.Type.MISS) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** 自動テスト：堤のブロックの数。 */
+    public int dikeBlocks() {
+        return dikes.size();
     }
 
     /** 技がないときは、いちばん敵視の高い人（いなければ近い人）の方へ、ゆっくり歩く。部屋のまん中から離れすぎない。 */
@@ -779,6 +941,7 @@ public class Hydram extends AmemaruBoss implements Drains.Listener {
                 }
                 refill(level);
             }
+            case "flood" -> startFlood(level, floodSkill());
             default -> {
                 return false;
             }
@@ -805,12 +968,19 @@ public class Hydram extends AmemaruBoss implements Drains.Listener {
     public void die(net.minecraft.world.damagesource.DamageSource source) {
         discardSummoned();
         setStatus("", 0);
+        if (level() instanceof ServerLevel level) {
+            dikes.restore(level);
+        }
         super.die(source);
     }
 
     @Override
     public void remove(RemovalReason reason) {
         discardSummoned();
+        // 11月25日：大放水の青銅の堤を戻す
+        if (level() instanceof ServerLevel level) {
+            dikes.restore(level);
+        }
         super.remove(reason);
     }
 }

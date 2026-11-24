@@ -466,29 +466,50 @@ public final class FloorRealPlayGameTests {
                 }
             }
         });
-        // 音の順番：鈴の石を鳴らし、鳴り終えたら、同じ順に床へ乗る（体を動かして乗る）
+        // 音の順番：鈴の石を鳴らし、鳴り終えたら、同じ順に床へ乗る（体を動かして乗る）。11月25日のご指示「音の通りに床を踏んでも
+        // 失敗になる」で見つけた3つ（鳴っている間から1音目の床で待つ・違う床を通り過ぎる・乗ったらすぐ次へ）も、遊ぶ人と同じに試す
         for (FloorFeatures.Song song : def.features().songs()) {
             int[][] notes = new int[1][];
             seq.thenExecute(() -> {
                 use(helper, tower, player, def.world(song.chime()), "鈴の石 " + song.id());
                 notes[0] = TempleService.songNotes(n, song.id());
                 check(helper, notes[0].length == song.length(), song.id() + "：鈴の石を右クリックしても、歌が始まりません");
-                // 乗る前は、床から離れた所に立つ
+                // 鳴っている間から、1音目の床に乗って待つ
+                stepOnto(player, def.world(song.plates().get(notes[0][0])));
+            }).thenIdle(song.length() * TempleService.NOTE_TICKS + 2).thenExecute(() -> {
+                check(helper, TempleService.songAnswered(n, song.id()) == 1,
+                        song.id() + "：鳴っている間から1音目の床で待っていたのに、鳴り終えても1音目と数えません（"
+                                + TempleService.songAnswered(n, song.id()) + "）");
+                // 次の床へ行く途中で、違う床の上を止まらずに通る（数えない・外れにしない）
+                int wrong = -1;
+                for (int i = 0; i < song.plates().size() && wrong < 0; i++) {
+                    if (i != notes[0][1] && i != notes[0][0]) {
+                        wrong = i;
+                    }
+                }
+                stepOnto(player, def.world(song.plates().get(wrong)));
+            }).thenIdle(2).thenExecute(() -> {
                 BlockPos away = def.world(song.chime());
                 player.setPos(away.getX() + 0.5, away.getY() + 1.0, away.getZ() + 0.5);
-            }).thenIdle(song.length() * TempleService.NOTE_TICKS + 4);
-            for (int i = 0; i < song.length(); i++) {
+            }).thenIdle(TempleService.DWELL_TICKS + 2).thenExecute(() ->
+                    check(helper, TempleService.songAnswered(n, song.id()) == 1,
+                            song.id() + "：違う床の上を通り過ぎただけで、外れ（はじめから）になりました"));
+            for (int i = 1; i < song.length(); i++) {
                 int k = i;
+                int[] before = new int[1];
                 seq.thenExecute(() -> {
                     BlockPos plate = def.world(song.plates().get(notes[0][k]));
                     int counted = TempleService.countedSteps();
+                    before[0] = TempleService.confirmedSteps();
                     stepOnto(player, plate);
                     check(helper, plate.equals(TempleService.lastStep(player)) && TempleService.countedSteps() == counted + 1,
-                            song.id() + "：音の床#" + notes[0][k] + "に乗っても、踏んだことになりません（" + (k + 1) + "音目）");
+                            song.id() + "：音の床#" + notes[0][k] + "に乗っても、乗ったことになりません（" + (k + 1) + "音目）");
                     // 乗ったまま少し動いても、もう一度は数えない
                     player.move(MoverType.PLAYER, new Vec3(0.1, 0.0, 0.1));
-                    check(helper, TempleService.countedSteps() == counted + 1, song.id() + "：同じ床の上で動いただけで、もう一度踏んだことになりました");
-                }).thenIdle(3);
+                    check(helper, TempleService.countedSteps() == counted + 1, song.id() + "：同じ床の上で動いただけで、もう一度乗ったことになりました");
+                }).thenIdle(TempleService.DWELL_TICKS + 2).thenExecute(() ->
+                        check(helper, TempleService.confirmedSteps() == before[0] + 1,
+                                song.id() + "：音の床#" + notes[0][k] + "に乗って止まっても、踏んだと数えません（" + (k + 1) + "音目）"));
             }
             seq.thenExecute(() -> {
                 check(helper, TempleService.Data.get(server).sung(n, song.id()), song.id() + "：鳴った順に床を踏んでも、歌がそろいません");

@@ -580,7 +580,11 @@ public final class CiScreenshots {
             {"cmd", null, "30", "execute in amemaru:tower run tp @p {f1:192.5,15,107.5} 180 8"},
             {"snap", null, "40", "phase5_tablet"},
             {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
-            {"cmd", null, "60", "execute in amemaru:tower run tp @p {f1:192.5,15,68.5} 180 4"},
+            // 11月25日：部屋に入ると戦いが始まる → はじまり（上下の黒い帯と、ボスの名前・階の名前）が出たら撮る
+            // （cmd の数は、コマンドのあとに待つ tick）
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,68.5} 180 4"},
+            {"await_intro", null, "0", "phase8_boss_intro"},
+            {"p8_bossfx", null, "0", "f1"},
             {"snap", null, "60", "phase5_boss_fight"},
             // 11月22日：技ごとの当たる所。ボスを出る所（{f1:192.5,15,51.5}。南を向く）に戻し、決まった所に立って、管理者のコマンドで
             // 技を出させ、打つ前に撮る（技は見ている人の方を向いて出る）。跳んでいる途中のボスは戻しても跳び続けるので、先に踏みつけを
@@ -628,12 +632,28 @@ public final class CiScreenshots {
             {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,61.5} 180 55"},
             {"cmd", null, "10", "amemaru admin boss skill 1 roots"},
             {"snap", null, "0", "phase5_boss_roots"},
-            // 11月24日：みんなで受ける一撃（青い円と、ボスのHPの帯の下の技の名前）
+            // 11月25日：固有のギミック「大地の咆哮」（角を突き立てた構え・部屋じゅうの赤い円・止めるまでの残り）。
+            // みんなで受ける一撃（11月24日）は、レイドのボスだけになった
             {"cmd", null, "50", "amemaru admin debug vitals @a 100 100"},
-            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,60.5} 180 35"},
-            {"cmd", null, "0", "amemaru admin boss skill 1 share"},
-            {"await_ground", null, "0", "balance_f1_share"},
-            {"cmd", null, "80", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,63.5} 180 25"},
+            {"cmd", null, "0", "amemaru admin boss skill 1 earth_roar"},
+            {"snap", null, "40", "phase8_f1_boss_earth_roar"},
+            // 11月25日：ギミックの残り3秒を切ると、画面のふちが濃く脈打つ（時を刻む音）
+            {"snap", null, "105", "phase8_boss_danger"},
+            {"cmd", null, "95", "amemaru admin debug vitals @a 100 100"},
+            // 11月25日：段階が変わる（HP45%：ボスから光の波と柱・白い光・「第2段階」）と、追いこんだ（HP25%：字と赤い気配）
+            {"cmd", null, "10", "execute in amemaru:tower run tp @p {f1:192.5,15,66.5} 180 12"},
+            {"cmd", null, "0", "amemaru admin boss hp 1 45"},
+            {"await_banner", null, "0", "phase8_boss_phase"},
+            // （cmd の数は、コマンドのあとに待つ tick。段階の字が消えるのを待ってから、追いこむ）
+            {"cmd", null, "70", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "0", "amemaru admin boss hp 1 25"},
+            {"await_banner", null, "0", "phase8_boss_intense"},
+            {"p8_bossfx", null, "0", "f1_intense"},
+            // 自分のHPが少ない（心臓の音と、画面のふちの赤い脈。HPが一気に減ったので、揺れと赤い光も）
+            {"cmd", null, "20", "amemaru admin debug vitals @a 20 100"},
+            {"snap", null, "12", "phase8_boss_low_hp"},
+            {"cmd", null, "20", "amemaru admin debug vitals @a 100 100"},
             // 戦っている人のまま（アドベンチャー。クリエイティブにすると戦いから外れる）倒す。
             // 倒してすぐ：ボスの名前の大きな字（下に出口の円の知らせ）。初撃破の場面がHUDを隠す（50 tick 待って白く光り、125〜215 tick に
             // 「始まりの草原　踏破」、215〜295 tick に字幕）。場面が終わると、初撃破の知らせの帯が出る（演出の間に届いた知らせは、演出の後に出す）
@@ -1159,11 +1179,17 @@ public final class CiScreenshots {
             // 根の檻（立っている人の足もとの円。地面の印が出たらすぐ撮る）
             {"cmd", null, "0", "amemaru admin boss skill 2 cage"},
             {"await_ground", null, "0", "phase8_f2_boss_cage"},
-            // 11月24日：みんなで受ける一撃（青い円）
+            // 11月25日：固有のギミック「芽吹きの種」（緑の円に、光る種が根づく。育つまでの残り）
             {"cmd", null, "50", "amemaru admin debug vitals @a 100 100"},
-            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f2:216.5,19,66.5} 180 35"},
-            {"cmd", null, "0", "amemaru admin boss skill 2 share"},
-            {"await_ground", null, "0", "balance_f2_share"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f2:216.5,19,70.5} 180 25"},
+            {"cmd", null, "0", "amemaru admin boss skill 2 seeds"},
+            {"await_ground", null, "0", "phase8_f2_boss_seeds"},
+            {"p8_bossfx", null, "0", "f2"},
+            // 根づいた種（光る種と光の柱）を、空き地の上から見下ろして撮り、すぐ地面へ戻る（落ちる前に。cmd の数はコマンドのあとに待つ tick）
+            {"cmd", null, "36", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f2:216.5,33,74.5} 180 48"},
+            {"snap", null, "0", "phase8_f2_boss_seeds_rooted"},
+            {"cmd", null, "1", "execute in amemaru:tower run tp @p {f2:216.5,19,70.5} 180 25"},
             // 光る節を3つとも壊すと怯む（傾いた幹が写るように、少し見上げる）
             {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
             {"cmd", null, "10", "execute in amemaru:tower run tp @p {f2:216.5,19,68.5} 180 -14"},
@@ -1264,11 +1290,13 @@ public final class CiScreenshots {
             {"cmd", null, "2", "execute in amemaru:tower run tp @p {f3:246.5,15,56.5} 180 35"},
             {"cmd", null, "0", "amemaru admin boss skill 3 whirl"},
             {"await_ground", null, "0", "phase8_f3_boss_whirl"},
-            // 大放流（みんなで受ける一撃。青い円）
+            // 11月25日：固有のギミック「大放水」（番人のまわりに青銅の堤がせり上がる。堤のかげに隠れる）
             {"cmd", null, "50", "amemaru admin debug vitals @a 100 100"},
-            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f3:234.5,15,56.5} 180 35"},
-            {"cmd", null, "0", "amemaru admin boss skill 3 share"},
-            {"await_ground", null, "0", "phase8_f3_boss_share"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f3:240.5,15,58.5} 180 22"},
+            {"cmd", null, "0", "amemaru admin boss skill 3 flood"},
+            {"snap", null, "30", "phase8_f3_boss_flood"},
+            {"p8_bossfx", null, "0", "f3"},
+            {"cmd", null, "130", "amemaru admin debug vitals @a 100 100"},
             // 排水：東と西の排水のハンドルを回す → 水が引き、炉心がむき出しになる
             {"cmd", null, "60", "amemaru admin debug vitals @a 100 100"},
             {"p8_valve", null, "10", "drain:0"},
@@ -1430,6 +1458,13 @@ public final class CiScreenshots {
             {"cmd", null, "2", "execute in amemaru:tower run tp @p {f4:264.5,25,82.5} 180 18"},
             {"cmd", null, "0", "amemaru admin boss skill 4 wave"},
             {"await_mark", null, "5", "phase8_f4_boss_wave"},
+            // 11月25日：固有のギミック「残響の色」（頭の上の色と、色ごとの床のまわりの円。自分の色の床のそばへ）
+            {"cmd", null, "60", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f4:264.5,25,88.5} 180 30"},
+            {"cmd", null, "0", "amemaru admin boss skill 4 echo"},
+            {"snap", null, "30", "phase8_f4_boss_echo"},
+            {"p8_bossfx", null, "0", "f4"},
+            {"cmd", null, "130", "amemaru admin debug vitals @a 100 100"},
             {"cmd", null, "40", "kill @e[type=amemaru:cantare]"},
             {"snap_keep", null, "30", "phase8_f4_boss_defeated"},
             {"snap_keep", null, "120", "phase8_f4_boss_title"},
@@ -1503,6 +1538,13 @@ public final class CiScreenshots {
             {"cmd", null, "2", "execute in amemaru:tower run tp @p {f5:288.5,49,86.5} 180 35"},
             {"cmd", null, "0", "amemaru admin boss skill 5 judge"},
             {"snap", null, "30", "phase8_f5_boss_judge"},
+            // 11月25日：固有のギミック「切断判定」（白い輪。ほかの人が中にいると赤い。ひとりの挑戦者は判定しない）
+            {"cmd", null, "70", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f5:288.5,49,86.5} 180 35"},
+            {"cmd", null, "0", "amemaru admin boss skill 5 sever"},
+            {"snap", null, "30", "phase8_f5_boss_sever"},
+            {"p8_bossfx", null, "0", "f5"},
+            {"cmd", null, "70", "amemaru admin debug vitals @a 100 100"},
             // 最後：HPが尽きても倒れず、祭壇の中央の円に全員が集まるのを待つ → 集まると膝をつき、倒れる
             {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
             {"cmd", null, "20", "kill @e[type=amemaru:ancient_guardian]"},
@@ -2794,7 +2836,8 @@ public final class CiScreenshots {
         } else if (shot[0].startsWith("await_")) {
             // 待つ：まだなら同じ行をもう一度（5 tick ごと。長く待っても来なければ、あきらめて次へ）。
             // await_mark は、予兆の形（行の3つ目の数）が出たらすぐ撮る（毎 tick 見る。短い予兆を逃さない。11月22日）
-            boolean mark = "await_mark".equals(shot[0]) || "await_ground".equals(shot[0]);
+            boolean mark = "await_mark".equals(shot[0]) || "await_ground".equals(shot[0]) || "await_intro".equals(shot[0])
+                    || "await_banner".equals(shot[0]);
             if (first) {
                 if (!awaitReady(minecraft, shot) && awaitTicks < awaitLimit(shot[0])) {
                     int step = mark ? 1 : 5;
@@ -2881,6 +2924,9 @@ public final class CiScreenshots {
             case "await_mark" -> CiPhase3.anyTelegraphOf(minecraft, Integer.parseInt(shot[2]));
             // 地面の印（ボスの体でなく、地面に置く円。2階の根の檻など）が出た
             case "await_ground" -> CiPhase8.anyGroundMarker(minecraft);
+            // 11月25日：ボス戦のはじまりの名前・段階の字が、すっかり出ている
+            case "await_intro" -> BossFx.introShowing();
+            case "await_banner" -> BossFx.bannerShowing();
             // オープニングの準備待ち（場面が始まる前の真っ暗な間）
             case "await_pending" -> ClientStory.openingPending() && !ScenePlayer.isActive();
             // 場面の字幕が出ている

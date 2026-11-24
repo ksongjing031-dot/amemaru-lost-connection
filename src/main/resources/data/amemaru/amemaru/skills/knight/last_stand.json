@@ -1,0 +1,23 @@
+{
+  "job": "knight",
+  "school": "guardian",
+  "row": 4,
+  "column": 1,
+  "type": "passive",
+  "name": "不屈の再起",
+  "description": "倒れかけても、誓いが体を立ち上がらせる。HPが3割を切ると、すぐにHPが大きく戻り、そのあと少しのあいだ戻り続ける（90秒に1回）。",
+  "max_rank": 5,
+  "rank_costs": [
+    1,
+    1,
+    2,
+    2,
+    3
+  ],
+  "min_level": 21,
+  "passive": {
+    "type": "last_stand",
+    "value": 20,
+    "value_per_rank": 2.5
+  }
+}
