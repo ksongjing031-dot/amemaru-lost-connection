@@ -62,6 +62,11 @@ import java.util.UUID;
 public final class CombatService {
     /** 盾結びで肩代わりできる距離。 */
     private static final double BOND_RANGE = 32.0;
+    /**
+     * 11月25日：管理者の確かめ・CIの写真で、倒れない人（HPは1までしか減らない。{@code /amemaru admin debug guard}）。ボスの技を
+     * つづけて写すと、途中で倒れて、あとの写真が「ダウン」と教会ばかりになっていた（6階・7階）。
+     */
+    public static final java.util.Set<UUID> DEBUG_GUARD = java.util.concurrent.ConcurrentHashMap.newKeySet();
     /** 正面とみなす角度の半分（60度 → 正面120度）。 */
     private static final double FRONT_DOT = Math.cos(Math.toRadians(60.0));
 
@@ -492,7 +497,7 @@ public final class CombatService {
             damage = event.getAmount() / vanillaMax * maxHp;
         }
         damage = absorbBarrier(player, data, damage, now);
-        if (data.getBuffs().unyielding(now)) {
+        if (data.getBuffs().unyielding(now) || DEBUG_GUARD.contains(player.getUUID())) {
             damage = Math.min(damage, Math.max(0.0, data.getHp() - 1.0));
         }
         damage = Math.max(0.0, damage);

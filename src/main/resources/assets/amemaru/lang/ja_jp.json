@@ -42,6 +42,8 @@
   "commands.amemaru.stat_value": "%s %s",
   "commands.amemaru.separator": "、",
   "commands.amemaru.debug.vitals": "%sのHPを%s%%、MPを%s%%にしました",
+  "commands.amemaru.debug.guard_on": "%sは、倒れなくなりました（HPは1まで）",
+  "commands.amemaru.debug.guard_off": "%sは、ふつうに倒れるようになりました",
   "commands.amemaru.no_data": "%sのデータが見つかりません",
   "key.amemaru.skill_tree": "スキルツリーを開く",
   "key.amemaru.skill_1": "スキル枠1",

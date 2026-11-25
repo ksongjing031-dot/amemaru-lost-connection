@@ -1604,6 +1604,9 @@ public final class CiScreenshots {
             {"cmd", null, "10", "gamemode adventure @p"},
             {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
             {"cmd", null, "10", "amemaru admin floor statues 6 reset"},
+            // 11月25日：ここから先（6〜8階）は倒れない（HPは1まで）。ボスの技をつづけて写すと、途中で倒れて、あとの写真が
+            // 「ダウン」と教会ばかりになっていた
+            {"cmd", null, "5", "amemaru admin debug guard @p on"},
             {"cmd", null, "10", "amemaru admin floor tp 6 entrance @p"},
             {"await_scene", null, "0"},
             {"snap_keep", null, "100", "phase8_f6_title"},
@@ -1754,13 +1757,18 @@ public final class CiScreenshots {
             {"snap_keep", null, "60", "phase8_f7_mirror_grove"},
             {"await_idle", null, "0"},
             // 入口の鏡の庭：真上から（上が北。鏡の「／」「＼」と、光の道の火花）→ 光の泉の前から鏡を見る → 解く（鏡が回る）
+            // 真上から写すときは、観戦（落ちない。落ちて倒れると、あとの写真がダウンになっていた）
+            {"cmd", null, "5", "gamemode spectator @p"},
             {"cmd", null, "60", "execute in amemaru:tower run tp @p {f7:335.5,34,532.5} 180 90"},
             {"snap", null, "40", "phase8_f7_light_maze_top"},
+            {"cmd", null, "5", "gamemode adventure @p"},
             {"cmd", null, "40", "execute in amemaru:tower run tp @p {f7:329.5,17,539.5} -153 14"},
             {"snap", null, "40", "phase8_f7_mirror"},
             {"cmd", null, "10", "amemaru admin floor lights 7 solve entry"},
+            {"cmd", null, "5", "gamemode spectator @p"},
             {"cmd", null, "30", "execute in amemaru:tower run tp @p {f7:335.5,34,532.5} 180 90"},
             {"snap", null, "40", "phase8_f7_light_solved_top"},
+            {"cmd", null, "5", "gamemode adventure @p"},
             {"cmd", null, "40", "execute in amemaru:tower run tp @p {f7:336.5,17,512.5} 180 -4"},
             {"snap", null, "40", "phase8_f7_gate_open"},
             // 7階の敵（分かれ道の北に並べ、南から見る。写し身は、近くの人＝こちらの姿を写す）
@@ -1834,6 +1842,8 @@ public final class CiScreenshots {
             {"p6_front", null, "10"},
             {"snap", null, "30", "phase8_f7_daggers"},
             {"p8_hold", null, "5", "-"},
+            // リリアはギルドの受付（話せるのは近くだけなので、受付の前へ）
+            {"cmd", null, "60", "tp @p {at:23.5,3,-78.5} -90 5"},
             {"p6g_talk", null, "10", "lilia"},
             {"await_dialogue", null, "0"},
             {"snap", null, "30", "phase8_f7_lilia_forgot"},
@@ -1900,8 +1910,10 @@ public final class CiScreenshots {
             {"await_scene", null, "0"},
             {"snap_keep", null, "60", "phase8_f8_sound_returns"},
             {"await_idle", null, "0"},
+            {"cmd", null, "5", "gamemode spectator @p"},
             {"cmd", null, "40", "execute in amemaru:tower run tp @p {f8:360.5,40,322.5} 180 32"},
             {"snap", null, "40", "phase8_f8_shrine_open"},
+            {"cmd", null, "5", "gamemode adventure @p"},
             // 湖底の祠（物語の場所）：古代記録の石板・最後の歌い手の氷像・祠の灯籠
             {"cmd", null, "60", "execute in amemaru:tower run tp @p {f8:360.5,9,281.5} 180 6"},
             {"await_scene", null, "0"},
@@ -1952,6 +1964,7 @@ public final class CiScreenshots {
             {"snap", null, "30", "phase8_f8_bow"},
             {"p8_hold", null, "5", "-"},
             {"screen", null, "10", "hold"},
+            {"cmd", null, "5", "amemaru admin debug guard @p off"},
             {"cmd", null, "10", "gamemode spectator @p"},
             {"hud", null, "5", "off"}};
 

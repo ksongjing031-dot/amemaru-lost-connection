@@ -272,7 +272,28 @@ public final class AdminCommands {
                                                 .executes(ctx -> setVitals(ctx.getSource(),
                                                         EntityArgument.getPlayers(ctx, "targets"),
                                                         IntegerArgumentType.getInteger(ctx, "hp"),
-                                                        IntegerArgumentType.getInteger(ctx, "mp")))))));
+                                                        IntegerArgumentType.getInteger(ctx, "mp")))))))
+                // 11月25日：倒れない（HPは1まで）。ボスの技の確かめ・CIの写真用。サーバーを止めると消える
+                .then(Commands.literal("guard")
+                        .then(Commands.argument("targets", EntityArgument.players())
+                                .then(Commands.literal("on").executes(ctx -> setGuard(ctx.getSource(), EntityArgument.getPlayers(ctx, "targets"), true)))
+                                .then(Commands.literal("off").executes(ctx -> setGuard(ctx.getSource(), EntityArgument.getPlayers(ctx, "targets"),
+                                        false)))));
+    }
+
+    /** 倒れない（HPは1まで）を、付ける・外す。 */
+    private static int setGuard(CommandSourceStack source, Collection<ServerPlayer> targets, boolean on) {
+        for (ServerPlayer player : targets) {
+            if (on) {
+                jp.amemaru.lostconnection.combat.CombatService.DEBUG_GUARD.add(player.getUUID());
+            } else {
+                jp.amemaru.lostconnection.combat.CombatService.DEBUG_GUARD.remove(player.getUUID());
+            }
+            log(source, "debug guard " + player.getGameProfile().getName() + " " + (on ? "on" : "off"));
+            source.sendSuccess(() -> Component.translatable(on ? "commands.amemaru.debug.guard_on" : "commands.amemaru.debug.guard_off",
+                    player.getDisplayName()), true);
+        }
+        return targets.size();
     }
 
     /** {@code debug status <相手> <種類> <数>}：凍え・星痕は重ねる数、ほかは秒。 */
