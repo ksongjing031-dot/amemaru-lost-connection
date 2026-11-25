@@ -106,7 +106,7 @@ FIXED = {
     "amemaru:blizzard_lamp_charm": 3600,
     "amemaru:mirror_ice_daggers": 5300,
 }
-# 表にない物：レアリティごとの基準額（×（1＋0.08×装備レベル）はゲームの中で計算する）【補完】
+# 表にない物：レアリティごとの基準額（×（1＋0.035×装備レベル）はゲームの中で計算する。11月24日にレベルの上限を上げたため 0.08 から）【補完】
 RARITY_BASE = {"common": 30, "uncommon": 100, "rare": 400, "epic": 1600, "legendary": 6000, "unique": 20000}
 
 TOWER_MATERIALS = ["amemaru:ancient_stone", "amemaru:moss_iron", "amemaru:crystal_shard", "amemaru:tsunomofu_fluff",
@@ -311,7 +311,7 @@ def main():
         "prices": dict(sorted(prices.items())),
         "rarity_base": RARITY_BASE,
         "accessory_quality": [0.6, 0.8, 1.0, 1.6, 3.0],
-        "level_step": 0.08,
+        "level_step": 0.035,
         # クエストの品（Phase 0-A 20章：取引できない）。光のかけらは1階の石柱の核に使う
         "untradeable": UNTRADEABLE,
     }

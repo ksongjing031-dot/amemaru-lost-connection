@@ -207,6 +207,8 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
     public void setVariant(@Nullable ResourceLocation variant) {
         this.variant = variant;
         appliedGeneration = -1;
+        // 11月25日：すぐに読めるように（7階のボスの写し身は、作ってすぐ、どの定義かを見る）
+        entityData.set(DATA_VARIANT, variant == null ? "" : variant.toString());
     }
 
     /** 攻撃のステータス（config の倍率をかけたもの）。 */

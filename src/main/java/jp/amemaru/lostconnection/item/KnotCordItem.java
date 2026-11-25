@@ -36,35 +36,47 @@ public class KnotCordItem extends Item {
         if (!(player instanceof ServerPlayer serverPlayer)) {
             return InteractionResultHolder.success(stack);
         }
-        int cleared = 0;
-        int people = 0;
-        for (ServerPlayer other : serverPlayer.serverLevel().players()) {
-            if (other.distanceToSqr(serverPlayer) > RANGE * RANGE || !other.isAlive()) {
-                continue;
+        return apply(serverPlayer, stack, serverPlayer.serverLevel().players());
+    }
+
+    /**
+     * 結び紐を使う：使う人と、{@code around} のうちまわり {@link #RANGE} ブロックの人のロスト状態を解く（自動テストからも、まわりの人を
+     * 渡して呼ぶ）。だれも解けなければ減らさず FAIL。
+     */
+    public InteractionResultHolder<ItemStack> apply(ServerPlayer user, ItemStack stack, Iterable<? extends ServerPlayer> around) {
+        java.util.LinkedHashSet<ServerPlayer> people = new java.util.LinkedHashSet<>();
+        people.add(user);
+        for (ServerPlayer other : around) {
+            if (other.level() == user.level() && other.distanceToSqr(user) <= RANGE * RANGE && other.isAlive()) {
+                people.add(other);
             }
+        }
+        int cleared = 0;
+        int freed = 0;
+        for (ServerPlayer other : people) {
             int n = LostService.clear(other);
             if (n > 0) {
                 cleared += n;
-                people++;
-                serverPlayer.serverLevel().sendParticles(ParticleTypes.END_ROD, other.getX(), other.getY() + 1.0, other.getZ(), 12, 0.4,
+                freed++;
+                user.serverLevel().sendParticles(ParticleTypes.END_ROD, other.getX(), other.getY() + 1.0, other.getZ(), 12, 0.4,
                         0.6, 0.4, 0.03);
-                if (other != serverPlayer) {
-                    other.displayClientMessage(Component.translatable("message.amemaru.knot_cord.freed_by", serverPlayer.getDisplayName())
+                if (other != user) {
+                    other.displayClientMessage(Component.translatable("message.amemaru.knot_cord.freed_by", user.getDisplayName())
                             .withStyle(ChatFormatting.GOLD), true);
                 }
             }
         }
         if (cleared == 0) {
-            serverPlayer.displayClientMessage(Component.translatable("message.amemaru.knot_cord.nothing").withStyle(ChatFormatting.GRAY), true);
+            user.displayClientMessage(Component.translatable("message.amemaru.knot_cord.nothing").withStyle(ChatFormatting.GRAY), true);
             return InteractionResultHolder.fail(stack);
         }
-        if (!serverPlayer.getAbilities().instabuild) {
+        if (!user.getAbilities().instabuild) {
             stack.shrink(1);
         }
-        serverPlayer.getCooldowns().addCooldown(this, COOLDOWN_TICKS);
-        serverPlayer.serverLevel().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.AMETHYST_BLOCK_CHIME,
+        user.getCooldowns().addCooldown(this, COOLDOWN_TICKS);
+        user.serverLevel().playSound(null, user.getX(), user.getY(), user.getZ(), SoundEvents.AMETHYST_BLOCK_CHIME,
                 SoundSource.PLAYERS, 1.2F, 1.4F);
-        serverPlayer.displayClientMessage(Component.translatable("message.amemaru.knot_cord.used", people).withStyle(ChatFormatting.GOLD), true);
+        user.displayClientMessage(Component.translatable("message.amemaru.knot_cord.used", freed).withStyle(ChatFormatting.GOLD), true);
         return InteractionResultHolder.consume(stack);
     }
 

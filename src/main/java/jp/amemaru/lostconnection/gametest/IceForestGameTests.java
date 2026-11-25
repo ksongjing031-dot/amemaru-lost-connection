@@ -192,11 +192,13 @@ public final class IceForestGameTests {
         check(helper, cord instanceof KnotCordItem, "結び紐が結び紐の品になっていません");
         ItemStack stack = new ItemStack(cord, 2);
         b.setItemInHand(InteractionHand.MAIN_HAND, stack);
-        InteractionResultHolder<ItemStack> used = cord.use(b.serverLevel(), b, InteractionHand.MAIN_HAND);
+        // にせのプレイヤーは世界の人の一覧に入らないので、まわりの人を渡して使う（右クリックの use と同じ中身）
+        KnotCordItem knot = (KnotCordItem) cord;
+        InteractionResultHolder<ItemStack> used = knot.apply(b, b.getMainHandItem(), around);
         check(helper, used.getResult().consumesAction(), "結び紐を使えません：" + used.getResult());
         check(helper, !a.hasEffect(ModEffects.LOST_FADE.get()) && !b.hasEffect(ModEffects.LOST_FADE.get()), "結び紐で、二人の薄れがほどけません");
         check(helper, b.getMainHandItem().getCount() == 1, "結び紐が1つ減りません：" + b.getMainHandItem().getCount());
-        InteractionResultHolder<ItemStack> idle = cord.use(b.serverLevel(), b, InteractionHand.MAIN_HAND);
+        InteractionResultHolder<ItemStack> idle = knot.apply(b, b.getMainHandItem(), around);
         check(helper, !idle.getResult().consumesAction() && b.getMainHandItem().getCount() == 1, "ほどくものがないのに、結び紐が減りました");
         b.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
         a.removeAllEffects();

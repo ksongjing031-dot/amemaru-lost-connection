@@ -234,7 +234,7 @@
     1.6,
     3.0
   ],
-  "level_step": 0.08,
+  "level_step": 0.035,
   "untradeable": [
     "amemaru:light_shard",
     "amemaru:knot_lantern",
