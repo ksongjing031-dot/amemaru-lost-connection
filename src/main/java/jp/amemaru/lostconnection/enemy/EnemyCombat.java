@@ -65,4 +65,47 @@ public final class EnemyCombat {
         }
         return -1.0;
     }
+    /**
+     * 壁に埋まったプレイヤーを、いちばん近い空いた所（足もとに床がある所）へ出す。ボスの突進などで押し込まれたとき（11月23日の
+     * ご指示「ボスの突進でブロックに埋まり、ダメージを受けてすぐに死んでしまう」）。出せたら true。
+     */
+    public static boolean unstick(ServerPlayer player) {
+        net.minecraft.server.level.ServerLevel level = player.serverLevel();
+        net.minecraft.world.phys.AABB here = player.getBoundingBox();
+        if (level.noCollision(player, here)) {
+            return false;
+        }
+        net.minecraft.world.phys.AABB local = here.move(-player.getX(), -player.getY(), -player.getZ());
+        net.minecraft.core.BlockPos base = player.blockPosition();
+        for (int r = 0; r <= 5; r++) {
+            for (int dy = 0; dy <= 4; dy++) {
+                for (int dx = -r; dx <= r; dx++) {
+                    for (int dz = -r; dz <= r; dz++) {
+                        if (Math.max(Math.abs(dx), Math.abs(dz)) != r) {
+                            continue;
+                        }
+                        double x = base.getX() + dx + 0.5;
+                        double y = base.getY() + dy;
+                        double z = base.getZ() + dz + 0.5;
+                        net.minecraft.world.phys.AABB box = local.move(x, y, z);
+                        if (level.noCollision(player, box) && !level.noCollision(player, box.move(0.0, -0.6, 0.0))) {
+                            player.teleportTo(x, y, z);
+                            player.fallDistance = 0.0F;
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        // 近くに足場がなければ、真上の空いた所へ
+        for (int dy = 1; dy <= 12; dy++) {
+            net.minecraft.world.phys.AABB box = here.move(0.0, dy, 0.0);
+            if (level.noCollision(player, box)) {
+                player.teleportTo(player.getX(), player.getY() + dy, player.getZ());
+                player.fallDistance = 0.0F;
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -453,6 +453,7 @@
   "screen.amemaru.workshop.job": "%s ・ 熟練度%s（上限%s） 経験 %s / %s",
   "screen.amemaru.workshop.job_max": "%s ・ 熟練度%s（最高）",
   "screen.amemaru.workshop.no_recipes": "レシピがありません",
+  "screen.amemaru.workshop.list_page": "%s〜%s／%s",
   "screen.amemaru.workshop.need_mastery": "熟練度%s以上",
   "screen.amemaru.workshop.great_chance": "大成功の確率 %s%%",
   "screen.amemaru.workshop.cost": "%s ×%s（持っている %s）",
@@ -526,7 +527,7 @@
   "commands.amemaru.city.place.town": "街並み",
   "commands.amemaru.city.place.aerial_se": "上空（南東から）",
   "commands.amemaru.city.place.aerial_nw": "上空（北西から）",
-  "generator.amemaru.conelia_check": "コネリアの確かめ用（平地）",
+  "generator.amemaru.conelia_check": "コネリアの街（AMEMARU）",
   "commands.amemaru.city.place.top_n": "上空（北の半分を真上から）",
   "commands.amemaru.city.place.top_s": "上空（南の半分を真上から）",
   "commands.amemaru.city.place.restaurant": "料理屋（育ったあと）",
@@ -1662,5 +1663,6 @@
   "commands.amemaru.duel.stopped": "決闘 #%sを止めた（引き分け）",
   "screen.amemaru.connections.commissions": "依頼 %s回",
   "screen.amemaru.connections.duels": "決闘 %s回",
-  "commands.amemaru.duel.arena": "決闘場 %s を見に来た（なければ建てた）"
+  "commands.amemaru.duel.arena": "決闘場 %s を見に来た（なければ建てた）",
+  "boss.amemaru.enraged": "戦いが長引き、ボスが怒った！ 攻撃が強くなり、技の間が短くなった"
 }

@@ -139,7 +139,8 @@ public class Veldhorn extends AmemaruBoss {
 
     private int cooldown(EnemyDef.Skill skill) {
         double scale = phase() >= 3 ? 0.7 : phase() == 2 ? 0.85 : 1.0;
-        return (int) Math.round(skill.cooldownTicks() * scale);
+        // 11月23日：参加の人数が多いほど、長引いて怒るほど、技の間が短い
+        return (int) Math.round(skill.cooldownTicks() * scale * pace());
     }
 
     private static int ticks(double seconds) {

@@ -129,6 +129,63 @@ public abstract class AmemaruBoss extends AmemaruMob {
     public void resetFight() {
         resetCombat();
         phase = 1;
+        fightTicks = 0;
+        enraged = false;
+        setAttackMultiplier(baseAttackMultiplier);
+    }
+
+    // ---------------------------------------------------------------- 人数補正と怒り（11月23日）
+
+    /** 人数補正の攻撃の倍率（怒りの前）。 */
+    private double baseAttackMultiplier = 1.0;
+    /** 技の間の倍率（人数が多いほど短い。1 より小さいほど速い）。 */
+    private double pace = 1.0;
+    /** 怒るまでの tick（0 なら怒らない）。 */
+    private int enrageTicks;
+    private int fightTicks;
+    private boolean enraged;
+
+    /**
+     * 戦いの人数補正を決める（部屋が閉じたとき。{@link BossRoom}）。11月23日のご指示「ボス戦の参加人数で強さが変わるように。
+     * 意外と簡単に攻略できてしまう」で、HPのほかに、攻撃と技の間も人数で変え、長引くと怒る（攻撃 +50%、技の間 ×0.75）。
+     */
+    public void setFightScaling(double attackMultiplier, double pace, int enrageSeconds) {
+        baseAttackMultiplier = Math.max(0.1, attackMultiplier);
+        this.pace = Math.max(0.3, Math.min(1.0, pace));
+        enrageTicks = Math.max(0, enrageSeconds) * 20;
+        fightTicks = 0;
+        enraged = false;
+        setAttackMultiplier(baseAttackMultiplier);
+    }
+
+    /** 技の間の倍率（人数補正と怒り）。技のクールダウンにかける。 */
+    protected double pace() {
+        return enraged ? pace * 0.75 : pace;
+    }
+
+    public boolean enraged() {
+        return enraged;
+    }
+
+    /** 戦いの間、毎 tick（怒るまでを数える）。 */
+    private void tickFightTimer(ServerLevel level) {
+        if (room == null || !room.fighting() || enrageTicks <= 0 || enraged) {
+            return;
+        }
+        if (++fightTicks >= enrageTicks) {
+            enraged = true;
+            setAttackMultiplier(baseAttackMultiplier * 1.5);
+            onEnraged(level);
+        }
+    }
+
+    /** 怒ったとき（戦いが長引いた）。 */
+    protected void onEnraged(ServerLevel level) {
+        tip("boss.amemaru.enraged");
+        level.playSound(null, getX(), getY(), getZ(), net.minecraft.sounds.SoundEvents.RAVAGER_ROAR,
+                net.minecraft.sounds.SoundSource.HOSTILE, 2.0F, 0.5F);
+        level.sendParticles(net.minecraft.core.particles.ParticleTypes.ANGRY_VILLAGER, getX(), getY() + getBbHeight(), getZ(),
+                12, 1.2, 0.6, 1.2, 0.0);
     }
 
     /** 管理者のコマンドで出させられる技の名前（{@code /amemaru admin boss skill}）。 */
@@ -189,6 +246,7 @@ public abstract class AmemaruBoss extends AmemaruMob {
                 phase = wanted;
                 onPhaseChanged(level, from, wanted);
             }
+            tickFightTimer(level);
         }
     }
 

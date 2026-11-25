@@ -30,6 +30,35 @@ public final class ClientForgeEvents {
     private ClientForgeEvents() {
     }
 
+    /** 新しいワールドを作る画面（開いたもの）。ワールドの種類を1度だけ選んでおく。 */
+    private static final Set<net.minecraft.client.gui.screens.Screen> WORLD_TYPE_SET =
+            java.util.Collections.newSetFromMap(new java.util.WeakHashMap<>());
+
+    /**
+     * 11月23日【補完】：新しいワールドを作るとき、ワールドの種類を、はじめから「コネリアの街」（このModの平地。開くと街が
+     * 建っている）にしておく。画面を開いたときに1度だけ選ぶので、ほかの種類にも変えられる。
+     */
+    @SubscribeEvent
+    public static void onScreenInit(net.minecraftforge.client.event.ScreenEvent.Init.Post event) {
+        if (!(event.getScreen() instanceof net.minecraft.client.gui.screens.worldselection.CreateWorldScreen screen)
+                || !WORLD_TYPE_SET.add(screen)) {
+            return;
+        }
+        net.minecraft.client.gui.screens.worldselection.WorldCreationUiState state = screen.getUiState();
+        for (net.minecraft.client.gui.screens.worldselection.WorldCreationUiState.WorldTypeEntry entry : state.getNormalPresetList()) {
+            if (entry.preset() != null && entry.preset().is(AmemaruMod.id("conelia_check"))) {
+                state.setWorldType(entry);
+                return;
+            }
+        }
+    }
+
+    /** 11月23日に決定：一人称で、籠手を両手にはめ、二刀の短剣を両手に持つ（{@code TwinWeapons}）。 */
+    @SubscribeEvent
+    public static void onRenderHand(net.minecraftforge.client.event.RenderHandEvent event) {
+        jp.amemaru.lostconnection.client.render.TwinWeapons.onRenderHand(event);
+    }
+
     @SubscribeEvent
     public static void onClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.END) {

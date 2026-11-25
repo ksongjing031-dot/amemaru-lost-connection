@@ -81,6 +81,8 @@ public final class SkillDef {
     private final List<Requirement> requirements;
     // アクティブだけ
     private final Ranked mpCost;
+    /** 消費MPの倍率（職業の {@code skill_mp_per_level} と覚えられるレベルから。{@link SkillRegistry} が決める）。 */
+    private double mpScale = 1.0;
     private final Ranked gaugeCost;
     private final Ranked cooldown;
     private final Ranked cast;
@@ -370,7 +372,16 @@ public final class SkillDef {
     }
 
     public int mpCost(int rank) {
-        return (int) Math.round(Math.max(0, mpCost.at(rank)));
+        return (int) Math.round(Math.max(0, mpCost.at(rank) * mpScale));
+    }
+
+    /** 職業の {@code skill_mp_per_level} から決めた、消費MPの倍率（一覧を作るときに決める）。 */
+    public double mpScale() {
+        return mpScale;
+    }
+
+    void setMpScale(double scale) {
+        mpScale = Math.max(0.0, scale);
     }
 
     public int gaugeCost(int rank) {

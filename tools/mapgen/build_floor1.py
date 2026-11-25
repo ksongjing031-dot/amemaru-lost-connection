@@ -97,6 +97,19 @@ CRYSTAL_HILLS = [(318, 66, 5.0, 14.0), (346, 92, 4.0, 11.0), (300, 40, 3.5, 12.0
 CHEST_LOOT = "amemaru:chests/floor1_ancient"
 HOLLOW = (324, 60)                              # 北東の結晶の窪み（結晶の丘の上）
 
+# ---- 11月23日のご指示「一日一層にしては内容が薄すぎる。マップを広く複雑に」【補完】
+# 西の野の地割れ：道と西の丘の間を斜めに走る深い谷。両端はなだらかに下りられ、真ん中は崖。古い石の橋と、つるの壁で渡る。底に宝箱と見張り
+RIFT = [(104, 194), (116, 208), (127, 224), (138, 240), (149, 256), (158, 272)]
+RIFT_DEPTH = 8.0                                # いちばん深い所の深さ
+RIFT_HALF = 4.5                                 # 谷の底の半分の幅（壁はその外の2ブロックほど）
+RIFT_BRIDGE_T = 0.42                            # 古い石の橋をかける所（谷の始まりからの割合）
+RIFT_VINES_T = 0.68                             # つるの壁の所
+RIFT_CHEST_T = 0.55                             # 谷の底の宝箱の所
+# 南東の古い庭の迷路：生け垣（高さ3）の迷路。西から入り、北へ抜ける。真ん中に宝箱
+MAZE = (230, 316)                               # 北西の角（x, z）
+MAZE_CELLS = (10, 8)                            # 区画の数（東西・南北）。通り道の幅3・生け垣の厚さ1
+MAZE_PATH = 3
+
 WHITE_STONE = [("polished_diorite", 6), ("diorite", 2), ("calcite", 1), ("andesite", 1)]   # 古代の白い石（街と同じ割合）
 ROAD_STONE = [("stone_bricks", 32), ("mossy_stone_bricks", 24), ("cracked_stone_bricks", 14), ("cobblestone", 10),
               ("mossy_cobblestone", 12), ("polished_andesite", 8)]
@@ -187,6 +200,10 @@ class Floor(World):
         self.switches = []         # 仕掛け石（x, y, z）
         self.gate = None           # 奥の院の門の格子（[x0, y0, z0], [x1, y1, z1]）
         self.guardian = None       # 群れの長の出る所（x, y, z）
+        self.rift_d = None         # 西の野の地割れの折れ線からの距離（SIZE×SIZE。11月23日）
+        self.rift_t = None         # 地割れの始まりからの割合
+        self.maze_y = 13           # 南東の古い庭の迷路の地面の高さ
+        self.maze_cells = set()    # 迷路の生け垣と通り道の (x, z)
 
     def top(self, x, z):
         return int(self.height[x, z])
@@ -258,9 +275,53 @@ def terrain(f):
     f.height = np.clip(np.round(h), 7, 30).astype(int)
     # 小川の上は、水面の1つ上より高くしない（谷の底）
     f.height = np.where(stream_d < 2.6, WATER - 1 - (stream_d < 1.4).astype(int), f.height)
-    f.height = np.where((stream_d >= 2.6) & (stream_d < 4.0), np.minimum(f.height, WATER + 1), f.height)
+    # 11月23日のご指示「1層の川に落ちたとき、上がるのがすごく大変」：水ぎわを水面と同じ高さにし（泳いでいても、浅い所に
+    # 立っても、歩いて上がれる）、川から離れるほど1ブロックずつ高くしてよい（2段の段差を作らない）。道（橋のたもと）は前のまま
+    limit = WATER + np.floor(np.maximum(stream_d - 2.6, 0.0)).astype(int)
+    near = (stream_d >= 2.6) & (stream_d < 30.0) & (road_d >= 9.0)
+    f.height = np.where(near, np.minimum(f.height, limit), f.height)
+    f.height = np.where((stream_d >= 2.6) & (stream_d < 4.0) & (road_d < 9.0), np.minimum(f.height, WATER + 1), f.height)
+    rift_terrain(f, X, Z)
+    maze_terrain(f)
     hill_terrain(f, X, Z)
     crystal_hollow_terrain(f, *HOLLOW)
+
+
+def rift_terrain(f, X, Z):
+    """西の野の地割れ（11月23日【補完】）：折れ線 RIFT に沿って地面を掘り下げる。両端は浅く（なだらかに下りられる）、真ん中は崖"""
+    d, along, length = polyline_distance(RIFT)
+    t = along / max(length, 1e-6)
+    taper = smoothstep(0.0, 0.24, t) * smoothstep(0.0, 0.24, 1.0 - t)
+    depth = RIFT_DEPTH * taper * (1.0 - smoothstep(RIFT_HALF - 0.5, RIFT_HALF + 2.2, d))
+    f.rift_d, f.rift_t = d, t
+    f.height = np.where(depth >= 0.5, np.round(f.height - depth).astype(int), f.height)
+
+
+def maze_box(margin=0):
+    """迷路の外まわり（x0, z0, x1, z1。両端を含む）"""
+    x0, z0 = MAZE
+    w = MAZE_CELLS[0] * (MAZE_PATH + 1) + 1
+    h = MAZE_CELLS[1] * (MAZE_PATH + 1) + 1
+    return x0 - margin, z0 - margin, x0 + w - 1 + margin, z0 + h - 1 + margin
+
+
+def maze_terrain(f):
+    """南東の古い庭の迷路の地面を、ひとつの高さにそろえる（まわり4マスでなじませる）"""
+    x0, z0 = MAZE
+    w = MAZE_CELLS[0] * (MAZE_PATH + 1) + 1
+    h = MAZE_CELLS[1] * (MAZE_PATH + 1) + 1
+    level = int(round(float(np.mean(f.height[x0:x0 + w, z0:z0 + h]))))
+    f.maze_y = level
+    for x in range(x0 - 4, x0 + w + 4):
+        for z in range(z0 - 4, z0 + h + 4):
+            dx = max(x0 - x, 0, x - (x0 + w - 1))
+            dz = max(z0 - z, 0, z - (z0 + h - 1))
+            e = max(dx, dz)
+            if e == 0:
+                f.height[x, z] = level
+            else:
+                k = e / 5.0
+                f.height[x, z] = int(round(level * (1 - k) + f.height[x, z] * k))
 
 
 def ledge_height(t):
@@ -907,6 +968,9 @@ def ruins(f):
 def scatter(f):
     rng = random.Random(909)
     keep_out = [(ENTRY[0], ENTRY[1], 26), (HALL[0], HALL[1], 50), (TABLET[0], TABLET[1], 20)] + [(px, pz, 11) for px, pz in PILLARS]
+    # 11月23日：湧く所の真ん中と巡回の点には、木の葉がかぶらないようにする（葉の下では敵が湧けない）
+    for zone in spawn_zones(None):
+        keep_out += [(p[0], p[2], 4.5) for p in [zone["center"]] + zone.get("route", [])]
 
     def ok(x, z, road=7, stream=5):
         if not (10 <= x < SIZE - 10 and 10 <= z < SIZE - 10) or (x, z) in f.reserved:
@@ -1020,6 +1084,222 @@ def ponds(f):
             f.put(ix - 1, WATER + 1, iz - 1, wall("mossy_stone_brick"))
             f.put(ix - 1, WATER + 2, iz - 1, lantern(False))
             chest(f, ix, WATER + 1, iz, "south")
+
+
+# ================================================================ 11月23日に足した所【補完】
+def rift_point(t):
+    """地割れの折れ線の上の、始まりから t の割合の点と、向き（単位ベクトル）"""
+    segs = list(zip(RIFT, RIFT[1:]))
+    total = sum(math.hypot(b[0] - a[0], b[1] - a[1]) for a, b in segs)
+    left = t * total
+    for (xa, za), (xb, zb) in segs:
+        seg = math.hypot(xb - xa, zb - za)
+        if left <= seg or (xb, zb) == RIFT[-1]:
+            k = min(1.0, left / seg)
+            return xa + (xb - xa) * k, za + (zb - za) * k, (xb - xa) / seg, (zb - za) / seg
+        left -= seg
+    return RIFT[-1][0], RIFT[-1][1], 1.0, 0.0
+
+
+def rift(f):
+    """西の野の地割れの中身（11月23日【補完】）：古い石の橋・つるの壁・光る苔・結晶・崩れた石"""
+    # 谷の底：粗い土・苔・砂利（落ちない所だけ）
+    for x in range(SIZE):
+        for z in range(SIZE):
+            d = f.rift_d[x, z]
+            if d > RIFT_HALF + 3.0 or f.stream_d[x, z] < 4.0:
+                continue
+            g = f.top(x, z)
+            if d < RIFT_HALF - 0.5 and 0.22 < f.rift_t[x, z] < 0.78:
+                st = R.pick([("coarse_dirt", 4), ("moss_block", 3), ("rooted_dirt", 2), ("stone", 1)], x, z, 2300)
+                f.put(x, g, z, block(st))
+                f.reserved.add((x, z))
+                if R.at(x, z, 2301) < 0.05:
+                    f.put(x, g + 1, z, block("moss_carpet"))
+    # 古い石の橋：谷をまたぐ、苔むした石のアーチ（幅3）
+    bx, bz, ux, uz = rift_point(RIFT_BRIDGE_T)
+    nx, nz = -uz, ux
+    reach = RIFT_HALF + 4.0
+    ends = []
+    for side in (-1, 1):
+        ex, ez = int(round(bx + nx * reach * side)), int(round(bz + nz * reach * side))
+        ends.append(f.top(ex, ez))
+    deck = max(ends)
+    for k in range(-int(reach) - 1, int(reach) + 2):
+        for w in (-1, 0, 1):
+            x = int(round(bx + nx * k + ux * w))
+            z = int(round(bz + nz * k + uz * w))
+            g = f.top(x, z)
+            if g >= deck:
+                continue
+            f.put(x, deck, z, block(R.pick([("mossy_stone_bricks", 3), ("stone_bricks", 2), ("cracked_stone_bricks", 2),
+                                             ("mossy_cobblestone", 1)], x, z, 2310)))
+            # アーチ：真ん中ほど薄く、端ほど厚い
+            thick = 1 + int(max(0, abs(k) - 2) * 0.6)
+            for yy in range(deck - thick, deck):
+                if yy > g:
+                    f.put(x, yy, z, block(R.pick([("stone_bricks", 3), ("mossy_stone_bricks", 2), ("cobblestone", 1)], x, yy, z, 2311)))
+            if w != 0 and abs(k) % 3 == 0:
+                f.put(x, deck + 1, z, wall("mossy_stone_brick"))
+            f.reserved.add((x, z))
+    # 橋のたもと：低い側の岸から上がれるよう、1段ずつの石段をつける
+    for side in (-1, 1):
+        level = deck
+        for k in range(int(reach) + 2, int(reach) + 10):
+            level -= 1
+            done = True
+            for w in (-1, 0, 1):
+                x = int(round(bx + nx * k * side + ux * w))
+                z = int(round(bz + nz * k * side + uz * w))
+                g = f.top(x, z)
+                if g < level:
+                    done = False
+                    for yy in range(g + 1, level + 1):
+                        f.put(x, yy, z, block(R.pick([("stone_bricks", 2), ("mossy_cobblestone", 1)], x, yy, z, 2312)))
+                    f.height[x, z] = level
+                    f.reserved.add((x, z))
+            if done:
+                break
+    f.rift_bridge = (int(round(bx)), deck, int(round(bz)))
+    # つるの壁：谷の東の壁に、上から底までつる（上り下りできる）
+    vx, vz, ux, uz = rift_point(RIFT_VINES_T)
+    nx, nz = -uz, ux
+    placed = 0
+    for w in (-1, 0, 1):
+        for k in range(int(RIFT_HALF) - 1, int(RIFT_HALF) + 5):
+            x = int(round(vx + nx * k + ux * w))
+            z = int(round(vz + nz * k + uz * w))
+            g = f.top(x, z)
+            # 1つ手前（谷の側）のマスが低ければ、そのマスの壁の面につるを下げる
+            px_ = int(round(vx + nx * (k - 1) + ux * w))
+            pz_ = int(round(vz + nz * (k - 1) + uz * w))
+            if (px_, pz_) == (x, z):
+                continue
+            gp = f.top(px_, pz_)
+            if g - gp < 2:
+                continue
+            dx, dz = x - px_, z - pz_
+            if abs(dx) + abs(dz) != 1:
+                continue
+            face = FACE_OF[(dx, dz)]
+            for yy in range(gp + 1, g + 1):
+                if f.get(px_, yy, pz_) is None:
+                    props = {"north": False, "south": False, "east": False, "west": False, "up": False}
+                    props[face] = True
+                    f.put(px_, yy, pz_, block("vine", **props))
+                    placed += 1
+            break
+    f.rift_vines = placed
+    # 光る苔と結晶（谷の壁と底）
+    for i in range(40):
+        t = 0.25 + 0.5 * R.at(i, 2320)
+        cx, cz, ux, uz = rift_point(t)
+        side = 1 if R.at(i, 2321) < 0.5 else -1
+        k = RIFT_HALF + 0.6
+        x, z = int(round(cx - uz * k * side)), int(round(cz + ux * k * side))
+        g = f.top(x, z)
+        ix, iz = int(round(cx - uz * (k - 1.2) * side)), int(round(cz + ux * (k - 1.2) * side))
+        gi = f.top(ix, iz)
+        dx, dz = x - ix, z - iz
+        if abs(dx) + abs(dz) == 1 and g - gi >= 2:
+            yy = gi + 1 + int(R.at(i, 2322) * (g - gi - 1))
+            if f.get(ix, yy, iz) is None:
+                f.put(ix, yy, iz, glow_lichen(FACE_OF[(dx, dz)]))
+    for i, t in enumerate((0.33, 0.6, 0.74)):
+        cx, cz, _, _ = rift_point(t)
+        crystal_outcrop(f, int(cx), int(cz), 2330 + i)
+
+
+def maze(f):
+    """南東の古い庭の迷路（11月23日【補完】）：生け垣（高さ3）の迷路。区画ごとに決まる乱数で作るので、作り直しても同じ形"""
+    x0, z0 = MAZE
+    cw, ch = MAZE_CELLS
+    step = MAZE_PATH + 1
+    w, h = cw * step + 1, ch * step + 1
+    y = f.maze_y
+    rnd = random.Random(20261123)
+    # 区画の間の壁を、深さ優先で掘る
+    walls_open = set()
+    seen = {(0, ch // 2)}
+    stack = [(0, ch // 2)]
+    while stack:
+        cx, cz = stack[-1]
+        nbrs = [(cx + dx, cz + dz) for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1))
+                if 0 <= cx + dx < cw and 0 <= cz + dz < ch and (cx + dx, cz + dz) not in seen]
+        if not nbrs:
+            stack.pop()
+            continue
+        nxt = rnd.choice(nbrs)
+        walls_open.add(frozenset(((cx, cz), nxt)))
+        seen.add(nxt)
+        stack.append(nxt)
+    # 迷いすぎないよう、ところどころ壁をもう1つ開ける（輪ができる）
+    for _ in range(6):
+        cx, cz = rnd.randrange(cw - 1), rnd.randrange(ch)
+        walls_open.add(frozenset(((cx, cz), (cx + 1, cz))))
+    leaf = block("oak_leaves", distance=1, persistent=True, waterlogged=False)
+    flower_leaf = block("flowering_azalea_leaves", distance=1, persistent=True, waterlogged=False)
+    entry = (0, ch // 2)
+    exit_ = (cw // 2, 0)
+
+    def is_wall(lx, lz):
+        if lx % step and lz % step:
+            return False                        # 区画の中
+        if lx % step == 0 and lz % step == 0:
+            return True                         # 柱
+        if lx % step == 0:                      # 東西の間の壁
+            cx2, cz2 = lx // step, lz // step
+            if cx2 == 0:
+                return (0, cz2) != entry
+            if cx2 == cw:
+                return True
+            return frozenset(((cx2 - 1, cz2), (cx2, cz2))) not in walls_open
+        cx2, cz2 = lx // step, lz // step       # 南北の間の壁
+        if cz2 == 0:
+            return (cx2, 0) != exit_
+        if cz2 == ch:
+            return True
+        return frozenset(((cx2, cz2 - 1), (cx2, cz2))) not in walls_open
+
+    for lx in range(w):
+        for lz in range(h):
+            x, z = x0 + lx, z0 + lz
+            g = f.top(x, z)
+            # 地面：通り道は古い庭の石と草、生け垣の下は苔
+            for yy in range(g + 1, g + 6):
+                if f.get(x, yy, z) is not None:
+                    f.put(x, yy, z, block("air"))
+            if is_wall(lx, lz):
+                f.put(x, g, z, block("moss_block"))
+                for yy in (g + 1, g + 2, g + 3):
+                    f.put(x, yy, z, flower_leaf if R.at(x, yy, z, 2340) < 0.12 else leaf)
+            else:
+                st = R.pick([("grass_block", 5), ("moss_block", 2), ("mossy_cobblestone", 1), ("coarse_dirt", 1)], x, z, 2341)
+                f.put(x, g, z, block(st, snowy=False) if st == "grass_block" else block(st))
+            f.reserved.add((x, z))
+            f.maze_cells.add((x, z))
+    # 区画の角の柱に、ところどころ石の柱とランタン（葉の上には置かない）
+    for i in range(1, cw):
+        for j in range(1, ch):
+            if (i + j) % 3 == 0:
+                x, z = x0 + i * step, z0 + j * step
+                g = f.top(x, z)
+                for yy in (g + 1, g + 2, g + 3):
+                    f.put(x, yy, z, wall("mossy_stone_brick"))
+                f.put(x, g + 4, z, lantern(False))
+    f.maze_entry = (x0, z0 + (ch // 2) * step + 2)
+    f.maze_exit = (x0 + (cw // 2) * step + 2, z0)
+    f.maze_center = (x0 + (cw // 2) * step + 2, z0 + (ch // 2) * step + 2)
+
+
+def late_chests(f):
+    """11月23日に足した宝箱（地割れの底・迷路の真ん中）。今までの宝箱の番号を変えないよう、いちばん後に置く"""
+    cx, cz, ux, uz = rift_point(RIFT_CHEST_T)
+    nx, nz = -uz, ux
+    x, z = int(round(cx + nx * (RIFT_HALF - 1.5))), int(round(cz + nz * (RIFT_HALF - 1.5)))
+    chest(f, x, f.top(x, z) + 1, z, "west" if nx > 0 else "east")
+    mx, mz = f.maze_center
+    chest(f, mx, f.top(mx, mz) + 1, mz, "south")
 
 
 # ================================================================ 11月22日に足した所【補完】
@@ -1646,6 +1926,11 @@ def hedgerows(f):
                 continue
             if (x, z) in f.reserved or f.road_d[x, z] < 5 or f.stream_d[x, z] < 4.5 or f.hill_d[x, z] < HILL_R + 10:
                 continue
+            if f.rift_d[x, z] < RIFT_HALF + 5.0:
+                continue                        # 11月23日：地割れの壁と縁には置かない
+            mx0, mz0, mx1, mz1 = maze_box(6)
+            if mx0 <= x <= mx1 and mz0 <= z <= mz1:
+                continue                        # 11月23日：迷路の生け垣とつながらないように、まわり6マスはあける
             if any(math.hypot(x - a, z - b) < r for a, b, r in keep):
                 continue
             rx0, rz0, rx1, rz1 = RUINS
@@ -1809,7 +2094,11 @@ def floor_json(cores, seal_cells, f=None):
             "start_radius": 20,
             "respawn_seconds": 120,
             "max_players": 8,
-            "hp_per_extra_player": 0.6,
+            # 11月23日：人数補正（1人増えるごとに HP +100%・攻撃 +10%・技の間 −5%）と、10分たつと怒る【補完】
+            "hp_per_extra_player": 1.0,
+            "attack_per_extra_player": 0.1,
+            "pace_per_extra_player": 0.05,
+            "enrage_seconds": 600,
             "exit": {"center": [hx + 0.5, y, hz - 19.5], "radius": 2.6},
         },
         "pillars": [dict({"pos": list(c), "line": PILLAR_LINES[i]}, **({"requires": PILLAR_REQUIRES[i]} if PILLAR_REQUIRES[i] else {}))
@@ -1845,9 +2134,9 @@ def spawn_zones(f=None):
     return [
         # ツノモフ（群れ）：南の野・東の野・西の野・北の野・西の丘の上（守り手の群れ）。11月22日に南の2つを入口の側へ動かし、2つ足した
         zone("meadow_south", "tsunomofu", 128, 346, 16, 6, 40, (3, 5)),
-        zone("meadow_southeast", "tsunomofu", 250, 340, 18, 7, 40, (3, 5)),
+        zone("meadow_southeast", "tsunomofu", 212, 336, 12, 6, 40, (3, 5)),
         zone("meadow_east", "tsunomofu", 250, 274, 16, 6, 40, (3, 4)),
-        zone("meadow_west", "tsunomofu", 124, 236, 16, 6, 40, (3, 4)),
+        zone("meadow_west", "tsunomofu", 152, 222, 12, 6, 40, (3, 4)),
         zone("meadow_north", "tsunomofu", 262, 140, 18, 6, 45, (3, 4)),
         zone("meadow_center", "tsunomofu", 150, 196, 14, 5, 45, (2, 4)),
         zone("hill_herd", "tsunomofu", HILL[0] - 2, HILL[1] + 2, 12, 5, 50, (2, 3), 44, y=HILL_TOP + 1),
@@ -1862,6 +2151,9 @@ def spawn_zones(f=None):
              route=[(313, 182), (329, 182), (335, 179), (345, 179), (345, 188)], y=ry),
         zone("ruins_south", "ishikure_soldier", 326, 211, 6, 2, 55, (1, 1), 56,
              route=[(313, 209), (328, 209), (345, 209), (345, 219), (322, 219)], y=ry),
+        # 11月23日：西の野の地割れの底を巡回する石くれ兵
+        zone("rift_floor", "ishikure_soldier", 132, 232, 6, 2, 50, (1, 1), 48,
+             route=[(121, 216), (132, 232), (143, 248)]),
         # 結晶蜂：結晶のまわり（北東の結晶の丘に2つ）
         zone("crystals_east", "crystal_bee", 282, 236, 10, 4, 45, (1, 2)),
         zone("crystals_west", "crystal_bee", 128, 142, 10, 4, 45, (1, 2)),
@@ -1918,6 +2210,8 @@ def build():
     f = Floor()
     terrain(f)
     fill_ground(f)
+    rift(f)
+    maze(f)
     bridge(f)
     for (cx, cz, r, s) in ((140, 330, 2, 1), (236, 330, 2, 2), (300, 270, 3, 3), (40, 200, 2, 4), (230, 120, 2, 5),
                            (150, 90, 2, 6), (330, 140, 2, 7), (100, 270, 1, 8), (270, 200, 1, 9), (60, 140, 2, 10)):
@@ -1944,7 +2238,7 @@ def build():
         if f.stream_d[x, z] > 4 and (x, z) not in f.reserved:
             waystone(f, x, z, 500 + i)
     for (cx, cz, r, count, s, birch) in ((304, 58, 16, 9, 1, 0.3), (356, 144, 10, 5, 3, 0.2),
-                                         (120, 330, 12, 6, 4, 0.5), (262, 344, 12, 6, 5, 0.3),
+                                         (120, 330, 12, 6, 4, 0.5), (296, 352, 10, 4, 5, 0.3),
                                          (236, 70, 8, 4, 7, 0.2), (30, 360, 10, 5, 8, 0.3), (350, 290, 10, 4, 9, 0.4),
                                          (150, 40, 9, 4, 10, 0.5)):
         grove(f, cx, cz, r, count, 600 + s * 17, birch)
@@ -1956,6 +2250,7 @@ def build():
     ponds(f)
     fords(f)
     bridge_chest(f)
+    late_chests(f)
     boundary(f)
     vegetation(f)
     f.finalize()
@@ -1979,7 +2274,8 @@ def main():
     if "--render" in sys.argv:
         render_dir = sys.argv[sys.argv.index("--render") + 1]
         import floor_figures
-        floor_figures.render_all(f, data, render_dir)
+        only = sys.argv[sys.argv.index("--only") + 1].split(",") if "--only" in sys.argv else None
+        floor_figures.render_all(f, data, render_dir, only)
 
 
 if __name__ == "__main__":

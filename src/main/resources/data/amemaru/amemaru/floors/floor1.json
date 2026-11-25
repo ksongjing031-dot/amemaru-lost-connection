@@ -72,7 +72,10 @@
     "start_radius": 20,
     "respawn_seconds": 120,
     "max_players": 8,
-    "hp_per_extra_player": 0.6,
+    "hp_per_extra_player": 1.0,
+    "attack_per_extra_player": 0.1,
+    "pace_per_extra_player": 0.05,
+    "enrage_seconds": 600,
     "exit": {
       "center": [
         192.5,
@@ -151,12 +154,12 @@
       "id": "meadow_southeast",
       "enemy": "amemaru:tsunomofu",
       "center": [
-        250,
-        11,
-        340
+        212,
+        8,
+        336
       ],
-      "radius": 18,
-      "max": 7,
+      "radius": 12,
+      "max": 6,
       "respawn_seconds": 40,
       "group": [
         3,
@@ -185,11 +188,11 @@
       "id": "meadow_west",
       "enemy": "amemaru:tsunomofu",
       "center": [
-        124,
-        14,
-        236
+        152,
+        12,
+        222
       ],
-      "radius": 16,
+      "radius": 12,
       "max": 6,
       "respawn_seconds": 40,
       "group": [
@@ -451,6 +454,40 @@
           322,
           10,
           219
+        ]
+      ]
+    },
+    {
+      "id": "rift_floor",
+      "enemy": "amemaru:ishikure_soldier",
+      "center": [
+        132,
+        5,
+        232
+      ],
+      "radius": 6,
+      "max": 2,
+      "respawn_seconds": 50,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 48,
+      "route": [
+        [
+          121,
+          5,
+          216
+        ],
+        [
+          132,
+          5,
+          232
+        ],
+        [
+          143,
+          5,
+          248
         ]
       ]
     },
@@ -732,6 +769,22 @@
         196,
         8,
         208
+      ],
+      "loot": "amemaru:chests/floor1_ancient"
+    },
+    {
+      "pos": [
+        133,
+        5,
+        238
+      ],
+      "loot": "amemaru:chests/floor1_ancient"
+    },
+    {
+      "pos": [
+        252,
+        10,
+        334
       ],
       "loot": "amemaru:chests/floor1_ancient"
     }

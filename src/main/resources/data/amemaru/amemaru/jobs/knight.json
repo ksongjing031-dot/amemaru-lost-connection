@@ -20,6 +20,8 @@
       "magic": -20
     }
   },
+  "_comment_skill_mp": "11月23日：近接職は、覚えられるレベルが高いスキルほど消費MPを増やす（1レベルにつき +5%。Lv10 で ×1.45、Lv30 で ×2.45）",
+  "skill_mp_per_level": 0.05,
   "gauge": {
     "type": "oath",
     "name": "誓気",

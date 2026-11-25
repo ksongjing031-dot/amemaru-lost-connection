@@ -557,7 +557,7 @@ public final class StoryTowerGameTests {
 
     // ---------------------------------------------------------------- 11月22日：1階の課題・仕掛け石と門・古代の宝箱
 
-    /** 1階の仕掛け（西の丘の守り手・石柱の課題・光のかけら・東の遺跡の仕掛け石と門・古代の宝箱10）の定義がそろっている。 */
+    /** 1階の仕掛け（西の丘の守り手・石柱の課題・光のかけら・東の遺跡の仕掛け石と門・古代の宝箱12）の定義がそろっている。11月23日に、地割れの谷と迷路の宝箱を足して12。 */
     @GameTest(template = EMPTY)
     public static void floor1Extras(GameTestHelper helper) {
         FloorDef def = FloorDefs.byNumber(1);
@@ -592,7 +592,7 @@ public final class StoryTowerGameTests {
         for (net.minecraft.core.BlockPos stone : group.stones()) {
             check(helper, def.contains(Vec3.atBottomCenterOf(def.world(stone))), "仕掛け石が階の外です：" + stone);
         }
-        check(helper, extras.chests().size() == 10, "古代の宝箱が10個ではありません：" + extras.chests().size());
+        check(helper, extras.chests().size() == 12, "古代の宝箱が12個ではありません：" + extras.chests().size());
         ResourceLocation loot = AmemaruMod.id("chests/floor1_ancient");
         check(helper, helper.getLevel().getServer().getLootData().getLootTable(loot) != net.minecraft.world.level.storage.loot.LootTable.EMPTY,
                 "宝箱の決まり（ルートテーブル）がありません");

@@ -71,6 +71,11 @@ public final class ServerEvents {
         if (ServerConfig.APPLY_GAME_RULES.get()) {
             GameRuleSetup.apply(event.getServer());
         }
+        // 11月23日：新しいワールドを開いたら、街が建っている（CIの写真と、自動テストのサーバーは除く。CIは自分で建てる）
+        if (ServerConfig.AUTO_BUILD_CITY.get() && !Boolean.getBoolean("amemaru.ci.screenshots")
+                && !(event.getServer() instanceof net.minecraft.gametest.framework.GameTestServer)) {
+            jp.amemaru.lostconnection.admin.CityCommands.autoBuild(event.getServer());
+        }
         // 職業とスキルの一覧を作っておく（参照切れなどの問題を、起動時のログに出すため）
         SkillRegistry.get();
     }

@@ -26,12 +26,16 @@ import net.minecraftforge.network.NetworkHooks;
  * 生産職になる・作る（レシピ）・強化・修理。Phase 5で、工房の担当NPCとの会話からも開けるようにする。
  */
 public class WorkshopBlock extends HorizontalDirectionalBlock {
+    // 11月23日：作業台のモデルを作り直した（tools/artgen/make_workbenches.py）。天板は高さ10〜13、その上の道具は16まで、
+    // 四隅の脚と下の棚（高さ3〜4）
     private static final VoxelShape SHAPE = Shapes.or(
-            Block.box(0.0, 12.0, 0.0, 16.0, 16.0, 16.0),
-            Block.box(1.0, 0.0, 1.0, 4.0, 12.0, 4.0),
-            Block.box(12.0, 0.0, 1.0, 15.0, 12.0, 4.0),
-            Block.box(1.0, 0.0, 12.0, 4.0, 12.0, 15.0),
-            Block.box(12.0, 0.0, 12.0, 15.0, 12.0, 15.0));
+            Block.box(0.0, 10.0, 0.0, 16.0, 13.0, 16.0),
+            Block.box(2.0, 13.0, 2.0, 14.0, 16.0, 14.0),
+            Block.box(0.5, 0.0, 0.5, 3.5, 10.0, 3.5),
+            Block.box(12.5, 0.0, 0.5, 15.5, 10.0, 3.5),
+            Block.box(0.5, 0.0, 12.5, 3.5, 10.0, 15.5),
+            Block.box(12.5, 0.0, 12.5, 15.5, 10.0, 15.5),
+            Block.box(2.0, 3.0, 2.0, 14.0, 4.0, 14.0));
 
     private final WorkshopType type;
 

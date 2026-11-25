@@ -133,6 +133,10 @@ def render_all(f, data, out, only=None):
     views.append(("woods_floor", (40, 4, 60, 160, 46, 160), (124, 17, 112), (98, 15, 104)))
     views.append(("hollow", (300, 4, 40, 350, 40, 84), (334, 24, 78), (324, 12, 60)))
     views.append(("stream2", (100, 4, 260, 260, 40, 360), (190, 24, 350), (186, 10, 310)))
+    # 11月23日：西の野の地割れ（北東の縁から谷を見下ろす・谷の底から橋を見上げる）と、南東の古い庭の迷路
+    views.append(("rift", (90, 0, 180, 176, 40, 290), (170, 30, 196), (126, 6, 236)))
+    views.append(("rift_floor", (90, 0, 180, 176, 40, 290), (138, 8, 244), (124, 12, 222)))
+    views.append(("maze", (218, 4, 300, 292, 40, 362), (292, 30, 304), (250, 12, 332)))
     for name, (x0, y0, z0, x1, y1, z1), eye, target in views:
         if only and name not in only:
             continue
