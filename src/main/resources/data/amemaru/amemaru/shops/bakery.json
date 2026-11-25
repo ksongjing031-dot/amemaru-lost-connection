@@ -12,10 +12,6 @@
     {
       "item": "minecraft:pumpkin_pie",
       "price": 18
-    },
-    {
-      "item": "minecraft:cake",
-      "price": 60
     }
   ],
   "buys": [
@@ -29,10 +25,6 @@
     },
     {
       "item": "minecraft:pumpkin_pie",
-      "ratio": 0.5
-    },
-    {
-      "item": "minecraft:cake",
       "ratio": 0.5
     }
   ]

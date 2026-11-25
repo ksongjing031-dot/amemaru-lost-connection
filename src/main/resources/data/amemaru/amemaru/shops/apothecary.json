@@ -2,37 +2,53 @@
   "name": "薬屋",
   "sells": [
     {
+      "item": "amemaru:healing_potion_small",
+      "price": 100
+    },
+    {
+      "item": "amemaru:healing_potion_medium",
+      "price": 260
+    },
+    {
+      "item": "amemaru:mana_water_small",
+      "price": 120
+    },
+    {
+      "item": "amemaru:mana_water_medium",
+      "price": 300
+    },
+    {
       "item": "minecraft:honey_bottle",
       "price": 24
     },
     {
       "item": "minecraft:glow_berries",
       "price": 8
-    },
-    {
-      "item": "minecraft:sugar",
-      "price": 4
-    },
-    {
-      "item": "minecraft:glass_bottle",
-      "price": 6
     }
   ],
   "buys": [
+    {
+      "item": "amemaru:healing_potion_small",
+      "ratio": 0.5
+    },
+    {
+      "item": "amemaru:healing_potion_medium",
+      "ratio": 0.5
+    },
+    {
+      "item": "amemaru:mana_water_small",
+      "ratio": 0.5
+    },
+    {
+      "item": "amemaru:mana_water_medium",
+      "ratio": 0.5
+    },
     {
       "item": "minecraft:honey_bottle",
       "ratio": 0.5
     },
     {
       "item": "minecraft:glow_berries",
-      "ratio": 0.5
-    },
-    {
-      "item": "minecraft:sugar",
-      "ratio": 0.5
-    },
-    {
-      "item": "minecraft:glass_bottle",
       "ratio": 0.5
     }
   ]

@@ -67,28 +67,93 @@ TOWER_MATERIALS = ["amemaru:ancient_stone", "amemaru:moss_iron", "amemaru:crysta
                    "amemaru:bee_stinger", "amemaru:chipped_fang", "amemaru:echo_fragment", "amemaru:soft_horn",
                    "amemaru:ishikure_core", "amemaru:polishing_powder", "amemaru:wavering_crystal"]
 
-# 店：(ファイルの名前, 名前, 店主, 売る品 [(品, 値段)], 買い取る品（None は売る品を買い戻す）)
+# 店：(ファイルの名前, 名前, 店主, 売る品 [(品, 値段) か (品, 値段, 見た目の名前, 色)], 買い取る品（None は売る品を買い戻す）)
+# 11月23日の直し（「色々な店があるがどこで使うかわからないものが多いので実用的なものを置く」）：どこにも使い道のない品
+# （羊毛・糸・羽根・種・骨粉・鎖・ハサミ・方位磁石・時計・リード・ろうそく・カカオなど）を外し、回復・料理屋の材料・
+# 贈り物・修理・帰還・灯り・工房の材料・見た目の服に入れ替えた。どの品にも USES の「使い道」を付ける（店の画面と説明文に出る）
+TAILOR_INDIGO, TAILOR_NATURAL, LEATHER_BROWN = "#3B4A8C", "#E6DCC4", "#7A4E2A"
 SHOPS = [
     ("general", "雑貨屋", "マルタ・ポム", [
-        ("amemaru:healing_potion_small", 100), ("amemaru:mana_water_small", 120), ("bread", 12), ("apple", 8),
-        ("torch", 4), ("lead", 30), ("glass_bottle", 6), ("string", 6), ("paper", 6)], TOWER_MATERIALS),
-    ("bakery", "パン屋", "", [("bread", 12), ("cookie", 4), ("pumpkin_pie", 18), ("cake", 60)], None),
-    ("greengrocer", "八百屋", "", [("carrot", 5), ("potato", 5), ("beetroot", 4), ("apple", 8), ("melon_slice", 3),
-                                  ("sweet_berries", 4), ("pumpkin", 12)], None),
-    ("apothecary", "薬屋", "", [("honey_bottle", 24), ("glow_berries", 8), ("sugar", 4), ("glass_bottle", 6)], None),
-    ("tools", "道具屋", "", [("shears", 40), ("compass", 60), ("clock", 80), ("spyglass", 120), ("lead", 30)], None),
-    ("lights", "ろうそくと灯り", "", [("lantern", 20), ("torch", 4), ("candle", 10), ("honeycomb", 10)], None),
-    ("cloth", "布と仕立て", "", [("white_wool", 10), ("magenta_wool", 12), ("light_blue_wool", 12), ("yellow_wool", 12),
-                                ("string", 6), ("feather", 4), ("leather", 12)], None),
-    ("butcher", "肉と燻製", "", [("cooked_porkchop", 20), ("cooked_beef", 20), ("cooked_mutton", 16), ("cooked_chicken", 14),
-                               ("rabbit_stew", 30)], None),
-    ("books", "本と地図", "", [("book", 30), ("writable_book", 40), ("map", 40), ("paper", 6), ("feather", 4)], None),
-    ("leather", "革と鞄", "", [("leather", 12), ("rabbit_hide", 6), ("string", 6), ("lead", 30)], None),
-    ("flowers", "花と種", "", [("poppy", 4), ("dandelion", 4), ("cornflower", 4), ("allium", 6), ("wheat_seeds", 2),
-                              ("pumpkin_seeds", 4), ("beetroot_seeds", 2), ("bone_meal", 4)], None),
-    ("hardware", "金物屋", "", [("chain", 8), ("iron_nugget", 4), ("shears", 40), ("lantern", 20)], None),
-    ("tea", "茶と香辛料", "", [("cocoa_beans", 6), ("sweet_berries", 4), ("sugar", 4), ("honey_bottle", 24)], None),
+        ("amemaru:healing_potion_small", 100), ("amemaru:mana_water_small", 120), ("amemaru:return_feather", 150),
+        ("amemaru:repair_kit", 200), ("bread", 12), ("apple", 8)], TOWER_MATERIALS),
+    ("bakery", "パン屋", "", [("bread", 12), ("cookie", 4), ("pumpkin_pie", 18)], None),
+    ("greengrocer", "八百屋", "", [("potato", 5), ("carrot", 5), ("beetroot", 4), ("apple", 8), ("sweet_berries", 4),
+                                  ("melon_slice", 3)], None),
+    ("apothecary", "薬屋", "", [("amemaru:healing_potion_small", 100), ("amemaru:healing_potion_medium", 260),
+                               ("amemaru:mana_water_small", 120), ("amemaru:mana_water_medium", 300), ("honey_bottle", 24),
+                               ("glow_berries", 8)], None),
+    ("tools", "道具屋", "", [("amemaru:return_feather", 150), ("amemaru:repair_kit", 200), ("spyglass", 120)], None),
+    ("lights", "ろうそくと灯り", "", [("amemaru:hand_lantern", 300), ("amemaru:lantern_vial", 40)], None),
+    ("cloth", "布と仕立て", "", [
+        ("leather_helmet", 80, "tailor_hat_indigo", TAILOR_INDIGO), ("leather_chestplate", 120, "tailor_coat_indigo", TAILOR_INDIGO),
+        ("leather_leggings", 100, "tailor_trousers_indigo", TAILOR_INDIGO), ("leather_boots", 70, "tailor_boots_indigo", TAILOR_INDIGO),
+        ("leather_helmet", 80, "tailor_hat_natural", TAILOR_NATURAL),
+        ("leather_chestplate", 120, "tailor_coat_natural", TAILOR_NATURAL),
+        ("leather_leggings", 100, "tailor_trousers_natural", TAILOR_NATURAL),
+        ("leather_boots", 70, "tailor_boots_natural", TAILOR_NATURAL)], None),
+    ("butcher", "肉と燻製", "", [("cooked_beef", 20), ("cooked_porkchop", 20), ("cooked_mutton", 16), ("cooked_chicken", 14)], None),
+    ("books", "本と地図", "", [("book", 30), ("paper", 6), ("map", 40)], None),
+    ("leather", "革と鞄", "", [
+        ("amemaru:repair_kit", 200),
+        ("leather_helmet", 60, "leather_hat_brown", LEATHER_BROWN), ("leather_chestplate", 100, "leather_coat_brown", LEATHER_BROWN),
+        ("leather_leggings", 80, "leather_trousers_brown", LEATHER_BROWN), ("leather_boots", 60, "leather_boots_brown", LEATHER_BROWN)],
+     None),
+    ("flowers", "花と種", "", [("poppy", 4), ("dandelion", 4), ("cornflower", 4), ("allium", 6)], None),
+    ("hardware", "金物屋", "", [("amemaru:repair_kit", 200), ("amemaru:moss_iron", 80), ("amemaru:ancient_stone", 25),
+                               ("amemaru:crystal_shard", 220)], None),
+    ("tea", "茶と香辛料", "", [("amemaru:herb_tea", 30), ("sugar", 4), ("honey_bottle", 24), ("sweet_berries", 4)], None),
 ]
+# 見た目の服の名前（店の画面と、買った品の名前）
+LOOKS = {
+    "tailor_hat_indigo": "仕立ての帽子（藍）", "tailor_coat_indigo": "仕立ての上着（藍）",
+    "tailor_trousers_indigo": "仕立てのズボン（藍）", "tailor_boots_indigo": "仕立ての靴（藍）",
+    "tailor_hat_natural": "仕立ての帽子（生成り）", "tailor_coat_natural": "仕立ての上着（生成り）",
+    "tailor_trousers_natural": "仕立てのズボン（生成り）", "tailor_boots_natural": "仕立ての靴（生成り）",
+    "leather_hat_brown": "革の帽子（茶）", "leather_coat_brown": "革の上着（茶）",
+    "leather_trousers_brown": "革のズボン（茶）", "leather_boots_brown": "革の靴（茶）",
+}
+# 品ごとの使い道（言語ファイルの itemuse.<名前空間>.<名前>。店の画面の2行目と、持ち物の説明文に出る）【補完】
+FOOD_HP, FOOD_MP = "食べるとHPが少し戻る", "食べるとMPが少し戻る"
+USES = {
+    "amemaru:healing_potion_small": "HPが25%戻る（戦いの最中に使える）・贈り物",
+    "amemaru:healing_potion_medium": "HPが50%戻る（戦いの最中に使える）",
+    "amemaru:mana_water_small": "MPが30%戻る（戦いの最中に使える）",
+    "amemaru:mana_water_medium": "MPが60%戻る（戦いの最中に使える）",
+    "amemaru:herb_tea": "飲むとMPが15%戻る（食べ物の仲間）",
+    "amemaru:return_feather": "塔の中で3秒持つと、街の塔の門へ帰る",
+    "amemaru:repair_kit": "防具とホットバーの装備の耐久を30%ずつ戻す",
+    "amemaru:hand_lantern": "手に持つと、まわりが明るくなる（暗い所で）",
+    "amemaru:lantern_vial": "その場とまわりに、90秒の灯りをともす",
+    "amemaru:moss_iron": "工房の材料（作る・強化・修理）・贈り物",
+    "amemaru:ancient_stone": "工房の材料（古代石シリーズ・修理）・贈り物",
+    "amemaru:crystal_shard": "工房の材料（+4からの強化）・贈り物",
+    "minecraft:bread": FOOD_HP + "・料理屋の材料・贈り物",
+    "minecraft:apple": FOOD_HP + "・料理屋の材料",
+    "minecraft:carrot": FOOD_HP + "・料理屋の材料",
+    "minecraft:potato": "料理屋の材料（魚と根菜のスープ）",
+    "minecraft:beetroot": FOOD_HP + "・料理屋の材料",
+    "minecraft:melon_slice": FOOD_HP,
+    "minecraft:sweet_berries": FOOD_MP + "・贈り物",
+    "minecraft:glow_berries": FOOD_MP,
+    "minecraft:honey_bottle": "飲むとMPが少し戻る・料理屋の材料・贈り物",
+    "minecraft:sugar": "料理屋の材料（魚の甘辛煮）",
+    "minecraft:cookie": FOOD_MP + "・贈り物",
+    "minecraft:pumpkin_pie": "食べるとHPが戻る",
+    "minecraft:cooked_beef": "食べるとHPが戻る・贈り物",
+    "minecraft:cooked_porkchop": "食べるとHPが戻る",
+    "minecraft:cooked_mutton": FOOD_HP,
+    "minecraft:cooked_chicken": FOOD_HP,
+    "minecraft:book": "贈り物（本の好きな人に）",
+    "minecraft:paper": "贈り物（本の好きな人に）",
+    "minecraft:map": "使うと、まわりの地図になる（広い所で道に迷わない）",
+    "minecraft:spyglass": "のぞくと遠くまで見える（広い所で道を探す）",
+    "minecraft:poppy": "贈り物（花の好きな人に）",
+    "minecraft:dandelion": "贈り物（花の好きな人に）",
+    "minecraft:cornflower": "贈り物（花の好きな人に）",
+    "minecraft:allium": "贈り物（花の好きな人に）",
+}
+LOOK_USE = "見た目だけの服（守りもステータスも変わらない）"
+LANG = [os.path.join(ROOT, "src", "main", "resources", "assets", "amemaru", "lang", n) for n in ("ja_jp.json", "en_us.json")]
 BUY_RATIO = 0.5
 # フリーマーケットに出せない品（クエストの品）【補完】。結晶果・見習い装備・装備したボスのレア装備は、ゲームの中の決まりで出せない
 UNTRADEABLE = ["amemaru:light_shard"]
@@ -133,7 +198,8 @@ def main():
     # 店で売る品：売値の80%（安い方の売値から）
     lowest = {}
     for _, _, _, sells, _ in SHOPS:
-        for item, price in sells:
+        for entry in sells:
+            item, price = entry[0], entry[1]
             key = full(item)
             lowest[key] = min(lowest.get(key, price), price)
     for key, price in sorted(lowest.items()):
@@ -149,8 +215,17 @@ def main():
         doc = {"name": name}
         if keeper:
             doc["keeper"] = keeper
-        doc["sells"] = [{"item": full(i), "price": p} for i, p in sells]
-        buy_items = buys if buys is not None else [i for i, _ in sells]
+        doc["sells"] = []
+        for entry in sells:
+            one = {"item": full(entry[0]), "price": entry[1]}
+            if len(entry) > 2:
+                one["look"] = entry[2]       # 見た目の服（守りも強さもない。名前は shop.amemaru.look.<名前>）
+                one["color"] = entry[3]
+            elif full(entry[0]) not in USES:
+                raise SystemExit("使い道（USES）のない品: " + full(entry[0]) + "（" + key + "）")
+            doc["sells"].append(one)
+        # 見た目の服は買い取らない（同じ革の帽子でも、ほかの物と見分けられないため）。塔の素材の買い取りは雑貨屋だけ
+        buy_items = buys if buys is not None else [e[0] for e in sells if len(e) == 2 and full(e[0]) not in TOWER_MATERIALS]
         seen = []
         for i in buy_items:
             if full(i) not in seen:
@@ -178,6 +253,19 @@ def main():
     with open(os.path.join(OUT, "market_prices", "default.json"), "w", encoding="utf-8") as f:
         json.dump(table, f, ensure_ascii=False, indent=2)
         f.write("\n")
+    # 言語ファイル：使い道と、見た目の服の名前（日本語と英語の表は同じ中身）
+    for path in LANG:
+        with open(path, encoding="utf-8") as f:
+            lang = json.load(f)
+        for item, text in USES.items():
+            ns, name = item.split(":")
+            lang["itemuse.%s.%s" % (ns, name)] = text
+        lang["itemuse.amemaru.look"] = LOOK_USE
+        for look, name in LOOKS.items():
+            lang["shop.amemaru.look." + look] = name
+        lang["shop.amemaru.look_lore"] = "見た目の品（守りも強さもない）"
+        with open(path, "w", encoding="utf-8") as f:
+            f.write(json.dumps(lang, ensure_ascii=False, indent=2) + "\n")
     for k in ("amemaru:moss_iron", "amemaru:crystal_shard", "amemaru:ancient_stone_sword", "amemaru:grassland_horn",
               "amemaru:healing_potion_small"):
         print(k, prices[k])

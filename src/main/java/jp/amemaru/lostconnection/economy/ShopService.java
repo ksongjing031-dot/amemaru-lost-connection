@@ -68,7 +68,7 @@ public final class ShopService {
         if (item == null || price <= 0) {
             return tell(player, Result.INVALID, null, 0, 0);
         }
-        ItemStack sample = new ItemStack(item);
+        ItemStack sample = entry.stack(item, 1);   // 見た目の服は、色と名前の付いた形（11月23日）
         long total = price * count;
         if (total / count != price) {
             return tell(player, Result.INVALID, null, 0, 0);
@@ -83,7 +83,7 @@ public final class ShopService {
         int left = count;
         while (left > 0) {
             int part = Math.min(left, sample.getMaxStackSize());
-            ItemStack stack = new ItemStack(item, part);
+            ItemStack stack = entry.stack(item, part);
             if (!player.getInventory().add(stack) && !stack.isEmpty()) {
                 player.drop(stack, false);
             }

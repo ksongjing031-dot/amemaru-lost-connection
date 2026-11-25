@@ -2,62 +2,53 @@
   "name": "布と仕立て",
   "sells": [
     {
-      "item": "minecraft:white_wool",
-      "price": 10
+      "item": "minecraft:leather_helmet",
+      "price": 80,
+      "look": "tailor_hat_indigo",
+      "color": "#3B4A8C"
     },
     {
-      "item": "minecraft:magenta_wool",
-      "price": 12
+      "item": "minecraft:leather_chestplate",
+      "price": 120,
+      "look": "tailor_coat_indigo",
+      "color": "#3B4A8C"
     },
     {
-      "item": "minecraft:light_blue_wool",
-      "price": 12
+      "item": "minecraft:leather_leggings",
+      "price": 100,
+      "look": "tailor_trousers_indigo",
+      "color": "#3B4A8C"
     },
     {
-      "item": "minecraft:yellow_wool",
-      "price": 12
+      "item": "minecraft:leather_boots",
+      "price": 70,
+      "look": "tailor_boots_indigo",
+      "color": "#3B4A8C"
     },
     {
-      "item": "minecraft:string",
-      "price": 6
+      "item": "minecraft:leather_helmet",
+      "price": 80,
+      "look": "tailor_hat_natural",
+      "color": "#E6DCC4"
     },
     {
-      "item": "minecraft:feather",
-      "price": 4
+      "item": "minecraft:leather_chestplate",
+      "price": 120,
+      "look": "tailor_coat_natural",
+      "color": "#E6DCC4"
     },
     {
-      "item": "minecraft:leather",
-      "price": 12
+      "item": "minecraft:leather_leggings",
+      "price": 100,
+      "look": "tailor_trousers_natural",
+      "color": "#E6DCC4"
+    },
+    {
+      "item": "minecraft:leather_boots",
+      "price": 70,
+      "look": "tailor_boots_natural",
+      "color": "#E6DCC4"
     }
   ],
-  "buys": [
-    {
-      "item": "minecraft:white_wool",
-      "ratio": 0.5
-    },
-    {
-      "item": "minecraft:magenta_wool",
-      "ratio": 0.5
-    },
-    {
-      "item": "minecraft:light_blue_wool",
-      "ratio": 0.5
-    },
-    {
-      "item": "minecraft:yellow_wool",
-      "ratio": 0.5
-    },
-    {
-      "item": "minecraft:string",
-      "ratio": 0.5
-    },
-    {
-      "item": "minecraft:feather",
-      "ratio": 0.5
-    },
-    {
-      "item": "minecraft:leather",
-      "ratio": 0.5
-    }
-  ]
+  "buys": []
 }

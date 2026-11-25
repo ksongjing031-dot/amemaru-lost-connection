@@ -62,7 +62,11 @@ public final class ShopGameTests {
         check(helper, MarketPrices.loader().errors().isEmpty(), "相場の表に問題があります：" + MarketPrices.loader().errors());
         check(helper, ConsumableDefs.loader().errors().isEmpty(), "消耗品の定義に問題があります：" + ConsumableDefs.loader().errors());
         check(helper, ShopDefs.all().size() == 13, "店の定義が13軒ではありません：" + ShopDefs.all().keySet());
-        check(helper, ConsumableDefs.server().size() == 2, "消耗品の定義が2つではありません：" + ConsumableDefs.server().size());
+        // 消耗品：回復薬（小・中）・マナ水（小・中）・香草茶と、11月23日の直しで数値を付けたバニラの食べ物15種
+        check(helper, ConsumableDefs.server().size() == 20, "消耗品の定義が20ではありません：" + ConsumableDefs.server().size());
+        for (jp.amemaru.lostconnection.item.ConsumableDef def : ConsumableDefs.server()) {
+            check(helper, ForgeRegistries.ITEMS.containsKey(def.id()), "消耗品の定義の品がありません：" + def.id());
+        }
 
         Map<ResourceLocation, Long> lowestSell = new HashMap<>();
         for (ShopDef def : ShopDefs.all().values()) {
@@ -95,8 +99,9 @@ public final class ShopGameTests {
         for (ShopDef def : ShopDefs.all().values()) {
             if (def != general) {
                 for (ShopDef.Entry entry : def.buys()) {
-                    check(helper, !entry.item().getNamespace().equals(AmemaruMod.MOD_ID), "塔の素材の買い取りは雑貨屋だけのはずです："
-                            + def.id() + " " + entry.item());
+                    // 11月23日の直しで、ほかの店もこのModの品（回復薬・道具）を売り、買い戻すようになった。塔の素材は雑貨屋だけ
+                    check(helper, !(ForgeRegistries.ITEMS.getValue(entry.item()) instanceof jp.amemaru.lostconnection.item.MaterialItem),
+                            "塔の素材の買い取りは雑貨屋だけのはずです：" + def.id() + " " + entry.item());
                 }
             }
         }

@@ -2,37 +2,21 @@
   "name": "ろうそくと灯り",
   "sells": [
     {
-      "item": "minecraft:lantern",
-      "price": 20
+      "item": "amemaru:hand_lantern",
+      "price": 300
     },
     {
-      "item": "minecraft:torch",
-      "price": 4
-    },
-    {
-      "item": "minecraft:candle",
-      "price": 10
-    },
-    {
-      "item": "minecraft:honeycomb",
-      "price": 10
+      "item": "amemaru:lantern_vial",
+      "price": 40
     }
   ],
   "buys": [
     {
-      "item": "minecraft:lantern",
+      "item": "amemaru:hand_lantern",
       "ratio": 0.5
     },
     {
-      "item": "minecraft:torch",
-      "ratio": 0.5
-    },
-    {
-      "item": "minecraft:candle",
-      "ratio": 0.5
-    },
-    {
-      "item": "minecraft:honeycomb",
+      "item": "amemaru:lantern_vial",
       "ratio": 0.5
     }
   ]

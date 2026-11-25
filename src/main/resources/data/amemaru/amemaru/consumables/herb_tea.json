@@ -1,0 +1,8 @@
+{
+  "_comment": "香草茶（11月23日の直し。茶と香辛料）。飲むと最大MPの15%が戻る。食べ物の仲間（group food。回復薬とは別のクールダウン）【補完】",
+  "restore": "mp",
+  "percent": 15,
+  "flat": 0,
+  "cooldown": 20,
+  "group": "food"
+}

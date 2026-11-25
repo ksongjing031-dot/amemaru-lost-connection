@@ -2,37 +2,25 @@
   "name": "金物屋",
   "sells": [
     {
-      "item": "minecraft:chain",
-      "price": 8
+      "item": "amemaru:repair_kit",
+      "price": 200
     },
     {
-      "item": "minecraft:iron_nugget",
-      "price": 4
+      "item": "amemaru:moss_iron",
+      "price": 80
     },
     {
-      "item": "minecraft:shears",
-      "price": 40
+      "item": "amemaru:ancient_stone",
+      "price": 25
     },
     {
-      "item": "minecraft:lantern",
-      "price": 20
+      "item": "amemaru:crystal_shard",
+      "price": 220
     }
   ],
   "buys": [
     {
-      "item": "minecraft:chain",
-      "ratio": 0.5
-    },
-    {
-      "item": "minecraft:iron_nugget",
-      "ratio": 0.5
-    },
-    {
-      "item": "minecraft:shears",
-      "ratio": 0.5
-    },
-    {
-      "item": "minecraft:lantern",
+      "item": "amemaru:repair_kit",
       "ratio": 0.5
     }
   ]

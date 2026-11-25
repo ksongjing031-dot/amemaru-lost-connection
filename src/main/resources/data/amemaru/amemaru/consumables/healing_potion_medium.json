@@ -1,0 +1,8 @@
+{
+  "_comment": "回復薬（中）（11月23日の直し。薬屋）。右クリックで、最大HPの50%がすぐに戻る。回復薬（小）と同じ group hp【補完】",
+  "restore": "hp",
+  "percent": 50,
+  "flat": 0,
+  "cooldown": 10,
+  "group": "hp"
+}
