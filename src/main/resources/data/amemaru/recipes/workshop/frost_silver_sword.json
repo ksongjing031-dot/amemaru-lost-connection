@@ -1,0 +1,27 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "weapon",
+  "mastery": 4,
+  "mastery_exp": 26,
+  "ingredients": [
+    {
+      "item": "amemaru:frost_silver",
+      "count": 5
+    },
+    {
+      "item": "amemaru:frost_fang",
+      "count": 2
+    },
+    {
+      "item": "amemaru:ice_crystal",
+      "count": 1
+    },
+    {
+      "item": "amemaru:crystal_filigree",
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "amemaru:frost_silver_sword"
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "slot": "weapon",
+  "generation": 2,
+  "series": "霜銀シリーズ（ローグ）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:rogue"
+  ],
+  "stats": {
+    "attack": 26,
+    "crit": 4
+  },
+  "durability": 550,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frost_silver",
+      "count": 1
+    },
+    {
+      "item": "amemaru:frost_fang",
+      "count": 1
+    }
+  ],
+  "description": "霜狼の牙の形に反った、二本ひと組の白銀の短剣。刃のふちに、薄い霜が浮く。"
+}

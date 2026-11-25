@@ -1,9 +1,12 @@
 package jp.amemaru.lostconnection.workshop;
 
+import jp.amemaru.lostconnection.AmemaruMod;
 import jp.amemaru.lostconnection.accessory.AccessoryItem;
 import jp.amemaru.lostconnection.equipment.GearItem;
 import jp.amemaru.lostconnection.equipment.GearSlot;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import javax.annotation.Nullable;
 
@@ -33,6 +36,23 @@ public enum WorkshopType {
 
     public String translationKey() {
         return "workshop.amemaru." + id;
+    }
+
+    /**
+     * 11月25日（第2章）：この工房で作る「別の生産職のための部品」（Phase 0-A 19章の三すくみ【提案】）。武器工房は防具に使う
+     * 補強金具、防具工房はアクセサリーに使う台座布、装飾工房は武器に使う結晶細工。
+     */
+    public ResourceLocation component() {
+        return switch (this) {
+            case WEAPON -> AmemaruMod.id("reinforcement_fitting");
+            case ARMOR -> AmemaruMod.id("pedestal_cloth");
+            case ACCESSORY -> AmemaruMod.id("crystal_filigree");
+        };
+    }
+
+    /** この工房のレシピで作れる品か：強化・修理できる品と、この工房の部品。 */
+    public boolean makes(ItemStack stack) {
+        return accepts(stack) || component().equals(ForgeRegistries.ITEMS.getKey(stack.getItem()));
     }
 
     /** この工房で強化・修理できる品か。 */

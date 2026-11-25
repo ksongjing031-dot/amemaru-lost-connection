@@ -1,11 +1,11 @@
 {
-  "_comment": "6階のボス、村長の残響オルド（Phase 0-A 9章の6階：村を守るつもりで、誰が仲間か分からなくなっている。戦いながら家々から記憶の結晶を3つ集めて渡すと、思い出して戦いをやめる＝撃破扱い）。memory：結晶を運ぶ人がオルドのそば range へ来ると受け取り、stagger 秒よろめく（その間 broken 倍のダメージ）。次の結晶は、よろめきの後、HPが second_at・third_at を切るか every 秒で出る。3つ受け取るまで、HPは floor より下がらない。技：sweep（前の扇）・icicle（線。凍え chill）・blizzard（まわりの円。第2段階から）・gaze（疑いの眼差し。見ている方の扇 angle。目との間にブロックがあれば無事。入ると freeze_seconds 秒凍りつく）・call（霜狼を count 匹、第3段階は count_late）。HPは2人のときの基準（ひとりでも2人ぶん）。数値は【補完】（4人で15分ほど）",
+  "_comment": "6階のボス、村長の残響オルド（Phase 0-A 9章の6階：村を守るつもりで、誰が仲間か分からなくなっている。戦いながら家々から記憶の結晶を3つ集めて渡すと、思い出して戦いをやめる＝撃破扱い）。memory：結晶を運ぶ人がオルドのそば range へ来ると受け取り、stagger 秒よろめく（その間 broken 倍のダメージ）。次の結晶は、よろめきの後、HPが second_at・third_at を切るか every 秒で出る。3つ受け取るまで、HPは floor より下がらない。技：sweep（前の扇）・icicle（線。凍え chill）・blizzard（まわりの円。第2段階から）・gaze（疑いの眼差し。見ている方の扇 angle。目との間にブロックがあれば無事。入ると freeze_seconds 秒凍りつく）・call（霜狼を count 匹、第3段階は count_late）。HPは2人のときの基準（ひとりでも2人ぶん）。数値は【補完】（tools/balance/estimate.py の目安で、2人で7分ほど）",
   "name": "村長の残響オルド",
   "floor": 6,
   "level": 32,
   "description": "凍った村の村長の、記憶だけが残った姿。あの日のまま、村を守ろうと立ち続けている。けれど、もう誰が村の者なのか分からない。近づく者すべてに、杖の灯を向ける。",
   "stats": {
-    "hp": 70000,
+    "hp": 85000,
     "attack": 196,
     "defense": 18,
     "move_speed": 0.16,

@@ -4,6 +4,7 @@ import com.mojang.authlib.GameProfile;
 import jp.amemaru.lostconnection.AmemaruMod;
 import jp.amemaru.lostconnection.accessory.AccessoryDef;
 import jp.amemaru.lostconnection.accessory.AccessoryDefs;
+import jp.amemaru.lostconnection.accessory.AccessoryItem;
 import jp.amemaru.lostconnection.combat.PlayerColdService;
 import jp.amemaru.lostconnection.core.registry.ModEntities;
 import jp.amemaru.lostconnection.core.registry.ModItems;
@@ -15,6 +16,7 @@ import jp.amemaru.lostconnection.enemy.village.StatueEcho;
 import jp.amemaru.lostconnection.equipment.EquipmentDef;
 import jp.amemaru.lostconnection.equipment.EquipmentDefs;
 import jp.amemaru.lostconnection.equipment.GearData;
+import jp.amemaru.lostconnection.equipment.GearItem;
 import jp.amemaru.lostconnection.equipment.GearService;
 import jp.amemaru.lostconnection.equipment.GearSlot;
 import jp.amemaru.lostconnection.equipment.Rarity;
@@ -32,6 +34,9 @@ import jp.amemaru.lostconnection.tower.FloorDefs;
 import jp.amemaru.lostconnection.tower.FloorFeatures;
 import jp.amemaru.lostconnection.tower.TowerService;
 import jp.amemaru.lostconnection.tower.village.VillageService;
+import jp.amemaru.lostconnection.workshop.ModRecipes;
+import jp.amemaru.lostconnection.workshop.WorkshopRecipe;
+import jp.amemaru.lostconnection.workshop.WorkshopType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.GameTest;
 import net.minecraft.gametest.framework.GameTestAssertException;
@@ -309,6 +314,56 @@ public final class VillageGameTests {
         AccessoryDef thorn = AccessoryDefs.get(ForgeRegistries.ITEMS.getValue(AmemaruMod.id("bear_frost_charm")));
         check(helper, thorn.effects().stream().anyMatch(e -> e.type() == SpecialEffect.Type.COLD_RESIST && Math.abs(e.percent() - 25.0) < EPSILON),
                 "霜熊の氷の棘が「寒さに強い 25%」ではありません");
+        helper.succeed();
+    }
+
+    // ---------------------------------------------------------------- 霜銀シリーズと、生産職どうしの部品
+
+    /**
+     * 第2章の装備（霜銀シリーズ）は、別の生産職が作る部品を1つ使う（武器は結晶細工・防具と盾は補強金具・アクセサリーは台座布）。
+     * 部品は、それぞれ別の工房で作る。
+     */
+    @GameTest(template = EMPTY)
+    public static void chapterTwoGearNeedsAnotherCrafter(GameTestHelper helper) {
+        List<WorkshopRecipe> recipes = helper.getLevel().getServer().getRecipeManager().getAllRecipesFor(ModRecipes.WORKSHOP_TYPE.get());
+        int gear = 0;
+        int accessories = 0;
+        for (WorkshopRecipe recipe : recipes) {
+            ItemStack result = recipe.result();
+            ResourceLocation need;
+            if (result.getItem() instanceof GearItem) {
+                EquipmentDef def = EquipmentDefs.server().get(result);
+                if (def == null || def.generation() < 2) {
+                    continue;
+                }
+                need = def.slot() == GearSlot.WEAPON ? WorkshopType.ACCESSORY.component() : WorkshopType.WEAPON.component();
+                gear++;
+            } else if (result.getItem() instanceof AccessoryItem) {
+                AccessoryDef def = AccessoryDefs.get(result);
+                if (def == null || def.generation() < 2) {
+                    continue;
+                }
+                need = WorkshopType.ARMOR.component();
+                accessories++;
+            } else {
+                continue;
+            }
+            check(helper, recipe.ingredients().stream().anyMatch(c -> c.item().equals(need)),
+                    recipe.getId() + " に、別の生産職の部品（" + need + "）がありません");
+        }
+        check(helper, gear == 32 && accessories == 5, "第2章の工房の品が、霜銀シリーズ32と6階のアクセサリー5ではありません：" + gear + "・" + accessories);
+        for (WorkshopType type : WorkshopType.values()) {
+            long made = recipes.stream().filter(r -> r.workshop() == type
+                    && type.component().equals(ForgeRegistries.ITEMS.getKey(r.result().getItem()))).count();
+            check(helper, made == 1 && ForgeRegistries.ITEMS.containsKey(type.component()),
+                    type.id() + " の工房で、部品（" + type.component() + "）を作るレシピが1つではありません");
+        }
+        EquipmentDef cuirass = EquipmentDefs.server().get(AmemaruMod.id("frost_silver_knight_cuirass"));
+        check(helper, cuirass != null && cuirass.generation() == 2 && cuirass.jobs().equals(List.of(AmemaruMod.id("knight"))),
+                "霜銀の胴鎧が、ナイトだけの第2世代の防具ではありません");
+        check(helper, ForgeRegistries.ITEMS.getValue(AmemaruMod.id("frost_silver_knight_cuirass"))
+                instanceof jp.amemaru.lostconnection.item.AmemaruArmorItem piece && piece.series().equals("frost_silver_knight"),
+                "霜銀の胴鎧が、霜銀シリーズ（ナイト）の防具として登録されていません");
         helper.succeed();
     }
 

@@ -1,6 +1,6 @@
 """強さの目安（11月24日の2回目のバランス調節：レベルの上限・スキルツリー・敵の硬さ。docs/phase8_balance.md）。
 
-  python3 tools/balance/estimate.py            # 1〜5階の目安の表
+  python3 tools/balance/estimate.py            # 1〜6階の目安の表
   python3 tools/balance/estimate.py --targets  # 目標の幅から外れたものだけ
 
 敵・装備・成長・スキルツリーの定義（JSON）から、階ごとのおすすめのレベルの真ん中の「ふつうの装備の人」を作り、
@@ -41,14 +41,20 @@ HEAVY = ["ancient_stone_helm", "ancient_stone_cuirass", "ancient_stone_greaves",
 ROBE = ["ancient_stone_hood", "ancient_stone_robe", "ancient_stone_legwear", "ancient_stone_boots"]
 RYUMON_KNIGHT = ["ryumon_knight_helm", "ryumon_knight_cuirass", "ryumon_knight_greaves", "ryumon_knight_sabatons"]
 RYUMON_WIZARD = ["ryumon_wizard_hat", "ryumon_wizard_robe", "ryumon_wizard_legwear", "ryumon_wizard_shoes"]
+# 11月25日：第2章の霜銀シリーズ（6階から）
+FROST_KNIGHT = ["frost_silver_knight_helm", "frost_silver_knight_cuirass", "frost_silver_knight_greaves", "frost_silver_knight_sabatons"]
+FROST_WIZARD = ["frost_silver_wizard_hat", "frost_silver_wizard_robe", "frost_silver_wizard_legwear", "frost_silver_wizard_shoes"]
 GEAR = {
     "knight": {"early": ["apprentice_sword", "apprentice_shield"], "mid": HEAVY + ["ancient_stone_sword", "ancient_stone_shield"],
-               "late": RYUMON_KNIGHT + ["ryumon_sword", "ryumon_shield"]},
-    "wizard": {"early": ["apprentice_staff"], "mid": ROBE + ["ancient_stone_staff"], "late": RYUMON_WIZARD + ["ryumon_staff"]},
+               "late": RYUMON_KNIGHT + ["ryumon_sword", "ryumon_shield"],
+               "frost": FROST_KNIGHT + ["frost_silver_sword", "frost_silver_shield"]},
+    "wizard": {"early": ["apprentice_staff"], "mid": ROBE + ["ancient_stone_staff"], "late": RYUMON_WIZARD + ["ryumon_staff"],
+               "frost": FROST_WIZARD + ["frost_silver_staff"]},
 }
+ERA_NAMES = {"early": "見習い装備", "mid": "古代石", "late": "流紋", "frost": "霜銀"}
 # 階ごとに見る「おすすめのレベルの真ん中」と、そのころの装備と強化の段（+r は装備のステータス +4%×r）
 REFERENCE = {1: [(4, "early", 0)], 2: [(9, "mid", 0)], 3: [(12, "mid", 1), (15, "late", 0)], 4: [(18, "late", 2)],
-             5: [(22, "late", 4)]}
+             5: [(22, "late", 4)], 6: [(26, "frost", 0), (28, "frost", 2)]}
 
 # スキルツリー（tools/datagen/build_skill_trees.py の STAT_VALUES と同じ）：ステータスの節の値（内側・中ほど・外側）
 NODE = {"hp": (20, 24, 28), "mp": (10, 12, 14), "attack": (2, 2, 3), "magic": (2, 2, 3), "defense": (2, 2, 3),
@@ -193,7 +199,7 @@ def report(floor, level, era, refine, only_bad):
         hit * mitigation(knight["defense"]) / knight["hp"] * 100, hit * power * mitigation(knight["defense"]) / knight["hp"] * 100)
     if lines or boss_lines or not only_bad:
         print("== %d階（Lv%d・%s+%d。ウィザード HP%d 魔力%d 防御%d・ナイト HP%d 攻撃%d 防御%d、2人の1秒あたり %d）" % (
-            floor, level, {"early": "見習い装備", "mid": "古代石", "late": "流紋"}[era], refine, wizard["hp"], wizard["magic"],
+            floor, level, ERA_NAMES[era], refine, wizard["hp"], wizard["magic"],
             wizard["defense"], knight["hp"], knight["attack"], knight["defense"], raw))
         print("| 敵 | HP | 攻撃 | 2人で倒す秒 | 1回でウィザードの | ナイトの | 目標から外れる |")
         print("| --- | --- | --- | --- | --- | --- | --- |")

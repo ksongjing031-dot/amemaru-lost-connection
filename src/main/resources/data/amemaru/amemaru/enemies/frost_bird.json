@@ -6,7 +6,7 @@
   "description": "白と氷青の羽の大きな鳥。羽ばたくたびに雪が舞い、群れが空を横切ると、村に吹雪が起こる。",
   "stats": {
     "hp": 1100,
-    "attack": 150,
+    "attack": 175,
     "defense": 8,
     "move_speed": 0.22,
     "follow_range": 24,

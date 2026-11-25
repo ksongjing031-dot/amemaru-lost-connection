@@ -1,0 +1,24 @@
+{
+  "slot": "feet",
+  "generation": 2,
+  "series": "霜銀シリーズ（ローグ）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:rogue"
+  ],
+  "stats": {
+    "defense": 3,
+    "hp": 12,
+    "speed": 3
+  },
+  "durability": 310,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 1
+    }
+  ],
+  "description": "底に凍て毛皮を張った、雪の上でも音のしない足袋。"
+}

@@ -1,0 +1,24 @@
+{
+  "slot": "legs",
+  "generation": 2,
+  "series": "霜銀シリーズ（アーチャー）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:archer"
+  ],
+  "stats": {
+    "defense": 6,
+    "hp": 26,
+    "speed": 1
+  },
+  "durability": 310,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 1
+    }
+  ],
+  "description": "腿に毛皮の当てをつけた、動きやすい脚絆。"
+}

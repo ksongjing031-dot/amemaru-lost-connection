@@ -1,0 +1,29 @@
+{
+  "slot": "chest",
+  "generation": 2,
+  "series": "霜銀シリーズ（ローグ）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:rogue"
+  ],
+  "stats": {
+    "defense": 6,
+    "hp": 32,
+    "speed": 1,
+    "crit": 2
+  },
+  "durability": 350,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 2
+    },
+    {
+      "item": "amemaru:frost_fang",
+      "count": 1
+    }
+  ],
+  "description": "雪に溶けこむよう、灰と白にまだらに染めた軽い装束。たすきに霜銀の短剣差し。"
+}

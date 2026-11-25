@@ -1,0 +1,24 @@
+{
+  "slot": "feet",
+  "generation": 2,
+  "series": "霜銀シリーズ（ヒーラー）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:healer"
+  ],
+  "stats": {
+    "defense": 3,
+    "mp": 15,
+    "speed": 1
+  },
+  "durability": 350,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 1
+    }
+  ],
+  "description": "銀の留め金の、毛皮の白い靴。"
+}

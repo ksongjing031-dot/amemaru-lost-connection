@@ -1,0 +1,27 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "armor",
+  "mastery": 5,
+  "mastery_exp": 30,
+  "ingredients": [
+    {
+      "item": "amemaru:frost_silver",
+      "count": 6
+    },
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 2
+    },
+    {
+      "item": "amemaru:ice_crystal",
+      "count": 1
+    },
+    {
+      "item": "amemaru:reinforcement_fitting",
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "amemaru:frost_silver_shield"
+  }
+}

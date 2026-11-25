@@ -1,0 +1,23 @@
+{
+  "slot": "feet",
+  "generation": 2,
+  "series": "霜銀シリーズ（ナイト）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "defense": 4,
+    "hp": 17
+  },
+  "durability": 560,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frost_silver",
+      "count": 1
+    }
+  ],
+  "description": "内側に凍て毛皮を張った、雪に沈まない鉄靴。"
+}

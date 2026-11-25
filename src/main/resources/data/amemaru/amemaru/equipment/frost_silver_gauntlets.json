@@ -1,0 +1,27 @@
+{
+  "slot": "weapon",
+  "generation": 2,
+  "series": "霜銀シリーズ（モンク）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:monk"
+  ],
+  "stats": {
+    "attack": 26,
+    "hp": 44
+  },
+  "durability": 550,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frost_silver",
+      "count": 1
+    },
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 1
+    }
+  ],
+  "description": "拳に霜銀の板を重ね、手首を凍て毛皮で包んだ籠手。打ち込むと、雪煙が上がる。"
+}

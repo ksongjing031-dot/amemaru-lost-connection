@@ -119,8 +119,9 @@ public final class EquipmentGameTests {
         // Phase 6 その2 で、4職業の見習い・古代石の武器（8）と、古代石シリーズ（軽装）の防具（4）が増えた
         // Phase 8 その1 で、2階のボスのレア「古樹の枝杖」が増えた
         // Phase 8 その2 で、3階のボスのレア「水門の鍵盾」と、3階からの職業ごとの装備「流紋シリーズ」（6職業の防具24・武器7・盾1）が増えた
-        // 11月25日：5階の守護者シリーズを防具一式に（6職業の頭・脚・足の18）と、6階のボスのレア「村長の毛皮」一式4で100
-        check(helper, gear.equipment().size() == 100, "装備の定義が100ではありません：" + gear.equipment().size());
+        // 11月25日：5階の守護者シリーズを防具一式に（6職業の頭・脚・足の18）と、6階のボスのレア「村長の毛皮」一式4、
+        // 第2章の職業ごとの装備「霜銀シリーズ」（6職業の防具24・武器7・盾1）で132
+        check(helper, gear.equipment().size() == 132, "装備の定義が132ではありません：" + gear.equipment().size());
         for (ItemManifest.Category category : new ItemManifest.Category[]{
                 ItemManifest.Category.WEAPON, ItemManifest.Category.SHIELD, ItemManifest.Category.ARMOR}) {
             for (RegistryObject<Item> item : ModItems.MANIFEST.category(category)) {
@@ -174,10 +175,10 @@ public final class EquipmentGameTests {
         // Phase 6 その2 で、古代石の鈴杖・弓・双短剣・籠手と、古代石シリーズ（軽装）の4つ（計8）が増えた
         // Phase 8 その2 で、流紋シリーズの32が増えた
         // 11月24日：2〜5階のアクセサリーの20が増えた
-        // 11月25日：6階のアクセサリーの5が増えた
-        check(helper, recipes.size() == 82, "工房のレシピが82ではありません：" + recipes.size());
+        // 11月25日：6階のアクセサリーの5と、霜銀シリーズの32、生産職どうしの部品3（補強金具・台座布・結晶細工）が増えた
+        check(helper, recipes.size() == 117, "工房のレシピが117ではありません：" + recipes.size());
         for (WorkshopRecipe recipe : recipes) {
-            check(helper, recipe.workshop().accepts(recipe.result()), recipe.getId() + " の品が、その工房で扱う品ではありません");
+            check(helper, recipe.workshop().makes(recipe.result()), recipe.getId() + " の品が、その工房で作る品ではありません");
             check(helper, !recipe.ingredients().isEmpty(), recipe.getId() + " に素材がありません");
             for (EquipmentDef.Cost cost : recipe.ingredients()) {
                 check(helper, ForgeRegistries.ITEMS.containsKey(cost.item()) && cost.count() > 0,

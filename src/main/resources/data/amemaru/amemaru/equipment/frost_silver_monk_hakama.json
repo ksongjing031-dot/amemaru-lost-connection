@@ -1,0 +1,23 @@
+{
+  "slot": "legs",
+  "generation": 2,
+  "series": "霜銀シリーズ（モンク）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:monk"
+  ],
+  "stats": {
+    "defense": 6,
+    "hp": 32
+  },
+  "durability": 330,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 1
+    }
+  ],
+  "description": "すそを毛皮の脚絆で絞った、藍の袴。"
+}

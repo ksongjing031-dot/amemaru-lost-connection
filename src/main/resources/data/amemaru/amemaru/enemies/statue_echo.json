@@ -6,7 +6,7 @@
   "description": "凍った村人の氷像に、残った記憶がしがみついたもの。顔は白く抜け落ちている。近づく者を、村を荒らす余所者だと思い込んで動き出す。",
   "stats": {
     "hp": 2700,
-    "attack": 178,
+    "attack": 190,
     "defense": 28,
     "move_speed": 0.18,
     "follow_range": 18,

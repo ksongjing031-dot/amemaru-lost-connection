@@ -1,0 +1,24 @@
+{
+  "slot": "head",
+  "generation": 2,
+  "series": "霜銀シリーズ（ヒーラー）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:healer"
+  ],
+  "stats": {
+    "defense": 4,
+    "mp": 29,
+    "heal_power": 1
+  },
+  "durability": 350,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 1
+    }
+  ],
+  "description": "白い頭巾。額の銀の輪に、氷晶の小さな鈴がひとつ下がる。"
+}

@@ -1,0 +1,27 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "armor",
+  "mastery": 5,
+  "mastery_exp": 24,
+  "ingredients": [
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 4
+    },
+    {
+      "item": "amemaru:ice_feather",
+      "count": 2
+    },
+    {
+      "item": "amemaru:frost_silver",
+      "count": 1
+    },
+    {
+      "item": "amemaru:reinforcement_fitting",
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "amemaru:frost_silver_wizard_legwear"
+  }
+}

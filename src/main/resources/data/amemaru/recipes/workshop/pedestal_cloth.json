@@ -1,0 +1,20 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "armor",
+  "mastery": 3,
+  "mastery_exp": 10,
+  "ingredients": [
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 1
+    },
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 2
+    }
+  ],
+  "result": {
+    "item": "amemaru:pedestal_cloth",
+    "count": 2
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "slot": "head",
+  "generation": 2,
+  "series": "霜銀シリーズ（モンク）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:monk"
+  ],
+  "stats": {
+    "defense": 3,
+    "hp": 22,
+    "crit": 2
+  },
+  "durability": 330,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 1
+    }
+  ],
+  "description": "額に霜銀の小さな板を縫いつけた鉢巻。結んだ端が、うしろに垂れる。"
+}

@@ -166,20 +166,22 @@ ACCESSORIES = [
     # 6階「凍結した村」（第2章のはじめ。Phase 0-A 21章の第2章の一覧から：霜銀の闘環・智環・氷晶の首飾り・雪灯のお守り。
     # 腕輪は、6階の素材の「凍て毛皮の腕輪」にした【補完】。一覧の「凍て鶴の腕輪」は、凍て鶴の出る8階で作る）。素材は
     # tools/datagen/build_floor6_data.py（霜銀・氷晶・凍て毛皮・霜狼の牙・凍て鳥の羽根）
+    # 第2章からのアクセサリーは、防具職人が織る「台座布」を1つ使う（0-A 19章の三すくみ【提案】。
+    # 部品は tools/datagen/build_gear_frost_silver.py）
     ("frost_silver_battle_ring", "霜銀の闘環", "ring", ["attack"], 6, "uncommon", False,
-     ing(("frost_silver", 3), ("frost_fang", 2), ("ice_crystal", 1)), 4, 22, [],
+     ing(("frost_silver", 3), ("frost_fang", 2), ("ice_crystal", 1), ("pedestal_cloth", 1)), 4, 22, [],
      "霜銀を打ち延ばした白い指輪。霜狼の牙を削った飾りが、拳の上で冷たく光る。"),
     ("frost_silver_wisdom_ring", "霜銀の智環", "ring", ["magic"], 6, "uncommon", False,
-     ing(("frost_silver", 3), ("ice_feather", 2), ("ice_crystal", 1)), 4, 22, [],
+     ing(("frost_silver", 3), ("ice_feather", 2), ("ice_crystal", 1), ("pedestal_cloth", 1)), 4, 22, [],
      "霜銀の輪に、溶けない氷晶を一粒はめた指輪。のぞくと、凍った誰かの声が聞こえる気がする。"),
     ("ice_crystal_necklace", "氷晶の首飾り", "necklace", None, 6, "uncommon", True,
-     ing(("ice_crystal", 3), ("frozen_fur", 1), ("frost_silver", 1)), 4, 22, [],
+     ing(("ice_crystal", 3), ("frozen_fur", 1), ("frost_silver", 1), ("pedestal_cloth", 1)), 4, 22, [],
      "凍て毛皮の紐に、霜銀の留め金で氷晶の柱を下げた首飾り。どんな火のそばでも、決して溶けない。"),
     ("frozen_fur_bracelet", "凍て毛皮の腕輪", "bracelet", None, 6, "uncommon", True,
-     ing(("frozen_fur", 4), ("frost_silver", 2)), 4, 22, [],
+     ing(("frozen_fur", 4), ("frost_silver", 2), ("pedestal_cloth", 1)), 4, 22, [],
      "霜の獣の毛皮を手首に巻き、霜銀の留め具でとめた腕輪。雪の村の猟師たちが、冬の初めに作った。"),
     ("snowlight_charm", "雪灯のお守り", "charm", None, 6, "uncommon", True,
-     ing(("ice_crystal", 2), ("ice_feather", 1), ("echo_fragment", 1)), 4, 22, [],
+     ing(("ice_crystal", 2), ("ice_feather", 1), ("echo_fragment", 1), ("pedestal_cloth", 1)), 4, 22, [],
      "小さな霜銀の灯籠に、淡く光る氷晶を入れたお守り。凍った村の家々は、冬の夜にこの灯を戸口に下げた。"),
     ("white_fang_charm", "群れ長の白牙", "charm", None, 6, "rare", False, None, 0, 0,
      [{"type": "extra_damage", "chance": 12, "percent": 20}],

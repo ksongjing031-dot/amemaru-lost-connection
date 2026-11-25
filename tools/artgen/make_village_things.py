@@ -312,8 +312,18 @@ def fur_series(base):
     with open(os.path.join(base, "geo/armor/mayor_fur.geo.json"), "w", encoding="utf-8") as fp:
         json.dump(geo, fp, ensure_ascii=False, indent=1)
         fp.write("\n")
-    fur_recolor(Image.open(os.path.join(base, "textures/armor/ancient_stone_robe.png"))).save(
-        os.path.join(base, "textures/armor/mayor_fur.png"))
+    painted = fur_recolor(Image.open(os.path.join(base, "textures/armor/ancient_stone_robe.png")))
+    painted.save(os.path.join(base, "textures/armor/mayor_fur.png"))
+    # エピックの「光る部分」：金の縁取りとボタンだけ（OptionalGlowLayer が <絵>_glowmask.png を重ねる）
+    glow = painted.copy()
+    gp = glow.load()
+    golds = set(GOLD)
+    for y in range(glow.size[1]):
+        for x in range(glow.size[0]):
+            r, g, b, a = gp[x, y]
+            if (r, g, b) not in golds:
+                gp[x, y] = (0, 0, 0, 0)
+    glow.save(os.path.join(base, "textures/armor/mayor_fur_glowmask.png"))
     for src, gid in FUR_PIECES.items():
         fur_recolor(Image.open(os.path.join(base, "textures/item", src + ".png"))).save(os.path.join(base, "textures/item", gid + ".png"))
         with open(os.path.join(base, "models/item", src + ".json"), encoding="utf-8") as fp:
@@ -325,8 +335,39 @@ def fur_series(base):
 MATERIAL_MODELS = ["frost_silver", "ice_crystal", "frozen_fur", "frost_fang", "ice_feather"]
 
 
+def fur_sheet(repo):
+    """docs/gear/mayor_fur_sheet.png：古代石の法衣の形（make_gear_ancient_armor.py）に、村長の毛皮の絵を着せて撮る。"""
+    import numpy as np
+    import make_gear_ancient_armor as AA
+    from geomodel import mannequin, paint_mannequin
+    from make_floor_accessory_art import disk_icon
+    from setsheet import make_set_sheet
+    base = os.path.join(repo, "src/main/resources/assets/amemaru")
+    g = AA.build_robe()
+    AA.paint(g)
+    tex = np.asarray(Image.open(os.path.join(base, "textures/armor/mayor_fur.png")).convert("RGBA"))
+    man = mannequin()
+    mtex = man.paint(paint_mannequin, frames=1)[0]
+    full = [(man, mtex), (g, tex)]
+    pieces = (("帽", "head", "mayor_fur_hat"), ("外套", "chest", "mayor_fur_coat"), ("脚衣", "legs", "mayor_fur_leggings"),
+              ("長靴", "feet", "mayor_fur_boots"))
+    icons = [(label, disk_icon(repo, item)) for label, _, item in pieces]
+    piece_views = [(label, -145, 14, [(man, mtex), (AA.subset(g, AA.PIECE_BONES[slot]), tex)]) for label, slot, _ in pieces]
+    items = [
+        {"label": "フルセット", "rarity": "エピック・Lv26・全職業", "pairs": full, "views": [(lab, y, p) for y, p, lab in AA.VIEWS],
+         "icons": icons, "note": "村長オルドの冬の装い。\n紺の外套に白い毛皮の縁、\n金の縁取り。一式で寒さに強い。"},
+        {"label": "部位ごと", "rarity": "着た場所だけ表示", "note": "", "pairs": full, "views": piece_views, "icons": icons,
+         "icon_cell": 40},
+    ]
+    make_set_sheet(os.path.join(repo, "docs/gear", "mayor_fur_sheet.png"), "村長の毛皮（6階のボスのレア）",
+                   "エピック ／ 古代石の法衣の形を、紺と白い毛皮の色に塗り直したもの【補完】／ 128×64の絵", items, row_h=420)
+
+
 def main():
     repo = sys.argv[1] if len(sys.argv) > 1 else "."
+    if "--fur-sheet" in sys.argv:
+        fur_sheet(repo)
+        return
     out = sys.argv[2] if len(sys.argv) > 2 else None
     base = os.path.join(repo, "src/main/resources/assets/amemaru")
     vdir = os.path.join(base, "textures/entity/village")

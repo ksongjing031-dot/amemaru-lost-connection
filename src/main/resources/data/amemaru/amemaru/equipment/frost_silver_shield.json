@@ -1,0 +1,27 @@
+{
+  "slot": "offhand",
+  "generation": 2,
+  "series": "霜銀シリーズ（ナイト）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "defense": 10,
+    "hp": 36
+  },
+  "durability": 640,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frost_silver",
+      "count": 2
+    },
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 1
+    }
+  ],
+  "description": "霜銀の板を丸く打ち出した盾。表に、六つの枝をもつ雪の結晶の紋。"
+}

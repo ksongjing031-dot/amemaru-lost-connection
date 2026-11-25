@@ -7,7 +7,7 @@
   "description": "白い牙を持つ、ひときわ大きな霜狼。凍った川のほとりで群れを率いる。遠吠えひとつで、林じゅうの霜狼が集まってくる。",
   "stats": {
     "hp": 14800,
-    "attack": 190,
+    "attack": 200,
     "defense": 18,
     "move_speed": 0.28,
     "follow_range": 28,

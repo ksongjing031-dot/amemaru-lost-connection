@@ -444,6 +444,13 @@ class Validator:
         for job, items in sorted(weapon_tags.missing().items()):
             self.problems.append(f"tags/items/weapons/{job}.json：{', '.join(items)} がありません（装備の定義では {job} の武器。"
                                  f"python3 tools/datagen/weapon_tags.py で足せます）")
+        # 会話の選択肢は、1つの場面に4つまで（DialogueDef の決まり。11月25日：セレナの「記憶の相談所」で5つにしてしまった）
+        for path in sorted((DATA / "dialogues").rglob("*.json")):
+            dialogue = json.loads(path.read_text(encoding="utf-8"))
+            for node_id, node in dialogue.get("nodes", {}).items():
+                if len(node.get("choices", [])) > 4:
+                    self.problems.append(f"dialogues/{path.relative_to(DATA / 'dialogues')}：場面「{node_id}」の選択肢が"
+                                         f"{len(node['choices'])}つあります（4つまで）")
         for warning in self.warnings:
             print("注意：" + warning)
         for problem in self.problems:

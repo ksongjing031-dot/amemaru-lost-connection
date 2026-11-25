@@ -6,7 +6,7 @@
   "description": "白く凍った毛並みの狼。群れで村の通りをさまよい、吐く息で獲物の足を凍えさせる。足あとには、溶けない霜が残る。",
   "stats": {
     "hp": 1500,
-    "attack": 165,
+    "attack": 185,
     "defense": 14,
     "move_speed": 0.27,
     "follow_range": 22,

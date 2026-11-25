@@ -1,0 +1,24 @@
+{
+  "slot": "head",
+  "generation": 2,
+  "series": "霜銀シリーズ（アーチャー）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:archer"
+  ],
+  "stats": {
+    "defense": 3,
+    "hp": 17,
+    "crit": 3
+  },
+  "durability": 310,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:ice_feather",
+      "count": 1
+    }
+  ],
+  "description": "毛皮の帽子に、凍て鳥の氷青の長い羽根を立てたもの。"
+}
