@@ -736,7 +736,7 @@ def shrine(f):
     statue(f, sx, 9, sz, "singer", "sing", 270.0, memory="singer")
     f.memories.append(("singer", "最後の歌い手", (sx, 9, sz)))
     hx, hz = x1 - 5, z0 + 12
-    f.put(hx, 9, hz, block("amemaru:village_hearth", facing="west"), thing(0, "shrine_brazier"))
+    f.put(hx, 9, hz, block("amemaru:village_hearth", facing="west"), thing(0, "hearth:shrine_brazier"))
     f.hearths.append(("shrine_brazier", "祠の灯籠", (hx, 9, hz)))
     sign(f, hx, 9, hz + 2, 8, ["祠の灯籠", "", "右クリックで", "熱の結晶をもらう"])
     # 北の封印（湖底の道へ）
