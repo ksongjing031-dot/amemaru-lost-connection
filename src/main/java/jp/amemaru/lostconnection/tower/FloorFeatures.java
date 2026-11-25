@@ -29,16 +29,41 @@ import java.util.List;
  *       歴史が一枚の絵になる」）。{@code songs}：音の順番の仕掛け（同じ表の「音の順番」）。{@code relics}：物語の品を拾う所
  *       （4階の結晶騎士団の遺品）。{@code boss_marks}：ボスが使う場所の組（4階の音の床・5階の結び台など。名前 → 場所の並び）。
  *       {@code abyss_y}：奈落（5階。階の中のこの高さより下へ落ちた人は、中継の灯か入口へ戻される）</li>
+ *   <li>{@code hearths}・{@code memory_statues}：6階「凍結した村」の熱の炉（熱の結晶をもらう所）と記憶の氷像（熱の結晶で溶かすと、
+ *       その日の村の短い場面 {@code event} が流れる。Phase 0-A 9章の6階「記憶の解凍」。11月25日）。封印の条件 {@code statues}：
+ *       記憶の氷像がすべて溶けた（みんなで同じ。その日のうち）。{@code environment} の {@code sky}（{@code aurora}：オーロラの空）・
+ *       {@code weather}（{@code snow}：雪が降る）</li>
  * </ul>
  */
 public record FloorFeatures(@Nullable Environment environment, List<LostWoods> lostWoods, List<Waypoint> waypoints,
                             @Nullable BlockPos travelStone, String sealRequires, List<StoryZone> storyZones,
                             List<Floodgate> floodgates, List<WaterSection> waterSections, List<Mural> murals, List<Song> songs,
-                            List<Relic> relics, java.util.Map<String, List<BlockPos>> bossMarks, int abyssY) {
+                            List<Relic> relics, java.util.Map<String, List<BlockPos>> bossMarks, int abyssY,
+                            List<Hearth> hearths, List<MemoryStatue> memoryStatues) {
     /** 奈落のない階の {@link #abyssY}。 */
     public static final int NO_ABYSS = Integer.MIN_VALUE;
     public static final FloorFeatures NONE = new FloorFeatures(null, List.of(), List.of(), null, "pillars", List.of(), List.of(),
-            List.of(), List.of(), List.of(), List.of(), java.util.Map.<String, List<BlockPos>>of(), NO_ABYSS);
+            List.of(), List.of(), List.of(), List.of(), java.util.Map.<String, List<BlockPos>>of(), NO_ABYSS, List.of(), List.of());
+    /** 11月25日（6階）：記憶の氷像がすべて溶けた（みんなで同じ。その日のうち）。 */
+    public static final String SEAL_STATUES = "statues";
+
+    /** 熱の炉（6階。右クリックで熱の結晶をもらう）。 */
+    public record Hearth(String id, String name, BlockPos pos) {
+    }
+
+    /** 記憶の氷像（6階。熱の結晶で溶かすと、{@code event} のストーリーイベントが流れる）。 */
+    public record MemoryStatue(String id, String name, BlockPos pos, net.minecraft.resources.ResourceLocation event) {
+    }
+
+    @Nullable
+    public MemoryStatue memoryStatue(String id) {
+        for (MemoryStatue statue : memoryStatues) {
+            if (statue.id().equals(id)) {
+                return statue;
+            }
+        }
+        return null;
+    }
     /** 11月24日（4階）：その階の壁画をすべて元に戻した（みんなで同じ。その日のうち）。 */
     public static final String SEAL_MURALS = "murals";
 
@@ -156,8 +181,8 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
         return null;
     }
 
-    /** 霧（クライアントの見え方）。色は 0xRRGGBB（−1 は空の色のまま）。 */
-    public record Environment(float fogStart, float fogEnd, int fogColor) {
+    /** 霧（クライアントの見え方）。色は 0xRRGGBB（−1 は空の色のまま）。{@code sky}・{@code weather} は 6階から（なければ ""）。 */
+    public record Environment(float fogStart, float fogEnd, int fogColor, String sky, String weather) {
     }
 
     /** 迷いの森の出口。{@code box} に出たとき、正しい出口でなく、または区画がまだつながっていなければ、{@code entry} へ戻される。 */
@@ -233,7 +258,15 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
                     throw new DefinitionException("「environment.fog_color」は #RRGGBB で書いてください");
                 }
             }
-            env = new Environment((float) Json.asNumber(fog.get(0), "fog"), (float) Json.asNumber(fog.get(1), "fog"), color);
+            String sky = Json.optionalString(e, "sky", "");
+            String weather = Json.optionalString(e, "weather", "");
+            if (!sky.isEmpty() && !sky.equals("aurora")) {
+                throw new DefinitionException("「environment.sky」は aurora にしてください（今は " + sky + "）");
+            }
+            if (!weather.isEmpty() && !weather.equals("snow")) {
+                throw new DefinitionException("「environment.weather」は snow にしてください（今は " + weather + "）");
+            }
+            env = new Environment((float) Json.asNumber(fog.get(0), "fog"), (float) Json.asNumber(fog.get(1), "fog"), color, sky, weather);
         }
         List<LostWoods> woods = new ArrayList<>();
         JsonArray woodsArray = Json.optionalArray(json, "lost_woods");
@@ -273,8 +306,8 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
         String seal = Json.optionalString(json, "seal_requires", SEAL_PILLARS);
         for (String token : seal.split("\\+")) {
             if (!token.equals(SEAL_PILLARS) && !token.equals(SEAL_LOST_WOODS) && !token.equals(SEAL_GUARDIANS)
-                    && !token.equals(SEAL_FLOODGATES) && !token.equals(SEAL_MURALS)) {
-                throw new DefinitionException("「seal_requires」は pillars・lost_woods・guardians・floodgates・murals を + でつないだものにしてください（今は "
+                    && !token.equals(SEAL_FLOODGATES) && !token.equals(SEAL_MURALS) && !token.equals(SEAL_STATUES)) {
+                throw new DefinitionException("「seal_requires」は pillars・lost_woods・guardians・floodgates・murals・statues を + でつないだものにしてください（今は "
                         + seal + "）");
             }
         }
@@ -401,8 +434,27 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
         }
         // 11月24日（5階）：奈落。階の中のこの高さ（y）より下へ落ちた人は、ともした中継の灯（なければ入口）へ戻される
         int abyss = json.has("abyss_y") ? Json.optionalInt(json, "abyss_y", 0, -64, 384) : NO_ABYSS;
+        // 11月25日（6階）：熱の炉と記憶の氷像
+        List<Hearth> hearths = new ArrayList<>();
+        for (JsonElement element : Json.optionalArray(json, "hearths")) {
+            JsonObject h = Json.asObject(element, "hearths");
+            hearths.add(new Hearth(Json.string(h, "id"), Json.optionalString(h, "name", ""), FloorDef.blockPos(Json.array(h, "pos"), "hearths.pos")));
+        }
+        List<MemoryStatue> statues = new ArrayList<>();
+        for (JsonElement element : Json.optionalArray(json, "memory_statues")) {
+            JsonObject m = Json.asObject(element, "memory_statues");
+            statues.add(new MemoryStatue(Json.string(m, "id"), Json.optionalString(m, "name", ""),
+                    FloorDef.blockPos(Json.array(m, "pos"), "memory_statues.pos"), Json.id(m, "event")));
+        }
+        if (requires(seal, SEAL_STATUES) && statues.isEmpty()) {
+            throw new DefinitionException("「seal_requires」が statues なのに、「memory_statues」がありません");
+        }
+        if (statues.size() > 16) {
+            throw new DefinitionException("「memory_statues」は16までにしてください");
+        }
         return new FloorFeatures(env, List.copyOf(woods), List.copyOf(waypoints), travel, seal, List.copyOf(zones), List.copyOf(gates),
-                List.copyOf(sections), List.copyOf(murals), List.copyOf(songs), List.copyOf(relics), java.util.Map.copyOf(marks), abyss);
+                List.copyOf(sections), List.copyOf(murals), List.copyOf(songs), List.copyOf(relics), java.util.Map.copyOf(marks), abyss,
+                List.copyOf(hearths), List.copyOf(statues));
     }
 
     @Nullable
