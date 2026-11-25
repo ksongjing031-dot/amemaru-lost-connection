@@ -80,6 +80,12 @@ public final class LinkComboTracker {
         }
     }
 
+    /** その敵に、まだつなげる起点の印があるか（千の刃の「連携中の敵には倍」）。 */
+    public static boolean hasOpenChain(LivingEntity target, long now) {
+        Chain chain = CHAINS.get(target.getUUID());
+        return chain != null && now - chain.lastTick <= windowTicks();
+    }
+
     /** 連携・支援の時間（tick）。 */
     public static long windowTicks() {
         return Math.round(ServerConfig.LINK_WINDOW_SECONDS.get() * 20.0);

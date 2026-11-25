@@ -1,0 +1,27 @@
+{
+  "job": "monk",
+  "school": "hard",
+  "row": 1,
+  "column": 2,
+  "type": "passive",
+  "name": "連撃の心得",
+  "description": "技と技の継ぎ目に、無駄がない。連撃1つごとのダメージの上がり方が大きくなる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "requires": [
+    {
+      "skill": "monk/jab_combo",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "chain_mastery",
+    "value": 2,
+    "value_per_rank": 1
+  }
+}

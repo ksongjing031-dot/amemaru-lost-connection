@@ -1,0 +1,50 @@
+{
+  "job": "rogue",
+  "school": "shadow",
+  "row": 2,
+  "column": 0,
+  "type": "active",
+  "name": "急所突き",
+  "description": "気配を残らず使い、急所をひと突きする。使った気配1つにつき威力が40%上がり、背後から突くと、さらに1.5倍（気配が1以上ないと使えない）。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 10,
+  "requires": [
+    {
+      "skill": "rogue/shadow_run",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 12,
+    "gauge": 1
+  },
+  "cooldown": 7,
+  "link": "finisher",
+  "delivery": {
+    "type": "target",
+    "range": 4.5
+  },
+  "effects": [
+    {
+      "type": "gauge_burst",
+      "per_gauge": 0.4
+    },
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 1.4,
+      "coefficient_per_rank": 0.2,
+      "backstab": 1.5
+    }
+  ],
+  "tags": [
+    "blade"
+  ],
+  "animation": "rogue_thrust",
+  "sound": "amemaru:skill.rogue.vital_strike"
+}

@@ -1,0 +1,27 @@
+{
+  "job": "rogue",
+  "school": "shadow",
+  "row": 4,
+  "column": 2,
+  "type": "passive",
+  "name": "影の歩法",
+  "description": "影から出た直後の一撃は、迷いがない。影走り・影討ち・影縫いの後3秒、次の一撃の会心が上がる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 20,
+  "requires": [
+    {
+      "skill": "rogue/fade",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "shadow_step",
+    "value": 20,
+    "value_per_rank": 10
+  }
+}

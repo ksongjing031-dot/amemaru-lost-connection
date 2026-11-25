@@ -1,0 +1,49 @@
+{
+  "job": "rogue",
+  "school": "shadow",
+  "row": 4,
+  "column": 0,
+  "type": "active",
+  "ultimate": true,
+  "name": "千の刃",
+  "description": "影結びの奥義。まわりの敵すべてに、千の刃のような連撃を浴びせる。仲間の起点の印がある敵には、倍の傷を刻む。気配が残っていれば、それも込める。",
+  "max_rank": 1,
+  "rank_costs": [
+    5
+  ],
+  "upper_rank": 1,
+  "min_level": 30,
+  "requires": [
+    {
+      "skill": "rogue/vital_strike",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 50
+  },
+  "cooldown": 90,
+  "delivery": {
+    "type": "around",
+    "radius": 6
+  },
+  "effects": [
+    {
+      "type": "gauge_burst",
+      "per_gauge": 0.2
+    },
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 0.6,
+      "hits": 10,
+      "hit_interval": 2,
+      "bonus_linked": 2.0
+    }
+  ],
+  "tags": [
+    "blade"
+  ],
+  "animation": "rogue_thousand",
+  "sound": "amemaru:skill.rogue.thousand_blades"
+}

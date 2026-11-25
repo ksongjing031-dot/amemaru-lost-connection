@@ -71,6 +71,17 @@ public final class JobDef {
     public record UpperDef(String name, String description, int minLevel, int minDay) {
     }
 
+    /**
+     * 連撃（モンク。Phase 6 その2【提案】）。違うスキルを {@code window} 秒以内に続けると連撃が1つずつ増え（{@code max} まで）、
+     * 1つにつきダメージ +{@code perStep}%。【極】の技は連撃を使い、1つにつき さらに +{@code finisherPerStep}%。
+     * 連撃が増えるたびに、専用ゲージが {@code gaugePerStep} たまる。
+     */
+    public record ComboDef(double window, int max, double perStep, double finisherPerStep, double gaugePerStep) {
+        public int windowTicks() {
+            return (int) Math.round(window * 20.0);
+        }
+    }
+
     /** 職業を選んだときに渡す見習い装備の1つ。 */
     public record KitEntry(ResourceLocation item, int count) {
     }
@@ -98,6 +109,9 @@ public final class JobDef {
     private final UpperDef upper;
     /** 生産職の工房（weapon・armor・accessory。戦闘職は空）。 */
     private String workshop = "";
+    /** 連撃（ない職業は null）。 */
+    @Nullable
+    private ComboDef combo;
 
     private JobDef(ResourceLocation id, Kind kind, int order, String name, String role, String description, int color,
                    ResourceLocation icon, @Nullable TagKey<Item> weapons, String weaponText, Set<String> tags,
@@ -213,6 +227,15 @@ public final class JobDef {
                 Collections.unmodifiableSet(tags), statPercent, statFlat, gauge, Collections.unmodifiableList(schools),
                 Collections.unmodifiableList(startingSkills), Collections.unmodifiableList(kit), upper);
         def.workshop = Json.optionalString(json, "workshop", "");
+        JsonObject comboJson = Json.optionalObject(json, "combo");
+        if (comboJson != null) {
+            def.combo = new ComboDef(
+                    Json.optionalDouble(comboJson, "window", 3.0, 0.5, 30.0),
+                    Json.optionalInt(comboJson, "max", 5, 1, 20),
+                    Json.optionalDouble(comboJson, "per_step", 6.0, 0.0, 100.0),
+                    Json.optionalDouble(comboJson, "finisher_per_step", 15.0, 0.0, 200.0),
+                    Json.optionalDouble(comboJson, "ki_per_step", 5.0, 0.0, 1000.0));
+        }
         return def;
     }
 
@@ -294,6 +317,12 @@ public final class JobDef {
     @Nullable
     public GaugeDef gauge() {
         return gauge;
+    }
+
+    /** 連撃（ない職業は null）。 */
+    @Nullable
+    public ComboDef combo() {
+        return combo;
     }
 
     public List<SchoolDef> schools() {

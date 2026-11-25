@@ -1,0 +1,59 @@
+{
+  "job": "archer",
+  "school": "rapid",
+  "row": 5,
+  "column": 0,
+  "type": "active",
+  "name": "矢嵐",
+  "description": "矢筒が空になるまで射続ける。3秒の間、まわり16ブロックでいちばん近い敵へ、次々に矢を放つ（その間は足が遅くなる）。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 25,
+  "requires": [
+    {
+      "skill": "archer/ricochet",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 30
+  },
+  "cooldown": 20,
+  "delivery": {
+    "type": "self"
+  },
+  "effects": [
+    {
+      "type": "zone",
+      "radius": 16,
+      "duration": 3,
+      "interval": 0.25,
+      "follow": true,
+      "mode": "nearest",
+      "effects": [
+        {
+          "type": "damage",
+          "stat": "attack",
+          "coefficient": 0.5,
+          "coefficient_per_rank": 0.08
+        }
+      ]
+    },
+    {
+      "type": "status",
+      "effect": "minecraft:slowness",
+      "duration": 3,
+      "level": 2,
+      "self": true
+    }
+  ],
+  "tags": [
+    "arrow"
+  ],
+  "animation": "archer_storm",
+  "sound": "amemaru:skill.archer.arrow_storm"
+}

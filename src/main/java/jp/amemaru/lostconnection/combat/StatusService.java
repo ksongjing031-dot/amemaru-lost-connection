@@ -273,6 +273,12 @@ public final class StatusService {
         add(entries, target, StatusFxS2C.Kind.BRAND, ModEffects.STAR_BRAND.get());
         add(entries, target, StatusFxS2C.Kind.ARMOR_BREAK, ModEffects.ARMOR_BREAK.get());
         add(entries, target, StatusFxS2C.Kind.STAGGER, ModEffects.STAGGER.get());
+        // Phase 6 その2：毒・標・縫い止め・戒め・煙（敵にも味方にもつく）
+        add(entries, target, StatusFxS2C.Kind.POISON, ModEffects.POISON.get());
+        add(entries, target, StatusFxS2C.Kind.MARK, ModEffects.HUNTER_MARK.get());
+        add(entries, target, StatusFxS2C.Kind.ROOTED, ModEffects.ROOTED.get());
+        add(entries, target, StatusFxS2C.Kind.ADMONISHED, ModEffects.ADMONISHED.get());
+        add(entries, target, StatusFxS2C.Kind.BLINDED, ModEffects.BLINDED.get());
         if (target instanceof ServerPlayer player) {
             PlayerData data = PlayerDataCapability.get(player).orElse(null);
             if (data != null) {
@@ -291,6 +297,23 @@ public final class StatusService {
             add(entries, target, StatusFxS2C.Kind.UNYIELDING, ModEffects.UNYIELDING.get());
             add(entries, target, StatusFxS2C.Kind.FORTRESS, ModEffects.FORTRESS.get());
             add(entries, target, StatusFxS2C.Kind.SHIELD_BOND, ModEffects.SHIELD_BOND.get());
+            // Phase 6 その2：味方にかかる強化
+            add(entries, target, StatusFxS2C.Kind.BLESSING, ModEffects.BLESSING.get());
+            add(entries, target, StatusFxS2C.Kind.PROTECTED, ModEffects.PROTECTED.get());
+            add(entries, target, StatusFxS2C.Kind.KEEN, ModEffects.KEEN.get());
+            add(entries, target, StatusFxS2C.Kind.SWIFT, ModEffects.SWIFT.get());
+            add(entries, target, StatusFxS2C.Kind.EMPOWERED, ModEffects.EMPOWERED.get());
+            add(entries, target, StatusFxS2C.Kind.AIMING, ModEffects.AIMING.get());
+            add(entries, target, StatusFxS2C.Kind.LIFE_THREAD, ModEffects.LIFE_THREAD.get());
+            add(entries, target, StatusFxS2C.Kind.GUARDIAN_BELL, ModEffects.GUARDIAN_BELL.get());
+            add(entries, target, StatusFxS2C.Kind.STAR_RING, ModEffects.STAR_RING.get());
+            add(entries, target, StatusFxS2C.Kind.SHADOW_CLONE, ModEffects.SHADOW_CLONE.get());
+            add(entries, target, StatusFxS2C.Kind.VENOM_COAT, ModEffects.VENOM_COAT.get());
+            add(entries, target, StatusFxS2C.Kind.BOW_DANCE, ModEffects.BOW_DANCE.get());
+            add(entries, target, StatusFxS2C.Kind.EVADE, ModEffects.EVADE.get());
+            add(entries, target, StatusFxS2C.Kind.ENDLESS_FLOW, ModEffects.ENDLESS_FLOW.get());
+            add(entries, target, StatusFxS2C.Kind.RENEWAL, ModEffects.RENEWAL.get());
+            add(entries, target, StatusFxS2C.Kind.HIDDEN, ModEffects.HIDDEN.get());
         }
         return new StatusFxS2C(target.getId(), event, entries);
     }

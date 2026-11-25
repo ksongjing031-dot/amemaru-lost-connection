@@ -1,0 +1,65 @@
+{
+  "job": "rogue",
+  "school": "venom",
+  "row": 4,
+  "column": 0,
+  "type": "active",
+  "ultimate": true,
+  "name": "毒華",
+  "description": "影結びの奥義。足もとに大きな毒の華を咲かせる。まわりの敵に毒を5つ重ね、華が咲いている間（8秒）、毒を重ね続ける。気配が残っていれば、毒が強くなる。",
+  "max_rank": 1,
+  "rank_costs": [
+    5
+  ],
+  "upper_rank": 1,
+  "min_level": 30,
+  "requires": [
+    {
+      "skill": "rogue/toxic_burst",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 50
+  },
+  "cooldown": 100,
+  "delivery": {
+    "type": "around",
+    "radius": 8
+  },
+  "effects": [
+    {
+      "type": "gauge_burst",
+      "per_gauge": 0.2
+    },
+    {
+      "type": "poison",
+      "stat": "attack",
+      "coefficient": 0.3,
+      "duration": 8,
+      "stacks": 5,
+      "max": 5
+    },
+    {
+      "type": "zone",
+      "radius": 8,
+      "duration": 8,
+      "interval": 1.0,
+      "effects": [
+        {
+          "type": "poison",
+          "stat": "attack",
+          "coefficient": 0.3,
+          "duration": 8,
+          "stacks": 1,
+          "max": 5
+        }
+      ]
+    }
+  ],
+  "tags": [
+    "poison"
+  ],
+  "animation": "rogue_bloom",
+  "sound": "amemaru:skill.rogue.poison_bloom"
+}

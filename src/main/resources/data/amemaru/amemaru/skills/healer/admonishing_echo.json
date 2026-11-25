@@ -1,0 +1,27 @@
+{
+  "job": "healer",
+  "school": "blessing",
+  "row": 3,
+  "column": 2,
+  "type": "passive",
+  "name": "戒めの響き",
+  "description": "鈴の音は、敵の心にも響く。自分のスキルでダメージを与えた敵は、4秒攻撃が弱まる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "healer/purity",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "weaken_echo",
+    "value": 5,
+    "value_per_rank": 3
+  }
+}

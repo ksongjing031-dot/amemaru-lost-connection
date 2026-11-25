@@ -1,0 +1,50 @@
+{
+  "job": "healer",
+  "school": "blessing",
+  "row": 4,
+  "column": 0,
+  "type": "active",
+  "name": "身代わりの鈴",
+  "description": "狙った仲間の頭の上に、小さな身代わりの鈴を浮かべる。鈴が浮いている間に倒れるほどの攻撃を受けると、鈴が代わりに砕け、仲間は倒れずにHPが戻る（1回だけ）。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 20,
+  "requires": [
+    {
+      "skill": "healer/admonishing_bell",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 30
+  },
+  "cooldown": 60,
+  "cooldown_per_rank": -10,
+  "link": "support",
+  "delivery": {
+    "type": "target",
+    "range": 20,
+    "affects": "allies",
+    "fallback_self": true,
+    "smart": true
+  },
+  "effects": [
+    {
+      "type": "buff",
+      "buff": "guardian",
+      "duration": 20,
+      "duration_per_rank": 5,
+      "value": 25,
+      "value_per_rank": 5
+    }
+  ],
+  "tags": [
+    "bell"
+  ],
+  "animation": "healer_raise",
+  "sound": "amemaru:skill.healer.guardian_bell"
+}

@@ -1,0 +1,44 @@
+{
+  "job": "healer",
+  "school": "blessing",
+  "row": 1,
+  "column": 0,
+  "type": "active",
+  "name": "加護の灯",
+  "description": "小さな加護の灯をともし、まわりの仲間に分ける。灯を受けた仲間（自分も）は、しばらく防御が上がる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "requires": [
+    {
+      "skill": "healer/purifying_chime",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 18
+  },
+  "cooldown": 20,
+  "link": "support",
+  "delivery": {
+    "type": "around",
+    "radius": 8,
+    "affects": "allies",
+    "include_self": true
+  },
+  "effects": [
+    {
+      "type": "buff",
+      "buff": "defense_up",
+      "duration": 15,
+      "value": 15,
+      "value_per_rank": 5
+    }
+  ],
+  "animation": "healer_lantern",
+  "sound": "amemaru:skill.healer.blessing_light"
+}

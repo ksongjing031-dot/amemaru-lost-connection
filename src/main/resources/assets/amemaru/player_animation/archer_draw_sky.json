@@ -1,0 +1,92 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "archer_draw_sky": {
+      "animation_length": 0.999,
+      "bones": {
+        "right_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -150,
+                -6,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.501": {
+              "vector": [
+                -152,
+                -6,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "1.001": {
+              "vector": [
+                -150,
+                -6,
+                0
+              ]
+            }
+          }
+        },
+        "left_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -140,
+                40,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.501": {
+              "vector": [
+                -142,
+                42,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "1.001": {
+              "vector": [
+                -140,
+                40,
+                0
+              ]
+            }
+          }
+        },
+        "body": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -10,
+                12,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.501": {
+              "vector": [
+                -11,
+                13,
+                0
+              ],
+              "easing": "easeInOutSine"
+            },
+            "1.001": {
+              "vector": [
+                -10,
+                12,
+                0
+              ]
+            }
+          }
+        }
+      },
+      "loop": true
+    }
+  }
+}

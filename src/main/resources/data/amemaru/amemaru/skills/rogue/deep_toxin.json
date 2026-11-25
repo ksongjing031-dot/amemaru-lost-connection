@@ -1,0 +1,27 @@
+{
+  "job": "rogue",
+  "school": "venom",
+  "row": 3,
+  "column": 2,
+  "type": "passive",
+  "name": "しみる毒",
+  "description": "毒が体の奥までしみこむ。毒の重なる上限が増える。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "rogue/corrosion",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "deep_toxin",
+    "value": 1,
+    "value_per_rank": 1
+  }
+}

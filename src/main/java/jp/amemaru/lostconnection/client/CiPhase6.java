@@ -18,6 +18,7 @@ import java.util.UUID;
 
 /**
  * 自動の確認の写真（Phase 6）の段取り：雑貨屋の画面を開く・回復薬を買う・取引所に見本の出品と露店を置く・取引所を開く・タブを変える。
+ * その2（職業とスキル）：スキルを使う・弓で射る・スキルツリーを開いてスキルを選ぶ・職業選択の画面を開く・正面から見る。
  */
 final class CiPhase6 {
     /** 雑貨屋（マルタ・ポム）の呼び鈴：商店街の北（街の真ん中から (-18, 0, 22)）の中の (27, 3, 6) */
@@ -29,7 +30,8 @@ final class CiPhase6 {
     /** その種類の行なら true（first のときだけ動かす）。 */
     static boolean action(Minecraft minecraft, String[] shot, boolean first) {
         String kind = shot[0];
-        if (!List.of("p6_shop", "p6_shop_buy", "p6_market_seed", "p6_market", "p6_market_tab").contains(kind)) {
+        if (!List.of("p6_shop", "p6_shop_buy", "p6_market_seed", "p6_market", "p6_market_tab", "p6_use", "p6_shoot", "p6_tree",
+                "p6_jobs", "p6_front").contains(kind)) {
             return false;
         }
         if (!first) {
@@ -48,6 +50,26 @@ final class CiPhase6 {
                     screen.ciTab(Integer.parseInt(shot[3]));
                 }
             }
+            case "p6_use" -> {
+                if (minecraft.player != null) {
+                    SkillInput.use(minecraft, minecraft.player, Integer.parseInt(shot[3]));
+                }
+            }
+            case "p6_shoot" -> jp.amemaru.lostconnection.network.ModNetwork.sendToServer(
+                    new jp.amemaru.lostconnection.network.c2s.BasicShotC2S());
+            case "p6_tree" -> {
+                jp.amemaru.lostconnection.client.screen.SkillTreeScreen tree = new jp.amemaru.lostconnection.client.screen.SkillTreeScreen();
+                minecraft.setScreen(tree);
+                for (jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C.SkillInfo skill
+                        : ClientDefinitions.get().skillsOf(ClientPlayerState.get().jobIndex())) {
+                    if (skill.id().getPath().equals(shot[3])) {
+                        tree.select(skill.index());
+                    }
+                }
+            }
+            case "p6_jobs" -> CiPhase3.onServer(minecraft, player ->
+                    jp.amemaru.lostconnection.job.JobService.openJobScreen(player, player.blockPosition()));
+            case "p6_front" -> minecraft.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_FRONT);
             default -> {
             }
         }

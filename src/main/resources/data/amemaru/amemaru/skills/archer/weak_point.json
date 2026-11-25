@@ -1,0 +1,27 @@
+{
+  "job": "archer",
+  "school": "sniping",
+  "row": 4,
+  "column": 2,
+  "type": "passive",
+  "name": "弱点看破",
+  "description": "動けない敵、標のある敵の急所が見える。標のある敵と、縫い止められた敵への会心ダメージが上がる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 20,
+  "requires": [
+    {
+      "skill": "archer/long_shot",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "weak_point",
+    "value": 15,
+    "value_per_rank": 5
+  }
+}

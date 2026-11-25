@@ -1,0 +1,67 @@
+{
+  "job": "healer",
+  "school": "blessing",
+  "row": 3,
+  "column": 1,
+  "type": "active",
+  "name": "鎮めの陣",
+  "description": "地面に鈴の紋の陣を描く。陣の中の敵は鈴の音に打たれて足が鈍り、陣の中の仲間は守られる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "healer/blessed_shield",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 26
+  },
+  "cooldown": 18,
+  "delivery": {
+    "type": "point",
+    "range": 18,
+    "radius": 4,
+    "radius_per_rank": 0.5
+  },
+  "effects": [
+    {
+      "type": "zone",
+      "radius": 4,
+      "radius_per_rank": 0.5,
+      "duration": 6,
+      "interval": 1.0,
+      "effects": [
+        {
+          "type": "damage",
+          "stat": "magic",
+          "coefficient": 0.5,
+          "coefficient_per_rank": 0.1
+        },
+        {
+          "type": "status",
+          "effect": "minecraft:slowness",
+          "duration": 1.2,
+          "level": 2
+        },
+        {
+          "type": "buff",
+          "buff": "ward",
+          "duration": 1.2,
+          "value": 10,
+          "to": "allies"
+        }
+      ]
+    }
+  ],
+  "tags": [
+    "bell"
+  ],
+  "animation": "healer_slam",
+  "sound": "amemaru:skill.healer.calming_circle"
+}

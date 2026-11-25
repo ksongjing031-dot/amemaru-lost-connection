@@ -1,0 +1,19 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "armor",
+  "mastery": 1,
+  "mastery_exp": 8,
+  "ingredients": [
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 3
+    },
+    {
+      "item": "amemaru:ancient_stone",
+      "count": 2
+    }
+  ],
+  "result": {
+    "item": "amemaru:ancient_stone_shoes"
+  }
+}

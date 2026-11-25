@@ -1,0 +1,53 @@
+{
+  "job": "healer",
+  "school": "healing",
+  "row": 4,
+  "column": 0,
+  "type": "active",
+  "ultimate": true,
+  "name": "大いなる呼び声",
+  "description": "鈴守の奥義。天に届くほど大きく鈴を鳴らし、まわりで倒れている仲間を全員起こし、仲間全員の傷を大きく癒す。",
+  "max_rank": 1,
+  "rank_costs": [
+    5
+  ],
+  "upper_rank": 1,
+  "min_level": 30,
+  "requires": [
+    {
+      "skill": "healer/call_back",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 80
+  },
+  "cooldown": 300,
+  "cast": 2.0,
+  "delivery": {
+    "type": "around",
+    "radius": 16,
+    "affects": "allies",
+    "include_self": true,
+    "include_downed": true
+  },
+  "effects": [
+    {
+      "type": "revive",
+      "hp": 50
+    },
+    {
+      "type": "heal",
+      "stat": "magic",
+      "coefficient": 3.0
+    }
+  ],
+  "tags": [
+    "heal",
+    "bell"
+  ],
+  "animation": "healer_great_call",
+  "cast_animation": "healer_great_call_cast",
+  "sound": "amemaru:skill.healer.great_call",
+  "cast_sound": "amemaru:skill.healer.great_call_cast"
+}

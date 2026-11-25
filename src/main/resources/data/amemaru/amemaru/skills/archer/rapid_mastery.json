@@ -1,0 +1,27 @@
+{
+  "job": "archer",
+  "school": "rapid",
+  "row": 2,
+  "column": 2,
+  "type": "passive",
+  "name": "速射の心得",
+  "description": "引いて、放つ。その動きが体に染みている。速射の流派のスキルのクールダウンが短くなる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 10,
+  "requires": [
+    {
+      "skill": "archer/nimble_archer",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "school_haste",
+    "value": 6,
+    "value_per_rank": 3
+  }
+}

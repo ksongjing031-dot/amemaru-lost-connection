@@ -1,0 +1,48 @@
+{
+  "job": "rogue",
+  "school": "venom",
+  "row": 0,
+  "column": 0,
+  "type": "active",
+  "name": "毒刃",
+  "description": "毒を塗った刃で斬りつける。斬られた敵は、しばらく毒で傷つき続ける（3つまで重なる）。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 1,
+  "cost": {
+    "mp": 8
+  },
+  "cooldown": 5,
+  "link": "starter",
+  "delivery": {
+    "type": "target",
+    "range": 4.5
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 0.8,
+      "coefficient_per_rank": 0.15
+    },
+    {
+      "type": "poison",
+      "stat": "attack",
+      "coefficient": 0.25,
+      "coefficient_per_rank": 0.05,
+      "duration": 6,
+      "stacks": 1,
+      "max": 3
+    }
+  ],
+  "tags": [
+    "blade",
+    "poison"
+  ],
+  "animation": "rogue_slash",
+  "sound": "amemaru:skill.rogue.venom_blade"
+}

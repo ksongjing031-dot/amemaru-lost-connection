@@ -9,6 +9,10 @@ import jp.amemaru.lostconnection.entity.TrainingDummy;
 import jp.amemaru.lostconnection.equipment.GearEffects;
 import jp.amemaru.lostconnection.equipment.GearService;
 import jp.amemaru.lostconnection.job.GaugeService;
+import jp.amemaru.lostconnection.job.HealService;
+import jp.amemaru.lostconnection.job.HitHooks;
+import jp.amemaru.lostconnection.job.SkillScheduler;
+import jp.amemaru.lostconnection.player.DownHandler;
 import jp.amemaru.lostconnection.job.PassiveService;
 import jp.amemaru.lostconnection.job.ReactiveSkills;
 import jp.amemaru.lostconnection.job.SkillContext;
@@ -90,18 +94,81 @@ public final class CombatService {
      */
     public static double dealSkillDamage(SkillContext ctx, LivingEntity target, double power, @Nullable Entity direct) {
         Entity owner = ctx.owner();
+        double critChance = ctx.stat(StatType.CRIT);
+        double critDamage = ctx.stat(StatType.CRIT_DAMAGE);
+        long now = ctx.level.getGameTime();
+        PlayerData ownerData = owner instanceof ServerPlayer player ? PlayerDataCapability.get(player).orElse(null) : null;
         // 装備の特殊効果（HPの少ない敵に強い など）
         if (owner instanceof ServerPlayer player) {
             power *= GearEffects.outgoingMultiplier(player, target, true);
+            if (ownerData != null) {
+                // 職業の強化とパッシブ（Phase 6 その2）
+                CombatBonuses.Offense offense = CombatBonuses.offense(player, ownerData, target, ctx.skill, ctx.skill.hasTag("arrow"), now);
+                power *= offense.multiplier();
+                critChance += offense.critBonus();
+                critDamage += offense.critDamageBonus();
+            }
+        }
+        if (ctx.forceCrit) {
+            critChance = 100.0;
         }
         // 結晶の加護（その階のボスへの与ダメージ。Phase 5）
         power *= TargetVitals.takenMultiplier(target);
-        DamageCalculator.Result result = DamageCalculator.compute(power, ctx.stat(StatType.CRIT), ctx.stat(StatType.CRIT_DAMAGE),
-                TargetVitals.defense(target), ServerConfig.DAMAGE_VARIANCE.get(), ctx.random());
+        double defense = TargetVitals.defense(target) * (1.0 - Math.max(0.0, Math.min(100.0, ctx.currentPierce)) / 100.0);
+        DamageCalculator.Result result = DamageCalculator.compute(power, critChance, critDamage, defense,
+                ServerConfig.DAMAGE_VARIANCE.get(), ctx.random());
         DamageSource source = ModDamageTypes.skill(ctx.level, direct != null ? direct : owner, owner);
         double dealt = applyDamage(target, result.amount(), result.crit(), source);
         if (dealt > 0 && owner instanceof ServerPlayer player) {
             GearEffects.afterHit(player, target, dealt, true, source);
+            if (ownerData != null) {
+                HitHooks.afterHit(player, ownerData, target, dealt, ctx, ctx.skill.hasTag("arrow"), now);
+            }
+        }
+        return dealt;
+    }
+
+    /**
+     * 毒・影分身など、決まった威力のダメージ（防御で減る。会心はない）。
+     *
+     * @return 与えたダメージ（与えられなかったときは -1）
+     */
+    public static double dealStatusDamage(LivingEntity target, double power, @Nullable ServerPlayer owner, CombatTextS2C.Kind kind) {
+        if (power <= 0 || !target.isAlive()) {
+            return -1;
+        }
+        double amount = power * TargetVitals.takenMultiplier(target) * DamageCalculator.mitigation(TargetVitals.defense(target));
+        amount *= 1.0 + AfflictionService.markBonus(target) / 100.0;
+        amount *= 1.0 + AfflictionService.corrodeBonus(target) / 100.0;
+        amount = Math.max(1.0, Math.round(amount));
+        DamageSource source = ModDamageTypes.skill(target.level(), owner, owner);
+        return applyDamage(target, amount, kind, source);
+    }
+
+    /**
+     * 弓の通常の射撃（Phase 6 その2）：攻撃のステータス × 係数のダメージ。標・遠矢などが効き、矢として集中がたまる。
+     */
+    public static double dealBasicShot(ServerPlayer attacker, LivingEntity target, double coefficient, @Nullable Entity direct) {
+        PlayerData data = PlayerDataCapability.get(attacker).orElse(null);
+        if (data == null || !data.isStatsReady() || !target.isAlive()) {
+            return -1;
+        }
+        long now = attacker.level().getGameTime();
+        double power = data.getStats().get(StatType.ATTACK) * coefficient;
+        power *= PassiveService.meleeMultiplier(data, target);
+        power *= GearEffects.outgoingMultiplier(attacker, target, false);
+        CombatBonuses.Offense offense = CombatBonuses.offense(attacker, data, target, null, true, now);
+        power *= offense.multiplier();
+        power *= TargetVitals.takenMultiplier(target);
+        DamageCalculator.Result result = DamageCalculator.compute(power, data.getStats().get(StatType.CRIT) + offense.critBonus(),
+                data.getStats().get(StatType.CRIT_DAMAGE) + offense.critDamageBonus(), TargetVitals.defense(target),
+                ServerConfig.DAMAGE_VARIANCE.get(), attacker.getRandom());
+        DamageSource source = ModDamageTypes.skill(attacker.level(), direct != null ? direct : attacker, attacker);
+        double dealt = applyDamage(target, result.amount(), result.crit(), source);
+        if (dealt > 0) {
+            data.markCombat(now);
+            GearEffects.afterHit(attacker, target, dealt, false, source);
+            HitHooks.afterHit(attacker, data, target, dealt, null, true, now);
         }
         return dealt;
     }
@@ -112,6 +179,11 @@ public final class CombatService {
      * @return 与えたダメージ（与えられなかったときは -1）
      */
     public static double applyDamage(LivingEntity target, double amount, boolean crit, DamageSource source) {
+        return applyDamage(target, amount, crit ? CombatTextS2C.Kind.CRIT : CombatTextS2C.Kind.DAMAGE, source);
+    }
+
+    /** 決まった量の独自のダメージを与え、数字は {@code kind} の見た目で出す。 */
+    public static double applyDamage(LivingEntity target, double amount, CombatTextS2C.Kind kind, DamageSource source) {
         if (amount <= 0 || !target.isAlive()) {
             return -1;
         }
@@ -130,7 +202,7 @@ public final class CombatService {
         if (!hit.applied) {
             return -1;
         }
-        CombatTextS2C.send(target, amount, crit ? CombatTextS2C.Kind.CRIT : CombatTextS2C.Kind.DAMAGE);
+        CombatTextS2C.send(target, amount, kind);
         return amount;
     }
 
@@ -224,16 +296,20 @@ public final class CombatService {
         }
         PlayerData data = found.get();
         float strength = data.getLastAttackStrength();
+        long now = attacker.level().getGameTime();
         double power = data.getStats().get(StatType.ATTACK) * ServerConfig.BASIC_ATTACK_COEFFICIENT.get()
                 * (0.2 + 0.8 * strength * strength);
         power *= PassiveService.meleeMultiplier(data, target);
         power *= GearEffects.outgoingMultiplier(attacker, target, false);
+        // 職業の強化とパッシブ（Phase 6 その2）
+        CombatBonuses.Offense offense = CombatBonuses.offense(attacker, data, target, null, false, now);
+        power *= offense.multiplier();
         power *= TargetVitals.takenMultiplier(target);
-        DamageCalculator.Result result = DamageCalculator.compute(power, data.getStats().get(StatType.CRIT),
-                data.getStats().get(StatType.CRIT_DAMAGE), TargetVitals.defense(target), ServerConfig.DAMAGE_VARIANCE.get(),
-                attacker.getRandom());
+        DamageCalculator.Result result = DamageCalculator.compute(power, data.getStats().get(StatType.CRIT) + offense.critBonus(),
+                data.getStats().get(StatType.CRIT_DAMAGE) + offense.critDamageBonus(), TargetVitals.defense(target),
+                ServerConfig.DAMAGE_VARIANCE.get(), attacker.getRandom());
         resolveOnTarget(event, target, result.amount());
-        data.markCombat(attacker.level().getGameTime());
+        data.markCombat(now);
         CombatTextS2C.send(target, result.amount(), result.crit() ? CombatTextS2C.Kind.CRIT : CombatTextS2C.Kind.DAMAGE);
         if (target instanceof AmemaruMob mob) {
             mob.onDamagedBy(attacker, result.amount());
@@ -241,6 +317,10 @@ public final class CombatService {
         // 武器の耐久と、当たった後の特殊効果（追加ダメージは tick の終わりに与える）
         GearService.wearWeapon(attacker, false);
         GearEffects.afterHit(attacker, target, result.amount(), false, event.getSource());
+        // 専用ゲージ（気配・気）と毒塗りなど（Phase 6 その2。強さの小さい空振りぎみの一撃では、気配と気はたまらない）
+        if (strength >= 0.6F) {
+            HitHooks.afterHit(attacker, data, target, result.amount(), null, false, now);
+        }
     }
 
     /** プレイヤーがダメージを受けたとき。 */
@@ -269,17 +349,28 @@ public final class CombatService {
             if (raw < 0) {
                 raw = event.getAmount() * ServerConfig.VANILLA_MOB_DAMAGE_MULTIPLIER.get();
             }
-            // 素早さの回避：かわせば、受けるダメージは0（防具の耐久も減らない）
+            // 煙・影走り：攻撃が外れる（Phase 6 その2）
+            if (attacker instanceof LivingEntity living && CombatBonuses.misses(player, data, living, now)) {
+                event.setAmount(0.0F);
+                data.markCombat(now);
+                CombatTextS2C.send(player, 0, CombatTextS2C.Kind.MISS);
+                player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_ATTACK_NODAMAGE,
+                        SoundSource.PLAYERS, 0.8F, 1.6F);
+                return;
+            }
+            // 素早さの回避：かわせば、受けるダメージは0（防具の耐久も減らない）。身軽・柔の理で上がる
             if (SpeedService.dodges(player, data)) {
                 event.setAmount(0.0F);
                 data.markCombat(now);
                 CombatTextS2C.send(player, 0, CombatTextS2C.Kind.DODGE);
                 player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_ATTACK_NODAMAGE,
                         SoundSource.PLAYERS, 0.8F, 1.4F);
+                ReactiveSkills.onDodged(player, data, now);
                 return;
             }
             damage = raw * DamageCalculator.mitigation(data.getStats().get(StatType.DEFENSE))
                     * GearEffects.incomingMultiplier(player, data);
+            damage *= CombatBonuses.incoming(player, data, attacker, now);
             damage = tauntMastery(player, damage, attacker, now);
             damage = reduce(player, data, damage, attacker, now, true);
             damage = shareWithBond(player, data, damage, attacker, now);
@@ -292,6 +383,22 @@ public final class CombatService {
             damage = Math.min(damage, Math.max(0.0, data.getHp() - 1.0));
         }
         damage = Math.max(0.0, damage);
+        // 身代わりの鈴：倒れるほどの攻撃を一度だけ防ぎ、HPを戻す（Phase 6 その2）
+        if (damage >= data.getHp() && data.getBuffs().guarded(now)) {
+            BuffState buffs = data.getBuffs();
+            double hp = Math.max(1.0, data.getStats().maxHp() * buffs.guardianHp / 100.0);
+            buffs.guardianUntil = 0;
+            player.removeEffect(ModEffects.GUARDIAN_BELL.get());
+            data.setHp(Math.max(data.getHp(), hp));
+            damage = 0.0;
+            event.setAmount(0.0F);
+            VitalsService.pushVanillaHealth(player, data);
+            CombatTextS2C.send(player, 0, CombatTextS2C.Kind.SAVED);
+            player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BELL_BLOCK, SoundSource.PLAYERS,
+                    1.2F, 1.6F);
+            StatusService.sync(player, StatusFxS2C.Event.GUARDIAN_SAVED);
+            return;
+        }
         event.setAmount((float) (damage / maxHp * vanillaMax));
         if (damage > 0) {
             data.markCombat(now);
@@ -300,6 +407,27 @@ public final class CombatService {
                 GearService.wearArmor(player);
             }
             CombatTextS2C.send(player, damage, CombatTextS2C.Kind.TAKEN);
+            // HPが減った後に見るもの（命の糸・守り手の心）は、tick の終わりに（独自のHPは、この後で減る）
+            double before = data.getHp();
+            double after = Math.max(0.0, before - damage);
+            double maxHpValue = maxHp;
+            SkillScheduler.schedule(player.serverLevel(), 1, () -> afterPlayerHurt(player, after, maxHpValue));
+        }
+    }
+
+    /** ダメージを受けた後：命の糸の大きな回復と、まわりのナイトの「守り手の心」。 */
+    private static void afterPlayerHurt(ServerPlayer player, double hpAfter, double maxHp) {
+        if (!player.isAlive()) {
+            return;
+        }
+        PlayerData data = PlayerDataCapability.get(player).orElse(null);
+        if (data == null || DownHandler.isDown(player)) {
+            return;
+        }
+        long now = player.level().getGameTime();
+        HealService.checkThread(player, data, now);
+        if (maxHp > 0 && hpAfter < maxHp * 0.3) {
+            GuardianHeart.onAllyLow(player, now);
         }
     }
 
@@ -329,8 +457,13 @@ public final class CombatService {
         data.markDirty(PlayerData.SYNC_VITALS);
         CombatTextS2C.send(player, absorbed, CombatTextS2C.Kind.ABSORBED);
         if (buffs.barrierAmount <= 1.0E-6) {
+            double healOnEnd = buffs.barrierHealOnEnd;
             buffs.clearBarrier();
             player.removeEffect(ModEffects.BARRIER.get());
+            // 祝福の盾：砕けたときも癒す（Phase 6 その2。ダメージを受けた後に戻すため、tick の終わりに）
+            if (healOnEnd > 0) {
+                SkillScheduler.schedule(player.serverLevel(), 1, () -> jp.amemaru.lostconnection.job.SkillExecutor.onBarrierEnded(player, data, healOnEnd));
+            }
             player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.AMETHYST_BLOCK_BREAK,
                     SoundSource.PLAYERS, 1.0F, 1.2F);
             StatusService.sync(player, StatusFxS2C.Event.BARRIER_BROKEN);

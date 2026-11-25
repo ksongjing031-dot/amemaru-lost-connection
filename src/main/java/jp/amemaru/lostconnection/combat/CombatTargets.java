@@ -32,6 +32,11 @@ public final class CombatTargets {
         return entity instanceof TrainingDummy || entity instanceof Enemy;
     }
 
+    /** ボス（投げられない・縫い止めが半分など。Phase 6 その2）。 */
+    public static boolean isBoss(Entity entity) {
+        return entity instanceof jp.amemaru.lostconnection.enemy.boss.AmemaruBoss;
+    }
+
     public static boolean isAlly(ServerPlayer caster, Entity entity, boolean includeSelf) {
         if (!(entity instanceof ServerPlayer player) || !player.isAlive() || player.isSpectator()
                 || jp.amemaru.lostconnection.player.DownHandler.isDown(player)) {

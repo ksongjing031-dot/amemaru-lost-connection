@@ -304,6 +304,12 @@ public final class ModNetwork {
                 .decoder(jp.amemaru.lostconnection.network.c2s.MarketActionC2S::decode)
                 .consumerMainThread(jp.amemaru.lostconnection.network.c2s.MarketActionC2S::handle)
                 .add();
+        // Phase 6 その2：弓の通常の射撃
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.c2s.BasicShotC2S.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(jp.amemaru.lostconnection.network.c2s.BasicShotC2S::encode)
+                .decoder(jp.amemaru.lostconnection.network.c2s.BasicShotC2S::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.c2s.BasicShotC2S::handle)
+                .add();
     }
 
     /** 1人のプレイヤーに送る。 */

@@ -1,0 +1,59 @@
+{
+  "job": "rogue",
+  "school": "venom",
+  "row": 5,
+  "column": 0,
+  "type": "active",
+  "name": "腐蝕の刃",
+  "description": "金物も溶かす毒の刃で斬りつける。敵の守りを砕き、毒を2つ重ねる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 25,
+  "requires": [
+    {
+      "skill": "rogue/envenom",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 20
+  },
+  "cooldown": 12,
+  "link": "finisher",
+  "delivery": {
+    "type": "target",
+    "range": 4.5
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 1.6,
+      "coefficient_per_rank": 0.25
+    },
+    {
+      "type": "status",
+      "effect": "amemaru:armor_break",
+      "duration": 6
+    },
+    {
+      "type": "poison",
+      "stat": "attack",
+      "coefficient": 0.25,
+      "coefficient_per_rank": 0.05,
+      "duration": 6,
+      "stacks": 2,
+      "max": 3
+    }
+  ],
+  "tags": [
+    "blade",
+    "poison"
+  ],
+  "animation": "rogue_cross",
+  "sound": "amemaru:skill.rogue.corroding_edge"
+}

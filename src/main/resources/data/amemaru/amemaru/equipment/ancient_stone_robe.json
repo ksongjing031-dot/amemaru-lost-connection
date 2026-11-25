@@ -5,7 +5,8 @@
   "rarity": "common",
   "required_level": 5,
   "jobs": [
-    "amemaru:wizard"
+    "amemaru:wizard",
+    "amemaru:healer"
   ],
   "stats": {
     "defense": 4,

@@ -1,0 +1,52 @@
+{
+  "job": "archer",
+  "school": "sniping",
+  "row": 4,
+  "column": 0,
+  "type": "active",
+  "ultimate": true,
+  "name": "流れ星の一矢",
+  "description": "天弓の奥義。流れ星を矢にして放ち、一直線のすべてを貫く。標のある敵には2倍の傷を刻む。集中が残っていれば、それも込める。",
+  "max_rank": 1,
+  "rank_costs": [
+    5
+  ],
+  "upper_rank": 1,
+  "min_level": 30,
+  "requires": [
+    {
+      "skill": "archer/piercing_shot",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 40
+  },
+  "cooldown": 90,
+  "cast": 1.0,
+  "delivery": {
+    "type": "line",
+    "range": 64,
+    "width": 1.6
+  },
+  "effects": [
+    {
+      "type": "gauge_burst",
+      "per_gauge": 0.005
+    },
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 6.0,
+      "bonus_status": "amemaru:hunter_mark",
+      "bonus": 2.0
+    }
+  ],
+  "tags": [
+    "arrow"
+  ],
+  "animation": "archer_star_release",
+  "cast_animation": "archer_star_cast",
+  "sound": "amemaru:skill.archer.shooting_star",
+  "cast_sound": "amemaru:skill.archer.shooting_star_cast"
+}

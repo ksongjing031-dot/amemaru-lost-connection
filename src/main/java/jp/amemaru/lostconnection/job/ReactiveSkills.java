@@ -35,14 +35,24 @@ public final class ReactiveSkills {
         final SkillContext ctx;
         final EffectDef effect;
         final long until;
-        boolean countered;
+        /** 反撃した回数と、その上限（流水の構えは何度でも）。 */
+        int counters;
+        long lastCounter = -1000L;
+        final int maxCounters;
+        /** どの向きからの攻撃も受け流すか（流水の構え・天地流転）。 */
+        final boolean allDirections;
 
         Parry(SkillContext ctx, EffectDef effect, long until) {
             this.ctx = ctx;
             this.effect = effect;
             this.until = until;
+            this.maxCounters = Math.max(1, (int) Math.round(effect.value("counters", ctx.rank)));
+            this.allDirections = effect.value("all_directions", ctx.rank) > 0.5;
         }
     }
+
+    /** 流水の構えの反撃は、同じ相手には少しあけてから（1回の攻撃で何度も反撃しないため）。 */
+    private static final int COUNTER_GAP = 8;
 
     private static final Map<UUID, Parry> PARRIES = new HashMap<>();
 
@@ -74,25 +84,46 @@ public final class ReactiveSkills {
             PARRIES.remove(player.getUUID());
             return false;
         }
-        if (!CombatService.isInFront(player, attacker)) {
+        if (!parry.allDirections && !CombatService.isInFront(player, attacker)) {
             return false;
         }
-        if (!parry.countered) {
-            parry.countered = true;
+        if (parry.counters < parry.maxCounters && now - parry.lastCounter >= COUNTER_GAP) {
+            parry.counters++;
+            parry.lastCounter = now;
             counter(parry, player, attacker, now);
         }
         return true;
     }
 
+    /** 回避したとき（柔の理の気・流れを読む）。 */
+    public static void onDodged(ServerPlayer player, PlayerData data, long now) {
+        double softWay = PassiveService.value(data, jp.amemaru.lostconnection.job.def.PassiveDef.Type.SOFT_WAY);
+        if (softWay > 0) {
+            GaugeService.add(data, 8.0);
+        }
+        ComboService.onFlowRead(player, data, now);
+    }
+
     private static void counter(Parry parry, ServerPlayer player, LivingEntity attacker, long now) {
         SkillContext ctx = parry.ctx;
+        PlayerData data = PlayerDataCapability.get(player).orElse(null);
+        // 受けの心得（モンク）：反撃のダメージが上がり、気がたまる（Phase 6 その2）
+        double mastery = data == null ? 0.0 : PassiveService.value(data, jp.amemaru.lostconnection.job.def.PassiveDef.Type.COUNTER_MASTERY);
+        double saved = ctx.multiplier;
+        if (mastery > 0) {
+            ctx.multiplier *= 1.0 + mastery / 100.0;
+            GaugeService.add(data, 10.0);
+        }
         // 反撃も連携の起点・追撃になる
         LinkComboTracker.onSkillHit(attacker, player, ctx.skill.link(), now);
         for (EffectDef effect : parry.effect.nested()) {
             SkillExecutor.applyTriggered(ctx, effect, attacker, player);
         }
-        PlayerData data = PlayerDataCapability.get(player).orElse(null);
-        double refund = parry.effect.value("refund", ctx.rank);
+        ctx.multiplier = saved;
+        if (data != null) {
+            ComboService.onFlowRead(player, data, now);
+        }
+        double refund = parry.counters == 1 ? parry.effect.value("refund", ctx.rank) : 0.0;
         if (data != null && refund > 0) {
             SkillCooldown cooldown = data.getCooldown(ctx.skill.id());
             if (cooldown != null && cooldown.endTick() > now) {

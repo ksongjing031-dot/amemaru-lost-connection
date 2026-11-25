@@ -1,0 +1,27 @@
+{
+  "job": "archer",
+  "school": "sniping",
+  "row": 3,
+  "column": 2,
+  "type": "passive",
+  "name": "遠矢",
+  "description": "遠くから射るほど、矢は重くなる。6ブロックより遠い敵へのダメージが、1ブロックごとに1%上がる（上限あり）。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "archer/still_focus",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "long_shot",
+    "value": 15,
+    "value_per_rank": 5
+  }
+}

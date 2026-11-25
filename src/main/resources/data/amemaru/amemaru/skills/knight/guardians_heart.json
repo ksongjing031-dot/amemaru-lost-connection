@@ -1,0 +1,28 @@
+{
+  "job": "knight",
+  "school": "guardian",
+  "row": 5,
+  "column": 2,
+  "type": "passive",
+  "name": "守り手の心",
+  "description": "仲間が危ないとき、誓いは燃え上がる。まわりの仲間のHPが3割を切ると、誓気が20たまり、5秒受けるダメージが減る（20秒に1回）。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 25,
+  "requires": [
+    {
+      "skill": "knight/steadfast_shield",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "guardian_heart",
+    "value": 15,
+    "value_per_rank": 5,
+    "radius": 12
+  }
+}

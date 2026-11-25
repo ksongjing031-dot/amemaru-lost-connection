@@ -69,6 +69,11 @@ jobs:
           ./gradlew runGameTestServer > gametest.log 2>&1 || true
           echo "----- テストの結果 -----"
           grep -E "GAME TESTS COMPLETE|required tests (passed|failed)|failed!|::|GameTestAssertException|amemaru" gametest.log | tail -n 80 || true
+          # 上の80行に入らなかった失敗と、定義の読み込みの問題を、すべて出す
+          echo "----- 失敗したテスト（すべて） -----"
+          grep -E "failed!|GameTestAssertException" gametest.log || true
+          echo "----- 定義の読み込み（問題があれば下に出る） -----"
+          grep -E "Loaded [0-9]+ definition|\[amemaru\].*ERROR|ERROR.*\[amemaru\]" gametest.log | head -n 120 || true
           if grep -q "required tests failed" gametest.log; then
             echo "::error::失敗した自動テストがあります"
             exit 1

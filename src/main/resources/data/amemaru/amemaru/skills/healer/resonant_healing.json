@@ -1,0 +1,52 @@
+{
+  "job": "healer",
+  "school": "healing",
+  "row": 5,
+  "column": 0,
+  "type": "active",
+  "name": "癒しの共鳴",
+  "description": "大きく鈴を鳴らし、遠くの仲間の糸まで響かせる。32ブロック以内の仲間全員を癒し、悪い状態を1つずつほどく。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 25,
+  "requires": [
+    {
+      "skill": "healer/swelling_bell",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 45
+  },
+  "cooldown": 40,
+  "cooldown_per_rank": -4,
+  "link": "support",
+  "delivery": {
+    "type": "around",
+    "radius": 32,
+    "affects": "allies",
+    "include_self": true
+  },
+  "effects": [
+    {
+      "type": "heal",
+      "stat": "magic",
+      "coefficient": 2.0,
+      "coefficient_per_rank": 0.3
+    },
+    {
+      "type": "cleanse",
+      "count": 1
+    }
+  ],
+  "tags": [
+    "heal",
+    "bell"
+  ],
+  "animation": "healer_resonance",
+  "sound": "amemaru:skill.healer.resonant_healing"
+}

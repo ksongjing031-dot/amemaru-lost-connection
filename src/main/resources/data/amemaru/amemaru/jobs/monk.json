@@ -1,0 +1,75 @@
+{
+  "kind": "combat",
+  "order": 60,
+  "name": "モンク",
+  "role": "格闘・連撃",
+  "description": "拳ひとつで道を開く格闘家。技と技をつないで「連撃」を重ね、締めの一撃で一気に打ち抜く。続けて当てるほど「気」が満ちる。",
+  "color": "#FF9A5C",
+  "icon": "amemaru:textures/gui/job/monk.png",
+  "weapons": "amemaru:weapons/monk",
+  "weapon_text": "籠手",
+  "tags": [
+    "melee",
+    "monk"
+  ],
+  "stats": {
+    "percent": {
+      "attack": 10,
+      "hp": 10,
+      "defense": 5,
+      "mp": -10,
+      "magic": -20
+    },
+    "flat": {
+      "speed": 2
+    }
+  },
+  "gauge": {
+    "type": "ki",
+    "name": "気",
+    "description": "攻撃を続けて当てるとたまる（2秒あくと、たまり方が戻る）。3秒当てないでいると減っていく。発勁・気功・轟拳などで使う。戦闘が終わると0に戻る。",
+    "max": 100,
+    "color": "#FF9A5C",
+    "hit_gain": 6,
+    "first_gain": 3,
+    "window": 2.0,
+    "decay_delay": 3.0,
+    "decay": 15
+  },
+  "combo": {
+    "window": 3.0,
+    "max": 5,
+    "per_step": 6,
+    "finisher_per_step": 15,
+    "ki_per_step": 5
+  },
+  "schools": [
+    {
+      "id": "hard",
+      "name": "剛",
+      "description": "拳と脚で打ち砕く流派。連打で連撃を始め、蹴りと崩拳でつなぎ、発勁と破山撃で締めくくる。",
+      "color": "#FF8A5C"
+    },
+    {
+      "id": "soft",
+      "name": "柔",
+      "description": "受けて流し、返す流派。流水の構えで攻撃を打ち返し、縮地と投げで間合いを操り、気を仲間に分ける。",
+      "color": "#7FD6FF"
+    }
+  ],
+  "starting_skills": [
+    "monk/jab_combo",
+    "monk/palm_strike"
+  ],
+  "starter_kit": [
+    {
+      "item": "amemaru:apprentice_gauntlets"
+    }
+  ],
+  "upper": {
+    "name": "拳聖",
+    "description": "拳で人と人をつなぐ聖者。奥義（剛の「百烈・結」か、柔の「天地流転」）と、各スキルの第3段が開く。",
+    "min_level": 30,
+    "min_day": 11
+  }
+}

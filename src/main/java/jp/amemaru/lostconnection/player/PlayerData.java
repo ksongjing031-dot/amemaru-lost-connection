@@ -89,6 +89,9 @@ public final class PlayerData {
 
     // ---- スキル（保存しない）
     private double gauge;
+    /** モンクの連撃（保存しない）。 */
+    private int combo;
+    private long comboUntil;
     private final Map<ResourceLocation, SkillCooldown> cooldowns = new HashMap<>();
     @Nullable
     private CastState casting;
@@ -436,6 +439,25 @@ public final class PlayerData {
     /** 専用ゲージの値。 */
     public double getGauge() {
         return gauge;
+    }
+
+    /** モンクの連撃の数（Phase 6 その2。保存しない）。 */
+    public int getCombo() {
+        return combo;
+    }
+
+    /** 連撃が消える時刻（ゲーム内の tick）。 */
+    public long getComboUntil() {
+        return comboUntil;
+    }
+
+    public void setCombo(int value, long until) {
+        int next = Math.max(0, value);
+        if (next != combo || (next > 0 && until != comboUntil)) {
+            dirty |= SYNC_GAUGE;
+        }
+        combo = next;
+        comboUntil = next > 0 ? until : 0L;
     }
 
     public void setGauge(double value) {

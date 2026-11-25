@@ -344,7 +344,8 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
         double value = -1.0;
         for (Map.Entry<UUID, Double> entry : threat.entrySet()) {
             ServerPlayer player = level.getServer().getPlayerList().getPlayer(entry.getKey());
-            if (player != null && player.isAlive() && player.level() == level && entry.getValue() > value) {
+            if (player != null && player.isAlive() && player.level() == level && entry.getValue() > value
+                    && !jp.amemaru.lostconnection.job.StealthService.hidden(player)) {
                 best = player;
                 value = entry.getValue();
             }
@@ -408,6 +409,15 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
         contributions.merge(taunter.getUUID(), 0.0, Double::sum);
         lastHurtTick = level().getGameTime();
         setTarget(taunter);
+    }
+
+    /** その人を見失う（潜伏。Phase 6 その2）：敵視を0にし、狙っていれば次の人に移る。 */
+    public void forgetThreat(UUID player) {
+        threat.remove(player);
+        LivingEntity target = getTarget();
+        if (target != null && target.getUUID().equals(player)) {
+            setTarget(topThreat());
+        }
     }
 
     /** 敵視を足す（仲間を呼ぶ・群れで反撃するとき）。 */

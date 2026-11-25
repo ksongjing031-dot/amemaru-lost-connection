@@ -27,10 +27,13 @@ import java.util.Locale;
  * 選ぶと確認を出し、「誓う」でサーバーに送る（費用と場所はサーバーで確かめる）。職業が3つ以上あるときは、左右の矢印で切りかえる。</p>
  */
 public class JobSelectScreen extends Screen {
-    private static final int PANEL_WIDTH = 344;
-    private static final int PANEL_HEIGHT = 226;
     private static final int CARD_WIDTH = 160;
     private static final int CARD_HEIGHT = 160;
+    /** カードの左右の余白。ページの矢印（幅14）をカードの外に置けるよう、矢印の幅＋左右4ずつをあける。 */
+    private static final int CARD_MARGIN = 22;
+    private static final int CARD_GAP = 8;
+    private static final int PANEL_WIDTH = CARD_MARGIN * 2 + CARD_WIDTH * 2 + CARD_GAP;
+    private static final int PANEL_HEIGHT = 226;
     private static final int PER_PAGE = 2;
 
     private final OpenJobScreenS2C info;
@@ -92,13 +95,13 @@ public class JobSelectScreen extends Screen {
             addRenderableWidget(button);
         }
         if (pages > 1) {
-            CrystalButton prev = new CrystalButton(left + 6, top + 38 + CARD_HEIGHT / 2 - 8, 14, 16, Component.literal("<"), b -> {
+            CrystalButton prev = new CrystalButton(left + 4, top + 38 + CARD_HEIGHT / 2 - 8, 14, 16, Component.literal("<"), b -> {
                 page--;
                 rebuild();
             });
             prev.active = page > 0;
             addRenderableWidget(prev);
-            CrystalButton next = new CrystalButton(left + PANEL_WIDTH - 20, top + 38 + CARD_HEIGHT / 2 - 8, 14, 16,
+            CrystalButton next = new CrystalButton(left + PANEL_WIDTH - 18, top + 38 + CARD_HEIGHT / 2 - 8, 14, 16,
                     Component.literal(">"), b -> {
                 page++;
                 rebuild();
@@ -118,7 +121,7 @@ public class JobSelectScreen extends Screen {
     }
 
     private int cardX(int column) {
-        return left + 12 + column * (CARD_WIDTH + 8);
+        return left + CARD_MARGIN + column * (CARD_WIDTH + CARD_GAP);
     }
 
     // ---------------------------------------------------------------- 描画
@@ -142,6 +145,16 @@ public class JobSelectScreen extends Screen {
                 int index = page * PER_PAGE + i;
                 if (index < jobs.size()) {
                     renderCard(graphics, jobs.get(index), cardX(i), top + 38, mouseX, mouseY);
+                }
+            }
+            // ページの印（Phase 6 その2：戦闘職が6つになり、3ページになった）
+            int pages = Math.max(1, (jobs.size() + PER_PAGE - 1) / PER_PAGE);
+            if (pages > 1) {
+                int dotsY = top + 38 + CARD_HEIGHT + 6;
+                int dotsX = width / 2 - (pages * 10 - 4) / 2;
+                for (int p = 0; p < pages; p++) {
+                    int color = p == page ? 0xFFFFF2A8 : 0xFF3E5274;
+                    graphics.fill(dotsX + p * 10, dotsY, dotsX + p * 10 + 6, dotsY + 6, color);
                 }
             }
         }

@@ -18,6 +18,10 @@ import net.minecraftforge.registries.RegistryObject;
  *   <li>star：またたく星</li>
  *   <li>rune：ゆっくり昇って消える紋字</li>
  *   <li>snow：舞い落ちる雪</li>
+ *   <li>feather：ゆらゆら舞い落ちる羽根（Phase 6 その2：アーチャー）</li>
+ *   <li>petal：くるくる回って漂う花びら・光の葉（ヒーラー）</li>
+ *   <li>smoke：ふくらんで薄れる煙（ローグ。光を足さずに描く）</li>
+ *   <li>bubble：昇ってはじける泡（毒）</li>
  * </ul>
  */
 public final class ModParticles {
@@ -30,6 +34,10 @@ public final class ModParticles {
     public static final RegistryObject<FxParticleType> STAR = PARTICLES.register("star", FxParticleType::new);
     public static final RegistryObject<FxParticleType> RUNE = PARTICLES.register("rune", FxParticleType::new);
     public static final RegistryObject<FxParticleType> SNOW = PARTICLES.register("snow", FxParticleType::new);
+    public static final RegistryObject<FxParticleType> FEATHER = PARTICLES.register("feather", FxParticleType::new);
+    public static final RegistryObject<FxParticleType> PETAL = PARTICLES.register("petal", FxParticleType::new);
+    public static final RegistryObject<FxParticleType> SMOKE = PARTICLES.register("smoke", FxParticleType::new);
+    public static final RegistryObject<FxParticleType> BUBBLE = PARTICLES.register("bubble", FxParticleType::new);
 
     private ModParticles() {
     }

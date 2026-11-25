@@ -1,0 +1,45 @@
+{
+  "job": "monk",
+  "school": "soft",
+  "row": 2,
+  "column": 1,
+  "type": "active",
+  "name": "縮地",
+  "description": "地を縮めるような一歩で、敵の背後へ回り込み、打ちこむ。【起】",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 10,
+  "requires": [
+    {
+      "skill": "monk/flowing_stance",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 10
+  },
+  "cooldown": 9,
+  "delivery": {
+    "type": "behind",
+    "range": 10
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 1.0,
+      "coefficient_per_rank": 0.18
+    }
+  ],
+  "tags": [
+    "fist",
+    "move"
+  ],
+  "combo": "opener",
+  "animation": "monk_step",
+  "sound": "amemaru:skill.monk.shrink_step"
+}

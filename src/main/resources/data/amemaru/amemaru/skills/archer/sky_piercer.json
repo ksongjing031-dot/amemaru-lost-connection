@@ -1,0 +1,53 @@
+{
+  "job": "archer",
+  "school": "sniping",
+  "row": 5,
+  "column": 0,
+  "type": "active",
+  "name": "天穿ち",
+  "description": "集中を50使い、空ごと穿つ一矢を引き絞る。とても遠くまで届き、敵の防御の半分を無視して貫く。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 25,
+  "requires": [
+    {
+      "skill": "archer/sniper_stance",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 28,
+    "gauge": 50
+  },
+  "cooldown": 24,
+  "link": "finisher",
+  "charge": {
+    "time": 2.0,
+    "min_multiplier": 1.0,
+    "max_multiplier": 2.0
+  },
+  "delivery": {
+    "type": "line",
+    "range": 64,
+    "width": 1.0
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 3.0,
+      "coefficient_per_rank": 0.5,
+      "pierce": 50
+    }
+  ],
+  "tags": [
+    "arrow"
+  ],
+  "animation": "archer_release",
+  "charge_animation": "archer_draw_sky",
+  "sound": "amemaru:skill.archer.sky_piercer"
+}

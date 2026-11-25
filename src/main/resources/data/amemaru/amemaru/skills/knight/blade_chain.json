@@ -1,0 +1,27 @@
+{
+  "job": "knight",
+  "school": "greatsword",
+  "row": 5,
+  "column": 2,
+  "type": "passive",
+  "name": "連ね斬り",
+  "description": "剛剣の技を途切れなくつなぐ。3秒以内に違う剛剣のスキルを続けて当てると、1つごとにダメージが上がる（3つまで）。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 25,
+  "requires": [
+    {
+      "skill": "knight/greatsword_mastery",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "blade_chain",
+    "value": 6,
+    "value_per_rank": 3
+  }
+}

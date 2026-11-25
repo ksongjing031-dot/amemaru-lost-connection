@@ -42,7 +42,15 @@ public class FxParticle extends TextureSheetParticle {
         /** 紋字：ゆっくり昇り、ふわっと現れて消える。 */
         RUNE,
         /** 雪：ゆらゆら舞い落ちる。 */
-        SNOW
+        SNOW,
+        /** 羽根：左右に揺れながら、ゆっくり落ちる（Phase 6 その2）。 */
+        FEATHER,
+        /** 花びら・光の葉：くるくる回りながら漂い、ゆっくり昇る。 */
+        PETAL,
+        /** 煙：ふくらみながら薄れる（光を足さずに描くので、暗い色も見える）。 */
+        SMOKE,
+        /** 泡：ゆらゆら昇り、最後にふくらんではじける。 */
+        BUBBLE
     }
 
     /** カメラからこの距離（＋粒の大きさ）より近いと薄くなりはじめ、{@link #NEAR_FADE_END} で見えなくなる。 */
@@ -136,13 +144,35 @@ public class FxParticle extends TextureSheetParticle {
                 this.friction = 0.96F;
                 this.hasPhysics = true;
             }
+            case FEATHER -> {
+                this.gravity = 0.04F;
+                this.friction = 0.93F;
+                this.hasPhysics = true;
+            }
+            case PETAL -> {
+                this.gravity = -0.015F;
+                this.friction = 0.95F;
+                this.hasPhysics = false;
+            }
+            case SMOKE -> {
+                this.gravity = -0.01F;
+                this.friction = 0.9F;
+                this.hasPhysics = false;
+            }
+            case BUBBLE -> {
+                this.gravity = -0.03F;
+                this.friction = 0.92F;
+                this.hasPhysics = false;
+                this.roll = 0.0F;
+                this.oRoll = 0.0F;
+            }
         }
         pickSprite(sprites);
     }
 
     @Override
     public ParticleRenderType getRenderType() {
-        return ADDITIVE;
+        return style == Style.SMOKE ? ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT : ADDITIVE;
     }
 
     @Override
@@ -185,6 +215,27 @@ public class FxParticle extends TextureSheetParticle {
                 roll += spin * 0.3F;
                 xd += Mth.sin(age * 0.25F + baseSize * 7.0F) * 0.0025;
                 alpha = baseAlpha * (1.0F - t * t);
+            }
+            case FEATHER -> {
+                roll = Mth.sin(age * 0.22F + baseSize * 9.0F) * 0.6F;
+                xd += Mth.sin(age * 0.18F + baseSize * 5.0F) * 0.004;
+                zd += Mth.cos(age * 0.15F + baseSize * 3.0F) * 0.003;
+                alpha = baseAlpha * (1.0F - t * t);
+            }
+            case PETAL -> {
+                roll += spin * 0.9F;
+                xd += Mth.sin(age * 0.3F + baseSize * 6.0F) * 0.003;
+                alpha = baseAlpha * Mth.sin(Mth.PI * Math.min(1.0F, t * 1.1F + 0.05F));
+            }
+            case SMOKE -> {
+                roll += spin * 0.2F;
+                alpha = baseAlpha * 0.75F * (1.0F - t);
+                quadSize = baseSize * (1.0F + 1.2F * t);
+            }
+            case BUBBLE -> {
+                xd += Mth.sin(age * 0.4F + baseSize * 8.0F) * 0.002;
+                alpha = baseAlpha * (t > 0.85F ? (1.0F - t) / 0.15F : 1.0F);
+                quadSize = baseSize * (t > 0.85F ? 1.0F + (t - 0.85F) * 4.0F : 1.0F);
             }
         }
     }

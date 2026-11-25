@@ -76,19 +76,22 @@ public final class SkillMechanicsGameTests {
 
     // ================================================================ 定義
 
-    /** 各職業：アクティブ12（流派ごとに6）・パッシブ6（流派ごとに3）・奥義1。木は4段×3列で、前提は同じ流派。説明文が作れる。 */
+    /**
+     * 各職業：アクティブ16（流派ごとに8）・パッシブ10（流派ごとに5）・奥義2（流派ごとに1）。木は6段×3列で、前提は同じ流派。
+     * 説明文が作れる（Phase 6 その2 で、戦闘職が6つ・木が6段になった）。
+     */
     @GameTest(template = EMPTY)
     public static void expandedSkillTrees(GameTestHelper helper) {
         SkillRegistry.Snapshot snapshot = SkillRegistry.get();
         check(helper, snapshot.problems().isEmpty(), "職業・スキルの定義に問題があります：" + snapshot.problems());
-        for (String name : new String[]{"knight", "wizard"}) {
+        for (String name : new String[]{"knight", "wizard", "healer", "archer", "rogue", "monk"}) {
             JobDef job = job(name);
             List<SkillDef> skills = snapshot.skillsOf(job.id());
             long actives = skills.stream().filter(skill -> skill.isActive() && !skill.isUltimate()).count();
             long passives = skills.stream().filter(skill -> skill.kind() == SkillKind.PASSIVE).count();
             long ultimates = skills.stream().filter(SkillDef::isUltimate).count();
-            check(helper, actives == 12, name + " のアクティブスキルが12個ではありません：" + actives);
-            check(helper, passives == 6, name + " のパッシブスキルが6個ではありません：" + passives);
+            check(helper, actives == 16, name + " のアクティブスキルが16個ではありません：" + actives);
+            check(helper, passives == 10, name + " のパッシブスキルが10個ではありません：" + passives);
             check(helper, ultimates == 2, name + " の奥義が2つではありません：" + ultimates);
             long ultimateSchools = skills.stream().filter(SkillDef::isUltimate).map(SkillDef::school).distinct().count();
             check(helper, ultimateSchools == 2, name + " の奥義が、2つの流派に1つずつになっていません");
@@ -102,7 +105,7 @@ public final class SkillMechanicsGameTests {
                 }
                 int[] count = perSchool.computeIfAbsent(skill.school(), key -> new int[2]);
                 count[skill.isActive() ? 0 : 1]++;
-                check(helper, skill.row() >= 0 && skill.row() <= 3, skill.id() + " の段（row）が0〜3ではありません");
+                check(helper, skill.row() >= 0 && skill.row() <= 5, skill.id() + " の段（row）が0〜5ではありません");
                 check(helper, skill.isActive() ? skill.column() <= 1 : skill.column() == 2,
                         skill.id() + " の列（column）が、アクティブは0か1、パッシブは2になっていません");
                 for (SkillDef.Requirement requirement : skill.requirements()) {
@@ -116,8 +119,8 @@ public final class SkillMechanicsGameTests {
             }
             check(helper, perSchool.size() == 2, name + " の流派が2つではありません：" + perSchool.keySet());
             for (Map.Entry<String, int[]> entry : perSchool.entrySet()) {
-                check(helper, entry.getValue()[0] == 6 && entry.getValue()[1] == 3,
-                        name + " の流派「" + entry.getKey() + "」が、アクティブ6・パッシブ3になっていません：" + entry.getValue()[0] + "・"
+                check(helper, entry.getValue()[0] == 8 && entry.getValue()[1] == 5,
+                        name + " の流派「" + entry.getKey() + "」が、アクティブ8・パッシブ5になっていません：" + entry.getValue()[0] + "・"
                                 + entry.getValue()[1]);
             }
         }

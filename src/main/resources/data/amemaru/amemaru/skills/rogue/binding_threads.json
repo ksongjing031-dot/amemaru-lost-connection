@@ -1,0 +1,53 @@
+{
+  "job": "rogue",
+  "school": "venom",
+  "row": 3,
+  "column": 1,
+  "type": "active",
+  "name": "絡め糸",
+  "description": "粘る糸を扇に投げ広げ、前の敵をまとめて絡め取る。絡まった敵は少しの間動けず、その後もしばらく足が鈍る。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "rogue/numbing_needle",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 14
+  },
+  "cooldown": 14,
+  "delivery": {
+    "type": "cone",
+    "radius": 6,
+    "radius_per_rank": 0.5,
+    "angle": 45
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 0.6,
+      "coefficient_per_rank": 0.1
+    },
+    {
+      "type": "root",
+      "duration": 1.0,
+      "duration_per_rank": 0.25
+    },
+    {
+      "type": "status",
+      "effect": "minecraft:slowness",
+      "duration": 3,
+      "level": 3
+    }
+  ],
+  "animation": "rogue_throw_wide",
+  "sound": "amemaru:skill.rogue.binding_threads"
+}

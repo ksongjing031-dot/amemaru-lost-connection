@@ -1,0 +1,27 @@
+{
+  "job": "archer",
+  "school": "sniping",
+  "row": 1,
+  "column": 2,
+  "type": "passive",
+  "name": "鷹の目",
+  "description": "遠くの獲物の、わずかな隙も見逃さない。会心が上がる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "requires": [
+    {
+      "skill": "archer/marking_arrow",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "hawk_eye",
+    "value": 3,
+    "value_per_rank": 2
+  }
+}

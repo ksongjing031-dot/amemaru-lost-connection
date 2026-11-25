@@ -1,0 +1,27 @@
+{
+  "job": "wizard",
+  "school": "frost",
+  "row": 4,
+  "column": 2,
+  "type": "passive",
+  "name": "雷の心得",
+  "description": "雷の扱いに長けている。感電した敵へのダメージが上がり、感電が長く続く。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 20,
+  "requires": [
+    {
+      "skill": "wizard/deep_chill",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "thunder_mastery",
+    "value": 5,
+    "value_per_rank": 3
+  }
+}

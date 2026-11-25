@@ -1,0 +1,45 @@
+{
+  "job": "archer",
+  "school": "sniping",
+  "row": 3,
+  "column": 0,
+  "type": "active",
+  "name": "鷹の眼差し",
+  "description": "鷹の目で戦場を見渡す。しばらく会心が大きく上がり、集中が20たまる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "archer/pinning_arrow",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 18
+  },
+  "cooldown": 30,
+  "delivery": {
+    "type": "self"
+  },
+  "effects": [
+    {
+      "type": "buff",
+      "buff": "crit_up",
+      "duration": 8,
+      "duration_per_rank": 1,
+      "value": 15,
+      "value_per_rank": 5
+    },
+    {
+      "type": "gauge",
+      "amount": 20
+    }
+  ],
+  "animation": "archer_gaze",
+  "sound": "amemaru:skill.archer.hawks_gaze"
+}

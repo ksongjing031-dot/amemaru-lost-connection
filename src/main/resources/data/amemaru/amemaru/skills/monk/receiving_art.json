@@ -1,0 +1,27 @@
+{
+  "job": "monk",
+  "school": "soft",
+  "row": 2,
+  "column": 2,
+  "type": "passive",
+  "name": "受けの心得",
+  "description": "受けることは、打つことの始まり。受け流しからの反撃のダメージが上がり、反撃すると気がたまる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 10,
+  "requires": [
+    {
+      "skill": "monk/allied_fists",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "counter_mastery",
+    "value": 15,
+    "value_per_rank": 8
+  }
+}

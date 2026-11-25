@@ -58,6 +58,9 @@ public final class SyncPlayerDataS2C {
     // ゲージ
     private float gauge;
     private int gaugeMax;
+    /** モンクの連撃の数と、消えるまでの tick（Phase 6 その2）。 */
+    private int combo;
+    private int comboRemaining;
     // クールダウン
     private int[] cooldownSkills = new int[0];
     private int[] cooldownRemaining = new int[0];
@@ -136,6 +139,8 @@ public final class SyncPlayerDataS2C {
 
         message.gauge = (float) data.getGauge();
         message.gaugeMax = GaugeService.max(data);
+        message.combo = data.getCombo();
+        message.comboRemaining = data.getCombo() > 0 ? (int) Math.max(0L, data.getComboUntil() - now) : 0;
 
         Map<ResourceLocation, SkillCooldown> cooldowns = data.getCooldowns();
         int[] cdSkills = new int[cooldowns.size()];
@@ -212,6 +217,8 @@ public final class SyncPlayerDataS2C {
         if ((sections & PlayerData.SYNC_GAUGE) != 0) {
             buf.writeFloat(gauge);
             buf.writeVarInt(gaugeMax);
+            buf.writeVarInt(combo);
+            buf.writeVarInt(comboRemaining);
         }
         if ((sections & PlayerData.SYNC_COOLDOWNS) != 0) {
             buf.writeVarInt(cooldownSkills.length);
@@ -294,6 +301,8 @@ public final class SyncPlayerDataS2C {
         if ((sections & PlayerData.SYNC_GAUGE) != 0) {
             message.gauge = buf.readFloat();
             message.gaugeMax = buf.readVarInt();
+            message.combo = Math.min(99, buf.readVarInt());
+            message.comboRemaining = buf.readVarInt();
         }
         if ((sections & PlayerData.SYNC_COOLDOWNS) != 0) {
             int count = checkLength(buf.readVarInt(), MAX_SKILLS);
@@ -413,6 +422,14 @@ public final class SyncPlayerDataS2C {
 
     public float gauge() {
         return gauge;
+    }
+
+    public int combo() {
+        return combo;
+    }
+
+    public int comboRemaining() {
+        return comboRemaining;
     }
 
     public int gaugeMax() {

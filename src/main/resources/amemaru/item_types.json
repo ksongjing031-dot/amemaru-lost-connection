@@ -2,7 +2,7 @@
   "_comment": [
     "アイテムの種類（IDと見た目の作り）。ゲームの起動時に登録するため、データパックでは変えられない（Phase 0-B 4.3）。",
     "数値は data/amemaru/amemaru/equipment/・accessories/ に書く。足すときは、言語ファイル・モデル・絵と一緒に足す。",
-    "weapons.kind：sword（片手剣）・greatsword（両手剣）・staff（杖）。model が geckolib なら GeckoLib で描く（動く・光る武器）",
+    "weapons.kind：sword（片手剣）・greatsword（両手剣）・staff（杖）・bell_staff（鈴杖）・bow（弓）・daggers（二刀の短剣）・fist（籠手）。model が geckolib なら GeckoLib で描く（動く・光る武器）",
     "armor：series（見た目のシリーズ。geo/armor/<series>.geo.json）と、場所ごとのアイテムのID",
     "accessories.slot：ring・necklace・bracelet・charm・clasp。model が geckolib なら体に表示する（geo/accessory/<ID>.geo.json）",
     "materials.rarity：名前の色。fruits.stat：結晶果が上げるステータス"
@@ -44,6 +44,38 @@
       "id": "bee_crystal_staff",
       "kind": "staff",
       "model": "geckolib"
+    },
+    {
+      "id": "apprentice_bell_staff",
+      "kind": "bell_staff"
+    },
+    {
+      "id": "ancient_stone_bell_staff",
+      "kind": "bell_staff"
+    },
+    {
+      "id": "apprentice_bow",
+      "kind": "bow"
+    },
+    {
+      "id": "ancient_stone_bow",
+      "kind": "bow"
+    },
+    {
+      "id": "apprentice_daggers",
+      "kind": "daggers"
+    },
+    {
+      "id": "ancient_stone_daggers",
+      "kind": "daggers"
+    },
+    {
+      "id": "apprentice_gauntlets",
+      "kind": "fist"
+    },
+    {
+      "id": "ancient_stone_gauntlets",
+      "kind": "fist"
     }
   ],
   "shields": [
@@ -74,6 +106,15 @@
         "chest": "ancient_stone_robe",
         "legs": "ancient_stone_legwear",
         "feet": "ancient_stone_boots"
+      }
+    },
+    {
+      "series": "ancient_stone_light",
+      "pieces": {
+        "head": "ancient_stone_circlet",
+        "chest": "ancient_stone_jerkin",
+        "legs": "ancient_stone_breeches",
+        "feet": "ancient_stone_shoes"
       }
     }
   ],
@@ -174,7 +215,13 @@
     }
   ],
   "consumables": [
-    {"id": "healing_potion_small", "stack": 16},
-    {"id": "mana_water_small", "stack": 16}
+    {
+      "id": "healing_potion_small",
+      "stack": 16
+    },
+    {
+      "id": "mana_water_small",
+      "stack": 16
+    }
   ]
 }

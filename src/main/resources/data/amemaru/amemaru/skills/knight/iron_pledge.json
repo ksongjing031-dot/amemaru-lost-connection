@@ -1,0 +1,43 @@
+{
+  "job": "knight",
+  "school": "guardian",
+  "row": 4,
+  "column": 0,
+  "type": "active",
+  "name": "鉄の誓約",
+  "description": "剣を掲げて誓いを立て、まわりの仲間すべてと鎖の糸で結ぶ。8秒、仲間の受けるダメージの一部を肩代わりする。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 20,
+  "requires": [
+    {
+      "skill": "knight/oath_circle",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 26
+  },
+  "cooldown": 30,
+  "link": "support",
+  "delivery": {
+    "type": "around",
+    "radius": 8,
+    "affects": "allies",
+    "include_self": true
+  },
+  "effects": [
+    {
+      "type": "shield_bond",
+      "duration": 8,
+      "share": 15,
+      "share_per_rank": 5
+    }
+  ],
+  "animation": "knight_vow",
+  "sound": "amemaru:skill.knight.iron_pledge"
+}

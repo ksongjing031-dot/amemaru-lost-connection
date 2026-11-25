@@ -1,0 +1,53 @@
+{
+  "job": "wizard",
+  "school": "starlight",
+  "row": 5,
+  "column": 0,
+  "type": "active",
+  "name": "彗星",
+  "description": "長い尾を引く彗星を撃ち出す。当たった所で弾け、まわりの敵に大きなダメージを与え、星痕を2つ刻む。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 25,
+  "requires": [
+    {
+      "skill": "wizard/star_ring",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 28
+  },
+  "cooldown": 12,
+  "cast": 0.8,
+  "link": "finisher",
+  "delivery": {
+    "type": "projectile",
+    "kind": "comet",
+    "range": 30,
+    "speed": 1.2,
+    "radius": 0.6,
+    "explode": 4
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "magic",
+      "coefficient": 2.8,
+      "coefficient_per_rank": 0.4
+    },
+    {
+      "type": "brand",
+      "stacks": 2,
+      "duration": 8
+    }
+  ],
+  "animation": "wizard_comet",
+  "cast_animation": "wizard_comet_cast",
+  "sound": "amemaru:skill.wizard.comet",
+  "impact_sound": "amemaru:skill.wizard.comet_impact"
+}

@@ -20,7 +20,12 @@ import java.util.function.Supplier;
 public final class StatusFxS2C {
     /** 状態の種類。番号の順番を変えないこと（足すときは最後に足す）。 */
     public enum Kind {
-        CHILL, FROZEN, SHOCK, BRAND, ARMOR_BREAK, STAGGER, BARRIER, WARD, PARRY, RAMPART, UNYIELDING, FORTRESS, SHIELD_BOND;
+        CHILL, FROZEN, SHOCK, BRAND, ARMOR_BREAK, STAGGER, BARRIER, WARD, PARRY, RAMPART, UNYIELDING, FORTRESS, SHIELD_BOND,
+        // Phase 6 その2：敵
+        POISON, MARK, ROOTED, ADMONISHED, BLINDED,
+        // Phase 6 その2：プレイヤー
+        BLESSING, PROTECTED, KEEN, SWIFT, EMPOWERED, AIMING, LIFE_THREAD, GUARDIAN_BELL, STAR_RING, SHADOW_CLONE, VENOM_COAT,
+        BOW_DANCE, EVADE, ENDLESS_FLOW, RENEWAL, HIDDEN;
 
         private static final Kind[] VALUES = values();
 
@@ -31,7 +36,9 @@ public final class StatusFxS2C {
 
     /** その瞬間の出来事。 */
     public enum Event {
-        NONE, FROZE, SHATTERED, DETONATED, DISCHARGED, ARMOR_BROKEN, PARRIED, BARRIER_BROKEN;
+        NONE, FROZE, SHATTERED, DETONATED, DISCHARGED, ARMOR_BROKEN, PARRIED, BARRIER_BROKEN,
+        // Phase 6 その2
+        CLEANSED, GUARDIAN_SAVED, THREAD_BURST, POISON_BURST, MARKED, REVIVED, COUNTERED;
 
         private static final Event[] VALUES = values();
 

@@ -1,0 +1,65 @@
+{
+  "kind": "combat",
+  "order": 40,
+  "name": "アーチャー",
+  "role": "遠距離",
+  "description": "風を読み、遠くから仲間の道を射ひらく弓使い。立ち止まって研いだ「集中」を一矢に込め、標の矢で仲間の攻撃を導く。",
+  "color": "#9FD8FF",
+  "icon": "amemaru:textures/gui/job/archer.png",
+  "weapons": "amemaru:weapons/archer",
+  "weapon_text": "弓",
+  "tags": [
+    "ranged",
+    "archer"
+  ],
+  "stats": {
+    "percent": {
+      "attack": 15,
+      "hp": -10,
+      "defense": -10,
+      "magic": -20
+    },
+    "flat": {
+      "crit": 3,
+      "speed": 2
+    }
+  },
+  "gauge": {
+    "type": "focus",
+    "name": "集中",
+    "description": "立ち止まっている間と、矢を当てるとたまる。射抜き・天穿ち・流れ星の一矢で使う。戦闘が終わると0に戻る。",
+    "max": 100,
+    "color": "#9FD8FF",
+    "still_gain": 6,
+    "hit_gain": 5
+  },
+  "schools": [
+    {
+      "id": "sniping",
+      "name": "狙撃",
+      "description": "一矢を研ぎすます流派。標の矢で仲間を導き、縫い止めで足を止め、集中を込めた矢で遠くから射抜く。",
+      "color": "#9FD8FF"
+    },
+    {
+      "id": "rapid",
+      "name": "速射",
+      "description": "矢継ぎ早に射る流派。扇に広げ、雨と降らせ、跳ねさせ、動きながら群れを射すくめる。",
+      "color": "#FFB37A"
+    }
+  ],
+  "starting_skills": [
+    "archer/marking_arrow",
+    "archer/spread_arrows"
+  ],
+  "starter_kit": [
+    {
+      "item": "amemaru:apprentice_bow"
+    }
+  ],
+  "upper": {
+    "name": "天弓",
+    "description": "星の高さまで矢を届かせる射手。奥義（狙撃の「流れ星の一矢」か、速射の「疾風の弓舞」）と、各スキルの第3段が開く。",
+    "min_level": 30,
+    "min_day": 11
+  }
+}

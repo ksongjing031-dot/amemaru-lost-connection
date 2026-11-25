@@ -1,0 +1,28 @@
+{
+  "job": "healer",
+  "school": "blessing",
+  "row": 5,
+  "column": 2,
+  "type": "passive",
+  "name": "鈴の余韻",
+  "description": "敵を打った鈴の音が、仲間の傷を癒す音に変わる。自分のスキルで与えたダメージの一部だけ、まわりでいちばん傷ついた仲間を癒す。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 25,
+  "requires": [
+    {
+      "skill": "healer/steady_prayer",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "bell_echo",
+    "value": 15,
+    "value_per_rank": 5,
+    "radius": 12
+  }
+}

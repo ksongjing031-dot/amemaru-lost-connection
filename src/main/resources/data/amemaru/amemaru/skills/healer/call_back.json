@@ -1,0 +1,47 @@
+{
+  "job": "healer",
+  "school": "healing",
+  "row": 3,
+  "column": 0,
+  "type": "active",
+  "name": "呼び戻し",
+  "description": "鈴の音で、倒れた仲間の名前を呼ぶ。離れた所でダウンしている仲間を、その場で起こす。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "healer/bond_mend",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 40
+  },
+  "cooldown": 150,
+  "cooldown_per_rank": -20,
+  "cast": 1.0,
+  "delivery": {
+    "type": "target",
+    "range": 24,
+    "affects": "allies",
+    "downed": true
+  },
+  "effects": [
+    {
+      "type": "revive",
+      "hp": 30,
+      "hp_per_rank": 10
+    }
+  ],
+  "tags": [
+    "heal"
+  ],
+  "animation": "healer_call",
+  "cast_animation": "healer_call_cast",
+  "sound": "amemaru:skill.healer.call_back"
+}

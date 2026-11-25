@@ -1,0 +1,94 @@
+{
+  "format_version": "1.8.0",
+  "animations": {
+    "rogue_throw_wide": {
+      "animation_length": 0.499,
+      "bones": {
+        "right_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                -15,
+                0,
+                0
+              ],
+              "easing": "easeOutQuad"
+            },
+            "0.101": {
+              "vector": [
+                -90,
+                30,
+                0
+              ],
+              "easing": "easeInQuad"
+            },
+            "0.251": {
+              "vector": [
+                -90,
+                -30,
+                40
+              ]
+            },
+            "0.351": {
+              "vector": [
+                -90,
+                -30,
+                40
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.501": {
+              "vector": [
+                -15,
+                0,
+                0
+              ]
+            }
+          }
+        },
+        "left_arm": {
+          "rotation": {
+            "0.001": {
+              "vector": [
+                0,
+                0,
+                0
+              ],
+              "easing": "easeOutQuad"
+            },
+            "0.101": {
+              "vector": [
+                -90,
+                -30,
+                0
+              ],
+              "easing": "easeInQuad"
+            },
+            "0.251": {
+              "vector": [
+                -90,
+                30,
+                -40
+              ]
+            },
+            "0.351": {
+              "vector": [
+                -90,
+                30,
+                -40
+              ],
+              "easing": "easeInOutSine"
+            },
+            "0.501": {
+              "vector": [
+                0,
+                0,
+                0
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}

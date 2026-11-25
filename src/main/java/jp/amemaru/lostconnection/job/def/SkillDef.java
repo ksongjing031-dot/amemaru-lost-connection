@@ -25,6 +25,45 @@ public final class SkillDef {
     public record Requirement(ResourceLocation skill, int rank) {
     }
 
+    /** モンクの連撃での役（Phase 6 その2【提案】）：【起】始める・【継】つなぐ・【極】締めくくる。 */
+    public enum ComboRole {
+        NONE("none", ""),
+        OPENER("opener", "起"),
+        LINK("link", "継"),
+        FINISHER("finisher", "極");
+
+        private final String id;
+        private final String label;
+
+        ComboRole(String id, String label) {
+            this.id = id;
+            this.label = label;
+        }
+
+        public String id() {
+            return id;
+        }
+
+        /** 画面に出す名前（なしのときは空）。 */
+        public String label() {
+            return label;
+        }
+
+        public static ComboRole byId(String id) {
+            for (ComboRole role : values()) {
+                if (role.id.equals(id)) {
+                    return role;
+                }
+            }
+            throw new DefinitionException("「combo」は opener・link・finisher のどれかにしてください（今は " + id + "）");
+        }
+
+        public static ComboRole byIndex(int index) {
+            ComboRole[] values = values();
+            return index >= 0 && index < values.length ? values[index] : NONE;
+        }
+    }
+
     private final ResourceLocation id;
     private final ResourceLocation job;
     private final String school;
@@ -68,6 +107,9 @@ public final class SkillDef {
     private final ResourceLocation castSound;
     @Nullable
     private final ResourceLocation impactSound;
+    /** スキルの性質の札（arrow・heal・poison など。パッシブの「矢のスキル」などに使う）。 */
+    private final List<String> tags;
+    private final ComboRole combo;
 
     private SkillDef(Builder b) {
         this.id = b.id;
@@ -105,6 +147,8 @@ public final class SkillDef {
         this.sound = b.sound;
         this.castSound = b.castSound;
         this.impactSound = b.impactSound;
+        this.tags = b.tags;
+        this.combo = b.combo;
     }
 
     // ---------------------------------------------------------------- 読み込み
@@ -198,6 +242,13 @@ public final class SkillDef {
         b.sound = Json.optionalId(json, "sound");
         b.castSound = Json.optionalId(json, "cast_sound");
         b.impactSound = Json.optionalId(json, "impact_sound");
+        List<String> tags = new ArrayList<>();
+        JsonArray tagArray = Json.optionalArray(json, "tags");
+        for (int i = 0; i < tagArray.size(); i++) {
+            tags.add(Json.asString(tagArray.get(i), "tags[" + i + "]"));
+        }
+        b.tags = Collections.unmodifiableList(tags);
+        b.combo = ComboRole.byId(Json.optionalString(json, "combo", "none"));
         return new SkillDef(b);
     }
 
@@ -422,6 +473,20 @@ public final class SkillDef {
         return impactSound;
     }
 
+    /** 性質の札（arrow・heal・poison など）。 */
+    public List<String> tags() {
+        return tags;
+    }
+
+    public boolean hasTag(String tag) {
+        return tags.contains(tag);
+    }
+
+    /** モンクの連撃での役。 */
+    public ComboRole combo() {
+        return combo;
+    }
+
     private static final class Builder {
         ResourceLocation id;
         ResourceLocation job;
@@ -458,5 +523,7 @@ public final class SkillDef {
         ResourceLocation sound;
         ResourceLocation castSound;
         ResourceLocation impactSound;
+        List<String> tags = List.of();
+        ComboRole combo = ComboRole.NONE;
     }
 }

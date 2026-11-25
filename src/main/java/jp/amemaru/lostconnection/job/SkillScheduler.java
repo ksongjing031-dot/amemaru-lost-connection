@@ -6,6 +6,8 @@ import jp.amemaru.lostconnection.combat.StatusService;
 import jp.amemaru.lostconnection.combat.TauntService;
 import jp.amemaru.lostconnection.job.def.Affects;
 import jp.amemaru.lostconnection.job.def.EffectDef;
+import jp.amemaru.lostconnection.network.s2c.SkillFxS2C;
+import jp.amemaru.lostconnection.player.DownHandler;
 import jp.amemaru.lostconnection.job.def.LinkType;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -39,21 +41,30 @@ public final class SkillScheduler {
 
     private static final class Zone {
         final SkillContext ctx;
-        final Vec3 center;
+        Vec3 center;
         final double radius;
         final long endTick;
         final int interval;
         long nextTick;
         final List<EffectDef> effects;
+        /** 使った人について動くか（百裂拳・矢嵐・大車輪）。 */
+        final boolean follow;
+        final EffectDef.ZoneMode mode;
+        final double angle;
 
-        Zone(SkillContext ctx, Vec3 center, double radius, long endTick, int interval, List<EffectDef> effects) {
+        Zone(SkillContext ctx, Vec3 center, double radius, long endTick, int interval, List<EffectDef> effects, boolean follow,
+             EffectDef.ZoneMode mode, double angle) {
             this.ctx = ctx;
             this.center = center;
             this.radius = radius;
             this.endTick = endTick;
             this.interval = interval;
-            this.nextTick = ctx.level.getGameTime() + interval;
+            // ついて動く陣は、すぐに1回目を出す（溜めの間がないため）
+            this.nextTick = ctx.level.getGameTime() + (follow ? 1 : interval);
             this.effects = effects;
+            this.follow = follow;
+            this.mode = mode;
+            this.angle = angle;
         }
     }
 
@@ -93,12 +104,19 @@ public final class SkillScheduler {
 
     /** 陣を置く。 */
     public static void addZone(SkillContext ctx, Vec3 center, double radius, int durationTicks, int intervalTicks, List<EffectDef> effects) {
+        addZone(ctx, center, radius, durationTicks, intervalTicks, effects, false, EffectDef.ZoneMode.AREA, 60.0);
+    }
+
+    /** 陣を置く（ついて動く陣・扇の陣・いちばん近い敵を射る陣。Phase 6 その2）。 */
+    public static void addZone(SkillContext ctx, Vec3 center, double radius, int durationTicks, int intervalTicks, List<EffectDef> effects,
+                               boolean follow, EffectDef.ZoneMode mode, double angle) {
         long count = ZONES.stream().filter(zone -> zone.ctx.level == ctx.level).count();
         if (count >= MAX_ZONES) {
             AmemaruMod.LOGGER.warn("[amemaru] Too many skill zones in {}; ignoring a new one", ctx.level.dimension().location());
             return;
         }
-        ZONES.add(new Zone(ctx, center, radius, ctx.level.getGameTime() + durationTicks, Math.max(1, intervalTicks), effects));
+        ZONES.add(new Zone(ctx, center, radius, ctx.level.getGameTime() + durationTicks, Math.max(1, intervalTicks), effects, follow,
+                mode, angle));
     }
 
     /** 跳躍を始めた（{@code flightTicks} は飛ぶ時間の見積もり）。 */
@@ -134,6 +152,7 @@ public final class SkillScheduler {
             long now = server.overworld().getGameTime();
             LinkComboTracker.cleanup(now);
             ReactiveSkills.cleanup(now);
+            jp.amemaru.lostconnection.combat.AfflictionService.cleanup(now);
             LANDED.values().removeIf(at -> now - at > LANDING_GRACE * 4L);
         }
         if (ticks % 400 == 0) {
@@ -219,13 +238,35 @@ public final class SkillScheduler {
                 it.remove();
                 continue;
             }
+            ServerPlayer caster = zone.ctx.caster();
+            if (zone.follow) {
+                if (caster == null || DownHandler.isDown(caster)) {
+                    it.remove();
+                    continue;
+                }
+                zone.center = caster.position();
+            }
             if (now < zone.nextTick) {
                 continue;
             }
             zone.nextTick = now + zone.interval;
-            List<LivingEntity> enemies = SkillTargeting.enemiesNear(zone.ctx.level, zone.center, zone.radius);
+            List<LivingEntity> enemies;
+            if (zone.mode == EffectDef.ZoneMode.CONE && caster != null) {
+                enemies = SkillTargeting.inCone(caster, zone.radius, zone.angle);
+            } else {
+                enemies = SkillTargeting.enemiesNear(zone.ctx.level, zone.center, zone.radius);
+            }
+            if (zone.mode == EffectDef.ZoneMode.NEAREST) {
+                enemies = enemies.isEmpty() ? List.of() : List.of(enemies.get(0));
+                if (!enemies.isEmpty() && caster != null) {
+                    // 矢嵐：いちばん近い敵へ矢を放つ（見た目は TRIGGER で送る）
+                    LivingEntity shot = enemies.get(0);
+                    new SkillFxS2C(SkillFxS2C.Phase.TRIGGER, caster.getId(), zone.ctx.skillIndex, caster.getEyePosition(),
+                            shot.getBoundingBox().getCenter(), 0.0F, 0, new int[]{shot.getId()}, 0.0F)
+                            .sendNear(zone.ctx.level.dimension(), caster.position());
+                }
+            }
             List<LivingEntity> allies = null;
-            ServerPlayer caster = zone.ctx.caster();
             if (caster != null && zone.ctx.skill.link() == LinkType.STARTER) {
                 // 陣の中にいる敵には、起点の印をつけ続ける（ほかの人の追撃がつながる）
                 for (LivingEntity target : enemies) {
@@ -264,5 +305,10 @@ public final class SkillScheduler {
         LinkComboTracker.clear();
         StatusService.clear();
         ReactiveSkills.clear();
+        jp.amemaru.lostconnection.combat.AfflictionService.clear();
+        jp.amemaru.lostconnection.combat.GuardianHeart.clear();
+        ComboService.clear();
+        HitHooks.clear();
+        StarRingService.clear();
     }
 }

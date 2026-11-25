@@ -1,0 +1,28 @@
+{
+  "job": "monk",
+  "school": "soft",
+  "row": 1,
+  "column": 2,
+  "type": "passive",
+  "name": "仲間の拳",
+  "description": "肩を並べて戦う仲間がいると、体が軽くなる。まわりに近接で戦う仲間がいると、素早さが上がる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "requires": [
+    {
+      "skill": "monk/palm_strike",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "ally_fist",
+    "value": 5,
+    "value_per_rank": 3,
+    "radius": 8
+  }
+}

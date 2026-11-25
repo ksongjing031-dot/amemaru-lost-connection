@@ -1,0 +1,27 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "古代石シリーズ",
+  "rarity": "common",
+  "required_level": 5,
+  "jobs": [
+    "amemaru:archer"
+  ],
+  "stats": {
+    "attack": 13,
+    "crit": 2
+  },
+  "durability": 400,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:moss_iron",
+      "count": 1
+    },
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 1
+    }
+  ],
+  "description": "苔鉄の芯に古代石の握りをはめ、結晶蜂の針で矢じりを研いだ弓。"
+}

@@ -57,8 +57,16 @@ public final class SkillTargeting {
     public static Aim resolve(ServerPlayer player, SkillDef skill, int rank, int entityId, @Nullable Vec3 point) {
         DeliveryDef delivery = skill.delivery();
         return switch (delivery.type()) {
-            case TARGET, CHAIN -> {
+            case TARGET, CHAIN, BEHIND -> {
+                if (delivery.downed()) {
+                    yield resolveDowned(player, delivery.range(rank), entityId);
+                }
                 Aim aim = resolveEntity(player, delivery.range(rank), delivery.affects(), delivery.includeSelf(), entityId);
+                if (aim.failure() != null && delivery.smart()) {
+                    // 回復の技：狙った先に味方がいなければ、まわりでいちばん傷ついた味方（いなければ自分）
+                    ServerPlayer lowest = HitHooks.lowestAlly(player, delivery.range(rank));
+                    yield new Aim(lowest != null ? lowest : player, null, null);
+                }
                 // 味方を狙う技で、狙える味方がいなければ自分にかける（光の帳）
                 yield aim.failure() != null && delivery.fallbackSelf() ? new Aim(player, null, null) : aim;
             }
@@ -72,11 +80,21 @@ public final class SkillTargeting {
     public static Aim recheck(ServerPlayer player, SkillDef skill, int rank, int entityId, @Nullable Vec3 point) {
         DeliveryDef delivery = skill.delivery();
         return switch (delivery.type()) {
-            case TARGET, CHAIN -> {
+            case TARGET, CHAIN, BEHIND -> {
                 Entity entity = player.level().getEntity(entityId);
+                if (delivery.downed()) {
+                    if (entity instanceof ServerPlayer downed && downedAlly(player, downed, delivery.range(rank) + 2.0)) {
+                        yield new Aim(downed, null, null);
+                    }
+                    yield Aim.fail(SkillService.Failure.NO_ALLY);
+                }
                 if (entity instanceof LivingEntity living && valid(player, living, delivery.range(rank) + 2.0, delivery.affects(),
                         delivery.includeSelf(), -1.0)) {
                     yield new Aim(living, null, null);
+                }
+                if (delivery.smart()) {
+                    ServerPlayer lowest = HitHooks.lowestAlly(player, delivery.range(rank));
+                    yield new Aim(lowest != null ? lowest : player, null, null);
                 }
                 if (delivery.fallbackSelf()) {
                     yield new Aim(player, null, null);
@@ -92,6 +110,46 @@ public final class SkillTargeting {
             }
             default -> Aim.NONE;
         };
+    }
+
+    /** ダウンしている味方を狙う（呼び戻し）：狙った相手か、視線の近くか、いちばん近い人。 */
+    private static Aim resolveDowned(ServerPlayer player, double range, int entityId) {
+        if (entityId >= 0 && player.level().getEntity(entityId) instanceof ServerPlayer aimed && downedAlly(player, aimed, range + 1.0)) {
+            return new Aim(aimed, null, null);
+        }
+        Vec3 eye = player.getEyePosition();
+        Vec3 look = player.getLookAngle();
+        ServerPlayer best = null;
+        double bestScore = Double.MAX_VALUE;
+        for (ServerPlayer other : player.serverLevel().players()) {
+            if (!downedAlly(player, other, range)) {
+                continue;
+            }
+            double dot = direction(eye, other).dot(look);
+            double score = (1.0 - dot) * 100.0 + other.distanceToSqr(player) * 0.01;
+            if (score < bestScore) {
+                best = other;
+                bestScore = score;
+            }
+        }
+        return best != null ? new Aim(best, null, null) : Aim.fail(SkillService.Failure.NO_ALLY);
+    }
+
+    /** ダウンしている味方で、射程の中か（壁は問わない：鈴の音は届く）。 */
+    public static boolean downedAlly(ServerPlayer caster, ServerPlayer other, double range) {
+        return other != caster && other.isAlive() && !other.isSpectator() && other.level() == caster.level()
+                && jp.amemaru.lostconnection.player.DownHandler.isDown(other) && other.distanceToSqr(caster) <= range * range;
+    }
+
+    /** 自分のまわりの、ダウンしている味方（大いなる呼び声）。 */
+    public static List<LivingEntity> downedAround(ServerPlayer player, double radius) {
+        List<LivingEntity> list = new ArrayList<>();
+        for (ServerPlayer other : player.serverLevel().players()) {
+            if (downedAlly(player, other, radius)) {
+                list.add(other);
+            }
+        }
+        return list;
     }
 
     private static Aim resolveEntity(ServerPlayer player, double range, Affects affects, boolean includeSelf, int entityId) {

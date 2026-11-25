@@ -1,0 +1,27 @@
+{
+  "job": "healer",
+  "school": "healing",
+  "row": 1,
+  "column": 2,
+  "type": "passive",
+  "name": "慈愛",
+  "description": "癒す手に、ためらいがない。回復の量が上がる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "requires": [
+    {
+      "skill": "healer/bell_heal",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "heal_power",
+    "value": 8,
+    "value_per_rank": 4
+  }
+}

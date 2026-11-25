@@ -1,0 +1,27 @@
+{
+  "job": "rogue",
+  "school": "shadow",
+  "row": 1,
+  "column": 2,
+  "type": "passive",
+  "name": "背後の心得",
+  "description": "敵の背後こそ、ローグの立つ場所。背後から当てたダメージが上がる。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "requires": [
+    {
+      "skill": "rogue/flurry",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "backstab_mastery",
+    "value": 10,
+    "value_per_rank": 5
+  }
+}

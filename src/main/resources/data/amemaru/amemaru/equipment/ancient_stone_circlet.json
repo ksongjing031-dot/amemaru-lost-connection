@@ -1,0 +1,26 @@
+{
+  "slot": "head",
+  "generation": 1,
+  "series": "古代石シリーズ（軽装）",
+  "rarity": "common",
+  "required_level": 5,
+  "jobs": [
+    "amemaru:archer",
+    "amemaru:rogue",
+    "amemaru:monk"
+  ],
+  "stats": {
+    "defense": 3,
+    "hp": 15,
+    "crit": 1
+  },
+  "durability": 280,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 1
+    }
+  ],
+  "description": "鞣した革に古代石の小板を縫いつけた額当て。羽根が一本さしてある。"
+}

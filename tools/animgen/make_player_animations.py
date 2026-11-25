@@ -324,6 +324,546 @@ define("wizard_ice_garden_release", 16,
              (16, ZERO)])
 
 
+# ================================================================ Phase 6 その2（11月22日）：アーチャー
+# 弓は右手（利き手）で持ち、左手で弦を引く（バニラの弓の構えと同じ向き）。
+BOW_R = [-90, -6, 0]
+BOW_L_DRAWN = [-90, 30, 0]
+BOW_L_LOOSE = [-80, 12, 0]
+
+# 射る：さっと引いて放つ
+define("archer_shot", 8,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, BOW_R), (5, BOW_R, "easeInOutSine"), (8, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (2, BOW_L_DRAWN, "easeInQuad"), (3, BOW_L_LOOSE), (5, BOW_L_LOOSE, "easeInOutSine"),
+                 (8, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (2, [0, 10, 0]), (5, [0, 10, 0], "easeInOutSine"), (8, ZERO)])
+
+# 重い一矢：深く引いて、体ごと放つ
+define("archer_heavy", 12,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (3, BOW_R), (9, BOW_R, "easeInOutSine"), (12, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (4, [-88, 45, 0], "easeInQuad"), (5, [-70, 0, -10]), (9, [-70, 0, -10], "easeInOutSine"),
+                 (12, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (4, [-4, 18, 0], "easeInQuad"), (5, [4, 8, 0]), (9, [4, 8, 0], "easeInOutSine"), (12, ZERO)],
+       right_leg=[(0, ZERO, "easeOutQuad"), (4, [-12, 0, 0]), (9, [-12, 0, 0], "easeInOutSine"), (12, ZERO)],
+       left_leg=[(0, ZERO, "easeOutQuad"), (4, [10, 0, 0]), (9, [10, 0, 0], "easeInOutSine"), (12, ZERO)])
+
+# 引き絞る（溜め）：弦を顔の横まで引いて、静かに息を整える。くり返し
+define("archer_draw", 20, loop=True,
+       right_arm=[(0, BOW_R, "easeInOutSine"), (10, [-91, -6, 0], "easeInOutSine"), (20, BOW_R)],
+       left_arm=[(0, [-88, 48, 0], "easeInOutSine"), (10, [-89, 50, 0], "easeInOutSine"), (20, [-88, 48, 0])],
+       body=[(0, [0, 16, 0], "easeInOutSine"), (10, [0, 17, 0], "easeInOutSine"), (20, [0, 16, 0])])
+
+# 天穿ち（溜め）：空へ向けて引き絞る。くり返し
+define("archer_draw_sky", 20, loop=True,
+       right_arm=[(0, [-150, -6, 0], "easeInOutSine"), (10, [-152, -6, 0], "easeInOutSine"), (20, [-150, -6, 0])],
+       left_arm=[(0, [-140, 40, 0], "easeInOutSine"), (10, [-142, 42, 0], "easeInOutSine"), (20, [-140, 40, 0])],
+       body=[(0, [-10, 12, 0], "easeInOutSine"), (10, [-11, 13, 0], "easeInOutSine"), (20, [-10, 12, 0])])
+
+# 放つ（溜めの後）：引いた弦を離し、反動で少し下がる
+define("archer_release", 12,
+       right_arm=[(0, BOW_R, "easeOutQuad"), (2, [-96, -6, 0]), (8, [-92, -6, 0], "easeInOutSine"), (12, R_IDLE)],
+       left_arm=[(0, [-88, 48, 0], "easeOutQuad"), (2, [-60, -10, -25]), (8, [-60, -10, -25], "easeInOutSine"), (12, L_IDLE)],
+       body=[(0, [0, 16, 0], "easeOutQuad"), (2, [-6, 6, 0]), (8, [-4, 6, 0], "easeInOutSine"), (12, ZERO)])
+
+# 扇に放つ：引いたまま、体を左から右へ払う
+define("archer_fan", 10,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, BOW_R), (7, BOW_R, "easeInOutSine"), (10, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (2, BOW_L_DRAWN, "easeInQuad"), (4, BOW_L_LOOSE), (7, BOW_L_LOOSE, "easeInOutSine"),
+                 (10, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (2, [0, 35, 0], "easeInOutQuad"), (5, [0, -25, 0]), (7, [0, -25, 0], "easeInOutSine"), (10, ZERO)])
+
+# 三連射：すばやく3回引いて放つ
+define("archer_triple", 14,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, BOW_R), (11, BOW_R, "easeInOutSine"), (14, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (2, BOW_L_DRAWN), (3, BOW_L_LOOSE), (5, BOW_L_DRAWN), (6, BOW_L_LOOSE), (8, BOW_L_DRAWN),
+                 (9, BOW_L_LOOSE), (11, BOW_L_LOOSE, "easeInOutSine"), (14, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (2, [0, 10, 0]), (11, [0, 10, 0], "easeInOutSine"), (14, ZERO)])
+
+# 鷹の眼差し：左手をひさしにして遠くを見る
+define("archer_gaze", 18,
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (4, [-140, -40, 10]), (13, [-140, -40, 10], "easeInOutSine"), (18, L_IDLE)],
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (4, [-10, 0, 10]), (13, [-10, 0, 10], "easeInOutSine"), (18, R_IDLE)],
+       head=[(0, ZERO, "easeOutQuad"), (4, [-8, 0, 0]), (8, [-8, -20, 0], "easeInOutSine"), (13, [-8, 20, 0], "easeInOutSine"), (18, ZERO)])
+
+# 狙撃の構え：片ひざをつき、弓を構える
+define("archer_kneel", 16,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (4, BOW_R), (12, BOW_R, "easeInOutSine"), (16, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (4, [-85, 35, 0]), (12, [-85, 35, 0], "easeInOutSine"), (16, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (4, [14, 12, 0]), (12, [14, 12, 0], "easeInOutSine"), (16, ZERO)],
+       right_leg=[(0, ZERO, "easeOutQuad"), (4, [-70, 0, 0]), (12, [-70, 0, 0], "easeInOutSine"), (16, ZERO)],
+       left_leg=[(0, ZERO, "easeOutQuad"), (4, [60, 0, 0]), (12, [60, 0, 0], "easeInOutSine"), (16, ZERO)])
+
+# 流れ星の一矢（詠唱）：天へ向けて弓を掲げ、星の光を集める。くり返し
+define("archer_star_cast", 20, loop=True,
+       right_arm=[(0, [-130, -6, 0], "easeInOutSine"), (10, [-135, -6, 0], "easeInOutSine"), (20, [-130, -6, 0])],
+       left_arm=[(0, [-125, 40, 0], "easeInOutSine"), (10, [-128, 44, 0], "easeInOutSine"), (20, [-125, 40, 0])],
+       body=[(0, [-6, 14, 0], "easeInOutSine"), (10, [-7, 15, 0], "easeInOutSine"), (20, [-6, 14, 0])])
+
+# 流れ星の一矢（放つ）：振り下ろすように前へ放つ
+define("archer_star_release", 16,
+       right_arm=[(0, [-130, -6, 0], "easeInQuad"), (3, BOW_R), (11, BOW_R, "easeInOutSine"), (16, R_IDLE)],
+       left_arm=[(0, [-125, 40, 0], "easeInQuad"), (3, [-88, 50, 0]), (4, [-55, -10, -30]), (11, [-55, -10, -30], "easeInOutSine"),
+                 (16, L_IDLE)],
+       body=[(0, [-6, 14, 0], "easeInQuad"), (3, [6, 16, 0]), (4, [-6, 4, 0]), (11, [-6, 4, 0], "easeInOutSine"), (16, ZERO)],
+       right_leg=[(0, ZERO, "easeOutQuad"), (3, [-15, 0, 0]), (11, [-15, 0, 0], "easeInOutSine"), (16, ZERO)])
+
+# 後跳び：後ろへ跳びながら、前へ一矢
+define("archer_back", 12,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, BOW_R), (8, BOW_R, "easeInOutSine"), (12, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (2, BOW_L_DRAWN), (4, BOW_L_LOOSE), (8, BOW_L_LOOSE, "easeInOutSine"), (12, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (2, [-14, 0, 0]), (8, [-10, 0, 0], "easeInOutSine"), (12, ZERO)],
+       right_leg=[(0, ZERO, "easeOutQuad"), (2, [-35, 0, 0]), (8, [-30, 0, 0], "easeInOutSine"), (12, ZERO)],
+       left_leg=[(0, ZERO, "easeOutQuad"), (2, [-20, 0, 0]), (8, [-15, 0, 0], "easeInOutSine"), (12, ZERO)])
+
+# 矢の雨：空へ向けて放つ
+define("archer_sky", 12,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (3, [-150, -6, 0]), (9, [-150, -6, 0], "easeInOutSine"), (12, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (3, [-140, 40, 0], "easeInQuad"), (4, [-120, 10, -20]), (9, [-120, 10, -20], "easeInOutSine"),
+                 (12, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (3, [-12, 12, 0]), (9, [-12, 12, 0], "easeInOutSine"), (12, ZERO)])
+
+# 旋風の矢：弓を構えたまま、その場で一回転
+define("archer_spin", 12,
+       body=[(0, ZERO), (1, ZERO, "easeOutQuad"), (5, [0, -180, 0]), (9, {"pre": [0, -360, 0], "post": [0, 0, 0]}), (12, ZERO)],
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (1, [-90, 0, 40]), (9, [-90, 0, 40], "easeInOutSine"), (12, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (1, [-90, 0, -40]), (9, [-90, 0, -40], "easeInOutSine"), (12, L_IDLE)])
+
+# 矢嵐：弓を構えて、まわりを次々に射る。くり返し
+define("archer_storm", 20, loop=True,
+       right_arm=[(0, BOW_R, "easeInOutSine"), (10, [-100, -6, 0], "easeInOutSine"), (20, BOW_R)],
+       left_arm=[(0, BOW_L_DRAWN), (3, BOW_L_LOOSE), (5, BOW_L_DRAWN), (8, BOW_L_LOOSE), (10, BOW_L_DRAWN), (13, BOW_L_LOOSE),
+                 (15, BOW_L_DRAWN), (18, BOW_L_LOOSE), (20, BOW_L_DRAWN)],
+       body=[(0, [0, 20, 0], "easeInOutSine"), (10, [0, -20, 0], "easeInOutSine"), (20, [0, 20, 0])])
+
+# 疾風の弓舞：くるりと回って弓を掲げる
+define("archer_dance", 16,
+       body=[(0, ZERO), (1, ZERO, "easeOutQuad"), (6, [0, 180, 0]), (10, {"pre": [0, 360, 0], "post": [0, 0, 0]}), (16, ZERO)],
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (4, [-160, 0, 20]), (12, [-160, 0, 20], "easeInOutSine"), (16, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (4, [-20, 0, -60]), (12, [-20, 0, -60], "easeInOutSine"), (16, L_IDLE)])
+
+# ================================================================ Phase 6 その2：ヒーラー（鈴杖は右手）
+# 癒しの鈴：鈴杖を前に上げて、小さく振る
+define("healer_ring", 12,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, [-115, 0, 0]), (4, [-115, 0, 12]), (6, [-115, 0, -8]), (8, [-115, 0, 6]),
+                  (9, [-110, 0, 0], "easeInOutSine"), (12, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (3, [-20, 0, -15]), (9, [-20, 0, -15], "easeInOutSine"), (12, L_IDLE)])
+
+# 祈りの輪：両手を胸の前で合わせる
+define("healer_pray", 16,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (4, [-65, 30, 0]), (12, [-65, 30, 0], "easeInOutSine"), (16, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (4, [-65, -30, 0]), (12, [-65, -30, 0], "easeInOutSine"), (16, L_IDLE)],
+       head=[(0, ZERO, "easeOutQuad"), (4, [15, 0, 0]), (12, [15, 0, 0], "easeInOutSine"), (16, ZERO)])
+
+# 差し向ける：鈴杖を相手へ向ける
+define("healer_point", 10,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, [-95, -8, 0]), (7, [-92, -8, 0], "easeInOutSine"), (10, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (2, [10, 0, -12]), (7, [10, 0, -12], "easeInOutSine"), (10, L_IDLE)])
+
+# 掲げる：鈴杖を高く掲げる
+define("healer_raise", 14,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (3, [-170, 0, -5]), (10, [-170, 0, -5], "easeInOutSine"), (14, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (3, [-30, 0, -25]), (10, [-30, 0, -25], "easeInOutSine"), (14, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (3, [-5, 0, 0]), (10, [-5, 0, 0], "easeInOutSine"), (14, ZERO)])
+
+# 呼び戻し（詠唱）：倒れた仲間へ手を伸ばし、鈴杖を胸に。くり返し
+define("healer_call_cast", 20, loop=True,
+       right_arm=[(0, [-60, 20, 0], "easeInOutSine"), (10, [-64, 22, 0], "easeInOutSine"), (20, [-60, 20, 0])],
+       left_arm=[(0, [-85, 10, 0], "easeInOutSine"), (10, [-95, 10, 0], "easeInOutSine"), (20, [-85, 10, 0])],
+       body=[(0, [12, 0, 0], "easeInOutSine"), (10, [14, 0, 0], "easeInOutSine"), (20, [12, 0, 0])])
+
+# 呼び戻し（放つ）：両手を天へ
+define("healer_call", 16,
+       right_arm=[(0, [-60, 20, 0], "easeOutQuad"), (4, [-165, 0, -15]), (12, [-165, 0, -15], "easeInOutSine"), (16, R_IDLE)],
+       left_arm=[(0, [-85, 10, 0], "easeOutQuad"), (4, [-165, 0, 15]), (12, [-165, 0, 15], "easeInOutSine"), (16, L_IDLE)],
+       body=[(0, [12, 0, 0], "easeOutQuad"), (4, [-6, 0, 0]), (12, [-6, 0, 0], "easeInOutSine"), (16, ZERO)])
+
+# ふくらむ鈴（溜め）：鈴杖を胸の前で抱え、光を込める。くり返し
+define("healer_charge", 20, loop=True,
+       right_arm=[(0, [-70, 25, 0], "easeInOutSine"), (10, [-76, 25, 0], "easeInOutSine"), (20, [-70, 25, 0])],
+       left_arm=[(0, [-60, -25, 0], "easeInOutSine"), (10, [-66, -25, 0], "easeInOutSine"), (20, [-60, -25, 0])])
+
+# ふくらむ鈴（放つ）：抱えた鈴杖を前へ差し出す
+define("healer_release", 12,
+       right_arm=[(0, [-70, 25, 0], "easeOutQuad"), (3, [-100, -5, 0]), (8, [-100, -5, 0], "easeInOutSine"), (12, R_IDLE)],
+       left_arm=[(0, [-60, -25, 0], "easeOutQuad"), (3, [-90, 10, 0]), (8, [-90, 10, 0], "easeInOutSine"), (12, L_IDLE)])
+
+# 清めの鈴音：鈴杖を横へ大きく払う
+define("healer_chime", 10,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, [-95, 50, 0], "easeInQuad"), (5, [-95, -50, 0]), (7, [-90, -50, 0], "easeInOutSine"),
+                  (10, R_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (2, [0, 20, 0], "easeInQuad"), (5, [0, -20, 0]), (7, [0, -20, 0], "easeInOutSine"), (10, ZERO)])
+
+# 響き合う癒し：両手を左右へ広げる
+define("healer_resonance", 16,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (4, [-90, 0, 70]), (12, [-90, 0, 70], "easeInOutSine"), (16, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (4, [-90, 0, -70]), (12, [-90, 0, -70], "easeInOutSine"), (16, L_IDLE)])
+
+# 加護の灯：鈴杖を灯のように頭の上へ
+define("healer_lantern", 14,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (3, [-150, 0, 20]), (10, [-150, 0, 20], "easeInOutSine"), (14, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (3, [-40, 0, -20]), (10, [-40, 0, -20], "easeInOutSine"), (14, L_IDLE)])
+
+# 鈴杖を地面へ：振り上げて、突く
+define("healer_slam", 14,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (3, [-165, 0, -5], "easeInQuad"), (6, [-45, 0, 0]), (10, [-45, 0, 0], "easeInOutSine"),
+                  (14, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (3, [-60, 0, -20]), (6, [-40, 0, -10]), (10, [-40, 0, -10], "easeInOutSine"), (14, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (3, [-6, 0, 0], "easeInQuad"), (6, [16, 0, 0]), (10, [16, 0, 0], "easeInOutSine"), (14, ZERO)])
+
+# つながりの聖域：両手を大きく広げてから、地へ下ろす
+define("healer_sanctuary", 18,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (4, [-160, 0, 40]), (9, [-160, 0, 40], "easeInQuad"), (13, [-40, 0, 40]),
+                  (15, [-40, 0, 40], "easeInOutSine"), (18, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (4, [-160, 0, -40]), (9, [-160, 0, -40], "easeInQuad"), (13, [-40, 0, -40]),
+                 (15, [-40, 0, -40], "easeInOutSine"), (18, L_IDLE)])
+
+# 大いなる呼び声（詠唱）：両手を空へ広げて祈る。くり返し
+define("healer_great_call_cast", 24, loop=True,
+       right_arm=[(0, [-150, 0, 30], "easeInOutSine"), (12, [-158, 0, 24], "easeInOutSine"), (24, [-150, 0, 30])],
+       left_arm=[(0, [-150, 0, -30], "easeInOutSine"), (12, [-158, 0, -24], "easeInOutSine"), (24, [-150, 0, -30])],
+       head=[(0, [-15, 0, 0], "easeInOutSine"), (12, [-18, 0, 0], "easeInOutSine"), (24, [-15, 0, 0])])
+
+# 大いなる呼び声（放つ）：掲げた手を、まわりへ振り下ろす
+define("healer_great_call", 18,
+       right_arm=[(0, [-150, 0, 30], "easeInQuad"), (4, [-175, 0, 5]), (8, [-60, 0, 60]), (14, [-60, 0, 60], "easeInOutSine"), (18, R_IDLE)],
+       left_arm=[(0, [-150, 0, -30], "easeInQuad"), (4, [-175, 0, -5]), (8, [-60, 0, -60]), (14, [-60, 0, -60], "easeInOutSine"),
+                 (18, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (4, [-8, 0, 0]), (8, [10, 0, 0]), (14, [10, 0, 0], "easeInOutSine"), (18, ZERO)])
+
+# ================================================================ Phase 6 その2：ローグ（短剣は両手）
+# 乱れ刃：左右の短剣で、交互にすばやく突く
+define("rogue_flurry", 12,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, [-95, -10, 0]), (4, [-40, 0, 10]), (6, [-95, -10, 0]), (8, [-40, 0, 10]),
+                  (10, [-40, 0, 10], "easeInOutSine"), (12, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (3, [-40, 0, -10]), (5, [-95, 10, 0]), (7, [-40, 0, -10]), (9, [-95, 10, 0]),
+                 (10, [-60, 0, -10], "easeInOutSine"), (12, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (2, [8, -10, 0]), (5, [8, 10, 0]), (8, [8, -10, 0]), (10, [6, 0, 0], "easeInOutSine"), (12, ZERO)])
+
+# 毒刃：斜めに斬り下ろす
+define("rogue_slash", 9,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, [-150, 0, -30], "easeInQuad"), (4, [-30, -40, 20]), (6, [-30, -40, 20], "easeInOutSine"),
+                  (9, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (2, [-60, 20, -20]), (6, [-30, 0, -15], "easeInOutSine"), (9, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (2, [-4, 10, 0], "easeInQuad"), (4, [10, -15, 0]), (6, [10, -15, 0], "easeInOutSine"), (9, ZERO)])
+
+# 十字斬り：両手を交差させて斬る
+define("rogue_cross", 10,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, [-150, 0, 30], "easeInQuad"), (4, [-50, 0, -35]), (7, [-50, 0, -35], "easeInOutSine"),
+                  (10, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (2, [-150, 0, -30], "easeInQuad"), (4, [-50, 0, 35]), (7, [-50, 0, 35], "easeInOutSine"),
+                 (10, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (2, [-6, 0, 0], "easeInQuad"), (4, [14, 0, 0]), (7, [14, 0, 0], "easeInOutSine"), (10, ZERO)])
+
+# 急所突き：身を低くして、深く一突き
+define("rogue_thrust", 10,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, [-60, 0, 10], "easeInQuad"), (4, [-95, -5, 0]), (7, [-95, -5, 0], "easeInOutSine"),
+                  (10, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (2, [-30, 0, -30]), (7, [20, 0, -20], "easeInOutSine"), (10, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (2, [10, 15, 0], "easeInQuad"), (4, [22, -10, 0]), (7, [22, -10, 0], "easeInOutSine"), (10, ZERO)],
+       right_leg=[(0, ZERO, "easeOutQuad"), (4, [-35, 0, 0]), (7, [-35, 0, 0], "easeInOutSine"), (10, ZERO)],
+       left_leg=[(0, ZERO, "easeOutQuad"), (4, [25, 0, 0]), (7, [25, 0, 0], "easeInOutSine"), (10, ZERO)])
+
+# 影討ち：背後へ回り、低い姿勢から斬り上げる
+define("rogue_behind", 10,
+       right_arm=[(0, [-20, 0, 20], "easeOutQuad"), (2, [-30, 0, 30], "easeInQuad"), (5, [-150, -20, 0]), (7, [-150, -20, 0], "easeInOutSine"),
+                  (10, R_IDLE)],
+       left_arm=[(0, [-20, 0, -20], "easeOutQuad"), (2, [-30, 0, -30]), (7, [-70, 10, -10], "easeInOutSine"), (10, L_IDLE)],
+       body=[(0, [20, 0, 0], "easeOutQuad"), (2, [24, 0, 0], "easeInQuad"), (5, [-4, 0, 0]), (7, [-4, 0, 0], "easeInOutSine"), (10, ZERO)])
+
+# 走る：前かがみで、短剣を後ろへ
+define("rogue_dash", 10,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, [40, 0, 15]), (7, [40, 0, 15], "easeInOutSine"), (10, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (2, [40, 0, -15]), (7, [40, 0, -15], "easeInOutSine"), (10, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (2, [25, 0, 0]), (7, [25, 0, 0], "easeInOutSine"), (10, ZERO)])
+
+# 影刃の舞：短剣を広げて、その場で一回転
+define("rogue_spin", 10,
+       body=[(0, ZERO), (1, ZERO, "easeOutQuad"), (5, [0, -180, 0]), (8, {"pre": [0, -360, 0], "post": [0, 0, 0]}), (10, ZERO)],
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (1, [-80, 0, 80]), (8, [-80, 0, 80], "easeInOutSine"), (10, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (1, [-80, 0, -80]), (8, [-80, 0, -80], "easeInOutSine"), (10, L_IDLE)])
+
+# 千の刃：回りながら、左右で斬り続ける
+define("rogue_thousand", 20,
+       body=[(0, ZERO), (1, ZERO, "easeInQuad"), (5, [0, -180, 0]), (9, {"pre": [0, -360, 0], "post": [0, 0, 0]}), (13, [0, -180, 0]),
+             (17, {"pre": [0, -360, 0], "post": [0, 0, 0]}), (20, ZERO)],
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, [-100, 0, 70]), (6, [-60, 0, 90]), (10, [-100, 0, 70]), (14, [-60, 0, 90]),
+                  (17, [-100, 0, 70], "easeInOutSine"), (20, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (2, [-60, 0, -90]), (6, [-100, 0, -70]), (10, [-60, 0, -90]), (14, [-100, 0, -70]),
+                 (17, [-60, 0, -90], "easeInOutSine"), (20, L_IDLE)])
+
+# 影分身：両手を交差させて、身を沈める
+define("rogue_clone", 14,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (3, [-70, 40, 0]), (10, [-70, 40, 0], "easeInOutSine"), (14, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (3, [-70, -40, 0]), (10, [-70, -40, 0], "easeInOutSine"), (14, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (3, [12, 0, 0]), (10, [12, 0, 0], "easeInOutSine"), (14, ZERO)])
+
+# 投げる（煙玉・毒霧）：右手で放る
+define("rogue_throw", 10,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (3, [-170, 0, -10], "easeInQuad"), (5, [-80, 0, 0]), (7, [-80, 0, 0], "easeInOutSine"),
+                  (10, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (3, [-60, 0, -20]), (7, [-20, 0, -15], "easeInOutSine"), (10, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (3, [-6, 15, 0], "easeInQuad"), (5, [10, -10, 0]), (7, [10, -10, 0], "easeInOutSine"), (10, ZERO)])
+
+# 糸を放つ：両手を前へ、扇に広げる
+define("rogue_throw_wide", 10,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, [-90, 30, 0], "easeInQuad"), (5, [-90, -30, 40]), (7, [-90, -30, 40], "easeInOutSine"),
+                  (10, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (2, [-90, -30, 0], "easeInQuad"), (5, [-90, 30, -40]), (7, [-90, 30, -40], "easeInOutSine"),
+                 (10, L_IDLE)])
+
+# 痺れ針：手首だけで、すばやく投げる
+define("rogue_needle", 7,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, [-60, 0, 20], "easeInQuad"), (3, [-95, -10, 0]), (5, [-95, -10, 0], "easeInOutSine"),
+                  (7, R_IDLE)])
+
+# 毒の弾け：指を鳴らす
+define("rogue_snap", 10,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (3, [-100, -20, 0]), (4, [-110, -20, 0]), (7, [-100, -20, 0], "easeInOutSine"), (10, R_IDLE)],
+       head=[(0, ZERO, "easeOutQuad"), (3, [5, 0, 0]), (7, [5, 0, 0], "easeInOutSine"), (10, ZERO)])
+
+# 毒塗り：短剣の刃に、毒を引く
+define("rogue_coat", 16,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (3, [-60, 30, 0]), (12, [-60, 30, 0], "easeInOutSine"), (16, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (3, [-55, -20, 0]), (6, [-55, 10, 0]), (9, [-55, -20, 0]), (12, [-55, 10, 0], "easeInOutSine"),
+                 (16, L_IDLE)],
+       head=[(0, ZERO, "easeOutQuad"), (3, [20, 0, 0]), (12, [20, 0, 0], "easeInOutSine"), (16, ZERO)])
+
+# 毒花：両手を下から上へ開き、花を咲かせる
+define("rogue_bloom", 16,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (4, [-30, 0, 20], "easeInQuad"), (8, [-160, 0, 50]), (12, [-160, 0, 50], "easeInOutSine"),
+                  (16, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (4, [-30, 0, -20], "easeInQuad"), (8, [-160, 0, -50]), (12, [-160, 0, -50], "easeInOutSine"),
+                 (16, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (4, [12, 0, 0], "easeInQuad"), (8, [-6, 0, 0]), (12, [-6, 0, 0], "easeInOutSine"), (16, ZERO)])
+
+# ================================================================ Phase 6 その2：モンク（籠手は両手）
+FIST_R = [-45, 20, 0]
+FIST_L = [-45, -20, 0]
+
+# 連打：左右の拳で、すばやく突く
+define("monk_jab", 10,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (1, [-95, -8, 0]), (3, FIST_R), (5, [-95, -8, 0]), (7, FIST_R, "easeInOutSine"),
+                  (10, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (2, [-95, 8, 0]), (4, FIST_L), (6, [-95, 8, 0]), (7, FIST_L, "easeInOutSine"), (10, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (1, [4, -12, 0]), (2, [4, 12, 0]), (3, [4, -12, 0]), (4, [4, 12, 0]), (5, [4, -12, 0]),
+             (7, [2, 0, 0], "easeInOutSine"), (10, ZERO)])
+
+# 掌打：体重をのせて、掌を突き出す
+define("monk_palm_light", 10,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, FIST_R, "easeInQuad"), (4, [-90, -5, 0]), (7, [-90, -5, 0], "easeInOutSine"), (10, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (2, FIST_L), (7, [-20, 0, -15], "easeInOutSine"), (10, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (2, [4, 15, 0], "easeInQuad"), (4, [10, -15, 0]), (7, [10, -15, 0], "easeInOutSine"), (10, ZERO)],
+       right_leg=[(0, ZERO, "easeOutQuad"), (4, [-25, 0, 0]), (7, [-25, 0, 0], "easeInOutSine"), (10, ZERO)])
+
+# 発勁：深く腰を落とし、両の掌を一気に突き出す
+define("monk_palm", 14,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (3, [-30, 30, 10], "easeInQuad"), (5, [-90, 10, 0]), (10, [-90, 10, 0], "easeInOutSine"),
+                  (14, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (3, [-30, -30, -10], "easeInQuad"), (5, [-90, -10, 0]), (10, [-90, -10, 0], "easeInOutSine"),
+                 (14, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (3, [-4, 0, 0], "easeInQuad"), (5, [16, 0, 0]), (10, [16, 0, 0], "easeInOutSine"), (14, ZERO)],
+       right_leg=[(0, ZERO, "easeOutQuad"), (5, [-30, 0, 8]), (10, [-30, 0, 8], "easeInOutSine"), (14, ZERO)],
+       left_leg=[(0, ZERO, "easeOutQuad"), (5, [25, 0, -8]), (10, [25, 0, -8], "easeInOutSine"), (14, ZERO)])
+
+# 旋脚：体を回して、脚で払う
+define("monk_kick", 11,
+       body=[(0, ZERO), (1, ZERO, "easeOutQuad"), (5, [0, -180, 0]), (8, {"pre": [0, -360, 0], "post": [0, 0, 0]}), (11, ZERO)],
+       right_leg=[(0, ZERO, "easeOutQuad"), (2, [-80, 0, 30]), (8, [-80, 0, 30], "easeInOutSine"), (11, ZERO)],
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, [-20, 0, 60]), (8, [-20, 0, 60], "easeInOutSine"), (11, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (2, [-20, 0, -60]), (8, [-20, 0, -60], "easeInOutSine"), (11, L_IDLE)])
+
+# 崩拳：踏み込みながら、まっすぐ打ち抜く
+define("monk_dash_punch", 12,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, [-20, 20, 10], "easeInQuad"), (4, [-95, 0, 0]), (9, [-95, 0, 0], "easeInOutSine"),
+                  (12, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (2, FIST_L), (4, [20, 0, -20]), (9, [20, 0, -20], "easeInOutSine"), (12, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (2, [10, 15, 0], "easeInQuad"), (4, [20, -15, 0]), (9, [20, -15, 0], "easeInOutSine"), (12, ZERO)],
+       right_leg=[(0, ZERO, "easeOutQuad"), (4, [-40, 0, 0]), (9, [-40, 0, 0], "easeInOutSine"), (12, ZERO)],
+       left_leg=[(0, ZERO, "easeOutQuad"), (4, [30, 0, 0]), (9, [30, 0, 0], "easeInOutSine"), (12, ZERO)])
+
+# 昇龍：低く構えてから、拳を天へ突き上げる
+define("monk_rising", 14,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (3, [-20, 0, 20], "easeInQuad"), (6, [-175, 0, -5]), (10, [-175, 0, -5], "easeInOutSine"),
+                  (14, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (3, FIST_L), (6, [10, 0, -30]), (10, [10, 0, -30], "easeInOutSine"), (14, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (3, [18, 0, 0], "easeInQuad"), (6, [-10, -20, 0]), (10, [-10, -20, 0], "easeInOutSine"), (14, ZERO)],
+       right_leg=[(0, ZERO, "easeOutQuad"), (3, [-30, 0, 0], "easeInQuad"), (6, [-10, 0, 0]), (14, ZERO)],
+       left_leg=[(0, ZERO, "easeOutQuad"), (3, [20, 0, 0], "easeInQuad"), (6, [30, 0, 0]), (14, ZERO)])
+
+# 百烈拳：前へ、拳を雨のように打ち続ける
+define("monk_rush", 30,
+       right_arm=[(0, R_IDLE, "easeOutQuad")] + [(1 + i * 2, [-95 if i % 2 == 0 else -60, -5, 0]) for i in range(14)]
+       + [(28, FIST_R, "easeInOutSine"), (30, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad")] + [(2 + i * 2, [-95 if i % 2 == 0 else -60, 5, 0]) for i in range(13)]
+       + [(28, FIST_L, "easeInOutSine"), (30, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (2, [10, 0, 0]), (28, [10, 0, 0], "easeInOutSine"), (30, ZERO)],
+       right_leg=[(0, ZERO, "easeOutQuad"), (2, [-20, 0, 0]), (28, [-20, 0, 0], "easeInOutSine"), (30, ZERO)],
+       left_leg=[(0, ZERO, "easeOutQuad"), (2, [15, 0, 0]), (28, [15, 0, 0], "easeInOutSine"), (30, ZERO)])
+
+# 破山撃（跳ぶ）：両の拳を頭の上で組む
+define("monk_slam", 30,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (3, [-170, 15, 0]), (26, [-175, 15, 0], "easeInOutSine"), (30, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (3, [-170, -15, 0]), (26, [-175, -15, 0], "easeInOutSine"), (30, L_IDLE)],
+       body=[(0, [14, 0, 0], "easeOutQuad"), (3, [-10, 0, 0]), (26, [-8, 0, 0], "easeInOutSine"), (30, ZERO)],
+       right_leg=[(0, [-30, 0, 0], "easeOutQuad"), (4, [-45, 0, 0]), (26, [-40, 0, 0], "easeInOutSine"), (30, ZERO)],
+       left_leg=[(0, [20, 0, 0], "easeOutQuad"), (4, [-30, 0, 0]), (26, [-25, 0, 0], "easeInOutSine"), (30, ZERO)])
+
+# 破山撃（着地）：組んだ拳を地面へ叩きつける
+define("monk_slam_land", 12,
+       right_arm=[(0, [-175, 15, 0], "easeInQuad"), (2, [-50, 15, 0]), (8, [-50, 15, 0], "easeInOutSine"), (12, R_IDLE)],
+       left_arm=[(0, [-175, -15, 0], "easeInQuad"), (2, [-50, -15, 0]), (8, [-50, -15, 0], "easeInOutSine"), (12, L_IDLE)],
+       body=[(0, [-8, 0, 0], "easeInQuad"), (2, [30, 0, 0]), (8, [30, 0, 0], "easeInOutSine"), (12, ZERO)],
+       right_leg=[(0, ZERO), (2, [-40, 0, 8]), (8, [-40, 0, 8], "easeInOutSine"), (12, ZERO)],
+       left_leg=[(0, ZERO), (2, [30, 0, -8]), (8, [30, 0, -8], "easeInOutSine"), (12, ZERO)])
+
+# 雷拳（溜め）：右の拳を腰に引き、雷を込める。くり返し
+define("monk_charge", 20, loop=True,
+       right_arm=[(0, [20, 20, 20], "easeInOutSine"), (10, [24, 20, 22], "easeInOutSine"), (20, [20, 20, 20])],
+       left_arm=[(0, [-70, -10, 0], "easeInOutSine"), (10, [-74, -10, 0], "easeInOutSine"), (20, [-70, -10, 0])],
+       body=[(0, [6, 25, 0], "easeInOutSine"), (10, [8, 27, 0], "easeInOutSine"), (20, [6, 25, 0])],
+       right_leg=[(0, [-20, 0, 6]), (20, [-20, 0, 6])],
+       left_leg=[(0, [20, 0, -6]), (20, [20, 0, -6])])
+
+# 雷拳（放つ）：引いた拳を、体ごと打ち抜く
+define("monk_heavy", 14,
+       right_arm=[(0, [20, 20, 20], "easeInQuad"), (3, [-95, -5, 0]), (9, [-95, -5, 0], "easeInOutSine"), (14, R_IDLE)],
+       left_arm=[(0, [-70, -10, 0], "easeInQuad"), (3, [20, 0, -25]), (9, [20, 0, -25], "easeInOutSine"), (14, L_IDLE)],
+       body=[(0, [6, 25, 0], "easeInQuad"), (3, [18, -25, 0]), (9, [18, -25, 0], "easeInOutSine"), (14, ZERO)],
+       right_leg=[(0, [-20, 0, 6], "easeInQuad"), (3, [-40, 0, 6]), (9, [-40, 0, 6], "easeInOutSine"), (14, ZERO)],
+       left_leg=[(0, [20, 0, -6], "easeInQuad"), (3, [30, 0, -6]), (9, [30, 0, -6], "easeInOutSine"), (14, ZERO)])
+
+# 百烈・結：連打のあと、両の拳で締める
+define("monk_hundred", 24,
+       right_arm=[(0, R_IDLE, "easeOutQuad")] + [(1 + i * 2, [-95 if i % 2 == 0 else -60, -5, 0]) for i in range(8)]
+       + [(17, [-20, 20, 20], "easeInQuad"), (19, [-95, 5, 0]), (22, [-95, 5, 0], "easeInOutSine"), (24, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad")] + [(2 + i * 2, [-95 if i % 2 == 0 else -60, 5, 0]) for i in range(7)]
+       + [(17, [-20, -20, -20], "easeInQuad"), (19, [-95, -5, 0]), (22, [-95, -5, 0], "easeInOutSine"), (24, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (2, [8, 0, 0]), (17, [0, 0, 0], "easeInQuad"), (19, [18, 0, 0]), (22, [18, 0, 0], "easeInOutSine"),
+             (24, ZERO)])
+
+# 寸勁：構えた拳を、ほんの少しだけ突き出す
+define("monk_inch", 12,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (3, [-85, 0, 0]), (5, [-85, 0, 0], "easeInQuad"), (6, [-92, 0, 0]),
+                  (9, [-92, 0, 0], "easeInOutSine"), (12, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (3, FIST_L), (9, FIST_L, "easeInOutSine"), (12, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (5, [2, 0, 0], "easeInQuad"), (6, [8, 0, 0]), (9, [8, 0, 0], "easeInOutSine"), (12, ZERO)])
+
+# 流水の構え：両手で水の流れを描き、構える
+define("monk_stance", 16,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (4, [-80, 30, 30]), (8, [-60, -10, 10], "easeInOutSine"), (12, [-70, 20, 0], "easeInOutSine"),
+                  (16, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (4, [-60, 10, -10]), (8, [-80, -30, -30], "easeInOutSine"), (12, [-60, -20, 0], "easeInOutSine"),
+                 (16, L_IDLE)],
+       right_leg=[(0, ZERO, "easeOutQuad"), (4, [-10, 0, 10]), (12, [-10, 0, 10], "easeInOutSine"), (16, ZERO)],
+       left_leg=[(0, ZERO, "easeOutQuad"), (4, [10, 0, -10]), (12, [10, 0, -10], "easeInOutSine"), (16, ZERO)])
+
+# 天地流転：両手を天と地へ分け、ゆっくり回す
+define("monk_heaven", 24,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (5, [-170, 0, 10]), (12, [-170, 0, 10], "easeInOutSine"), (18, [-60, 30, 0], "easeInOutSine"),
+                  (24, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (5, [-10, 0, -40]), (12, [-10, 0, -40], "easeInOutSine"), (18, [-60, -30, 0], "easeInOutSine"),
+                 (24, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (5, [-6, 0, 0]), (12, [-6, 0, 0], "easeInOutSine"), (18, [6, 0, 0], "easeInOutSine"), (24, ZERO)],
+       right_leg=[(0, ZERO, "easeOutQuad"), (5, [-15, 0, 12]), (18, [-15, 0, 12], "easeInOutSine"), (24, ZERO)],
+       left_leg=[(0, ZERO, "easeOutQuad"), (5, [15, 0, -12]), (18, [15, 0, -12], "easeInOutSine"), (24, ZERO)])
+
+# 気功・分け与え：掌を仲間へ向ける
+define("monk_ki_give", 14,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (3, [-90, -10, 0]), (10, [-90, -10, 0], "easeInOutSine"), (14, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (3, [-60, 20, 0]), (10, [-60, 20, 0], "easeInOutSine"), (14, L_IDLE)])
+
+# 縮地：一瞬で踏み込む（身を低く）
+define("monk_step", 8,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, [30, 0, 15]), (4, [-95, 0, 0]), (6, [-95, 0, 0], "easeInOutSine"), (8, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (2, [30, 0, -15]), (6, [-20, 0, -10], "easeInOutSine"), (8, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (2, [25, 0, 0]), (4, [12, 0, 0]), (6, [12, 0, 0], "easeInOutSine"), (8, ZERO)])
+
+# 気弾：両の掌を合わせて、前へ押し出す
+define("monk_push", 10,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, [-40, 30, 0], "easeInQuad"), (4, [-90, 15, 0]), (7, [-90, 15, 0], "easeInOutSine"),
+                  (10, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (2, [-40, -30, 0], "easeInQuad"), (4, [-90, -15, 0]), (7, [-90, -15, 0], "easeInOutSine"),
+                 (10, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (2, [-4, 0, 0], "easeInQuad"), (4, [10, 0, 0]), (7, [10, 0, 0], "easeInOutSine"), (10, ZERO)])
+
+# 転身投げ：つかんで、背負って投げる
+define("monk_throw", 14,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, [-90, -10, 0]), (5, [-170, 0, 0], "easeInQuad"), (8, [-30, 0, 0]),
+                  (11, [-30, 0, 0], "easeInOutSine"), (14, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (2, [-90, 10, 0]), (5, [-170, 0, 0], "easeInQuad"), (8, [-30, 0, 0]),
+                 (11, [-30, 0, 0], "easeInOutSine"), (14, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (2, [6, 0, 0]), (5, [-10, 90, 0], "easeInQuad"), (8, [30, 180, 0]), (11, [30, 180, 0], "easeInOutSine"),
+             (14, {"pre": [0, 360, 0], "post": [0, 0, 0]})])
+
+# 気の渦：両手で大きく円を描き、引き寄せる
+define("monk_vortex", 16,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (3, [-90, 0, 70]), (7, [-150, 0, 20]), (11, [-60, 30, 0]), (13, [-60, 30, 0], "easeInOutSine"),
+                  (16, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (3, [-90, 0, -70]), (7, [-150, 0, -20]), (11, [-60, -30, 0]), (13, [-60, -30, 0], "easeInOutSine"),
+                 (16, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (7, [-4, 0, 0]), (11, [8, 0, 0]), (13, [8, 0, 0], "easeInOutSine"), (16, ZERO)])
+
+# ================================================================ Phase 6 その2：ナイト・ウィザード（足した段）
+# 鉄の誓い：剣を胸に当て、盾を仲間へ向ける
+define("knight_vow", 16,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (4, [-70, 40, 0]), (12, [-70, 40, 0], "easeInOutSine"), (16, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (4, [-90, -30, 0]), (12, [-90, -30, 0], "easeInOutSine"), (16, L_IDLE)])
+
+# 盾打ち：盾を前へ叩きつける
+define("knight_bash", 10,
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (2, [-60, 40, 0], "easeInQuad"), (4, [-95, 0, 0]), (7, [-95, 0, 0], "easeInOutSine"), (10, L_IDLE)],
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, [-20, 0, 15]), (7, [-20, 0, 15], "easeInOutSine"), (10, R_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (2, [-4, -20, 0], "easeInQuad"), (4, [14, 15, 0]), (7, [14, 15, 0], "easeInOutSine"), (10, ZERO)],
+       left_leg=[(0, ZERO, "easeOutQuad"), (4, [-30, 0, 0]), (7, [-30, 0, 0], "easeInOutSine"), (10, ZERO)])
+
+# 大車輪：大剣を振り回し、回り続ける（2秒）
+define("knight_great_wheel", 40,
+       body=[(0, ZERO)] + [(2 + i * 8, [0, -180, 0]) if i % 2 == 0 else (2 + i * 8, {"pre": [0, -360, 0], "post": [0, 0, 0]})
+                           for i in range(5)] + [(40, {"pre": [0, -360, 0], "post": [0, 0, 0]})],
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (2, [-90, 0, 85]), (36, [-90, 0, 85], "easeInOutSine"), (40, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (2, [-90, 0, -60]), (36, [-90, 0, -60], "easeInOutSine"), (40, L_IDLE)])
+
+# 地裂き：大剣を振り上げ、地面へ打ち下ろす
+define("knight_earth_split", 16,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (4, [-175, 0, -5], "easeInQuad"), (7, [-35, 0, 0]), (12, [-35, 0, 0], "easeInOutSine"),
+                  (16, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (4, [-170, 0, 5], "easeInQuad"), (7, [-40, 0, 0]), (12, [-40, 0, 0], "easeInOutSine"),
+                 (16, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (4, [-10, 0, 0], "easeInQuad"), (7, [26, 0, 0]), (12, [26, 0, 0], "easeInOutSine"), (16, ZERO)],
+       right_leg=[(0, ZERO), (7, [-30, 0, 6]), (12, [-30, 0, 6], "easeInOutSine"), (16, ZERO)],
+       left_leg=[(0, ZERO), (7, [25, 0, -6]), (12, [25, 0, -6], "easeInOutSine"), (16, ZERO)])
+
+# 星の環：杖で頭の上に円を描く
+define("wizard_star_ring", 16,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (3, [-160, 0, 30]), (6, [-160, 30, 0]), (9, [-160, 0, -30]), (12, [-160, -30, 0], "easeInOutSine"),
+                  (16, R_IDLE)])
+
+# 彗星（詠唱）：杖を天へ、星を呼ぶ。くり返し
+define("wizard_comet_cast", 20, loop=True,
+       right_arm=[(0, [-165, 0, -10], "easeInOutSine"), (10, [-170, 0, -6], "easeInOutSine"), (20, [-165, 0, -10])],
+       left_arm=[(0, [-100, 0, -30], "easeInOutSine"), (10, [-106, 0, -26], "easeInOutSine"), (20, [-100, 0, -30])])
+
+# 彗星（放つ）：天の杖を、前へ振り下ろす
+define("wizard_comet", 12,
+       right_arm=[(0, [-165, 0, -10], "easeInQuad"), (3, [-80, 0, 0]), (8, [-80, 0, 0], "easeInOutSine"), (12, R_IDLE)],
+       left_arm=[(0, [-100, 0, -30], "easeInQuad"), (3, [-20, 0, -30]), (8, [-20, 0, -30], "easeInOutSine"), (12, L_IDLE)],
+       body=[(0, ZERO, "easeInQuad"), (3, [12, 0, 0]), (8, [12, 0, 0], "easeInOutSine"), (12, ZERO)])
+
+# 吹雪：杖を掲げて、大きく回す
+define("wizard_blizzard", 16,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (3, [-150, 0, 30]), (6, [-150, 30, 0]), (9, [-150, 0, -30]), (12, [-150, -30, 0], "easeInOutSine"),
+                  (16, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (3, [-70, 0, -40]), (12, [-70, 0, -40], "easeInOutSine"), (16, L_IDLE)])
+
+# 絶対零度：杖を地面へ突き立て、身を沈める
+define("wizard_absolute_zero", 20,
+       right_arm=[(0, R_IDLE, "easeOutQuad"), (4, [-175, 0, -5], "easeInQuad"), (7, [-40, 0, 0]), (15, [-40, 0, 0], "easeInOutSine"),
+                  (20, R_IDLE)],
+       left_arm=[(0, L_IDLE, "easeOutQuad"), (4, [-60, 0, -40]), (7, [-10, 0, -70]), (15, [-10, 0, -70], "easeInOutSine"), (20, L_IDLE)],
+       body=[(0, ZERO, "easeOutQuad"), (4, [-8, 0, 0], "easeInQuad"), (7, [24, 0, 0]), (15, [24, 0, 0], "easeInOutSine"), (20, ZERO)],
+       right_leg=[(0, ZERO), (7, [-40, 0, 8]), (15, [-40, 0, 8], "easeInOutSine"), (20, ZERO)],
+       left_leg=[(0, ZERO), (7, [35, 0, -8]), (15, [35, 0, -8], "easeInOutSine"), (20, ZERO)])
+
+
 if __name__ == "__main__":
     os.makedirs(OUT, exist_ok=True)
     for name, data in ANIMS.items():

@@ -7,10 +7,20 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 import javax.annotation.Nullable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 効果音の登録。中身は {@code assets/amemaru/sounds.json} で決める。
@@ -72,9 +82,33 @@ public final class ModSounds {
     private static final Map<String, RegistryObject<SoundEvent>> BY_NAME = new LinkedHashMap<>();
 
     static {
-        for (String name : NAMES) {
+        // 上の一覧と、同梱の sounds.json のキーをすべて登録する（Phase 6 その2：職業が増えて音が多くなったため、
+        // sounds.json に足すだけで登録されるようにした）
+        Set<String> names = new LinkedHashSet<>(NAMES);
+        names.addAll(bundledNames());
+        for (String name : names) {
             BY_NAME.put(name, SOUNDS.register(name, () -> SoundEvent.createVariableRangeEvent(AmemaruMod.id(name))));
         }
+    }
+
+    /** Modに同梱した sounds.json のキー（読めなければ空）。 */
+    private static List<String> bundledNames() {
+        List<String> out = new ArrayList<>();
+        try (InputStream stream = ModSounds.class.getResourceAsStream("/assets/" + AmemaruMod.MOD_ID + "/sounds.json")) {
+            if (stream == null) {
+                AmemaruMod.LOGGER.warn("[amemaru] sounds.json was not found in the mod; only the built-in sound list is registered");
+                return out;
+            }
+            JsonObject json = JsonParser.parseReader(new InputStreamReader(stream, StandardCharsets.UTF_8)).getAsJsonObject();
+            for (String key : json.keySet()) {
+                if (key.matches("[a-z0-9_.]+")) {
+                    out.add(key);
+                }
+            }
+        } catch (IOException | RuntimeException e) {
+            AmemaruMod.LOGGER.warn("[amemaru] Could not read sounds.json: {}", e.toString());
+        }
+        return out;
     }
 
     private ModSounds() {

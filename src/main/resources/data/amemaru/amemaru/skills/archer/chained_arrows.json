@@ -1,0 +1,27 @@
+{
+  "job": "archer",
+  "school": "rapid",
+  "row": 3,
+  "column": 2,
+  "type": "passive",
+  "name": "連なる矢",
+  "description": "矢が当たるたびに、次の矢が狙いやすくなる。2秒以内に矢を当て続けると、1本ごとにダメージが上がる（10本まで）。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 15,
+  "requires": [
+    {
+      "skill": "archer/rapid_mastery",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "arrow_chain",
+    "value": 2,
+    "value_per_rank": 1
+  }
+}

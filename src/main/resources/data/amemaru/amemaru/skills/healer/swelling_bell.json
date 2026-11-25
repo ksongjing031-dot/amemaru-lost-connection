@@ -1,0 +1,66 @@
+{
+  "job": "healer",
+  "school": "healing",
+  "row": 4,
+  "column": 0,
+  "type": "active",
+  "name": "満ちる鈴",
+  "description": "鈴杖に祈りを満たしてから鳴らす。長く満たすほど大きく癒し、満たしきると悪い状態もほどいて、しばらく癒し続ける。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 20,
+  "requires": [
+    {
+      "skill": "healer/call_back",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 24
+  },
+  "cooldown": 9,
+  "charge": {
+    "time": 1.5,
+    "min_multiplier": 1.0,
+    "max_multiplier": 2.25
+  },
+  "delivery": {
+    "type": "target",
+    "range": 20,
+    "affects": "allies",
+    "fallback_self": true,
+    "smart": true
+  },
+  "effects": [
+    {
+      "type": "heal",
+      "stat": "magic",
+      "coefficient": 2.0,
+      "coefficient_per_rank": 0.3
+    }
+  ],
+  "full_charge_effects": [
+    {
+      "type": "cleanse",
+      "count": 0
+    },
+    {
+      "type": "regen",
+      "stat": "magic",
+      "coefficient": 0.3,
+      "coefficient_per_rank": 0.05,
+      "duration": 5
+    }
+  ],
+  "tags": [
+    "heal",
+    "bell"
+  ],
+  "animation": "healer_release",
+  "charge_animation": "healer_charge",
+  "sound": "amemaru:skill.healer.swelling_bell"
+}

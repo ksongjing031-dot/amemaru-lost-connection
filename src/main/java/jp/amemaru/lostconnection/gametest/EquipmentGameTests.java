@@ -115,7 +115,8 @@ public final class EquipmentGameTests {
         check(helper, SkillRegistry.get().problems().isEmpty(), "職業の定義に問題があります：" + SkillRegistry.get().problems());
 
         EquipmentDefs.Snapshot gear = EquipmentDefs.server();
-        check(helper, gear.equipment().size() == 20, "装備の定義が20ではありません：" + gear.equipment().size());
+        // Phase 6 その2 で、4職業の見習い・古代石の武器（8）と、古代石シリーズ（軽装）の防具（4）が増えた
+        check(helper, gear.equipment().size() == 32, "装備の定義が32ではありません：" + gear.equipment().size());
         for (ItemManifest.Category category : new ItemManifest.Category[]{
                 ItemManifest.Category.WEAPON, ItemManifest.Category.SHIELD, ItemManifest.Category.ARMOR}) {
             for (RegistryObject<Item> item : ModItems.MANIFEST.category(category)) {
@@ -158,7 +159,8 @@ public final class EquipmentGameTests {
         // 工房のレシピ：できる品はその工房で扱う品、素材はすべてある
         List<WorkshopRecipe> recipes = helper.getLevel().getServer().getRecipeManager()
                 .getAllRecipesFor(ModRecipes.WORKSHOP_TYPE.get());
-        check(helper, recipes.size() == 17, "工房のレシピが17ではありません：" + recipes.size());
+        // Phase 6 その2 で、古代石の鈴杖・弓・双短剣・籠手と、古代石シリーズ（軽装）の4つ（計8）が増えた
+        check(helper, recipes.size() == 25, "工房のレシピが25ではありません：" + recipes.size());
         for (WorkshopRecipe recipe : recipes) {
             check(helper, recipe.workshop().accepts(recipe.result()), recipe.getId() + " の品が、その工房で扱う品ではありません");
             check(helper, !recipe.ingredients().isEmpty(), recipe.getId() + " に素材がありません");

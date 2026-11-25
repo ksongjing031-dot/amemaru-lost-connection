@@ -1,0 +1,41 @@
+{
+  "job": "wizard",
+  "school": "starlight",
+  "row": 4,
+  "column": 0,
+  "type": "active",
+  "name": "星の環",
+  "description": "小さな星を5つ呼び、自分のまわりを巡らせる（10秒）。近づいた敵に星がぶつかってダメージを与え、星痕を刻む。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 20,
+  "requires": [
+    {
+      "skill": "wizard/light_veil",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 22
+  },
+  "cooldown": 18,
+  "delivery": {
+    "type": "self"
+  },
+  "effects": [
+    {
+      "type": "buff",
+      "buff": "star_ring",
+      "duration": 10,
+      "value": 0.6,
+      "value_per_rank": 0.1,
+      "count": 5
+    }
+  ],
+  "animation": "wizard_star_ring",
+  "sound": "amemaru:skill.wizard.star_ring"
+}

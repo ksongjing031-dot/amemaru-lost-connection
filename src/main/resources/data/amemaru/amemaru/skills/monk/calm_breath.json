@@ -1,0 +1,27 @@
+{
+  "job": "monk",
+  "school": "soft",
+  "row": 4,
+  "column": 2,
+  "type": "passive",
+  "name": "静の呼吸",
+  "description": "呼吸を整え、気で体を満たす。戦いの間、気が50以上あると、毎秒HPが少しずつ戻る。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 20,
+  "requires": [
+    {
+      "skill": "monk/soft_way",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "calm_breath",
+    "value": 0.5,
+    "value_per_rank": 0.25
+  }
+}

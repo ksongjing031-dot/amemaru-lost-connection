@@ -1,0 +1,27 @@
+{
+  "job": "healer",
+  "school": "blessing",
+  "row": 4,
+  "column": 2,
+  "type": "passive",
+  "name": "揺るがぬ祈り",
+  "description": "祈りの最中は、心が揺るがない。詠唱と溜めの間、受けるダメージが減る。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 20,
+  "requires": [
+    {
+      "skill": "healer/admonishing_echo",
+      "rank": 1
+    }
+  ],
+  "passive": {
+    "type": "steady_prayer",
+    "value": 15,
+    "value_per_rank": 5
+  }
+}

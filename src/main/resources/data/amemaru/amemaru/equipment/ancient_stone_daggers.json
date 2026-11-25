@@ -1,0 +1,27 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "古代石シリーズ",
+  "rarity": "common",
+  "required_level": 5,
+  "jobs": [
+    "amemaru:rogue"
+  ],
+  "stats": {
+    "attack": 13,
+    "crit": 2
+  },
+  "durability": 400,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:moss_iron",
+      "count": 1
+    },
+    {
+      "item": "amemaru:chipped_fang",
+      "count": 1
+    }
+  ],
+  "description": "欠けた牙を研ぎ出した刃に、苔鉄の柄を巻いた二本の短剣。"
+}

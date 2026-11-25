@@ -36,7 +36,11 @@ public final class SyncDefinitionsS2C {
                           ResourceLocation icon, String weaponText, boolean hasGauge, String gaugeName, String gaugeDescription,
                           int gaugeMax, int gaugeColor, List<SchoolInfo> schools, boolean hasUpper, String upperName,
                           String upperDescription, int upperMinLevel, int upperMinDay, int[] startingSkills,
-                          List<ResourceLocation> kitItems, double[] statPercent) {
+                          List<ResourceLocation> kitItems, double[] statPercent, String gaugeType, int comboMax) {
+        /** 連撃（モンク）がある職業か。 */
+        public boolean hasCombo() {
+            return comboMax > 0;
+        }
     }
 
     /** スキルの、画面に要る分。数値は段階ごとの配列（0番目が1段目）。 */
@@ -45,7 +49,17 @@ public final class SyncDefinitionsS2C {
                             int upperRank, int minLevel, int[] requiredSkills, int[] requiredRanks, int link, int delivery,
                             boolean alliesOnly, int[] mpCost, int[] gaugeCost, float[] cooldown, float[] cast, float[] aimRange,
                             float[] radius, String animation, String castAnimation, String fx, List<List<String>> details,
-                            float chargeTime, String chargeAnimation, float[] angle, int[] count, int[] countCharged) {
+                            float chargeTime, String chargeAnimation, float[] angle, int[] count, int[] countCharged, int combo,
+                            List<String> tags) {
+        /** 連撃の役の名前（起・継・極。なければ空）。 */
+        public String comboLabel() {
+            return SkillDef.ComboRole.byIndex(combo).label();
+        }
+
+        public boolean hasTag(String tag) {
+            return tags.contains(tag);
+        }
+
         /** 溜めるスキルか。 */
         public boolean charged() {
             return chargeTime > 0;
@@ -86,7 +100,8 @@ public final class SyncDefinitionsS2C {
                     gauge != null, gauge == null ? "" : gauge.name(), gauge == null ? "" : gauge.description(),
                     gauge == null ? 0 : gauge.max(), gauge == null ? 0 : gauge.color(), schools,
                     upper != null, upper == null ? "" : upper.name(), upper == null ? "" : upper.description(),
-                    upper == null ? 0 : upper.minLevel(), upper == null ? 0 : upper.minDay(), starting, kit, percent));
+                    upper == null ? 0 : upper.minLevel(), upper == null ? 0 : upper.minDay(), starting, kit, percent,
+                    gauge == null ? "" : gauge.type(), job.combo() == null ? 0 : job.combo().max()));
         }
         List<SkillInfo> skills = new ArrayList<>();
         for (int i = 0; i < snapshot.skills().size(); i++) {
@@ -130,7 +145,7 @@ public final class SyncDefinitionsS2C {
                     skill.upperRank(), skill.minLevel(), reqSkills, reqRanks, skill.link().ordinal(),
                     skill.delivery().type().ordinal(), skill.delivery().affects() == Affects.ALLIES, mp, gauge, cooldown, cast,
                     aim, radius, skill.animation(), skill.castAnimation(), skill.fx(), details, (float) skill.chargeTime(),
-                    skill.chargeAnimation(), angle, count, countCharged));
+                    skill.chargeAnimation(), angle, count, countCharged, skill.combo().ordinal(), skill.tags()));
         }
         return new SyncDefinitionsS2C(snapshot.version(), jobs, skills);
     }
@@ -175,6 +190,8 @@ public final class SyncDefinitionsS2C {
             for (double value : job.statPercent()) {
                 buf.writeDouble(value);
             }
+            buf.writeUtf(job.gaugeType());
+            buf.writeVarInt(job.comboMax());
         }
         buf.writeVarInt(skills.size());
         for (SkillInfo skill : skills) {
@@ -222,6 +239,11 @@ public final class SyncDefinitionsS2C {
             writeFloats(buf, skill.angle());
             buf.writeVarIntArray(skill.count());
             buf.writeVarIntArray(skill.countCharged());
+            buf.writeVarInt(skill.combo());
+            buf.writeVarInt(skill.tags().size());
+            for (String tag : skill.tags()) {
+                buf.writeUtf(tag);
+            }
         }
     }
 
@@ -264,9 +286,11 @@ public final class SyncDefinitionsS2C {
             for (int k = 0; k < statCount; k++) {
                 percent[k] = buf.readDouble();
             }
+            String gaugeType = buf.readUtf();
+            int comboMax = buf.readVarInt();
             jobs.add(new JobInfo(index, id, name, role, description, color, icon, weaponText, hasGauge, gaugeName,
                     gaugeDescription, gaugeMax, gaugeColor, schools, hasUpper, upperName, upperDescription, upperMinLevel,
-                    upperMinDay, starting, kit, percent));
+                    upperMinDay, starting, kit, percent, gaugeType, comboMax));
         }
         int skillCount = check(buf.readVarInt(), MAX_ENTRIES);
         List<SkillInfo> skills = new ArrayList<>(skillCount);
@@ -320,9 +344,16 @@ public final class SyncDefinitionsS2C {
             float[] angle = readFloats(buf);
             int[] count = buf.readVarIntArray(16);
             int[] countCharged = buf.readVarIntArray(16);
+            int combo = buf.readVarInt();
+            int tagCount = check(buf.readVarInt(), 16);
+            List<String> tags = new ArrayList<>(tagCount);
+            for (int t = 0; t < tagCount; t++) {
+                tags.add(buf.readUtf(64));
+            }
             skills.add(new SkillInfo(index, id, jobIndex, schoolIndex, row, column, passive, ultimate, name, description, icon,
                     maxRank, costs, upperRank, minLevel, reqSkills, reqRanks, link, delivery, alliesOnly, mp, gauge, cooldown, cast,
-                    aim, radius, animation, castAnimation, fx, details, chargeTime, chargeAnimation, angle, count, countCharged));
+                    aim, radius, animation, castAnimation, fx, details, chargeTime, chargeAnimation, angle, count, countCharged, combo,
+                    tags));
         }
         return new SyncDefinitionsS2C(version, jobs, skills);
     }

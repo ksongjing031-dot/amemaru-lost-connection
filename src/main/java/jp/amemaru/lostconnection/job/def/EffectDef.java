@@ -10,9 +10,11 @@ import net.minecraft.resources.ResourceLocation;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * スキルの効果の1つ（Phase 0-B 6章の「係数と参照するステータス、効果」）。届け方（{@link DeliveryDef}）で選んだ相手に、
@@ -20,29 +22,46 @@ import java.util.Map;
  *
  * <table>
  *   <tr><th>type</th><th>効果</th><th>数値</th></tr>
- *   <tr><td>damage</td><td>ダメージ</td><td>stat（attack / magic）, coefficient（ステータスの何倍か）</td></tr>
+ *   <tr><td>damage</td><td>ダメージ</td><td>stat（attack / magic）, coefficient（ステータスの何倍か）。hits・hit_interval（連撃）、
+ *       backstab（背後からの倍率）、pierce（無視する防御の%）、delay（遅れる tick）、bonus_linked（仲間の起点の印がある敵への倍率）</td></tr>
  *   <tr><td>status</td><td>状態（よろめき・凍えなど）</td><td>effect, duration（秒）, level</td></tr>
  *   <tr><td>taunt</td><td>敵の狙いを自分に向ける</td><td>duration</td></tr>
  *   <tr><td>gauge</td><td>専用ゲージをためる</td><td>amount, per_target, max</td></tr>
  *   <tr><td>gauge_empower</td><td>ゲージを使って、この後のダメージを強める</td><td>consume, multiplier</td></tr>
  *   <tr><td>shield_bond</td><td>味方の受けるダメージを肩代わりする</td><td>duration, share（%）</td></tr>
- *   <tr><td>buff</td><td>数値つきの強化（城壁の構え・不屈の誓い・不落の城・受け流し・誓いの円陣）</td><td>buff, duration, value（%）。
- *       受け流しは refund（成功したときにクールダウンの残りが減る割合）と on_success（反撃の効果）</td></tr>
+ *   <tr><td>buff</td><td>数値つきの強化（{@link BuffKind}）</td><td>buff, duration, value（%など）。count・burst・threshold・
+ *       counters・all_directions・area（自分のまわりの味方にかける半径）・受け流しは refund と on_success</td></tr>
  *   <tr><td>mp_transfer</td><td>自分のMPを味方に分ける</td><td>amount</td></tr>
- *   <tr><td>zone</td><td>地面に陣を残し、中の敵に効果をかけ続ける</td><td>radius, duration, interval, effects</td></tr>
+ *   <tr><td>zone</td><td>地面に陣を残し、中の相手に効果をかけ続ける</td><td>radius, duration, interval, effects。follow（使った人について動く）、
+ *       mode（area・cone・nearest）、angle</td></tr>
  *   <tr><td>knockback</td><td>吹き飛ばす</td><td>strength</td></tr>
- *   <tr><td>chill</td><td>凍えを重ねる（5つで凍結）</td><td>stacks, duration, max, freeze（凍結の秒数）, freeze_if（この数以上なら、すぐ凍結）</td></tr>
- *   <tr><td>shock</td><td>感電させる（次の雷鎖がよく跳ぶ）</td><td>duration</td></tr>
+ *   <tr><td>chill</td><td>凍えを重ねる（5つで凍結）</td><td>stacks, duration, max, freeze, freeze_if</td></tr>
+ *   <tr><td>shock</td><td>感電させる</td><td>duration</td></tr>
  *   <tr><td>brand</td><td>星痕を刻む（最大5つ）</td><td>stacks, duration</td></tr>
- *   <tr><td>detonate</td><td>星痕を弾けさせる（星痕が多いほど強い）</td><td>stat, base, per_stack</td></tr>
- *   <tr><td>pull</td><td>手前に引き寄せる</td><td>strength, stop（止まる距離）</td></tr>
- *   <tr><td>gauge_burst</td><td>専用ゲージを残らず使い、使った量だけ強める</td><td>per_gauge（1あたりの上がり幅）</td></tr>
- *   <tr><td>barrier</td><td>ダメージを吸う障壁</td><td>stat, coefficient, duration</td></tr>
+ *   <tr><td>detonate</td><td>星痕を弾けさせる</td><td>stat, base, per_stack</td></tr>
+ *   <tr><td>pull</td><td>手前に引き寄せる</td><td>strength, stop</td></tr>
+ *   <tr><td>gauge_burst</td><td>専用ゲージを残らず使い、使った量だけ強める</td><td>per_gauge</td></tr>
+ *   <tr><td>barrier</td><td>ダメージを吸う障壁</td><td>stat, coefficient, duration, heal_on_end（消えるときに癒す、障壁の%）</td></tr>
+ *   <tr><td>heal</td><td>味方のHPを戻す（Phase 6）</td><td>stat, coefficient</td></tr>
+ *   <tr><td>heal_percent</td><td>最大HPの割合だけ戻す</td><td>percent</td></tr>
+ *   <tr><td>regen</td><td>毎秒HPを戻し続ける</td><td>stat, coefficient（毎秒）, duration</td></tr>
+ *   <tr><td>cleanse</td><td>悪い状態をほどく</td><td>count（0ならすべて）</td></tr>
+ *   <tr><td>revive</td><td>ダウンしている味方を起こす</td><td>hp（最大HPの%）</td></tr>
+ *   <tr><td>poison</td><td>毒を重ねる（毎秒ダメージ）</td><td>stat, coefficient（毎秒・1つあたり）, duration, stacks, max</td></tr>
+ *   <tr><td>detonate_poison</td><td>毒を弾けさせる</td><td>stat, base, per_stack, radius（まわりの敵も）</td></tr>
+ *   <tr><td>mark</td><td>標：プレイヤーから受けるダメージが上がる</td><td>value（%）, duration</td></tr>
+ *   <tr><td>root</td><td>その場から動けなくする（攻撃はできる）</td><td>duration</td></tr>
+ *   <tr><td>weaken</td><td>敵の攻撃を弱める</td><td>value（%）, duration</td></tr>
+ *   <tr><td>blind</td><td>敵の攻撃を外れやすくする</td><td>value（外れる%）, duration</td></tr>
+ *   <tr><td>stealth</td><td>使った人が、敵に見失われる</td><td>duration</td></tr>
+ *   <tr><td>teleport_to</td><td>狙った味方のそばへ移る</td><td>―</td></tr>
+ *   <tr><td>throw</td><td>敵を自分の後ろへ投げる（ボスは投げない）</td><td>strength</td></tr>
+ *   <tr><td>launch</td><td>敵を打ち上げる</td><td>strength</td></tr>
+ *   <tr><td>combo_step</td><td>モンクの連撃を1つ足す</td><td>―</td></tr>
  * </table>
  *
- * <p>damage には、与えたダメージの何%を回復するか（{@code lifesteal}）と、決まった状態の相手へのダメージの倍率
- * （{@code bonus_status}・{@code bonus}・{@code consume_status}：例 凍結の敵に1.8倍で、凍結を砕く）を付けられる。</p>
- * <p>陣（zone）の中の効果には、{@code to}（enemies・allies）で、敵と味方のどちらに効くかを書く。</p>
+ * <p>{@code "self": true} を付けた buff・status・barrier・heal・regen は、相手でなく使った人にかかる（1回だけ）。</p>
+ * <p>陣（zone）の中の効果には、{@code to}（enemies・allies）で、敵と味方のどちらに効くかを書く（回復・強化・障壁は、書かなければ味方）。</p>
  */
 public final class EffectDef {
     public enum Type {
@@ -62,7 +81,24 @@ public final class EffectDef {
         DETONATE("detonate"),
         PULL("pull"),
         GAUGE_BURST("gauge_burst"),
-        BARRIER("barrier");
+        BARRIER("barrier"),
+        // Phase 6 その2
+        HEAL("heal"),
+        HEAL_PERCENT("heal_percent"),
+        REGEN("regen"),
+        CLEANSE("cleanse"),
+        REVIVE("revive"),
+        POISON("poison"),
+        DETONATE_POISON("detonate_poison"),
+        MARK("mark"),
+        ROOT("root"),
+        WEAKEN("weaken"),
+        BLIND("blind"),
+        STEALTH("stealth"),
+        TELEPORT_TO("teleport_to"),
+        THROW("throw"),
+        LAUNCH("launch"),
+        COMBO_STEP("combo_step");
 
         private final String id;
 
@@ -82,7 +118,21 @@ public final class EffectDef {
             }
             throw new DefinitionException("効果の「type」に、ない種類「" + id + "」があります");
         }
+
+        /** 味方にかける効果か（陣の中で、to を書かなければ味方に効く）。 */
+        public boolean forAllies() {
+            return this == BUFF || this == HEAL || this == HEAL_PERCENT || this == REGEN || this == CLEANSE || this == REVIVE
+                    || this == BARRIER || this == SHIELD_BOND || this == MP_TRANSFER;
+        }
     }
+
+    /** 陣（zone）の中で使える効果。 */
+    private static final Set<Type> ZONE_TYPES = EnumSet.of(Type.DAMAGE, Type.STATUS, Type.KNOCKBACK, Type.CHILL, Type.SHOCK,
+            Type.TAUNT, Type.BUFF, Type.HEAL, Type.REGEN, Type.CLEANSE, Type.POISON, Type.MARK, Type.ROOT, Type.WEAKEN, Type.BLIND,
+            Type.PULL, Type.LAUNCH, Type.BRAND);
+    /** 「self」（使った人にかける）を付けられる効果。 */
+    private static final Set<Type> SELF_TYPES = EnumSet.of(Type.BUFF, Type.STATUS, Type.BARRIER, Type.HEAL, Type.HEAL_PERCENT,
+            Type.REGEN);
 
     private final Type type;
     @Nullable
@@ -97,10 +147,42 @@ public final class EffectDef {
     @Nullable
     private final ResourceLocation bonusStatus;
     private final boolean consumeStatus;
+    private final boolean self;
+    private final boolean follow;
+    private final ZoneMode zoneMode;
+
+    /** 陣の効き方。 */
+    public enum ZoneMode {
+        /** 半径の中の相手すべて。 */
+        AREA("area"),
+        /** 使った人の前の扇の中だけ（follow と組み合わせる）。 */
+        CONE("cone"),
+        /** 半径の中で、いちばん近い敵1体（矢嵐）。 */
+        NEAREST("nearest");
+
+        private final String id;
+
+        ZoneMode(String id) {
+            this.id = id;
+        }
+
+        public String id() {
+            return id;
+        }
+
+        static ZoneMode byId(String id) {
+            for (ZoneMode mode : values()) {
+                if (mode.id.equals(id)) {
+                    return mode;
+                }
+            }
+            throw new DefinitionException("陣の「mode」は area・cone・nearest のどれかにしてください（今は " + id + "）");
+        }
+    }
 
     private EffectDef(Type type, @Nullable StatType stat, @Nullable ResourceLocation statusEffect, @Nullable BuffKind buff,
                       Map<String, Ranked> params, List<EffectDef> nested, Affects to, @Nullable ResourceLocation bonusStatus,
-                      boolean consumeStatus) {
+                      boolean consumeStatus, boolean self, boolean follow, ZoneMode zoneMode) {
         this.type = type;
         this.stat = stat;
         this.statusEffect = statusEffect;
@@ -110,6 +192,9 @@ public final class EffectDef {
         this.to = to;
         this.bonusStatus = bonusStatus;
         this.consumeStatus = consumeStatus;
+        this.self = self;
+        this.follow = follow;
+        this.zoneMode = zoneMode;
     }
 
     public static List<EffectDef> parseList(JsonArray array, int maxRank, boolean insideZone) {
@@ -127,9 +212,8 @@ public final class EffectDef {
 
     private static EffectDef parse(JsonObject json, int maxRank, boolean insideZone) {
         Type type = Type.byId(Json.string(json, "type"));
-        if (insideZone && type != Type.DAMAGE && type != Type.STATUS && type != Type.KNOCKBACK && type != Type.CHILL
-                && type != Type.SHOCK && type != Type.TAUNT && type != Type.BUFF) {
-            throw new DefinitionException("陣（zone）の中で使える効果は damage・status・knockback・chill・shock・taunt・buff だけです");
+        if (insideZone && !ZONE_TYPES.contains(type)) {
+            throw new DefinitionException("陣（zone）の中で、効果「" + type.id() + "」は使えません");
         }
         Map<String, Ranked> params = new LinkedHashMap<>();
         StatType stat = null;
@@ -138,11 +222,20 @@ public final class EffectDef {
         List<EffectDef> nested = List.of();
         ResourceLocation bonusStatus = null;
         boolean consumeStatus = false;
+        boolean self = Json.optionalBoolean(json, "self", false);
+        boolean follow = false;
+        ZoneMode zoneMode = ZoneMode.AREA;
+        if (self && !SELF_TYPES.contains(type)) {
+            throw new DefinitionException("「self」は buff・status・barrier・heal・heal_percent・regen にだけ付けられます");
+        }
+        if (self && insideZone) {
+            throw new DefinitionException("陣の中の効果に「self」は付けられません");
+        }
         Affects to = Affects.ENEMIES;
         if (insideZone) {
-            to = json.has("to") ? Affects.byId(Json.string(json, "to")) : type == Type.BUFF ? Affects.ALLIES : Affects.ENEMIES;
-            if (type == Type.BUFF && to != Affects.ALLIES) {
-                throw new DefinitionException("陣の中の buff は、味方（\"to\": \"allies\"）にだけかけられます");
+            to = json.has("to") ? Affects.byId(Json.string(json, "to")) : type.forAllies() ? Affects.ALLIES : Affects.ENEMIES;
+            if (type.forAllies() && to != Affects.ALLIES) {
+                throw new DefinitionException("陣の中の「" + type.id() + "」は、味方（\"to\": \"allies\"）にだけかけられます");
             }
         }
         switch (type) {
@@ -150,6 +243,12 @@ public final class EffectDef {
                 stat = readStat(json);
                 put(params, "coefficient", Ranked.read(json, "coefficient", 0.0, 100.0), maxRank, 0.0, 100.0);
                 put(params, "lifesteal", Ranked.readOptional(json, "lifesteal", 0.0, 0.0, 100.0), maxRank, 0.0, 100.0);
+                put(params, "hits", Ranked.readOptional(json, "hits", 1.0, 1.0, 40.0), maxRank, 1.0, 40.0);
+                put(params, "hit_interval", Ranked.readOptional(json, "hit_interval", 4.0, 1.0, 40.0), maxRank, 1.0, 40.0);
+                put(params, "backstab", Ranked.readOptional(json, "backstab", 1.0, 1.0, 10.0), maxRank, 1.0, 10.0);
+                put(params, "pierce", Ranked.readOptional(json, "pierce", 0.0, 0.0, 100.0), maxRank, 0.0, 100.0);
+                put(params, "delay", Ranked.readOptional(json, "delay", 0.0, 0.0, 200.0), maxRank, 0.0, 200.0);
+                put(params, "bonus_linked", Ranked.readOptional(json, "bonus_linked", 1.0, 1.0, 10.0), maxRank, 1.0, 10.0);
                 if (json.has("bonus_status")) {
                     bonusStatus = Json.id(json, "bonus_status");
                     put(params, "bonus", Ranked.read(json, "bonus", 1.0, 10.0), maxRank, 1.0, 10.0);
@@ -179,17 +278,25 @@ public final class EffectDef {
                 buff = BuffKind.byId(Json.string(json, "buff"));
                 put(params, "duration", Ranked.read(json, "duration", 0.05, 600.0), maxRank, 0.05, 600.0);
                 put(params, "value", Ranked.readOptional(json, "value", 0.0, 0.0, 95.0), maxRank, 0.0, 95.0);
+                put(params, "count", Ranked.readOptional(json, "count", 0.0, 0.0, 50.0), maxRank, 0.0, 50.0);
+                put(params, "burst", Ranked.readOptional(json, "burst", 0.0, 0.0, 100.0), maxRank, 0.0, 100.0);
+                put(params, "threshold", Ranked.readOptional(json, "threshold", 0.0, 0.0, 100.0), maxRank, 0.0, 100.0);
+                put(params, "area", Ranked.readOptional(json, "area", 0.0, 0.0, 64.0), maxRank, 0.0, 64.0);
                 if (buff == BuffKind.PARRY) {
                     if (insideZone) {
                         throw new DefinitionException("受け流し（parry）は、陣の中には置けません");
                     }
                     // 受け流しに成功したとき：攻撃してきた相手への効果（反撃）と、クールダウンの戻り
                     put(params, "refund", Ranked.readOptional(json, "refund", 0.0, 0.0, 1.0), maxRank, 0.0, 1.0);
+                    // 反撃できる回数（1なら最初の1回だけ）と、どの向きからの攻撃も受け流すか（流水の構え）
+                    put(params, "counters", Ranked.readOptional(json, "counters", 1.0, 1.0, 999.0), maxRank, 1.0, 999.0);
+                    put(params, "all_directions", Ranked.readOptional(json, "all_directions", 0.0, 0.0, 1.0), maxRank, 0.0, 1.0);
                     nested = parseList(Json.optionalArray(json, "on_success"), maxRank, false);
                     for (EffectDef inner : nested) {
                         if (inner.type == Type.ZONE || inner.type == Type.BUFF || inner.type == Type.GAUGE_BURST
                                 || inner.type == Type.GAUGE_EMPOWER || inner.type == Type.BARRIER || inner.type == Type.SHIELD_BOND
-                                || inner.type == Type.MP_TRANSFER) {
+                                || inner.type == Type.MP_TRANSFER || inner.type == Type.HEAL || inner.type == Type.REVIVE
+                                || inner.type == Type.TELEPORT_TO) {
                             throw new DefinitionException("受け流しの「on_success」に「" + inner.type.id() + "」は書けません");
                         }
                     }
@@ -199,7 +306,13 @@ public final class EffectDef {
             case ZONE -> {
                 put(params, "radius", Ranked.read(json, "radius", 0.5, 32.0), maxRank, 0.5, 32.0);
                 put(params, "duration", Ranked.read(json, "duration", 0.05, 120.0), maxRank, 0.05, 120.0);
-                put(params, "interval", Ranked.readOptional(json, "interval", 0.5, 0.25, 5.0), maxRank, 0.25, 5.0);
+                put(params, "interval", Ranked.readOptional(json, "interval", 0.5, 0.1, 5.0), maxRank, 0.1, 5.0);
+                put(params, "angle", Ranked.readOptional(json, "angle", 60.0, 5.0, 180.0), maxRank, 5.0, 180.0);
+                follow = Json.optionalBoolean(json, "follow", false);
+                zoneMode = ZoneMode.byId(Json.optionalString(json, "mode", "area"));
+                if (zoneMode == ZoneMode.CONE && !follow) {
+                    throw new DefinitionException("陣の「mode」が cone のときは、「follow」を true にしてください（向きは使った人の向き）");
+                }
                 JsonArray inner = Json.array(json, "effects");
                 if (inner.isEmpty()) {
                     throw new DefinitionException("陣（zone）の「effects」が空です");
@@ -233,18 +346,55 @@ public final class EffectDef {
                 stat = readStat(json);
                 put(params, "coefficient", Ranked.read(json, "coefficient", 0.0, 100.0), maxRank, 0.0, 100.0);
                 put(params, "duration", Ranked.read(json, "duration", 0.05, 600.0), maxRank, 0.05, 600.0);
+                put(params, "heal_on_end", Ranked.readOptional(json, "heal_on_end", 0.0, 0.0, 100.0), maxRank, 0.0, 100.0);
+            }
+            case HEAL -> {
+                stat = readStat(json);
+                put(params, "coefficient", Ranked.read(json, "coefficient", 0.0, 100.0), maxRank, 0.0, 100.0);
+            }
+            case HEAL_PERCENT -> put(params, "percent", Ranked.read(json, "percent", 0.0, 100.0), maxRank, 0.0, 100.0);
+            case REGEN -> {
+                stat = readStat(json);
+                put(params, "coefficient", Ranked.read(json, "coefficient", 0.0, 100.0), maxRank, 0.0, 100.0);
+                put(params, "duration", Ranked.read(json, "duration", 0.5, 120.0), maxRank, 0.5, 120.0);
+            }
+            case CLEANSE -> put(params, "count", Ranked.readOptional(json, "count", 0.0, 0.0, 50.0), maxRank, 0.0, 50.0);
+            case REVIVE -> put(params, "hp", Ranked.read(json, "hp", 1.0, 100.0), maxRank, 1.0, 100.0);
+            case POISON -> {
+                stat = readStat(json);
+                put(params, "coefficient", Ranked.read(json, "coefficient", 0.0, 100.0), maxRank, 0.0, 100.0);
+                put(params, "duration", Ranked.readOptional(json, "duration", 6.0, 0.5, 60.0), maxRank, 0.5, 60.0);
+                put(params, "stacks", Ranked.readOptional(json, "stacks", 1.0, 1.0, 10.0), maxRank, 1.0, 10.0);
+                put(params, "max", Ranked.readOptional(json, "max", 3.0, 1.0, 10.0), maxRank, 1.0, 10.0);
+            }
+            case DETONATE_POISON -> {
+                stat = readStat(json);
+                put(params, "base", Ranked.read(json, "base", 0.0, 100.0), maxRank, 0.0, 100.0);
+                put(params, "per_stack", Ranked.read(json, "per_stack", 0.0, 100.0), maxRank, 0.0, 100.0);
+                put(params, "radius", Ranked.readOptional(json, "radius", 0.0, 0.0, 16.0), maxRank, 0.0, 16.0);
+            }
+            case MARK, WEAKEN, BLIND -> {
+                put(params, "value", Ranked.read(json, "value", 0.0, 95.0), maxRank, 0.0, 95.0);
+                put(params, "duration", Ranked.read(json, "duration", 0.05, 120.0), maxRank, 0.05, 120.0);
+            }
+            case ROOT, STEALTH -> put(params, "duration", Ranked.read(json, "duration", 0.05, 60.0), maxRank, 0.05, 60.0);
+            case THROW -> put(params, "strength", Ranked.readOptional(json, "strength", 1.0, 0.1, 5.0), maxRank, 0.1, 5.0);
+            case LAUNCH -> put(params, "strength", Ranked.read(json, "strength", 0.05, 3.0), maxRank, 0.05, 3.0);
+            case TELEPORT_TO, COMBO_STEP -> {
             }
         }
         return new EffectDef(type, stat, statusEffect, buff, Collections.unmodifiableMap(params), nested, to, bonusStatus,
-                consumeStatus);
+                consumeStatus, self, follow, zoneMode);
     }
 
     private static StatType readStat(JsonObject json) {
         String statId = Json.string(json, "stat");
-        if (!statId.equals("attack") && !statId.equals("magic")) {
-            throw new DefinitionException("「stat」は attack か magic にしてください（今は " + statId + "）");
-        }
-        return statId.equals("attack") ? StatType.ATTACK : StatType.MAGIC;
+        return switch (statId) {
+            case "attack" -> StatType.ATTACK;
+            case "magic" -> StatType.MAGIC;
+            case "defense" -> StatType.DEFENSE;
+            default -> throw new DefinitionException("「stat」は attack・magic・defense のどれかにしてください（今は " + statId + "）");
+        };
     }
 
     private static void put(Map<String, Ranked> params, String key, Ranked value, int maxRank, double min, double max) {
@@ -256,7 +406,7 @@ public final class EffectDef {
         return type;
     }
 
-    /** ダメージの元になるステータス（damage のときだけ）。 */
+    /** ダメージ・回復などの元になるステータス。 */
     @Nullable
     public StatType stat() {
         return stat;
@@ -299,5 +449,20 @@ public final class EffectDef {
     /** {@link #bonusStatus()} の状態を、当てたときに消すか（凍結を砕く、など）。 */
     public boolean consumeStatus() {
         return consumeStatus;
+    }
+
+    /** 相手でなく、使った人にかける効果か（1回だけ）。 */
+    public boolean self() {
+        return self;
+    }
+
+    /** 陣が、使った人について動くか。 */
+    public boolean follow() {
+        return follow;
+    }
+
+    /** 陣の効き方。 */
+    public ZoneMode zoneMode() {
+        return zoneMode;
     }
 }

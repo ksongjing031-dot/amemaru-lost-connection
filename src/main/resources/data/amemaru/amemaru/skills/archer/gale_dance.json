@@ -1,0 +1,39 @@
+{
+  "job": "archer",
+  "school": "rapid",
+  "row": 4,
+  "column": 0,
+  "type": "active",
+  "ultimate": true,
+  "name": "疾風の弓舞",
+  "description": "天弓の奥義。風をまとって舞うように射る。10秒の間、足が速くなり、矢のダメージが上がり、スキルのクールダウンが早く戻る。",
+  "max_rank": 1,
+  "rank_costs": [
+    5
+  ],
+  "upper_rank": 1,
+  "min_level": 30,
+  "requires": [
+    {
+      "skill": "archer/arrow_rain",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 50
+  },
+  "cooldown": 120,
+  "delivery": {
+    "type": "self"
+  },
+  "effects": [
+    {
+      "type": "buff",
+      "buff": "bow_dance",
+      "duration": 10,
+      "value": 30
+    }
+  ],
+  "animation": "archer_dance",
+  "sound": "amemaru:skill.archer.gale_dance"
+}

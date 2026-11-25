@@ -44,9 +44,9 @@ public final class SkillFx {
     private static final Map<Integer, Long> PREDICTED = new HashMap<>();
 
     /** 形の印：詠唱・溜めの間だけのもの／着弾の目印／跳躍の軌跡。 */
-    private static final int TAG_CAST = 1;
-    private static final int TAG_MARKER = 2;
-    private static final int TAG_LEAP = 3;
+    static final int TAG_CAST = 1;
+    static final int TAG_MARKER = 2;
+    static final int TAG_LEAP = 3;
 
     // 色
     private static final int WHITE = 0xFFFFFF;
@@ -227,8 +227,7 @@ public final class SkillFx {
                 FxWorld.later(ticks / 2, () -> FxWorld.add(new FxWorld.Spikes(at, radius * 0.5F, 6, 0.55F, ICE, ticks / 2 + 14, seed))
                         .tag(id, TAG_MARKER)).tag(id, TAG_MARKER);
             }
-            default -> {
-            }
+            default -> JobFx.castStart(level, fx, message, caster);
         }
     }
 
@@ -253,14 +252,16 @@ public final class SkillFx {
                 fullChargeFlash(level, id, ticks, FIRE);
             }
             default -> {
-                FxWorld.add(new FxWorld.Gather(Anchor.center(id, Vec3.ZERO), 2.0F, GOLD, hold, 10)).tag(id, TAG_CAST);
-                fullChargeFlash(level, id, ticks, GOLD);
+                if (!JobFx.chargeStart(level, fx, message, hold)) {
+                    FxWorld.add(new FxWorld.Gather(Anchor.center(id, Vec3.ZERO), 2.0F, GOLD, hold, 10)).tag(id, TAG_CAST);
+                    fullChargeFlash(level, id, ticks, GOLD);
+                }
             }
         }
     }
 
     /** 溜めきった瞬間の光（溜めの途中で離したら、詠唱の印ごと消える）。 */
-    private static void fullChargeFlash(ClientLevel level, int id, int ticks, int color) {
+    static void fullChargeFlash(ClientLevel level, int id, int ticks, int color) {
         FxWorld.later(ticks, () -> {
             Entity entity = level.getEntity(id);
             if (entity == null) {
@@ -705,7 +706,11 @@ public final class SkillFx {
                         .tag(id, TAG_MARKER);
                 FxWorld.add(new FxWorld.Flare(Anchor.center(id, new Vec3(0.0, 1.0, 0.0)), 1.2F, THUNDER, 6, FxTextures.STAR, 0.5F, 1));
             }
-            default -> Fx.burst(level, ModParticles.GLOW.get(), to, 12, GOLD_LIGHT, 0.3F, 12, 0.15);
+            default -> {
+                if (!JobFx.release(level, fx, message, caster, skill)) {
+                    Fx.burst(level, ModParticles.GLOW.get(), to, 12, GOLD_LIGHT, 0.3F, 12, 0.15);
+                }
+            }
         }
     }
 
@@ -811,7 +816,11 @@ public final class SkillFx {
                 Fx.fountain(level, ModParticles.SPARK.get(), at, 16, 0xFFFFFF, 0.08F, 10, 0.5, 0.4);
                 FxWorld.shake(at, 7, 1.0F);
             }
-            default -> Fx.burst(level, ModParticles.GLOW.get(), at, 16, GOLD_LIGHT, 0.35F, 12, 0.2);
+            default -> {
+                if (!JobFx.impact(level, fx, message, caster)) {
+                    Fx.burst(level, ModParticles.GLOW.get(), at, 16, GOLD_LIGHT, 0.35F, 12, 0.2);
+                }
+            }
         }
     }
 
@@ -827,13 +836,16 @@ public final class SkillFx {
             Fx.burst(level, ModParticles.SPARK.get(), at, 16, 0xFFF6D0, 0.1F, 12, 0.6);
             return;
         }
+        if (JobFx.trigger(level, fx, message, caster)) {
+            return;
+        }
         Fx.burst(level, ModParticles.GLOW.get(), at, 10, GOLD_LIGHT, 0.3F, 10, 0.2);
     }
 
     // ---------------------------------------------------------------- 道具
 
     /** 挑発の印（頭の上の赤い光）。 */
-    private static void tauntMark(ClientLevel level, int target, int ticks) {
+    static void tauntMark(ClientLevel level, int target, int ticks) {
         Entity enemy = level.getEntity(target);
         float height = enemy == null ? 1.8F : enemy.getBbHeight();
         FxWorld.add(new FxWorld.Flare(Anchor.entity(target, new Vec3(0.0, height + 0.7, 0.0)), 0.8F, TAUNT, ticks, FxTextures.STAR, 0.2F,
@@ -841,7 +853,7 @@ public final class SkillFx {
     }
 
     /** 当たった敵に火花。 */
-    private static void hitSparks(ClientLevel level, int[] targets, int color, int count) {
+    static void hitSparks(ClientLevel level, int[] targets, int color, int count) {
         for (int target : targets) {
             Entity enemy = level.getEntity(target);
             if (enemy != null) {
@@ -853,7 +865,7 @@ public final class SkillFx {
     }
 
     /** 地面のかけら（足もとのブロックの破片が飛ぶ）。 */
-    private static void debris(ClientLevel level, Vec3 at, int count) {
+    static void debris(ClientLevel level, Vec3 at, int count) {
         BlockPos below = BlockPos.containing(at.x, at.y - 0.2, at.z);
         BlockState state = level.getBlockState(below);
         if (state.isAir()) {
@@ -869,7 +881,7 @@ public final class SkillFx {
     }
 
     /** 向き（ベクトル）から、プレイヤーと同じ決まりの角度（度。0で南）。 */
-    private static float yawOf(Vec3 direction) {
+    static float yawOf(Vec3 direction) {
         return (float) (Mth.atan2(-direction.x, direction.z) * Mth.RAD_TO_DEG);
     }
 
@@ -877,13 +889,13 @@ public final class SkillFx {
      * カメラから distance より遠いか。バニラの爆発の煙は、カメラの近くに出ると画面をふさぐ灰色の大きな塊に見えるため、
      * 近いときは出さない（光の演出だけにする）。
      */
-    private static boolean farFromCamera(Vec3 at, double distance) {
+    static boolean farFromCamera(Vec3 at, double distance) {
         Vec3 camera = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
         return camera.distanceToSqr(at) > distance * distance;
     }
 
     /** エンティティの前（見ている向き）へのずれ。 */
-    private static Vec3 lookOffset(Entity entity, double distance) {
+    static Vec3 lookOffset(Entity entity, double distance) {
         if (entity == null) {
             return Vec3.ZERO;
         }

@@ -378,7 +378,12 @@ public final class SkillService {
         if (skill.gaugeCost(rank) > 0 && GaugeService.consume(player, data, skill.gaugeCost(rank))) {
             gaugeSpent = skill.gaugeCost(rank);
         }
-        int cooldownTicks = cooldownTicks(data, skill, rank);
+        int cooldownTicks = cooldownTicks(data, skill, rank, now);
+        // 矢筒の名手（アーチャー）：その流派のスキルは、ときどきクールダウンが半分（Phase 6 その2）
+        double quiver = PassiveService.schoolValue(data, jp.amemaru.lostconnection.job.def.PassiveDef.Type.QUIVER_MASTER, skill);
+        if (quiver > 0 && cooldownTicks > 0 && player.getRandom().nextDouble() * 100.0 < quiver) {
+            cooldownTicks = Math.max(1, cooldownTicks / 2);
+        }
         if (cooldownTicks > 0) {
             data.setCooldown(skill.id(), new SkillCooldown(now + cooldownTicks, cooldownTicks));
         }
@@ -389,6 +394,27 @@ public final class SkillService {
             ctx.chargeRatio = Math.max(0.0, Math.min(1.0, chargeRatio));
             ctx.fullCharge = ctx.chargeRatio >= 0.999;
             ctx.multiplier *= skill.chargeMultiplier(ctx.chargeRatio);
+        }
+        // 連撃（モンク）：違うスキルを回すほど強くなる（Phase 6 その2）
+        ComboService.Step step = ComboService.onSkillUse(player, data, skill, now);
+        ctx.multiplier *= step.multiplier();
+        ctx.forceCrit = step.forceCrit();
+        BuffState stateNow = data.getBuffs();
+        // 百烈・結：次のスキルが強くなる（使うと消える）
+        double empower = stateNow.empower(now);
+        if (empower > 0) {
+            ctx.multiplier *= 1.0 + empower / 100.0;
+            stateNow.empowerUntil = 0;
+            player.removeEffect(ModEffects.EMPOWERED.get());
+        }
+        // 狙撃の構え：次の矢が強くなる（矢のスキルで1本ずつ使う）
+        if (skill.hasTag("arrow") && stateNow.aiming(now)) {
+            ctx.multiplier *= 1.0 + stateNow.aimBonus / 100.0;
+            stateNow.aimShots--;
+            if (stateNow.aimShots <= 0) {
+                stateNow.aimUntil = 0;
+                player.removeEffect(ModEffects.AIMING.get());
+            }
         }
         // 連携支援：ほかの人の「支援」を受けていれば、このスキルの効果が上がる
         BuffState buffs = data.getBuffs();
@@ -415,7 +441,17 @@ public final class SkillService {
             return 0;
         }
         double reduction = Math.min(ServerConfig.COOLDOWN_REDUCTION_CAP.get(), data.getStats().get(StatType.COOLDOWN_REDUCTION));
-        return Math.max(1, Mth.ceil(seconds * (1.0 - Math.max(0.0, reduction) / 100.0) * 20.0));
+        // 速射の心得など（その流派のスキルのクールダウン -%）
+        double school = PassiveService.schoolValue(data, jp.amemaru.lostconnection.job.def.PassiveDef.Type.SCHOOL_HASTE, skill);
+        double ticks = seconds * (1.0 - Math.max(0.0, reduction) / 100.0) * (1.0 - Math.min(80.0, school) / 100.0) * 20.0;
+        return Math.max(1, Mth.ceil(ticks));
+    }
+
+    /** クールダウンの長さ（tick）。疾風の弓舞の間は、早く戻る（Phase 6 その2）。 */
+    public static int cooldownTicks(PlayerData data, SkillDef skill, int rank, long now) {
+        int ticks = cooldownTicks(data, skill, rank);
+        double dance = data.getBuffs().bowDance(now);
+        return dance > 0 && ticks > 0 ? Math.max(1, Mth.ceil(ticks / (1.0 + dance / 100.0))) : ticks;
     }
 
     // ---------------------------------------------------------------- 毎 tick
@@ -435,15 +471,21 @@ public final class SkillService {
                 finishCast(player, data, casting, now);
             }
         }
-        // 障壁の時間切れ（HUDの表示を消すため）
+        // 障壁の時間切れ（HUDの表示を消すため）。祝福の盾は、消えるときに癒す
         BuffState buffs = data.getBuffs();
         if (buffs.barrierAmount > 0 && now >= buffs.barrierUntil) {
+            double healOnEnd = buffs.barrierHealOnEnd;
             buffs.clearBarrier();
             data.markDirty(PlayerData.SYNC_VITALS);
             StatusService.sync(player, StatusFxS2C.Event.NONE);
+            SkillExecutor.onBarrierEnded(player, data, healOnEnd);
         }
         GaugeService.tick(player, data, now);
         PassiveService.tick(player, data);
+        // Phase 6 その2：回復し続ける・命の糸・静の呼吸、気配消し、星の環
+        HealService.tick(player, data, now);
+        StealthService.tick(player, data, now);
+        StarRingService.tick(player, data, now);
         if (player.tickCount % 100 == 0) {
             data.pruneCooldowns(now);
         }

@@ -1,0 +1,18 @@
+{
+  "slot": "weapon",
+  "generation": 1,
+  "series": "見習い装備",
+  "rarity": "common",
+  "required_level": 1,
+  "jobs": [
+    "amemaru:healer"
+  ],
+  "stats": {
+    "magic": 8,
+    "mp": 20
+  },
+  "fixed": true,
+  "durability": 0,
+  "binding": "bound",
+  "description": "ギルドが新しい冒険者に貸す鈴杖。先の小さな鈴は、教会で清めてある。"
+}

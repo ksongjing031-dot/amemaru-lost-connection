@@ -1,0 +1,53 @@
+{
+  "job": "archer",
+  "school": "rapid",
+  "row": 1,
+  "column": 0,
+  "type": "active",
+  "name": "後跳び",
+  "description": "後ろへ大きく跳びながら、前へ一矢を放つ。当たった敵は足が鈍る。",
+  "max_rank": 3,
+  "rank_costs": [
+    1,
+    2,
+    3
+  ],
+  "min_level": 5,
+  "requires": [
+    {
+      "skill": "archer/spread_arrows",
+      "rank": 1
+    }
+  ],
+  "cost": {
+    "mp": 10
+  },
+  "cooldown": 9,
+  "cooldown_per_rank": -1,
+  "delivery": {
+    "type": "backstep",
+    "kind": "arrow",
+    "distance": 6,
+    "range": 28,
+    "speed": 2.0
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 1.0,
+      "coefficient_per_rank": 0.2
+    },
+    {
+      "type": "status",
+      "effect": "minecraft:slowness",
+      "duration": 2,
+      "level": 2
+    }
+  ],
+  "tags": [
+    "arrow"
+  ],
+  "animation": "archer_back",
+  "sound": "amemaru:skill.archer.back_leap"
+}
