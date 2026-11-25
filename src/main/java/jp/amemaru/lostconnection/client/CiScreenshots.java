@@ -1607,7 +1607,7 @@ public final class CiScreenshots {
             // 11月25日：ここから先（6〜8階）は倒れない（HPは1まで）。ボスの技をつづけて写すと、途中で倒れて、あとの写真が
             // 「ダウン」と教会ばかりになっていた
             {"cmd", null, "5", "amemaru admin debug guard @p on"},
-            {"cmd", null, "10", "amemaru admin floor tp 6 entrance @p"},
+            {"cmd", null, "10", "amemaru admin floor tp 6 enter @p"},
             {"await_scene", null, "0"},
             {"snap_keep", null, "100", "phase8_f6_title"},
             {"await_idle", null, "0"},
@@ -1746,7 +1746,7 @@ public final class CiScreenshots {
             {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
             {"cmd", null, "10", "amemaru admin floor lights 7 reset"},
             {"cmd", null, "10", "amemaru admin floor passphrase 7 reset @p"},
-            {"cmd", null, "10", "amemaru admin floor tp 7 entrance @p"},
+            {"cmd", null, "10", "amemaru admin floor tp 7 enter @p"},
             {"await_scene", null, "0"},
             {"snap_keep", null, "100", "phase8_f7_title"},
             {"await_idle", null, "0"},
@@ -1863,7 +1863,7 @@ public final class CiScreenshots {
             {"cmd", null, "10", "gamemode adventure @p"},
             {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
             {"cmd", null, "10", "amemaru admin floor bells 8 reset"},
-            {"cmd", null, "10", "amemaru admin floor tp 8 entrance @p"},
+            {"cmd", null, "10", "amemaru admin floor tp 8 enter @p"},
             {"await_scene", null, "0"},
             {"snap_keep", null, "100", "phase8_f8_title"},
             {"await_idle", null, "0"},

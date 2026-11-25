@@ -66,7 +66,7 @@ public final class StoryCommands {
         return builder.buildFuture();
     };
     private static final SuggestionProvider<CommandSourceStack> SPOTS = (context, builder) -> {
-        for (String spot : List.of("entrance", "boss", "center", "pillar1", "pillar2", "pillar3", "top")) {
+        for (String spot : List.of("entrance", "enter", "boss", "center", "pillar1", "pillar2", "pillar3", "top")) {
             builder.suggest(spot);
         }
         // Phase 8 その1：迷いの森の入口（woods_<id>）と、中継の灯（waypoint<番号>）
@@ -555,6 +555,14 @@ public final class StoryCommands {
         if (def == null || tower == null) {
             source.sendFailure(Component.translatable("commands.amemaru.map.no_floor", floor));
             return 0;
+        }
+        // 11月25日：enter は、遊ぶ人が門や次の階への円から入ったときと同じ（入口へ移り、初めてなら章題と階の場面が流れる）。
+        // entrance は、ただ入口へ移るだけ（場面は流れない）
+        if ("enter".equals(spot)) {
+            for (ServerPlayer player : players) {
+                TowerService.enterFloor(player, def);
+            }
+            return players.size();
         }
         Vec3 at;
         float yaw = def.entrance().yaw();
