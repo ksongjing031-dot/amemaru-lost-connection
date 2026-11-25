@@ -11,7 +11,8 @@ import software.bernie.geckolib.core.object.Color;
  * （半透明の濃い紺）、氷の上へ出ると、ふつうの色で描く（Phase 0-A 9章の8階「氷の下に巨大な影」）。
  */
 public class LakeShadowRenderer<T extends AmemaruMob> extends AmemaruMobRenderer<T> {
-    private static final Color SHADOW = Color.ofARGB(190, 34, 44, 64);
+    /** 半透明の濃い紺（ARGB）。 */
+    private static final Color SHADOW = new Color((190 << 24) | (34 << 16) | (44 << 8) | 64);
 
     public LakeShadowRenderer(EntityRendererProvider.Context context, String name, float shadow) {
         super(context, name, shadow, true);
