@@ -63,7 +63,8 @@ final class CiPhase8 {
             // 11月25日：着ている頭と胴の品の説明文を並べて描く（「一式の効果 今 4/4」を撮る。「-」で閉じる）
             case "p8_tooltip" -> {
                 if ("-".equals(shot[3]) || minecraft.player == null) {
-                    minecraft.setScreen(null);
+                    // 11月25日：何もない画面にすると、写真の途中で自動テストが始まる（6階の写真が止まった原因）。CIの間は何も描かない画面へ
+                    minecraft.setScreen(CiScreenshots.screenAfterClose());
                 } else {
                     minecraft.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
                     minecraft.setScreen(new CiPhase3.TooltipScreen(List.of(
