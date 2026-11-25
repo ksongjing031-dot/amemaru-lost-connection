@@ -1,0 +1,19 @@
+{
+  "name": "星映しの記憶魚",
+  "chapter": 4,
+  "rarity": 4,
+  "spots": [
+    "pond",
+    "lake"
+  ],
+  "size": [
+    20,
+    35
+  ],
+  "price": 500,
+  "points": 10,
+  "difficulty": 0.7,
+  "comment": "水に映った灯りの輪を覚えてる魚だなぁ。手から手へ、火を渡してたらしい",
+  "order": 38,
+  "memory": "amemaru:fish_memory_star"
+}

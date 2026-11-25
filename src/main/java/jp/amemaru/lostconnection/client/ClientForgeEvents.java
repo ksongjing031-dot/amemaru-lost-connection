@@ -140,5 +140,6 @@ public final class ClientForgeEvents {
         ClientDown.reset();
         ClientParty.reset();
         ClientConnection.clear();
+        ClientFishing.clear();
     }
 }

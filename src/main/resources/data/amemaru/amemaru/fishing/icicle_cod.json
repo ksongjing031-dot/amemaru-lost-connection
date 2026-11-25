@@ -1,0 +1,18 @@
+{
+  "name": "氷柱ダラ",
+  "chapter": 2,
+  "rarity": 3,
+  "spots": [
+    "pond",
+    "lake"
+  ],
+  "size": [
+    40,
+    70
+  ],
+  "price": 190,
+  "points": 5,
+  "difficulty": 0.55,
+  "comment": "ひれが氷柱みたいに透けてとがってる。氷の下の大物だなぁ",
+  "order": 15
+}

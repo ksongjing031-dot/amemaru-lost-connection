@@ -1,0 +1,18 @@
+{
+  "name": "霜銀イワナ",
+  "chapter": 2,
+  "rarity": 2,
+  "spots": [
+    "lake",
+    "river"
+  ],
+  "size": [
+    25,
+    40
+  ],
+  "price": 85,
+  "points": 2,
+  "difficulty": 0.45,
+  "comment": "霜銀の鉱脈のそばの水にいるイワナだ。白い点が霜みたいだなぁ",
+  "order": 14
+}

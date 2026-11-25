@@ -1,0 +1,18 @@
+{
+  "name": "霜ワカサギ",
+  "chapter": 2,
+  "rarity": 1,
+  "spots": [
+    "pond",
+    "lake"
+  ],
+  "size": [
+    8,
+    14
+  ],
+  "price": 20,
+  "points": 1,
+  "difficulty": 0.2,
+  "comment": "氷に穴をあけて釣るのが楽しいんだなぁ。寒いほど、よく釣れる",
+  "order": 10
+}

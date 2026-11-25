@@ -1,0 +1,19 @@
+{
+  "name": "朝凪の記憶魚",
+  "chapter": 1,
+  "rarity": 4,
+  "spots": [
+    "pond",
+    "lake"
+  ],
+  "size": [
+    20,
+    35
+  ],
+  "price": 500,
+  "points": 10,
+  "difficulty": 0.7,
+  "comment": "こいつは、水路をめぐる記憶を食べて育った魚だなぁ。朝の光みたいに、あったかい",
+  "order": 9,
+  "memory": "amemaru:fish_memory_dawn"
+}

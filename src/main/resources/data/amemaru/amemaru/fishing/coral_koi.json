@@ -1,0 +1,17 @@
+{
+  "name": "珊瑚ゴイ",
+  "chapter": 3,
+  "rarity": 2,
+  "spots": [
+    "pond"
+  ],
+  "size": [
+    40,
+    70
+  ],
+  "price": 90,
+  "points": 2,
+  "difficulty": 0.45,
+  "comment": "白い体に珊瑚色のまだら。温かい水で、色がどんどん冴えるんだなぁ",
+  "order": 23
+}

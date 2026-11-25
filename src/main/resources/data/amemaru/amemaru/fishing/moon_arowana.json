@@ -1,0 +1,17 @@
+{
+  "name": "月光アロワナ",
+  "chapter": 4,
+  "rarity": 3,
+  "spots": [
+    "lake"
+  ],
+  "size": [
+    60,
+    100
+  ],
+  "price": 300,
+  "points": 5,
+  "difficulty": 0.65,
+  "comment": "月の夜にだけ、水面のすぐ下まで上がってくる。うろこが月みたいだなぁ",
+  "order": 35
+}

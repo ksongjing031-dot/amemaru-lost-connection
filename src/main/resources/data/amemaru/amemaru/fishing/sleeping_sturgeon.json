@@ -1,0 +1,17 @@
+{
+  "name": "眠りチョウザメ",
+  "chapter": 2,
+  "rarity": 3,
+  "spots": [
+    "lake"
+  ],
+  "size": [
+    100,
+    180
+  ],
+  "price": 320,
+  "points": 5,
+  "difficulty": 0.75,
+  "comment": "湖の底で、何十年も眠ってるような顔をしてる。起こすと大暴れだなぁ",
+  "order": 18
+}

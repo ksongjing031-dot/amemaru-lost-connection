@@ -1,0 +1,17 @@
+{
+  "name": "極光サケ",
+  "chapter": 2,
+  "rarity": 3,
+  "spots": [
+    "lake"
+  ],
+  "size": [
+    50,
+    90
+  ],
+  "price": 260,
+  "points": 5,
+  "difficulty": 0.65,
+  "comment": "冬の夜空の光みたいに、緑から紫へ色が変わるサケだ。湖でしか見ないなぁ",
+  "order": 17
+}

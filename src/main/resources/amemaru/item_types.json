@@ -238,5 +238,167 @@
       "id": "mana_water_small",
       "stack": 16
     }
+  ],
+  "fish": [
+    {
+      "id": "fish_pebble_dace",
+      "rarity": 1
+    },
+    {
+      "id": "fish_moss_crucian",
+      "rarity": 1
+    },
+    {
+      "id": "fish_silver_stripe",
+      "rarity": 1
+    },
+    {
+      "id": "fish_lantern_medaka",
+      "rarity": 2
+    },
+    {
+      "id": "fish_crystal_trout",
+      "rarity": 2
+    },
+    {
+      "id": "fish_stone_loach",
+      "rarity": 2
+    },
+    {
+      "id": "fish_amber_carp",
+      "rarity": 3
+    },
+    {
+      "id": "fish_waterway_eel",
+      "rarity": 3
+    },
+    {
+      "id": "fish_spear_pike",
+      "rarity": 3
+    },
+    {
+      "id": "fish_memory_dawn",
+      "rarity": 4
+    },
+    {
+      "id": "fish_frost_smelt",
+      "rarity": 1
+    },
+    {
+      "id": "fish_ice_dace",
+      "rarity": 1
+    },
+    {
+      "id": "fish_snow_trout",
+      "rarity": 2
+    },
+    {
+      "id": "fish_glass_goby",
+      "rarity": 2
+    },
+    {
+      "id": "fish_frostsilver_char",
+      "rarity": 2
+    },
+    {
+      "id": "fish_icicle_cod",
+      "rarity": 3
+    },
+    {
+      "id": "fish_white_catfish",
+      "rarity": 3
+    },
+    {
+      "id": "fish_aurora_salmon",
+      "rarity": 3
+    },
+    {
+      "id": "fish_sleeping_sturgeon",
+      "rarity": 3
+    },
+    {
+      "id": "fish_memory_snow",
+      "rarity": 4
+    },
+    {
+      "id": "fish_spring_guppy",
+      "rarity": 1
+    },
+    {
+      "id": "fish_ember_crucian",
+      "rarity": 1
+    },
+    {
+      "id": "fish_steam_minnow",
+      "rarity": 1
+    },
+    {
+      "id": "fish_coral_koi",
+      "rarity": 2
+    },
+    {
+      "id": "fish_sun_perch",
+      "rarity": 2
+    },
+    {
+      "id": "fish_lamp_shrimp",
+      "rarity": 2
+    },
+    {
+      "id": "fish_golden_carp",
+      "rarity": 3
+    },
+    {
+      "id": "fish_rainbow_gourami",
+      "rarity": 3
+    },
+    {
+      "id": "fish_ember_ray",
+      "rarity": 3
+    },
+    {
+      "id": "fish_memory_steam",
+      "rarity": 4
+    },
+    {
+      "id": "fish_cloud_medaka",
+      "rarity": 1
+    },
+    {
+      "id": "fish_sky_dace",
+      "rarity": 1
+    },
+    {
+      "id": "fish_wind_trout",
+      "rarity": 2
+    },
+    {
+      "id": "fish_star_goby",
+      "rarity": 2
+    },
+    {
+      "id": "fish_link_jelly",
+      "rarity": 2
+    },
+    {
+      "id": "fish_moon_arowana",
+      "rarity": 3
+    },
+    {
+      "id": "fish_thunder_catfish",
+      "rarity": 3
+    },
+    {
+      "id": "fish_dawn_koi",
+      "rarity": 3
+    },
+    {
+      "id": "fish_memory_star",
+      "rarity": 4
+    },
+    {
+      "id": "fish_memory_lord",
+      "rarity": 5
+    }
   ]
 }

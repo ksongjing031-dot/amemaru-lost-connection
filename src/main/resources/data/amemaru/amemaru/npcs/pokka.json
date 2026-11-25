@@ -1,0 +1,24 @@
+{
+  "_comment": "ポッカ爺（Phase 0-A 8章：釣り堀の主人。70代。陽気な釣り好き。「〜だなぁ」。口ぐせ「魚は、待てる人のとこに来るんだなぁ」。エルネストの茶飲み友達）。Phase 7 その2。立つ所は釣り堀の上の台の東、ポッカの釣り具屋のカウンターの内側（西の台を向く。tools/mapgen/build_fishing.py の「ポッカの立つ所」）。見た目はプレイヤーと同じ形のスキン（11月23日に決定：重要なNPCでも、立体的なモデルでなくてよい。tools/artgen/make_facility_npcs.py）",
+  "name": "ポッカ",
+  "title": "釣り堀の主人",
+  "skin": "amemaru:textures/entity/npc/pokka.png",
+  "slim": false,
+  "portrait_y": 1.32,
+  "expressions": [
+    "laugh"
+  ],
+  "home": {
+    "place": "conelia",
+    "pos": [
+      -64.5,
+      2,
+      40.5
+    ],
+    "yaw": 90
+  },
+  "roles": [
+    "fishing_pond"
+  ],
+  "talk_range": 5
+}

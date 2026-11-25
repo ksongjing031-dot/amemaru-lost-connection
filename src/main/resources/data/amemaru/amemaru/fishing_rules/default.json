@@ -1,0 +1,84 @@
+{
+  "_comment": "釣りの決まり（Phase 7 その2。Phase 0-A 15章「娯楽の設計（釣り）」・13章「ほかの人の近くで釣る」「魚図鑑に新しく登録」）。数は【補完】。釣り場の範囲は中央広場の真ん中からの位置（docs/map_style.md の釣り堀と湖）",
+  "rarity_weights": {
+    "1": 60,
+    "2": 30,
+    "3": 10
+  },
+  "current_chapter_weight": 1.5,
+  "memory_chance": 2.0,
+  "lord_chance": 0.2,
+  "size_skew": 1.6,
+  "big_ratio": 0.9,
+  "big_price_factor": 1.3,
+  "points_per_thread": 10,
+  "rod_rent_knots": 0,
+  "near_radius": 16,
+  "near_seconds": 30,
+  "spots": {
+    "pond": {
+      "min": [
+        -96,
+        -10,
+        22
+      ],
+      "max": [
+        -59,
+        6,
+        68
+      ]
+    },
+    "lake": {
+      "min": [
+        -132,
+        -12,
+        54
+      ],
+      "max": [
+        -95,
+        6,
+        92
+      ]
+    }
+  },
+  "lake_flag": "amemaru:project/lakeside",
+  "minigame": {
+    "zone_center": 0.5,
+    "zone_half": 0.19,
+    "zone_shrink": 0.35,
+    "reel_rate": 0.024,
+    "slack_rate": 0.022,
+    "pull": 0.016,
+    "burst": 0.065,
+    "decay": 0.25,
+    "base_ticks": 50,
+    "extra_ticks": 50,
+    "escape_ticks": 40,
+    "limit_seconds": 20
+  },
+  "tournament": {
+    "minutes": 10,
+    "countdown_seconds": 30,
+    "rarity_multiplier": {
+      "1": 1,
+      "2": 2,
+      "3": 4,
+      "4": 6,
+      "5": 20
+    },
+    "prizes": [
+      {
+        "knots": 3000,
+        "threads": 3
+      },
+      {
+        "knots": 2000,
+        "threads": 2
+      },
+      {
+        "knots": 1000,
+        "threads": 1
+      }
+    ]
+  }
+}

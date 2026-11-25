@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Modに同梱したJSON（{@code amemaru/item_types.json}）から、装備・アクセサリー・素材・結晶果・消耗品（Phase 6）のアイテムの種類を
+ * Modに同梱したJSON（{@code amemaru/item_types.json}）から、装備・アクセサリー・素材・結晶果・消耗品（Phase 6）・魚（Phase 7）のアイテムの種類を
  * 起動時に登録する（Phase 0-B 4.3「アイテムの種類（IDと見た目）は起動時に登録する必要があるため、Modに同梱したJSONから
  * 起動時に登録します。攻撃力やドロップ率などの数値は、データパックで後から変えられます」）。
  *
@@ -44,7 +44,7 @@ public final class ItemManifest {
 
     /** アイテムの分類。 */
     public enum Category {
-        WEAPON, SHIELD, ARMOR, ACCESSORY, MATERIAL, FRUIT, CONSUMABLE
+        WEAPON, SHIELD, ARMOR, ACCESSORY, MATERIAL, FRUIT, CONSUMABLE, FISH
     }
 
     private ItemManifest() {
@@ -114,6 +114,12 @@ public final class ItemManifest {
             int stack = entry.has("stack") ? entry.get("stack").getAsInt() : 16;
             int size = Math.max(1, Math.min(64, stack));
             manifest.add(register, Category.CONSUMABLE, id, () -> new ConsumableItem(new Item.Properties().stacksTo(size)));
+        }
+        // Phase 7 その2：魚（★の数は rarity。数値はデータパックの fish/）
+        for (JsonObject entry : objects(json, "fish")) {
+            String id = string(entry, "id");
+            int stars = entry.has("rarity") ? entry.get("rarity").getAsInt() : 1;
+            manifest.add(register, Category.FISH, id, () -> new jp.amemaru.lostconnection.fishing.FishItem(stars, new Item.Properties()));
         }
         AmemaruMod.LOGGER.info("[amemaru] Registered {} item type(s) from {}", manifest.items.size(), PATH);
         return manifest;

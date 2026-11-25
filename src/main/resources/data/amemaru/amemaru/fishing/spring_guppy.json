@@ -1,0 +1,17 @@
+{
+  "name": "湧き水グッピー",
+  "chapter": 3,
+  "rarity": 1,
+  "spots": [
+    "pond"
+  ],
+  "size": [
+    3,
+    6
+  ],
+  "price": 20,
+  "points": 1,
+  "difficulty": 0.2,
+  "comment": "温かい湧き水が出てから増えた小魚だ。尾びれがにぎやかだなぁ",
+  "order": 20
+}

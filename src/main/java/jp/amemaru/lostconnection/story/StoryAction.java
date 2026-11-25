@@ -39,6 +39,8 @@ import java.util.Set;
  *       {@code amemaru:give_record_book}（記録帳を渡す）・{@code amemaru:decipher_records}（古代記録を解読する）・
  *       {@code amemaru:grant_title}（称号を与える。{@code title}）・{@code amemaru:open_titles}（称号の一覧）・
  *       {@code amemaru:open_record_book}（記録帳）・{@code amemaru:open_connections}（縁帳）・{@code amemaru:open_donation}（露店の寄付）</li>
+ *   <li>Phase 7 その2：{@code amemaru:open_fishing}（ポッカ爺の釣り具屋の画面。{@code tab}：dex・sell・trade・tournament）・
+ *       {@code amemaru:rent_rod}（竿を借りる）</li>
  * </ul>
  * 大結晶の「記憶の再生」で見返すときは、処理を行わない（見るだけ）。
  */
@@ -47,7 +49,7 @@ public record StoryAction(String type, JsonObject params) {
             "amemaru:open_floor_select", "amemaru:guide", "amemaru:play_event", "amemaru:give_item", "amemaru:close",
             "amemaru:open_guild", "amemaru:start_quest", "amemaru:report_quest", "amemaru:bond", "amemaru:give_record_book",
             "amemaru:decipher_records", "amemaru:grant_title", "amemaru:open_titles", "amemaru:open_record_book",
-            "amemaru:open_connections", "amemaru:open_donation");
+            "amemaru:open_connections", "amemaru:open_donation", "amemaru:open_fishing", "amemaru:rent_rod");
 
     public static List<StoryAction> parseList(JsonArray array) {
         List<StoryAction> list = new ArrayList<>();
@@ -151,6 +153,9 @@ public record StoryAction(String type, JsonObject params) {
             case "amemaru:open_record_book" -> jp.amemaru.lostconnection.guild.RecordService.openBook(player);
             case "amemaru:open_connections" -> jp.amemaru.lostconnection.guild.GuildService.openConnections(player);
             case "amemaru:open_donation" -> jp.amemaru.lostconnection.guild.StallDonation.open(player);
+            case "amemaru:open_fishing" -> jp.amemaru.lostconnection.fishing.FishingService.openShop(player,
+                    Json.optionalString(params, "tab", "dex"), false);
+            case "amemaru:rent_rod" -> jp.amemaru.lostconnection.fishing.FishingService.rentRod(player);
             default -> {
                 // close は会話の側で扱う
             }

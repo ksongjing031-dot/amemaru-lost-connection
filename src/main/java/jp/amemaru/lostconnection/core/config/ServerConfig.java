@@ -146,6 +146,7 @@ public final class ServerConfig {
     public static final ForgeConfigSpec.BooleanValue PARTNER_ENABLED;
     public static final ForgeConfigSpec.IntValue PARTNER_GOAL;
     public static final ForgeConfigSpec.IntValue PARTNER_KNOTS;
+    public static final ForgeConfigSpec.BooleanValue FISHING_ENABLED;
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
@@ -547,6 +548,12 @@ public final class ServerConfig {
         PARTNER_KNOTS = b
                 .comment("今日の相棒の依頼を終えたときの、ひとりぶんのお礼（ノット）【補完】。コネクションは connection_actions/today_partner.json")
                 .defineInRange("partnerKnots", 150, 0, 1_000_000);
+        b.pop();
+
+        b.comment("釣り（Phase 7 その2。Phase 0-A 15章）。魚の表と数は、データパックの fish/ と fishing_rules/default.json").push("fishing");
+        FISHING_ENABLED = b
+                .comment("釣りのミニゲーム（糸の張り）と魚図鑑を使う（オフにすると、バニラの釣りのまま）")
+                .define("enabled", true);
         b.pop();
 
         SPEC = b.build();

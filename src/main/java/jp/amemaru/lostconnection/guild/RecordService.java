@@ -33,15 +33,24 @@ public final class RecordService {
     private RecordService() {
     }
 
-    /** 集めた古代記録の割合（%。切り捨て）。 */
+    /**
+     * 集めた古代記録の割合（%。切り捨て）。塔の中の記録（1〜19階）だけを数える（Phase 7 その2【補完】：塔の外の記憶魚の記録は、
+     * 釣りの称号「記憶を釣り上げた者」で数える）。
+     */
     public static long percent(PlayerData data) {
-        int total = RecordDefs.all().size();
+        int total = 0;
+        for (RecordDef def : RecordDefs.all().values()) {
+            if (def.floor() >= 1) {
+                total++;
+            }
+        }
         if (total <= 0) {
             return 0;
         }
         int found = 0;
         for (ResourceLocation id : data.getGuild().records().keySet()) {
-            if (RecordDefs.get(id) != null) {
+            RecordDef def = RecordDefs.get(id);
+            if (def != null && def.floor() >= 1) {
                 found++;
             }
         }
@@ -63,8 +72,11 @@ public final class RecordService {
         toast.putString("type", "record");
         toast.putInt("floor", def.floor());
         ModNetwork.sendTo(player, new GuildS2C("toast", toast));
+        // 塔の外の記録（記憶魚。Phase 7 その2）は「塔の外」
+        Object where = def.floor() == 0 ? Component.translatable("screen.amemaru.record_book.floor0")
+                : Component.translatable("screen.amemaru.record_book.floor", def.floor());
         player.displayClientMessage(Component.translatable(data.getGuild().hasRecordBook() ? "message.amemaru.record.found"
-                : "message.amemaru.record.found_nobook", def.floor()).withStyle(ChatFormatting.AQUA), false);
+                : "message.amemaru.record.found_nobook", where).withStyle(ChatFormatting.AQUA), false);
         player.level().playSound(null, player.blockPosition(), SoundEvents.BOOK_PAGE_TURN, SoundSource.PLAYERS, 1.0F, 0.8F);
         QuestService.onRecord(player);
         TitleService.check(player);

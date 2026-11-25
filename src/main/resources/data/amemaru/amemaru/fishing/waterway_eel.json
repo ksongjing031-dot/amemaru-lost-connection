@@ -1,0 +1,18 @@
+{
+  "name": "水路ウナギ",
+  "chapter": 1,
+  "rarity": 3,
+  "spots": [
+    "pond",
+    "lake"
+  ],
+  "size": [
+    50,
+    90
+  ],
+  "price": 200,
+  "points": 5,
+  "difficulty": 0.6,
+  "comment": "古い水路を通って、どこからともなく来るんだなぁ。力が強いぞ",
+  "order": 7
+}

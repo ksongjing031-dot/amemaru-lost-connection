@@ -1,0 +1,19 @@
+{
+  "name": "小石ハヤ",
+  "chapter": 1,
+  "rarity": 1,
+  "spots": [
+    "pond",
+    "river",
+    "lake"
+  ],
+  "size": [
+    8,
+    15
+  ],
+  "price": 18,
+  "points": 1,
+  "difficulty": 0.15,
+  "comment": "どこの水にもいる、すばしこいやつだなぁ。最初の一匹は、たいていこいつだ",
+  "order": 0
+}

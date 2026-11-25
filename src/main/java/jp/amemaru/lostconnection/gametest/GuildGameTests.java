@@ -64,12 +64,12 @@ public final class GuildGameTests {
     private GuildGameTests() {
     }
 
-    /** 定義：称号63・古代記録30・クエスト28が、問題なく読める。ノアとエルネストがいて、親密度と現れる日がある。会話も読める。 */
+    /** 定義：称号63・古代記録34（塔の中30・記憶魚4）・クエスト28が、問題なく読める。ノアとエルネストがいて、親密度と現れる日がある。会話も読める。 */
     @GameTest(template = EMPTY)
     public static void guildDefinitionsLoad(GameTestHelper helper) {
         check(helper, TitleDefs.loader().errors().isEmpty() && TitleDefs.all().size() == 63,
                 "称号の定義が読めません（" + TitleDefs.all().size() + "）：" + TitleDefs.loader().errors());
-        check(helper, RecordDefs.loader().errors().isEmpty() && RecordDefs.all().size() == 30,
+        check(helper, RecordDefs.loader().errors().isEmpty() && RecordDefs.all().size() == 34,
                 "古代記録の定義が読めません（" + RecordDefs.all().size() + "）：" + RecordDefs.loader().errors());
         check(helper, QuestDefs.loader().errors().isEmpty() && QuestDefs.all().size() == 28,
                 "クエストの定義が読めません（" + QuestDefs.all().size() + "）：" + QuestDefs.loader().errors());
@@ -196,7 +196,8 @@ public final class GuildGameTests {
 
     /**
      * 古代記録：見つけると「未解読」（2回目は増えない）・収集率・エルネストに渡すと解読（記録帳がなければ渡す）・記録帳の中身
-     * （30の記録、1階に1つ・15階に8つ）・階を決めた「記録を見つける」クエストは、受ける前に見つけた分も数える。
+     * （塔の30の記録、1階に1つ・15階に8つ。ほかに塔の外の記憶魚の記憶が4つ）・階を決めた「記録を見つける」クエストは、受ける前に
+     * 見つけた分も数える。
      */
     @GameTest(template = EMPTY)
     public static void guildRecords(GameTestHelper helper) {
@@ -216,8 +217,9 @@ public final class GuildGameTests {
             CompoundTag book = RecordService.bookTag(player, data);
             int[] total = book.getIntArray("total");
             int[] found = book.getIntArray("found");
-            check(helper, book.getList("entries", Tag.TAG_COMPOUND).size() == 30 && total[1] == 1 && found[1] == 1 && total[15] == 8
-                    && total[20] == 0, "記録帳の中身（数）が違います");
+            // 塔の30の記録と、塔の外（階 0）の記憶魚の4つの記憶（Phase 7 その2）
+            check(helper, book.getList("entries", Tag.TAG_COMPOUND).size() == 34 && total[0] == 4 && total[1] == 1 && found[1] == 1
+                    && total[15] == 8 && total[20] == 0, "記録帳の中身（数）が違います");
             boolean read = false;
             for (Tag tag : book.getList("entries", Tag.TAG_COMPOUND)) {
                 CompoundTag one = (CompoundTag) tag;

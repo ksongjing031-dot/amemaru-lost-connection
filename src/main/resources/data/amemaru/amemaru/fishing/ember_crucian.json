@@ -1,0 +1,18 @@
+{
+  "name": "火照りブナ",
+  "chapter": 3,
+  "rarity": 1,
+  "spots": [
+    "pond",
+    "lake"
+  ],
+  "size": [
+    15,
+    25
+  ],
+  "price": 24,
+  "points": 1,
+  "difficulty": 0.25,
+  "comment": "温い水に入ると、体がほんのり赤くなるフナだなぁ",
+  "order": 21
+}

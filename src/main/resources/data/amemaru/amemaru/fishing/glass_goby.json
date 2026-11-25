@@ -1,0 +1,17 @@
+{
+  "name": "玻璃ハゼ",
+  "chapter": 2,
+  "rarity": 2,
+  "spots": [
+    "pond"
+  ],
+  "size": [
+    5,
+    10
+  ],
+  "price": 65,
+  "points": 2,
+  "difficulty": 0.35,
+  "comment": "体が透けて、骨まで見えるんだ。光にかざすと、ガラス細工みたいだなぁ",
+  "order": 13
+}

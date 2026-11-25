@@ -1,0 +1,19 @@
+{
+  "name": "湯けむりの記憶魚",
+  "chapter": 3,
+  "rarity": 4,
+  "spots": [
+    "pond",
+    "lake"
+  ],
+  "size": [
+    20,
+    35
+  ],
+  "price": 500,
+  "points": 10,
+  "difficulty": 0.7,
+  "comment": "湯けむりの中の話し声を覚えてる魚だなぁ。帰ってきた人の声らしい",
+  "order": 29,
+  "memory": "amemaru:fish_memory_steam"
+}

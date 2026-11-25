@@ -1,0 +1,18 @@
+{
+  "name": "雲メダカ",
+  "chapter": 4,
+  "rarity": 1,
+  "spots": [
+    "pond",
+    "lake"
+  ],
+  "size": [
+    3,
+    6
+  ],
+  "price": 24,
+  "points": 1,
+  "difficulty": 0.2,
+  "comment": "ひれがふわふわで、水に映った雲の中を泳いでるみたいだなぁ",
+  "order": 30
+}
