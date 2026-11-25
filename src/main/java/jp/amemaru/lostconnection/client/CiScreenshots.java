@@ -1765,8 +1765,8 @@ public final class CiScreenshots {
             {"snap", null, "40", "phase8_f7_gate_open"},
             // 7階の敵（分かれ道の北に並べ、南から見る。写し身は、近くの人＝こちらの姿を写す）
             {"cmd", null, "40", "execute in amemaru:tower run tp @p {f7:336.5,17,484.5} 180 4"},
-            {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:mimic {f7:330.5,18,475.5} {NoAI:1b,Rotation:[0f,0f]}"},
-            {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:ice_stag {f7:334.5,18,475.5} {NoAI:1b,Rotation:[0f,0f]}"},
+            {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:mimic {f7:330.5,17,475.5} {NoAI:1b,Rotation:[0f,0f]}"},
+            {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:ice_stag {f7:334.5,17,475.5} {NoAI:1b,Rotation:[0f,0f]}"},
             {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:icicle_bat {f7:338.5,19,475.5} {NoAI:1b,Rotation:[0f,0f]}"},
             {"cmd", null, "5", "execute in amemaru:tower run summon amemaru:blizzard_spirit {f7:342.5,18,475.5} {NoAI:1b,Rotation:[0f,0f]}"},
             {"cmd", null, "40", "execute in amemaru:tower run tp @p {f7:336.5,17,484.5} 180 4"},
