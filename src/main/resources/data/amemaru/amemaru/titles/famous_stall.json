@@ -1,0 +1,12 @@
+{
+  "name": "名物露店",
+  "field": "trade",
+  "kind": "normal",
+  "condition": {
+    "type": "counter",
+    "counter": "stall_visitors",
+    "at_least": 200
+  },
+  "description": "自分の露店に、のべ200人のお客が来た",
+  "order": 220
+}

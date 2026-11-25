@@ -1,0 +1,21 @@
+{
+  "name": "草原の大掃除",
+  "kind": "upper",
+  "description": "新人が増える前に、1階の敵をまとめて減らしておきたいのです。",
+  "requires": {
+    "day_min": 5,
+    "has_job": true
+  },
+  "objectives": [
+    {
+      "type": "kill_any",
+      "count": 80,
+      "floor": 1
+    }
+  ],
+  "rewards": {
+    "knots": 1000,
+    "exp": 700
+  },
+  "order": 220
+}

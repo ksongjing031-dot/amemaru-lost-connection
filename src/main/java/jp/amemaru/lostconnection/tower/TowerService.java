@@ -148,6 +148,13 @@ public final class TowerService {
         ModNetwork.sendTo(player, new StoryTextS2C(StoryTextS2C.Kind.ANCIENT, tablet.title(), tablet.text(), 160));
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS,
                 1.0F, 0.6F);
+        // Phase 6 その3：古代記録として記録帳に残す（同じ階・同じ名前の記録。エルネストに渡すと解読済みになる）
+        for (jp.amemaru.lostconnection.guild.RecordDef record : jp.amemaru.lostconnection.guild.RecordDefs.sorted()) {
+            if (record.floor() == def.number() && record.title().equals(tablet.title())) {
+                jp.amemaru.lostconnection.guild.RecordService.find(player, record.id());
+                break;
+            }
+        }
     }
 
     /** 石板を右クリックしたとき（何度でも読める）。 */
@@ -426,6 +433,7 @@ public final class TowerService {
                         0.8F, 1.2F);
             }
             GuideService.refresh(target, data);
+            jp.amemaru.lostconnection.guild.GuildHooks.onPillarActivated(target);
         }
         if (any) {
             level.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.BLOCKS, 1.4F, 0.9F);
@@ -521,6 +529,7 @@ public final class TowerService {
                 .withStyle(ChatFormatting.GOLD));
         level.playSound(null, pos, SoundEvents.CHEST_OPEN, SoundSource.BLOCKS, 1.0F, 0.8F);
         level.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.BLOCKS, 1.0F, 1.3F);
+        jp.amemaru.lostconnection.guild.GuildHooks.onChestOpened(player);
         level.sendParticles(ParticleTypes.WAX_OFF, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 30, 0.4, 0.4, 0.4, 0.05);
         AmemaruMod.LOGGER.info("[amemaru] {} opened ancient chest {} of floor {} ({} knots, {} item(s))", player.getGameProfile().getName(),
                 index, floor, knots, items);

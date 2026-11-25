@@ -139,6 +139,11 @@ public class NpcEntity extends PathfinderMob implements GeoEntity {
             return InteractionResult.PASS;
         }
         if (!level().isClientSide() && player instanceof ServerPlayer serverPlayer) {
+            // しゃがんで品を持って話しかけると、贈り物（Phase 6 その3：親密度）
+            if (serverPlayer.isShiftKeyDown() && !serverPlayer.getMainHandItem().isEmpty()
+                    && jp.amemaru.lostconnection.guild.BondService.gift(serverPlayer, this)) {
+                return InteractionResult.SUCCESS;
+            }
             DialogueManager.talk(serverPlayer, this);
         }
         return InteractionResult.sidedSuccess(level().isClientSide());

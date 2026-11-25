@@ -1,0 +1,11 @@
+{
+  "name": "絆を守りし者",
+  "field": "combat",
+  "kind": "limited",
+  "condition": {
+    "type": "first",
+    "event": "first_boss_floor15"
+  },
+  "description": "断絶の執行者を、サーバーで最初に倒した",
+  "order": 590
+}

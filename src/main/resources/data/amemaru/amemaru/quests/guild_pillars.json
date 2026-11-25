@@ -1,0 +1,20 @@
+{
+  "name": "三本の石柱",
+  "kind": "guild",
+  "description": "草原に散らばる三本の石柱を起動してください。触れるたびに、古代の文字が一行ずつ読めるそうです。",
+  "requires": {
+    "has_job": true
+  },
+  "objectives": [
+    {
+      "type": "pillar",
+      "count": 3,
+      "floor": 1
+    }
+  ],
+  "rewards": {
+    "knots": 200,
+    "exp": 150
+  },
+  "order": 110
+}

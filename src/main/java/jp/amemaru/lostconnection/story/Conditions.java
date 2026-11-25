@@ -19,8 +19,9 @@ import java.util.List;
  *   <li>{@code day_min}・{@code day_max}：進行日の範囲。{@code chapter}：章</li>
  *   <li>{@code has_job}：戦闘職を選んでいるか（Phase 5で足した）。{@code job}：その戦闘職か</li>
  *   <li>{@code opening}：オープニングの進み（0・1・2。Phase 5で足した）。{@code opening_max}：オープニングの進みがこれ以下</li>
- *   <li>{@code affinity_min}・{@code title}・{@code remembered}：親密度・称号・NPCの記憶。Phase 6・8で働く（いまは読み取るだけ。
- *       親密度と称号はまだないので「足りている」、記憶はまだ失われないので「覚えている」とみなす）</li>
+ *   <li>{@code affinity_min}・{@code title}：会話のNPCとの親密度の段階・称号を持っているか（Phase 6 その3で働く。親密度は、会話・
+ *       クエストのNPCについて見る。NPCの分からない所では「足りている」とみなす）</li>
+ *   <li>{@code remembered}：NPCの記憶。Phase 8で働く（いまは記憶が失われないので「覚えている」とみなす）</li>
  * </ul>
  */
 public record Conditions(List<ResourceLocation> flagsAll, List<ResourceLocation> flagsAny, List<ResourceLocation> flagsNone,
@@ -44,8 +45,40 @@ public record Conditions(List<ResourceLocation> flagsAll, List<ResourceLocation>
                 Json.optionalInt(json, "affinity_min", 0, 0, 5), Json.optionalId(json, "title"), remembered);
     }
 
-    /** その人について、条件がすべて合っているか。 */
+    /** その人について、条件がすべて合っているか（親密度は見ない）。 */
     public boolean test(ServerPlayer player) {
+        return test(player, null);
+    }
+
+    /**
+     * サーバー全体の条件（物語フラグ・進行日・章）だけで見る。NPCが現れるか（{@code appears}）など、人のいない所で使う。
+     * 本人のフラグ・職業・オープニング・親密度・称号は見ない。
+     */
+    public boolean testServer(net.minecraft.server.MinecraftServer server) {
+        StoryState state = StoryState.get(server);
+        ProgressionData progress = ProgressionData.get(server);
+        for (ResourceLocation flag : flagsAll) {
+            if (!state.has(flag)) {
+                return false;
+            }
+        }
+        if (!flagsAny.isEmpty() && flagsAny.stream().noneMatch(state::has)) {
+            return false;
+        }
+        for (ResourceLocation flag : flagsNone) {
+            if (state.has(flag)) {
+                return false;
+            }
+        }
+        int day = progress.day();
+        if (day < dayMin || day > dayMax) {
+            return false;
+        }
+        return chapter <= 0 || progress.chapter() == chapter;
+    }
+
+    /** その人について、条件がすべて合っているか。{@code npc} は親密度を見るNPC（会話・クエストのNPC）。 */
+    public boolean test(ServerPlayer player, @Nullable ResourceLocation npc) {
         PlayerData data = PlayerDataCapability.get(player).orElse(null);
         StoryState state = StoryState.get(player.server);
         ProgressionData progress = ProgressionData.get(player.server);
@@ -90,7 +123,15 @@ public record Conditions(List<ResourceLocation> flagsAll, List<ResourceLocation>
         if (openingMax >= 0 && (data == null || data.getStory().opening() > openingMax)) {
             return false;
         }
-        // 親密度・称号（Phase 6）・NPCの記憶（Phase 8）はまだないので、いまは条件に合っているとみなす
+        // 親密度・称号（Phase 6 その3）
+        if (affinityMin > 0 && npc != null && (data == null
+                || jp.amemaru.lostconnection.guild.BondService.stage(data, npc) < affinityMin)) {
+            return false;
+        }
+        if (title != null && (data == null || !data.getGuild().hasTitle(title))) {
+            return false;
+        }
+        // NPCの記憶（Phase 8）はまだ失われないので、いまは「覚えている」とみなす
         return remembered == null || remembered;
     }
 

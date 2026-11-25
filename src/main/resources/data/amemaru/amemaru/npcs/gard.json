@@ -7,12 +7,39 @@
   "model": "amemaru:npc/gard",
   "model_scale": 0.97,
   "portrait_y": 1.33,
-  "expressions": ["stern"],
+  "expressions": [
+    "stern"
+  ],
   "home": {
     "place": "conelia",
-    "pos": [26.5, 3, -82.5],
+    "pos": [
+      26.5,
+      3,
+      -82.5
+    ],
     "yaw": 90
   },
   "roles": [],
-  "talk_range": 5
+  "talk_range": 5,
+  "bond": {
+    "loved": [
+      "minecraft:cooked_beef",
+      "minecraft:honey_bottle"
+    ],
+    "liked": [
+      "amemaru:healing_potion_small",
+      "minecraft:bread",
+      "amemaru:moss_iron"
+    ],
+    "reactions": {
+      "loved": "……いい品だ。礼を言う",
+      "liked": "……もらっておく",
+      "normal": "……気を遣うな",
+      "full": "今日はもういい。休め",
+      "frozen": "……誰だ、お前は"
+    },
+    "gift": "amemaru:healing_potion_small",
+    "gift_count": 5,
+    "keepsake": "amemaru:keepsake_gard"
+  }
 }

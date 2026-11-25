@@ -1,0 +1,31 @@
+{
+  "name": "昇格試験",
+  "kind": "promotion",
+  "giver": "amemaru:gard",
+  "report": "amemaru:gard",
+  "board": true,
+  "description": "上位職への昇格を望むなら、腕を見せろ。……生きて戻れ。それが命令だ。",
+  "requires": {
+    "day_min": 11,
+    "has_job": true
+  },
+  "objectives": [
+    {
+      "type": "kill_any",
+      "count": 100
+    },
+    {
+      "type": "boss",
+      "count": 2
+    }
+  ],
+  "rewards": {
+    "knots": 2000,
+    "exp": 1000,
+    "promote": true,
+    "affinity": {
+      "amemaru:gard": 15
+    }
+  },
+  "order": 300
+}

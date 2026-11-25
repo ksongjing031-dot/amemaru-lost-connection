@@ -103,6 +103,8 @@ public final class ClientModEvents {
         event.registerAboveAll("special_moment", SpecialMomentFx.OVERLAY);
         // Phase 5：暗転・章題・字幕・古代文字・知らせ・カウントダウン・はじめの手引き
         event.registerAboveAll("story", StoryHud.OVERLAY);
+        // Phase 6 その3：受けているクエスト（右上。はじめの手引きの下。手引きの高さを使うので、そのあとに描く）
+        event.registerAboveAll("guild_quests", GuildHud.OVERLAY);
     }
 
     @SubscribeEvent

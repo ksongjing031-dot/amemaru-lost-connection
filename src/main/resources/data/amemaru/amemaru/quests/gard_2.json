@@ -1,0 +1,29 @@
+{
+  "name": "新人の備え",
+  "kind": "personal",
+  "giver": "amemaru:gard",
+  "board": true,
+  "description": "新人に持たせる回復薬が足りん。3つ、用意してくれ。",
+  "requires": {
+    "affinity_min": 3,
+    "has_job": true
+  },
+  "objectives": [
+    {
+      "type": "collect",
+      "item": "amemaru:healing_potion_small",
+      "count": 3,
+      "consume": true
+    }
+  ],
+  "rewards": {
+    "knots": 300,
+    "affinity": {
+      "amemaru:gard": 20
+    },
+    "flags": [
+      "amemaru:bond/gard_2_done"
+    ]
+  },
+  "order": 419
+}

@@ -1,0 +1,18 @@
+{
+  "_comment": "2〜3日目のノア（まだ言葉を交わさない。Phase 0-A 11章：4日目に初めて話す）",
+  "npc": "amemaru:noa",
+  "priority": 10,
+  "conditions": {
+    "day_max": 3
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "……",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "（白に近い灰色の髪の少女は、塔を見上げたまま、何も言わない）"
+    }
+  }
+}

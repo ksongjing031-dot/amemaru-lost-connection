@@ -1,0 +1,12 @@
+{
+  "name": "白い花を摘まなかった人",
+  "field": "story",
+  "kind": "hidden",
+  "condition": {
+    "type": "event",
+    "event": "white_flowers_untouched"
+  },
+  "description": "17階を、白い花に一度も触れずに抜けた",
+  "hint": "咲いている途中の記憶には、触れないで",
+  "order": 520
+}

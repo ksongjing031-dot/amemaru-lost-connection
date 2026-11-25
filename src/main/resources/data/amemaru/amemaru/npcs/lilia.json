@@ -7,12 +7,45 @@
   "model": "amemaru:npc/lilia",
   "model_scale": 0.9375,
   "portrait_y": 1.12,
-  "expressions": ["smile", "surprised", "worried"],
+  "expressions": [
+    "smile",
+    "surprised",
+    "worried"
+  ],
   "home": {
     "place": "conelia",
-    "pos": [26.5, 3, -78.5],
+    "pos": [
+      26.5,
+      3,
+      -78.5
+    ],
     "yaw": 90
   },
-  "roles": ["job_registration"],
-  "talk_range": 5
+  "roles": [
+    "job_registration"
+  ],
+  "talk_range": 5,
+  "bond": {
+    "loved": [
+      "minecraft:honey_bottle",
+      "minecraft:cookie"
+    ],
+    "liked": [
+      "minecraft:cornflower",
+      "minecraft:poppy",
+      "minecraft:dandelion",
+      "minecraft:sweet_berries",
+      "minecraft:bread"
+    ],
+    "reactions": {
+      "loved": "わあ、これ大好きなんです！ ありがとうございます、{player}さん！",
+      "liked": "ありがとうございます！ 受付に飾りますね",
+      "normal": "わたしに？ ふふ、ありがとうございます",
+      "full": "今日はもうたくさんいただきましたよ。また明日、お話ししましょう！",
+      "frozen": "……あの、どなたでしたっけ？ ごめんなさい、受け取れません"
+    },
+    "gift": "minecraft:cookie",
+    "gift_count": 8,
+    "keepsake": "amemaru:keepsake_lilia"
+  }
 }

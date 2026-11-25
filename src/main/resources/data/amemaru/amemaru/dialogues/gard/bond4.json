@@ -1,0 +1,32 @@
+{
+  "_comment": "親密度4「親友」：特別な会話。ゆかりの小物（見た目だけ）は、段階が上がったときに渡している（一度だけ。台詞は【提案】）",
+  "npc": "amemaru:gard",
+  "priority": 15,
+  "conditions": {
+    "opening": 2,
+    "has_job": true,
+    "affinity_min": 4,
+    "flags_none": [
+      "amemaru:bond/gard_talk4"
+    ]
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "……さっきの羽根は、ワタリガラスのだ",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "騎士団の頃からの、俺の印だ。……なくすなよ",
+      "expression": "stern"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:bond/gard_talk4"
+      ]
+    }
+  ]
+}

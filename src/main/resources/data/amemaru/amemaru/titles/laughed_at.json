@@ -1,0 +1,11 @@
+{
+  "name": "運命の女神に笑われた",
+  "field": "leisure",
+  "kind": "normal",
+  "condition": {
+    "type": "event",
+    "event": "roulette_lose_streak_10"
+  },
+  "description": "ルーレットで10回続けて外した",
+  "order": 370
+}

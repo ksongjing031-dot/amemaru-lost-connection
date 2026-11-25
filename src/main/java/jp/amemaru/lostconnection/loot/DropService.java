@@ -76,6 +76,8 @@ public final class DropService {
                 continue;
             }
             data.getAdventure().recordKill(def.id());
+            // Phase 6 その3：クエストの目標と、称号の数（倒した数）
+            jp.amemaru.lostconnection.guild.GuildHooks.onKill(player, def.id(), def.floor());
             int share = shares.getOrDefault(player.getUUID(), 0);
             if (share > 0) {
                 LevelService.addExp(player, data, share, LevelService.ExpSource.GAMEPLAY);

@@ -101,4 +101,10 @@ SPECS = {
     "bard": {"tilt": 0.0, "tilt_sway": 0.5, "blink": 3.1,
              "sway": {"cape": (1.5, 2, 0.3)},
              "hold": ("right_arm", "spear"), "arm_swing": 16},
+    # Phase 6 その3：ノア（首をかしげる子。外套のフードと後ろ髪が揺れる）とエルネスト（石板を見つめる。跳ね上げた眼鏡は動かさない）
+    "noa": {"tilt": 6.0, "tilt_sway": 2.5, "blink": 3.4,
+            "sway": {"hair_back": (3.0, 0, 0.1), "hood": (2.0, 0, 0.3)},
+            "arm_swing": 20, "leg_swing": 22},
+    "ernesto": {"tilt": -3.0, "tilt_sway": 1.0, "blink": 2.2,
+                "hold": ("left_arm", "tablet", "glasses_up"), "arm_swing": 12, "leg_swing": 16},
 }

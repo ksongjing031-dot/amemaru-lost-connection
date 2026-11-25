@@ -1,0 +1,50 @@
+{
+  "_comment": "ノア（Phase 0-A 8章）。正体不明の少女。2日目から塔前広場に現れる（2階ができるまでは、塔前広場の石柱の陰。Phase 8 で2階の霧の奥の初目撃を足す）。4日目から言葉を交わす。名前を一度で覚え、決して忘れない【補完】。正体は明かさない【確定】。立体のモデルは tools/artgen/make_npc_models.py",
+  "name": "ノア",
+  "title": "不思議な少女",
+  "skin": "amemaru:textures/entity/npc/noa.png",
+  "slim": true,
+  "model": "amemaru:npc/noa",
+  "model_scale": 0.9,
+  "portrait_y": 0.86,
+  "expressions": [
+    "smile",
+    "sad"
+  ],
+  "home": {
+    "place": "conelia",
+    "pos": [
+      16.5,
+      3,
+      -137.5
+    ],
+    "yaw": 180
+  },
+  "roles": [],
+  "talk_range": 5,
+  "appears": {
+    "day_min": 2
+  },
+  "bond": {
+    "loved": [
+      "minecraft:cookie",
+      "minecraft:sweet_berries"
+    ],
+    "liked": [
+      "minecraft:dandelion",
+      "minecraft:cornflower",
+      "amemaru:crystal_shard",
+      "minecraft:honey_bottle"
+    ],
+    "reactions": {
+      "loved": "……！ これ、好き。リ・ネ",
+      "liked": "ありがとう。……覚えておくね",
+      "normal": "くれるの？ ……ふしぎ",
+      "full": "もう、いっぱいだよ",
+      "frozen": "……わたしは、覚えてるよ"
+    },
+    "gift": "minecraft:sweet_berries",
+    "gift_count": 6,
+    "keepsake": "amemaru:keepsake_noa"
+  }
+}

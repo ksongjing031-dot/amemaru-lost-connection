@@ -1,0 +1,12 @@
+{
+  "name": "先導者",
+  "field": "social",
+  "kind": "normal",
+  "condition": {
+    "type": "counter",
+    "counter": "leads",
+    "at_least": 10
+  },
+  "description": "途中から来た人・後輩とのパーティを10回組んだ",
+  "order": 300
+}

@@ -207,7 +207,10 @@ public final class MarketService {
     }
 
     public static int limit(MinecraftServer server, UUID player) {
-        return activeStallOf(server, player) > 0 ? ServerConfig.MARKET_STALL_LISTING_LIMIT.get() : ServerConfig.MARKET_LISTING_LIMIT.get();
+        int base = activeStallOf(server, player) > 0 ? ServerConfig.MARKET_STALL_LISTING_LIMIT.get() : ServerConfig.MARKET_LISTING_LIMIT.get();
+        // Phase 6 その3：称号「コネリアの大商人」の効果（出品の枠 +5。Phase 0-A 22章の効果の提案）
+        net.minecraft.server.level.ServerPlayer online = server.getPlayerList().getPlayer(player);
+        return online == null ? base : base + jp.amemaru.lostconnection.guild.TitleService.effectAmount(online, "listing_bonus");
     }
 
     public static boolean freeListingDay(MinecraftServer server) {
@@ -246,6 +249,8 @@ public final class MarketService {
             if (rent != null && !rent.owner.equals(player.getUUID())) {
                 rent.visitors++;
                 data.setDirty();
+                // Phase 6 その3：露店の持ち主の称号「名物露店」（1日に1人1回）
+                jp.amemaru.lostconnection.guild.GuildHooks.onStallVisit(player, rent.owner);
             }
         }
     }
@@ -376,6 +381,9 @@ public final class MarketService {
             seller.level().playSound(null, seller.blockPosition(), SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 0.5F, 1.4F);
         }
         stallsChanged(server, listing.seller);
+        // Phase 6 その3：取引の数と縁帳（売り手・買い手）。最初の取引の2人には限定称号「市場の開拓者」
+        jp.amemaru.lostconnection.guild.GuildHooks.onMarketTrade(server, player.getUUID(), name(player), listing.seller,
+                listing.sellerName);
         send(player, Component.translatable("message.amemaru.market.bought", listing.item.getHoverName(), listing.item.getCount(),
                 KnotTransfer.format(total)).withStyle(ChatFormatting.GOLD), true);
         player.level().playSound(null, player.blockPosition(), SoundEvents.VILLAGER_YES, SoundSource.PLAYERS, 0.4F, 1.3F);

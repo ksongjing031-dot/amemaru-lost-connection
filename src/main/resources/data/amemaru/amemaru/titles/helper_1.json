@@ -1,0 +1,15 @@
+{
+  "name": "手を差し伸べる者",
+  "field": "social",
+  "kind": "normal",
+  "series": "helper",
+  "tier": 1,
+  "tiers": 3,
+  "condition": {
+    "type": "counter",
+    "counter": "revives",
+    "at_least": 10
+  },
+  "description": "仲間を10回起こした",
+  "order": 230
+}

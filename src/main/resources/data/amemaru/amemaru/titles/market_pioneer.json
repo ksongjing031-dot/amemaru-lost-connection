@@ -1,0 +1,11 @@
+{
+  "name": "市場の開拓者",
+  "field": "trade",
+  "kind": "limited",
+  "condition": {
+    "type": "first",
+    "event": "first_market_trade"
+  },
+  "description": "フリーマーケットの最初の取引を成立させた（売り手と買い手）",
+  "order": 610
+}

@@ -1,0 +1,19 @@
+{
+  "name": "ツノモフの毛",
+  "kind": "daily",
+  "pool": "floor1",
+  "description": "布と仕立ての店から、ツノモフの毛の注文です。",
+  "objectives": [
+    {
+      "type": "collect",
+      "item": "amemaru:tsunomofu_fluff",
+      "count": 6,
+      "consume": true
+    }
+  ],
+  "rewards": {
+    "knots": 140,
+    "exp": 100
+  },
+  "order": 60
+}

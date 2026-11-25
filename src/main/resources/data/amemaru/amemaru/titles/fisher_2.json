@@ -1,0 +1,15 @@
+{
+  "name": "釣り名人",
+  "field": "leisure",
+  "kind": "normal",
+  "series": "fisher",
+  "tier": 2,
+  "tiers": 3,
+  "condition": {
+    "type": "counter",
+    "counter": "fish_percent",
+    "at_least": 60
+  },
+  "description": "魚図鑑を60%うめた",
+  "order": 330
+}

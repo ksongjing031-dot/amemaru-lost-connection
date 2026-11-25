@@ -1,0 +1,12 @@
+{
+  "name": "ドランの相棒",
+  "field": "story",
+  "kind": "normal",
+  "condition": {
+    "type": "affinity",
+    "npc": "amemaru:doran",
+    "stage": 5
+  },
+  "description": "ドランと「かけがえのない人」になった",
+  "order": 430
+}

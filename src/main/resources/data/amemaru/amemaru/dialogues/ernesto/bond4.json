@@ -1,0 +1,36 @@
+{
+  "_comment": "親密度4「親友」：特別な会話。ゆかりの小物（見た目だけ）は、段階が上がったときに渡している（一度だけ。台詞は【提案】）",
+  "npc": "amemaru:ernesto",
+  "priority": 15,
+  "conditions": {
+    "opening": 2,
+    "has_job": true,
+    "affinity_min": 4,
+    "flags_none": [
+      "amemaru:bond/ernesto_talk4"
+    ]
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "さっきのレンズは、わしの眼鏡の予備じゃ。……三枚あっても、まだ足りんがのう",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "実はな、あの石板の最後の一行だけ、三十年かけても読めんのじゃ",
+      "expression": "worried",
+      "next": "s3"
+    },
+    "s3": {
+      "text": "いつか、読める日が来ると信じておるよ"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:bond/ernesto_talk4"
+      ]
+    }
+  ]
+}

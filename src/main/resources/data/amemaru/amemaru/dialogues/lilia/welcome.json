@@ -1,5 +1,5 @@
 {
-  "_comment": "ふだんのリリア（口ぐせ「おかえりなさい！」）。職業を変えるときも、ここから画面を開く。市場の手帳もここで配る（Phase 0-A 20章「ギルドで配る『市場の手帳』」。Phase 6）",
+  "_comment": "ふだんのリリア（口ぐせ「おかえりなさい！」）。職業を変えるときも、ここから画面を開く。市場の手帳もここで配る（Phase 0-A 20章「ギルドで配る『市場の手帳』」。Phase 6）。Phase 6 その3：ギルドの窓口（クエスト・パーティ募集・称号・冒険日誌・縁）もここから開く",
   "npc": "amemaru:lilia",
   "priority": 10,
   "conditions": {
@@ -17,8 +17,14 @@
       "text": "今日はどうしましたか？",
       "choices": [
         {
-          "text": "塔のことを聞きたい",
-          "next": "t1"
+          "text": "ギルドの窓口を見たい",
+          "next": "end",
+          "actions": [
+            {
+              "type": "amemaru:open_guild",
+              "tab": "quests"
+            }
+          ]
         },
         {
           "text": "職業を変えたい",
@@ -30,14 +36,8 @@
           ]
         },
         {
-          "text": "市場の手帳がほしい",
-          "next": "m1",
-          "actions": [
-            {
-              "type": "amemaru:give_item",
-              "item": "amemaru:market_notebook"
-            }
-          ]
+          "text": "ほかのこと",
+          "next": "o1"
         },
         {
           "text": "なんでもない",
@@ -64,6 +64,29 @@
     "t3": {
       "expression": "worried",
       "text": "……無理はしないでくださいね。待ってますから"
+    },
+    "o1": {
+      "text": "はい、なんでしょう？",
+      "choices": [
+        {
+          "text": "市場の手帳がほしい",
+          "next": "m1",
+          "actions": [
+            {
+              "type": "amemaru:give_item",
+              "item": "amemaru:market_notebook"
+            }
+          ]
+        },
+        {
+          "text": "塔のことを聞きたい",
+          "next": "t1"
+        },
+        {
+          "text": "やっぱりいい",
+          "next": "end"
+        }
+      ]
     }
   }
 }

@@ -1,0 +1,11 @@
+{
+  "name": "最初の一歩",
+  "field": "combat",
+  "kind": "limited",
+  "condition": {
+    "type": "first",
+    "event": "first_boss_floor1"
+  },
+  "description": "1階のボスを、サーバーで最初に倒した",
+  "order": 560
+}

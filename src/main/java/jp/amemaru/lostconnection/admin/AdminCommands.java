@@ -96,6 +96,13 @@ public final class AdminCommands {
                         .then(EconomyCommands.storageCommand())
                         .then(EconomyCommands.shopCommand())
                         .then(EconomyCommands.marketCommand())
+                        // Phase 6 その3：称号・古代記録・親密度・クエスト・露店の区画の寄付・冒険日誌
+                        .then(GuildCommands.titleCommand())
+                        .then(GuildCommands.recordCommand())
+                        .then(GuildCommands.bondCommand())
+                        .then(GuildCommands.questCommand())
+                        .then(GuildCommands.donationCommand())
+                        .then(GuildCommands.chronicleCommand())
                         .then(debugCommand())));
     }
 

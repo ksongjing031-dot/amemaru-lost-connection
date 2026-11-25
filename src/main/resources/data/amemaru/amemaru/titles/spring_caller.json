@@ -1,0 +1,11 @@
+{
+  "name": "春を呼ぶ者",
+  "field": "combat",
+  "kind": "normal",
+  "condition": {
+    "type": "boss",
+    "boss": "amemaru:queen_of_oblivion"
+  },
+  "description": "10階の忘却の女王を倒した",
+  "order": 70
+}

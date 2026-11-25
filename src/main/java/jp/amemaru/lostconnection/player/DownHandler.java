@@ -233,6 +233,8 @@ public final class DownHandler {
         told.add(player.getUUID());
         if (reviver != null) {
             PlayerDataCapability.get(reviver).ifPresent(PlayerData::countRevive);
+            // Phase 6 その3：縁帳（起こした・起こしてくれた）と称号の数
+            jp.amemaru.lostconnection.guild.GuildHooks.onRevive(reviver, player);
             player.sendSystemMessage(Component.translatable("message.amemaru.down.revived_by", reviver.getDisplayName())
                     .withStyle(ChatFormatting.GREEN));
             reviver.sendSystemMessage(Component.translatable("message.amemaru.down.revived_other", name).withStyle(ChatFormatting.GREEN));

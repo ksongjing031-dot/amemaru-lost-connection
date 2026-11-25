@@ -1,0 +1,15 @@
+{
+  "name": "市場の顔",
+  "field": "trade",
+  "kind": "normal",
+  "series": "trader",
+  "tier": 2,
+  "tiers": 3,
+  "condition": {
+    "type": "counter",
+    "counter": "trades",
+    "at_least": 100
+  },
+  "description": "フリーマーケットで100回取引した",
+  "order": 200
+}

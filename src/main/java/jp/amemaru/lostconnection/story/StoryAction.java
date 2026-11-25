@@ -34,12 +34,20 @@ import java.util.Set;
  *   <li>{@code amemaru:play_event}：ストーリーイベントの演出を流す</li>
  *   <li>{@code amemaru:give_item}：アイテムを渡す</li>
  *   <li>{@code amemaru:close}：会話を終える</li>
+ *   <li>Phase 6 その3：{@code amemaru:open_guild}（ギルドの窓口。{@code tab}）・{@code amemaru:start_quest}・{@code amemaru:report_quest}
+ *       （クエストを受ける・報告する。{@code quest}）・{@code amemaru:bond}（親密度を足す。{@code npc}・{@code amount}）・
+ *       {@code amemaru:give_record_book}（記録帳を渡す）・{@code amemaru:decipher_records}（古代記録を解読する）・
+ *       {@code amemaru:grant_title}（称号を与える。{@code title}）・{@code amemaru:open_titles}（称号の一覧）・
+ *       {@code amemaru:open_record_book}（記録帳）・{@code amemaru:open_connections}（縁帳）・{@code amemaru:open_donation}（露店の寄付）</li>
  * </ul>
  * 大結晶の「記憶の再生」で見返すときは、処理を行わない（見るだけ）。
  */
 public record StoryAction(String type, JsonObject params) {
     private static final Set<String> TYPES = Set.of("amemaru:set_flags", "amemaru:roster", "amemaru:open_job_screen",
-            "amemaru:open_floor_select", "amemaru:guide", "amemaru:play_event", "amemaru:give_item", "amemaru:close");
+            "amemaru:open_floor_select", "amemaru:guide", "amemaru:play_event", "amemaru:give_item", "amemaru:close",
+            "amemaru:open_guild", "amemaru:start_quest", "amemaru:report_quest", "amemaru:bond", "amemaru:give_record_book",
+            "amemaru:decipher_records", "amemaru:grant_title", "amemaru:open_titles", "amemaru:open_record_book",
+            "amemaru:open_connections", "amemaru:open_donation");
 
     public static List<StoryAction> parseList(JsonArray array) {
         List<StoryAction> list = new ArrayList<>();
@@ -108,6 +116,41 @@ public record StoryAction(String type, JsonObject params) {
                     }
                 }
             }
+            // ---- Phase 6 その3：ギルド・クエスト・親密度・古代記録・称号
+            case "amemaru:open_guild" -> jp.amemaru.lostconnection.guild.GuildService.openGuild(player,
+                    Json.optionalString(params, "tab", "quests"));
+            case "amemaru:start_quest" -> {
+                ResourceLocation quest = Json.optionalId(params, "quest");
+                if (quest != null) {
+                    jp.amemaru.lostconnection.guild.QuestService.accept(player, quest, npc == null ? null : npc.npcId());
+                }
+            }
+            case "amemaru:report_quest" -> {
+                ResourceLocation quest = Json.optionalId(params, "quest");
+                jp.amemaru.lostconnection.guild.QuestService.report(player, quest, npc == null ? null : npc.npcId());
+            }
+            case "amemaru:bond" -> {
+                ResourceLocation who = Json.optionalId(params, "npc");
+                if (who == null && npc != null) {
+                    who = npc.npcId();
+                }
+                if (who != null) {
+                    jp.amemaru.lostconnection.guild.BondService.add(player, who, Json.optionalInt(params, "amount", 0, -1000, 1000),
+                            "dialogue");
+                }
+            }
+            case "amemaru:give_record_book" -> jp.amemaru.lostconnection.guild.RecordService.giveBook(player);
+            case "amemaru:decipher_records" -> jp.amemaru.lostconnection.guild.RecordService.decipher(player);
+            case "amemaru:grant_title" -> {
+                ResourceLocation title = Json.optionalId(params, "title");
+                if (title != null) {
+                    jp.amemaru.lostconnection.guild.TitleService.grant(player, title, "dialogue");
+                }
+            }
+            case "amemaru:open_titles" -> jp.amemaru.lostconnection.guild.GuildService.openTitles(player);
+            case "amemaru:open_record_book" -> jp.amemaru.lostconnection.guild.RecordService.openBook(player);
+            case "amemaru:open_connections" -> jp.amemaru.lostconnection.guild.GuildService.openConnections(player);
+            case "amemaru:open_donation" -> jp.amemaru.lostconnection.guild.StallDonation.open(player);
             default -> {
                 // close は会話の側で扱う
             }

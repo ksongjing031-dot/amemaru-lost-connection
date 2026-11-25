@@ -1,0 +1,33 @@
+{
+  "_comment": "親密度5「かけがえのない人」：称号は条件で自動で渡る（一度だけ。台詞は【提案】）",
+  "npc": "amemaru:noa",
+  "priority": 15,
+  "conditions": {
+    "opening": 2,
+    "has_job": true,
+    "affinity_min": 5,
+    "flags_none": [
+      "amemaru:bond/noa_talk5"
+    ],
+    "day_min": 4
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "{player}のこと、わたしはずっと覚えてる",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "……だから、だいじょうぶ",
+      "expression": "smile"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:bond/noa_talk5"
+      ]
+    }
+  ]
+}

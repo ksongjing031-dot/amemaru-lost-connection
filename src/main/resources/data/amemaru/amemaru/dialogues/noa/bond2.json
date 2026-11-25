@@ -1,0 +1,54 @@
+{
+  "_comment": "親密度2「知り合い」になって最初に話したとき（一度だけ）。個人的な依頼①を頼む。依頼はギルドの掲示板にも出る（Phase 6 その3。台詞は【提案】）",
+  "npc": "amemaru:noa",
+  "priority": 15,
+  "conditions": {
+    "opening": 2,
+    "has_job": true,
+    "affinity_min": 2,
+    "flags_none": [
+      "amemaru:bond/noa_talk2"
+    ],
+    "day_min": 4
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "{player}。お願い、してもいい？",
+      "next": "offer"
+    },
+    "offer": {
+      "text": "街の音を、聞いてきて",
+      "choices": [
+        {
+          "text": "引き受ける",
+          "next": "yes",
+          "actions": [
+            {
+              "type": "amemaru:start_quest",
+              "quest": "amemaru:noa_1"
+            }
+          ]
+        },
+        {
+          "text": "また今度",
+          "next": "no"
+        }
+      ]
+    },
+    "yes": {
+      "text": "……うん。待ってる"
+    },
+    "no": {
+      "text": "そっか。……また今度"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:bond/noa_talk2"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "name": "古代の門を開きし者",
+  "field": "combat",
+  "kind": "limited",
+  "condition": {
+    "type": "first",
+    "event": "first_boss_floor5"
+  },
+  "description": "古代守護者を、サーバーで最初に倒した",
+  "order": 570
+}

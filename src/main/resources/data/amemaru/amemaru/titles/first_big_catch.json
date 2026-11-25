@@ -1,0 +1,11 @@
+{
+  "name": "最初の大物",
+  "field": "leisure",
+  "kind": "limited",
+  "condition": {
+    "type": "first",
+    "event": "first_lake_lord"
+  },
+  "description": "湖の主「記憶の主」を、サーバーで最初に釣った",
+  "order": 620
+}

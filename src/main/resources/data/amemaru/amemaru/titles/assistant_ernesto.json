@@ -1,0 +1,12 @@
+{
+  "name": "エルネストの助手",
+  "field": "story",
+  "kind": "normal",
+  "condition": {
+    "type": "affinity",
+    "npc": "amemaru:ernesto",
+    "stage": 5
+  },
+  "description": "エルネストと「かけがえのない人」になった",
+  "order": 450
+}

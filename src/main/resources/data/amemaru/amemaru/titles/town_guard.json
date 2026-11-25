@@ -1,0 +1,11 @@
+{
+  "name": "街の守り手",
+  "field": "social",
+  "kind": "normal",
+  "condition": {
+    "type": "event",
+    "event": "raid_defense_top"
+  },
+  "description": "街の襲撃で、役割の貢献が上位だった",
+  "order": 310
+}

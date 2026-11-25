@@ -1,0 +1,15 @@
+{
+  "name": "はじめまして",
+  "field": "social",
+  "kind": "normal",
+  "series": "hello",
+  "tier": 1,
+  "tiers": 3,
+  "condition": {
+    "type": "counter",
+    "counter": "partners",
+    "at_least": 5
+  },
+  "description": "5人とパーティを組んだ（25人のとき）",
+  "order": 260
+}

@@ -1,0 +1,32 @@
+{
+  "_comment": "親密度5「かけがえのない人」：称号は条件で自動で渡る（一度だけ。台詞は【提案】）",
+  "npc": "amemaru:gard",
+  "priority": 15,
+  "conditions": {
+    "opening": 2,
+    "has_job": true,
+    "affinity_min": 5,
+    "flags_none": [
+      "amemaru:bond/gard_talk5"
+    ]
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "……お前のような奴がいると、ギルドが明るくなる。リリアも喜んでいる",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "……礼は言わん。生きて戻れ。それが命令だ",
+      "expression": "stern"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:bond/gard_talk5"
+      ]
+    }
+  ]
+}

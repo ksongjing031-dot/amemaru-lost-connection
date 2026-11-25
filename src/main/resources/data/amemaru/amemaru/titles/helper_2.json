@@ -1,0 +1,15 @@
+{
+  "name": "救いの手",
+  "field": "social",
+  "kind": "normal",
+  "series": "helper",
+  "tier": 2,
+  "tiers": 3,
+  "condition": {
+    "type": "counter",
+    "counter": "revives",
+    "at_least": 50
+  },
+  "description": "仲間を50回起こした",
+  "order": 240
+}

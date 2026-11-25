@@ -167,6 +167,8 @@ public final class PartyService {
         }
         manager.add(party, target.getUUID(), target.getGameProfile().getName());
         manager.clearInvitesFor(target.getUUID());
+        // Phase 6 その3：縁帳（一緒に組んだ人）と称号「はじめまして」の系統
+        jp.amemaru.lostconnection.guild.GuildHooks.onPartyJoined(target, online(target.server, party));
         Component name = target.getDisplayName();
         for (ServerPlayer member : online(target.server, party)) {
             if (member == target) {

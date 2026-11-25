@@ -1,0 +1,19 @@
+{
+  "name": "歴史の語り部",
+  "field": "story",
+  "kind": "normal",
+  "series": "records",
+  "tier": 3,
+  "tiers": 3,
+  "condition": {
+    "type": "counter",
+    "counter": "records_percent",
+    "at_least": 100
+  },
+  "description": "古代記録をすべて集めた",
+  "effect": {
+    "type": "record_hints",
+    "amount": 1
+  },
+  "order": 400
+}

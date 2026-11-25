@@ -1,0 +1,30 @@
+{
+  "name": "古い声の欠片",
+  "kind": "personal",
+  "giver": "amemaru:ernesto",
+  "board": true,
+  "description": "残響の欠片を3つ、持ってきてくれんか。古代の音が、まだ中に残っておるかもしれん。",
+  "requires": {
+    "affinity_min": 2,
+    "has_job": true
+  },
+  "objectives": [
+    {
+      "type": "collect",
+      "item": "amemaru:echo_fragment",
+      "count": 3,
+      "consume": true
+    }
+  ],
+  "rewards": {
+    "knots": 200,
+    "exp": 100,
+    "affinity": {
+      "amemaru:ernesto": 15
+    },
+    "flags": [
+      "amemaru:bond/ernesto_1_done"
+    ]
+  },
+  "order": 424
+}

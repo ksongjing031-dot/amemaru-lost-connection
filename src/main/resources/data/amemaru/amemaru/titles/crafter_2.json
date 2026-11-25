@@ -1,0 +1,15 @@
+{
+  "name": "熟練職人",
+  "field": "craft",
+  "kind": "normal",
+  "series": "crafter",
+  "tier": 2,
+  "tiers": 3,
+  "condition": {
+    "type": "counter",
+    "counter": "crafted",
+    "at_least": 300
+  },
+  "description": "装備を300個作った",
+  "order": 120
+}

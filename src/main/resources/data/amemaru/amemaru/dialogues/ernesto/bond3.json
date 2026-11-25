@@ -1,0 +1,61 @@
+{
+  "_comment": "親密度3「信頼」：過去の話（Phase 0-A 12章の明かしてよい時期に合わせて、日で区切る）と、個人的な依頼②（一度だけ。台詞は【提案】）",
+  "npc": "amemaru:ernesto",
+  "priority": 15,
+  "conditions": {
+    "opening": 2,
+    "has_job": true,
+    "affinity_min": 3,
+    "flags_none": [
+      "amemaru:bond/ernesto_talk3"
+    ]
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "わしはな、若いころ、遠い学術都市の学院におった",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "「塔は古代の記録媒体だ」と唱えて、追い出されてしもうた",
+      "next": "s3"
+    },
+    "s3": {
+      "text": "四十年前にこの街へ来て、塔の根元で石板を見つけた。……それからずっと、読んでおる",
+      "next": "offer"
+    },
+    "offer": {
+      "text": "そこで、またひとつ頼みたいのじゃが",
+      "choices": [
+        {
+          "text": "引き受ける",
+          "next": "yes",
+          "actions": [
+            {
+              "type": "amemaru:start_quest",
+              "quest": "amemaru:ernesto_2"
+            }
+          ]
+        },
+        {
+          "text": "また今度",
+          "next": "no"
+        }
+      ]
+    },
+    "yes": {
+      "text": "実に、実に頼もしい！"
+    },
+    "no": {
+      "text": "うむ、気が向いたらでよい"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:bond/ernesto_talk3"
+      ]
+    }
+  ]
+}

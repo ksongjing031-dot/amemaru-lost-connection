@@ -1,0 +1,12 @@
+{
+  "name": "ただいまを言った人",
+  "field": "story",
+  "kind": "hidden",
+  "condition": {
+    "type": "event",
+    "event": "said_tadaima"
+  },
+  "description": "記憶を失ったリリアに「ただいま」と言った",
+  "hint": "リリアの口ぐせを、思い出して",
+  "order": 490
+}

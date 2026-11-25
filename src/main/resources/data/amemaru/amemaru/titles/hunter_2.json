@@ -1,0 +1,15 @@
+{
+  "name": "熟練討伐者",
+  "field": "combat",
+  "kind": "normal",
+  "series": "hunter",
+  "tier": 2,
+  "tiers": 3,
+  "condition": {
+    "type": "counter",
+    "counter": "kills",
+    "at_least": 3000
+  },
+  "description": "敵を3,000体倒した",
+  "order": 10
+}

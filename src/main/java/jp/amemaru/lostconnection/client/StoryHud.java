@@ -219,7 +219,15 @@ public final class StoryHud {
         }
     }
 
+    /** はじめの手引きの下の端（出していなければ 0。ギルドのクエストの一覧を、その下に出すため。Phase 6 その3） */
+    private static int guideBottom;
+
+    public static int guideBottom() {
+        return guideBottom;
+    }
+
     private static void renderGuide(GuiGraphics graphics, Font font, int width, Minecraft minecraft) {
+        guideBottom = 0;
         var story = ClientStory.story();
         if (story.guideIndex() < 0 || story.guideText().isEmpty()
                 || minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.DialogueScreen) {
@@ -231,6 +239,7 @@ public final class StoryHud {
         int h = 16 + lines.size() * 10 + (target != null ? 12 : 0);
         int x = width - w - 6;
         int y = 6;
+        guideBottom = y + h;
         graphics.fill(x, y, x + w, y + h, 0xA00B1022);
         graphics.fill(x, y, x + 1, y + h, 0xFF8FD3FF);
         graphics.drawString(font, Component.translatable("hud.amemaru.story.guide", story.guideIndex() + 1, story.guideTotal()), x + 6, y + 4,

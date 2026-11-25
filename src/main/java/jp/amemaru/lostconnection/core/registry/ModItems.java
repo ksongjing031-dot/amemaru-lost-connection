@@ -72,6 +72,16 @@ public final class ModItems {
     /** 市場の手帳（Phase 6）：右クリックで、街のどこからでも取引所の画面を開く。ギルドの受付（リリア）でもらえる */
     public static final RegistryObject<Item> MARKET_NOTEBOOK = ITEMS.register("market_notebook", () ->
             new jp.amemaru.lostconnection.item.MarketNotebookItem(new Item.Properties().stacksTo(1)));
+    /** 記録帳（Phase 6 その3）：見つけた古代記録と、階ごとの収集率。エルネストから受け取る */
+    public static final RegistryObject<Item> RECORD_BOOK = ITEMS.register("record_book", () ->
+            new jp.amemaru.lostconnection.item.RecordBookItem(new Item.Properties().stacksTo(1).rarity(Rarity.UNCOMMON)));
+    /** NPCゆかりの小物（Phase 6 その3。親密度4「親友」で受け取る。見た目だけ） */
+    public static final RegistryObject<Item> KEEPSAKE_LILIA = keepsake("keepsake_lilia");
+    public static final RegistryObject<Item> KEEPSAKE_GARD = keepsake("keepsake_gard");
+    public static final RegistryObject<Item> KEEPSAKE_DORAN = keepsake("keepsake_doran");
+    public static final RegistryObject<Item> KEEPSAKE_SERENA = keepsake("keepsake_serena");
+    public static final RegistryObject<Item> KEEPSAKE_ERNESTO = keepsake("keepsake_ernesto");
+    public static final RegistryObject<Item> KEEPSAKE_NOA = keepsake("keepsake_noa");
     public static final RegistryObject<Item> LOST_BLANK = ITEMS.register("lost_blank", () ->
             new BlockItem(ModBlocks.LOST_BLANK.get(), new Item.Properties()));
     public static final RegistryObject<Item> MEMORY_STONE = ITEMS.register("memory_stone", () ->
@@ -97,5 +107,10 @@ public final class ModItems {
             new ForgeSpawnEggItem(ModEntities.NPC, 0x2E5E3A, 0xF3E6C8, new Item.Properties()));
 
     private ModItems() {
+    }
+
+    private static RegistryObject<Item> keepsake(String name) {
+        return ITEMS.register(name, () -> new jp.amemaru.lostconnection.item.KeepsakeItem(name,
+                new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
     }
 }

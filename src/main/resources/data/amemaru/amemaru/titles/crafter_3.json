@@ -1,0 +1,15 @@
+{
+  "name": "名工",
+  "field": "craft",
+  "kind": "normal",
+  "series": "crafter",
+  "tier": 3,
+  "tiers": 3,
+  "condition": {
+    "type": "counter",
+    "counter": "crafted",
+    "at_least": 1000
+  },
+  "description": "装備を1,000個作った",
+  "order": 130
+}

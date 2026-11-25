@@ -1,0 +1,11 @@
+{
+  "name": "最初の完璧",
+  "field": "craft",
+  "kind": "limited",
+  "condition": {
+    "type": "first",
+    "event": "first_perfect_accessory"
+  },
+  "description": "完璧なアクセサリーを、サーバーで最初に手に入れた",
+  "order": 600
+}

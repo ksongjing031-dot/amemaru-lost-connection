@@ -1,0 +1,11 @@
+{
+  "name": "断絶を断つ者",
+  "field": "combat",
+  "kind": "normal",
+  "condition": {
+    "type": "boss",
+    "boss": "amemaru:severance_executor"
+  },
+  "description": "15階の断絶の執行者を倒した",
+  "order": 80
+}

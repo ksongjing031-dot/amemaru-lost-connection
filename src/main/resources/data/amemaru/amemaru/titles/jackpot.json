@@ -1,0 +1,11 @@
+{
+  "name": "大当たり！",
+  "field": "leisure",
+  "kind": "normal",
+  "condition": {
+    "type": "event",
+    "event": "roulette_straight_win"
+  },
+  "description": "ルーレットの一点賭けを当てた",
+  "order": 360
+}

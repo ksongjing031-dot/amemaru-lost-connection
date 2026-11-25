@@ -1,0 +1,32 @@
+{
+  "_comment": "親密度5「かけがえのない人」：称号は条件で自動で渡る（一度だけ。台詞は【提案】）",
+  "npc": "amemaru:serena",
+  "priority": 15,
+  "conditions": {
+    "opening": 2,
+    "has_job": true,
+    "affinity_min": 5,
+    "flags_none": [
+      "amemaru:bond/serena_talk5"
+    ]
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "つながりは、灯りです",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "{player}さん。あなたは、わたくしの灯りのひとつです",
+      "expression": "smile"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:bond/serena_talk5"
+      ]
+    }
+  ]
+}

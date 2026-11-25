@@ -1,0 +1,15 @@
+{
+  "name": "記録の読み手",
+  "field": "story",
+  "kind": "normal",
+  "series": "records",
+  "tier": 2,
+  "tiers": 3,
+  "condition": {
+    "type": "counter",
+    "counter": "records_percent",
+    "at_least": 60
+  },
+  "description": "古代記録を60%集めた",
+  "order": 390
+}

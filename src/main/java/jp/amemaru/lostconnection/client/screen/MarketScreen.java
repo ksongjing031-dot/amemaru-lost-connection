@@ -368,6 +368,9 @@ public class MarketScreen extends Screen {
                 b -> ModNetwork.sendToServer(MarketActionC2S.of(MarketActionC2S.Action.EXTEND))));
         fourthButton = addRenderableWidget(new CrystalButton(left + 252, top + 40, 60, 14, Component.translatable("screen.amemaru.market.stalls.release"),
                 b -> ModNetwork.sendToServer(MarketActionC2S.of(MarketActionC2S.Action.RELEASE))));
+        // Phase 6 その3：区画を増やす寄付（フィンが寄付を募る。目標に届いた次の朝に 12 → 20 区画）
+        addRenderableWidget(new CrystalButton(left + 136, top + BUTTON_Y, 104, 16, Component.translatable("screen.amemaru.market.stalls.donation"),
+                b -> jp.amemaru.lostconnection.client.ClientGuild.send("donation_open")));
     }
 
     // ---------------------------------------------------------------- 操作

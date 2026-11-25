@@ -1088,6 +1088,446 @@ def bard():
     return g, painter, ["normal"]
 
 
+# ================================================================ ノア
+
+NOA_PAL = {
+    "skin": hexc("F6E2D6"), "skin_d": hexc("E6C9B8"), "blush": hexc("F0B4B0"),
+    "hair": hexc("D6D9E0"), "hair_d": hexc("A9AEBA"), "hair_l": hexc("F5F6F9"),
+    "navy": hexc("1F2A4E"), "navy_d": hexc("141B35"), "navy_l": hexc("34447C"),
+    "gold": hexc("E8D08A"), "gold_d": hexc("BFA45E"),
+    "white": hexc("ECEEF2"), "white_d": hexc("C9CDD6"),
+    "tights": hexc("2A2F45"), "boot": hexc("3A3F5A"), "boot_d": hexc("262A3E"),
+}
+
+NOA_FACE_PAL = {
+    "L": hexc("4A4C5A"), "H": hexc("FFFFFF"), "a": hexc("5E6B8E"), "b": hexc("8190B4"), "c": hexc("B9C3DC"),
+    "p": hexc("232A40"), "w": hexc("FDFDFB"), "B": hexc("B4B8C2"), "m": hexc("B87A80"), "M": hexc("E3A1A4"),
+}
+
+# 片方の瞳だけ淡い金色（Phase 0-A 8章）：左目（見る人の右）の瞳の色を、金に置きかえる
+NOA_GOLD_EYE = {hexc("5E6B8E"): hexc("B8913E"), hexc("8190B4"): hexc("E2C36C"), hexc("B9C3DC"): hexc("F6E6B0")}
+
+NOA_EYES = {
+    "normal": ["L L L L",
+               "L H a a",
+               "w a p b",
+               "w b b c",
+               ". c c ."],
+    "smile": [". . . .",
+              ". L L .",
+              "L . . L",
+              ". . . .",
+              ". . . ."],
+    "sad": [". . . .",
+            "L L L L",
+            "w H p b",
+            "w b b c",
+            ". c c ."],
+    "closed": [". . . .",
+               ". . . .",
+               ". . . .",
+               "L L L L",
+               ". L L ."],
+}
+NOA_BROWS = {"normal": [". . . .", ". B B ."], "smile": [". . . .", ". B B ."], "sad": [". . B B", "B B . ."]}
+NOA_MOUTHS = {"normal": ["m m"], "smile": ["m . . m", ". m m ."], "sad": [". m m .", "m . . m"]}
+
+# 外套のふちの「結び目に似た文字の模様」（淡金。4マスごとにくり返す）【補完】
+KNOT_GLYPH = [". g .",
+              "g . g",
+              ". g ."]
+
+
+def noa():
+    """ノア（13歳ほど）。白に近い灰色の髪、片方の瞳だけ淡い金色。どの時代とも違う外套に、結び目に似た文字の模様。
+    色：白灰・淡金・夜空の紺。
+
+    かわいらしく、少し不思議に：小柄（頭9・胴8・足9）。肩までの白灰の髪と長い横髪、夜空の紺の外套（高い襟・背に下ろしたフード・
+    前を開けた裾）に淡金の結び目の模様、中は白い服。足音がしない子なので、靴はやわらかい布の短靴【補完】。
+    """
+    g = NpcModel("noa", 128, 128)
+    g.face_center_y = 22
+    g.bone("root", (0, 0, 0))
+    g.bone("body", (0, 9, 0), "root")
+    g.bone("head", (0, 17, 0), "body")
+    g.bone("eyelids", (0, 20, -4.5), "head")
+    g.bone("hair_back", (0, 24, 4.4), "head")
+    g.bone("coat", (0, 9, 0), "body")
+    g.bone("hood", (0, 16, 2.2), "body")
+    g.bone("right_arm", (-5, 16, 0), "body")
+    g.bone("left_arm", (5, 16, 0), "body")
+    g.bone("right_leg", (-1.5, 9, 0), "root")
+    g.bone("left_leg", (1.5, 9, 0), "root")
+    for side, x in (("right", -3), ("left", 0)):
+        g.part(side + "_leg", "leg_" + side, (x, 0, -1.5), (3, 9, 3), "tights")
+        g.part(side + "_leg", "boot_" + side, (x, 0, -1.5), (3, 3, 3), "boot", inflate=0.3)
+    # 胴（白い服）と、夜空の紺の外套（前をV字に開ける）・高い襟・胸の結び目の留め具
+    g.part("body", "torso", (-3.5, 9, -2), (7, 8, 4), "tunic")
+    g.part("body", "coat_top", (-3.5, 9.5, -2), (7, 7, 4), "coat", inflate=0.3)
+    g.part("body", "collar", (-3, 16.0, -2.2), (6, 2, 4), "coat_collar", inflate=0.4)
+    g.part("body", "knot", (-0.5, 14.6, -2.75), (1, 1, 1), "gold_knot")
+    g.part("hood", "hood", (-3, 13.0, 1.9), (6, 3, 2), "hood", inflate=0.2)
+    # 外套の裾（ひざの上まで。前は開けて、白い服が見える）
+    g.part("coat", "coat_low", (-4, 3.5, -2.6), (8, 6, 5), "coat_hem")
+    # 腕（細い3。紺の袖と、淡金の袖口）
+    for side, x in (("right", -6.5), ("left", 3.5)):
+        g.part(side + "_arm", "arm_" + side, (x, 8, -1.5), (3, 8, 3), "sleeve")
+        g.part(side + "_arm", "cuff_" + side, (x, 8.6, -1.5), (3, 1, 3), "cuff", inflate=0.35)
+        g.part(side + "_arm", "hand_" + side, (x + 0.5, 6.8, -1), (2, 2, 2), "hand")
+    # 頭（9）と髪：不ぞろいの前髪・長い横髪・肩までの後ろ髪
+    g.part("head", "head", (-4.5, 17, -4.5), (9, 9, 9), "head")
+    g.part("head", "hair_shell", (-4.5, 18, -4.5), (9, 8, 9), "hair_shell", inflate=0.5)
+    for k, (x0, w, bottom, z0) in enumerate(((-4.5, 2, 22.0, -5.3), (-2.5, 2, 22.8, -5.15), (-0.5, 1, 21.6, -5.3),
+                                            (0.5, 2, 22.6, -5.15), (2.5, 2, 22.2, -5.3))):
+        g.part("head", "bangs_%d" % k, (x0, bottom, z0), (w, max(3, round(25.6 - bottom)), 1), "bangs")
+    g.part("head", "crown", (-3.5, 26.2, -3.5), (7, 1, 7), "crown")
+    g.part("head", "lock_r", (-5.35, 15.4, -4.3), (1, 8, 2), "lock")
+    g.part("head", "lock_l", (4.35, 15.4, -4.3), (1, 8, 2), "lock")
+    g.part("hair_back", "hair_back", (-4.5, 15.6, 4.3), (9, 7, 2), "hair_long")
+    g.part("eyelids", "eyelids", (-3.5, 18.5, -4.0), (7, 3, 0), "eyelids")
+    g.pose = {"right_arm": (-6, 0, 3), "left_arm": (-14, 0, -3), "hair_back": (5, 0, 0), "hood": (8, 0, 0)}
+    g.pack()
+
+    P = NOA_PAL
+    face = FaceDesign(18, 18, P["skin"], NOA_FACE_PAL, eye_row=9, eye_col=3, eyes=NOA_EYES, mouths=NOA_MOUTHS,
+                      brows=NOA_BROWS, mouth_row=15, brow_row=6, blush=(P["blush"], 14, (2,)))
+
+    def knot_band(ctx, rows_from_bottom=3):
+        """下の端の帯に、結び目の模様。模様の上なら True。"""
+        j = ctx.j - (ctx.H - rows_from_bottom)
+        if j < 0 or j >= 3:
+            return False
+        line = KNOT_GLYPH[j].split()
+        return line[ctx.i % 4] == "g" if ctx.i % 4 < 3 else False
+
+    def painter(expr):
+        def paint(ctx):
+            m = ctx.el.mat
+            d = ctx.face.d
+            y = ctx.p[1]
+            if m == "head":
+                if d == "front":
+                    if ctx.j <= 5:
+                        return rgba(hair_color(ctx, P, 71))
+                    c = face.pixel(ctx.i, ctx.j, expr)
+                    if c is not None and ctx.i >= 9:
+                        c = NOA_GOLD_EYE.get(c, c)
+                    return rgba(c if c is not None else vshade(ctx, P["skin"], 0.0, 0.06))
+                if d == "up" or (d in ("left", "right", "back") and y > 18.6):
+                    return rgba(hair_color(ctx, P, 71))
+                return rgba(vshade(ctx, P["skin_d"] if d == "down" else P["skin"], 0.0, 0.1))
+            if m == "eyelids":
+                c = face.pixel(ctx.i + 2, ctx.j + 9, "closed")
+                return rgba(c if c is not None else P["skin"])
+            if m == "hair_shell":
+                if d == "front" and y < 24.4:
+                    return CLEAR
+                if d == "down":
+                    return CLEAR
+                if d in ("left", "right") and y < 20.2 and ctx.p[2] < -2.6:
+                    return CLEAR
+                return rgba(hair_color(ctx, P, 73, ring_y=24.6))
+            if m == "bangs":
+                if d in ("front", "left", "right", "back"):
+                    if ctx.j >= ctx.H - 1 and (ctx.i == 0 or ctx.i == ctx.W - 1):
+                        return CLEAR
+                if d == "down":
+                    return rgba(shade(P["hair_d"], 0.9))
+                return rgba(hair_color(ctx, P, 75, ring_y=24.6))
+            if m == "lock":
+                if d in ("front", "back", "left", "right"):
+                    e = ctx.edge_dist()
+                    if ctx.j >= ctx.H - 2 and (e["left"] == 0 or e["right"] == 0):
+                        return CLEAR
+                return rgba(hair_color(ctx, P, 77))
+            if m == "crown":
+                return rgba(hair_color(ctx, P, 79)) if d != "down" else CLEAR
+            if m == "hair_long":
+                if d == "down":
+                    return rgba(P["hair_d"])
+                if d in ("front", "back") and ctx.j >= ctx.H - 1 and ctx.i % 3 == 1:
+                    return CLEAR                                   # 毛先を不ぞろいに
+                return rgba(hair_color(ctx, P, 81))
+            if m == "tunic":
+                return rgba(cloth(ctx, P["white"], 0.03))
+            if m in ("coat", "coat_hem"):
+                if d == "front":
+                    cx = abs(ctx.i - (ctx.W - 1) / 2)
+                    if m == "coat":
+                        open_w = max(0.0, (ctx.H * 0.7 - ctx.j) * 0.5)
+                    else:
+                        open_w = 1.6                               # 裾は前を開ける
+                    if cx < open_w:
+                        return CLEAR
+                    if cx < open_w + 1.2:
+                        return rgba(P["gold_d"] if m == "coat_hem" else P["gold"])   # 前のふちの淡金の線
+                if d == "up":
+                    return CLEAR if m == "coat_hem" else rgba(P["navy_d"])
+                if d == "down":
+                    return rgba(P["navy_d"])
+                if m == "coat_hem" and knot_band(ctx):
+                    return rgba(P["gold"])
+                if m == "coat_hem" and ctx.j == ctx.H - 4:
+                    return rgba(P["gold_d"])
+                c = P["navy_l"] if (d in ("left", "right") and edge_band(ctx, 1)) else P["navy"]
+                if star_at(ctx, cell=7, salt=83, keep=0.18):
+                    c = P["navy_l"]                                # 夜空のような、かすかな光の粒
+                return rgba(grain(ctx, vshade(ctx, c, 0.05, 0.12), 0.03))
+            if m == "coat_collar":
+                if d == "down":
+                    return CLEAR
+                if d == "up":
+                    return rgba(P["navy_d"])
+                return rgba(P["gold"] if ctx.j == 0 else vshade(ctx, P["navy"]))
+            if m == "gold_knot":
+                return rgba(vshade(ctx, P["gold"], 0.1, 0.1))
+            if m == "hood":
+                if d == "front":
+                    return rgba(P["navy_d"])
+                c = P["gold"] if ctx.j == ctx.H - 1 and d == "back" else P["navy"]
+                return rgba(grain(ctx, vshade(ctx, c), 0.03))
+            if m == "sleeve":
+                if y < 7.2:
+                    return rgba(vshade(ctx, P["skin"], 0.0, 0.08))
+                if d == "up":
+                    return rgba(P["navy"])
+                return rgba(grain(ctx, vshade(ctx, P["navy"]), 0.03))
+            if m == "cuff":
+                if d in ("up", "down"):
+                    return CLEAR
+                return rgba(P["gold"] if ctx.j == 0 else P["gold_d"])
+            if m == "hand":
+                return rgba(vshade(ctx, P["skin"], 0.0, 0.08))
+            if m == "tights":
+                return rgba(grain(ctx, vshade(ctx, P["tights"]), 0.03))
+            if m == "boot":
+                if d == "up":
+                    return CLEAR
+                if d == "down":
+                    return rgba(P["boot_d"])
+                return rgba(cloth(ctx, P["boot"] if ctx.j < ctx.H - 1 else P["boot_d"], 0.04))
+            return rgba((255, 0, 255))
+        return paint
+
+    return g, painter, ["normal", "smile", "sad"]
+
+
+# ================================================================ エルネスト
+
+ERNESTO_PAL = {
+    "skin": hexc("E9C4A8"), "skin_d": hexc("CFA184"), "skin_l": hexc("F3D6C0"), "wrinkle": hexc("C89A7E"),
+    "hair": hexc("EDEDEA"), "hair_d": hexc("BDBDB6"), "hair_l": hexc("FFFFFF"),
+    "coat": hexc("E4D9BC"), "coat_d": hexc("C6B892"), "coat_l": hexc("F2EBD6"),
+    "brown": hexc("5A3B26"), "brown_d": hexc("3E281A"), "brown_l": hexc("7A5338"),
+    "brass": hexc("C9A24A"), "brass_d": hexc("9C7A30"), "brass_l": hexc("ECCB74"),
+    "vest": hexc("6B4A30"), "shirt": hexc("F2EEE6"),
+    "trousers": hexc("4C3B2E"), "boot": hexc("3A2A1E"),
+    "stone": hexc("8E8C86"), "stone_d": hexc("6A6862"), "glyph": hexc("8FD3FF"),
+}
+
+
+def ernesto():
+    """エルネスト（78歳）。白いもじゃもじゃの髪と眉。丸眼鏡を三枚重ね。ポケットだらけの外套に、石板の欠片。
+    色：生成り・焦げ茶・真鍮。
+
+    好奇心のかたまりの、やせた老学者：もじゃもじゃの白髪（頭の上と横と後ろに、ふくらんだ房）、太い白い眉、大きな鼻。
+    丸眼鏡の三枚重ねは、跳ね上げ式の真鍮の枠【補完】（1枚は目の前、2枚は額へ跳ね上げた形）。生成りの外套は、胸と腰と裾に
+    焦げ茶のポケット（真鍮のボタン）。中は焦げ茶のベストと白いシャツ。左手に、古代文字が淡く光る石板の欠片【補完】。
+    """
+    g = NpcModel("ernesto", 128, 128)
+    g.face_center_y = 27
+    g.bone("root", (0, 0, 0))
+    g.bone("body", (0, 11, 0), "root")
+    g.bone("head", (0, 23, 0), "body")
+    g.bone("eyelids", (0, 26.5, -4), "head")
+    g.bone("glasses_up", (0, 29.0, -4.8), "head")
+    g.bone("coat", (0, 11, 0), "body")
+    g.bone("right_arm", (-6, 21.5, 0), "body")
+    g.bone("left_arm", (6, 21.5, 0), "body")
+    g.bone("tablet", (6, 10, -2), "left_arm")
+    g.bone("right_leg", (-2, 11, 0), "root")
+    g.bone("left_leg", (2, 11, 0), "root")
+    for side, x in (("right", -4), ("left", 0)):
+        g.part(side + "_leg", "leg_" + side, (x, 0, -2), (4, 11, 4), "trousers")
+        g.part(side + "_leg", "boot_" + side, (x, 0, -2), (4, 3, 4), "boot", inflate=0.3)
+    # 胴（白いシャツに焦げ茶のベスト）と、生成りの外套（前を開ける）・襟・ポケット
+    g.part("body", "torso", (-4, 11, -2.5), (8, 12, 5), "vest")
+    g.part("body", "coat_top", (-4, 11.5, -2.5), (8, 11, 5), "coat", inflate=0.35)
+    g.part("body", "lapels", (-3.5, 21.4, -2.6), (7, 2, 5), "coat_collar", inflate=0.45)
+    g.part("body", "pocket_chest", (1.4, 18.0, -3.0), (2, 2, 0), "pocket")
+    g.part("body", "pocket_r", (-4.2, 13.0, -3.0), (3, 3, 0), "pocket")
+    g.part("body", "pocket_l", (1.2, 13.0, -3.0), (3, 3, 0), "pocket")
+    g.part("coat", "coat_low", (-4.5, 3.0, -3.0), (9, 9, 6), "coat_hem")
+    g.part("coat", "pocket_low_r", (-4.4, 6.0, -3.1), (3, 3, 0), "pocket")
+    g.part("coat", "pocket_low_l", (1.4, 6.0, -3.1), (3, 3, 0), "pocket")
+    g.part("coat", "fragment", (2.0, 8.4, -3.5), (1, 1, 1), "stone_bit", rot=(0, 0, 20), pivot=(2.5, 8.9, -3.0))
+    g.part("body", "fragment2", (1.7, 19.6, -3.3), (1, 1, 1), "stone_bit", rot=(0, 0, -15), pivot=(2.2, 20.1, -3.0))
+    # 腕（やせた4。生成りの袖と焦げ茶の袖口）
+    for side, x in (("right", -8), ("left", 4)):
+        g.part(side + "_arm", "arm_" + side, (x, 11, -2), (4, 11, 4), "sleeve")
+        g.part(side + "_arm", "cuff_" + side, (x, 11.2, -2), (4, 2, 4), "cuff", inflate=0.35)
+        g.part(side + "_arm", "hand_" + side, (x + 0.5, 9.4, -1.5), (3, 2, 3), "hand")
+    # 左手の石板の欠片（古代文字が淡く光る）
+    g.part("tablet", "tablet", (4.6, 6.8, -4.4), (3, 4, 1), "tablet", rot=(-6, -12, 4), pivot=(6.1, 8.8, -3.9))
+    # 頭（8）：もじゃもじゃの白髪・太い眉・大きな鼻
+    g.part("head", "head", (-4, 23, -4), (8, 8, 8), "head")
+    g.part("head", "hair_cap", (-4, 28.6, -4), (8, 3, 8), "hair_cap", inflate=0.8)
+    g.part("head", "tuft_r", (-5.4, 24.6, -2.6), (2, 4, 5), "tuft", inflate=0.5)
+    g.part("head", "tuft_l", (3.4, 24.6, -2.6), (2, 4, 5), "tuft", inflate=0.5)
+    g.part("head", "tuft_back", (-4, 24.2, 2.6), (8, 5, 2), "tuft", inflate=0.5)
+    for k, (x0, y0, z0) in enumerate(((-3.6, 31.0, -3.0), (0.4, 31.3, -1.4), (-1.6, 31.1, 1.0), (1.6, 30.8, 1.8))):
+        g.part("head", "tuft_top_%d" % k, (x0, y0, z0), (3, 2, 3), "tuft", inflate=0.25)
+    g.part("head", "brow_r", (-3.7, 28.0, -4.6), (3, 1, 1), "brows", inflate=0.3)
+    g.part("head", "brow_l", (0.7, 28.0, -4.6), (3, 1, 1), "brows", inflate=0.3)
+    g.part("head", "nose", (-0.5, 25.6, -4.9), (1, 2, 1), "nose", inflate=0.15)
+    # 丸眼鏡の三枚重ね：目の前の1枚（真鍮の丸い枠）と、その上に重ねて押し上げた2枚（額と、髪の生えぎわ）
+    g.part("head", "lens_r", (-3.6, 25.0, -4.75), (3, 3, 0), "lens")
+    g.part("head", "lens_l", (0.6, 25.0, -4.75), (3, 3, 0), "lens")
+    g.part("head", "bridge", (-0.6, 26.6, -4.75), (1, 1, 0), "brass_bit")
+    for k, (y0, z0, tilt) in enumerate(((28.3, -5.0, -10), (30.4, -5.35, -24))):
+        g.part("glasses_up", "lens_up_r%d" % k, (-3.6, y0, z0), (3, 3, 0), "lens", rot=(tilt, 0, 0), pivot=(0, y0, z0))
+        g.part("glasses_up", "lens_up_l%d" % k, (0.6, y0, z0), (3, 3, 0), "lens", rot=(tilt, 0, 0), pivot=(0, y0, z0))
+        g.part("glasses_up", "bridge_up%d" % k, (-0.6, y0 + 1.6, z0), (1, 1, 0), "brass_bit", rot=(tilt, 0, 0), pivot=(0, y0, z0))
+    g.part("eyelids", "eyelids", (-3, 26, -3.5), (6, 2, 0), "eyelids")
+    g.pose = {"left_arm": (-42, 10, -4), "right_arm": (-8, -4, 4), "tablet": (0, 0, 0)}
+    g.pack()
+
+    P = ERNESTO_PAL
+    fp = male_face_pal(P["wrinkle"], hexc("3A2E28"), hexc("F2EEE6"), hexc("6B8A5E"), hexc("1E2A1A"), P["hair_d"],
+                       hexc("9A6A5A"))
+    eyes = {"normal": ["L L L", "w p i", ". S ."],
+            "excited": ["w w w", "w p w", ". w ."],
+            "worried": [". L L", "w p i", ". S ."],
+            "closed": [". . .", "L L L", ". . ."]}
+    mouths = {"normal": ["m m"], "excited": ["m . . m", ". m m ."], "worried": [". m m .", "m . . m"]}
+
+    def wrinkles(i, j, expr):
+        # 目じりと額の小じわ、ほうれい線
+        if (j == 4 and 4 <= i <= 11 and i % 3 != 0) or (j == 12 and i in (4, 11)) or (j == 13 and i in (4, 11)):
+            return P["wrinkle"]
+        return None
+
+    face = FaceDesign(16, 16, P["skin"], fp, eye_row=8, eye_col=3, eyes=eyes, mouths=mouths, brows={"normal": [". . ."]},
+                      mouth_row=13, brow_row=6, extras=[wrinkles])
+
+    def painter(expr):
+        def paint(ctx):
+            m = ctx.el.mat
+            d = ctx.face.d
+            y = ctx.p[1]
+            if m == "head":
+                if d == "front":
+                    if ctx.j <= 1:
+                        return rgba(hair_color(ctx, P, 91))
+                    c = face.pixel(ctx.i, ctx.j, expr)
+                    if c is not None:
+                        return rgba(c)
+                    return rgba(vshade(ctx, P["skin"], 0.0, 0.08))
+                if d == "up" or (d == "back" and y > 24.6) or (d in ("left", "right") and y > 27.0 and ctx.p[2] > -1.5):
+                    return rgba(hair_color(ctx, P, 91))
+                return rgba(vshade(ctx, P["skin"], 0.0, 0.1))
+            if m == "eyelids":
+                c = face.pixel(ctx.i + 2, ctx.j + 8, "closed")
+                return rgba(c if c is not None else P["skin"])
+            if m in ("hair_cap", "tuft"):
+                if m == "hair_cap" and ((d == "front" and y < 30.6) or d == "down"):
+                    return CLEAR
+                if d == "down" and m == "tuft":
+                    return rgba(P["hair_d"])
+                # もじゃもじゃ：明るい毛・影の毛・抜けた所（すき間）をまだらに
+                k = hash01(ctx.i, ctx.j, name_seed(ctx.el.name), 93)
+                if k < 0.07 and ctx.edge_dist()["top"] == 0:
+                    return CLEAR
+                c = P["hair_l"] if k > 0.72 else (P["hair_d"] if k < 0.25 else P["hair"])
+                return rgba(vshade(ctx, c, 0.04, 0.1))
+            if m == "brows":
+                if d == "down":
+                    return rgba(P["hair_d"])
+                k = hash01(ctx.i, ctx.j, name_seed(ctx.el.name), 95)
+                return rgba(P["hair_l"] if k > 0.5 else P["hair"])
+            if m == "nose":
+                return rgba(vshade(ctx, P["skin_l"] if d == "front" else P["skin"], 0.04, 0.14))
+            if m == "lens":
+                # 真鍮の丸い枠（角を落とした輪）。中は透かす（ガラスの光を1つ）
+                e = ctx.edge_dist()
+                corner = (e["left"] == 0 or e["right"] == 0) and (e["top"] == 0 or e["bottom"] == 0)
+                if corner:
+                    return CLEAR
+                if min(e["left"], e["right"], e["top"], e["bottom"]) == 0:
+                    return rgba(P["brass_l"] if e["top"] == 0 else P["brass"])
+                if ctx.i == 1 and ctx.j == 1:
+                    return rgba(hexc("FFFFFF"), 170)
+                return CLEAR
+            if m == "brass_bit":
+                return rgba(P["brass"])
+            if m == "vest":
+                if y > 21.0 and d == "front" and 6 <= ctx.i <= 9:
+                    return rgba(P["shirt"])                        # えり元の白いシャツ
+                if d == "front" and ctx.i in (7, 8) and ctx.j % 4 == 1 and y < 21:
+                    return rgba(P["brass"])                        # ベストのボタン
+                return rgba(cloth(ctx, P["vest"], 0.04))
+            if m in ("coat", "coat_hem"):
+                if d == "front":
+                    cx = abs(ctx.i - (ctx.W - 1) / 2)
+                    open_w = 3.2 if m == "coat" else 2.4
+                    if cx < open_w:
+                        return CLEAR
+                    if cx < open_w + 1.0:
+                        return rgba(P["coat_d"])
+                if d == "up":
+                    return CLEAR if m == "coat_hem" else rgba(P["coat_d"])
+                if d == "down":
+                    return rgba(P["coat_d"])
+                if m == "coat_hem" and ctx.j >= ctx.H - 2:
+                    return rgba(mix(P["coat_d"], P["brown"], 0.35))   # 裾のすす汚れ
+                if hash01(ctx.i // 3, ctx.j // 3, 97) < 0.05:
+                    return rgba(mix(P["coat"], P["brown_l"], 0.25))   # 古いしみ
+                return rgba(grain(ctx, vshade(ctx, P["coat"], 0.05, 0.12), 0.04))
+            if m == "coat_collar":
+                if d == "down":
+                    return CLEAR
+                return rgba(cloth(ctx, P["coat_l"], 0.03))
+            if m == "pocket":
+                e = ctx.edge_dist()
+                if e["top"] == 0:
+                    return rgba(P["brown_d"])                       # ふた
+                if e["top"] == 1 and abs(ctx.i - (ctx.W - 1) / 2) < 1:
+                    return rgba(P["brass_l"])                       # 真鍮のボタン
+                return rgba(cloth(ctx, P["brown"], 0.05))
+            if m == "stone_bit":
+                return rgba(P["glyph"] if (d == "front" and ctx.i == ctx.j) else vshade(ctx, P["stone"]))
+            if m == "sleeve":
+                if d == "up":
+                    return rgba(P["coat_d"])
+                return rgba(grain(ctx, vshade(ctx, P["coat"], 0.05, 0.12), 0.04))
+            if m == "cuff":
+                if d in ("up", "down"):
+                    return CLEAR
+                return rgba(cloth(ctx, P["brown"], 0.04))
+            if m == "hand":
+                c = P["skin"] if hash01(ctx.i, ctx.j, 99) > 0.15 else P["skin_d"]   # しみのある、年をとった手
+                return rgba(vshade(ctx, c, 0.04, 0.1))
+            if m == "tablet":
+                if d == "front":
+                    # 古代文字の行（淡く光る水色）
+                    if ctx.j in (1, 3, 5) and 1 <= ctx.i <= ctx.W - 2 and hash01(ctx.i, ctx.j, 101) > 0.3:
+                        return rgba(P["glyph"])
+                    e = ctx.edge_dist()
+                    if e["right"] == 0 and e["top"] <= 1:
+                        return CLEAR                                # 欠けた角
+                return rgba(grain(ctx, vshade(ctx, P["stone"] if d != "down" else P["stone_d"], 0.05, 0.12), 0.08))
+            if m == "trousers":
+                return rgba(cloth(ctx, P["trousers"], 0.04))
+            if m == "boot":
+                if d == "up":
+                    return CLEAR
+                return rgba(cloth(ctx, P["boot"], 0.05))
+            return rgba((255, 0, 255))
+        return paint
+
+    return g, painter, ["normal", "excited", "worried"]
+
+
 # ================================================================ 書き出し
 
 CHARACTERS = {
@@ -1096,6 +1536,8 @@ CHARACTERS = {
     "gard": gard,
     "doran": doran,
     "bard": bard,
+    "noa": noa,
+    "ernesto": ernesto,
 }
 
 

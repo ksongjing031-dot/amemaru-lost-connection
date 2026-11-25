@@ -1,0 +1,15 @@
+{
+  "name": "見習い職人",
+  "field": "craft",
+  "kind": "normal",
+  "series": "crafter",
+  "tier": 1,
+  "tiers": 3,
+  "condition": {
+    "type": "counter",
+    "counter": "crafted",
+    "at_least": 50
+  },
+  "description": "装備を50個作った",
+  "order": 110
+}

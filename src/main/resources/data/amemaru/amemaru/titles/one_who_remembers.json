@@ -1,0 +1,13 @@
+{
+  "name": "覚えている人",
+  "field": "story",
+  "kind": "hidden",
+  "condition": {
+    "type": "affinity",
+    "npc": "amemaru:noa",
+    "stage": 5
+  },
+  "description": "ノアと「かけがえのない人」になった",
+  "hint": "……覚えてる？",
+  "order": 540
+}

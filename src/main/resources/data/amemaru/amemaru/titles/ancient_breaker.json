@@ -1,0 +1,11 @@
+{
+  "name": "古代を越えし者",
+  "field": "combat",
+  "kind": "normal",
+  "condition": {
+    "type": "boss",
+    "boss": "amemaru:ancient_guardian"
+  },
+  "description": "5階の古代守護者を倒した",
+  "order": 60
+}

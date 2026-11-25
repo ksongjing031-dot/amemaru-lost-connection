@@ -1,0 +1,19 @@
+{
+  "name": "ツノモフの間引き",
+  "kind": "daily",
+  "pool": "floor1",
+  "description": "草原のツノモフが増えすぎています。少し数を減らしてください。",
+  "objectives": [
+    {
+      "type": "kill",
+      "enemy": "amemaru:tsunomofu",
+      "count": 12,
+      "floor": 1
+    }
+  ],
+  "rewards": {
+    "knots": 150,
+    "exp": 120
+  },
+  "order": 10
+}

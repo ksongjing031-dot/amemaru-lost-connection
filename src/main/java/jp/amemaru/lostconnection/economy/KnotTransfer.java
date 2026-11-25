@@ -55,6 +55,8 @@ public final class KnotTransfer {
             return Result.NOT_ENOUGH;
         }
         LAST.put(from.getUUID(), System.currentTimeMillis());
+        // Phase 6 その3：縁帳（取引した人）
+        jp.amemaru.lostconnection.guild.GuildHooks.onKnotTransfer(from, to);
         String shown = format(amount);
         from.sendSystemMessage(Component.translatable("message.amemaru.transfer.sent", to.getGameProfile().getName(), shown)
                 .withStyle(ChatFormatting.GOLD));

@@ -766,6 +766,63 @@ public final class CiScreenshots {
             {"p6_front", null, "10"},
             {"snap", null, "20", "phase6_light_armor"},
             {"view", null, "5", "first"},
+            // Phase 6 その3（11月22日）：ギルド。4日目にして（ノアが話す・エルネストがいる）、NPCを置き直す
+            {"cmd", null, "10", "amemaru admin day set 4"},
+            {"cmd", null, "20", "amemaru admin npc place"},
+            // ノア：塔前広場の石柱の陰（2日目から。4日目から話す）
+            {"cmd", null, "80", "tp @p {at:16.5,3,-133.5} 180 8"},
+            {"snap", null, "40", "phase6g_npc_noa"},
+            {"p6g_talk", null, "10", "noa"},
+            {"await_dialogue", null, "0"},
+            {"snap", null, "30", "phase6g_noa_dialogue"},
+            {"dialogue_finish", null, "10"},
+            {"screen", null, "10", "hold"},
+            // エルネスト：ギルドの2階の資料室（3日目から）。初めて会うと、記録帳を渡す
+            {"cmd", null, "80", "tp @p {at:30.5,10,-66.5} -90 8"},
+            {"snap", null, "40", "phase6g_npc_ernesto"},
+            {"p6g_talk", null, "10", "ernesto"},
+            {"await_dialogue", null, "0"},
+            {"snap", null, "30", "phase6g_ernesto_dialogue"},
+            {"dialogue_finish", null, "10"},
+            {"screen", null, "10", "hold"},
+            // 記録帳：1階の石板（解読済み）と2階の日誌（未解読）
+            {"cmd", null, "5", "amemaru admin record find @p amemaru:f01_waystone"},
+            {"cmd", null, "5", "amemaru admin record decipher @p"},
+            {"cmd", null, "5", "amemaru admin record find @p amemaru:f02_forester"},
+            {"p6g_book", null, "20"},
+            {"snap", null, "20", "phase6g_record_book"},
+            {"p6g_book_read", null, "10", "amemaru:f01_waystone"},
+            {"snap", null, "10", "phase6g_record_read"},
+            {"screen", null, "10", "hold"},
+            // 称号：いくつか与えて（知らせの札）、限定称号を表示する。称号の一覧
+            {"cmd", null, "5", "amemaru admin title grant @p amemaru:hunter_1"},
+            {"cmd", null, "5", "amemaru admin title grant @p amemaru:trader_3"},
+            {"cmd", null, "5", "amemaru admin title grant @p amemaru:first_step"},
+            // 右上の札（称号の知らせ）を消さずに撮る
+            {"snap_keep", null, "20", "phase6g_title_toast"},
+            {"cmd", null, "5", "amemaru admin title show @p amemaru:first_step"},
+            {"p6g_titles", null, "20"},
+            {"snap", null, "20", "phase6g_titles"},
+            {"screen", null, "10", "hold"},
+            // ギルドの窓口（1階の受付の前）：クエスト・パーティ募集・冒険日誌・縁
+            {"cmd", null, "80", "tp @p {at:21.5,3,-78.5} -90 6"},
+            {"cmd", null, "5", "amemaru admin quest start @p amemaru:guild_first_floor"},
+            {"cmd", null, "5", "amemaru admin bond set @p amemaru:lilia 90"},
+            {"cmd", null, "5", "amemaru admin bond set @p amemaru:ernesto 35"},
+            {"cmd", null, "5", "amemaru admin quest open @p quests"},
+            {"snap", null, "20", "phase6g_guild_quests"},
+            {"p6g_tab", null, "10", "party"},
+            {"snap", null, "10", "phase6g_guild_party"},
+            {"p6g_tab", null, "10", "chronicle"},
+            {"snap", null, "10", "phase6g_guild_chronicle"},
+            {"p6g_tab", null, "10", "bonds"},
+            {"snap", null, "10", "phase6g_guild_bonds"},
+            {"screen", null, "10", "hold"},
+            // 受けているクエストの一覧（右上）と、露店の区画の寄付の画面
+            {"snap", null, "20", "phase6g_quest_tracker"},
+            {"p6g_donation", null, "20"},
+            {"snap", null, "10", "phase6g_donation"},
+            {"screen", null, "10", "hold"},
             {"cmd", null, "10", "gamemode spectator @p"},
             {"hud", null, "5", "off"}};
 
@@ -1999,7 +2056,7 @@ public final class CiScreenshots {
                     }
                 }
             }
-        } else if (CiPhase6.action(minecraft, shot, first)) {
+        } else if (CiPhase6.action(minecraft, shot, first) || CiPhase6Guild.action(minecraft, shot, first)) {
             next(stage + 1, first ? waitTicks : 0);
         } else if (phase5Action(minecraft, shot, first)) {
             next(stage + 1, first ? waitTicks : 0);

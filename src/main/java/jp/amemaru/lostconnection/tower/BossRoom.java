@@ -385,12 +385,17 @@ public final class BossRoom {
             AmemaruMod.LOGGER.info("[amemaru] Boss of floor {} fell with no one taking part; no first kill recorded", floor.number());
             return;
         }
-        if (progress.recordFirstKill(floor.number(), System.currentTimeMillis(), names)) {
+        boolean first = progress.recordFirstKill(floor.number(), System.currentTimeMillis(), names);
+        if (first) {
             ProgressionService.broadcast(level.getServer(), Component.translatable("message.amemaru.boss.first_kill",
                     String.join("・", names), Component.literal(floor.title()), Component.literal(name)), AnnouncementS2C.Kind.BOSS);
             AmemaruMod.LOGGER.info("[amemaru] First kill of floor {} by {}", floor.number(), names);
             StoryEventManager.trigger(level.getServer(), "floor_first_kill", floor.number(), winners);
         }
+        // Phase 6 その3：クエスト・称号・冒険日誌（初撃破なら限定称号「最初の一歩」など）
+        jp.amemaru.lostconnection.guild.GuildHooks.onBossDefeated(winners, floor.number(),
+                boss.def() == null ? AmemaruMod.id("unknown") : boss.def().id(), name, floor.title(),
+                first);
     }
 
     private static String bossName(AmemaruBoss boss) {

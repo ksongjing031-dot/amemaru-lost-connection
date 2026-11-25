@@ -7,12 +7,42 @@
   "model": "amemaru:npc/serena",
   "model_scale": 0.9375,
   "portrait_y": 1.18,
-  "expressions": ["smile"],
+  "expressions": [
+    "smile"
+  ],
   "home": {
     "place": "conelia",
-    "pos": [-98.5, 4, 0.5],
+    "pos": [
+      -98.5,
+      4,
+      0.5
+    ],
     "yaw": -90
   },
-  "roles": ["church"],
-  "talk_range": 5
+  "roles": [
+    "church"
+  ],
+  "talk_range": 5,
+  "bond": {
+    "loved": [
+      "minecraft:allium",
+      "minecraft:honey_bottle"
+    ],
+    "liked": [
+      "minecraft:cornflower",
+      "minecraft:poppy",
+      "amemaru:echo_fragment",
+      "minecraft:bread"
+    ],
+    "reactions": {
+      "loved": "まあ……。こんなに嬉しい贈り物は、久しぶりです",
+      "liked": "ありがとうございます。灯りのそばに置きますね",
+      "normal": "お気遣い、ありがとうございます",
+      "full": "今日はもう十分ですよ。その気持ちだけで、灯りがともります",
+      "frozen": "……ごめんなさい。あなたのことを、思い出せないのです"
+    },
+    "gift": "amemaru:mana_water_small",
+    "gift_count": 3,
+    "keepsake": "amemaru:keepsake_serena"
+  }
 }

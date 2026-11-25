@@ -1,0 +1,15 @@
+{
+  "name": "不屈の結び手",
+  "field": "social",
+  "kind": "normal",
+  "series": "helper",
+  "tier": 3,
+  "tiers": 3,
+  "condition": {
+    "type": "counter",
+    "counter": "revives",
+    "at_least": 200
+  },
+  "description": "仲間を200回起こした",
+  "order": 250
+}

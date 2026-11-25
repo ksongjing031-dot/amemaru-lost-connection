@@ -35,7 +35,7 @@ import java.util.Set;
  */
 public final class PlayerData {
     /** 保存データの版。項目を増やしたら上げ、{@link #load} で古い版を読み替える。 */
-    public static final int DATA_VERSION = 5;
+    public static final int DATA_VERSION = 6;
     /** スキル枠の数。 */
     public static final int LOADOUT_SIZE = 6;
 
@@ -61,9 +61,11 @@ public final class PlayerData {
     public static final int SYNC_WALLET = 1 << 9;
     /** 同期するまとまり：物語（Phase 5。オープニングの進み・起動した石柱・手引き）。別のパケットで送る。 */
     public static final int SYNC_STORY = 1 << 10;
+    /** 同期するまとまり：ギルド（Phase 6 その3。称号・古代記録・親密度・クエスト・縁帳）。別のパケットで送る。 */
+    public static final int SYNC_GUILD = 1 << 11;
     /** すべてのまとまり。 */
     public static final int SYNC_ALL = SYNC_GROWTH | SYNC_STATS | SYNC_VITALS | SYNC_JOB | SYNC_SKILLS | SYNC_GAUGE
-            | SYNC_COOLDOWNS | SYNC_CAST | SYNC_ADVENTURE | SYNC_WALLET | SYNC_STORY;
+            | SYNC_COOLDOWNS | SYNC_CAST | SYNC_ADVENTURE | SYNC_WALLET | SYNC_STORY | SYNC_GUILD;
 
     // ---- 保存する項目
     private int level = 1;
@@ -118,6 +120,9 @@ public final class PlayerData {
     /** 物語（Phase 5）。 */
     private final jp.amemaru.lostconnection.story.PlayerStory story =
             new jp.amemaru.lostconnection.story.PlayerStory(() -> markDirty(SYNC_STORY));
+    /** ギルド（Phase 6 その3）：称号・古代記録・親密度・クエスト・縁帳。 */
+    private final jp.amemaru.lostconnection.guild.GuildData guild =
+            new jp.amemaru.lostconnection.guild.GuildData(() -> markDirty(SYNC_GUILD));
     /** 記録（Phase 4）：ダウンした・仲間を起こした・教会に戻った回数（称号・ランキングは後のPhase） */
     private int downCount;
     private int reviveCount;
@@ -604,6 +609,11 @@ public final class PlayerData {
         return story;
     }
 
+    /** ギルド（Phase 6 その3）。 */
+    public jp.amemaru.lostconnection.guild.GuildData getGuild() {
+        return guild;
+    }
+
     public int getDownCount() {
         return downCount;
     }
@@ -726,6 +736,7 @@ public final class PlayerData {
         records.putInt("church", churchCount);
         tag.put("records", records);
         tag.put("story", story.save());
+        tag.put("guild", guild.save());
         return tag;
     }
 
@@ -804,6 +815,8 @@ public final class PlayerData {
         reviveCount = Math.max(0, records.getInt("revives"));
         churchCount = Math.max(0, records.getInt("church"));
         story.load(tag.getCompound("story"));
+        // 版5 → 版6：ギルド（称号・古代記録・親密度・クエスト・縁帳）が増えた。版5のデータには無いので、空で始まる
+        guild.load(tag.getCompound("guild"));
         resetTransient();
     }
 
@@ -834,6 +847,7 @@ public final class PlayerData {
         reviveCount = other.reviveCount;
         churchCount = other.churchCount;
         story.copyFrom(other.story);
+        guild.copyFrom(other.guild);
         // バニラの死亡（奈落・/kill）のあとは、リスポーンで教会へ戻す（DownHandler）。ダウンそのものは引き継がない
         down.clear();
         down.setDiedForReal(other.down.diedForReal() || other.down.isDown());

@@ -1,0 +1,19 @@
+{
+  "name": "見張りの石くれ兵",
+  "kind": "daily",
+  "pool": "floor1",
+  "description": "決まった道を巡回する古代の見張りが、新人の行く手をふさいでいます。",
+  "objectives": [
+    {
+      "type": "kill",
+      "enemy": "amemaru:ishikure_soldier",
+      "count": 8,
+      "floor": 1
+    }
+  ],
+  "rewards": {
+    "knots": 180,
+    "exp": 150
+  },
+  "order": 20
+}

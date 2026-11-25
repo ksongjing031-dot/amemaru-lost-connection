@@ -109,6 +109,11 @@ public final class ServerConfig {
     public static final ForgeConfigSpec.IntValue MARKET_DRIFT_MIN_TRADES;
     public static final ForgeConfigSpec.DoubleValue MARKET_REACH;
 
+    // ---- ギルド（Phase 6 その3）
+    public static final ForgeConfigSpec.IntValue GUILD_PARTICIPANTS;
+    public static final ForgeConfigSpec.LongValue GUILD_STALL_DONATION_GOAL;
+    public static final ForgeConfigSpec.BooleanValue GUILD_SHOW_TITLES;
+
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
 
@@ -399,6 +404,19 @@ public final class ServerConfig {
         MARKET_REACH = b
                 .comment("市場監督の小屋・露店から何ブロック以内で、借りる・露店で買うができるか")
                 .defineInRange("reach", 8.0, 2.0, 64.0);
+        b.pop();
+
+        b.comment("ギルドとクエスト・主要NPC・古代記録・称号（Phase 6 その3）").push("guild");
+        GUILD_PARTICIPANTS = b
+                .comment("サーバーの参加人数。寄付の目標を、この人数に合わせて増減する（Phase 0-A 7章：目標は25人基準。13章の人数補正と同じ）")
+                .defineInRange("participants", 25, 1, 500);
+        GUILD_STALL_DONATION_GOAL = b
+                .comment("フリーマーケットの露店の区画を12から20に増やす寄付の目標（25人基準のノット）。フィン・ロッソが寄付を募り、",
+                        "目標に届いた次の朝（次の進行日）に増える（Phase 0-A 7章。11月20日に決定）。目標の額は【補完】")
+                .defineInRange("stallDonationGoal", 20_000L, 1L, Long.MAX_VALUE);
+        GUILD_SHOW_TITLES = b
+                .comment("表示している称号を、頭の上・チャット・Tabの一覧の名前の前に出す（Phase 0-A 22章【確定】）")
+                .define("showTitles", true);
         b.pop();
 
         SPEC = b.build();

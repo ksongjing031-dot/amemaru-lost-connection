@@ -1,0 +1,12 @@
+{
+  "name": "ありがとうの数だけ",
+  "field": "social",
+  "kind": "normal",
+  "condition": {
+    "type": "counter",
+    "counter": "thanks_received",
+    "at_least": 50
+  },
+  "description": "結び札を50枚受け取った",
+  "order": 290
+}

@@ -147,6 +147,7 @@ public final class WorkshopService {
         int chapter = ProgressionData.currentChapter(player.server);
         adventure.setMasteryExp(job.id(), ProductionRules.current().addExp(adventure.masteryExp(job.id()), recipe.masteryExp(), chapter));
         adventure.addCrafted(result.getCount());
+        jp.amemaru.lostconnection.guild.GuildHooks.onCrafted(player);
         int after = ProductionRules.current().level(adventure.masteryExp(job.id()), chapter);
 
         ItemStack shown = result.copy();

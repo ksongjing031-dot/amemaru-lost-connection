@@ -1,0 +1,19 @@
+{
+  "name": "結晶蜂の針",
+  "kind": "daily",
+  "pool": "floor1",
+  "description": "工房から、結晶蜂の針の注文です。",
+  "objectives": [
+    {
+      "type": "collect",
+      "item": "amemaru:bee_stinger",
+      "count": 4,
+      "consume": true
+    }
+  ],
+  "rewards": {
+    "knots": 160,
+    "exp": 120
+  },
+  "order": 50
+}

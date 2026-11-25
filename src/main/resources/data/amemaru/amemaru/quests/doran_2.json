@@ -1,0 +1,36 @@
+{
+  "name": "結晶の目利き",
+  "kind": "personal",
+  "giver": "amemaru:doran",
+  "board": true,
+  "description": "結晶の欠片を8つと、石くれの核を1つ。古代の武器の秘密に、もう少しで手が届きそうなんだ。",
+  "requires": {
+    "affinity_min": 3,
+    "has_job": true
+  },
+  "objectives": [
+    {
+      "type": "collect",
+      "item": "amemaru:crystal_shard",
+      "count": 8,
+      "consume": true
+    },
+    {
+      "type": "collect",
+      "item": "amemaru:ishikure_core",
+      "count": 1,
+      "consume": true
+    }
+  ],
+  "rewards": {
+    "knots": 400,
+    "exp": 120,
+    "affinity": {
+      "amemaru:doran": 20
+    },
+    "flags": [
+      "amemaru:bond/doran_2_done"
+    ]
+  },
+  "order": 421
+}

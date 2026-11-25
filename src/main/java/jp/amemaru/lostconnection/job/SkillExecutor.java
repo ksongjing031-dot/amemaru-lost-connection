@@ -466,6 +466,8 @@ public final class SkillExecutor {
                     if (link.outcome() == LinkComboTracker.Outcome.LINK || link.outcome() == LinkComboTracker.Outcome.LINK3) {
                         multiplier *= link.multiplier();
                         announceLink(ctx.level, target, link);
+                        // Phase 6 その3：連携技の成立を、加わった人の称号の数に
+                        jp.amemaru.lostconnection.guild.GuildHooks.onLink(ctx.level, link.players());
                     }
                     // 連ね斬り（ナイト）：1回のスキルで1回だけ決める
                     if (!ctx.bladeChecked && casterData != null) {
