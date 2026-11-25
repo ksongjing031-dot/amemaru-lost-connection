@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "amemaru:block/village_hearth"
+    },
+    "facing=east": {
+      "model": "amemaru:block/village_hearth",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "amemaru:block/village_hearth",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "amemaru:block/village_hearth",
+      "y": 270
+    }
+  }
+}

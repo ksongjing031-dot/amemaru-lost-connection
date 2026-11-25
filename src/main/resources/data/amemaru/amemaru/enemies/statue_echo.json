@@ -1,0 +1,50 @@
+{
+  "_comment": "氷像の残響（6階の雑魚。Phase 0-A 9章の6階「村人の氷像の一部が近づくと動く」）。凍った村人の氷像と同じ見た目で、ふだんは像のまま動かない。behavior.wake_range まで近づく・叩くと目覚める（4階の沈黙の石像と同じ動き）。眠っている間の受けるダメージ dormant_taken、起きている間 stone_taken。拳（fist）と叩きつけ（quake。当たると凍えが chill_stacks）。数値は【補完】",
+  "name": "氷像の残響",
+  "floor": 6,
+  "level": 26,
+  "description": "凍った村人の氷像に、残った記憶がしがみついたもの。顔は白く抜け落ちている。近づく者を、村を荒らす余所者だと思い込んで動き出す。",
+  "stats": {
+    "hp": 2700,
+    "attack": 190,
+    "defense": 28,
+    "move_speed": 0.18,
+    "follow_range": 18,
+    "aggro_range": 8
+  },
+  "exp": 60,
+  "skills": {
+    "fist": {
+      "power": 1.2,
+      "windup": 0.9,
+      "cooldown": 2.4,
+      "range": 2.8
+    },
+    "quake": {
+      "power": 1.5,
+      "windup": 1.4,
+      "cooldown": 9.0,
+      "range": 3.5
+    }
+  },
+  "behavior": {
+    "wake_range": 5.0,
+    "dormant_taken": 0.3,
+    "stone_taken": 0.85,
+    "chill_stacks": 2,
+    "chill_seconds": 5.0
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/statue_echo",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_white",
+        "chance": 0.6
+      },
+      {
+        "item": "amemaru:crystal_fruit_azure",
+        "chance": 0.3
+      }
+    ]
+  }
+}

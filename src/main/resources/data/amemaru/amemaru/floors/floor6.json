@@ -1,0 +1,1192 @@
+{
+  "_comment": "塔の6階「凍結した村」（tools/mapgen/build_floor6.py が書き出す。手で直すときは、スクリプトを直して作り直す）",
+  "floor": 6,
+  "chapter": 2,
+  "name": "凍結した村",
+  "chapter_title": "第2章　凍てついた記憶",
+  "recommended_level": [
+    24,
+    31
+  ],
+  "origin": [
+    24264,
+    60,
+    -312
+  ],
+  "size": [
+    624,
+    80,
+    624
+  ],
+  "structure": "amemaru:map/floor6/",
+  "piece_size": 48,
+  "entrance": {
+    "pos": [
+      312.5,
+      17,
+      588.5
+    ],
+    "yaw": 180
+  },
+  "return_circle": {
+    "center": [
+      312.5,
+      17,
+      596.5
+    ],
+    "radius": 2.6
+  },
+  "boss_room": {
+    "boss": "amemaru:ordo",
+    "name": "雪の広場",
+    "spawn": {
+      "pos": [
+        312.5,
+        17,
+        93.5
+      ],
+      "yaw": 0
+    },
+    "arena": {
+      "center": [
+        312.5,
+        17,
+        100.5
+      ],
+      "radius": 50.0,
+      "y_min": 14,
+      "y_max": 40
+    },
+    "seal": [
+      [
+        308,
+        17,
+        140
+      ],
+      [
+        316,
+        22,
+        140
+      ]
+    ],
+    "start_radius": 24,
+    "respawn_seconds": 150,
+    "max_players": 8,
+    "hp_min_players": 2,
+    "hp_per_extra_player": 0.6,
+    "attack_per_extra_player": 0.1,
+    "pace_per_extra_player": 0.05,
+    "enrage_seconds": 1800,
+    "exit": {
+      "center": [
+        308.5,
+        17,
+        82.5
+      ],
+      "radius": 2.6
+    },
+    "next": {
+      "center": [
+        315.5,
+        17,
+        82.5
+      ],
+      "radius": 2.6
+    }
+  },
+  "pillars": [],
+  "pillars_done": "記憶の氷像が、すべて溶けた。凍りついた門が、静かにほどけていく……",
+  "tablet": {
+    "pos": [
+      230,
+      17,
+      424
+    ],
+    "title": "村の子どもの日記",
+    "text": "きょう、おかあさんが、わたしの名前を呼ばなくなった。村の大人たちも、少しずつ、だれかの名前を忘れていく。雪がふるたびに。"
+  },
+  "spawns": [
+    {
+      "id": "gate_wolves",
+      "enemy": "amemaru:frost_wolf",
+      "center": [
+        340,
+        17,
+        548
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "street_statues_s",
+      "enemy": "amemaru:statue_echo",
+      "center": [
+        312,
+        17,
+        520
+      ],
+      "radius": 6,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "street_statues_n",
+      "enemy": "amemaru:statue_echo",
+      "center": [
+        312,
+        17,
+        452
+      ],
+      "radius": 6,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "street_wolves",
+      "enemy": "amemaru:frost_wolf",
+      "center": [
+        276,
+        18,
+        490
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "street_birds",
+      "enemy": "amemaru:frost_bird",
+      "center": [
+        330,
+        22,
+        492
+      ],
+      "radius": 10,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "market_statues_w",
+      "enemy": "amemaru:statue_echo",
+      "center": [
+        300,
+        17,
+        386
+      ],
+      "radius": 7,
+      "max": 3,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "market_statues_e",
+      "enemy": "amemaru:statue_echo",
+      "center": [
+        324,
+        17,
+        400
+      ],
+      "radius": 7,
+      "max": 3,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "market_birds",
+      "enemy": "amemaru:frost_bird",
+      "center": [
+        312,
+        25,
+        380
+      ],
+      "radius": 12,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "lane_wolves",
+      "enemy": "amemaru:frost_wolf",
+      "center": [
+        214,
+        17,
+        398
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "river_wolves",
+      "enemy": "amemaru:frost_wolf",
+      "center": [
+        196,
+        17,
+        340
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "west_wolves_a",
+      "enemy": "amemaru:frost_wolf",
+      "center": [
+        110,
+        16,
+        300
+      ],
+      "radius": 12,
+      "max": 4,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        4
+      ],
+      "activation": 44
+    },
+    {
+      "id": "west_wolves_b",
+      "enemy": "amemaru:frost_wolf",
+      "center": [
+        100,
+        17,
+        390
+      ],
+      "radius": 12,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "west_statues",
+      "enemy": "amemaru:statue_echo",
+      "center": [
+        80,
+        17,
+        320
+      ],
+      "radius": 6,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "south_bridge",
+      "enemy": "amemaru:frost_wolf",
+      "center": [
+        200,
+        17,
+        530
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "south_woods_bear",
+      "enemy": "amemaru:frost_bear",
+      "center": [
+        90,
+        16,
+        470
+      ],
+      "radius": 12,
+      "max": 1,
+      "respawn_seconds": 120,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 44
+    },
+    {
+      "id": "smithy_statues",
+      "enemy": "amemaru:statue_echo",
+      "center": [
+        268,
+        17,
+        276
+      ],
+      "radius": 6,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "chapel_statues",
+      "enemy": "amemaru:statue_echo",
+      "center": [
+        228,
+        17,
+        246
+      ],
+      "radius": 8,
+      "max": 3,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "chapel_birds",
+      "enemy": "amemaru:frost_bird",
+      "center": [
+        206,
+        30,
+        230
+      ],
+      "radius": 12,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "graveyard_wolves",
+      "enemy": "amemaru:frost_wolf",
+      "center": [
+        180,
+        20,
+        260
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "east_lane_wolves",
+      "enemy": "amemaru:frost_wolf",
+      "center": [
+        392,
+        17,
+        368
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "pasture_bears",
+      "enemy": "amemaru:frost_bear",
+      "center": [
+        500,
+        17,
+        368
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 110,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 44
+    },
+    {
+      "id": "pasture_bears_n",
+      "enemy": "amemaru:frost_bear",
+      "center": [
+        470,
+        17,
+        296
+      ],
+      "radius": 12,
+      "max": 1,
+      "respawn_seconds": 120,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 44
+    },
+    {
+      "id": "east_woods_bears",
+      "enemy": "amemaru:frost_bear",
+      "center": [
+        556,
+        20,
+        330
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 120,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 44
+    },
+    {
+      "id": "pasture_birds",
+      "enemy": "amemaru:frost_bird",
+      "center": [
+        486,
+        25,
+        340
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "pond_birds_a",
+      "enemy": "amemaru:frost_bird",
+      "center": [
+        470,
+        22,
+        182
+      ],
+      "radius": 14,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "pond_birds_b",
+      "enemy": "amemaru:frost_bird",
+      "center": [
+        492,
+        22,
+        200
+      ],
+      "radius": 12,
+      "max": 2,
+      "respawn_seconds": 70,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "pond_wolves",
+      "enemy": "amemaru:frost_wolf",
+      "center": [
+        440,
+        17,
+        226
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "ne_bear",
+      "enemy": "amemaru:frost_bear",
+      "center": [
+        520,
+        17,
+        150
+      ],
+      "radius": 12,
+      "max": 1,
+      "respawn_seconds": 120,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 44
+    },
+    {
+      "id": "north_statues_a",
+      "enemy": "amemaru:statue_echo",
+      "center": [
+        312,
+        17,
+        300
+      ],
+      "radius": 6,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "north_statues_b",
+      "enemy": "amemaru:statue_echo",
+      "center": [
+        312,
+        17,
+        232
+      ],
+      "radius": 6,
+      "max": 3,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "north_wolves",
+      "enemy": "amemaru:frost_wolf",
+      "center": [
+        340,
+        16,
+        260
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "north_birds",
+      "enemy": "amemaru:frost_bird",
+      "center": [
+        296,
+        26,
+        200
+      ],
+      "radius": 12,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "seal_statues",
+      "enemy": "amemaru:statue_echo",
+      "center": [
+        312,
+        17,
+        176
+      ],
+      "radius": 6,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "farm_wolves",
+      "enemy": "amemaru:frost_wolf",
+      "center": [
+        420,
+        17,
+        470
+      ],
+      "radius": 12,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "farm_statues",
+      "enemy": "amemaru:statue_echo",
+      "center": [
+        400,
+        17,
+        492
+      ],
+      "radius": 6,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "camp_bear",
+      "enemy": "amemaru:frost_bear",
+      "center": [
+        96,
+        17,
+        530
+      ],
+      "radius": 12,
+      "max": 1,
+      "respawn_seconds": 120,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 44
+    },
+    {
+      "id": "camp_wolves",
+      "enemy": "amemaru:frost_wolf",
+      "center": [
+        110,
+        17,
+        490
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "hunter_wolves",
+      "enemy": "amemaru:frost_wolf",
+      "center": [
+        104,
+        17,
+        210
+      ],
+      "radius": 12,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "hunter_statues",
+      "enemy": "amemaru:statue_echo",
+      "center": [
+        92,
+        17,
+        168
+      ],
+      "radius": 6,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "lookout_birds",
+      "enemy": "amemaru:frost_bird",
+      "center": [
+        430,
+        27,
+        136
+      ],
+      "radius": 12,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "lookout_wolves",
+      "enemy": "amemaru:frost_wolf",
+      "center": [
+        432,
+        17,
+        178
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    }
+  ],
+  "guardians": [
+    {
+      "id": "pack_leader",
+      "enemy": "amemaru:frost_wolf",
+      "variant": "amemaru:frost_wolf_leader",
+      "pos": [
+        96.5,
+        17,
+        350.5
+      ],
+      "respawn_seconds": 300,
+      "activation": 26,
+      "pillar": -1
+    },
+    {
+      "id": "bear_elder",
+      "enemy": "amemaru:frost_bear",
+      "variant": "amemaru:frost_bear_elder",
+      "pos": [
+        486.5,
+        17,
+        358.5
+      ],
+      "respawn_seconds": 300,
+      "activation": 28,
+      "pillar": -1
+    }
+  ],
+  "chests": [
+    {
+      "pos": [
+        325,
+        17,
+        592
+      ],
+      "loot": "amemaru:chests/floor6_village"
+    },
+    {
+      "pos": [
+        306,
+        17,
+        430
+      ],
+      "loot": "amemaru:chests/floor6_village"
+    },
+    {
+      "pos": [
+        328,
+        17,
+        374
+      ],
+      "loot": "amemaru:chests/floor6_village"
+    },
+    {
+      "pos": [
+        172,
+        17,
+        334
+      ],
+      "loot": "amemaru:chests/floor6_village"
+    },
+    {
+      "pos": [
+        96,
+        17,
+        337
+      ],
+      "loot": "amemaru:chests/floor6_village",
+      "guardian": "pack_leader"
+    },
+    {
+      "pos": [
+        74,
+        17,
+        300
+      ],
+      "loot": "amemaru:chests/floor6_village"
+    },
+    {
+      "pos": [
+        194,
+        17,
+        216
+      ],
+      "loot": "amemaru:chests/floor6_village"
+    },
+    {
+      "pos": [
+        482,
+        17,
+        322
+      ],
+      "loot": "amemaru:chests/floor6_village",
+      "guardian": "bear_elder"
+    },
+    {
+      "pos": [
+        501,
+        17,
+        206
+      ],
+      "loot": "amemaru:chests/floor6_village"
+    },
+    {
+      "pos": [
+        306,
+        17,
+        240
+      ],
+      "loot": "amemaru:chests/floor6_village"
+    },
+    {
+      "pos": [
+        420,
+        17,
+        248
+      ],
+      "loot": "amemaru:chests/floor6_village"
+    },
+    {
+      "pos": [
+        560,
+        20,
+        470
+      ],
+      "loot": "amemaru:chests/floor6_village"
+    },
+    {
+      "pos": [
+        236,
+        17,
+        300
+      ],
+      "loot": "amemaru:chests/floor6_village"
+    },
+    {
+      "pos": [
+        404,
+        17,
+        516
+      ],
+      "loot": "amemaru:chests/floor6_village"
+    },
+    {
+      "pos": [
+        72,
+        17,
+        494
+      ],
+      "loot": "amemaru:chests/floor6_village"
+    },
+    {
+      "pos": [
+        90,
+        17,
+        164
+      ],
+      "loot": "amemaru:chests/floor6_village"
+    },
+    {
+      "pos": [
+        429,
+        31,
+        117
+      ],
+      "loot": "amemaru:chests/floor6_village"
+    }
+  ],
+  "environment": {
+    "fog": [
+      40,
+      200
+    ],
+    "fog_color": "#C9D9EC",
+    "sky": "aurora",
+    "weather": "snow"
+  },
+  "waypoints": [
+    {
+      "id": "inn",
+      "name": "雪灯亭",
+      "pos": [
+        318,
+        17,
+        466
+      ],
+      "arrive": {
+        "pos": [
+          316.5,
+          17,
+          466.5
+        ],
+        "yaw": -108.4
+      }
+    },
+    {
+      "id": "market",
+      "name": "市場の広場",
+      "pos": [
+        308,
+        17,
+        410
+      ],
+      "arrive": {
+        "pos": [
+          308.5,
+          17,
+          408.5
+        ],
+        "yaw": -168.0
+      }
+    },
+    {
+      "id": "chapel",
+      "name": "教会の前",
+      "pos": [
+        230,
+        17,
+        234
+      ],
+      "arrive": {
+        "pos": [
+          230.5,
+          17,
+          232.5
+        ],
+        "yaw": 99.8
+      }
+    },
+    {
+      "id": "pasture",
+      "name": "牧場の入口",
+      "pos": [
+        430,
+        17,
+        348
+      ],
+      "arrive": {
+        "pos": [
+          428.5,
+          17,
+          348.5
+        ],
+        "yaw": -101.6
+      }
+    }
+  ],
+  "travel_stone": [
+    303,
+    17,
+    590
+  ],
+  "seal_requires": "statues+guardians",
+  "hearths": [
+    {
+      "id": "inn",
+      "name": "雪灯亭の暖炉",
+      "pos": [
+        331,
+        17,
+        456
+      ]
+    },
+    {
+      "id": "bakery",
+      "name": "パン屋のかまど",
+      "pos": [
+        340,
+        17,
+        385
+      ]
+    },
+    {
+      "id": "smithy",
+      "name": "鍛冶屋の炉",
+      "pos": [
+        263,
+        17,
+        257
+      ]
+    }
+  ],
+  "memory_statues": [
+    {
+      "id": "market",
+      "name": "市場の値切り",
+      "pos": [
+        300,
+        17,
+        392
+      ],
+      "event": "amemaru:floor6/memory_market"
+    },
+    {
+      "id": "mother",
+      "name": "母と子",
+      "pos": [
+        232,
+        17,
+        410
+      ],
+      "event": "amemaru:floor6/memory_mother"
+    },
+    {
+      "id": "ringer",
+      "name": "鐘を鳴らす若者",
+      "pos": [
+        224,
+        17,
+        236
+      ],
+      "event": "amemaru:floor6/memory_ringer"
+    },
+    {
+      "id": "mayor_call",
+      "name": "村長の呼びかけ",
+      "pos": [
+        312,
+        17,
+        162
+      ],
+      "event": "amemaru:floor6/memory_mayor_call"
+    }
+  ],
+  "boss_marks": {
+    "crystal_spots": [
+      [
+        268,
+        18,
+        100
+      ],
+      [
+        356,
+        18,
+        100
+      ],
+      [
+        312,
+        18,
+        66
+      ]
+    ],
+    "plaza_center": [
+      [
+        312,
+        17,
+        100
+      ]
+    ]
+  },
+  "story_zones": [
+    {
+      "id": "village_gate",
+      "box": [
+        304,
+        16,
+        560,
+        320,
+        22,
+        570
+      ]
+    },
+    {
+      "id": "frozen_market",
+      "box": [
+        298,
+        16,
+        378,
+        326,
+        22,
+        406
+      ]
+    },
+    {
+      "id": "aurora_lookout",
+      "box": [
+        427,
+        30,
+        115,
+        433,
+        34,
+        121
+      ]
+    }
+  ]
+}

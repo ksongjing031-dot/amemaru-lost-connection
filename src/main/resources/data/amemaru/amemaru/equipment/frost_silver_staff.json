@@ -1,0 +1,27 @@
+{
+  "slot": "weapon",
+  "generation": 2,
+  "series": "霜銀シリーズ（ウィザード）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:wizard"
+  ],
+  "stats": {
+    "magic": 35,
+    "mp": 80
+  },
+  "durability": 550,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frost_silver",
+      "count": 1
+    },
+    {
+      "item": "amemaru:ice_crystal",
+      "count": 1
+    }
+  ],
+  "description": "霜銀の枝の先に、氷晶の玉を結晶細工で吊った杖。玉の中に、かすかなオーロラが揺れる。"
+}

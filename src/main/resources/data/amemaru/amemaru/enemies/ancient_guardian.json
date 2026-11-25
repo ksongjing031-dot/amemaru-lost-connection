@@ -86,7 +86,25 @@
       },
       {
         "item": "amemaru:guardian_knight_shell",
-        "chance": 4,
+        "chance": 3,
+        "rarity": "epic",
+        "job_match": true
+      },
+      {
+        "item": "amemaru:guardian_knight_helm",
+        "chance": 3,
+        "rarity": "epic",
+        "job_match": true
+      },
+      {
+        "item": "amemaru:guardian_knight_greaves",
+        "chance": 3,
+        "rarity": "epic",
+        "job_match": true
+      },
+      {
+        "item": "amemaru:guardian_knight_sabatons",
+        "chance": 3,
         "rarity": "epic",
         "job_match": true
       },
@@ -98,7 +116,25 @@
       },
       {
         "item": "amemaru:guardian_wizard_shell",
-        "chance": 4,
+        "chance": 3,
+        "rarity": "epic",
+        "job_match": true
+      },
+      {
+        "item": "amemaru:guardian_wizard_hat",
+        "chance": 3,
+        "rarity": "epic",
+        "job_match": true
+      },
+      {
+        "item": "amemaru:guardian_wizard_legwear",
+        "chance": 3,
+        "rarity": "epic",
+        "job_match": true
+      },
+      {
+        "item": "amemaru:guardian_wizard_shoes",
+        "chance": 3,
         "rarity": "epic",
         "job_match": true
       },
@@ -110,7 +146,25 @@
       },
       {
         "item": "amemaru:guardian_healer_shell",
-        "chance": 4,
+        "chance": 3,
+        "rarity": "epic",
+        "job_match": true
+      },
+      {
+        "item": "amemaru:guardian_healer_hood",
+        "chance": 3,
+        "rarity": "epic",
+        "job_match": true
+      },
+      {
+        "item": "amemaru:guardian_healer_legwear",
+        "chance": 3,
+        "rarity": "epic",
+        "job_match": true
+      },
+      {
+        "item": "amemaru:guardian_healer_shoes",
+        "chance": 3,
         "rarity": "epic",
         "job_match": true
       },
@@ -122,7 +176,25 @@
       },
       {
         "item": "amemaru:guardian_archer_shell",
-        "chance": 4,
+        "chance": 3,
+        "rarity": "epic",
+        "job_match": true
+      },
+      {
+        "item": "amemaru:guardian_archer_cap",
+        "chance": 3,
+        "rarity": "epic",
+        "job_match": true
+      },
+      {
+        "item": "amemaru:guardian_archer_leggings",
+        "chance": 3,
+        "rarity": "epic",
+        "job_match": true
+      },
+      {
+        "item": "amemaru:guardian_archer_boots",
+        "chance": 3,
         "rarity": "epic",
         "job_match": true
       },
@@ -134,7 +206,25 @@
       },
       {
         "item": "amemaru:guardian_rogue_shell",
-        "chance": 4,
+        "chance": 3,
+        "rarity": "epic",
+        "job_match": true
+      },
+      {
+        "item": "amemaru:guardian_rogue_mask",
+        "chance": 3,
+        "rarity": "epic",
+        "job_match": true
+      },
+      {
+        "item": "amemaru:guardian_rogue_leggings",
+        "chance": 3,
+        "rarity": "epic",
+        "job_match": true
+      },
+      {
+        "item": "amemaru:guardian_rogue_tabi",
+        "chance": 3,
         "rarity": "epic",
         "job_match": true
       },
@@ -146,7 +236,25 @@
       },
       {
         "item": "amemaru:guardian_monk_shell",
-        "chance": 4,
+        "chance": 3,
+        "rarity": "epic",
+        "job_match": true
+      },
+      {
+        "item": "amemaru:guardian_monk_headband",
+        "chance": 3,
+        "rarity": "epic",
+        "job_match": true
+      },
+      {
+        "item": "amemaru:guardian_monk_hakama",
+        "chance": 3,
+        "rarity": "epic",
+        "job_match": true
+      },
+      {
+        "item": "amemaru:guardian_monk_sandals",
+        "chance": 3,
         "rarity": "epic",
         "job_match": true
       },

@@ -1,0 +1,20 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "weapon",
+  "mastery": 3,
+  "mastery_exp": 10,
+  "ingredients": [
+    {
+      "item": "amemaru:frost_silver",
+      "count": 2
+    },
+    {
+      "item": "amemaru:moss_iron",
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "amemaru:reinforcement_fitting",
+    "count": 2
+  }
+}

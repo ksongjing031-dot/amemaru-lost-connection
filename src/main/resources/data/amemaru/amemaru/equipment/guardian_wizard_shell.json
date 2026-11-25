@@ -31,5 +31,11 @@
       "count": 2
     }
   ],
+  "set_effects": [
+    {
+      "type": "damage_reduction",
+      "percent": 5
+    }
+  ],
   "description": "守護者の装甲の薄い板を、法衣の胸と肩に縫いつけたもの。板の翠の線が、受けた魔力の衝撃を逃がす。"
 }

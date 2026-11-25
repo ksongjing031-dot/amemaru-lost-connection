@@ -139,6 +139,34 @@
     {
       "id": "ryumon_gauntlets",
       "kind": "fist"
+    },
+    {
+      "id": "frost_silver_sword",
+      "kind": "sword"
+    },
+    {
+      "id": "frost_silver_greatsword",
+      "kind": "greatsword"
+    },
+    {
+      "id": "frost_silver_staff",
+      "kind": "staff"
+    },
+    {
+      "id": "frost_silver_bell_staff",
+      "kind": "bell_staff"
+    },
+    {
+      "id": "frost_silver_bow",
+      "kind": "bow"
+    },
+    {
+      "id": "frost_silver_daggers",
+      "kind": "daggers"
+    },
+    {
+      "id": "frost_silver_gauntlets",
+      "kind": "fist"
     }
   ],
   "shields": [
@@ -153,6 +181,9 @@
     },
     {
       "id": "ryumon_shield"
+    },
+    {
+      "id": "frost_silver_shield"
     }
   ],
   "armor": [
@@ -240,37 +271,118 @@
     {
       "series": "guardian_knight",
       "pieces": {
-        "chest": "guardian_knight_shell"
+        "head": "guardian_knight_helm",
+        "chest": "guardian_knight_shell",
+        "legs": "guardian_knight_greaves",
+        "feet": "guardian_knight_sabatons"
       }
     },
     {
       "series": "guardian_wizard",
       "pieces": {
-        "chest": "guardian_wizard_shell"
+        "head": "guardian_wizard_hat",
+        "chest": "guardian_wizard_shell",
+        "legs": "guardian_wizard_legwear",
+        "feet": "guardian_wizard_shoes"
       }
     },
     {
       "series": "guardian_healer",
       "pieces": {
-        "chest": "guardian_healer_shell"
+        "head": "guardian_healer_hood",
+        "chest": "guardian_healer_shell",
+        "legs": "guardian_healer_legwear",
+        "feet": "guardian_healer_shoes"
       }
     },
     {
       "series": "guardian_archer",
       "pieces": {
-        "chest": "guardian_archer_shell"
+        "head": "guardian_archer_cap",
+        "chest": "guardian_archer_shell",
+        "legs": "guardian_archer_leggings",
+        "feet": "guardian_archer_boots"
       }
     },
     {
       "series": "guardian_rogue",
       "pieces": {
-        "chest": "guardian_rogue_shell"
+        "head": "guardian_rogue_mask",
+        "chest": "guardian_rogue_shell",
+        "legs": "guardian_rogue_leggings",
+        "feet": "guardian_rogue_tabi"
       }
     },
     {
       "series": "guardian_monk",
       "pieces": {
-        "chest": "guardian_monk_shell"
+        "head": "guardian_monk_headband",
+        "chest": "guardian_monk_shell",
+        "legs": "guardian_monk_hakama",
+        "feet": "guardian_monk_sandals"
+      }
+    },
+    {
+      "series": "frost_silver_knight",
+      "pieces": {
+        "head": "frost_silver_knight_helm",
+        "chest": "frost_silver_knight_cuirass",
+        "legs": "frost_silver_knight_greaves",
+        "feet": "frost_silver_knight_sabatons"
+      }
+    },
+    {
+      "series": "frost_silver_wizard",
+      "pieces": {
+        "head": "frost_silver_wizard_hat",
+        "chest": "frost_silver_wizard_robe",
+        "legs": "frost_silver_wizard_legwear",
+        "feet": "frost_silver_wizard_shoes"
+      }
+    },
+    {
+      "series": "frost_silver_healer",
+      "pieces": {
+        "head": "frost_silver_healer_hood",
+        "chest": "frost_silver_healer_robe",
+        "legs": "frost_silver_healer_legwear",
+        "feet": "frost_silver_healer_shoes"
+      }
+    },
+    {
+      "series": "frost_silver_archer",
+      "pieces": {
+        "head": "frost_silver_archer_cap",
+        "chest": "frost_silver_archer_jerkin",
+        "legs": "frost_silver_archer_leggings",
+        "feet": "frost_silver_archer_boots"
+      }
+    },
+    {
+      "series": "frost_silver_rogue",
+      "pieces": {
+        "head": "frost_silver_rogue_mask",
+        "chest": "frost_silver_rogue_garb",
+        "legs": "frost_silver_rogue_leggings",
+        "feet": "frost_silver_rogue_tabi"
+      }
+    },
+    {
+      "series": "frost_silver_monk",
+      "pieces": {
+        "head": "frost_silver_monk_headband",
+        "chest": "frost_silver_monk_gi",
+        "legs": "frost_silver_monk_hakama",
+        "feet": "frost_silver_monk_sandals"
+      }
+    },
+    {
+      "series": "mayor_fur",
+      "pieces": {
+        "head": "mayor_fur_hat",
+        "chest": "mayor_fur_coat",
+        "legs": "mayor_fur_leggings",
+        "feet": "mayor_fur_boots"
       }
     }
   ],
@@ -414,6 +526,37 @@
       "id": "seventh_gate_key",
       "slot": "charm",
       "model": "geckolib"
+    },
+    {
+      "id": "frost_silver_battle_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "frost_silver_wisdom_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "ice_crystal_necklace",
+      "slot": "necklace",
+      "model": "geckolib"
+    },
+    {
+      "id": "frozen_fur_bracelet",
+      "slot": "bracelet",
+      "model": "geckolib"
+    },
+    {
+      "id": "snowlight_charm",
+      "slot": "charm",
+      "model": "geckolib"
+    },
+    {
+      "id": "white_fang_charm",
+      "slot": "charm"
+    },
+    {
+      "id": "bear_frost_charm",
+      "slot": "charm"
     }
   ],
   "materials": [
@@ -538,6 +681,38 @@
     {
       "id": "jade_core_shard",
       "rarity": "rare"
+    },
+    {
+      "id": "reinforcement_fitting",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "pedestal_cloth",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "crystal_filigree",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "frost_silver",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "ice_crystal",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "frozen_fur",
+      "rarity": "common"
+    },
+    {
+      "id": "frost_fang",
+      "rarity": "common"
+    },
+    {
+      "id": "ice_feather",
+      "rarity": "common"
     }
   ],
   "fruits": [
@@ -626,6 +801,16 @@
     {
       "id": "warden_light",
       "kind": "warden",
+      "stack": 1
+    },
+    {
+      "id": "heat_crystal",
+      "kind": "heat",
+      "stack": 1
+    },
+    {
+      "id": "memory_crystal",
+      "kind": "memory",
       "stack": 1
     }
   ],

@@ -1,0 +1,107 @@
+{
+  "_comment": "記憶の氷像「村長の呼びかけ」（凍りついた門の前）。ボスの台詞「おまえは……村の者か……？」につながる。台詞は【補完】",
+  "title": "記憶の場面：村長の呼びかけ",
+  "trigger": {
+    "type": "amemaru:admin"
+  },
+  "scope": "player",
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:fade",
+      "from": "none",
+      "to": "white",
+      "ticks": 12
+    },
+    {
+      "type": "amemaru:actor",
+      "id": "ordo",
+      "npc": "amemaru:echo_ordo",
+      "pos": {
+        "anchor": "floor",
+        "offset": [
+          312.5,
+          17,
+          162.5
+        ]
+      },
+      "yaw": 0.0
+    },
+    {
+      "type": "amemaru:actor",
+      "id": "listener",
+      "npc": "amemaru:echo_merchant",
+      "pos": {
+        "anchor": "floor",
+        "offset": [
+          309.5,
+          17,
+          167.0
+        ]
+      },
+      "yaw": 180.0
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "white",
+      "to": "none",
+      "ticks": 24
+    },
+    {
+      "type": "amemaru:sound",
+      "sound": "minecraft:block.amethyst_block.resonate",
+      "volume": 1.0,
+      "pitch": 0.7
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "オルド「落ち着け、みんな！ 名前を呼び合え。忘れるな、互いの名を――」",
+      "ticks": 130,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "オルド「……おまえは……村の者か……？」",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "村長は、最後まで村を守ろうとしていた。誰を守るのかさえ、分からなくなっても。",
+      "ticks": 140,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "凍りついた門の向こうに、村長の家と、雪の広場がある。",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "none",
+      "to": "white",
+      "ticks": 16
+    },
+    {
+      "type": "amemaru:actor_remove",
+      "id": "ordo"
+    },
+    {
+      "type": "amemaru:actor_remove",
+      "id": "listener"
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "white",
+      "to": "none",
+      "ticks": 24
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/memory_mayor_call"
+      ]
+    }
+  ]
+}

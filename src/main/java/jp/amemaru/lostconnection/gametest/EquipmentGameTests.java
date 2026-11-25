@@ -23,6 +23,7 @@ import jp.amemaru.lostconnection.equipment.GearRules;
 import jp.amemaru.lostconnection.equipment.GearService;
 import jp.amemaru.lostconnection.equipment.GearSlot;
 import jp.amemaru.lostconnection.equipment.Rarity;
+import jp.amemaru.lostconnection.equipment.SpecialEffect;
 import jp.amemaru.lostconnection.item.AmemaruShieldItem;
 import jp.amemaru.lostconnection.item.ItemManifest;
 import jp.amemaru.lostconnection.job.JobService;
@@ -118,7 +119,9 @@ public final class EquipmentGameTests {
         // Phase 6 その2 で、4職業の見習い・古代石の武器（8）と、古代石シリーズ（軽装）の防具（4）が増えた
         // Phase 8 その1 で、2階のボスのレア「古樹の枝杖」が増えた
         // Phase 8 その2 で、3階のボスのレア「水門の鍵盾」と、3階からの職業ごとの装備「流紋シリーズ」（6職業の防具24・武器7・盾1）が増えた
-        check(helper, gear.equipment().size() == 78, "装備の定義が78ではありません：" + gear.equipment().size());
+        // 11月25日：5階の守護者シリーズを防具一式に（6職業の頭・脚・足の18）と、6階のボスのレア「村長の毛皮」一式4、
+        // 第2章の職業ごとの装備「霜銀シリーズ」（6職業の防具24・武器7・盾1）で132
+        check(helper, gear.equipment().size() == 132, "装備の定義が132ではありません：" + gear.equipment().size());
         for (ItemManifest.Category category : new ItemManifest.Category[]{
                 ItemManifest.Category.WEAPON, ItemManifest.Category.SHIELD, ItemManifest.Category.ARMOR}) {
             for (RegistryObject<Item> item : ModItems.MANIFEST.category(category)) {
@@ -127,7 +130,8 @@ public final class EquipmentGameTests {
         }
         // Phase 5 で、1階のボスのレアのお守り「草原の角笛」が増えた
         // 11月24日：2〜5階のアクセサリー（階ごとに、作る5つと、名のある魔物が落とすレアのお守り1つ）の24が増えた
-        check(helper, AccessoryDefs.all().size() == 31, "アクセサリーの定義が31ではありません：" + AccessoryDefs.all().size());
+        // 11月25日：6階のアクセサリー（作る5つと、名のある魔物2体が落とすレアのお守り2つ）の7で38
+        check(helper, AccessoryDefs.all().size() == 38, "アクセサリーの定義が38ではありません：" + AccessoryDefs.all().size());
         for (RegistryObject<Item> item : ModItems.MANIFEST.category(ItemManifest.Category.ACCESSORY)) {
             check(helper, AccessoryDefs.get(item.get()) != null, "アクセサリーの定義がありません：" + item.getId());
         }
@@ -138,7 +142,8 @@ public final class EquipmentGameTests {
         // その幹の「光る節」
         // Phase 8 その2：3階の雑魚4種（水門ネズミ・澱みスライムと小さな澱みスライム・水路掃除機兵・牙ナマズ）と名のある魔物3体、
         // ボス「大水門の番人ハイドラム」
-        check(helper, EnemyDefs.all().size() == 37, "敵の定義が37ではありません：" + EnemyDefs.all().keySet());
+        // 11月25日：6階の雑魚4種（霜狼・氷像の残響・凍て鳥・霜の欠け熊）と名のある魔物2体、ボス「村長の残響オルド」で44
+        check(helper, EnemyDefs.all().size() == 44, "敵の定義が44ではありません：" + EnemyDefs.all().keySet());
         EnemyDef alpha = EnemyDefs.get(AmemaruMod.id("tsunomofu_alpha"));
         check(helper, alpha != null && AmemaruMod.id("tsunomofu").equals(alpha.entity()) && alpha.behavior().getOrDefault("scale", 1.0) > 1.0,
                 "群れの長が、ツノモフの見た目を借りる大きな個体になっていません");
@@ -170,9 +175,10 @@ public final class EquipmentGameTests {
         // Phase 6 その2 で、古代石の鈴杖・弓・双短剣・籠手と、古代石シリーズ（軽装）の4つ（計8）が増えた
         // Phase 8 その2 で、流紋シリーズの32が増えた
         // 11月24日：2〜5階のアクセサリーの20が増えた
-        check(helper, recipes.size() == 77, "工房のレシピが77ではありません：" + recipes.size());
+        // 11月25日：6階のアクセサリーの5と、霜銀シリーズの32、生産職どうしの部品3（補強金具・台座布・結晶細工）が増えた
+        check(helper, recipes.size() == 117, "工房のレシピが117ではありません：" + recipes.size());
         for (WorkshopRecipe recipe : recipes) {
-            check(helper, recipe.workshop().accepts(recipe.result()), recipe.getId() + " の品が、その工房で扱う品ではありません");
+            check(helper, recipe.workshop().makes(recipe.result()), recipe.getId() + " の品が、その工房で作る品ではありません");
             check(helper, !recipe.ingredients().isEmpty(), recipe.getId() + " に素材がありません");
             for (EquipmentDef.Cost cost : recipe.ingredients()) {
                 check(helper, ForgeRegistries.ITEMS.containsKey(cost.item()) && cost.count() > 0,
@@ -245,6 +251,49 @@ public final class EquipmentGameTests {
         check(helper, GearData.bindsOnEquip(rare) && !GearData.isBound(rare), "見張りの石刃に「装備すると取引不可」の印がありません");
         GearData.bind(rare);
         check(helper, GearData.isBound(rare) && !GearData.bindsOnEquip(rare), "装備した後に取引できない品になっていません");
+        helper.succeed();
+    }
+
+    /**
+     * 11月25日「防具は一式全部揃えた形に」：同じシリーズの頭・胴・脚・足をそろえると、一式の効果（set_effects）が効く。
+     * 3つだけ・ほかのシリーズが混ざる・レベルが足りない・壊れた品があるときは効かない。
+     */
+    @GameTest(template = EMPTY)
+    public static void armorSetBonusNeedsAllFour(GameTestHelper helper) {
+        FakePlayer player = fake(helper, "armor_set");
+        PlayerData data = knight(player, 22);
+        ItemStack helm = rolled("guardian_knight_helm", Rarity.EPIC, 1.0, 0);
+        ItemStack shell = rolled("guardian_knight_shell", Rarity.EPIC, 1.0, 0);
+        ItemStack greaves = rolled("guardian_knight_greaves", Rarity.EPIC, 1.0, 0);
+        ItemStack sabatons = rolled("guardian_knight_sabatons", Rarity.EPIC, 1.0, 0);
+        player.setItemSlot(EquipmentSlot.HEAD, helm);
+        player.setItemSlot(EquipmentSlot.CHEST, shell);
+        player.setItemSlot(EquipmentSlot.LEGS, greaves);
+        check(helper, GearService.setEffects(player, data).isEmpty() && GearService.seriesWorn(player, "guardian_knight") == 3,
+                "3つだけで、一式の効果が効いています");
+        player.setItemSlot(EquipmentSlot.FEET, sabatons);
+        check(helper, GearService.seriesWorn(player, "guardian_knight") == 4, "守護者シリーズを4つ着ていることになっていません");
+        check(helper, GearService.setEffects(player, data).stream().anyMatch(e -> e.type() == SpecialEffect.Type.DAMAGE_REDUCTION
+                && Math.abs(e.percent() - 5.0) < EPSILON), "一式そろえても、一式の効果（被ダメージ −5%）が効いていません");
+        long wards = GearEffects.active(player, data).stream().filter(e -> e.type() == SpecialEffect.Type.DAMAGE_REDUCTION).count();
+        check(helper, wards == 2, "外装の効果と一式の効果の2つが効いていません：" + wards);
+
+        // ほかのシリーズが混ざると効かない
+        player.setItemSlot(EquipmentSlot.FEET, rolled("ryumon_knight_sabatons", Rarity.COMMON, 1.0, 0));
+        check(helper, GearService.setEffects(player, data).isEmpty(), "流紋の鉄靴が混ざっても、一式の効果が効いています");
+        player.setItemSlot(EquipmentSlot.FEET, sabatons);
+        // レベルが足りないと効かない
+        LevelService.setLevel(player, data, 21);
+        check(helper, GearService.setEffects(player, data).isEmpty(), "レベル21（使えない）でも、一式の効果が効いています");
+        LevelService.setLevel(player, data, 22);
+        check(helper, !GearService.setEffects(player, data).isEmpty(), "レベルを戻しても、一式の効果が戻りません");
+        // 壊れた品があると効かない
+        EquipmentDef helmDef = gearDef("guardian_knight_helm");
+        GearData.setDurability(player.getItemBySlot(EquipmentSlot.HEAD), helmDef, 0);
+        check(helper, GearService.setEffects(player, data).isEmpty(), "壊れた兜があっても、一式の効果が効いています");
+        for (EquipmentSlot slot : EquipmentSlot.values()) {
+            player.setItemSlot(slot, ItemStack.EMPTY);
+        }
         helper.succeed();
     }
 

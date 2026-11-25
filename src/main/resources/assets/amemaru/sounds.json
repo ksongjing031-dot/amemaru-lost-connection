@@ -1553,5 +1553,13 @@
         "stream": true
       }
     ]
+  },
+  "music.boss.ordo": {
+    "sounds": [
+      {
+        "name": "amemaru:music/boss_ordo",
+        "stream": true
+      }
+    ]
   }
 }

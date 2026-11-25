@@ -1,0 +1,107 @@
+{
+  "_comment": "記憶の氷像「市場の値切り」が溶けたとき、そばの人に流れる、あの日の村の短い場面（Phase 0-A 9章の6階「その日の村の短い場面が見える」）。台詞は【補完】",
+  "title": "記憶の場面：市場の値切り",
+  "trigger": {
+    "type": "amemaru:admin"
+  },
+  "scope": "player",
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:fade",
+      "from": "none",
+      "to": "white",
+      "ticks": 12
+    },
+    {
+      "type": "amemaru:actor",
+      "id": "merchant",
+      "npc": "amemaru:echo_merchant",
+      "pos": {
+        "anchor": "floor",
+        "offset": [
+          300.5,
+          17,
+          392.5
+        ]
+      },
+      "yaw": 90.0
+    },
+    {
+      "type": "amemaru:actor",
+      "id": "buyer",
+      "npc": "amemaru:echo_buyer",
+      "pos": {
+        "anchor": "floor",
+        "offset": [
+          298.3,
+          17,
+          392.5
+        ]
+      },
+      "yaw": 270.0
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "white",
+      "to": "none",
+      "ticks": 24
+    },
+    {
+      "type": "amemaru:sound",
+      "sound": "minecraft:block.amethyst_block.resonate",
+      "volume": 1.0,
+      "pitch": 0.7
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "商人「明日は冬祭りだ。この林檎、ひとつおまけしとくよ」",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "客「もう、いつもそう言って……あら、雪？ ずいぶん白い雪ね」",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "商人「……あれ。いま、何の話をしてたっけ」",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "白い雪が降るたびに、村の人たちは、少しずつ何かを忘れていった。",
+      "ticks": 130,
+      "wait": true
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "none",
+      "to": "white",
+      "ticks": 16
+    },
+    {
+      "type": "amemaru:actor_remove",
+      "id": "merchant"
+    },
+    {
+      "type": "amemaru:actor_remove",
+      "id": "buyer"
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "white",
+      "to": "none",
+      "ticks": 24
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/memory_market"
+      ]
+    }
+  ]
+}

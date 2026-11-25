@@ -33,6 +33,8 @@ import java.util.Map;
  *   <li>{@code binding}：取引の決まり。bound（取引できない）・on_equip（一度装備するまで取引できる。ボスのレア装備）・none</li>
  *   <li>{@code effects}：固有の特殊効果（{@link SpecialEffect}）</li>
  *   <li>{@code rare}：工房では作れないレア装備か（説明文に出す）</li>
+ *   <li>{@code set_effects}：防具を一式（頭・胴・脚・足を同じシリーズで）そろえたときに効く特殊効果（11月25日「防具は一式全部揃えた形に」
+ *       【補完】）。4つの部位に同じものを書き、効くのは胴の分の1回だけ</li>
  *   <li>{@code repair}：耐久が0から最大まで戻すときの素材（減った分の割合で少なくなる）</li>
  *   <li>{@code description}：説明文の最後に出す、ひとこと</li>
  * </ul>
@@ -40,7 +42,7 @@ import java.util.Map;
 public record EquipmentDef(ResourceLocation id, GearSlot slot, int generation, String series, Rarity rarity,
                            int requiredLevel, List<ResourceLocation> jobs, Map<StatType, Double> stats, boolean fixed,
                            int durability, Binding binding, List<SpecialEffect> effects, boolean rare,
-                           List<Cost> repair, String description) {
+                           List<Cost> repair, String description, List<SpecialEffect> setEffects) {
 
     /** 取引の決まり。 */
     public enum Binding {
@@ -131,6 +133,21 @@ public record EquipmentDef(ResourceLocation id, GearSlot slot, int generation, S
             effects.add(SpecialEffect.parse(Json.asObject(effectArray.get(i), where), where));
         }
         boolean rare = Json.optionalBoolean(json, "rare", false);
+        List<SpecialEffect> setEffects = new ArrayList<>();
+        JsonArray setArray = Json.optionalArray(json, "set_effects");
+        for (int i = 0; i < setArray.size(); i++) {
+            String where = "set_effects[" + i + "]";
+            setEffects.add(SpecialEffect.parse(Json.asObject(setArray.get(i), where), where));
+        }
+        if (!setEffects.isEmpty() && !(slot == GearSlot.HEAD || slot == GearSlot.CHEST || slot == GearSlot.LEGS || slot == GearSlot.FEET)) {
+            throw new DefinitionException("「set_effects」（一式の効果）は防具（head・chest・legs・feet）にだけ書けます");
+        }
+        for (SpecialEffect effect : setEffects) {
+            if (effect.type() == SpecialEffect.Type.MOVE_SPEED) {
+                // 移動の速さは品ごとの属性で効く（GearEffects.withMoveSpeed）ので、一式の効果にはできない
+                throw new DefinitionException("「set_effects」に move_speed は書けません（品ごとの「effects」に書いてください）");
+            }
+        }
 
         List<Cost> repair = new ArrayList<>();
         JsonArray repairArray = Json.optionalArray(json, "repair");
@@ -144,7 +161,7 @@ public record EquipmentDef(ResourceLocation id, GearSlot slot, int generation, S
         String description = Json.optionalString(json, "description", "");
         return new EquipmentDef(id, slot, generation, series, rarity, requiredLevel, List.copyOf(jobs),
                 Collections.unmodifiableMap(stats), fixed, durability, binding, List.copyOf(effects), rare,
-                List.copyOf(repair), description);
+                List.copyOf(repair), description, List.copyOf(setEffects));
     }
 
     // ---------------------------------------------------------------- 通信（説明文に要る分をクライアントへ）
@@ -178,6 +195,10 @@ public record EquipmentDef(ResourceLocation id, GearSlot slot, int generation, S
             cost.write(buf);
         }
         buf.writeUtf(description);
+        buf.writeVarInt(setEffects.size());
+        for (SpecialEffect effect : setEffects) {
+            effect.write(buf);
+        }
     }
 
     public static EquipmentDef read(FriendlyByteBuf buf) {
@@ -217,8 +238,13 @@ public record EquipmentDef(ResourceLocation id, GearSlot slot, int generation, S
             repair.add(Cost.read(buf));
         }
         String description = buf.readUtf();
+        int setCount = Math.min(buf.readVarInt(), 64);
+        List<SpecialEffect> setEffects = new ArrayList<>();
+        for (int i = 0; i < setCount; i++) {
+            setEffects.add(SpecialEffect.read(buf));
+        }
         return new EquipmentDef(id, slot, generation, series, rarity, requiredLevel, List.copyOf(jobs),
                 Collections.unmodifiableMap(stats), fixed, durability, binding, List.copyOf(effects), rare,
-                List.copyOf(repair), description);
+                List.copyOf(repair), description, List.copyOf(setEffects));
     }
 }

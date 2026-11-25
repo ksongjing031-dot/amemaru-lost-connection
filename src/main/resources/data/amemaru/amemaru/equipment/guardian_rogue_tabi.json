@@ -1,0 +1,35 @@
+{
+  "slot": "feet",
+  "generation": 1,
+  "series": "守護者シリーズ（ローグ）",
+  "rarity": "epic",
+  "required_level": 22,
+  "jobs": [
+    "amemaru:rogue"
+  ],
+  "stats": {
+    "defense": 3,
+    "hp": 11,
+    "speed": 4
+  },
+  "durability": 380,
+  "binding": "on_equip",
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:jade_core_shard",
+      "count": 1
+    },
+    {
+      "item": "amemaru:sentinel_plate",
+      "count": 1
+    }
+  ],
+  "set_effects": [
+    {
+      "type": "damage_reduction",
+      "percent": 5
+    }
+  ],
+  "description": "底に白い石の薄板を仕込んだ足袋。足音を、祭壇の静けさに溶かす。"
+}

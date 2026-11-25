@@ -1,0 +1,23 @@
+{
+  "slot": "head",
+  "generation": 2,
+  "series": "霜銀シリーズ（ナイト）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "defense": 6,
+    "hp": 26
+  },
+  "durability": 560,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frost_silver",
+      "count": 1
+    }
+  ],
+  "description": "白銀の兜。とさかに沿って、凍て毛皮の房が流れる。"
+}

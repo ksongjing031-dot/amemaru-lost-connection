@@ -1,0 +1,33 @@
+{
+  "slot": "feet",
+  "generation": 2,
+  "series": "村長の毛皮",
+  "rarity": "epic",
+  "required_level": 26,
+  "jobs": [],
+  "stats": {
+    "defense": 4,
+    "hp": 22,
+    "speed": 1
+  },
+  "durability": 420,
+  "binding": "on_equip",
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 2
+    },
+    {
+      "item": "amemaru:frost_silver",
+      "count": 1
+    }
+  ],
+  "set_effects": [
+    {
+      "type": "cold_resist",
+      "percent": 30
+    }
+  ],
+  "description": "凍った道でも滑らない、毛皮の長靴。オルドは、これで毎朝、村じゅうの雪をかいて回った。"
+}

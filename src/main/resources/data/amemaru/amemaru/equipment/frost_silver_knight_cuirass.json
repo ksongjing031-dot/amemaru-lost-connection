@@ -1,0 +1,27 @@
+{
+  "slot": "chest",
+  "generation": 2,
+  "series": "霜銀シリーズ（ナイト）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "defense": 9,
+    "hp": 44
+  },
+  "durability": 600,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frost_silver",
+      "count": 2
+    },
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 1
+    }
+  ],
+  "description": "胸に雪の結晶の紋を打ち出した、霜銀の重い鎧。襟は凍て毛皮で、吹雪の中でも首が冷えない。"
+}

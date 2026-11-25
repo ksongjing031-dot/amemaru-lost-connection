@@ -1,0 +1,43 @@
+{
+  "_comment": "村はずれの門のすぐ内側（本人だけ。一人一度）。ロストの侵食：氷像の顔が空白（Phase 0-A 9章の6階）【補完】",
+  "title": "顔のない氷像",
+  "trigger": {
+    "type": "amemaru:floor_zone",
+    "floor": 6,
+    "zone": "village_gate"
+  },
+  "scope": "player",
+  "once": false,
+  "replayable": true,
+  "conditions": {
+    "flags_none": [
+      "amemaru:story/blank_faces_seen"
+    ]
+  },
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "門の上の鐘も、凍りついている。……鳴らそうとした誰かの手も、きっと。",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "氷像の顔をのぞきこむと、どれも、顔のところだけが白く抜け落ちていた。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "……ロストだ。この村の人たちは、何かを――誰かを、忘れてしまったのだ。",
+      "ticks": 120,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/blank_faces_seen"
+      ]
+    }
+  ]
+}

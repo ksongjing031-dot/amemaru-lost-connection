@@ -1,0 +1,53 @@
+{
+  "_comment": "初めて6階に入ったとき（本人だけ）。一瞬のまま凍りついた雪の村・空にオーロラ（Phase 0-A 9章の6階の地形・環境）。6日目：この階に到達すると、ロストがコネリアにも及ぶ（物語フラグ ch2/lost_in_town。サーバー全体。知らせは NpcMemoryService が出す）。台詞は【補完】",
+  "title": "凍結した村",
+  "trigger": {
+    "type": "amemaru:floor_enter",
+    "floor": 6
+  },
+  "scope": "player",
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:wait",
+      "ticks": 60
+    },
+    {
+      "type": "amemaru:sound",
+      "sound": "minecraft:ambient.basalt_deltas.mood",
+      "volume": 0.8,
+      "pitch": 1.4
+    },
+    {
+      "type": "amemaru:title",
+      "title": "第2章　凍てついた記憶",
+      "subtitle": "6階　凍結した村",
+      "ticks": 110
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "一面の雪。音のない村が、息をとめたまま凍りついていた……。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "家の前で雪をかく人、手を振る人。誰もが、その一瞬のまま氷になっている。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "見上げると、空に、緑と紫の光の帯――オーロラが揺れていた。",
+      "ticks": 110,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "scope": "server",
+      "add": [
+        "amemaru:ch2/lost_in_town"
+      ]
+    }
+  ]
+}

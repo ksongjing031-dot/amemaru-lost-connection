@@ -20,6 +20,14 @@ public final class ClientTowerEnv {
     private static int fogColor = -1;
     private static boolean dark;
     private static float darkRadius = 6.0F;
+    /** 11月25日（6階）：空（aurora）と天気（snow）。 */
+    private static String sky = "";
+    private static String weather = "";
+    /** 吹雪の強さ（0〜1。凍て鳥の吹雪。しばらくで消える）と、消える時刻（クライアントの tick）。 */
+    private static float blizzard;
+    private static long blizzardUntil;
+    /** 11月25日：街にロストが及んでいる（6日目から。コネリアに白い雪が降る）。 */
+    private static boolean townLost;
 
     private ClientTowerEnv() {
     }
@@ -30,6 +38,9 @@ public final class ClientTowerEnv {
                 // 階が変わった：ボスの部屋の暗さは、その部屋の中だけのもの（11月24日：2階のボスの暗さが3階まで残り、
                 // 3階が真っ暗に見えた。暗いままの部屋にいれば、サーバーがもう一度送る）
                 dark = false;
+                sky = data.getString("sky");
+                weather = data.getString("weather");
+                blizzard = 0.0F;
                 if (data.contains("fogEnd")) {
                     fogStart = data.getFloat("fogStart");
                     fogEnd = data.getFloat("fogEnd");
@@ -44,6 +55,14 @@ public final class ClientTowerEnv {
                 dark = data.getBoolean("on");
                 darkRadius = data.contains("radius") ? data.getFloat("radius") : 6.0F;
             }
+            case "town" -> townLost = data.getBoolean("lost");
+            case "blizzard" -> {
+                // 11月25日（6階）：凍て鳥の吹雪（強さ・tick）。近くが見えにくくなり、雪が横に流れる
+                Minecraft minecraft = Minecraft.getInstance();
+                long now = minecraft.level == null ? 0 : minecraft.level.getGameTime();
+                blizzard = Math.max(blizzard(), Math.min(1.0F, data.getFloat("strength")));
+                blizzardUntil = Math.max(blizzardUntil, now + data.getInt("ticks"));
+            }
             default -> {
             }
         }
@@ -54,6 +73,33 @@ public final class ClientTowerEnv {
         return fogEnd > 0 || dark;
     }
 
+    public static String sky() {
+        return sky;
+    }
+
+    public static String weather() {
+        return weather;
+    }
+
+    /** 街にロストが及んでいるか（コネリアに白い雪）。 */
+    public static boolean townLost() {
+        return townLost;
+    }
+
+    /** 今の吹雪の強さ（0〜1）。 */
+    public static float blizzard() {
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.level == null || blizzard <= 0.0F) {
+            return 0.0F;
+        }
+        long left = blizzardUntil - minecraft.level.getGameTime();
+        if (left <= 0) {
+            blizzard = 0.0F;
+            return 0.0F;
+        }
+        return blizzard * Math.min(1.0F, left / 20.0F);
+    }
+
     @SubscribeEvent
     public static void onRenderFog(ViewportEvent.RenderFog event) {
         Minecraft minecraft = Minecraft.getInstance();
@@ -62,6 +108,12 @@ public final class ClientTowerEnv {
         }
         float near = fogStart;
         float far = fogEnd;
+        float storm = blizzard();
+        if (storm > 0.0F) {
+            // 吹雪：見えるのは近くだけ
+            far = Math.min(far, Math.max(14.0F, far * (1.0F - storm * 0.85F)));
+            near = Math.min(near, 2.0F);
+        }
         if (dark) {
             // 暗い：灯りを持つ人のそばでも、見えるのは少しだけ（サーバーが、灯りから遠い人には目くらましもかける）
             near = 0.0F;

@@ -1,0 +1,35 @@
+{
+  "slot": "feet",
+  "generation": 1,
+  "series": "守護者シリーズ（ヒーラー）",
+  "rarity": "epic",
+  "required_level": 22,
+  "jobs": [
+    "amemaru:healer"
+  ],
+  "stats": {
+    "defense": 3,
+    "mp": 14,
+    "speed": 1
+  },
+  "durability": 390,
+  "binding": "on_equip",
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:jade_core_shard",
+      "count": 1
+    },
+    {
+      "item": "amemaru:sentinel_plate",
+      "count": 1
+    }
+  ],
+  "set_effects": [
+    {
+      "type": "damage_reduction",
+      "percent": 5
+    }
+  ],
+  "description": "青銅の留め具の白い靴。駆け寄る足を、決して止めない。"
+}

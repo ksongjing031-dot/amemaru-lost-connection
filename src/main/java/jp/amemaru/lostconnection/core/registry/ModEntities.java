@@ -217,6 +217,36 @@ public final class ModEntities {
                             MobCategory.MONSTER)
                     .sized(2.6F, 5.2F).clientTrackingRange(16).updateInterval(2).build(AmemaruMod.id("ancient_guardian").toString()));
 
+    // ---- 11月25日：6階「凍結した村」の敵（Phase 0-A 9章）
+    /** 霜狼（群れで動く。噛まれると凍える）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.village.FrostWolf>> FROST_WOLF =
+            ENTITIES.register("frost_wolf", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.village.FrostWolf>of(jp.amemaru.lostconnection.enemy.village.FrostWolf::new,
+                            MobCategory.MONSTER)
+                    .sized(0.8F, 0.95F).clientTrackingRange(10).build(AmemaruMod.id("frost_wolf").toString()));
+    /** 氷像の残響（村人の氷像の一部が、近づくと動く）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.village.StatueEcho>> STATUE_ECHO =
+            ENTITIES.register("statue_echo", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.village.StatueEcho>of(jp.amemaru.lostconnection.enemy.village.StatueEcho::new,
+                            MobCategory.MONSTER)
+                    .sized(0.6F, 1.8F).clientTrackingRange(10).build(AmemaruMod.id("statue_echo").toString()));
+    /** 凍て鳥（吹雪を起こす）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.village.FrostBird>> FROST_BIRD =
+            ENTITIES.register("frost_bird", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.village.FrostBird>of(jp.amemaru.lostconnection.enemy.village.FrostBird::new,
+                            MobCategory.MONSTER)
+                    .sized(0.9F, 0.7F).clientTrackingRange(10).build(AmemaruMod.id("frost_bird").toString()));
+    /** 霜の欠け熊（大型）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.village.FrostBear>> FROST_BEAR =
+            ENTITIES.register("frost_bear", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.village.FrostBear>of(jp.amemaru.lostconnection.enemy.village.FrostBear::new,
+                            MobCategory.MONSTER)
+                    .sized(1.6F, 1.6F).clientTrackingRange(10).build(AmemaruMod.id("frost_bear").toString()));
+    /** 6階のボス、村長の残響オルド（Phase 0-A 9章）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.boss.Ordo>> ORDO = ENTITIES.register("ordo", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.boss.Ordo>of(jp.amemaru.lostconnection.enemy.boss.Ordo::new, MobCategory.MONSTER)
+                    .sized(1.3F, 3.2F).clientTrackingRange(16).updateInterval(2).build(AmemaruMod.id("ordo").toString()));
+
     /** 1階のボス、草原の主ヴェルドホーン（Phase 0-A 9章）。 */
     public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.boss.Veldhorn>> VELDHORN = ENTITIES.register("veldhorn", () ->
             EntityType.Builder.<jp.amemaru.lostconnection.enemy.boss.Veldhorn>of(jp.amemaru.lostconnection.enemy.boss.Veldhorn::new,
@@ -276,5 +306,13 @@ public final class ModEntities {
                 net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE, 0.8).build());
         event.put(REPAIR_DRONE.get(), jp.amemaru.lostconnection.enemy.altar.RepairDrone.createDroneAttributes().build());
         event.put(ANCIENT_GUARDIAN.get(), jp.amemaru.lostconnection.enemy.boss.AmemaruBoss.createBossAttributes().build());
+        // 11月25日：6階
+        event.put(FROST_WOLF.get(), AmemaruMob.createAttributes().build());
+        event.put(STATUE_ECHO.get(), AmemaruMob.createAttributes().add(
+                net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE, 0.9).build());
+        event.put(FROST_BIRD.get(), CrystalBee.createBeeAttributes().build());
+        event.put(FROST_BEAR.get(), AmemaruMob.createAttributes().add(
+                net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE, 0.7).build());
+        event.put(ORDO.get(), jp.amemaru.lostconnection.enemy.boss.AmemaruBoss.createBossAttributes().build());
     }
 }

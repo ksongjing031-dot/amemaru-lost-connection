@@ -151,6 +151,16 @@ public final class GearTooltips {
         for (SpecialEffect effect : def.effects()) {
             lines.add(Component.translatable("tooltip.amemaru.effect", effect.describe()).withStyle(ChatFormatting.LIGHT_PURPLE));
         }
+        // 11月25日：一式の効果（頭・胴・脚・足を同じシリーズでそろえると効く。今そろっている数も出す）
+        if (!def.setEffects().isEmpty() && stack.getItem() instanceof jp.amemaru.lostconnection.item.AmemaruArmorItem armor) {
+            net.minecraft.client.player.LocalPlayer local = net.minecraft.client.Minecraft.getInstance().player;
+            int worn = local == null ? 0 : jp.amemaru.lostconnection.equipment.GearService.seriesWorn(local, armor.series());
+            lines.add(Component.translatable("tooltip.amemaru.set_bonus", worn).withStyle(worn >= 4 ? ChatFormatting.GOLD : ChatFormatting.GRAY));
+            for (SpecialEffect effect : def.setEffects()) {
+                lines.add(Component.translatable("tooltip.amemaru.set_effect", effect.describe())
+                        .withStyle(worn >= 4 ? ChatFormatting.LIGHT_PURPLE : ChatFormatting.DARK_GRAY));
+            }
+        }
         if (def.rare()) {
             lines.add(Component.translatable("tooltip.amemaru.rare_gear").withStyle(ChatFormatting.DARK_PURPLE));
         }

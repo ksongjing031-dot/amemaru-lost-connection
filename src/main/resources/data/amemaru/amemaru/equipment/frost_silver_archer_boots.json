@@ -1,0 +1,24 @@
+{
+  "slot": "feet",
+  "generation": 2,
+  "series": "霜銀シリーズ（アーチャー）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:archer"
+  ],
+  "stats": {
+    "defense": 3,
+    "hp": 12,
+    "speed": 2
+  },
+  "durability": 310,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 1
+    }
+  ],
+  "description": "ひざ下まである、毛皮の折り返しの長靴。"
+}

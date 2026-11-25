@@ -1,0 +1,105 @@
+{
+  "_comment": "6日目：教会に「記憶の相談所」（Phase 0-A 15章の6日目の街の発展・13章「教会の『記憶の相談所』のクエストで一人ずつ」）。忘れられた人ごとのクエストを始める。台詞は【補完】",
+  "npc": "amemaru:serena",
+  "priority": 45,
+  "conditions": {
+    "flags_all": [
+      "amemaru:ch2/lost_in_town"
+    ],
+    "flags_none": [
+      "amemaru:ch2/queen_down"
+    ]
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "記憶の相談所へ、ようこそ。……あなたを忘れてしまった人が、いるのね",
+      "choices": [
+        {
+          "text": "忘れられてしまった人のこと",
+          "next": "p1"
+        },
+        {
+          "text": "記憶が消えるって、どういうこと？",
+          "next": "w1"
+        },
+        {
+          "text": "またにする",
+          "next": "end"
+        }
+      ]
+    },
+    "p1": {
+      "text": "誰のことかしら。……ゆっくりでいいわ",
+      "choices": [
+        {
+          "text": "門番のバルドのこと",
+          "conditions": {
+            "flags_none": [
+              "amemaru:memory/bard"
+            ]
+          },
+          "actions": [
+            {
+              "type": "amemaru:start_quest",
+              "quest": "amemaru:memory_bard"
+            }
+          ],
+          "next": "b1"
+        },
+        {
+          "text": "カジノのジゼルのこと",
+          "conditions": {
+            "flags_none": [
+              "amemaru:memory/gisele"
+            ]
+          },
+          "actions": [
+            {
+              "type": "amemaru:start_quest",
+              "quest": "amemaru:memory_gisele"
+            }
+          ],
+          "next": "b1"
+        },
+        {
+          "text": "料理屋のペトラのこと",
+          "conditions": {
+            "flags_none": [
+              "amemaru:memory/petra"
+            ]
+          },
+          "actions": [
+            {
+              "type": "amemaru:start_quest",
+              "quest": "amemaru:memory_petra"
+            }
+          ],
+          "next": "b1"
+        },
+        {
+          "text": "やっぱり、またにする",
+          "next": "end"
+        }
+      ]
+    },
+    "b1": {
+      "text": "その人と、前に交わした言葉を思い出して。それを、もう一度伝えに行きましょう",
+      "next": "b2"
+    },
+    "b2": {
+      "text": "糸は切れても、結び直せるわ。……一人ずつ、ゆっくりね"
+    },
+    "w1": {
+      "text": "塔の上で、凍った村が見つかったでしょう。あの白い雪が、街にも降り始めたの",
+      "next": "w2"
+    },
+    "w2": {
+      "text": "わたくしの家は、記憶を守る家系。だから、わたくしは忘れないの",
+      "next": "w3"
+    },
+    "w3": {
+      "text": "忘れている間も、あなたとその人のつながりは消えないわ。凍っているだけ"
+    }
+  }
+}

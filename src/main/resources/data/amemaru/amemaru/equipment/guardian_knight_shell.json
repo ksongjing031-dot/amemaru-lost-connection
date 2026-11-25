@@ -30,5 +30,11 @@
       "count": 2
     }
   ],
+  "set_effects": [
+    {
+      "type": "damage_reduction",
+      "percent": 5
+    }
+  ],
   "description": "守護者の胸を覆っていた白い石の装甲を、騎士の胴に合わせて組み直したもの。継ぎ目を翠の光がめぐり、受けた衝撃を散らす。"
 }

@@ -26,7 +26,7 @@ final class CiPhase8 {
     static boolean action(Minecraft minecraft, String[] shot, boolean first) {
         String kind = shot[0];
         if (!List.of("p8_bell", "p8_listen", "p8_knot", "p8_hold", "p8_valve", "p8_bench", "p8_bench_open", "p8_charm", "p8_lock",
-                "p8_bossfx").contains(kind)) {
+                "p8_bossfx", "p8_tooltip").contains(kind)) {
             return false;
         }
         if (!first) {
@@ -60,6 +60,18 @@ final class CiPhase8 {
             // 11月25日：ボス戦の曲の確かめ（CIの機械には音が出ないので、選んだ曲を記録に書く）
             case "p8_bossfx" -> jp.amemaru.lostconnection.AmemaruMod.LOGGER.info("[amemaru-ci] boss fx ({}): boss={} track={}", shot[3],
                     BossFx.currentBoss(), BossFx.playingTrack());
+            // 11月25日：着ている頭と胴の品の説明文を並べて描く（「一式の効果 今 4/4」を撮る。「-」で閉じる）
+            case "p8_tooltip" -> {
+                if ("-".equals(shot[3]) || minecraft.player == null) {
+                    // 11月25日：何もない画面にすると、写真の途中で自動テストが始まる（6階の写真が止まった原因）。CIの間は何も描かない画面へ
+                    minecraft.setScreen(CiScreenshots.screenAfterClose());
+                } else {
+                    minecraft.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+                    minecraft.setScreen(new CiPhase3.TooltipScreen(List.of(
+                            minecraft.player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.HEAD).copy(),
+                            minecraft.player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.CHEST).copy())));
+                }
+            }
             // 11月24日：ロックオンのキー（B）を1回押したのと同じ（見ている敵をロック。照準の印と名前・距離・HPを撮る）
             case "p8_lock" -> TargetLock.ciPress(minecraft);
             // 11月24日：お守りの枠に付ける（「-」で外す）。5階のユニーク「第七の門鍵」の、体に表示するモデルを撮る

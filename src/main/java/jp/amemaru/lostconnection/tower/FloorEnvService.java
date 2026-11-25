@@ -94,6 +94,13 @@ public final class FloorEnvService {
             if (env.fogColor() >= 0) {
                 tag.putInt("fogColor", env.fogColor());
             }
+            // 11月25日（6階）：オーロラの空・雪
+            if (!env.sky().isEmpty()) {
+                tag.putString("sky", env.sky());
+            }
+            if (!env.weather().isEmpty()) {
+                tag.putString("weather", env.weather());
+            }
         }
         return tag;
     }

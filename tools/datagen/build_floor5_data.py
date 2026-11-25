@@ -61,6 +61,87 @@ JOBS = OrderedDict([
 WEAPON_IDS = {"greatsword": "guardian_greatsword", "staff": "guardian_staff", "bell_staff": "guardian_bell_staff", "bow": "guardian_bow",
               "daggers": "guardian_daggers", "fist": "guardian_gauntlets"}
 
+# 11月25日「防具は一式全部揃えた形にしてください」：外装（胴）のほかに、頭・脚・足を足して一式にする【補完】。
+# 形と絵は流紋シリーズの同じ部位を守護者の色に塗り替える（tools/artgen/make_altar_things.py）。数値は、流紋の部位の数値に
+# 「守護者の外装 ÷ 流紋の胴」の倍率をかけたもの。一式（4つ）そろえると、受けるダメージがさらに −5%（set_effects）
+# 職業 → [(部位, 流紋のID, 守護者のID, 名前, 説明)]
+PIECES = OrderedDict([
+    ("knight", [
+        ("head", "ryumon_knight_helm", "guardian_knight_helm", "守護者の兜",
+         "守護者の頭部の白い石を削り、騎士の兜に仕立てたもの。額の翠の筋が、迫る刃の気配を先に知らせる。"),
+        ("legs", "ryumon_knight_greaves", "guardian_knight_greaves", "守護者の脚甲",
+         "守護者の脚の装甲板を、騎士の脚に合わせて重ねたもの。踏みこむたびに、継ぎ目の翠が淡く光る。"),
+        ("feet", "ryumon_knight_sabatons", "guardian_knight_sabatons", "守護者の鉄靴",
+         "白い石の板を青銅の留め具で綴じた鉄靴。奈落のふちでも、足もとが揺らがない。")]),
+    ("wizard", [
+        ("head", "ryumon_wizard_hat", "guardian_wizard_hat", "守護者の尖り帽",
+         "守護者の装甲の薄い板を、尖り帽のつばに縫いこんだもの。翠の線が、詠唱の乱れを静める。"),
+        ("legs", "ryumon_wizard_legwear", "guardian_wizard_legwear", "守護者の下衣",
+         "法衣の下に重ねる下衣。裾の白い石の小板が、足もとから上がる魔力の衝撃を受け流す。"),
+        ("feet", "ryumon_wizard_shoes", "guardian_wizard_shoes", "守護者の布靴",
+         "翠の糸で縫った、軽い布靴。祭壇の床の冷たさも、魔力の流れも、足に伝えない。")]),
+    ("healer", [
+        ("head", "ryumon_healer_hood", "guardian_healer_hood", "守護者の白頭巾",
+         "白い石の粉で染めた頭巾。額の翠の小石が、癒やしの祈りを遠くまで届ける。"),
+        ("legs", "ryumon_healer_legwear", "guardian_healer_legwear", "守護者の白下衣",
+         "白衣に合わせた下衣。裾の翠の線が、傷ついた仲間のそばで淡く光る。"),
+        ("feet", "ryumon_healer_shoes", "guardian_healer_shoes", "守護者の白靴",
+         "青銅の留め具の白い靴。駆け寄る足を、決して止めない。")]),
+    ("archer", [
+        ("head", "ryumon_archer_cap", "guardian_archer_cap", "守護者の羽根帽",
+         "守護者の装甲の欠片を帽子の縁に縫いつけたもの。羽根の先の翠が、風の向きを教える。"),
+        ("legs", "ryumon_archer_leggings", "guardian_archer_leggings", "守護者の革脚絆",
+         "革の脚絆に、白い石の小板を鱗のように重ねたもの。駆けても音が立たない。"),
+        ("feet", "ryumon_archer_boots", "guardian_archer_boots", "守護者の長靴",
+         "青銅の縁取りの長靴。狙いを定める間、足もとが一寸も動かない。")]),
+    ("rogue", [
+        ("head", "ryumon_rogue_mask", "guardian_rogue_mask", "守護者の覆面",
+         "黒い布の内側に、守護者の装甲の薄い板を当てた覆面。翠の光は、布の内でだけ灯る。"),
+        ("legs", "ryumon_rogue_leggings", "guardian_rogue_leggings", "守護者の黒脚絆",
+         "黒装束に合わせた脚絆。膝の板が、低く駆ける身を守る。"),
+        ("feet", "ryumon_rogue_tabi", "guardian_rogue_tabi", "守護者の足袋",
+         "底に白い石の薄板を仕込んだ足袋。足音を、祭壇の静けさに溶かす。")]),
+    ("monk", [
+        ("head", "ryumon_monk_headband", "guardian_monk_headband", "守護者の鉢巻",
+         "守護者の装甲の帯を細く裂いて編んだ鉢巻。結び目の翠が、気の高まりに合わせて脈打つ。"),
+        ("legs", "ryumon_monk_hakama", "guardian_monk_hakama", "守護者の袴",
+         "道着に合わせた袴。腰の帯の白い石が、踏みこみの重さを地面へ逃がす。"),
+        ("feet", "ryumon_monk_sandals", "guardian_monk_sandals", "守護者の草鞋",
+         "翠の糸で編んだ草鞋。どんな足場でも、拳を打つ足がぶれない。")]),
+])
+# 流紋シリーズの胴（外装の倍率をはかる、もとの品）
+RYUMON_CHEST = {"knight": "ryumon_knight_cuirass", "wizard": "ryumon_wizard_robe", "healer": "ryumon_healer_robe",
+                "archer": "ryumon_archer_jerkin", "rogue": "ryumon_rogue_garb", "monk": "ryumon_monk_gi"}
+SET_EFFECTS = [{"type": "damage_reduction", "percent": 5}]
+
+
+def _ryumon(name):
+    with open(os.path.join(DEFS, "equipment", name + ".json"), encoding="utf-8") as fp:
+        return json.load(fp)
+
+
+def guardian_piece(job, astats, chest_durability, piece_id, ryumon_id, desc, jp_name):
+    """流紋の部位の数値を、守護者の外装 ÷ 流紋の胴 の倍率（1.5倍まで）でふくらませる（ほかの部位にだけある数は、流紋のまま）。"""
+    base = _ryumon(ryumon_id)
+    chest = _ryumon(RYUMON_CHEST[job])
+    stats = OrderedDict()
+    for key, value in base["stats"].items():
+        if key in astats and key in chest["stats"] and chest["stats"][key] > 0:
+            # 小さい数（会心・速さの1→2など）で倍率がはね上がらないよう、1.5倍までにする
+            ratio = min(1.5, astats[key] / chest["stats"][key])
+            stats[key] = max(1, int(round(value * ratio)))
+        else:
+            stats[key] = value
+    durability = int(round(base["durability"] * chest_durability / chest["durability"] / 10.0)) * 10
+    return OrderedDict([
+        ("slot", base["slot"]), ("generation", 1), ("series", "守護者シリーズ（%s）" % jp_name), ("rarity", "epic"),
+        ("required_level", 22), ("jobs", ["amemaru:" + job]), ("stats", stats), ("durability", durability), ("binding", "on_equip"),
+        ("rare", True),
+        ("repair", [{"item": "amemaru:jade_core_shard", "count": 1}, {"item": "amemaru:sentinel_plate", "count": 1}]),
+        ("set_effects", SET_EFFECTS),
+        ("description", desc),
+    ])
+
 
 def guardian_gear():
     out = OrderedDict()
@@ -74,13 +155,17 @@ def guardian_gear():
             ("description", wdesc),
         ])
         aid = "guardian_%s_shell" % job
+        chest_durability = 600 if job == "knight" else 440
         out[aid] = OrderedDict([
             ("slot", "chest"), ("generation", 1), ("series", "守護者シリーズ（%s）" % jp_name), ("rarity", "epic"), ("required_level", 22),
-            ("jobs", ["amemaru:" + job]), ("stats", astats), ("durability", 600 if job == "knight" else 440), ("binding", "on_equip"),
+            ("jobs", ["amemaru:" + job]), ("stats", astats), ("durability", chest_durability), ("binding", "on_equip"),
             ("effects", [{"type": "damage_reduction", "percent": 5}]), ("rare", True),
             ("repair", [{"item": "amemaru:jade_core_shard", "count": 1}, {"item": "amemaru:sentinel_plate", "count": 2}]),
+            ("set_effects", SET_EFFECTS),
             ("description", adesc),
         ])
+        for _slot, ryumon_id, piece_id, _name, desc in PIECES[job]:
+            out[piece_id] = guardian_piece(job, astats, chest_durability, piece_id, ryumon_id, desc, jp_name)
     return out
 
 
@@ -88,6 +173,8 @@ GEAR_NAMES = OrderedDict()
 for _job, (_jp, _kind, _wname, _ws, _aname, _as, _wd, _ad) in JOBS.items():
     GEAR_NAMES[WEAPON_IDS[_kind]] = _wname
     GEAR_NAMES["guardian_%s_shell" % _job] = "守護者の外装（%s）" % _aname
+    for _slot, _rid, _pid, _pname, _pdesc in PIECES[_job]:
+        GEAR_NAMES[_pid] = _pname
 
 GATE_KEY = OrderedDict([
     ("_comment", "守護者の記録核「第七の門鍵」（Phase 0-A 23章のユニーク。お守り。認証：3人以上の味方が8ブロック以内にいると、その全員の"
@@ -156,7 +243,9 @@ ENEMIES = {
 def guardian_rare():
     rare = []
     for wid in GEAR_NAMES:
-        rare.append({"item": "amemaru:" + wid, "chance": 4, "rarity": "epic", "job_match": True})
+        # 11月25日：防具を一式にしたので、武器は4%・防具はそれぞれ3%（ひとりあたりの合計は16%）【補完】
+        chance = 4 if wid in WEAPON_IDS.values() else 3
+        rare.append({"item": "amemaru:" + wid, "chance": chance, "rarity": "epic", "job_match": True})
     rare += [{"item": "amemaru:jade_core_shard", "chance": 100, "count": 2, "pity": False},
              {"item": "amemaru:crystal_fruit_azure", "chance": 20, "pity": False},
              {"item": "amemaru:crystal_fruit_crimson", "chance": 15, "pity": False},
@@ -412,7 +501,13 @@ def merge_item_types():
     d["weapons"] = weapons
     armor = [a for a in d["armor"] if not a["series"].startswith("guardian_")]
     for job in JOBS:
-        armor.append(OrderedDict([("series", "guardian_" + job), ("pieces", OrderedDict([("chest", "guardian_%s_shell" % job)]))]))
+        pieces = OrderedDict()
+        by_slot = {slot: pid for slot, _rid, pid, _n, _d in PIECES[job]}
+        pieces["head"] = by_slot["head"]
+        pieces["chest"] = "guardian_%s_shell" % job
+        pieces["legs"] = by_slot["legs"]
+        pieces["feet"] = by_slot["feet"]
+        armor.append(OrderedDict([("series", "guardian_" + job), ("pieces", pieces)]))
     d["armor"] = armor
     acc = [a for a in d["accessories"] if a["id"] != "seventh_gate_key"]
     # 11月24日：ユニークなので、体にも表示する（専用のモデルと回る環。tools/artgen/make_gate_key.py）

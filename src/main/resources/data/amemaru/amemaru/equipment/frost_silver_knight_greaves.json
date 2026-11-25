@@ -1,0 +1,23 @@
+{
+  "slot": "legs",
+  "generation": 2,
+  "series": "霜銀シリーズ（ナイト）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "defense": 7,
+    "hp": 35
+  },
+  "durability": 560,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frost_silver",
+      "count": 1
+    }
+  ],
+  "description": "膝に霜狼の牙の形の当て板をつけた脚甲。"
+}

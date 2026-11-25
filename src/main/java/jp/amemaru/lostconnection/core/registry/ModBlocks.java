@@ -147,6 +147,17 @@ public final class ModBlocks {
                     .mapColor(MapColor.QUARTZ).strength(-1.0F, 3600000.0F).sound(SoundType.STONE)
                     .lightLevel(state -> state.getValue(jp.amemaru.lostconnection.tower.altar.AltarBlocks.LIT) ? 12 : 5)
                     .noOcclusion().pushReaction(PushReaction.BLOCK)));
+    // ---- 11月25日：6階「凍結した村」の仕掛け（壊せない）
+    /** 熱の炉（宿屋の暖炉・パン屋のかまど・鍛冶屋の炉。右クリックで熱の結晶をもらう）。 */
+    public static final RegistryObject<Block> VILLAGE_HEARTH = BLOCKS.register("village_hearth", () ->
+            new jp.amemaru.lostconnection.tower.village.VillageBlocks.Hearth(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.COLOR_ORANGE).strength(-1.0F, 3600000.0F).sound(SoundType.STONE).lightLevel(state -> 14)
+                    .pushReaction(PushReaction.BLOCK)));
+    /** 凍った村人の氷像（人の形は、ブロックの実体が描く）。 */
+    public static final RegistryObject<Block> VILLAGE_STATUE = BLOCKS.register("village_statue", () ->
+            new jp.amemaru.lostconnection.tower.village.VillageBlocks.Statue(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.ICE).strength(-1.0F, 3600000.0F).sound(SoundType.GLASS).lightLevel(state -> 3)
+                    .noOcclusion().pushReaction(PushReaction.BLOCK)));
     /** 入口の道しるべの石（ともした中継の灯へ連れていく）。 */
     public static final RegistryObject<Block> TRAVEL_STONE = BLOCKS.register("travel_stone", () ->
             new jp.amemaru.lostconnection.tower.forest.ForestBlocks.TravelStone(BlockBehaviour.Properties.of()

@@ -1,0 +1,24 @@
+{
+  "slot": "legs",
+  "generation": 2,
+  "series": "霜銀シリーズ（ヒーラー）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:healer"
+  ],
+  "stats": {
+    "defense": 4,
+    "mp": 29,
+    "hp": 15
+  },
+  "durability": 350,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 1
+    }
+  ],
+  "description": "すそに淡い青で雪を縫った、白い長い下衣。"
+}

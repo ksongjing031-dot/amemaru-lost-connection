@@ -62,6 +62,11 @@ public final class ModCreativeTabs {
                 output.accept(ModItems.BROKEN_BEAST_SPAWN_EGG.get());
                 // 11月24日：5階の敵
                 output.accept(ModItems.WATCHER_SPAWN_EGG.get());
+                output.accept(ModItems.FROST_WOLF_SPAWN_EGG.get());
+                output.accept(ModItems.STATUE_ECHO_SPAWN_EGG.get());
+                output.accept(ModItems.FROST_BIRD_SPAWN_EGG.get());
+                output.accept(ModItems.FROST_BEAR_SPAWN_EGG.get());
+                output.accept(ModItems.ORDO_SPAWN_EGG.get());
                 output.accept(ModItems.SENTINEL_SPAWN_EGG.get());
                 output.accept(ModItems.REPAIR_DRONE_SPAWN_EGG.get());
             })

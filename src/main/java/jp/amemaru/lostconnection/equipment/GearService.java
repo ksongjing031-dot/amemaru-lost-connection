@@ -95,6 +95,47 @@ public final class GearService {
     }
 
     /** 必要レベルと職業の条件を満たしているか。 */
+    /**
+     * 11月25日：防具を一式（頭・胴・脚・足を同じシリーズで）そろえているときの、一式の効果（胴の品の {@code set_effects}）。
+     * 4つとも使える（レベル・職業）・壊れていないときだけ。そろっていなければ空。
+     */
+    public static List<SpecialEffect> setEffects(Player player, PlayerData data) {
+        String series = null;
+        EquipmentDef chest = null;
+        EquipmentDefs.Snapshot snapshot = EquipmentDefs.server();
+        for (EquipmentSlot slot : ARMOR) {
+            ItemStack stack = player.getItemBySlot(slot);
+            if (!(stack.getItem() instanceof jp.amemaru.lostconnection.item.AmemaruArmorItem armor)) {
+                return List.of();
+            }
+            if (series == null) {
+                series = armor.series();
+            } else if (!series.equals(armor.series())) {
+                return List.of();
+            }
+            EquipmentDef def = snapshot.get(stack);
+            if (def == null || !usable(data, def) || GearData.isBroken(stack, def)) {
+                return List.of();
+            }
+            if (slot == EquipmentSlot.CHEST) {
+                chest = def;
+            }
+        }
+        return chest == null ? List.of() : chest.setEffects();
+    }
+
+    /** 着ている防具のうち、そのシリーズの数（一式の説明文に「今 n/4」と出す）。 */
+    public static int seriesWorn(Player player, String series) {
+        int count = 0;
+        for (EquipmentSlot slot : ARMOR) {
+            if (player.getItemBySlot(slot).getItem() instanceof jp.amemaru.lostconnection.item.AmemaruArmorItem armor
+                    && armor.series().equals(series)) {
+                count++;
+            }
+        }
+        return count;
+    }
+
     public static boolean usable(PlayerData data, EquipmentDef def) {
         if (data.getLevel() < def.requiredLevel()) {
             return false;

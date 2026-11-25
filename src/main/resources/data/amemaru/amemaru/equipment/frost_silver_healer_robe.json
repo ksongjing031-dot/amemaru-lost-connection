@@ -1,0 +1,29 @@
+{
+  "slot": "chest",
+  "generation": 2,
+  "series": "霜銀シリーズ（ヒーラー）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:healer"
+  ],
+  "stats": {
+    "defense": 6,
+    "mp": 44,
+    "hp": 22,
+    "heal_power": 3
+  },
+  "durability": 390,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 2
+    },
+    {
+      "item": "amemaru:ice_crystal",
+      "count": 1
+    }
+  ],
+  "description": "雪のように白い法衣。肩掛けのふちに氷晶の鈴が並び、歩くたびに澄んだ音がする。"
+}

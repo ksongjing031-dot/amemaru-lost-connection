@@ -1,0 +1,35 @@
+{
+  "slot": "legs",
+  "generation": 1,
+  "series": "守護者シリーズ（ローグ）",
+  "rarity": "epic",
+  "required_level": 22,
+  "jobs": [
+    "amemaru:rogue"
+  ],
+  "stats": {
+    "defense": 4,
+    "hp": 23,
+    "speed": 2
+  },
+  "durability": 380,
+  "binding": "on_equip",
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:jade_core_shard",
+      "count": 1
+    },
+    {
+      "item": "amemaru:sentinel_plate",
+      "count": 1
+    }
+  ],
+  "set_effects": [
+    {
+      "type": "damage_reduction",
+      "percent": 5
+    }
+  ],
+  "description": "黒装束に合わせた脚絆。膝の板が、低く駆ける身を守る。"
+}

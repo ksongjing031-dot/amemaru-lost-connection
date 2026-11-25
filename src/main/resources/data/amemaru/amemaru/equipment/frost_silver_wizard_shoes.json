@@ -1,0 +1,24 @@
+{
+  "slot": "feet",
+  "generation": 2,
+  "series": "霜銀シリーズ（ウィザード）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:wizard"
+  ],
+  "stats": {
+    "defense": 3,
+    "mp": 22,
+    "speed": 1
+  },
+  "durability": 350,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 1
+    }
+  ],
+  "description": "毛皮を折り返した、やわらかい布の靴。"
+}

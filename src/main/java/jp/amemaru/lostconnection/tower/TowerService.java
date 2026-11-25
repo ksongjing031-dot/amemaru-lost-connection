@@ -479,6 +479,11 @@ public final class TowerService {
                 && !jp.amemaru.lostconnection.tower.temple.TempleService.allSolved(player.server, def)) {
             return false;
         }
+        // 11月25日（6階）：記憶の氷像をすべて溶かしたら（みんな）
+        if (features.requires(FloorFeatures.SEAL_STATUES)
+                && !jp.amemaru.lostconnection.tower.village.VillageService.allThawed(player.server, def)) {
+            return false;
+        }
         if (!features.requires(FloorFeatures.SEAL_PILLARS) || def.pillars().isEmpty()) {
             return true;
         }
@@ -702,6 +707,11 @@ public final class TowerService {
                 && !jp.amemaru.lostconnection.tower.temple.TempleService.allSolved(player.server, def)) {
             int[] murals = jp.amemaru.lostconnection.tower.temple.TempleService.count(player.server, def);
             return Component.translatable("message.amemaru.seal.murals", murals[0], murals[1]);
+        }
+        if (features.requires(FloorFeatures.SEAL_STATUES)
+                && !jp.amemaru.lostconnection.tower.village.VillageService.allThawed(player.server, def)) {
+            int[] statues = jp.amemaru.lostconnection.tower.village.VillageService.count(player.server, def);
+            return Component.translatable("message.amemaru.seal.statues", statues[0], statues[1]);
         }
         if (features.requires(FloorFeatures.SEAL_GUARDIANS)) {
             int done = guardiansDefeated(player, def);

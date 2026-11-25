@@ -1,0 +1,40 @@
+{
+  "_comment": "6日目から（物語フラグ ch2/lost_in_town）、ペトラはプレイヤーを忘れている（Phase 0-A 13章「街の人（一部）」「あんた、見ない顔だね」。NpcMemoryService）。施設の働きは止めない。教会の「記憶の相談所」のクエストで思い出す。台詞は【補完】",
+  "npc": "amemaru:petra",
+  "priority": 40,
+  "conditions": {
+    "remembered": false
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "いらっしゃいませ。……はじめてのお客さん、ですよね？",
+      "choices": [
+        {
+          "text": "料理を作ってほしい",
+          "actions": [
+            {
+              "type": "amemaru:open_restaurant"
+            }
+          ],
+          "next": "end"
+        },
+        {
+          "text": "またね",
+          "next": "end"
+        },
+        {
+          "text": "（前にも会ったことを話す）",
+          "next": "m1"
+        }
+      ]
+    },
+    "m1": {
+      "text": "お料理の腕は、ちゃんと覚えてるんです。……お客さんのお名前だけが、どうしても",
+      "next": "m2"
+    },
+    "m2": {
+      "text": "……ごめんなさい。教会のセレナさんが、記憶の相談にのってくれるそうです"
+    }
+  }
+}

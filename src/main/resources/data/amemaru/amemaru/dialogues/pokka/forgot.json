@@ -1,0 +1,50 @@
+{
+  "_comment": "6日目から、ポッカ爺は魚の名前を忘れる（Phase 0-A 13章。魚図鑑の名前が一時的に「？？？」。魚を手に持って話しかけると、一匹ずつ思い出す。NpcMemoryService.showFish）。台詞は【補完】",
+  "npc": "amemaru:pokka",
+  "priority": 40,
+  "conditions": {
+    "flags_all": [
+      "amemaru:ch2/lost_in_town"
+    ],
+    "flags_none": [
+      "amemaru:ch2/queen_down"
+    ]
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "おう、いらっしゃい。……すまんなぁ、魚の名前が、どうにも出てこないんだなぁ",
+      "choices": [
+        {
+          "text": "魚図鑑を見せて",
+          "actions": [
+            {
+              "type": "amemaru:open_fishing"
+            }
+          ],
+          "next": "end"
+        },
+        {
+          "text": "魚を売りたい・換えたい",
+          "actions": [
+            {
+              "type": "amemaru:open_fishing"
+            }
+          ],
+          "next": "end"
+        },
+        {
+          "text": "どうしたら思い出せる？",
+          "next": "h1"
+        },
+        {
+          "text": "またね",
+          "next": "end"
+        }
+      ]
+    },
+    "h1": {
+      "text": "魚を手に持って、話しかけてくれりゃ……顔を見りゃ、一匹ずつ思い出せる気がするんだなぁ"
+    }
+  }
+}

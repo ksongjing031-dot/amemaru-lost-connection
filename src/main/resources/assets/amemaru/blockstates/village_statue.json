@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "thawed=false": {
+      "model": "amemaru:block/village_statue"
+    },
+    "thawed=true": {
+      "model": "amemaru:block/village_statue"
+    }
+  }
+}

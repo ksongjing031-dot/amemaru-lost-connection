@@ -127,6 +127,8 @@ public final class ProgressionService {
         jp.amemaru.lostconnection.tower.waterway.FloodgateService.onDayChanged(server);
         // 11月24日（4階）：壁画は朝に崩れ、音の順番の扉も閉じる
         jp.amemaru.lostconnection.tower.temple.TempleService.onDayChanged(server);
+        // 11月25日（6階）：記憶の氷像は、朝にはまた凍っている
+        jp.amemaru.lostconnection.tower.village.VillageService.onDayChanged(server);
         broadcastWorldState(server);
         TowerHall.update(server);
         return now;

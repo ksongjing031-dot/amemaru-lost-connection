@@ -31,5 +31,11 @@
       "count": 2
     }
   ],
+  "set_effects": [
+    {
+      "type": "damage_reduction",
+      "percent": 5
+    }
+  ],
   "description": "守護者の装甲の小さな板を、革の胴着に鱗のように重ねたもの。動きを妨げずに、受けた矢と刃を散らす。"
 }

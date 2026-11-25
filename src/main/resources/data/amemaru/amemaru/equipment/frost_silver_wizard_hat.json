@@ -1,0 +1,24 @@
+{
+  "slot": "head",
+  "generation": 2,
+  "series": "霜銀シリーズ（ウィザード）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:wizard"
+  ],
+  "stats": {
+    "defense": 3,
+    "mp": 36,
+    "magic": 4
+  },
+  "durability": 350,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 1
+    }
+  ],
+  "description": "夜空の色の尖り帽。つばのふちに、霜銀の糸で雪の結晶が縫ってある。"
+}

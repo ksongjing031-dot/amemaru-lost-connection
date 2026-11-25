@@ -1,0 +1,24 @@
+{
+  "slot": "feet",
+  "generation": 2,
+  "series": "霜銀シリーズ（モンク）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:monk"
+  ],
+  "stats": {
+    "defense": 3,
+    "hp": 15,
+    "speed": 2
+  },
+  "durability": 330,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 1
+    }
+  ],
+  "description": "足首を凍て毛皮で包んだ、鼻緒の草鞋。"
+}

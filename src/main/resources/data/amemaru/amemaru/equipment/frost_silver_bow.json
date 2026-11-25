@@ -1,0 +1,27 @@
+{
+  "slot": "weapon",
+  "generation": 2,
+  "series": "霜銀シリーズ（アーチャー）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:archer"
+  ],
+  "stats": {
+    "attack": 26,
+    "crit": 4
+  },
+  "durability": 550,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frost_silver",
+      "count": 1
+    },
+    {
+      "item": "amemaru:ice_feather",
+      "count": 1
+    }
+  ],
+  "description": "霜銀の弭（ゆはず）に、凍て鳥の羽根を飾った反り弓。握りは凍て毛皮で巻いてあり、冷えた手でも滑らない。"
+}

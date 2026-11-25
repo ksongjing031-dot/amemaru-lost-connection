@@ -71,12 +71,15 @@ public final class StoryTowerGameTests {
         // 街の10人（リリア・ガルド・セレナ・ドラン・バルド、Phase 6 その3のノア・エルネスト、Phase 7 その2のポッカ爺・その3のジゼル・
         // その4のペトラ）・会話43
         // （Phase 5 の11と、その3の親密度・ノア・エルネストの29、ポッカ爺の1）・ストーリーイベント4（目覚め・2度目の目覚め・1階に入る・初撃破）
-        check(helper, NpcDefs.all().size() == 10, "NPCの数が10ではありません：" + NpcDefs.all().keySet());
+        // 11月25日：6階の記憶の場面の役者6人（あの日の村人。街には立たない＝home がない）で16
+        check(helper, NpcDefs.all().size() == 16, "NPCの数が16ではありません：" + NpcDefs.all().keySet());
         // 11月24日：4階のガルドの「騎士団の遺品」・リリアの「ハロルドの認識票」、5階のガルドの「昇格式」で46
-        check(helper, DialogueDefs.all().size() == 46, "会話の数が46ではありません：" + DialogueDefs.all().size() + " " + DialogueDefs.all().keySet());
+        // 11月25日：6階の記憶をなくした街の人（バルド・ジゼル・ペトラ・ポッカ爺）と、セレナの「記憶の机」で51
+        check(helper, DialogueDefs.all().size() == 51, "会話の数が51ではありません：" + DialogueDefs.all().size() + " " + DialogueDefs.all().keySet());
         // Phase 8 その1：2階に入る・2階の初撃破・霧の奥の少女（ノアの初目撃）。その2：3階に入る・3階の初撃破・白い流れ。
         // 11月24日：4階に入る・初撃破・騎士団の野営の跡・遺品・白い壁画、5階に入る・初撃破・奈落のふち・格子の空で19
-        check(helper, StoryEventManager.all().size() == 19, "ストーリーイベントの数が19ではありません：" + StoryEventManager.all().size());
+        // 11月25日：6階に入る・村の入口・凍った市場・オーロラの見晴らし・記憶の氷像4つ・初撃破で28
+        check(helper, StoryEventManager.all().size() == 28, "ストーリーイベントの数が28ではありません：" + StoryEventManager.all().size());
         for (DialogueDef dialogue : DialogueDefs.all().values()) {
             check(helper, NpcDefs.get(dialogue.npc()) != null, "会話 " + dialogue.id() + " のNPC " + dialogue.npc() + " の定義がありません");
         }

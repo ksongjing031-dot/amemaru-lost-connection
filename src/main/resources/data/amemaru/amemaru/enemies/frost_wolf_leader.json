@@ -1,0 +1,59 @@
+{
+  "_comment": "霜狼の群れ長（6階の名のある魔物。川向こうの林のねぐらの宝箱の守り手）。大きく、噛まれると凍えが2つ。HPが半分を切ると遠吠えで仲間を呼ぶ（behavior.call 匹）。数値は【補完】",
+  "name": "霜狼の群れ長",
+  "model": "amemaru:frost_wolf",
+  "floor": 6,
+  "level": 29,
+  "description": "白い牙を持つ、ひときわ大きな霜狼。凍った川のほとりで群れを率いる。遠吠えひとつで、林じゅうの霜狼が集まってくる。",
+  "stats": {
+    "hp": 14800,
+    "attack": 200,
+    "defense": 18,
+    "move_speed": 0.28,
+    "follow_range": 28,
+    "aggro_range": 16
+  },
+  "exp": 460,
+  "skills": {
+    "bite": {
+      "power": 1.2,
+      "windup": 0.6,
+      "cooldown": 1.6,
+      "range": 2.6,
+      "angle": 100
+    },
+    "charge": {
+      "power": 1.9,
+      "windup": 1.2,
+      "cooldown": 6.5,
+      "range": 16.0,
+      "min_range": 4.5,
+      "speed": 0.95,
+      "width": 1.8,
+      "recover": 1.0
+    }
+  },
+  "behavior": {
+    "chill_stacks": 2,
+    "chill_seconds": 5.0,
+    "call": 3,
+    "scale": 1.6
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/frost_wolf",
+    "rare": [
+      {
+        "item": "amemaru:frost_silver",
+        "chance": 40.0
+      },
+      {
+        "item": "amemaru:white_fang_charm",
+        "chance": 5.0
+      },
+      {
+        "item": "amemaru:crystal_fruit_crimson",
+        "chance": 6.0
+      }
+    ]
+  }
+}

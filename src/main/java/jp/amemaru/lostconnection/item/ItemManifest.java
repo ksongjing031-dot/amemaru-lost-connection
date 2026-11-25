@@ -130,6 +130,9 @@ public final class ItemManifest {
                 case "antidote" -> () -> new AntidoteItem(new Item.Properties().stacksTo(size));
                 case "knot" -> () -> new jp.amemaru.lostconnection.tower.forest.KnotLanternItem(new Item.Properties().stacksTo(size));
                 case "warden" -> () -> new jp.amemaru.lostconnection.tower.forest.WardenLightItem(new Item.Properties().stacksTo(size));
+                // 11月25日：6階の熱の結晶（熱の炉でもらう）と、記憶の結晶（ボスとの戦いの間に、広場のまわりの家に現れる）
+                case "heat" -> () -> new jp.amemaru.lostconnection.tower.village.HeatCrystalItem(false, new Item.Properties().stacksTo(size));
+                case "memory" -> () -> new jp.amemaru.lostconnection.tower.village.HeatCrystalItem(true, new Item.Properties().stacksTo(size));
                 default -> throw new IllegalStateException(PATH + "：道具 " + id + " の kind が分かりません（" + kind + "）");
             };
             manifest.add(register, Category.CONSUMABLE, id, factory);

@@ -1,0 +1,35 @@
+{
+  "slot": "legs",
+  "generation": 1,
+  "series": "守護者シリーズ（ヒーラー）",
+  "rarity": "epic",
+  "required_level": 22,
+  "jobs": [
+    "amemaru:healer"
+  ],
+  "stats": {
+    "defense": 4,
+    "mp": 28,
+    "hp": 14
+  },
+  "durability": 390,
+  "binding": "on_equip",
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:jade_core_shard",
+      "count": 1
+    },
+    {
+      "item": "amemaru:sentinel_plate",
+      "count": 1
+    }
+  ],
+  "set_effects": [
+    {
+      "type": "damage_reduction",
+      "percent": 5
+    }
+  ],
+  "description": "白衣に合わせた下衣。裾の翠の線が、傷ついた仲間のそばで淡く光る。"
+}

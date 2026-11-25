@@ -1,0 +1,26 @@
+{
+  "slot": "weapon",
+  "generation": 2,
+  "series": "霜銀シリーズ（ナイト）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "attack": 28
+  },
+  "durability": 550,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frost_silver",
+      "count": 1
+    },
+    {
+      "item": "amemaru:ice_crystal",
+      "count": 1
+    }
+  ],
+  "description": "霜銀を鍛えた片手剣。刃の根もとに結晶細工を埋め、振ると白い霜の筋が残る。"
+}

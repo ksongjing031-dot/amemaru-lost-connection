@@ -34,7 +34,8 @@ public record SyncStoryS2C(int opening, boolean openingPending, Map<Integer, Int
             if (features.requires(jp.amemaru.lostconnection.tower.FloorFeatures.SEAL_LOST_WOODS)
                     || features.requires(jp.amemaru.lostconnection.tower.FloorFeatures.SEAL_GUARDIANS)
                     || features.requires(jp.amemaru.lostconnection.tower.FloorFeatures.SEAL_FLOODGATES)
-                    || features.requires(jp.amemaru.lostconnection.tower.FloorFeatures.SEAL_MURALS)) {
+                    || features.requires(jp.amemaru.lostconnection.tower.FloorFeatures.SEAL_MURALS)
+                    || features.requires(jp.amemaru.lostconnection.tower.FloorFeatures.SEAL_STATUES)) {
                 // Phase 8 その1：迷いの森の区画（みんなで同じ）を、石柱と同じ形で送る（封印の判定をクライアントでも同じにする）。
                 // 11月24日：名のある魔物を倒した印（人ごと）も、その後ろのビットに足す
                 int bits = 0;
@@ -60,6 +61,11 @@ public record SyncStoryS2C(int opening, boolean openingPending, Map<Integer, Int
                     int[] murals = jp.amemaru.lostconnection.tower.temple.TempleService.count(player.server, def);
                     bits |= jp.amemaru.lostconnection.tower.temple.TempleService.muralBits(player.server, def) << total;
                     total += murals[1];
+                }
+                if (features.requires(jp.amemaru.lostconnection.tower.FloorFeatures.SEAL_STATUES)) {
+                    // 11月25日（6階）：溶けた記憶の氷像（みんなで同じ）
+                    bits |= jp.amemaru.lostconnection.tower.village.VillageService.statueBits(player.server, def) << total;
+                    total += features.memoryStatues().size();
                 }
                 if (features.requires(jp.amemaru.lostconnection.tower.FloorFeatures.SEAL_GUARDIANS)) {
                     List<jp.amemaru.lostconnection.tower.FloorDef.Guardian> named = jp.amemaru.lostconnection.tower.TowerService.namedGuardians(def);

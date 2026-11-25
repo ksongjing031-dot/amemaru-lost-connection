@@ -212,6 +212,34 @@ public final class StoryCommands {
                                             ctx.getSource().sendSuccess(() -> Component.translatable("commands.amemaru.floor.murals_reset"), true);
                                             return 1;
                                         }))))
+                // 11月25日（6階）：記憶の氷像を溶かす・凍らせる（封印の条件 statues の確かめ用）・熱の結晶を渡す
+                .then(Commands.literal("statues")
+                        .then(Commands.argument("floor", IntegerArgumentType.integer(1, 99)).suggests(FLOORS)
+                                .then(Commands.literal("thaw")
+                                        .executes(ctx -> thawStatues(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"), ""))
+                                        .then(Commands.argument("statue", com.mojang.brigadier.arguments.StringArgumentType.word())
+                                                .executes(ctx -> thawStatues(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"),
+                                                        com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "statue")))))
+                                .then(Commands.literal("reset")
+                                        .executes(ctx -> {
+                                            jp.amemaru.lostconnection.tower.village.VillageService.onDayChanged(ctx.getSource().getServer());
+                                            AdminCommands.log(ctx.getSource(), "floor statues reset");
+                                            ctx.getSource().sendSuccess(() -> Component.translatable("commands.amemaru.floor.statues_reset"), true);
+                                            return 1;
+                                        }))))
+                .then(Commands.literal("heat")
+                        .then(Commands.argument("targets", EntityArgument.players())
+                                .executes(ctx -> {
+                                    for (ServerPlayer player : EntityArgument.getPlayers(ctx, "targets")) {
+                                        net.minecraft.world.item.ItemStack stack = jp.amemaru.lostconnection.tower.village.VillageService
+                                                .heatCrystal(player.level().getGameTime());
+                                        if (!player.getInventory().add(stack)) {
+                                            player.drop(stack, false);
+                                        }
+                                    }
+                                    AdminCommands.log(ctx.getSource(), "floor heat");
+                                    return 1;
+                                })))
                 // 11月24日（5階）：祭壇の警戒を消す・上げる（確かめ用）
                 .then(Commands.literal("alert")
                         .then(Commands.argument("floor", IntegerArgumentType.integer(1, 99)).suggests(FLOORS)
@@ -234,6 +262,26 @@ public final class StoryCommands {
                                         .then(Commands.argument("targets", EntityArgument.players())
                                                 .executes(ctx -> setGuardians(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"),
                                                         EntityArgument.getPlayers(ctx, "targets"), false))))));
+    }
+
+    /** 6階の記憶の氷像を溶かす（statue が "" なら、すべて）。 */
+    private static int thawStatues(CommandSourceStack source, int floor, String which) {
+        FloorDef def = FloorDefs.byNumber(floor);
+        if (def == null || def.features().memoryStatues().isEmpty()) {
+            source.sendFailure(Component.translatable("commands.amemaru.floor.no_statues", floor));
+            return 0;
+        }
+        int n = 0;
+        for (jp.amemaru.lostconnection.tower.FloorFeatures.MemoryStatue statue : def.features().memoryStatues()) {
+            if (which.isEmpty() || statue.id().equals(which)) {
+                jp.amemaru.lostconnection.tower.village.VillageService.thaw(source.getServer(), def, statue, null);
+                n++;
+            }
+        }
+        AdminCommands.log(source, "floor statues " + floor + " thaw " + which);
+        int count = n;
+        source.sendSuccess(() -> Component.translatable("commands.amemaru.floor.statues_thawed", count), true);
+        return n;
     }
 
     private static int openGates(CommandSourceStack source, int floor, String which) {

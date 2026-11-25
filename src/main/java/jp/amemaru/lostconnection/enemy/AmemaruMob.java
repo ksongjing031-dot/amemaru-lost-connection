@@ -735,6 +735,10 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
         return true;
     }
 
+    /** 技が人に当たった（{@link EnemyCombat#strike}）。敵ごとの追加の効き目（凍えなど）。11月25日。 */
+    public void onStruck(ServerPlayer player, double coefficient) {
+    }
+
     /** 戦った（打たれた・打った）。押し出されても、戦っている間は戻らない。 */
     public void noteCombat() {
         lastCombatTime = level().getGameTime();

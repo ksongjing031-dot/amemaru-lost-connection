@@ -1,0 +1,24 @@
+{
+  "slot": "legs",
+  "generation": 2,
+  "series": "霜銀シリーズ（ローグ）",
+  "rarity": "common",
+  "required_level": 24,
+  "jobs": [
+    "amemaru:rogue"
+  ],
+  "stats": {
+    "defense": 4,
+    "hp": 23,
+    "speed": 1
+  },
+  "durability": 310,
+  "binding": "none",
+  "repair": [
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 1
+    }
+  ],
+  "description": "すねに毛皮を巻いた、音のしない脚絆。"
+}
