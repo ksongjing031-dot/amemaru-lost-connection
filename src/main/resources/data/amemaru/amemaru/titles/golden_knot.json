@@ -1,0 +1,11 @@
+{
+  "name": "金の結び目",
+  "field": "leisure",
+  "kind": "normal",
+  "condition": {
+    "type": "event",
+    "event": "casino_prize_golden_knot"
+  },
+  "description": "カジノの景品の交換所で、チップ2,000枚と取りかえた（景品の称号）",
+  "order": 376
+}

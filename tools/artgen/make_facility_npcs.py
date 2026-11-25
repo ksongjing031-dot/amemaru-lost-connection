@@ -8,6 +8,8 @@
 作るもの：textures/entity/npc/<名前>.png と、表情の差分 <名前>_<表情>.png（顔の正面だけが違う）
   pokka（ポッカ爺。釣り堀の主人。Phase 0-A 8章：70代、陽気な釣り好き。【補完】白い髪とふさふさの白いひげ、日に焼けた肌、
          麦わら帽子、釣り堀の色（青緑と白）のシャツに、ポケットの多い生成りの釣りベスト、まくった袖、深緑のゴム長靴）
+  gisele（ジゼル・ノワール。カジノの支配人。Phase 0-A 8章：年齢不詳。洒落た女性。【補完】長い黒髪、右に寄せた小さな紫の帽子と
+          金の帯と黒い羽根、カジノの色（紫・金・黒。docs/map_style.md）のドレス、黒い長い手袋、金の耳飾りと首飾り、赤い口紅）
 """
 import os
 import sys
@@ -124,7 +126,114 @@ def pokka():
     return s, pal, faces
 
 
-NPCS = {"pokka": pokka}
+def gisele():
+    s = Skin(True, 113)
+    r = s.rng
+    hair, hair_d, sheen = "#1E1726", "#120D18", "#4A2E66"
+    skin, skin_d = "#F0D2C0", "#D9B4A0"
+    dress, dress_d, dress_l = "#5A2D82", "#3E1D5C", "#7F3FB2"
+    gold, gold_d = "#E8C25A", "#B8923A"
+    glove = "#1A1620"
+    stock, shoe = "#2A2230", "#141018"
+
+    def head(face, x, y, w, h):
+        if face == "top":
+            return noisy(r, hair if (x + y) % 4 else sheen, 0.05)
+        if face == "bottom":
+            return noisy(r, hair_d, 0.05)
+        if face == "front":
+            return skin
+        if face == "back":
+            return noisy(r, hair if (x + y) % 5 else sheen, 0.05)   # 長い黒髪（背中へ）
+        # 横：耳の前まで髪、耳に金の耳飾り
+        if y <= 2 or (face == "right" and x <= 2) or (face == "left" and x >= 5):
+            return noisy(r, hair, 0.05)
+        if y == 5 and ((face == "right" and x == 4) or (face == "left" and x == 3)):
+            return gold
+        return skin
+    s.head(head)
+
+    def hat(face, x, y, w, h):
+        # 小さな紫の帽子（右に寄せてかぶる）に金の帯と、黒い羽根
+        if face == "top":
+            return noisy(r, dress, 0.05) if 1 <= x <= 5 and 1 <= y <= 5 else None
+        if face == "bottom":
+            return None
+        if face == "front" and y == 0 and 1 <= x <= 5:
+            return dress_l
+        if face == "front" and y == 1 and 1 <= x <= 5:
+            return gold
+        if face == "right" and y <= 1:
+            return dress if y == 0 else gold
+        if face == "left" and y <= 2 and x >= 4:
+            return "#101014" if y < 2 else gold                    # 羽根
+        if face == "back" and y >= 1:
+            return noisy(r, hair, 0.05) if y >= 2 else None        # 背中へ垂れる髪
+        return None
+    s.hat(hat)
+
+    def body(face, x, y, w, h):
+        if face == "front":
+            if y == 0 and 2 <= x <= 5:
+                return skin                                       # 首もと
+            if y == 1 and 3 <= x <= 4:
+                return gold                                       # 金の首飾り
+            if y == 1:
+                return skin
+            if y == 2 and 1 <= x <= 6:
+                return dress_l                                    # 胸の縁
+            if 6 <= y <= 7:
+                return gold if y == 6 else dress_d                # 腰の金の帯
+            return noisy(r, dress if y < 10 else dress_d, 0.04)
+        if face == "back":
+            if y <= 6:
+                return noisy(r, hair if (x + y) % 4 else sheen, 0.05)   # 背中の長い髪
+            return noisy(r, dress, 0.04) if y != 7 else gold
+        if face in ("top", "bottom"):
+            return dress_d
+        return noisy(r, dress, 0.04) if y != 6 else gold
+    s.body(body)
+
+    def arm(face, x, y, w, h):
+        if face == "top":
+            return dress
+        if face == "bottom":
+            return glove
+        if y <= 3:
+            return noisy(r, dress, 0.04)                          # 紫の袖
+        if y == 4:
+            return gold                                           # 袖口の金
+        return glove                                              # 黒い長い手袋
+    s.arm("right", arm)
+    s.arm("left", arm)
+
+    def leg(face, x, y, w, h):
+        if face == "top":
+            return dress_d
+        if face == "bottom":
+            return shoe
+        if y <= 6:
+            return noisy(r, dress_d if (x + y) % 3 else dress, 0.04)   # 長いドレスのすそ
+        if y == 7:
+            return gold
+        if y >= 10:
+            return shoe
+        return stock
+    s.leg("right", leg)
+    s.leg("left", leg)
+    pal = {"H": hair, "h": sheen, "S": skin, "s": skin_d, "W": "#FFFFFF", "E": "#3A1E52", "L": "#1A1018", "M": "#B8304A",
+           "m": "#8E2038", "T": "#FFFFFF", "P": "#E8A0B0", "D": "#4A3040"}
+    faces = {
+        # 切れ長の目と長いまつげ、紫の瞳、赤い口紅、左の目もとのほくろ
+        "": ["H H h H H H H H", "H H H H H H S H", "S L L S S L L S", "S W E S S E W S",
+             "S S S S S S D S", "S P S s s S P S", "S S S M M S S S", "S S S S S S S S"],
+        "laugh": ["H H h H H H H H", "H H H H H H S H", "S S S S S S S S", "S L L S S L L S",
+                  "S S S S S S D S", "S P S s s S P S", "S S M T T M S S", "S S S m m S S S"],
+    }
+    return s, pal, faces
+
+
+NPCS = {"pokka": pokka, "gisele": gisele}
 
 
 def build(root):

@@ -1,0 +1,24 @@
+{
+  "_comment": "ジゼル・ノワール（Phase 0-A 8章：カジノ支配人。年齢不詳。洒落た女性。勝っても負けても笑う人が好き。口ぐせ「さあ、運命の輪を回しましょう」。街の噂の出どころ）。Phase 7 その3。立つ所はカジノの大広間のルーレットの卓の東（西の卓を向く。tools/mapgen/build_casino.py の GISELE）。見た目はプレイヤーと同じ形のスキン（11月23日に決定。tools/artgen/make_facility_npcs.py）",
+  "name": "ジゼル",
+  "title": "カジノ支配人",
+  "skin": "amemaru:textures/entity/npc/gisele.png",
+  "slim": true,
+  "portrait_y": 1.36,
+  "expressions": [
+    "laugh"
+  ],
+  "home": {
+    "place": "conelia",
+    "pos": [
+      31.5,
+      3,
+      84.5
+    ],
+    "yaw": 90
+  },
+  "roles": [
+    "casino"
+  ],
+  "talk_range": 5
+}

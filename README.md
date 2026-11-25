@@ -4,7 +4,7 @@ Discordサーバー「あめまるさん」のための、Minecraft Java版 1.20
 
 - 設計：Phase 0-A（世界観とゲームデザイン）、Phase 0-B（技術設計）
 - 作り方：Phaseごとにブランチ（`phase-1` など）で作り、プルリクエストで確認していただいてから `main` に入れます。
-- 各Phaseの内容と確認の手順は [`docs/`](docs/) にあります（[Phase 1](docs/phase1.md)・[Phase 2](docs/phase2.md)・[Phase 3](docs/phase3.md)・[Phase 4](docs/phase4.md)・[Phase 5](docs/phase5.md)・[Phase 6](docs/phase6.md)・[Phase 7 その1](docs/phase7_connection.md)・[その2](docs/phase7_fishing.md)）。建物の様式は [`docs/map_style.md`](docs/map_style.md)、装備のデザインは [`docs/gear/`](docs/gear/README.md)。
+- 各Phaseの内容と確認の手順は [`docs/`](docs/) にあります（[Phase 1](docs/phase1.md)・[Phase 2](docs/phase2.md)・[Phase 3](docs/phase3.md)・[Phase 4](docs/phase4.md)・[Phase 5](docs/phase5.md)・[Phase 6](docs/phase6.md)・[Phase 7 その1](docs/phase7_connection.md)・[その2](docs/phase7_fishing.md)・[その3](docs/phase7_casino.md)）。建物の様式は [`docs/map_style.md`](docs/map_style.md)、装備のデザインは [`docs/gear/`](docs/gear/README.md)。
 - 今までの全部をゲームの中で見て回る道具（確かめ用の平らなワールドと、街の11施設をまとめて建てるコマンド）は [`docs/ingame_check.md`](docs/ingame_check.md)。
 
 ## 動かすのに必要なもの

@@ -4,6 +4,8 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
+import jp.amemaru.lostconnection.casino.CasinoData;
+import jp.amemaru.lostconnection.casino.CasinoService;
 import jp.amemaru.lostconnection.fishing.FishingData;
 import jp.amemaru.lostconnection.fishing.FishingRules;
 import jp.amemaru.lostconnection.fishing.FishingTournament;
@@ -28,7 +30,7 @@ import java.util.Set;
  *   <li>{@code event stop <催し>}：終える（釣り大会は、順位と賞品を出して終える）</li>
  * </ul>
  *
- * <p>催しは Phase 7 その2の「釣り大会」から。カジノナイト（その3）、襲撃・祭り・品評会（Phase 8）も {@link #register} で足す。
+ * <p>催しは Phase 7 その2の「釣り大会」と、その3の「カジノナイト」。襲撃・祭り・品評会（Phase 8）も {@link #register} で足す。
  * 催しごとの細かい操作（釣り大会を何も渡さずに取りやめる、など）は、それぞれのコマンド（{@code fishing tournament …}）で。
  */
 public final class EventCommands {
@@ -67,6 +69,23 @@ public final class EventCommands {
                 }
                 FishingTournament.finish(server, true);
                 return true;
+            }
+        });
+        // カジノナイト（Phase 0-A 15章「夜の催し：不定期（運営が開催）。4人以上の卓に配当ボーナス。生放送に合わせて」。Phase 7 その3）
+        register("casino_night", new AdminEvent() {
+            @Override
+            public boolean running(MinecraftServer server) {
+                return CasinoData.get(server).night();
+            }
+
+            @Override
+            public boolean start(MinecraftServer server, int minutes) {
+                return CasinoService.startNight(server, minutes);
+            }
+
+            @Override
+            public boolean stop(MinecraftServer server) {
+                return CasinoService.endNight(server);
             }
         });
     }

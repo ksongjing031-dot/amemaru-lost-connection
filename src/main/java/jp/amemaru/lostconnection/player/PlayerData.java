@@ -131,6 +131,8 @@ public final class PlayerData {
     /** 釣り（Phase 7 その2）：魚図鑑・点の端数。画面を開いたときに送るので、同期のまとまりはない。 */
     private final jp.amemaru.lostconnection.fishing.FishingRecord fishing =
             new jp.amemaru.lostconnection.fishing.FishingRecord(() -> { });
+    /** カジノ（Phase 7 その3）：チップ・今日買った数・続けて外した回数。 */
+    private final jp.amemaru.lostconnection.casino.CasinoRecord casino = new jp.amemaru.lostconnection.casino.CasinoRecord();
     /** 記録（Phase 4）：ダウンした・仲間を起こした・教会に戻った回数（称号・ランキングは後のPhase） */
     private int downCount;
     private int reviveCount;
@@ -628,6 +630,10 @@ public final class PlayerData {
     }
 
     /** 釣り（Phase 7 その2）。 */
+    public jp.amemaru.lostconnection.casino.CasinoRecord getCasino() {
+        return casino;
+    }
+
     public jp.amemaru.lostconnection.fishing.FishingRecord getFishing() {
         return fishing;
     }
@@ -757,6 +763,7 @@ public final class PlayerData {
         tag.put("guild", guild.save());
         tag.put("connection", connection.save());
         tag.put("fishing", fishing.save());
+        tag.put("casino", casino.save());
         return tag;
     }
 
@@ -841,6 +848,7 @@ public final class PlayerData {
         connection.load(tag.getCompound("connection"));
         // Phase 7 その2：釣り。前の版のデータには無いので、空で始まる
         fishing.load(tag.getCompound("fishing"));
+        casino.load(tag.getCompound("casino"));
         resetTransient();
     }
 
@@ -874,6 +882,7 @@ public final class PlayerData {
         guild.copyFrom(other.guild);
         connection.copyFrom(other.connection);
         fishing.copyFrom(other.fishing);
+        casino.copyFrom(other.casino);
         // バニラの死亡（奈落・/kill）のあとは、リスポーンで教会へ戻す（DownHandler）。ダウンそのものは引き継がない
         down.clear();
         down.setDiedForReal(other.down.diedForReal() || other.down.isDown());

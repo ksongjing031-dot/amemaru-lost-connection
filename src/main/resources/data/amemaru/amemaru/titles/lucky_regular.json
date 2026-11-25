@@ -1,0 +1,11 @@
+{
+  "name": "ラッキーノットの常連",
+  "field": "leisure",
+  "kind": "normal",
+  "condition": {
+    "type": "event",
+    "event": "casino_prize_regular"
+  },
+  "description": "カジノの景品の交換所で、チップ300枚と取りかえた（景品の称号）",
+  "order": 375
+}

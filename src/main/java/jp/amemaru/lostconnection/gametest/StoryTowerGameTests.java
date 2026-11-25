@@ -68,10 +68,10 @@ public final class StoryTowerGameTests {
         check(helper, GuideService.loader().errors().isEmpty(), "手引きの定義に問題があります：" + GuideService.loader().errors());
         check(helper, DaySchedule.loader().errors().isEmpty(), "進行日の定義に問題があります：" + DaySchedule.loader().errors());
         check(helper, FloorDefs.loader().errors().isEmpty(), "階の定義に問題があります：" + FloorDefs.loader().errors());
-        // 街の8人（リリア・ガルド・セレナ・ドラン・バルド、Phase 6 その3のノア・エルネスト、Phase 7 その2のポッカ爺）・会話41
+        // 街の9人（リリア・ガルド・セレナ・ドラン・バルド、Phase 6 その3のノア・エルネスト、Phase 7 その2のポッカ爺・その3のジゼル）・会話42
         // （Phase 5 の11と、その3の親密度・ノア・エルネストの29、ポッカ爺の1）・ストーリーイベント4（目覚め・2度目の目覚め・1階に入る・初撃破）
-        check(helper, NpcDefs.all().size() == 8, "NPCの数が8ではありません：" + NpcDefs.all().keySet());
-        check(helper, DialogueDefs.all().size() == 41, "会話の数が41ではありません：" + DialogueDefs.all().size() + " " + DialogueDefs.all().keySet());
+        check(helper, NpcDefs.all().size() == 9, "NPCの数が9ではありません：" + NpcDefs.all().keySet());
+        check(helper, DialogueDefs.all().size() == 42, "会話の数が42ではありません：" + DialogueDefs.all().size() + " " + DialogueDefs.all().keySet());
         check(helper, StoryEventManager.all().size() == 4, "ストーリーイベントの数が4ではありません");
         for (DialogueDef dialogue : DialogueDefs.all().values()) {
             check(helper, NpcDefs.get(dialogue.npc()) != null, "会話 " + dialogue.id() + " のNPC " + dialogue.npc() + " の定義がありません");

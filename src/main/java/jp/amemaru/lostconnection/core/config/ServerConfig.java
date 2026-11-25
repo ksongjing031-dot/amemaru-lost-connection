@@ -147,6 +147,7 @@ public final class ServerConfig {
     public static final ForgeConfigSpec.IntValue PARTNER_GOAL;
     public static final ForgeConfigSpec.IntValue PARTNER_KNOTS;
     public static final ForgeConfigSpec.BooleanValue FISHING_ENABLED;
+    public static final ForgeConfigSpec.BooleanValue CASINO_ENABLED;
 
     static {
         ForgeConfigSpec.Builder b = new ForgeConfigSpec.Builder();
@@ -550,9 +551,15 @@ public final class ServerConfig {
                 .defineInRange("partnerKnots", 150, 0, 1_000_000);
         b.pop();
 
-        b.comment("釣り（Phase 7 その2。Phase 0-A 15章）。魚の表と数は、データパックの fish/ と fishing_rules/default.json").push("fishing");
+        b.comment("釣り（Phase 7 その2。Phase 0-A 15章）。魚の表と数は、データパックの fishing/ と fishing_rules/default.json").push("fishing");
         FISHING_ENABLED = b
                 .comment("釣りのミニゲーム（糸の張り）と魚図鑑を使う（オフにすると、バニラの釣りのまま）")
+                .define("enabled", true);
+        b.pop();
+
+        b.comment("カジノ（Phase 7 その3。Phase 0-A 15章）。倍率と上限・景品は、データパックの casino/default.json").push("casino");
+        CASINO_ENABLED = b
+                .comment("カジノの卓と窓口の右クリックで、カジノの画面を開く")
                 .define("enabled", true);
         b.pop();
 

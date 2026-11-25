@@ -1,0 +1,178 @@
+{
+  "_comment": "カジノの倍率と上限（Phase 7 その3。Phase 0-B 6章のフォルダの一覧「casino/：カジノの倍率と上限」。Phase 0-A 15章「娯楽の設計（カジノ）」）。数は【補完】。zones は中央広場の真ん中からの位置（tools/mapgen/build_casino.py の卓と窓口。y は道の高さから）",
+  "open_day": 3,
+  "knots_per_chip": 10,
+  "daily_chip_limit": 500,
+  "min_bet": 1,
+  "max_bet": 100,
+  "max_round_bet": 300,
+  "bet_seconds": 25,
+  "roll_seconds": 6,
+  "result_seconds": 5,
+  "table_players": 4,
+  "night_bonus": 0.1,
+  "night_minutes": 60,
+  "watch_range": 24,
+  "zones": {
+    "roulette": {
+      "min": [
+        25,
+        3,
+        82
+      ],
+      "max": [
+        30,
+        4,
+        87
+      ]
+    },
+    "highlow_a": {
+      "min": [
+        22,
+        3,
+        94
+      ],
+      "max": [
+        23,
+        4,
+        95
+      ]
+    },
+    "highlow_b": {
+      "min": [
+        27,
+        3,
+        94
+      ],
+      "max": [
+        28,
+        4,
+        95
+      ]
+    },
+    "fishrace": {
+      "min": [
+        22,
+        10,
+        81
+      ],
+      "max": [
+        32,
+        11,
+        89
+      ]
+    },
+    "cashier": {
+      "min": [
+        15,
+        3,
+        81
+      ],
+      "max": [
+        18,
+        5,
+        81
+      ]
+    },
+    "prizes": {
+      "min": [
+        15,
+        3,
+        90
+      ],
+      "max": [
+        18,
+        4,
+        92
+      ]
+    }
+  },
+  "highlow": {
+    "flag": "amemaru:project/highlow",
+    "edge": 0.97
+  },
+  "fishrace": {
+    "flag": "amemaru:project/fishrace",
+    "edge": 0.97,
+    "min_multiplier": 1.1,
+    "max_multiplier": 30,
+    "entry_win_chips": 20
+  },
+  "prizes": [
+    {
+      "id": "thread",
+      "kind": "item",
+      "item": "amemaru:binding_thread",
+      "chips": 50
+    },
+    {
+      "id": "flag",
+      "kind": "banner",
+      "item": "minecraft:purple_banner",
+      "chips": 30
+    },
+    {
+      "id": "painting",
+      "kind": "item",
+      "item": "minecraft:painting",
+      "chips": 20
+    },
+    {
+      "id": "disc",
+      "kind": "item",
+      "item": "minecraft:music_disc_cat",
+      "chips": 150
+    },
+    {
+      "id": "hat",
+      "kind": "item",
+      "item": "minecraft:leather_helmet",
+      "color": "#7F3FB2",
+      "cosmetic": true,
+      "chips": 60
+    },
+    {
+      "id": "coat",
+      "kind": "item",
+      "item": "minecraft:leather_chestplate",
+      "color": "#7F3FB2",
+      "cosmetic": true,
+      "chips": 90
+    },
+    {
+      "id": "trousers",
+      "kind": "item",
+      "item": "minecraft:leather_leggings",
+      "color": "#1D1D21",
+      "cosmetic": true,
+      "chips": 70
+    },
+    {
+      "id": "boots",
+      "kind": "item",
+      "item": "minecraft:leather_boots",
+      "color": "#FED83D",
+      "cosmetic": true,
+      "chips": 50
+    },
+    {
+      "id": "crown",
+      "kind": "item",
+      "item": "minecraft:golden_helmet",
+      "cosmetic": true,
+      "chips": 200
+    },
+    {
+      "id": "regular",
+      "kind": "title",
+      "title": "amemaru:lucky_regular",
+      "chips": 300
+    },
+    {
+      "id": "golden_knot",
+      "kind": "title",
+      "title": "amemaru:golden_knot",
+      "chips": 2000
+    }
+  ]
+}

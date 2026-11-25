@@ -9,21 +9,27 @@ import net.minecraft.nbt.CompoundTag;
 import java.util.List;
 
 /**
- * 自動の確認の写真（Phase 7：コネクション量と大結晶の輝き・釣り）の段取り：大結晶の台の西の「記憶の石」を右クリックする・
- * 輝きの画面のタブを変える・縁帳を開く・縁帳から結び札を贈る・釣り具屋の画面のタブと図鑑の魚を選ぶ・糸の張りを自動で巻く。
+ * 自動の確認の写真（Phase 7：コネクション量と大結晶の輝き・釣り・カジノ）の段取り：大結晶の台の西の「記憶の石」を右クリックする・
+ * 輝きの画面のタブを変える・縁帳を開く・縁帳から結び札を贈る・釣り具屋の画面のタブと図鑑の魚を選ぶ・糸の張りを自動で巻く・
+ * カジノのルーレットの卓を右クリックする・カジノの画面のタブとチップの額を選ぶ・賭ける・魚レースに魚を出す。
  */
 final class CiPhase7 {
     /** 記憶の石（中央広場の真ん中から。tools/mapgen/build_city.py）。 */
     private static final int STONE_X = -8;
     private static final int STONE_Y = 1;
     private static final int STONE_Z = 0;
+    /** カジノのルーレットの卓の目（中央広場の真ん中から。tools/mapgen/build_casino.py の POCKETS の (13, 12)）。 */
+    private static final int ROULETTE_X = 26;
+    private static final int ROULETTE_Y = 4;
+    private static final int ROULETTE_Z = 84;
 
     private CiPhase7() {
     }
 
     static boolean action(Minecraft minecraft, String[] shot, boolean first) {
         String kind = shot[0];
-        if (!List.of("p7_stone", "p7_glow", "p7_glow_tab", "p7_book", "p7_thanks", "p7f_tab", "p7f_select", "p7f_auto").contains(kind)) {
+        if (!List.of("p7_stone", "p7_glow", "p7_glow_tab", "p7_book", "p7_thanks", "p7f_tab", "p7f_select", "p7f_auto",
+                "p7c_use", "p7c_tab", "p7c_chip", "p7c_bet", "p7c_enter").contains(kind)) {
             return false;
         }
         if (!first) {
@@ -59,6 +65,33 @@ final class CiPhase7 {
                 }
             }
             case "p7f_auto" -> ClientFishing.setAuto("on".equals(shot[3]));
+            case "p7c_use" -> {
+                BlockPos origin = CiScreenshots.cityOrigin();
+                if (origin != null) {
+                    CiPhase3.useWorkbench(minecraft, origin.offset(ROULETTE_X, ROULETTE_Y, ROULETTE_Z));
+                }
+            }
+            case "p7c_tab" -> {
+                if (minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.CasinoScreen screen) {
+                    screen.ciTab(shot[3]);
+                }
+            }
+            case "p7c_chip" -> {
+                if (minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.CasinoScreen screen) {
+                    screen.ciChip(Long.parseLong(shot[3]));
+                }
+            }
+            case "p7c_bet" -> {
+                if (minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.CasinoScreen screen) {
+                    String[] parts = shot[3].split(":");
+                    screen.ciBet(parts[0], Integer.parseInt(parts[1]));
+                }
+            }
+            case "p7c_enter" -> {
+                if (minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.CasinoScreen screen) {
+                    screen.ciEnter();
+                }
+            }
             default -> {
             }
         }
