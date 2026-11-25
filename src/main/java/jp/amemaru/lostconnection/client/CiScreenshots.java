@@ -1842,6 +1842,7 @@ public final class CiScreenshots {
             {"p6_front", null, "10"},
             {"snap", null, "30", "phase8_f7_daggers"},
             {"p8_hold", null, "5", "-"},
+            {"view", null, "5", "first"},
             // リリアはギルドの受付（話せるのは近くだけなので、受付の前へ）
             {"cmd", null, "60", "tp @p {at:23.5,3,-78.5} -90 5"},
             {"p6g_talk", null, "10", "lilia"},
@@ -1855,6 +1856,7 @@ public final class CiScreenshots {
             // 鐘を鳴らすと石橋が浮かぶ・氷の上の8階の敵と氷の下の無音の大魚の影・ロスト状態「静寂」「断線」・湖の歌の碑・湖の鐘を
             // 鳴らすと音が戻る（場面）・祠の氷のふたが開く・湖底の祠（石板・最後の歌い手の氷像・灯籠）・湖心とムーネ（氷の下の影。
             // はね上げ・髭払い・尾打ち・静寂の帳・断ち波）・湖主の髭弓
+            {"view", null, "5", "first"},
             {"cmd", null, "10", "gamemode creative @p"},
             {"p5_build_floor", null, "20", "8"},
             {"await_floor", null, "0"},
@@ -1877,11 +1879,16 @@ public final class CiScreenshots {
             {"await_scene", null, "0"},
             {"snap_keep", null, "60", "phase8_f8_cove"},
             {"await_idle", null, "0"},
+            {"cmd", null, "5", "execute in amemaru:tower run kill @e[type=amemaru:frost_crane,distance=..40]"},
+            {"cmd", null, "5", "execute in amemaru:tower run kill @e[type=amemaru:voice_eater,distance=..40]"},
+            {"cmd", null, "5", "execute in amemaru:tower run kill @e[type=amemaru:fog_wraith,distance=..40]"},
+            {"cmd", null, "5", "amemaru admin debug vitals @a 100 100"},
             {"cmd", null, "20", "execute in amemaru:tower run tp @p {f8:332.5,26,666.5} 180 12"},
             {"snap", null, "40", "phase8_f8_cove_stele"},
             // 入江の鐘を鳴らしきると、石橋が浮かぶ（裂け目の北から、南を見る）
             {"cmd", null, "10", "amemaru admin floor bells 8 solve cove"},
             {"cmd", null, "40", "execute in amemaru:tower run tp @p {f8:360.5,25,598.5} 0 18"},
+            {"cmd", null, "5", "amemaru admin debug vitals @a 100 100"},
             {"snap", null, "40", "phase8_f8_bridge_raised"},
             // 8階の敵（氷の上に並べ、南から見る。無音の大魚は氷の下の影）
             {"cmd", null, "40", "execute in amemaru:tower run tp @p {f8:362.5,25,557.5} 180 10"},
@@ -1904,6 +1911,7 @@ public final class CiScreenshots {
             {"cmd", null, "5", "execute in amemaru:tower run kill @e[type=amemaru:silent_fish,distance=..40]"},
             // 湖の歌の碑（小島）
             {"cmd", null, "60", "execute in amemaru:tower run tp @p {f8:360.5,28,433.5} 180 8"},
+            {"cmd", null, "5", "amemaru admin debug vitals @a 100 100"},
             {"snap", null, "40", "phase8_f8_stele"},
             // 湖の鐘を鳴らしきると、音が戻る（場面）。祠の氷のふたが開く
             {"cmd", null, "5", "amemaru admin floor bells 8 solve"},
@@ -1963,6 +1971,7 @@ public final class CiScreenshots {
             {"p6_front", null, "10"},
             {"snap", null, "30", "phase8_f8_bow"},
             {"p8_hold", null, "5", "-"},
+            {"view", null, "5", "first"},
             {"screen", null, "10", "hold"},
             {"cmd", null, "5", "amemaru admin debug guard @p off"},
             {"cmd", null, "10", "gamemode spectator @p"},
