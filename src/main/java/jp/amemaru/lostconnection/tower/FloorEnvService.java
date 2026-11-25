@@ -56,7 +56,7 @@ public final class FloorEnvService {
                 continue;
             }
             SENT.put(player.getUUID(), floor);
-            ModNetwork.sendTo(player, new TowerS2C("env", envTag(floor)));
+            ModNetwork.sendTo(player, new TowerS2C("env", envTag(server, floor)));
         }
     }
 
@@ -83,8 +83,13 @@ public final class FloorEnvService {
         }
     }
 
+    /** 霧と音の決まりを、みんなにもう一度送る（1秒のうちに。8階の音が戻ったとき・消えたとき）。 */
+    public static void resend(MinecraftServer server) {
+        SENT.clear();
+    }
+
     /** その階の霧（霧の決まりがなければ空。クライアントは霧を戻す）。 */
-    public static CompoundTag envTag(int floor) {
+    public static CompoundTag envTag(MinecraftServer server, int floor) {
         CompoundTag tag = new CompoundTag();
         FloorDef def = floor <= 0 ? null : FloorDefs.byNumber(floor);
         FloorFeatures.Environment env = def == null ? null : def.features().environment();
@@ -100,6 +105,10 @@ public final class FloorEnvService {
             }
             if (!env.weather().isEmpty()) {
                 tag.putString("weather", env.weather());
+            }
+            // 11月25日（8階）：湖の鐘を鳴らすまで、階じゅうの音が消えている
+            if (env.silent() && def != null && !jp.amemaru.lostconnection.tower.lake.BellService.soundRestored(server, def)) {
+                tag.putBoolean("silent", true);
             }
         }
         return tag;

@@ -176,6 +176,17 @@ public final class ModItems {
             new ForgeSpawnEggItem(ModEntities.BLIZZARD_SPIRIT, 0xF2F7FC, 0xB6A0E0, new Item.Properties()));
     public static final RegistryObject<Item> REFLECTA_SPAWN_EGG = ITEMS.register("reflecta_spawn_egg", () ->
             new ForgeSpawnEggItem(ModEntities.REFLECTA, 0xDDEEFA, 0xC7A6F0, new Item.Properties()));
+    // 11月25日：8階
+    public static final RegistryObject<Item> SILENT_FISH_SPAWN_EGG = ITEMS.register("silent_fish_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.SILENT_FISH, 0xE6ECF2, 0x2C3A52, new Item.Properties()));
+    public static final RegistryObject<Item> VOICE_EATER_SPAWN_EGG = ITEMS.register("voice_eater_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.VOICE_EATER, 0xD8DEE8, 0x3FA7B8, new Item.Properties()));
+    public static final RegistryObject<Item> FROST_CRANE_SPAWN_EGG = ITEMS.register("frost_crane_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.FROST_CRANE, 0xF4F6FA, 0x20242E, new Item.Properties()));
+    public static final RegistryObject<Item> FOG_WRAITH_SPAWN_EGG = ITEMS.register("fog_wraith_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.FOG_WRAITH, 0xB9C3CF, 0x6D7A8C, new Item.Properties()));
+    public static final RegistryObject<Item> MUNE_SPAWN_EGG = ITEMS.register("mune_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.MUNE, 0xEEF2F6, 0x8FD8E8, new Item.Properties()));
     // 11月24日：5階の結び台
     public static final RegistryObject<Item> BINDING_DAIS = ITEMS.register("binding_dais", () ->
             new BlockItem(ModBlocks.BINDING_DAIS.get(), new Item.Properties().rarity(Rarity.RARE)));
@@ -191,6 +202,17 @@ public final class ModItems {
             new BlockItem(ModBlocks.ICE_MIRROR.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> LIGHT_TARGET = ITEMS.register("light_target", () ->
             new BlockItem(ModBlocks.LIGHT_TARGET.get(), new Item.Properties().rarity(Rarity.RARE)));
+    // 11月25日：8階
+    public static final RegistryObject<Item> LAKE_ICE = ITEMS.register("lake_ice", () ->
+            new BlockItem(ModBlocks.LAKE_ICE.get(), new Item.Properties()));
+    public static final RegistryObject<Item> THIN_ICE = ITEMS.register("thin_ice", () ->
+            new BlockItem(ModBlocks.THIN_ICE.get(), new Item.Properties()));
+    public static final RegistryObject<Item> LAKE_BELL = ITEMS.register("lake_bell", () ->
+            new BlockItem(ModBlocks.LAKE_BELL.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> SONG_STELE = ITEMS.register("song_stele", () ->
+            new BlockItem(ModBlocks.SONG_STELE.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> LAKE_TABLET = ITEMS.register("lake_tablet", () ->
+            new BlockItem(ModBlocks.LAKE_TABLET.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> MURAL_PANEL = ITEMS.register("mural_panel", () ->
             new BlockItem(ModBlocks.MURAL_PANEL.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> SOUND_PLATE = ITEMS.register("sound_plate", () ->

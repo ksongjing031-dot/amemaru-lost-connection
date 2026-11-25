@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=south": {
+      "model": "amemaru:block/song_stele"
+    },
+    "facing=west": {
+      "model": "amemaru:block/song_stele",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "amemaru:block/song_stele",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "amemaru:block/song_stele",
+      "y": 270
+    }
+  }
+}

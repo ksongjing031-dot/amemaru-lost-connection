@@ -1,0 +1,37 @@
+{
+  "_comment": "黒い裂け目の岸（本人だけ。一人一度）。沈んだ石橋は、入江の鐘を正しい順番で鳴らすと浮かぶ【補完】",
+  "title": "黒い裂け目",
+  "trigger": {
+    "type": "amemaru:floor_zone",
+    "floor": 8,
+    "zone": "gorge"
+  },
+  "scope": "player",
+  "once": false,
+  "replayable": true,
+  "conditions": {
+    "flags_none": [
+      "amemaru:story/lake_gorge_seen"
+    ]
+  },
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "黒い裂け目の底に、崩れた石橋が沈んでいる。",
+      "ticks": 100,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "岸の碑に、こう刻まれている。「入江の鐘を、歌のとおりに鳴らせ。沈んだ道は、音に応えて浮かぶ」",
+      "ticks": 140,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/lake_gorge_seen"
+      ]
+    }
+  ]
+}

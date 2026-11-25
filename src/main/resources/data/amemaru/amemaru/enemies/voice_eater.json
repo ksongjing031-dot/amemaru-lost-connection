@@ -1,0 +1,48 @@
+{
+  "_comment": "声喰い（8階の雑魚。Phase 0-A 9章の8階「近くにいると効果音が消える」）。宙に浮き、声の礫を吐く（needle。1階の結晶蜂と同じ動き）。そば（behavior.silence_range）の人は、ロスト状態「静寂」（効果音と予兆の音が消える。silence_seconds 秒。そばにいる間とぎれない）。数値は【補完】",
+  "name": "声喰い",
+  "floor": 8,
+  "level": 32,
+  "description": "大きな口だけの、ふわふわと浮く白い影。のどの奥が、これまでに食べた声で青く光っている。近くでは、自分の足音さえ聞こえなくなる。",
+  "stats": {
+    "hp": 1500,
+    "attack": 214,
+    "defense": 10,
+    "move_speed": 0.24,
+    "follow_range": 24,
+    "aggro_range": 14
+  },
+  "exp": 66,
+  "skills": {
+    "needle": {
+      "power": 0.9,
+      "windup": 0.8,
+      "cooldown": 3.0,
+      "range": 12,
+      "speed": 0.9
+    }
+  },
+  "behavior": {
+    "keep_distance": 5,
+    "hover_height": 1.5,
+    "silence_range": 7.0,
+    "silence_seconds": 3.0
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/voice_eater",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_white",
+        "chance": 0.6
+      },
+      {
+        "item": "amemaru:crystal_fruit_azure",
+        "chance": 0.3
+      },
+      {
+        "item": "amemaru:lake_pearl",
+        "chance": 1.0
+      }
+    ]
+  }
+}

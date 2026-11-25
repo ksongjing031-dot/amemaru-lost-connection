@@ -15,6 +15,8 @@
   6階 凍結した村      ：凍て毛皮の紐・霜銀の留め金と灯籠・溶けない氷晶（11月25日）
   7階 氷の森林        ：鏡氷（白銀に、淡い紫の映り込み）・枝分かれした氷角・つらら蝙蝠の夜の色の翼と、下がるつらら・
                         オーロラ色の玉（11月25日）
+  8階 沈黙の湖        ：静氷（灰白の氷）・無音の大魚の白い鱗・霧の糸・凍て鶴の白い羽と黒い風切り・青く光る声石・
+                        湖の真珠（11月25日）
 """
 import os
 import sys
@@ -54,6 +56,13 @@ LOCAL = {
     "antler": ramp("#4E7EA6", "#6A98BE", "#8CB4D6", "#AECDE8", "#CFE6F6", "#E8F4FC", "#FFFFFF"),
     "bat": ramp("#0C1018", "#141A26", "#1E2636", "#2A3448", "#38445C", "#4A5874", "#5E6E8E"),
     "aurora": ramp("#3E2E7A", "#5A44A0", "#7A66C4", "#8FD6C8", "#B6EEDF", "#DDF9F1", "#FFFFFF"),
+    # 8階（11月25日）
+    "silent_ice": ramp("#5A6470", "#76808C", "#929CA8", "#AEB8C2", "#C8D0D8", "#DEE4EA", "#F2F5F8"),
+    "lake_scale": ramp("#545C68", "#6E7884", "#8C96A2", "#AAB4BE", "#C8D0D8", "#E2E8EE", "#F8FAFC"),
+    "mist": ramp("#4A5462", "#5E6878", "#747E8E", "#8A94A4", "#A2ACBA", "#BCC4D0", "#D6DCE4"),
+    "crane_white": ramp("#7C8692", "#98A2AE", "#B4BEC8", "#CED6DE", "#E2E8EE", "#F0F4F8", "#FFFFFF"),
+    "crane_black": ramp("#08090C", "#101218", "#181B22", "#22262E", "#2E333C", "#3C424C", "#4C535E"),
+    "voice": ramp("#1E3C9A", "#2A52BA", "#3E6CD2", "#5E8CE4", "#88AEF0", "#B6D0F8", "#E6F0FF"),
 }
 
 
@@ -224,6 +233,42 @@ class FloorAccessoryPainter(AccessoryPainter):
     def paint_aurora(self, c):
         tone = 3.8 + self.bevel(c, up=1.6, down=0.8)
         return pick(LOCAL["aurora"], tone)
+
+    # ---- 8階（11月25日） ----
+    def paint_silent_ice(self, c):
+        """静氷：つやのない灰白の氷。中に、細い白い筋（音を吸いこんだ跡）"""
+        tone = 4.0 + self.bevel(c, up=1.2, down=1.0) + (self.tex(c, 101) - 0.5) * 0.4
+        if (c.i * 2 + c.j) % 6 == 0:
+            tone += 0.8
+        return pick(LOCAL["silent_ice"], tone)
+
+    def paint_lake_scale(self, c):
+        """白い鱗：下のふちが少し暗く、上の面はつやで明るい"""
+        tone = 4.4 + self.bevel(c, up=1.4, down=1.2)
+        if c.j == c.H - 1:
+            tone -= 0.7
+        if c.i == 0 and c.j == 0:
+            tone += 1.0
+        return pick(LOCAL["lake_scale"], tone)
+
+    def paint_mist(self, c):
+        return self._std(c, "mist", base=4.2, noise=0.6, blob=0.3, up=0.8, down=0.8)
+
+    def paint_crane_white(self, c):
+        tone = 4.6 + self.bevel(c, up=1.0, down=1.0)
+        if c.j % 2 == 1:
+            tone -= 0.5   # 羽の重なり
+        return pick(LOCAL["crane_white"], tone)
+
+    def paint_crane_black(self, c):
+        return pick(LOCAL["crane_black"], 3.4 + self.bevel(c, up=1.2, down=0.6))
+
+    def paint_voice(self, c):
+        """声石：深い青の小石（アンコモンなので光らない。左上に白い点のつや）"""
+        tone = 3.4 + self.bevel(c, up=1.6, down=0.8)
+        if c.i == 0 and c.j == 0:
+            tone += 1.6
+        return pick(LOCAL["voice"], tone)
 
 
 # ---------------------------------------------------------------- 共通の形
@@ -499,12 +544,53 @@ def build_passphrase_charm():
     return g
 
 
+# ---------------------------------------------------------------- 8階（11月25日）
+
+def build_fish_scale_necklace():
+    g = new_accessory("fish_scale_necklace")
+    B = "armorBody"
+    neck_cord(g, "mist", inflate=-0.15)
+    # 静氷の留め玉と、扇のように重ねて下げた白い鱗3枚（まん中が手前で大きい）
+    gcube(g, B, "bead", (-0.5, 21.7, -2.8), (1, 1, 1), "silent_ice", inflate=-0.18)
+    for side, sx in (("r", 1), ("l", -1)):
+        gcube(g, B, f"scale_{side}", (sx * 0.9 - 0.75, 19.6, -2.9), (2, 2, 1), "lake_scale", inflate=-0.3,
+              rot=(0, 0, -sx * 22), pivot=(sx * 0.4, 21.4, -2.6))
+    gcube(g, B, "scale_mid", (-1, 19.2, -3.15), (2, 2, 1), "lake_scale", inflate=-0.22)
+    return g
+
+
+def build_frost_crane_bracelet():
+    g = new_accessory("frost_crane_bracelet")
+    A = wrist_band(g, "frost_silver", inflate=0.15)
+    y0 = 14.5
+    # 外に、凍て鶴の冠羽を編みこむ（白い羽2枚を斜めに。先は黒い風切り）
+    for k, (z, tilt) in enumerate(((-1.3, 25), (0.3, -25))):
+        gcube(g, A, f"plume_{k}", (8.4, y0 - 0.2, z), (1, 3, 1), "crane_white", inflate=-0.22, rot=(tilt, 0, 0),
+              pivot=(8.9, y0 + 1.0, z + 0.5))
+        gcube(g, A, f"tip_{k}", (8.4, y0 + 2.3, z + (0.55 if tilt > 0 else -0.55)), (1, 1, 1), "crane_black", inflate=-0.3,
+              rot=(tilt, 0, 0), pivot=(8.9, y0 + 1.0, z + 0.5))
+    return g
+
+
+def build_bell_charm():
+    g = new_accessory("bell_charm")
+    B = hip_cord(g, "mist", "frost_silver")
+    x = -5.5
+    # 静氷を削った小さな鐘（つまみ・肩・すそが広がる）と、中に青い声石の舌
+    gcube(g, B, "knob", (x + 0.75, 9.1, -0.5), (1, 1, 1), "silent_ice", inflate=-0.22)
+    gcube(g, B, "shoulder", (x + 0.25, 8.0, -1.0), (2, 1, 2), "silent_ice", inflate=-0.12)
+    gcube(g, B, "skirt", (x + 0.25, 7.0, -1.0), (2, 1, 2), "silent_ice", inflate=0.2)
+    gcube(g, B, "clapper", (x + 0.75, 6.3, -0.5), (1, 1, 1), "voice", inflate=-0.28)
+    return g
+
+
 BUILDERS = [build_glowcap_necklace, build_rootknot_bracelet, build_wisp_charm,
             build_clearwater_necklace, build_cogwheel_bracelet, build_whisker_charm,
             build_chime_necklace, build_mural_bracelet, build_mane_charm,
             build_jade_necklace, build_sentinel_bracelet, build_lens_charm,
             build_ice_crystal_necklace, build_frozen_fur_bracelet, build_snowlight_charm,
-            build_ice_antler_necklace, build_icicle_bracelet, build_passphrase_charm]
+            build_ice_antler_necklace, build_icicle_bracelet, build_passphrase_charm,
+            build_fish_scale_necklace, build_frost_crane_bracelet, build_bell_charm]
 
 
 # ---------------------------------------------------------------- 持ち物の絵（16×16。enhance_icons.py で 32×32 にする）
@@ -1570,6 +1656,236 @@ ICONS["knot_cord"] = ([
     "................",
 ], {"R": "#D04040", "r": "#8A2020", "w": "#F4F0E8"})
 
+# 8階（11月25日）：静氷の輪（闘環は白い筋の刻み、智環は青い声石）・大魚の鱗の首飾り・凍て鶴の腕輪・鐘の音のお守り・
+# 霜冠の冠羽・千の声の喉石と、8階の素材（静氷・大魚の鱗・声石・凍て鶴の冠羽・霧の糸・湖の真珠）、物語の品（湖底の祠の石板）
+ring("silent_ice_battle_ring", RING_KNUCKLE, {"B": "#DEE4EA", "b": "#AEB8C2", "d": "#76808C", "S": "#929CA8", "k": "#F2F5F8"})
+ring("silent_ice_wisdom_ring", RING_GEM, {"B": "#DEE4EA", "b": "#AEB8C2", "d": "#76808C", "S": "#929CA8", "G": "#88AEF0",
+                                          "g": "#2A52BA"})
+
+ICONS["fish_scale_necklace"] = ([
+    "................",
+    "....mMmMmMmM....",
+    "...M........m...",
+    "..m..........M..",
+    "..M..........m..",
+    "..m..........M..",
+    "...M........m...",
+    "....mM....Mm....",
+    "......MmmM......",
+    ".......II.......",
+    "....SS.SS.SS....",
+    "...SsSSsSSsSS...",
+    "...SSSSSSSSSS...",
+    "....dSSSSSSd....",
+    "......dSSd......",
+    "................",
+], {"m": "#747E8E", "M": "#A2ACBA", "I": "#C8D0D8", "S": "#E2E8EE", "s": "#FFFFFF", "d": "#8C96A2"})
+
+ICONS["frost_crane_bracelet"] = ([
+    "................",
+    "................",
+    "....bBBBBBBb....",
+    "...B........B...",
+    "..b..........b..",
+    "..B..........B..",
+    "..b..........b..",
+    "...B........B...",
+    "....bBBSSBBb....",
+    "......WSsW......",
+    ".....WWSSWW.....",
+    "....WWW..WWW....",
+    "...WWw....wWW...",
+    "...KK......KK...",
+    "..KK........KK..",
+    "................",
+], {"b": "#6A788C", "B": "#B0BCCC", "S": "#8C9AAE", "s": "#F8FBFE", "W": "#F0F4F8", "w": "#B4BEC8", "K": "#22262E"})
+
+ICONS["bell_charm"] = ([
+    "................",
+    ".......ll.......",
+    "......l..l......",
+    ".......ll.......",
+    ".......SS.......",
+    "......IIII......",
+    ".....IiIIII.....",
+    ".....IiIIII.....",
+    ".....IIIIII.....",
+    "....IIIIIIII....",
+    "...IIIIIIIIII...",
+    "...dddddddddd...",
+    ".......VV.......",
+    ".......Vv.......",
+    "................",
+    "................",
+], {"l": "#747E8E", "S": "#8C9AAE", "I": "#C8D0D8", "i": "#F2F5F8", "d": "#76808C", "V": "#3E6CD2", "v": "#88AEF0"})
+
+ICONS["frost_crown_plume"] = ([
+    "................",
+    "...p....c....y..",
+    "...pP...C...Yy..",
+    "....pP..C..Yy...",
+    "....pPP.C.YYy...",
+    ".....pPPCYYy....",
+    "......pPCYy.....",
+    ".......PCY......",
+    "......SSSSS.....",
+    ".......SsS......",
+    "........S.......",
+    ".......lll......",
+    "......l...l.....",
+    ".......lll......",
+    "................",
+    "................",
+], {"p": "#C6BAF0", "P": "#F2E6FF", "c": "#A8DCEC", "C": "#E6FBFF", "y": "#F0E6A0", "Y": "#FFF8DC", "S": "#8C9AAE",
+    "s": "#F8FBFE", "l": "#747E8E"})
+
+ICONS["thousand_voice_stone"] = ([
+    "................",
+    "..a..........a..",
+    ".a....oooo....a.",
+    ".a..ooVVVVoo..a.",
+    "a..oVvvVVVVVo..a",
+    "a..oVvVVVVVVo..a",
+    "a.oVVVVVVVVVVo.a",
+    "a.oVVVVwVVVVVo.a",
+    "a.oVVVwwwVVVVo.a",
+    ".a.oVVVwVVVVo.a.",
+    ".a.oVVVVVVVdo.a.",
+    "..a.ooVVVVoo.a..",
+    "......oooo......",
+    "................",
+    "................",
+    "................",
+], {"a": "#88AEF0", "o": "#1E3C9A", "V": "#3E6CD2", "v": "#B6D0F8", "w": "#E6F0FF", "d": "#2A52BA"})
+
+ICONS["silent_ice"] = ([
+    "................",
+    "................",
+    "......oooo......",
+    ".....oIIIIoo....",
+    "....oIiiIIIIo...",
+    "...oIiIIIsIIo...",
+    "...oIIIIsIIIo...",
+    "...oIIIsIIIIIo..",
+    "...oIIsIIIIIIo..",
+    "....oIIIIIIIo...",
+    "....oIIIIIIo....",
+    ".....ooIIIo.....",
+    ".......ooo......",
+    "................",
+    "................",
+    "................",
+], {"o": "#5A6470", "I": "#AEB8C2", "i": "#F2F5F8", "s": "#DEE4EA"})
+ICONS["fish_scale"] = ([
+    "................",
+    "................",
+    ".....oooooo.....",
+    "....oSSSSSSo....",
+    "...oSsSSSSSSo...",
+    "...oSsSSSSSSo...",
+    "...oSSddddSSo...",
+    "...oSdSSSSdSo...",
+    "...oSSSSSSSSo...",
+    "....oSSddSSo....",
+    "....oSdSSdSo....",
+    ".....oSSSSo.....",
+    "......oSSo......",
+    ".......oo.......",
+    "................",
+    "................",
+], {"o": "#6E7884", "S": "#E2E8EE", "s": "#FFFFFF", "d": "#AAB4BE"})
+ICONS["voice_stone"] = ([
+    "................",
+    "................",
+    "................",
+    "......oooo......",
+    "....ooVVVVoo....",
+    "...oVvVVVVVVo...",
+    "...oVvvVVVVVo...",
+    "..oVVvVVVVVVVo..",
+    "..oVVVVVVVVVVo..",
+    "..oVVVVVVVVdVo..",
+    "...oVVVVVVddo...",
+    "....ooVVVVoo....",
+    "......oooo......",
+    "................",
+    "................",
+    "................",
+], {"o": "#1E3C9A", "V": "#3E6CD2", "v": "#B6D0F8", "d": "#2A52BA"})
+ICONS["crane_plume"] = ([
+    "................",
+    "...........KK...",
+    "..........KKWK..",
+    ".........KWWWK..",
+    "........WWWWW...",
+    ".......WWWsWW...",
+    "......WWWsWWw...",
+    ".....WWWsWWw....",
+    "....WWWsWWw.....",
+    "...wWWsWWw......",
+    "...wWsWww.......",
+    "....sww.........",
+    "...s............",
+    "..s.............",
+    "................",
+    "................",
+], {"K": "#22262E", "W": "#F0F4F8", "w": "#B4BEC8", "s": "#7C8692"})
+ICONS["mist_thread"] = ([
+    "................",
+    "................",
+    "....mmm.........",
+    "...m...mm.......",
+    "...m.MMMMm......",
+    "....MmMmMMM.....",
+    "...MMmMmMmMM....",
+    "...MmMmMmMmMm...",
+    "....MmMmMmMMm...",
+    ".....MMmMmMM....",
+    "......MMMMm..m..",
+    "...........m.m..",
+    "............m...",
+    "................",
+    "................",
+    "................",
+], {"m": "#747E8E", "M": "#BCC4D0"})
+ICONS["lake_pearl"] = ([
+    "................",
+    "................",
+    "................",
+    "......oooo......",
+    ".....oPPPPo.....",
+    "....oPppPPPo....",
+    "....oPpPPPPo....",
+    "....oPPPPPbo....",
+    "....oPPPPbbo....",
+    ".....oPPbbo.....",
+    "......oooo......",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+], {"o": "#6E7884", "P": "#EEF0F2", "p": "#FFFFFF", "b": "#A8DCEC"})
+# 物語の品：湖底の祠の石板（丸い頭の石板に、歌の刻み。下に青く光る音符のしるし）
+ICONS["lake_shrine_tablet"] = ([
+    "................",
+    "......oooo......",
+    "....ooTTTToo....",
+    "...oTTTTTTTTo...",
+    "...oTkkTkkkTo...",
+    "...oTTTTTTTTo...",
+    "...oTkkkTkkTo...",
+    "...oTTTTTTTTo...",
+    "...oTkTkkkkTo...",
+    "...oTTTTbTTTo...",
+    "...oTTTbBbTTo...",
+    "...oTTTTbTTTo...",
+    "...oTTTTTTTTo...",
+    "..oooooooooooo..",
+    "..oSSSSSSSSSSo..",
+    "................",
+], {"o": "#3A4250", "T": "#AEB8C2", "k": "#5A6470", "b": "#5E8CE4", "B": "#E6F0FF", "S": "#76808C"})
+
 ICON_NAMES = list(ICONS.keys())
 
 
@@ -1605,6 +1921,9 @@ NOTES = {
     "ice_antler_necklace": ("氷角の首飾り（7階）", "凍て毛皮の紐と霜銀の留め金に\n枝分かれした氷角（幹と、左右に開いた枝）"),
     "icicle_bracelet": ("つららの腕輪（7階）", "夜の色の翼の骨の輪に、霜銀の留め具\n外に、下へ3本のつらら"),
     "passphrase_charm": ("合言葉の札（7階）", "霜銀のかしらと、合言葉を刻んだ鏡氷の札\n下にオーロラ色の玉"),
+    "fish_scale_necklace": ("大魚の鱗の首飾り（8階）", "霧の糸の紐と静氷の留め玉に\n扇のように重ねた白い鱗3枚"),
+    "frost_crane_bracelet": ("凍て鶴の腕輪（8階）", "霜銀の輪の外に、凍て鶴の白い冠羽を2枚\n斜めに編みこむ（先は黒い風切り）"),
+    "bell_charm": ("鐘の音のお守り（8階）", "霧の糸の紐に、静氷を削った小さな鐘\n中に青い声石の舌"),
     "glowcap_necklace": ("光茸の首飾り（2階）", "葉影の尾の黒緑の紐に、光茸のかさを3つ\n（まん中が大きい。淡い青緑に白い斑）"),
     "rootknot_bracelet": ("根結びの腕輪（2階）", "樹皮の4つの部品を、根のこぶで留めた輪\n外に、錆びた古代の管のかけらと苔鉄の輪"),
     "wisp_charm": ("迷い灯のお守り（2階）", "苔鉄の小さな灯籠（笠・4本の柱・台）の中に\n琥珀色の芯。下に葉影の尾の房"),
@@ -1664,7 +1983,7 @@ def sheets(repo, out, accs):
     ptex = AA.paint(plate)[0]
     chest = AA.PIECE_BONES["chest"] + AA.PIECE_BONES["legs"]
     floors = [("2階", accs[0:3]), ("3階", accs[3:6]), ("4階", accs[6:9]), ("5階", accs[9:12]), ("6階", accs[12:15]),
-              ("7階", accs[15:18])]
+              ("7階", accs[15:18]), ("8階", accs[18:21])]
     for label, group in floors:
         rows = []
         for g, frames in group:

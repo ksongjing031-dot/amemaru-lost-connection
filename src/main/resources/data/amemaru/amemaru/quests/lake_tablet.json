@@ -1,0 +1,30 @@
+{
+  "_comment": "8日目（8階）：湖底の祠の石板を、セレナに見せる（石板を手に取ると始まる。セレナの会話で報告）【補完】",
+  "name": "湖底の祠の石板",
+  "kind": "story",
+  "giver": "amemaru:serena",
+  "report": "amemaru:serena",
+  "board": false,
+  "description": "8階の湖の底の祠で、古い石板を見つけた。「沈黙は、争いを止めた。だが、歌も止めた」。教会のセレナに見せよう。",
+  "requires": {},
+  "objectives": [
+    {
+      "type": "collect",
+      "item": "amemaru:lake_shrine_tablet",
+      "count": 1,
+      "consume": true,
+      "label": "湖底の祠の石板をセレナに見せる"
+    }
+  ],
+  "rewards": {
+    "knots": 400,
+    "exp": 500,
+    "affinity": {
+      "amemaru:serena": 20
+    },
+    "flags": [
+      "amemaru:story/lake_tablet_reported"
+    ]
+  },
+  "order": 140
+}

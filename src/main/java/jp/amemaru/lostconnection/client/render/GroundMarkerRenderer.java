@@ -19,6 +19,10 @@ public class GroundMarkerRenderer extends EntityRenderer<GroundMarker> {
     public void render(GroundMarker marker, float yaw, float partialTick, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         float age = marker.tickCount + partialTick;
         float progress = marker.progress(partialTick);
+        // 11月25日（8階）：ボスの「静寂の帳」の間は、地面の予兆の印も見えない
+        if (jp.amemaru.lostconnection.client.LakeSoundFilter.deepSilence()) {
+            return;
+        }
         poseStack.pushPose();
         poseStack.translate(0.0, 0.07 + TelegraphDraw.waterLift(marker), 0.0);
         if (marker.kind() == GroundMarker.KIND_SHARE) {
@@ -46,6 +50,8 @@ public class GroundMarkerRenderer extends EntityRenderer<GroundMarker> {
             case GroundMarker.KIND_SEED -> 0xFF8FE0;
             case GroundMarker.KIND_SEVER -> 0xF0F4FF;
             case GroundMarker.KIND_SAFE -> 0xF2C94C;
+            // 11月25日（8階）：氷の下から来る所（ひびの色）
+            case GroundMarker.KIND_CRACK -> 0xBFE8FF;
             case GroundMarker.KIND_NOTE -> 0xF4F4F4;
             case GroundMarker.KIND_NOTE + 1 -> 0x6CB8FF;
             case GroundMarker.KIND_NOTE + 2 -> 0xF2C94C;

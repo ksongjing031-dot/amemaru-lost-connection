@@ -649,6 +649,11 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
         super.onSyncedDataUpdated(key);
         if (DATA_TELEGRAPH.equals(key) && level().isClientSide()) {
             telegraphStartClient = level().getGameTime();
+            // 11月25日（8階）：静寂の間も、湖主の髭弓を持つ人には予兆の音が聞こえる
+            if (entityData.get(DATA_TELEGRAPH) != TELEGRAPH_NONE) {
+                net.minecraftforge.fml.DistExecutor.unsafeRunWhenOn(net.minecraftforge.api.distmarker.Dist.CLIENT,
+                        () -> () -> jp.amemaru.lostconnection.client.LakeSoundFilter.onTelegraph(this));
+            }
         }
         if (DATA_SCALE.equals(key)) {
             refreshDimensions();

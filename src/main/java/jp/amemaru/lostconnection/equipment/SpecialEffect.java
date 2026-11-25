@@ -31,6 +31,8 @@ import java.util.Locale;
  *       7階のボスのレア「鏡氷の短剣」。Phase 0-A 20章「一定確率で攻撃が二重に当たる」。11月25日）</li>
  *   <li>{@code lost_resist}：ロスト耐性 +{@code percent}%（ロスト状態の時間が短くなる。ステータスのロスト耐性と足して 50% まで。
  *       7階の名のある魔物のレアのお守り【補完】。11月25日）</li>
+ *   <li>{@code warning_ear}：ロスト状態「静寂」の間も、予兆の音が自分にだけ聞こえる（8階のボスのレア「湖主の髭弓」。Phase 0-A 20章。
+ *       11月25日。働きはクライアントの {@code client.LakeSoundFilter}。{@code percent} は使わないが、100 と書く）</li>
  * </ul>
  *
  * <p>{@code source} は効く攻撃の種類（{@code any}：すべて、{@code melee}：近接攻撃だけ、{@code skill}：スキルだけ）。</p>
@@ -48,7 +50,8 @@ public record SpecialEffect(Type type, double chance, double percent, double thr
         PARTY_WARD("party_ward"),
         COLD_RESIST("cold_resist"),
         DOUBLE_HIT("double_hit"),
-        LOST_RESIST("lost_resist");
+        LOST_RESIST("lost_resist"),
+        WARNING_EAR("warning_ear");
 
         private final String id;
 

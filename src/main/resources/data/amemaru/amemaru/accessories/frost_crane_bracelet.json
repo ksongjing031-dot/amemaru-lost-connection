@@ -1,0 +1,7 @@
+{
+  "_comment": "凍て鶴の腕輪（8階。11月24日「階層ごとにアクセサリーも追加しましょう」【補完】。tools/datagen/build_floor_accessories.py）",
+  "slot": "bracelet",
+  "generation": 2,
+  "floor": 8,
+  "rarity": "uncommon"
+}

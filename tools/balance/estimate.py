@@ -54,7 +54,11 @@ GEAR = {
 ERA_NAMES = {"early": "見習い装備", "mid": "古代石", "late": "流紋", "frost": "霜銀"}
 # 階ごとに見る「おすすめのレベルの真ん中」と、そのころの装備と強化の段（+r は装備のステータス +4%×r）
 REFERENCE = {1: [(4, "early", 0)], 2: [(9, "mid", 0)], 3: [(12, "mid", 1), (15, "late", 0)], 4: [(18, "late", 2)],
-             5: [(22, "late", 4)], 6: [(26, "frost", 0), (28, "frost", 2)], 7: [(30, "frost", 2), (32, "frost", 4)]}
+             5: [(22, "late", 4)], 6: [(26, "frost", 0), (28, "frost", 2)], 7: [(30, "frost", 2), (32, "frost", 4)],
+             8: [(34, "frost", 4), (36, "frost", 6)]}
+# 叩ける間が限られるボス（11月25日）：8階のムーネは氷の下にいる間は叩けない。はね上げ2回（およそ15秒）のあと10秒だけ
+# 氷の上に出る＋静寂の帳を破ったときの8秒（受けるダメージ1.3倍）で、70秒のうちおよそ半分【補完】
+UPTIME = {"mune": 0.5}
 
 # スキルツリー（tools/datagen/build_skill_trees.py の STAT_VALUES と同じ）：ステータスの節の値（内側・中ほど・外側）
 NODE = {"hp": (20, 24, 28), "mp": (10, 12, 14), "attack": (2, 2, 3), "magic": (2, 2, 3), "defense": (2, 2, 3),
@@ -178,7 +182,7 @@ def report(floor, level, era, refine, only_bad):
     for n in (1, 2, 4):
         mult = 1 + k * (max(n, mn) - 1)
         hp = e["stats"]["hp"] * mult
-        dps = raw / 2 * n * mitigation(e["stats"]["defense"]) * 0.55
+        dps = raw / 2 * n * mitigation(e["stats"]["defense"]) * 0.55 * UPTIME.get(boss, 1.0)
         minutes = hp / dps / 60
         flag = ""
         if n == 2 and not TARGET_BOSS_MIN[0] <= minutes <= TARGET_BOSS_MIN[1]:

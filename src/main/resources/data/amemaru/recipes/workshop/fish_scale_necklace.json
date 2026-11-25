@@ -1,0 +1,27 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "accessory",
+  "mastery": 4,
+  "mastery_exp": 26,
+  "ingredients": [
+    {
+      "item": "amemaru:fish_scale",
+      "count": 3
+    },
+    {
+      "item": "amemaru:mist_thread",
+      "count": 1
+    },
+    {
+      "item": "amemaru:silent_ice",
+      "count": 1
+    },
+    {
+      "item": "amemaru:pedestal_cloth",
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "amemaru:fish_scale_necklace"
+  }
+}

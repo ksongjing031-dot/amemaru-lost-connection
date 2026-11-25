@@ -169,6 +169,35 @@ public final class ModBlocks {
                     .mapColor(MapColor.ICE).strength(-1.0F, 3600000.0F).sound(SoundType.AMETHYST)
                     .lightLevel(state -> state.getValue(jp.amemaru.lostconnection.tower.iceforest.IceForestBlocks.LIT) ? 15 : 3)
                     .pushReaction(PushReaction.BLOCK)));
+    // ---- 11月25日：8階「沈黙の湖」（壊せない）
+    /** 湖の氷（透きとおり、すべらない）。 */
+    public static final RegistryObject<Block> LAKE_ICE = BLOCKS.register("lake_ice", () ->
+            new jp.amemaru.lostconnection.tower.lake.LakeBlocks.LakeIce(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.ICE).strength(-1.0F, 3600000.0F).sound(SoundType.GLASS).noOcclusion()
+                    .isValidSpawn((s, l, p, e) -> false).isRedstoneConductor((s, l, p) -> false).isSuffocating((s, l, p) -> false)
+                    .isViewBlocking((s, l, p) -> false).pushReaction(PushReaction.BLOCK)));
+    /** 薄氷（2人以上が近くに乗ると、ひびが入って割れる）。 */
+    public static final RegistryObject<Block> THIN_ICE = BLOCKS.register("thin_ice", () ->
+            new jp.amemaru.lostconnection.tower.lake.LakeBlocks.ThinIce(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.ICE).strength(-1.0F, 3600000.0F).sound(SoundType.GLASS).noOcclusion()
+                    .isValidSpawn((s, l, p, e) -> false).isRedstoneConductor((s, l, p) -> false).isSuffocating((s, l, p) -> false)
+                    .isViewBlocking((s, l, p) -> false).pushReaction(PushReaction.BLOCK)));
+    /** 湖の鐘・鳴り石（右クリックで鳴らす）。 */
+    public static final RegistryObject<Block> LAKE_BELL = BLOCKS.register("lake_bell", () ->
+            new jp.amemaru.lostconnection.tower.lake.LakeBlocks.Bell(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.GOLD).strength(-1.0F, 3600000.0F).sound(SoundType.METAL)
+                    .lightLevel(state -> state.getValue(jp.amemaru.lostconnection.tower.lake.LakeBlocks.LIT) ? 13 : 4)
+                    .noOcclusion().pushReaction(PushReaction.BLOCK)));
+    /** 歌の碑（触れると、今日の歌が浮かぶ）。 */
+    public static final RegistryObject<Block> SONG_STELE = BLOCKS.register("song_stele", () ->
+            new jp.amemaru.lostconnection.tower.lake.LakeBlocks.Stele(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.QUARTZ).strength(-1.0F, 3600000.0F).sound(SoundType.STONE).lightLevel(state -> 7)
+                    .pushReaction(PushReaction.BLOCK)));
+    /** 湖底の祠の石板（物語の品）。 */
+    public static final RegistryObject<Block> LAKE_TABLET = BLOCKS.register("lake_tablet", () ->
+            new jp.amemaru.lostconnection.tower.lake.LakeBlocks.Tablet(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.STONE).strength(-1.0F, 3600000.0F).sound(SoundType.STONE).lightLevel(state -> 5)
+                    .noOcclusion().pushReaction(PushReaction.BLOCK)));
     /** 凍った村人の氷像（人の形は、ブロックの実体が描く）。 */
     public static final RegistryObject<Block> VILLAGE_STATUE = BLOCKS.register("village_statue", () ->
             new jp.amemaru.lostconnection.tower.village.VillageBlocks.Statue(BlockBehaviour.Properties.of()

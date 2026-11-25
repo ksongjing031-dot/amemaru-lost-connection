@@ -1,0 +1,29 @@
+{
+  "_comment": "湖底の祠の石板を手に取ったとき（本人だけ）。持ち帰ってセレナに見せるクエスト lake_tablet が始まる【補完】",
+  "title": "湖底の祠の石板",
+  "trigger": {
+    "type": "amemaru:admin"
+  },
+  "scope": "player",
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "石板を手に取った。冷たい。指先に、刻まれた文字のでこぼこが伝わる。",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "「沈黙は、争いを止めた。だが、歌も止めた」",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "……この言葉の意味を、セレナなら知っているかもしれない。街へ持ち帰ろう。",
+      "ticks": 120,
+      "wait": false
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+{
+  "_comment": "湖の上の、凍った釣り人たち（本人だけ。一人一度）。ロストの侵食：音そのものが消えている【補完】",
+  "title": "凍った釣り人たち",
+  "trigger": {
+    "type": "amemaru:floor_zone",
+    "floor": 8,
+    "zone": "fishers"
+  },
+  "scope": "player",
+  "once": false,
+  "replayable": true,
+  "conditions": {
+    "flags_none": [
+      "amemaru:story/lake_fishers_seen"
+    ]
+  },
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "湖の上に、釣り糸を垂らしたまま凍りついた人たちがいる。",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "呼び合う声が消えた湖で、隣にいる誰かに気づかないまま……何日も、何年も。",
+      "ticks": 130,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/lake_fishers_seen"
+      ]
+    }
+  ]
+}

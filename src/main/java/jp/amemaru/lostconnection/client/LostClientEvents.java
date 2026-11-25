@@ -35,9 +35,16 @@ public final class LostClientEvents {
         return minecraft.player != null && minecraft.player.hasEffect(ModEffects.LOST_FADE.get());
     }
 
+    /** 自分が「断線」の状態か（パーティの欄から、仲間のHPが消える。8階から）。 */
+    public static boolean severed() {
+        Minecraft minecraft = Minecraft.getInstance();
+        return minecraft.player != null && minecraft.player.hasEffect(ModEffects.LOST_SEVER.get());
+    }
+
     /** なにかのロスト状態か。 */
     public static boolean anyLost() {
-        return fade();
+        Minecraft minecraft = Minecraft.getInstance();
+        return fade() || severed() || minecraft.player != null && minecraft.player.hasEffect(ModEffects.LOST_SILENCE.get());
     }
 
     // 称号・ダウンの秒数を足したあとに、まるごと「？？？」にする。写し身（7階）の名前は、いつも氷の色の「？？？」

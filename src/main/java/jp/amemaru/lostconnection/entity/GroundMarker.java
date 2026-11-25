@@ -37,6 +37,8 @@ public class GroundMarker extends Entity {
     public static final int KIND_SEVER = 3;
     /** 金：逃げこむ所（安全な所。11月25日：4階のボスの「残響の色」の床のまわり）。 */
     public static final int KIND_SAFE = 4;
+    /** 11月25日（8階）：氷の下から何かが来る所（無音の大魚・湖主の突き上げ。氷のひびの色）。 */
+    public static final int KIND_CRACK = 5;
     /** 音の色（白・青・金・紅）の、逃げこむ所（4階のボスの「残響の色」。KIND_NOTE + 音の番号）。 */
     public static final int KIND_NOTE = 10;
     /** 打ったあと、明るく見せておく長さ（tick） */
@@ -102,6 +104,11 @@ public class GroundMarker extends Entity {
         super.tick();
         if (!level().isClientSide() && --life <= 0) {
             discard();
+        }
+        // 11月25日（8階）：静寂の間も、湖主の髭弓を持つ人には、印の所から予兆の音が聞こえる
+        if (level().isClientSide() && tickCount == 1) {
+            net.minecraftforge.fml.DistExecutor.unsafeRunWhenOn(net.minecraftforge.api.distmarker.Dist.CLIENT,
+                    () -> () -> jp.amemaru.lostconnection.client.LakeSoundFilter.onTelegraph(this));
         }
     }
 

@@ -40,6 +40,13 @@ import java.util.List;
  *   <li>{@code passphrase}：合言葉の扉（7階。同じ表の「最奥の合言葉の扉は、パーティ全員が同じ合言葉をチャットに打つと開く」）。
  *       {@code area} の中にいるパーティの全員が、{@code seconds} 秒のうちに同じ言葉をチャットに打つと、その人たちは封印を通れる
  *       （封印の条件 {@code passphrase}。人ごと）</li>
+ *   <li>{@code bells}：8階「沈黙の湖」の鐘（Phase 0-A 9章の8階「湖のまわりの鐘を正しい順番で鳴らすと音が戻り、祠への道が開く」。
+ *       11月25日）。組ごとに、歌の碑 {@code stele}（触れると今日の順番が出る）・鐘 {@code bells}・制限時間 {@code seconds}・
+ *       鳴らせたら開く箱 {@code opens}（ブロック → 空気）と浮かぶ箱 {@code raises}（空気 → ブロック）・開いたままにする所
+ *       {@code hold}（人がいる間は閉じない）・音が戻るか {@code sound}。封印の条件 {@code bells}：すべての組を鳴らした（みんな。
+ *       その日のうち）。{@code environment} の {@code silent}：音が戻る組を鳴らすまで、階じゅうの音が消えている</li>
+ *   <li>{@code lake}：8階の湖（{@code ice_y}：氷の面の高さ。{@code rescue_seconds}：氷の下の水に落ちた人を、何秒で引き上げるか）。
+ *       薄氷（2人以上が近くに乗ると割れる）と、敵やボスが割った氷の穴は {@code tower.lake.ThinIceService}</li>
  * </ul>
  */
 public record FloorFeatures(@Nullable Environment environment, List<LostWoods> lostWoods, List<Waypoint> waypoints,
@@ -47,18 +54,47 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
                             List<Floodgate> floodgates, List<WaterSection> waterSections, List<Mural> murals, List<Song> songs,
                             List<Relic> relics, java.util.Map<String, List<BlockPos>> bossMarks, int abyssY,
                             List<Hearth> hearths, List<MemoryStatue> memoryStatues, List<LightMaze> lightMazes,
-                            @Nullable Passphrase passphrase) {
+                            @Nullable Passphrase passphrase, List<BellGroup> bells, @Nullable Lake lake) {
     /** 奈落のない階の {@link #abyssY}。 */
     public static final int NO_ABYSS = Integer.MIN_VALUE;
     public static final FloorFeatures NONE = new FloorFeatures(null, List.of(), List.of(), null, "pillars", List.of(), List.of(),
             List.of(), List.of(), List.of(), List.of(), java.util.Map.<String, List<BlockPos>>of(), NO_ABYSS, List.of(), List.of(),
-            List.of(), null);
+            List.of(), null, List.of(), null);
     /** 11月25日（6階）：記憶の氷像がすべて溶けた（みんなで同じ。その日のうち）。 */
     public static final String SEAL_STATUES = "statues";
     /** 11月25日（7階）：光の迷路をすべて解いた（みんなで同じ。その日のうち）。 */
     public static final String SEAL_LIGHTS = "lights";
     /** 11月25日（7階）：合言葉の扉で、パーティの全員が同じ合言葉を言った（人ごと）。 */
     public static final String SEAL_PASSPHRASE = "passphrase";
+    /** 11月25日（8階）：鐘の組をすべて正しい順番で鳴らした（みんなで同じ。その日のうち）。 */
+    public static final String SEAL_BELLS = "bells";
+
+    /** 鐘（8階）。{@code mark}：歌の碑に出る印（月・鶴など）、{@code name}：鐘の名前、{@code where}：どこにあるか。 */
+    public record Bell(BlockPos pos, String mark, String name, String where) {
+    }
+
+    /**
+     * 鐘の組（8階）。歌の碑 {@code stele} に触れると、今日の順番（毎日かわる）が出る。最初の鐘から {@code seconds} 秒のうちに、
+     * 順番どおりに鳴らすと解け、{@code opens} が開き（空気に）、{@code raises} が浮かぶ（ブロックを置く）。{@code sound}：解けると、
+     * 階に音が戻る（environment.silent）。{@code hold}：人がいる間は、日が変わっても閉じない所（なければ null）。
+     */
+    public record BellGroup(String id, String name, BlockPos stele, int seconds, boolean sound, List<Bell> bells, List<Door> opens,
+                            List<Door> raises, @Nullable AABB hold) {
+    }
+
+    /** 8階の湖。{@code iceY}：氷の面の高さ（階の座標）。{@code rescueSeconds}：水に落ちた人を引き上げるまでの秒。 */
+    public record Lake(int iceY, int rescueSeconds) {
+    }
+
+    @Nullable
+    public BellGroup bellGroup(String id) {
+        for (BellGroup group : bells) {
+            if (group.id().equals(id)) {
+                return group;
+            }
+        }
+        return null;
+    }
 
     /** 氷の鏡（7階）。{@code slash}：はじめ（朝）の向きが「／」か（でなければ「＼」）。 */
     public record Mirror(BlockPos pos, boolean slash) {
@@ -218,7 +254,7 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
     }
 
     /** 霧（クライアントの見え方）。色は 0xRRGGBB（−1 は空の色のまま）。{@code sky}・{@code weather} は 6階から（なければ ""）。 */
-    public record Environment(float fogStart, float fogEnd, int fogColor, String sky, String weather) {
+    public record Environment(float fogStart, float fogEnd, int fogColor, String sky, String weather, boolean silent) {
     }
 
     /** 迷いの森の出口。{@code box} に出たとき、正しい出口でなく、または区画がまだつながっていなければ、{@code entry} へ戻される。 */
@@ -302,7 +338,8 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
             if (!weather.isEmpty() && !weather.equals("snow")) {
                 throw new DefinitionException("「environment.weather」は snow にしてください（今は " + weather + "）");
             }
-            env = new Environment((float) Json.asNumber(fog.get(0), "fog"), (float) Json.asNumber(fog.get(1), "fog"), color, sky, weather);
+            env = new Environment((float) Json.asNumber(fog.get(0), "fog"), (float) Json.asNumber(fog.get(1), "fog"), color, sky, weather,
+                    Json.optionalBoolean(e, "silent", false));
         }
         List<LostWoods> woods = new ArrayList<>();
         JsonArray woodsArray = Json.optionalArray(json, "lost_woods");
@@ -343,8 +380,8 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
         for (String token : seal.split("\\+")) {
             if (!token.equals(SEAL_PILLARS) && !token.equals(SEAL_LOST_WOODS) && !token.equals(SEAL_GUARDIANS)
                     && !token.equals(SEAL_FLOODGATES) && !token.equals(SEAL_MURALS) && !token.equals(SEAL_STATUES)
-                    && !token.equals(SEAL_LIGHTS) && !token.equals(SEAL_PASSPHRASE)) {
-                throw new DefinitionException("「seal_requires」は pillars・lost_woods・guardians・floodgates・murals・statues・lights・passphrase を"
+                    && !token.equals(SEAL_LIGHTS) && !token.equals(SEAL_PASSPHRASE) && !token.equals(SEAL_BELLS)) {
+                throw new DefinitionException("「seal_requires」は pillars・lost_woods・guardians・floodgates・murals・statues・lights・passphrase・bells を"
                         + " + でつないだものにしてください（今は "
                         + seal + "）");
             }
@@ -521,9 +558,43 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
         if (requires(seal, SEAL_PASSPHRASE) && passphrase == null) {
             throw new DefinitionException("「seal_requires」が passphrase なのに、「passphrase」がありません");
         }
+        List<BellGroup> bellGroups = new ArrayList<>();
+        for (JsonElement element : Json.optionalArray(json, "bells")) {
+            JsonObject g = Json.asObject(element, "bells");
+            List<Bell> list = new ArrayList<>();
+            for (JsonElement be : Json.array(g, "bells")) {
+                JsonObject b = Json.asObject(be, "bells.bells");
+                list.add(new Bell(FloorDef.blockPos(Json.array(b, "pos"), "bells.pos"), Json.string(b, "mark"), Json.string(b, "name"),
+                        Json.optionalString(b, "where", "")));
+            }
+            if (list.size() < 2 || list.size() > 8) {
+                throw new DefinitionException("「bells.bells」は2〜8にしてください（" + Json.string(g, "id") + "）");
+            }
+            List<Door> opens = new ArrayList<>();
+            for (JsonElement oe : Json.optionalArray(g, "opens")) {
+                opens.add(door(Json.asObject(oe, "bells.opens"), "bells.opens"));
+            }
+            List<Door> raises = new ArrayList<>();
+            for (JsonElement re : Json.optionalArray(g, "raises")) {
+                raises.add(door(Json.asObject(re, "bells.raises"), "bells.raises"));
+            }
+            JsonArray holdArray = Json.optionalArray(g, "hold");
+            bellGroups.add(new BellGroup(Json.string(g, "id"), Json.optionalString(g, "name", ""),
+                    FloorDef.blockPos(Json.array(g, "stele"), "bells.stele"), Json.optionalInt(g, "seconds", 120, 10, 900),
+                    Json.optionalBoolean(g, "sound", false), List.copyOf(list), List.copyOf(opens), List.copyOf(raises),
+                    holdArray.size() == 6 ? box(holdArray, "bells.hold") : null));
+        }
+        if (requires(seal, SEAL_BELLS) && bellGroups.isEmpty()) {
+            throw new DefinitionException("「seal_requires」が bells なのに、「bells」がありません");
+        }
+        Lake lake = null;
+        JsonObject lk = Json.optionalObject(json, "lake");
+        if (lk != null) {
+            lake = new Lake(Json.optionalInt(lk, "ice_y", 24, 1, 300), Json.optionalInt(lk, "rescue_seconds", 4, 1, 60));
+        }
         return new FloorFeatures(env, List.copyOf(woods), List.copyOf(waypoints), travel, seal, List.copyOf(zones), List.copyOf(gates),
                 List.copyOf(sections), List.copyOf(murals), List.copyOf(songs), List.copyOf(relics), java.util.Map.copyOf(marks), abyss,
-                List.copyOf(hearths), List.copyOf(statues), List.copyOf(mazes), passphrase);
+                List.copyOf(hearths), List.copyOf(statues), List.copyOf(mazes), passphrase, List.copyOf(bellGroups), lake);
     }
 
     @Nullable

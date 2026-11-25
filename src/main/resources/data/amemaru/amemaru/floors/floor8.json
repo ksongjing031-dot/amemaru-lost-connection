@@ -1,0 +1,1167 @@
+{
+  "_comment": "塔の8階「沈黙の湖」（tools/mapgen/build_floor8.py が書き出す。手で直すときは、スクリプトを直して作り直す）",
+  "floor": 8,
+  "chapter": 2,
+  "name": "沈黙の湖",
+  "chapter_title": "第2章　凍てついた記憶",
+  "recommended_level": [
+    32,
+    39
+  ],
+  "origin": [
+    32408,
+    60,
+    -360
+  ],
+  "size": [
+    720,
+    96,
+    720
+  ],
+  "structure": "amemaru:map/floor8/",
+  "piece_size": 48,
+  "entrance": {
+    "pos": [
+      360.5,
+      25,
+      686.5
+    ],
+    "yaw": 180
+  },
+  "return_circle": {
+    "center": [
+      360.5,
+      25,
+      694.5
+    ],
+    "radius": 2.6
+  },
+  "boss_room": {
+    "boss": "amemaru:mune",
+    "name": "湖心",
+    "spawn": {
+      "pos": [
+        360.5,
+        19,
+        128.5
+      ],
+      "yaw": 180
+    },
+    "arena": {
+      "center": [
+        360.5,
+        25,
+        128.5
+      ],
+      "radius": 56.0,
+      "y_min": 8,
+      "y_max": 52
+    },
+    "seal": [
+      [
+        359,
+        9,
+        262
+      ],
+      [
+        361,
+        11,
+        262
+      ]
+    ],
+    "start_radius": 34,
+    "respawn_seconds": 150,
+    "max_players": 8,
+    "hp_min_players": 2,
+    "hp_per_extra_player": 0.6,
+    "attack_per_extra_player": 0.1,
+    "pace_per_extra_player": 0.05,
+    "enrage_seconds": 1800,
+    "exit": {
+      "center": [
+        356.5,
+        25,
+        76.5
+      ],
+      "radius": 2.6
+    },
+    "next": {
+      "center": [
+        363.5,
+        25,
+        76.5
+      ],
+      "radius": 2.6
+    }
+  },
+  "pillars": [],
+  "pillars_done": "湖に、音が戻った。祠の奥の扉が、静かに開く……",
+  "tablet": {
+    "pos": [
+      360,
+      10,
+      264
+    ],
+    "title": "湖底の祠の石板",
+    "text": "沈黙は、争いを止めた。だが、歌も止めた。祠の守り手より。湖に音が戻る日まで、この石板を沈めておく。"
+  },
+  "spawns": [
+    {
+      "id": "shore_cranes",
+      "enemy": "amemaru:frost_crane",
+      "center": [
+        330,
+        26,
+        676
+      ],
+      "radius": 12,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "cove_cranes",
+      "enemy": "amemaru:frost_crane",
+      "center": [
+        268,
+        26,
+        660
+      ],
+      "radius": 10,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "south_fish",
+      "enemy": "amemaru:silent_fish",
+      "center": [
+        330,
+        25,
+        540
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "south_fish_e",
+      "enemy": "amemaru:silent_fish",
+      "center": [
+        410,
+        25,
+        540
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "strip_cranes",
+      "enemy": "amemaru:frost_crane",
+      "center": [
+        420,
+        25,
+        598
+      ],
+      "radius": 10,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "fishers_eaters",
+      "enemy": "amemaru:voice_eater",
+      "center": [
+        432,
+        26,
+        520
+      ],
+      "radius": 10,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 36
+    },
+    {
+      "id": "south_wraiths",
+      "enemy": "amemaru:fog_wraith",
+      "center": [
+        280,
+        26,
+        560
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 40
+    },
+    {
+      "id": "stele_eaters",
+      "enemy": "amemaru:voice_eater",
+      "center": [
+        360,
+        26,
+        456
+      ],
+      "radius": 10,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 36
+    },
+    {
+      "id": "stele_fish_w",
+      "enemy": "amemaru:silent_fish",
+      "center": [
+        300,
+        25,
+        430
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "stele_fish_e",
+      "enemy": "amemaru:silent_fish",
+      "center": [
+        420,
+        25,
+        430
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "west_fish",
+      "enemy": "amemaru:silent_fish",
+      "center": [
+        200,
+        25,
+        440
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "west_wraiths",
+      "enemy": "amemaru:fog_wraith",
+      "center": [
+        160,
+        26,
+        400
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 40
+    },
+    {
+      "id": "marsh_cranes",
+      "enemy": "amemaru:frost_crane",
+      "center": [
+        62,
+        26,
+        360
+      ],
+      "radius": 12,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "marsh_cranes_s",
+      "enemy": "amemaru:frost_crane",
+      "center": [
+        70,
+        25,
+        520
+      ],
+      "radius": 12,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "moon_eaters",
+      "enemy": "amemaru:voice_eater",
+      "center": [
+        112,
+        26,
+        486
+      ],
+      "radius": 8,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 36
+    },
+    {
+      "id": "east_fish",
+      "enemy": "amemaru:silent_fish",
+      "center": [
+        520,
+        25,
+        440
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "east_wraiths",
+      "enemy": "amemaru:fog_wraith",
+      "center": [
+        560,
+        26,
+        400
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 40
+    },
+    {
+      "id": "flower_eaters",
+      "enemy": "amemaru:voice_eater",
+      "center": [
+        610,
+        26,
+        486
+      ],
+      "radius": 8,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 36
+    },
+    {
+      "id": "east_cranes",
+      "enemy": "amemaru:frost_crane",
+      "center": [
+        640,
+        27,
+        520
+      ],
+      "radius": 10,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "north_fish",
+      "enemy": "amemaru:silent_fish",
+      "center": [
+        360,
+        25,
+        340
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "crane_isle_eaters",
+      "enemy": "amemaru:voice_eater",
+      "center": [
+        222,
+        26,
+        300
+      ],
+      "radius": 8,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 36
+    },
+    {
+      "id": "fish_isle_eaters",
+      "enemy": "amemaru:voice_eater",
+      "center": [
+        498,
+        26,
+        300
+      ],
+      "radius": 8,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 36
+    },
+    {
+      "id": "north_wraiths_w",
+      "enemy": "amemaru:fog_wraith",
+      "center": [
+        290,
+        26,
+        300
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 40
+    },
+    {
+      "id": "north_wraiths_e",
+      "enemy": "amemaru:fog_wraith",
+      "center": [
+        430,
+        26,
+        300
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 40
+    },
+    {
+      "id": "shrine_wraiths",
+      "enemy": "amemaru:fog_wraith",
+      "center": [
+        360,
+        26,
+        320
+      ],
+      "radius": 12,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 40
+    }
+  ],
+  "guardians": [
+    {
+      "id": "crane_lord",
+      "enemy": "amemaru:frost_crane",
+      "variant": "amemaru:frost_crane_lord",
+      "pos": [
+        58.5,
+        25,
+        423.5
+      ],
+      "respawn_seconds": 300,
+      "activation": 26,
+      "pillar": -1
+    },
+    {
+      "id": "voice_elder",
+      "enemy": "amemaru:voice_eater",
+      "variant": "amemaru:voice_eater_elder",
+      "pos": [
+        688.5,
+        26.5,
+        425.5
+      ],
+      "respawn_seconds": 300,
+      "activation": 24,
+      "pillar": -1
+    }
+  ],
+  "chests": [
+    {
+      "pos": [
+        371,
+        25,
+        690
+      ],
+      "loot": "amemaru:chests/floor8_lake"
+    },
+    {
+      "pos": [
+        279,
+        25,
+        664
+      ],
+      "loot": "amemaru:chests/floor8_lake"
+    },
+    {
+      "pos": [
+        54,
+        25,
+        414
+      ],
+      "loot": "amemaru:chests/floor8_lake",
+      "guardian": "crane_lord"
+    },
+    {
+      "pos": [
+        692,
+        25,
+        418
+      ],
+      "loot": "amemaru:chests/floor8_lake",
+      "guardian": "voice_elder"
+    },
+    {
+      "pos": [
+        384,
+        25,
+        600
+      ],
+      "loot": "amemaru:chests/floor8_lake"
+    },
+    {
+      "pos": [
+        250,
+        27,
+        486
+      ],
+      "loot": "amemaru:chests/floor8_lake"
+    },
+    {
+      "pos": [
+        470,
+        27,
+        372
+      ],
+      "loot": "amemaru:chests/floor8_lake"
+    },
+    {
+      "pos": [
+        156,
+        27,
+        352
+      ],
+      "loot": "amemaru:chests/floor8_lake"
+    },
+    {
+      "pos": [
+        566,
+        27,
+        548
+      ],
+      "loot": "amemaru:chests/floor8_lake"
+    },
+    {
+      "pos": [
+        430,
+        27,
+        560
+      ],
+      "loot": "amemaru:chests/floor8_lake"
+    },
+    {
+      "pos": [
+        286,
+        27,
+        330
+      ],
+      "loot": "amemaru:chests/floor8_lake"
+    },
+    {
+      "pos": [
+        604,
+        27,
+        330
+      ],
+      "loot": "amemaru:chests/floor8_lake"
+    },
+    {
+      "pos": [
+        208,
+        25,
+        296
+      ],
+      "loot": "amemaru:chests/floor8_lake"
+    },
+    {
+      "pos": [
+        512,
+        25,
+        296
+      ],
+      "loot": "amemaru:chests/floor8_lake"
+    },
+    {
+      "pos": [
+        372,
+        25,
+        440
+      ],
+      "loot": "amemaru:chests/floor8_lake"
+    },
+    {
+      "pos": [
+        100,
+        25,
+        520
+      ],
+      "loot": "amemaru:chests/floor8_lake"
+    },
+    {
+      "pos": [
+        620,
+        27,
+        520
+      ],
+      "loot": "amemaru:chests/floor8_lake"
+    },
+    {
+      "pos": [
+        300,
+        33,
+        690
+      ],
+      "loot": "amemaru:chests/floor8_lake"
+    }
+  ],
+  "environment": {
+    "fog": [
+      24,
+      140
+    ],
+    "fog_color": "#AEB9C4",
+    "silent": true
+  },
+  "waypoints": [
+    {
+      "id": "bridge",
+      "name": "石橋の北",
+      "pos": [
+        374,
+        25,
+        598
+      ],
+      "arrive": {
+        "pos": [
+          374.5,
+          25,
+          596.5
+        ],
+        "yaw": 180
+      }
+    },
+    {
+      "id": "west",
+      "name": "西の葦原",
+      "pos": [
+        110,
+        25,
+        432
+      ],
+      "arrive": {
+        "pos": [
+          108.5,
+          25,
+          432.5
+        ],
+        "yaw": 90
+      }
+    },
+    {
+      "id": "east",
+      "name": "東の声の洞",
+      "pos": [
+        640,
+        25,
+        432
+      ],
+      "arrive": {
+        "pos": [
+          642.5,
+          25,
+          432.5
+        ],
+        "yaw": -90
+      }
+    },
+    {
+      "id": "shrine",
+      "name": "祠の上",
+      "pos": [
+        374,
+        25,
+        304
+      ],
+      "arrive": {
+        "pos": [
+          374.5,
+          25,
+          302.5
+        ],
+        "yaw": 180
+      }
+    }
+  ],
+  "travel_stone": [
+    352,
+    25,
+    688
+  ],
+  "seal_requires": "bells+guardians",
+  "bells": [
+    {
+      "id": "cove",
+      "name": "入江の鐘",
+      "stele": [
+        332,
+        26,
+        663
+      ],
+      "seconds": 90,
+      "sound": false,
+      "bells": [
+        {
+          "pos": [
+            282,
+            27,
+            640
+          ],
+          "mark": "dawn",
+          "name": "朝の鐘",
+          "where": "入江の西"
+        },
+        {
+          "pos": [
+            300,
+            26,
+            671
+          ],
+          "mark": "noon",
+          "name": "昼の鐘",
+          "where": "入江の南"
+        },
+        {
+          "pos": [
+            318,
+            26,
+            640
+          ],
+          "mark": "night",
+          "name": "夜の鐘",
+          "where": "入江の東"
+        }
+      ],
+      "raises": [
+        {
+          "box": [
+            357,
+            24,
+            604,
+            363,
+            24,
+            624
+          ],
+          "block": "minecraft:stone_bricks"
+        },
+        {
+          "box": [
+            357,
+            17,
+            607,
+            358,
+            23,
+            607
+          ],
+          "block": "minecraft:stone_bricks"
+        },
+        {
+          "box": [
+            362,
+            17,
+            607,
+            363,
+            23,
+            607
+          ],
+          "block": "minecraft:stone_bricks"
+        },
+        {
+          "box": [
+            357,
+            17,
+            612,
+            358,
+            23,
+            612
+          ],
+          "block": "minecraft:stone_bricks"
+        },
+        {
+          "box": [
+            362,
+            17,
+            612,
+            363,
+            23,
+            612
+          ],
+          "block": "minecraft:stone_bricks"
+        },
+        {
+          "box": [
+            357,
+            17,
+            617,
+            358,
+            23,
+            617
+          ],
+          "block": "minecraft:stone_bricks"
+        },
+        {
+          "box": [
+            362,
+            17,
+            617,
+            363,
+            23,
+            617
+          ],
+          "block": "minecraft:stone_bricks"
+        },
+        {
+          "box": [
+            357,
+            17,
+            622,
+            358,
+            23,
+            622
+          ],
+          "block": "minecraft:stone_bricks"
+        },
+        {
+          "box": [
+            362,
+            17,
+            622,
+            363,
+            23,
+            622
+          ],
+          "block": "minecraft:stone_bricks"
+        },
+        {
+          "box": [
+            357,
+            25,
+            604,
+            357,
+            25,
+            624
+          ],
+          "block": "minecraft:stone_brick_wall"
+        },
+        {
+          "box": [
+            363,
+            25,
+            604,
+            363,
+            25,
+            624
+          ],
+          "block": "minecraft:stone_brick_wall"
+        }
+      ]
+    },
+    {
+      "id": "main",
+      "name": "湖の鐘",
+      "stele": [
+        360,
+        28,
+        429
+      ],
+      "seconds": 240,
+      "sound": true,
+      "bells": [
+        {
+          "pos": [
+            92,
+            28,
+            470
+          ],
+          "mark": "moon",
+          "name": "月の鐘",
+          "where": "西の岬"
+        },
+        {
+          "pos": [
+            215,
+            28,
+            287
+          ],
+          "mark": "crane",
+          "name": "鶴の鐘",
+          "where": "北西の小島"
+        },
+        {
+          "pos": [
+            505,
+            28,
+            287
+          ],
+          "mark": "fish",
+          "name": "魚の鐘",
+          "where": "北東の小島"
+        },
+        {
+          "pos": [
+            628,
+            28,
+            470
+          ],
+          "mark": "flower",
+          "name": "花の鐘",
+          "where": "東の岸"
+        },
+        {
+          "pos": [
+            330,
+            25,
+            598
+          ],
+          "mark": "star",
+          "name": "星の鐘",
+          "where": "南の岸（石橋のそば）"
+        }
+      ],
+      "opens": [
+        {
+          "box": [
+            363,
+            24,
+            290,
+            364,
+            24,
+            292
+          ],
+          "block": "minecraft:blue_ice"
+        }
+      ],
+      "hold": [
+        346,
+        8,
+        260,
+        374,
+        23,
+        296
+      ]
+    }
+  ],
+  "lake": {
+    "ice_y": 24,
+    "rescue_seconds": 4
+  },
+  "relics": [
+    {
+      "id": "lake_tablet",
+      "pos": [
+        360,
+        10,
+        264
+      ],
+      "items": [
+        "amemaru:lake_shrine_tablet"
+      ],
+      "flag": "amemaru:story/lake_tablet_found",
+      "event": "amemaru:floor8/tablet",
+      "quest": "amemaru:lake_tablet"
+    }
+  ],
+  "hearths": [
+    {
+      "id": "shrine_brazier",
+      "name": "祠の灯籠",
+      "pos": [
+        368,
+        9,
+        274
+      ]
+    }
+  ],
+  "memory_statues": [
+    {
+      "id": "singer",
+      "name": "最後の歌い手",
+      "pos": [
+        352,
+        9,
+        274
+      ],
+      "event": "amemaru:floor8/memory_singer"
+    }
+  ],
+  "boss_marks": {
+    "arena_bells": [
+      [
+        389,
+        25,
+        99
+      ],
+      [
+        331,
+        25,
+        99
+      ],
+      [
+        331,
+        25,
+        157
+      ],
+      [
+        389,
+        25,
+        157
+      ]
+    ],
+    "arena_center": [
+      [
+        360,
+        24,
+        128
+      ]
+    ]
+  },
+  "story_zones": [
+    {
+      "id": "gorge",
+      "box": [
+        352,
+        24,
+        626,
+        368,
+        30,
+        634
+      ]
+    },
+    {
+      "id": "cove",
+      "box": [
+        280,
+        24,
+        634,
+        336,
+        30,
+        672
+      ]
+    },
+    {
+      "id": "shrine",
+      "box": [
+        348,
+        9,
+        263,
+        372,
+        15,
+        283
+      ]
+    },
+    {
+      "id": "fishers",
+      "box": [
+        425,
+        24,
+        500,
+        439,
+        29,
+        513
+      ]
+    }
+  ]
+}

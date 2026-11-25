@@ -1,0 +1,46 @@
+{
+  "_comment": "初めて8階に入ったとき（本人だけ）。音のない凍った湖。足音も環境音も消えている。氷の下に巨大な影と、沈んだ祠が見える（Phase 0-A 9章の8階の地形・環境）。8日目。台詞は【補完】",
+  "title": "沈黙の湖",
+  "trigger": {
+    "type": "amemaru:floor_enter",
+    "floor": 8
+  },
+  "scope": "player",
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:wait",
+      "ticks": 60
+    },
+    {
+      "type": "amemaru:title",
+      "title": "第2章　凍てついた記憶",
+      "subtitle": "8階　沈黙の湖",
+      "ticks": 110
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "……足音がしない。",
+      "ticks": 90,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "雪を踏んでも、氷をたたいても、何も聞こえない。自分の息の音さえ、湖に吸いこまれていく。",
+      "ticks": 130,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "凍った湖の下を、大きな影がゆっくりと横切った。",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "この湖では、声だけが頼りだ。仲間と声をかけ合おう（ボイスチャット）。",
+      "ticks": 120,
+      "wait": false
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=south": {
+      "model": "amemaru:block/lake_tablet"
+    },
+    "facing=west": {
+      "model": "amemaru:block/lake_tablet",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "amemaru:block/lake_tablet",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "amemaru:block/lake_tablet",
+      "y": 270
+    }
+  }
+}

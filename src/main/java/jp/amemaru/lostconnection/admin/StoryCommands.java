@@ -66,7 +66,7 @@ public final class StoryCommands {
         return builder.buildFuture();
     };
     private static final SuggestionProvider<CommandSourceStack> SPOTS = (context, builder) -> {
-        for (String spot : List.of("entrance", "boss", "center", "pillar1", "pillar2", "pillar3", "top")) {
+        for (String spot : List.of("entrance", "enter", "boss", "center", "pillar1", "pillar2", "pillar3", "top")) {
             builder.suggest(spot);
         }
         // Phase 8 その1：迷いの森の入口（woods_<id>）と、中継の灯（waypoint<番号>）
@@ -242,6 +242,21 @@ public final class StoryCommands {
                                             ctx.getSource().sendSuccess(() -> Component.translatable("commands.amemaru.floor.lights_reset"), true);
                                             return 1;
                                         }))))
+                // 11月25日（8階）：鐘の組を鳴らしきる・朝に戻す（確かめ用）
+                .then(Commands.literal("bells")
+                        .then(Commands.argument("floor", IntegerArgumentType.integer(1, 99)).suggests(FLOORS)
+                                .then(Commands.literal("solve")
+                                        .executes(ctx -> solveBells(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"), ""))
+                                        .then(Commands.argument("group", com.mojang.brigadier.arguments.StringArgumentType.word())
+                                                .executes(ctx -> solveBells(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"),
+                                                        com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "group")))))
+                                .then(Commands.literal("reset")
+                                        .executes(ctx -> {
+                                            jp.amemaru.lostconnection.tower.lake.BellService.onDayChanged(ctx.getSource().getServer());
+                                            AdminCommands.log(ctx.getSource(), "floor bells reset");
+                                            ctx.getSource().sendSuccess(() -> Component.translatable("commands.amemaru.floor.bells_reset"), true);
+                                            return 1;
+                                        }))))
                 .then(Commands.literal("passphrase")
                         .then(Commands.argument("floor", IntegerArgumentType.integer(1, 99)).suggests(FLOORS)
                                 .then(Commands.literal("done")
@@ -287,6 +302,26 @@ public final class StoryCommands {
                                         .then(Commands.argument("targets", EntityArgument.players())
                                                 .executes(ctx -> setGuardians(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"),
                                                         EntityArgument.getPlayers(ctx, "targets"), false))))));
+    }
+
+    /** 8階の鐘の組を、正しく鳴らしきったことにする（group が "" なら、すべて）。 */
+    private static int solveBells(CommandSourceStack source, int floor, String which) {
+        FloorDef def = FloorDefs.byNumber(floor);
+        if (def == null || def.features().bells().isEmpty()) {
+            source.sendFailure(Component.translatable("commands.amemaru.floor.no_bells", floor));
+            return 0;
+        }
+        int n = 0;
+        for (jp.amemaru.lostconnection.tower.FloorFeatures.BellGroup group : def.features().bells()) {
+            if (which.isEmpty() || group.id().equals(which)) {
+                jp.amemaru.lostconnection.tower.lake.BellService.solve(source.getServer(), def, group, null);
+                n++;
+            }
+        }
+        AdminCommands.log(source, "floor bells " + floor + " solve " + which);
+        int count = n;
+        source.sendSuccess(() -> Component.translatable("commands.amemaru.floor.bells_solved", count), true);
+        return n;
     }
 
     /** 7階の光の迷路を解く（maze が "" なら、すべて）。 */
@@ -520,6 +555,14 @@ public final class StoryCommands {
         if (def == null || tower == null) {
             source.sendFailure(Component.translatable("commands.amemaru.map.no_floor", floor));
             return 0;
+        }
+        // 11月25日：enter は、遊ぶ人が門や次の階への円から入ったときと同じ（入口へ移り、初めてなら章題と階の場面が流れる）。
+        // entrance は、ただ入口へ移るだけ（場面は流れない）
+        if ("enter".equals(spot)) {
+            for (ServerPlayer player : players) {
+                TowerService.enterFloor(player, def);
+            }
+            return players.size();
         }
         Vec3 at;
         float yaw = def.entrance().yaw();

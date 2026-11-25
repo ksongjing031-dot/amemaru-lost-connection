@@ -1,0 +1,53 @@
+{
+  "_comment": "歌い手の氷像を、祠の灯籠の熱の結晶で溶かしたとき（6階と同じ記憶の氷像）。湖が音を失った日の場面【補完】",
+  "title": "最後の歌い手",
+  "trigger": {
+    "type": "amemaru:admin"
+  },
+  "scope": "player",
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:fade",
+      "from": "none",
+      "to": "white",
+      "ticks": 20
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "white",
+      "to": "none",
+      "ticks": 40
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "――氷が溶けると、歌い手の声が、一瞬だけ聞こえた。",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "「やめて。湖の両岸で、もう誰も傷つけ合わないで」",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "「歌が届かないなら……いっそ、声ごと止めてしまえばいい」　誰かが、湖の鐘を鳴らした。",
+      "ticks": 140,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "湖じゅうの音が消えた。争う声も、泣く声も、歌も。歌い手は、口を開けたまま凍りついた。",
+      "ticks": 140,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/memory_singer"
+      ]
+    }
+  ]
+}
