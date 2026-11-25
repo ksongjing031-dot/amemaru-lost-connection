@@ -28,6 +28,15 @@ WEAPONS = {"greatsword": "guardian_greatsword", "staff": "guardian_staff", "bell
            "daggers": "guardian_daggers", "gauntlets": "guardian_gauntlets"}
 CHESTS = {"knight": "ryumon_knight_cuirass", "wizard": "ryumon_wizard_robe", "healer": "ryumon_healer_robe",
           "archer": "ryumon_archer_jerkin", "rogue": "ryumon_rogue_garb", "monk": "ryumon_monk_gi"}
+# 流紋の頭・脚・足（守護者の同じ部位は ryumon_ を guardian_ にしたID。11月25日）
+RYUMON_PIECES = {
+    "knight": ["ryumon_knight_helm", "ryumon_knight_greaves", "ryumon_knight_sabatons"],
+    "wizard": ["ryumon_wizard_hat", "ryumon_wizard_legwear", "ryumon_wizard_shoes"],
+    "healer": ["ryumon_healer_hood", "ryumon_healer_legwear", "ryumon_healer_shoes"],
+    "archer": ["ryumon_archer_cap", "ryumon_archer_leggings", "ryumon_archer_boots"],
+    "rogue": ["ryumon_rogue_mask", "ryumon_rogue_leggings", "ryumon_rogue_tabi"],
+    "monk": ["ryumon_monk_headband", "ryumon_monk_hakama", "ryumon_monk_sandals"],
+}
 
 
 def write_json(path, data):
@@ -170,6 +179,15 @@ def guardian_series(base):
             outer = json.load(fp)
         write_json(os.path.join(item, shell + ".json"), json.loads(json.dumps(outer).replace(chest, shell)))
         made.append(shell)
+        # 11月25日「防具は一式全部揃えた形に」：頭・脚・足も、流紋の同じ部位を守護者の色に塗り替える（体のモデルと絵は、上の
+        # シリーズの分をそのまま使う。流紋の geo には4つの部位の骨がそろっている）
+        for src in RYUMON_PIECES[job]:
+            gid = src.replace("ryumon_", "guardian_", 1)
+            recolor(Image.open(os.path.join(tex, src + ".png"))).save(os.path.join(tex, gid + ".png"))
+            with open(os.path.join(item, src + ".json"), encoding="utf-8") as fp:
+                outer = json.load(fp)
+            write_json(os.path.join(item, gid + ".json"), json.loads(json.dumps(outer).replace(src, gid)))
+            made.append(gid)
     return made
 
 
@@ -278,10 +296,13 @@ def check(base, made, out):
         pair = [Image.open(os.path.join(base, "textures/item", src + ".png")).convert("RGBA"),
                 Image.open(os.path.join(base, "textures/item", name + ".png")).convert("RGBA")]
         tiles.append(pair)
-    s = Image.new("RGBA", (len(tiles) * 140, 330), (40, 44, 48, 255))
+    per_row = 12
+    rows = (len(tiles) + per_row - 1) // per_row
+    s = Image.new("RGBA", (min(len(tiles), per_row) * 140, 30 + rows * 300), (40, 44, 48, 255))
     for k, (a, b) in enumerate(tiles):
-        s.alpha_composite(a.resize((128, 128), Image.NEAREST), (k * 140 + 6, 30))
-        s.alpha_composite(b.resize((128, 128), Image.NEAREST), (k * 140 + 6, 170))
+        x, y = (k % per_row) * 140, 30 + (k // per_row) * 300
+        s.alpha_composite(a.resize((128, 128), Image.NEAREST), (x + 6, y))
+        s.alpha_composite(b.resize((128, 128), Image.NEAREST), (x + 6, y + 140))
     d = ImageDraw.Draw(s)
     d.text((6, 4), "守護者シリーズの持ち物の絵（上：流紋のもと・下：守護者の色）", fill=(235, 235, 220), font=sheet_font(16))
     s.save(os.path.join(out, "guardian_series_check.png"))

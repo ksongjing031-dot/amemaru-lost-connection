@@ -1,0 +1,35 @@
+{
+  "slot": "head",
+  "generation": 1,
+  "series": "守護者シリーズ（ウィザード）",
+  "rarity": "epic",
+  "required_level": 22,
+  "jobs": [
+    "amemaru:wizard"
+  ],
+  "stats": {
+    "defense": 3,
+    "mp": 35,
+    "magic": 4
+  },
+  "durability": 390,
+  "binding": "on_equip",
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:jade_core_shard",
+      "count": 1
+    },
+    {
+      "item": "amemaru:sentinel_plate",
+      "count": 1
+    }
+  ],
+  "set_effects": [
+    {
+      "type": "damage_reduction",
+      "percent": 5
+    }
+  ],
+  "description": "守護者の装甲の薄い板を、尖り帽のつばに縫いこんだもの。翠の線が、詠唱の乱れを静める。"
+}

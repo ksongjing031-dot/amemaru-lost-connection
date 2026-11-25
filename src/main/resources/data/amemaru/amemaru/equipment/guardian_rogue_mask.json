@@ -1,0 +1,35 @@
+{
+  "slot": "head",
+  "generation": 1,
+  "series": "守護者シリーズ（ローグ）",
+  "rarity": "epic",
+  "required_level": 22,
+  "jobs": [
+    "amemaru:rogue"
+  ],
+  "stats": {
+    "defense": 3,
+    "hp": 14,
+    "crit": 2
+  },
+  "durability": 380,
+  "binding": "on_equip",
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:jade_core_shard",
+      "count": 1
+    },
+    {
+      "item": "amemaru:sentinel_plate",
+      "count": 1
+    }
+  ],
+  "set_effects": [
+    {
+      "type": "damage_reduction",
+      "percent": 5
+    }
+  ],
+  "description": "黒い布の内側に、守護者の装甲の薄い板を当てた覆面。翠の光は、布の内でだけ灯る。"
+}

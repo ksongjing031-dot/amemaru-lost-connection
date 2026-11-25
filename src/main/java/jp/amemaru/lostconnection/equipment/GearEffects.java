@@ -81,6 +81,8 @@ public final class GearEffects {
                 list.addAll(def.effects());
             }
         }
+        // 11月25日：防具を一式そろえたときの効果
+        list.addAll(GearService.setEffects(player, data));
         return list;
     }
 

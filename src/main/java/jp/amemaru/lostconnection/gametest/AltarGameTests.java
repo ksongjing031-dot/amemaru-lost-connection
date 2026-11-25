@@ -13,6 +13,7 @@ import jp.amemaru.lostconnection.enemy.boss.AncientGuardian;
 import jp.amemaru.lostconnection.equipment.EquipmentDef;
 import jp.amemaru.lostconnection.equipment.EquipmentDefs;
 import jp.amemaru.lostconnection.equipment.GearData;
+import jp.amemaru.lostconnection.equipment.GearSlot;
 import jp.amemaru.lostconnection.equipment.Rarity;
 import jp.amemaru.lostconnection.equipment.SpecialEffect;
 import jp.amemaru.lostconnection.guild.RecordDefs;
@@ -174,22 +175,34 @@ public final class AltarGameTests {
         EnemyDef boss = EnemyDefs.get(AmemaruMod.id("ancient_guardian"));
         check(helper, boss != null, "古代守護者の定義がありません");
         long matched = boss.rare().stream().filter(EnemyDef.RareDrop::jobMatch).count();
-        check(helper, matched == 12, "守護者シリーズ（職業ごとの武器と外装）が12ではありません：" + matched);
+        // 11月25日「防具は一式全部揃えた形に」：職業ごとに、武器1つと防具一式（頭・胴・脚・足）
+        check(helper, matched == 30, "守護者シリーズ（職業ごとの武器1と防具一式4）が30ではありません：" + matched);
         for (String job : JOBS) {
             int weapons = 0;
             int shells = 0;
+            java.util.Set<GearSlot> armor = java.util.EnumSet.noneOf(GearSlot.class);
             for (EnemyDef.RareDrop rare : boss.rare()) {
                 EquipmentDef gear = EquipmentDefs.server().get(rare.item());
                 if (!rare.jobMatch() || gear == null || !gear.jobs().contains(AmemaruMod.id(job))) {
                     continue;
                 }
-                check(helper, Math.abs(rare.chance() - 4.0) < 1.0E-6, rare.item() + " の確率が4%ではありません");
-                boolean ally = gear.effects().stream().anyMatch(e -> e.type() == SpecialEffect.Type.ALLY_POWER);
-                boolean ward = gear.effects().stream().anyMatch(e -> e.type() == SpecialEffect.Type.DAMAGE_REDUCTION);
-                weapons += ally ? 1 : 0;
-                shells += ward ? 1 : 0;
+                if (gear.slot() == GearSlot.WEAPON) {
+                    check(helper, Math.abs(rare.chance() - 4.0) < 1.0E-6, rare.item() + " の確率が4%ではありません");
+                    weapons += gear.effects().stream().anyMatch(e -> e.type() == SpecialEffect.Type.ALLY_POWER) ? 1 : 0;
+                    continue;
+                }
+                check(helper, Math.abs(rare.chance() - 3.0) < 1.0E-6, rare.item() + " の確率が3%ではありません");
+                check(helper, gear.setEffects().stream().anyMatch(e -> e.type() == SpecialEffect.Type.DAMAGE_REDUCTION),
+                        rare.item() + " に、一式の効果（被ダメージ減）がありません");
+                check(helper, ForgeRegistries.ITEMS.getValue(rare.item()) instanceof jp.amemaru.lostconnection.item.AmemaruArmorItem piece
+                        && piece.series().equals("guardian_" + job), rare.item() + " が、守護者シリーズの防具として登録されていません");
+                armor.add(gear.slot());
+                if (gear.slot() == GearSlot.CHEST && gear.effects().stream().anyMatch(e -> e.type() == SpecialEffect.Type.DAMAGE_REDUCTION)) {
+                    shells++;
+                }
             }
-            check(helper, weapons == 1 && shells == 1, job + " の守護者シリーズが、武器1（味方が近いほど攻撃+）と外装1（被ダメージ減）ではありません");
+            check(helper, weapons == 1 && shells == 1 && armor.size() == 4,
+                    job + " の守護者シリーズが、武器1（味方が近いほど攻撃+）と防具一式（頭・胴〈被ダメージ減〉・脚・足）ではありません");
         }
         FakePlayer player = fake(helper, "gear_job");
         PlayerData data = PlayerDataCapability.get(player).orElseThrow(() -> new GameTestAssertException("プレイヤーデータが付いていません"));

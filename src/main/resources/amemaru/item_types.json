@@ -240,37 +240,55 @@
     {
       "series": "guardian_knight",
       "pieces": {
-        "chest": "guardian_knight_shell"
+        "head": "guardian_knight_helm",
+        "chest": "guardian_knight_shell",
+        "legs": "guardian_knight_greaves",
+        "feet": "guardian_knight_sabatons"
       }
     },
     {
       "series": "guardian_wizard",
       "pieces": {
-        "chest": "guardian_wizard_shell"
+        "head": "guardian_wizard_hat",
+        "chest": "guardian_wizard_shell",
+        "legs": "guardian_wizard_legwear",
+        "feet": "guardian_wizard_shoes"
       }
     },
     {
       "series": "guardian_healer",
       "pieces": {
-        "chest": "guardian_healer_shell"
+        "head": "guardian_healer_hood",
+        "chest": "guardian_healer_shell",
+        "legs": "guardian_healer_legwear",
+        "feet": "guardian_healer_shoes"
       }
     },
     {
       "series": "guardian_archer",
       "pieces": {
-        "chest": "guardian_archer_shell"
+        "head": "guardian_archer_cap",
+        "chest": "guardian_archer_shell",
+        "legs": "guardian_archer_leggings",
+        "feet": "guardian_archer_boots"
       }
     },
     {
       "series": "guardian_rogue",
       "pieces": {
-        "chest": "guardian_rogue_shell"
+        "head": "guardian_rogue_mask",
+        "chest": "guardian_rogue_shell",
+        "legs": "guardian_rogue_leggings",
+        "feet": "guardian_rogue_tabi"
       }
     },
     {
       "series": "guardian_monk",
       "pieces": {
-        "chest": "guardian_monk_shell"
+        "head": "guardian_monk_headband",
+        "chest": "guardian_monk_shell",
+        "legs": "guardian_monk_hakama",
+        "feet": "guardian_monk_sandals"
       }
     }
   ],

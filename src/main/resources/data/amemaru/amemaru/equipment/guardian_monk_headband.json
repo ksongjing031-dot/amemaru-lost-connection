@@ -1,0 +1,35 @@
+{
+  "slot": "head",
+  "generation": 1,
+  "series": "守護者シリーズ（モンク）",
+  "rarity": "epic",
+  "required_level": 22,
+  "jobs": [
+    "amemaru:monk"
+  ],
+  "stats": {
+    "defense": 3,
+    "hp": 21,
+    "crit": 1
+  },
+  "durability": 380,
+  "binding": "on_equip",
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:jade_core_shard",
+      "count": 1
+    },
+    {
+      "item": "amemaru:sentinel_plate",
+      "count": 1
+    }
+  ],
+  "set_effects": [
+    {
+      "type": "damage_reduction",
+      "percent": 5
+    }
+  ],
+  "description": "守護者の装甲の帯を細く裂いて編んだ鉢巻。結び目の翠が、気の高まりに合わせて脈打つ。"
+}

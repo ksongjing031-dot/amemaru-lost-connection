@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "amemaru:item/guardian_wizard_hat"
+  }
+}

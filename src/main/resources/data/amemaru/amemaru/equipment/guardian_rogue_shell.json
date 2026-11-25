@@ -32,5 +32,11 @@
       "count": 2
     }
   ],
+  "set_effects": [
+    {
+      "type": "damage_reduction",
+      "percent": 5
+    }
+  ],
   "description": "黒い布の下に、守護者の装甲の薄い板を隠した装束。板の翠の光は、布の内側でだけ灯る。"
 }
