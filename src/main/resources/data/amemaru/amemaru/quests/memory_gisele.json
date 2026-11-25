@@ -1,0 +1,28 @@
+{
+  "_comment": "6日目：記憶の相談所（セレナ）のクエスト。ジゼルに話しかけると思い出してもらえる（本人のフラグ amemaru:memory/gisele。思い出したときに親密度を少し上乗せ。Phase 0-A 13章）【補完】",
+  "name": "記憶の相談：ジゼル",
+  "kind": "story",
+  "giver": "amemaru:serena",
+  "report": "amemaru:gisele",
+  "board": false,
+  "description": "ジゼルが、わたしのことを忘れてしまった。セレナの言うとおり、前に交わした言葉を、もう一度伝えに行こう。",
+  "requires": {},
+  "objectives": [
+    {
+      "type": "talk",
+      "npc": "amemaru:gisele",
+      "label": "ジゼルに、前に交わした言葉を伝える"
+    }
+  ],
+  "rewards": {
+    "knots": 150,
+    "exp": 250,
+    "affinity": {
+      "amemaru:gisele": 10
+    },
+    "flags": [
+      "amemaru:memory/gisele"
+    ]
+  },
+  "order": 161
+}

@@ -144,6 +144,10 @@ public class NpcEntity extends PathfinderMob implements GeoEntity {
                     && jp.amemaru.lostconnection.guild.BondService.gift(serverPlayer, this)) {
                 return InteractionResult.SUCCESS;
             }
+            // 11月25日：魚の名前を忘れたポッカ爺に、魚を見せる（手に持って話しかける）
+            if (NpcMemoryService.showFish(serverPlayer, this)) {
+                return InteractionResult.SUCCESS;
+            }
             DialogueManager.talk(serverPlayer, this);
         }
         return InteractionResult.sidedSuccess(level().isClientSide());

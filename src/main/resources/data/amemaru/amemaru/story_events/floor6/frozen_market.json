@@ -1,0 +1,43 @@
+{
+  "_comment": "市場の広場（本人だけ。一人一度）。記憶の解凍の手がかり（熱の結晶は、火の残る所でもらえる）【補完】",
+  "title": "凍った市場",
+  "trigger": {
+    "type": "amemaru:floor_zone",
+    "floor": 6,
+    "zone": "frozen_market"
+  },
+  "scope": "player",
+  "once": false,
+  "replayable": true,
+  "conditions": {
+    "flags_none": [
+      "amemaru:story/frozen_market_seen"
+    ]
+  },
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "値切り声が、聞こえる気がした。市場は、笑い声のかたちのまま凍っている。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "淡く光る氷像がある。……溶かせば、凍った記憶が戻るかもしれない。",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "宿屋の暖炉、パン屋のかまど、鍛冶屋の炉。火の残る所なら、熱を分けてもらえそうだ。",
+      "ticks": 130,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/frozen_market_seen"
+      ]
+    }
+  ]
+}

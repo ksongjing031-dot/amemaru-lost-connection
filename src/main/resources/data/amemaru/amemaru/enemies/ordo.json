@@ -1,0 +1,120 @@
+{
+  "_comment": "6階のボス、村長の残響オルド（Phase 0-A 9章の6階：村を守るつもりで、誰が仲間か分からなくなっている。戦いながら家々から記憶の結晶を3つ集めて渡すと、思い出して戦いをやめる＝撃破扱い）。memory：結晶を運ぶ人がオルドのそば range へ来ると受け取り、stagger 秒よろめく（その間 broken 倍のダメージ）。次の結晶は、よろめきの後、HPが second_at・third_at を切るか every 秒で出る。3つ受け取るまで、HPは floor より下がらない。技：sweep（前の扇）・icicle（線。凍え chill）・blizzard（まわりの円。第2段階から）・gaze（疑いの眼差し。見ている方の扇 angle。目との間にブロックがあれば無事。入ると freeze_seconds 秒凍りつく）・call（霜狼を count 匹、第3段階は count_late）。HPは2人のときの基準（ひとりでも2人ぶん）。数値は【補完】（4人で15分ほど）",
+  "name": "村長の残響オルド",
+  "floor": 6,
+  "level": 32,
+  "description": "凍った村の村長の、記憶だけが残った姿。あの日のまま、村を守ろうと立ち続けている。けれど、もう誰が村の者なのか分からない。近づく者すべてに、杖の灯を向ける。",
+  "stats": {
+    "hp": 70000,
+    "attack": 196,
+    "defense": 18,
+    "move_speed": 0.16,
+    "follow_range": 64,
+    "aggro_range": 30
+  },
+  "exp": 2200,
+  "skills": {
+    "sweep": {
+      "power": 1.3,
+      "windup": 1.4,
+      "anim_windup": 1.2,
+      "cooldown": 6.0,
+      "range": 7.0,
+      "angle": 120,
+      "push": 1.0
+    },
+    "icicle": {
+      "power": 1.5,
+      "windup": 1.8,
+      "anim_windup": 1.4,
+      "cooldown": 10.0,
+      "range": 26.0,
+      "width": 2.6,
+      "chill": 2
+    },
+    "blizzard": {
+      "power": 1.2,
+      "windup": 2.2,
+      "anim_windup": 1.8,
+      "cooldown": 18.0,
+      "range": 9.0,
+      "chill": 2,
+      "first": 20.0
+    },
+    "gaze": {
+      "power": 0.8,
+      "windup": 2.8,
+      "anim_windup": 2.4,
+      "cooldown": 24.0,
+      "range": 30.0,
+      "angle": 70,
+      "freeze_seconds": 2.0,
+      "first": 14.0
+    },
+    "call": {
+      "windup": 1.6,
+      "cooldown": 40.0,
+      "count": 2,
+      "count_late": 3,
+      "max": 4,
+      "first": 30.0
+    },
+    "memory": {
+      "range": 3.5,
+      "stagger": 12.0,
+      "broken": 1.6,
+      "floor": 0.1,
+      "second_at": 0.7,
+      "third_at": 0.4,
+      "every": 100.0
+    }
+  },
+  "behavior": {},
+  "drops": {
+    "loot_table": "amemaru:entities/ordo",
+    "pity": true,
+    "rare": [
+      {
+        "item": "amemaru:mayor_fur_hat",
+        "chance": 4,
+        "rarity": "epic"
+      },
+      {
+        "item": "amemaru:mayor_fur_coat",
+        "chance": 5,
+        "rarity": "epic"
+      },
+      {
+        "item": "amemaru:mayor_fur_leggings",
+        "chance": 4,
+        "rarity": "epic"
+      },
+      {
+        "item": "amemaru:mayor_fur_boots",
+        "chance": 4,
+        "rarity": "epic"
+      },
+      {
+        "item": "amemaru:frost_silver",
+        "chance": 100,
+        "count": 2,
+        "pity": false
+      },
+      {
+        "item": "amemaru:crystal_fruit_white",
+        "chance": 20,
+        "pity": false
+      },
+      {
+        "item": "amemaru:crystal_fruit_azure",
+        "chance": 15,
+        "pity": false
+      },
+      {
+        "item": "amemaru:crystal_fruit_violet",
+        "chance": 15,
+        "pity": false
+      }
+    ]
+  }
+}

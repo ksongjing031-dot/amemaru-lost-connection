@@ -28,7 +28,15 @@ public final class ModBlockEntities {
                     ModBlocks.TOWER_SWITCH.get(), ModBlocks.TOWER_CHEST.get(), ModBlocks.FOREST_BELL.get(), ModBlocks.KNOT_POST.get(),
                     ModBlocks.WAYPOINT.get(), ModBlocks.TRAVEL_STONE.get(), ModBlocks.FLOODGATE_VALVE.get(),
                     // 11月24日：4階の壁画のパネル・鈴の石・騎士団の遺品
-                    ModBlocks.MURAL_PANEL.get(), ModBlocks.CHIME_STONE.get(), ModBlocks.KNIGHT_RELIC.get()).build(null));
+                    ModBlocks.MURAL_PANEL.get(), ModBlocks.CHIME_STONE.get(), ModBlocks.KNIGHT_RELIC.get(),
+                    // 11月25日：6階の熱の炉
+                    ModBlocks.VILLAGE_HEARTH.get()).build(null));
+
+    /** 6階の凍った村人の氷像（どの姿・格好・向き・記憶か。11月25日）。 */
+    @SuppressWarnings("DataFlowIssue")
+    public static final RegistryObject<BlockEntityType<jp.amemaru.lostconnection.tower.village.VillageStatueBlockEntity>> VILLAGE_STATUE =
+            BLOCK_ENTITIES.register("village_statue", () -> BlockEntityType.Builder.of(
+                    jp.amemaru.lostconnection.tower.village.VillageStatueBlockEntity::new, ModBlocks.VILLAGE_STATUE.get()).build(null));
 
     /** 店のカウンターの呼び鈴（どの店か。Phase 6）。 */
     @SuppressWarnings("DataFlowIssue")

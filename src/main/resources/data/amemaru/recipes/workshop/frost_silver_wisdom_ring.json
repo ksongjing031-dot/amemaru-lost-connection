@@ -1,0 +1,23 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "accessory",
+  "mastery": 4,
+  "mastery_exp": 22,
+  "ingredients": [
+    {
+      "item": "amemaru:frost_silver",
+      "count": 3
+    },
+    {
+      "item": "amemaru:ice_feather",
+      "count": 2
+    },
+    {
+      "item": "amemaru:ice_crystal",
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "amemaru:frost_silver_wisdom_ring"
+  }
+}

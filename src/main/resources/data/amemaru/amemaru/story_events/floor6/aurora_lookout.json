@@ -1,0 +1,37 @@
+{
+  "_comment": "北東の見張りの塔の上（本人だけ。一人一度）【補完】",
+  "title": "見張りの塔",
+  "trigger": {
+    "type": "amemaru:floor_zone",
+    "floor": 6,
+    "zone": "aurora_lookout"
+  },
+  "scope": "player",
+  "once": false,
+  "replayable": true,
+  "conditions": {
+    "flags_none": [
+      "amemaru:story/aurora_seen"
+    ]
+  },
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "塔の上から、村が見渡せる。オーロラの光が、凍った屋根を緑と紫に染めていた。",
+      "ticks": 130,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "……忘れることは、凍ること。この村は、あの日から一歩も進めずにいる。",
+      "ticks": 120,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/aurora_seen"
+      ]
+    }
+  ]
+}

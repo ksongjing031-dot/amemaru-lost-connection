@@ -25,6 +25,8 @@ import java.util.Locale;
  *       5階のレア「守護者の核剣」など）</li>
  *   <li>{@code party_ward}：{@code threshold} ブロック以内に味方が3人以上いると、自分とその味方の、敵から受けるダメージ
  *       −{@code percent}%（5階のユニーク「第七の門鍵」）</li>
+ *   <li>{@code cold_resist}：寒さ（凍え・凍結）と、遅くなる効果の時間 −{@code percent}%（6階のボスのレア「村長の毛皮」。
+ *       Phase 0-A 20章「寒さと遅くなる効果を減らす」。11月25日。いくつあっても 80% まで）</li>
  * </ul>
  *
  * <p>{@code source} は効く攻撃の種類（{@code any}：すべて、{@code melee}：近接攻撃だけ、{@code skill}：スキルだけ）。</p>
@@ -39,7 +41,8 @@ public record SpecialEffect(Type type, double chance, double percent, double thr
         MOVE_SPEED("move_speed"),
         HEAL_WARD("heal_ward"),
         ALLY_POWER("ally_power"),
-        PARTY_WARD("party_ward");
+        PARTY_WARD("party_ward"),
+        COLD_RESIST("cold_resist");
 
         private final String id;
 
@@ -58,7 +61,7 @@ public record SpecialEffect(Type type, double chance, double percent, double thr
                 }
             }
             throw new DefinitionException("特殊効果の種類「" + id + "」はありません（extra_damage・execute・heal_on_hit・"
-                    + "damage_reduction・regen・move_speed・heal_ward・ally_power・party_ward のどれかにしてください）");
+                    + "damage_reduction・regen・move_speed・heal_ward・ally_power・party_ward・cold_resist のどれかにしてください）");
         }
     }
 

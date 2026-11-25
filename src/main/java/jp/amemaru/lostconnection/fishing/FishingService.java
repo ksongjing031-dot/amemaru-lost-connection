@@ -468,7 +468,10 @@ public final class FishingService {
             CompoundTag one = new CompoundTag();
             one.putString("id", def.id().toString());
             one.putString("item", def.itemId().toString());
-            one.putString("name", def.name());
+            // 11月25日：ポッカ爺が魚の名前を忘れている間は「？？？」（魚を見せると、一匹ずつ思い出す）
+            boolean forgot = jp.amemaru.lostconnection.npc.NpcMemoryService.fishForgotten(player.server, def);
+            one.putString("name", forgot ? "？？？" : def.name());
+            one.putBoolean("forgot", forgot);
             one.putInt("chapter", def.chapter());
             one.putInt("stars", def.rarity());
             ListTag spots = new ListTag();

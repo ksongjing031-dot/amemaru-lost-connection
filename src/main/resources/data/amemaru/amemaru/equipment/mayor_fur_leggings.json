@@ -1,0 +1,32 @@
+{
+  "slot": "legs",
+  "generation": 2,
+  "series": "村長の毛皮",
+  "rarity": "epic",
+  "required_level": 26,
+  "jobs": [],
+  "stats": {
+    "defense": 7,
+    "hp": 40
+  },
+  "durability": 420,
+  "binding": "on_equip",
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 2
+    },
+    {
+      "item": "amemaru:frost_silver",
+      "count": 1
+    }
+  ],
+  "set_effects": [
+    {
+      "type": "cold_resist",
+      "percent": 30
+    }
+  ],
+  "description": "毛皮を裏に張った厚い脚衣。雪の深い道でも、足が冷えない。"
+}

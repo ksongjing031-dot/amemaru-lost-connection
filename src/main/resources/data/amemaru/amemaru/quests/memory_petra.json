@@ -1,0 +1,28 @@
+{
+  "_comment": "6日目：記憶の相談所（セレナ）のクエスト。ペトラに話しかけると思い出してもらえる（本人のフラグ amemaru:memory/petra。思い出したときに親密度を少し上乗せ。Phase 0-A 13章）【補完】",
+  "name": "記憶の相談：ペトラ",
+  "kind": "story",
+  "giver": "amemaru:serena",
+  "report": "amemaru:petra",
+  "board": false,
+  "description": "ペトラが、わたしのことを忘れてしまった。セレナの言うとおり、前に交わした言葉を、もう一度伝えに行こう。",
+  "requires": {},
+  "objectives": [
+    {
+      "type": "talk",
+      "npc": "amemaru:petra",
+      "label": "ペトラに、前に交わした言葉を伝える"
+    }
+  ],
+  "rewards": {
+    "knots": 150,
+    "exp": 250,
+    "affinity": {
+      "amemaru:petra": 10
+    },
+    "flags": [
+      "amemaru:memory/petra"
+    ]
+  },
+  "order": 162
+}

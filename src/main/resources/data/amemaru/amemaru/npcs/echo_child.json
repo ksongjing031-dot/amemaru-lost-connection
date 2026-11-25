@@ -1,0 +1,8 @@
+{
+  "_comment": "6階の記憶の場面の役者（あの日の村人。記憶の氷像が溶けたときの場面にだけ出る。街には立たない＝home がない）。見た目は tools/artgen/make_village_things.py【補完】",
+  "name": "日記の子",
+  "title": "あの日の村人",
+  "skin": "amemaru:textures/entity/village/child_girl.png",
+  "slim": true,
+  "model_scale": 0.72
+}

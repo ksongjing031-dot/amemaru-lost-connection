@@ -1,0 +1,32 @@
+{
+  "slot": "head",
+  "generation": 2,
+  "series": "村長の毛皮",
+  "rarity": "epic",
+  "required_level": 26,
+  "jobs": [],
+  "stats": {
+    "defense": 5,
+    "hp": 30
+  },
+  "durability": 420,
+  "binding": "on_equip",
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 2
+    },
+    {
+      "item": "amemaru:frost_silver",
+      "count": 1
+    }
+  ],
+  "set_effects": [
+    {
+      "type": "cold_resist",
+      "percent": 30
+    }
+  ],
+  "description": "村長オルドが冬の見回りにかぶっていた毛皮の帽子。耳まで温かく、吹雪の中でも村の音がよく聞こえる。"
+}

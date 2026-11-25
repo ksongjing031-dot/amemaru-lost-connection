@@ -91,9 +91,9 @@ public final class BondService {
         return def != null && def.bond() != null;
     }
 
-    /** 記憶喪失中で、親密度が凍結されているか（Phase 0-A 13章。記憶喪失は Phase 8 で作る。いまは凍結しない）。 */
+    /** 記憶喪失中で、親密度が凍結されているか（Phase 0-A 13章。11月25日：6日目から、街の人の一部がプレイヤーを忘れる）。 */
     public static boolean frozen(ServerPlayer player, ResourceLocation npc) {
-        return false;
+        return !jp.amemaru.lostconnection.npc.NpcMemoryService.remembers(player, npc);
     }
 
     // ================================================================ 上げる

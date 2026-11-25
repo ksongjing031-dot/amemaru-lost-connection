@@ -136,8 +136,17 @@ public class SilentStatue extends AmemaruMob {
         playAction("skill_wake");
         level.playSound(null, getX(), getY(), getZ(), SoundEvents.GRINDSTONE_USE, SoundSource.HOSTILE, 1.6F, 0.5F);
         level.playSound(null, getX(), getY(), getZ(), SoundEvents.STONE_BREAK, SoundSource.HOSTILE, 1.6F, 0.6F);
-        level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.CALCITE.defaultBlockState()), getX(), getY() + getBbHeight() * 0.7,
+        level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, debris()), getX(), getY() + getBbHeight() * 0.7,
                 getZ(), 30, getBbWidth() * 0.4, getBbHeight() * 0.3, getBbWidth() * 0.4, 0.05);
+    }
+
+    /** 目覚めたとき・叩きつけで散る欠片（11月25日：6階の氷像の残響は氷）。 */
+    protected net.minecraft.world.level.block.state.BlockState debris() {
+        return Blocks.CALCITE.defaultBlockState();
+    }
+
+    /** 叩きつけが当たった人に（11月25日：6階の氷像の残響は凍えさせる）。 */
+    protected void onQuakeHit(ServerPlayer player) {
     }
 
     @Override
@@ -243,9 +252,10 @@ public class SilentStatue extends AmemaruMob {
                             && EnemyCombat.strike(SilentStatue.this, player, skill.power(), null)) {
                         player.push(0.0, 0.45, 0.0);
                         player.hurtMarked = true;
+                        onQuakeHit(player);
                     }
                 }
-                level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, Blocks.CALCITE.defaultBlockState()), getX(), getY() + 0.2,
+                level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, debris()), getX(), getY() + 0.2,
                         getZ(), 50, range * 0.5, 0.1, range * 0.5, 0.15);
                 level.sendParticles(ParticleTypes.EXPLOSION, getX(), getY() + 0.3, getZ(), 1, 0.0, 0.0, 0.0, 0.0);
                 level.playSound(null, getX(), getY(), getZ(), SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 1.0F, 0.7F);

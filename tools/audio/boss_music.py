@@ -13,6 +13,8 @@
 - 3階 ハイドラム「大水門の機関」：ハ短調・136。機械の脈打つベース・金属の打撃・水の雫・こだまするシンセ
 - 4階 カンターレ「祈りの残響」：イ短調（フリギア）・3拍子・138。合唱・鐘・オルガン・ティンパニ
 - 5階 古代守護者「祭壇の守護者」：嬰ハ短調・156。弦の刻み・金管・合唱・太鼓・ティンパニ
+- 6階 村長の残響オルド「凍てついた村の灯」：ニ短調・3拍子・132。オルゴールの鈴・弦・合唱・そりの鈴・ティンパニ
+  （11月25日。雪の村のワルツが、追いこむほど重く速く聞こえるように）
 """
 
 import json
@@ -37,6 +39,7 @@ TITLES = {
     "hydram": "大水門の機関",
     "cantare": "祈りの残響",
     "ancient_guardian": "祭壇の守護者",
+    "ordo": "凍てついた村の灯",
 }
 
 
@@ -520,12 +523,89 @@ def ancient_guardian():
     return song, S.reverb_ir(2.4, 0.025, 7000.0, seed=17)
 
 
+# ---------------------------------------------------------------- 6階 村長の残響オルド（11月25日）
+
+def ordo():
+    song = S.Song(132, 48, beats_per_bar=3, seed=66)
+    rng = song.rng
+    song.bus("box", -19.0, 0.6)
+    song.bus("strings", -22.0, 0.5)
+    song.bus("choir", -22.0, 0.55)
+    song.bus("bass", -21.0, 0.25)
+    song.bus("sleigh", -28.0, 0.3)
+    song.bus("timp", -19.0, 0.4)
+    song.bus("taiko", -21.0, 0.35)
+    song.bus("ost", -24.0, 0.3)
+    song.bus("brass", -23.0, 0.4)
+    song.bus("riser", -28.0, 0.5)
+
+    names = (["Dm", "Dm", "Bb", "Bb", "Gm", "Gm", "A", "A", "Dm", "Dm", "F", "C", "Bb", "Gm", "A", "A"]
+             + ["Gm", "Gm", "Dm", "Dm", "Bb", "Bb", "A", "A", "Gm", "C", "F", "Dm", "Bb", "Gm", "A", "A"]
+             + ["Dm", "Bb", "Gm", "A", "Dm", "Bb", "C", "A", "Bb", "C", "Dm", "Dm", "Gm", "Bb", "A", "A"])
+    voice = {"Dm": "D3 F3 A3 D4", "Bb": "Bb2 D3 F3 Bb3", "Gm": "G2 Bb2 D3 G3", "A": "A2 C#3 E3 A3", "F": "F2 A2 C3 F3",
+             "C": "C3 E3 G3 C4"}
+    low = {"Dm": "D2", "Bb": "Bb1", "Gm": "G1", "A": "A1", "F": "F1", "C": "C2"}
+    ost = {"Dm": "D4 F4 A4", "Bb": "D4 F4 Bb4", "Gm": "D4 G4 Bb4", "A": "C#4 E4 A4", "F": "C4 F4 A4", "C": "C4 E4 G4"}
+    sl = [S.shaker(rng, 0.06) for _ in range(4)]
+    drum = [S.taiko(rng, 82.0, 0.9, 0.7) for _ in range(2)]
+    pick = lambda xs: (lambda: xs[int(rng.integers(len(xs)))])  # noqa: E731
+
+    for bar in range(48):
+        sec = bar // 16
+        name = names[bar]
+        # 3拍子：1拍目に低い音、2・3拍目に和音（弦）
+        song.put("bass", song.beat(bar), S.bass(S.freq(low[name]), song.dur(1.0), rng, bright=520.0, kind="sine", sub=0.7), pan=0.0)
+        chord = triad(voice[name])
+        for k in (1, 2):
+            song.put("strings", song.beat(bar, k), S.strings(chord, song.dur(0.8), a=0.03, r=0.2, bright=2400.0), pan=0.15,
+                     gain=0.7 if sec == 0 else 0.85)
+        # そりの鈴（2から）
+        if sec >= 1:
+            song.pattern("sleigh", pick(sl), "xox", [bar], steps_per_bar=3, pan=0.4, humanize=0.006)
+        # 合唱（2小節ずつ。3から強く）
+        if bar % 2 == 0 and sec >= 1:
+            song.put("choir", song.beat(bar), S.choir(chord, song.dur(6) * 0.97, vowel="o" if sec == 1 else "a", a=0.5, r=1.0),
+                     gain=0.8 if sec == 1 else 1.0)
+        # 太鼓とティンパニ（3から）
+        if sec >= 2:
+            song.put("taiko", song.beat(bar), pick(drum)(), pan=-0.1)
+            if bar % 2 == 1:
+                song.put("taiko", song.beat(bar, 2), pick(drum)(), pan=0.1, gain=0.6)
+            arpeggio(song, "ost", bar, ost[name], [0, 1, 2, 1, 2, 1], 0.5, S.staccato_strings, pan=0.3)
+        if sec >= 1 and bar % 4 == 0:
+            song.put("timp", song.beat(bar), S.timpani(rng, S.freq(low[name]) * 2))
+        if bar in (46, 47):
+            for k in range(12):
+                song.put("timp", song.beat(bar, k * 0.25), S.timpani(rng, S.freq("A1") * 2, 0.6), gain=0.35 + 0.05 * k + 0.4 * (bar - 46))
+        if bar == 46:
+            song.put("riser", song.beat(bar), S.riser(rng, song.dur(6), 6500.0))
+        if bar % 16 == 15 and bar != 47:
+            song.put("riser", song.beat(bar), S.riser(rng, song.dur(3), 5500.0))
+        if sec == 2 and bar % 2 == 0:
+            song.put("brass", song.beat(bar), S.brass(chord, song.dur(2.6), a=0.12, bright=2000.0), pan=-0.2, gain=0.8)
+
+    box = lambda f, on: S.bell(f, 1.6, index=2.2, ratio=4.0)  # noqa: E731
+    melody_a = ("A5:1 D6:1 E6:1 | F6:2 E6:1 | D6:1 F6:1 Bb6:1 | A6:3 | G6:1 F6:1 E6:1 | D6:2 Bb5:1 | A5:1 C#6:1 E6:1 | A5:3 |"
+                " A5:1 D6:1 E6:1 | F6:2 G6:1 | A6:2 F6:1 | G6:1 E6:1 C6:1 | D6:2 Bb5:1 | Bb5:1 D6:1 G6:1 | E6:2 C#6:1 | A5:3")
+    melody_b = ("Bb5:2 A5:1 | G5:3 | F5:1 A5:1 D6:1 | D6:3 | D6:2 C6:1 | Bb5:1 A5:1 G5:1 | A5:1 C#6:1 E6:1 | E6:3 |"
+                " Bb5:2 A5:1 | G5:2 C6:1 | C6:1 A5:1 F5:1 | F5:3 | F5:1 G5:1 Bb5:1 | Bb5:2 G5:1 | A5:1 E5:1 C#5:1 | A4:3")
+    melody_c = ("D6:1 F6:1 A6:1 | Bb6:2 A6:1 | G6:1 F6:1 E6:1 | E6:3 | D6:1 F6:1 A6:1 | Bb6:2 D7:1 | C7:1 Bb6:1 G6:1 | A6:3 |"
+                " Bb6:2 A6:1 | C7:2 Bb6:1 | A6:1 F6:1 D6:1 | D6:3 | G6:1 F6:1 E6:1 | Bb6:2 G6:1 | E6:1 C#6:1 A5:1 | A5:3")
+    play(song, "box", 0, melody_a, box, pan=0.25)
+    play(song, "choir", 16, melody_b, lambda f, on: S.choir([f], on, vowel="a", a=0.08, r=0.4), pan=0.1, gain=1.4, octave=-1)
+    play(song, "box", 16, melody_b, box, pan=0.25, gain=0.6)
+    play(song, "box", 32, melody_c, box, pan=0.2)
+    play(song, "brass", 32, melody_c, lambda f, on: S.brass([f], on, bright=2400.0), pan=0.1, gain=0.85, octave=-1)
+    return song, S.reverb_ir(3.6, 0.035, 6500.0, seed=19)
+
+
 SONGS = {
     "veldhorn": veldhorn,
     "old_ward": old_ward,
     "hydram": hydram,
     "cantare": cantare,
     "ancient_guardian": ancient_guardian,
+    "ordo": ordo,
 }
 
 

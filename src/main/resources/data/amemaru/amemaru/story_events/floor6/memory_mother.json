@@ -1,0 +1,107 @@
+{
+  "_comment": "記憶の氷像「母と子」（日記の子と、その母）。台詞は【補完】",
+  "title": "記憶の場面：母と子",
+  "trigger": {
+    "type": "amemaru:admin"
+  },
+  "scope": "player",
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:fade",
+      "from": "none",
+      "to": "white",
+      "ticks": 12
+    },
+    {
+      "type": "amemaru:actor",
+      "id": "mother",
+      "npc": "amemaru:echo_mother",
+      "pos": {
+        "anchor": "floor",
+        "offset": [
+          232.5,
+          17,
+          410.5
+        ]
+      },
+      "yaw": 180.0
+    },
+    {
+      "type": "amemaru:actor",
+      "id": "child",
+      "npc": "amemaru:echo_child",
+      "pos": {
+        "anchor": "floor",
+        "offset": [
+          231.5,
+          17,
+          411.9
+        ]
+      },
+      "yaw": 0.0
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "white",
+      "to": "none",
+      "ticks": 24
+    },
+    {
+      "type": "amemaru:sound",
+      "sound": "minecraft:block.amethyst_block.resonate",
+      "volume": 1.0,
+      "pitch": 0.7
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "女の子「おかあさん、まって！ わたしも、おまつりに行く！」",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "母「……ええと。あなたは……どこの子だったかしら」",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "女の子「……おかあさん？」",
+      "ticks": 90,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "日記の子だ。母親が、娘の名前を呼ばなくなった日――。",
+      "ticks": 130,
+      "wait": true
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "none",
+      "to": "white",
+      "ticks": 16
+    },
+    {
+      "type": "amemaru:actor_remove",
+      "id": "mother"
+    },
+    {
+      "type": "amemaru:actor_remove",
+      "id": "child"
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "white",
+      "to": "none",
+      "ticks": 24
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/memory_mother"
+      ]
+    }
+  ]
+}

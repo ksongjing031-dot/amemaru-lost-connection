@@ -47,6 +47,8 @@ public final class EnemyCombat {
             if (hit) {
                 // 打った：戦っている間は、離れても戻らない（11月22日）
                 mob.noteCombat();
+                // 11月25日：当たったときの、敵ごとの追加の効き目（6階の霜の敵の凍えなど）
+                mob.onStruck(player, coefficient);
             }
             return hit;
         } finally {

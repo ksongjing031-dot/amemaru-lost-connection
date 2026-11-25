@@ -1,0 +1,73 @@
+{
+  "_comment": "6階のボスの初撃破（倒したパーティの画面だけ。サーバー全体には知らせが出る）。オルドは思い出して戦いをやめる（撃破扱い）。台詞は【補完】（白き声・NULLの名前は、まだ出さない）",
+  "title": "村長の残響オルド",
+  "trigger": {
+    "type": "amemaru:floor_first_kill",
+    "floor": 6
+  },
+  "scope": "party",
+  "once": true,
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:wait",
+      "ticks": 60
+    },
+    {
+      "type": "amemaru:hud",
+      "hide": true
+    },
+    {
+      "type": "amemaru:sound",
+      "sound": "minecraft:block.bell.resonate",
+      "volume": 1.0,
+      "pitch": 0.8
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "none",
+      "to": "white",
+      "ticks": 30
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "white",
+      "to": "none",
+      "ticks": 60
+    },
+    {
+      "type": "amemaru:title",
+      "title": "凍結した村　踏破",
+      "subtitle": "第2章　凍てついた記憶",
+      "ticks": 110
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "オルドは、ひざをついたまま、やさしく笑った。「……客人に、杖を向けるとはな」",
+      "ticks": 130,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "「白い雪が降ってから、皆が少しずつ、互いを忘れていった。わしも……守るべき顔を、忘れてしまった」",
+      "ticks": 140,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "「この先の森にも、まだ凍った記憶が眠っている。どうか、思い出してやってくれ」",
+      "ticks": 130,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "オルドの姿は、光の粒になって、雪の中へ溶けていった。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:hud",
+      "hide": false
+    }
+  ]
+}

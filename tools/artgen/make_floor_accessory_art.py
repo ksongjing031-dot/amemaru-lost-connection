@@ -42,6 +42,10 @@ LOCAL = {
     "jade": ramp("#0B3A24", "#11563A", "#1A7A52", "#26A06C", "#48C488", "#86E2AE", "#C8F6DC"),
     "lens": ramp("#1E3A52", "#2C5676", "#3E7698", "#5E9CBC", "#8CC2DA", "#BFE2F0", "#EEF9FF"),
     "leather_dark": RAMPS["leather_dark"],
+    # 6階（11月25日）
+    "frost_silver": ramp("#4A5668", "#6A788C", "#8C9AAE", "#B0BCCC", "#CFD8E4", "#E6EDF4", "#F8FBFE"),
+    "ice": ramp("#3E6E9A", "#5A8EBA", "#7AAED4", "#9CC8E8", "#BEDDF4", "#DDEEFA", "#FFFFFF"),
+    "white_fur": ramp("#6A707A", "#868C96", "#A2A8B2", "#BEC4CC", "#D6DBE1", "#E8ECF0", "#F7F9FB"),
 }
 
 
@@ -167,6 +171,22 @@ class FloorAccessoryPainter(AccessoryPainter):
 
     def paint_leather_dark(self, c):
         return pick(LOCAL["leather_dark"], 3.4 + (self.tex(c, 71) - 0.5) * 0.4 + self.bevel(c, up=0.8, down=0.8))
+
+    # ---- 6階（11月25日） ----
+    def paint_frost_silver(self, c):
+        tone = 4.0 + (self.tex(c, 81) - 0.5) * 0.3 + self.bevel(c, up=1.6, down=1.0)
+        if c.el.tags.get("link") and (c.i + c.j) % 2 == 1:
+            tone -= 0.6
+        return pick(LOCAL["frost_silver"], tone)
+
+    def paint_ice(self, c):
+        tone = 4.2 + self.bevel(c, up=1.6, down=0.6)
+        if c.i == 0 and c.j == 0:
+            tone += 1.2
+        return pick(LOCAL["ice"], tone)
+
+    def paint_white_fur(self, c):
+        return self._std(c, "white_fur", base=4.0, noise=0.6, blob=0.4, up=0.8, down=0.8)
 
 
 # ---------------------------------------------------------------- 共通の形
@@ -368,10 +388,48 @@ def build_lens_charm():
     return g
 
 
+# ---------------------------------------------------------------- 6階（11月25日）
+
+def build_ice_crystal_necklace():
+    g = new_accessory("ice_crystal_necklace")
+    B = "armorBody"
+    neck_cord(g, "white_fur", inflate=-0.15)
+    # 霜銀の留め金と、下へ細くなる氷晶の柱
+    gcube(g, B, "bail", (-0.5, 21.7, -2.8), (1, 1, 1), "frost_silver", inflate=-0.2, tags={"link": True})
+    gcube(g, B, "crystal", (-0.5, 18.6, -3.1), (1, 3, 1), "ice", inflate=0.05)
+    gcube(g, B, "crystal_tip", (-0.5, 17.8, -3.1), (1, 1, 1), "ice", inflate=-0.2)
+    gcube(g, B, "shard_r", (0.4, 19.4, -3.0), (1, 2, 1), "ice", inflate=-0.25)
+    gcube(g, B, "shard_l", (-1.4, 19.4, -3.0), (1, 2, 1), "ice", inflate=-0.25)
+    return g
+
+
+def build_frozen_fur_bracelet():
+    g = new_accessory("frozen_fur_bracelet")
+    A = wrist_band(g, "white_fur", inflate=0.25)
+    y0 = 14.5
+    # 外に、霜銀の留め具
+    gcube(g, A, "clasp", (8.45, y0 + 0.2, -1.0), (1, 2, 2), "frost_silver", inflate=-0.05)
+    return g
+
+
+def build_snowlight_charm():
+    g = new_accessory("snowlight_charm")
+    B = hip_cord(g, "leather_dark", "frost_silver")
+    x = -5.5
+    # 小さな霜銀の灯籠（屋根・柱・淡く光る氷晶）
+    gcube(g, B, "roof", (x + 0.25, 8.6, -0.75), (2, 1, 2), "frost_silver", inflate=0.05)
+    gcube(g, B, "light", (x + 0.5, 6.6, -0.5), (1, 2, 1), "ice", inflate=0.15)
+    gcube(g, B, "post_l", (x + 0.0, 6.4, -0.6), (1, 2, 1), "frost_silver", inflate=-0.3)
+    gcube(g, B, "post_r", (x + 1.0, 6.4, -0.6), (1, 2, 1), "frost_silver", inflate=-0.3)
+    gcube(g, B, "base", (x + 0.25, 5.8, -0.75), (2, 1, 2), "frost_silver", inflate=-0.05)
+    return g
+
+
 BUILDERS = [build_glowcap_necklace, build_rootknot_bracelet, build_wisp_charm,
             build_clearwater_necklace, build_cogwheel_bracelet, build_whisker_charm,
             build_chime_necklace, build_mural_bracelet, build_mane_charm,
-            build_jade_necklace, build_sentinel_bracelet, build_lens_charm]
+            build_jade_necklace, build_sentinel_bracelet, build_lens_charm,
+            build_ice_crystal_necklace, build_frozen_fur_bracelet, build_snowlight_charm]
 
 
 # ---------------------------------------------------------------- 持ち物の絵（16×16。enhance_icons.py で 32×32 にする）
@@ -727,6 +785,197 @@ ICONS["altar_knot_charm"] = ([
     "................",
 ], {"b": "#7E6222", "B": "#DEC06A", "J": "#48C488", "j": "#C8F6DC"})
 
+# 6階（11月25日）：霜銀の輪（闘環は牙の刻み、智環は氷晶）・氷晶の首飾り・凍て毛皮の腕輪・雪灯のお守り・群れ長の白牙・霜熊の氷の棘
+ring("frost_silver_battle_ring", RING_KNUCKLE, {"B": "#E6EDF4", "b": "#B0BCCC", "d": "#6A788C", "S": "#8C9AAE", "k": "#FFFFFF"})
+ring("frost_silver_wisdom_ring", RING_GEM, {"B": "#E6EDF4", "b": "#B0BCCC", "d": "#6A788C", "S": "#8C9AAE", "G": "#BEDDF4", "g": "#5A8EBA"})
+
+ICONS["ice_crystal_necklace"] = ([
+    "................",
+    "....wWwWwWwW....",
+    "...W........w...",
+    "..w..........W..",
+    "..W..........w..",
+    "..w..........W..",
+    "...W........w...",
+    "....wW....Ww....",
+    "......WwwW......",
+    ".......SS.......",
+    "......ICCI......",
+    "......IcCI......",
+    "......ICcI......",
+    ".......IC.......",
+    ".......I........",
+    "................",
+], {"W": "#E8ECF0", "w": "#A2A8B2", "S": "#B0BCCC", "I": "#5A8EBA", "C": "#BEDDF4", "c": "#FFFFFF"})
+
+ICONS["frozen_fur_bracelet"] = ([
+    "................",
+    "................",
+    "................",
+    ".....wWWWWw.....",
+    "...wW......WWW..",
+    "..wW......WSsSW.",
+    "..wW......WsSsW.",
+    "..wW......WSsSW.",
+    "..ww.......WWW..",
+    "...wWWWWWWWWw...",
+    "...wwfwwwfwww...",
+    "....ddddddddd...",
+    "................",
+    "................",
+    "................",
+    "................",
+], {"W": "#E8ECF0", "w": "#A2A8B2", "d": "#6A707A", "f": "#F7F9FB", "S": "#B0BCCC", "s": "#E6EDF4"})
+
+ICONS["snowlight_charm"] = ([
+    "................",
+    "......lLlL......",
+    ".....L....l.....",
+    ".....l....L.....",
+    "......LllL......",
+    ".......ll.......",
+    ".....SSSSSS.....",
+    "....SsssssS.....",
+    ".....S.CC.S.....",
+    ".....S.cC.S.....",
+    ".....S.CC.S.....",
+    "....SSSSSSSS....",
+    ".......ll.......",
+    ".......lL.......",
+    "................",
+    "................",
+], {"l": "#3A261A", "L": "#654430", "S": "#8C9AAE", "s": "#E6EDF4", "C": "#BEDDF4", "c": "#FFFFFF"})
+
+ICONS["white_fang_charm"] = ([
+    "................",
+    ".......ll.......",
+    "......l..l......",
+    ".......ll.......",
+    "......LLLL......",
+    "......FFFF......",
+    "......FfFF......",
+    ".......FFF......",
+    ".......FfF......",
+    "........FF......",
+    "........Fd......",
+    ".........d......",
+    "................",
+    "................",
+    "................",
+    "................",
+], {"l": "#3A261A", "L": "#654430", "F": "#F2F0EA", "f": "#FFFFFF", "d": "#B8B4AA"})
+
+ICONS["bear_frost_charm"] = ([
+    "................",
+    ".......ll.......",
+    "......l..l......",
+    ".......ll.......",
+    "......SSSS......",
+    ".......II.......",
+    "......ICcI......",
+    "......ICCI......",
+    "......ICcI......",
+    ".......ICI......",
+    ".......IC.......",
+    ".......I........",
+    "................",
+    "................",
+    "................",
+    "................",
+], {"l": "#3A261A", "S": "#8C9AAE", "I": "#5A8EBA", "C": "#BEDDF4", "c": "#FFFFFF"})
+
+# 6階の素材（11月25日）：霜銀・氷晶・凍て毛皮・霜狼の牙・凍て鳥の羽根
+ICONS["frost_silver"] = ([
+    "................",
+    "................",
+    "................",
+    "....oooooooo....",
+    "...oWWWWWWWSo...",
+    "..oWwWWWWWSSSo..",
+    "..oSSSSSSSSSSo..",
+    "..oSsSSSSSSdSo..",
+    "..oSSSSSSSdddo..",
+    "...ooooooooooo..",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+], {"o": "#2A3240", "W": "#F8FBFE", "w": "#FFFFFF", "S": "#B0BCCC", "s": "#E6EDF4", "d": "#6A788C"})
+ICONS["ice_crystal"] = ([
+    "................",
+    "........o.......",
+    ".......oCo......",
+    "......oCcCo.....",
+    "...o..oCCCo.....",
+    "..oCo.oCcCo..o..",
+    "..oCCooCCCo.oCo.",
+    "..oCcCoCCCooCCo.",
+    "...oCCoCCCoCCo..",
+    "...oCCCCCCCCo...",
+    "....oCCCCCCo....",
+    ".....oooooo.....",
+    "................",
+    "................",
+    "................",
+    "................",
+], {"o": "#3E6E9A", "C": "#9CC8E8", "c": "#FFFFFF"})
+ICONS["frozen_fur"] = ([
+    "................",
+    "................",
+    "....o.oooo.o....",
+    "...oWoWWWWoWo...",
+    "..oWWWWWWWWWWo..",
+    "..oWwWWWWWWwWo..",
+    "...oWWWWWWWWo...",
+    "...oWWWwWWWWo...",
+    "..oWWWWWWWWWWo..",
+    "..oWWwWWWWwWWo..",
+    "...oWoWWWWoWo...",
+    "....o.oooo.o....",
+    "................",
+    "................",
+    "................",
+    "................",
+], {"o": "#6A707A", "W": "#D6DBE1", "w": "#F7F9FB"})
+ICONS["frost_fang"] = ([
+    "................",
+    "................",
+    "......oooo......",
+    ".....oFFFFo.....",
+    ".....oFfFFo.....",
+    "......oFFFo.....",
+    "......oFfFo.....",
+    ".......oFFo.....",
+    ".......oFFo.....",
+    "........oFo.....",
+    "........oo......",
+    "................",
+    "................",
+    "................",
+    "................",
+    "................",
+], {"o": "#8A8C94", "F": "#F2F4F8", "f": "#BEDDF4"})
+ICONS["ice_feather"] = ([
+    "................",
+    "...........oo...",
+    "..........oCCo..",
+    ".........oCcCo..",
+    "........oCCCo...",
+    ".......oCcCo....",
+    "......oCCCo.....",
+    ".....oCcCo......",
+    "....oCCCo.......",
+    "...oCCCo........",
+    "...oCCo.........",
+    "...so...........",
+    "..s.............",
+    "................",
+    "................",
+    "................",
+], {"o": "#3E6E9A", "C": "#BEDDF4", "c": "#F2F8FE", "s": "#8C9AAE"})
+
 # 素材
 ICONS["old_bark"] = ([
     "................",
@@ -1004,6 +1253,9 @@ def build_all():
 
 
 NOTES = {
+    "ice_crystal_necklace": ("氷晶の首飾り（6階）", "凍て毛皮の紐と霜銀の留め金に\n溶けない氷晶の柱（左右に小さなかけら）"),
+    "frozen_fur_bracelet": ("凍て毛皮の腕輪（6階）", "白い毛皮を手首に巻き\n外に霜銀の留め具"),
+    "snowlight_charm": ("雪灯のお守り（6階）", "霜銀の小さな灯籠（屋根・柱・台）の中に\n淡く光る氷晶"),
     "glowcap_necklace": ("光茸の首飾り（2階）", "葉影の尾の黒緑の紐に、光茸のかさを3つ\n（まん中が大きい。淡い青緑に白い斑）"),
     "rootknot_bracelet": ("根結びの腕輪（2階）", "樹皮の4つの部品を、根のこぶで留めた輪\n外に、錆びた古代の管のかけらと苔鉄の輪"),
     "wisp_charm": ("迷い灯のお守り（2階）", "苔鉄の小さな灯籠（笠・4本の柱・台）の中に\n琥珀色の芯。下に葉影の尾の房"),
@@ -1062,7 +1314,7 @@ def sheets(repo, out, accs):
     plate = AA.build_plate()
     ptex = AA.paint(plate)[0]
     chest = AA.PIECE_BONES["chest"] + AA.PIECE_BONES["legs"]
-    floors = [("2階", accs[0:3]), ("3階", accs[3:6]), ("4階", accs[6:9]), ("5階", accs[9:12])]
+    floors = [("2階", accs[0:3]), ("3階", accs[3:6]), ("4階", accs[6:9]), ("5階", accs[9:12]), ("6階", accs[12:15])]
     for label, group in floors:
         rows = []
         for g, frames in group:

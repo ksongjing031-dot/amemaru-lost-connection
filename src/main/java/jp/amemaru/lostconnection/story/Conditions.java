@@ -21,7 +21,8 @@ import java.util.List;
  *   <li>{@code opening}：オープニングの進み（0・1・2。Phase 5で足した）。{@code opening_max}：オープニングの進みがこれ以下</li>
  *   <li>{@code affinity_min}・{@code title}：会話のNPCとの親密度の段階・称号を持っているか（Phase 6 その3で働く。親密度は、会話・
  *       クエストのNPCについて見る。NPCの分からない所では「足りている」とみなす）</li>
- *   <li>{@code remembered}：NPCの記憶。Phase 8で働く（いまは記憶が失われないので「覚えている」とみなす）</li>
+ *   <li>{@code remembered}：NPCがその人を覚えているか（11月25日。{@link jp.amemaru.lostconnection.npc.NpcMemoryService}。
+ *       NPCの分からない所では「覚えている」とみなす）</li>
  * </ul>
  */
 public record Conditions(List<ResourceLocation> flagsAll, List<ResourceLocation> flagsAny, List<ResourceLocation> flagsNone,
@@ -131,8 +132,12 @@ public record Conditions(List<ResourceLocation> flagsAll, List<ResourceLocation>
         if (title != null && (data == null || !data.getGuild().hasTitle(title))) {
             return false;
         }
-        // NPCの記憶（Phase 8）はまだ失われないので、いまは「覚えている」とみなす
-        return remembered == null || remembered;
+        // NPCの記憶（11月25日：6日目から、街の人の一部がプレイヤーを忘れる）
+        if (remembered != null) {
+            boolean remembers = npc == null || jp.amemaru.lostconnection.npc.NpcMemoryService.remembers(player, npc);
+            return remembers == remembered;
+        }
+        return true;
     }
 
     private static boolean flag(StoryState state, @Nullable PlayerData data, ResourceLocation flag) {

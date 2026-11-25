@@ -1,0 +1,83 @@
+{
+  "_comment": "記憶の氷像「鐘を鳴らす若者」（教会の前）。台詞は【補完】",
+  "title": "記憶の場面：鐘を鳴らす若者",
+  "trigger": {
+    "type": "amemaru:admin"
+  },
+  "scope": "player",
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:fade",
+      "from": "none",
+      "to": "white",
+      "ticks": 12
+    },
+    {
+      "type": "amemaru:actor",
+      "id": "ringer",
+      "npc": "amemaru:echo_ringer",
+      "pos": {
+        "anchor": "floor",
+        "offset": [
+          224.5,
+          17,
+          236.5
+        ]
+      },
+      "yaw": 90.0
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "white",
+      "to": "none",
+      "ticks": 24
+    },
+    {
+      "type": "amemaru:sound",
+      "sound": "minecraft:block.amethyst_block.resonate",
+      "volume": 1.0,
+      "pitch": 0.7
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "若者「白い雪だ！ みんな、家に入れ！ 鐘を……鐘を鳴らさないと……！」",
+      "ticks": 130,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "若者「……鐘？ なんのために、鳴らすんだっけ……」",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "鐘は、ついに鳴らなかった。",
+      "ticks": 100,
+      "wait": true
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "none",
+      "to": "white",
+      "ticks": 16
+    },
+    {
+      "type": "amemaru:actor_remove",
+      "id": "ringer"
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "white",
+      "to": "none",
+      "ticks": 24
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/memory_ringer"
+      ]
+    }
+  ]
+}

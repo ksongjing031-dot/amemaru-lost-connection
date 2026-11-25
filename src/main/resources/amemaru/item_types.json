@@ -290,6 +290,15 @@
         "legs": "guardian_monk_hakama",
         "feet": "guardian_monk_sandals"
       }
+    },
+    {
+      "series": "mayor_fur",
+      "pieces": {
+        "head": "mayor_fur_hat",
+        "chest": "mayor_fur_coat",
+        "legs": "mayor_fur_leggings",
+        "feet": "mayor_fur_boots"
+      }
     }
   ],
   "accessories": [
@@ -432,6 +441,37 @@
       "id": "seventh_gate_key",
       "slot": "charm",
       "model": "geckolib"
+    },
+    {
+      "id": "frost_silver_battle_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "frost_silver_wisdom_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "ice_crystal_necklace",
+      "slot": "necklace",
+      "model": "geckolib"
+    },
+    {
+      "id": "frozen_fur_bracelet",
+      "slot": "bracelet",
+      "model": "geckolib"
+    },
+    {
+      "id": "snowlight_charm",
+      "slot": "charm",
+      "model": "geckolib"
+    },
+    {
+      "id": "white_fang_charm",
+      "slot": "charm"
+    },
+    {
+      "id": "bear_frost_charm",
+      "slot": "charm"
     }
   ],
   "materials": [
@@ -556,6 +596,26 @@
     {
       "id": "jade_core_shard",
       "rarity": "rare"
+    },
+    {
+      "id": "frost_silver",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "ice_crystal",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "frozen_fur",
+      "rarity": "common"
+    },
+    {
+      "id": "frost_fang",
+      "rarity": "common"
+    },
+    {
+      "id": "ice_feather",
+      "rarity": "common"
     }
   ],
   "fruits": [
@@ -644,6 +704,16 @@
     {
       "id": "warden_light",
       "kind": "warden",
+      "stack": 1
+    },
+    {
+      "id": "heat_crystal",
+      "kind": "heat",
+      "stack": 1
+    },
+    {
+      "id": "memory_crystal",
+      "kind": "memory",
       "stack": 1
     }
   ],

@@ -1,0 +1,63 @@
+{
+  "_comment": "霜の欠け熊の主（6階の名のある魔物。牧場の納屋の宝箱の守り手）。もっと大きく、咆哮が2回。数値は【補完】",
+  "name": "霜の欠け熊の主",
+  "model": "amemaru:frost_bear",
+  "floor": 6,
+  "level": 30,
+  "description": "村の牧場に居座る、山のような霜の熊。白く欠けた背中から、溶けない氷の棘が生えている。",
+  "stats": {
+    "hp": 19000,
+    "attack": 220,
+    "defense": 26,
+    "move_speed": 0.22,
+    "follow_range": 28,
+    "aggro_range": 14
+  },
+  "exp": 520,
+  "skills": {
+    "claw": {
+      "power": 1.45,
+      "windup": 0.95,
+      "cooldown": 2.6,
+      "range": 4.6,
+      "angle": 130
+    },
+    "charge": {
+      "power": 1.9,
+      "windup": 1.2,
+      "cooldown": 6.5,
+      "range": 18.0,
+      "min_range": 5.0,
+      "width": 3.0,
+      "speed": 1.0,
+      "recover": 1.2
+    }
+  },
+  "behavior": {
+    "roars": 2,
+    "roar_radius": 14.0,
+    "roar_attack": 1.3,
+    "roar_seconds": 12.0,
+    "forget_chance": 0.02,
+    "chill_stacks": 2,
+    "chill_seconds": 6.0,
+    "scale": 1.5
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/frost_bear",
+    "rare": [
+      {
+        "item": "amemaru:frost_silver",
+        "chance": 40.0
+      },
+      {
+        "item": "amemaru:bear_frost_charm",
+        "chance": 5.0
+      },
+      {
+        "item": "amemaru:crystal_fruit_amber",
+        "chance": 6.0
+      }
+    ]
+  }
+}

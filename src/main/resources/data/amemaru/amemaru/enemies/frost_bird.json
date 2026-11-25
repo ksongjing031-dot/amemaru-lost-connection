@@ -1,0 +1,51 @@
+{
+  "_comment": "凍て鳥（6階の雑魚。Phase 0-A 9章の6階「凍て鳥（吹雪を起こす）」）。空に浮き、氷の羽根を撃つ（needle。1階の結晶蜂と同じ動き）。blizzard：狙った人のまわりに円の予兆（windup 秒）のあと、seconds 秒の吹雪（radius。1秒ごとに power の傷と凍え。近くが見えにくくなる）。数値は【補完】",
+  "name": "凍て鳥",
+  "floor": 6,
+  "level": 25,
+  "description": "白と氷青の羽の大きな鳥。羽ばたくたびに雪が舞い、群れが空を横切ると、村に吹雪が起こる。",
+  "stats": {
+    "hp": 1100,
+    "attack": 150,
+    "defense": 8,
+    "move_speed": 0.22,
+    "follow_range": 24,
+    "aggro_range": 14
+  },
+  "exp": 50,
+  "skills": {
+    "needle": {
+      "power": 0.9,
+      "windup": 0.8,
+      "cooldown": 3.0,
+      "range": 14,
+      "speed": 0.9
+    },
+    "blizzard": {
+      "power": 0.3,
+      "windup": 1.8,
+      "cooldown": 16.0,
+      "range": 16.0,
+      "radius": 6.0,
+      "seconds": 5.0,
+      "chill_seconds": 4.0
+    }
+  },
+  "behavior": {
+    "keep_distance": 8,
+    "hover_height": 5.0
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/frost_bird",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_white",
+        "chance": 0.6
+      },
+      {
+        "item": "amemaru:crystal_fruit_azure",
+        "chance": 0.3
+      }
+    ]
+  }
+}

@@ -165,6 +165,12 @@ public final class ClientModEvents {
         event.registerEntityRenderer(ModEntities.SENTINEL.get(), context -> new AmemaruMobRenderer<>(context, "sentinel", 0.6F));
         event.registerEntityRenderer(ModEntities.REPAIR_DRONE.get(), context -> new AmemaruMobRenderer<>(context, "repair_drone", 0.0F));
         event.registerEntityRenderer(ModEntities.ANCIENT_GUARDIAN.get(), context -> new AmemaruMobRenderer<>(context, "ancient_guardian", 1.4F));
+        // 11月25日：6階
+        event.registerEntityRenderer(ModEntities.FROST_WOLF.get(), context -> new AmemaruMobRenderer<>(context, "frost_wolf", 0.5F));
+        event.registerEntityRenderer(ModEntities.STATUE_ECHO.get(), jp.amemaru.lostconnection.client.render.StatueEchoRenderer::new);
+        event.registerEntityRenderer(ModEntities.FROST_BIRD.get(), context -> new AmemaruMobRenderer<>(context, "frost_bird", 0.4F));
+        event.registerEntityRenderer(ModEntities.FROST_BEAR.get(), context -> new AmemaruMobRenderer<>(context, "frost_bear", 0.9F));
+        event.registerEntityRenderer(ModEntities.ORDO.get(), context -> new AmemaruMobRenderer<>(context, "ordo", 1.0F));
         event.registerEntityRenderer(ModEntities.YODOMI_SLIME.get(), context -> new AmemaruMobRenderer<>(context, "yodomi_slime", 0.6F));
         event.registerEntityRenderer(ModEntities.SOUJIKIHEI.get(), context -> new AmemaruMobRenderer<>(context, "soujikihei", 0.7F));
         event.registerEntityRenderer(ModEntities.KIBA_NAMAZU.get(), context -> new AmemaruMobRenderer<>(context, "kiba_namazu", 0.6F));
@@ -174,6 +180,9 @@ public final class ClientModEvents {
                 jp.amemaru.lostconnection.client.render.TowerPillarRenderer::new);
         event.registerBlockEntityRenderer(jp.amemaru.lostconnection.core.registry.ModBlockEntities.FLOOR_SEAL.get(),
                 jp.amemaru.lostconnection.client.render.FloorSealRenderer::new);
+        // 11月25日：6階の凍った村人の氷像
+        event.registerBlockEntityRenderer(jp.amemaru.lostconnection.core.registry.ModBlockEntities.VILLAGE_STATUE.get(),
+                jp.amemaru.lostconnection.client.render.VillageStatueRenderer::new);
     }
 
     /**

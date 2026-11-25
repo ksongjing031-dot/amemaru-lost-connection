@@ -154,10 +154,26 @@ public final class ModItems {
             new ForgeSpawnEggItem(ModEntities.REPAIR_DRONE, 0xA07A3C, 0x5CE0A4, new Item.Properties()));
     public static final RegistryObject<Item> ANCIENT_GUARDIAN_SPAWN_EGG = ITEMS.register("ancient_guardian_spawn_egg", () ->
             new ForgeSpawnEggItem(ModEntities.ANCIENT_GUARDIAN, 0xE6E2D6, 0x4CD69A, new Item.Properties()));
+    // 11月25日：6階「凍結した村」
+    public static final RegistryObject<Item> FROST_WOLF_SPAWN_EGG = ITEMS.register("frost_wolf_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.FROST_WOLF, 0xE6F0F8, 0x7A8EA6, new Item.Properties()));
+    public static final RegistryObject<Item> STATUE_ECHO_SPAWN_EGG = ITEMS.register("statue_echo_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.STATUE_ECHO, 0xD6E8F6, 0x9CC8E8, new Item.Properties()));
+    public static final RegistryObject<Item> FROST_BIRD_SPAWN_EGG = ITEMS.register("frost_bird_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.FROST_BIRD, 0xF2F7FC, 0x5A8EBA, new Item.Properties()));
+    public static final RegistryObject<Item> FROST_BEAR_SPAWN_EGG = ITEMS.register("frost_bear_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.FROST_BEAR, 0xD0E0EE, 0x2A344A, new Item.Properties()));
+    public static final RegistryObject<Item> ORDO_SPAWN_EGG = ITEMS.register("ordo_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.ORDO, 0x2A3A62, 0x9FD8FF, new Item.Properties()));
     // 11月24日：5階の結び台
     public static final RegistryObject<Item> BINDING_DAIS = ITEMS.register("binding_dais", () ->
             new BlockItem(ModBlocks.BINDING_DAIS.get(), new Item.Properties().rarity(Rarity.RARE)));
     // 11月24日：4階の仕掛けのブロック
+    // 11月25日：6階の熱の炉と、凍った村人の氷像
+    public static final RegistryObject<Item> VILLAGE_HEARTH = ITEMS.register("village_hearth", () ->
+            new BlockItem(ModBlocks.VILLAGE_HEARTH.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> VILLAGE_STATUE = ITEMS.register("village_statue", () ->
+            new BlockItem(ModBlocks.VILLAGE_STATUE.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> MURAL_PANEL = ITEMS.register("mural_panel", () ->
             new BlockItem(ModBlocks.MURAL_PANEL.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> SOUND_PLATE = ITEMS.register("sound_plate", () ->
