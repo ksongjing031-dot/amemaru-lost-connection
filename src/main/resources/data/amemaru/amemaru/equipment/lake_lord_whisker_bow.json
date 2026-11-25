@@ -1,0 +1,34 @@
+{
+  "slot": "weapon",
+  "generation": 2,
+  "series": "8階のレア装備",
+  "rarity": "epic",
+  "required_level": 34,
+  "jobs": [
+    "amemaru:archer"
+  ],
+  "stats": {
+    "attack": 35,
+    "crit": 7
+  },
+  "durability": 620,
+  "binding": "on_equip",
+  "effects": [
+    {
+      "type": "warning_ear",
+      "percent": 100
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:silent_ice",
+      "count": 2
+    },
+    {
+      "item": "amemaru:lake_pearl",
+      "count": 1
+    }
+  ],
+  "description": "声なき湖主ムーネの、光る長いひげを弦に張った弓。湖の音がすべて消えても、この弦だけは、危ないものが来る前に、持ち主の耳もとで小さく鳴る。"
+}

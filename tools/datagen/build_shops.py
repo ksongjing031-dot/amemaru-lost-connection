@@ -73,6 +73,13 @@ MATERIALS = {
     "amemaru:icicle_wing": 45,          # つらら蝙蝠から60%
     "amemaru:blizzard_core": 90,        # 吹雪の精から55%
     "amemaru:prism_shard": 950,         # 名のある魔物から40%・リフレクタから3〜4個・写し身から1%（レア）
+    # 8階の素材（11月25日。8階のアクセサリーと湖主の髭弓の修理の材料）【補完】
+    "amemaru:silent_ice": 90,           # 無音の大魚・声喰い・氷霧の亡霊から20〜25%・ムーネから4〜6個・宝箱
+    "amemaru:fish_scale": 50,           # 無音の大魚から60%（叩ける間が短い）
+    "amemaru:voice_stone": 85,          # 声喰いから55%
+    "amemaru:crane_plume": 50,          # 凍て鶴から60%
+    "amemaru:mist_thread": 50,          # 氷霧の亡霊から60%
+    "amemaru:lake_pearl": 1000,         # 名のある魔物から40%・ムーネから3〜4個・雑魚から1%（レア）
 }
 DROPS = {
     "amemaru:ancient_stone": 0.7 * 1.5,
@@ -105,6 +112,10 @@ FIXED = {
     "amemaru:white_horn_charm": 3400,
     "amemaru:blizzard_lamp_charm": 3600,
     "amemaru:mirror_ice_daggers": 5300,
+    # 11月25日：8階の名のある魔物のレアのお守りと、8階のボスのレア（4%。1回9分 → 225分 × 33）【補完】
+    "amemaru:frost_crown_plume": 3600,
+    "amemaru:thousand_voice_stone": 3800,
+    "amemaru:lake_lord_whisker_bow": 7400,
 }
 # 表にない物：レアリティごとの基準額（×（1＋0.035×装備レベル）はゲームの中で計算する。11月24日にレベルの上限を上げたため 0.08 から）【補完】
 RARITY_BASE = {"common": 30, "uncommon": 100, "rare": 400, "epic": 1600, "legendary": 6000, "unique": 20000}

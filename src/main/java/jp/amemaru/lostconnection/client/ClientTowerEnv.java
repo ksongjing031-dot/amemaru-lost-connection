@@ -23,6 +23,8 @@ public final class ClientTowerEnv {
     /** 11月25日（6階）：空（aurora）と天気（snow）。 */
     private static String sky = "";
     private static String weather = "";
+    /** 11月25日（8階）：音のない湖（湖の鐘を鳴らすまで、効果音が消えている）。 */
+    private static boolean silent;
     /** 吹雪の強さ（0〜1。凍て鳥の吹雪。しばらくで消える）と、消える時刻（クライアントの tick）。 */
     private static float blizzard;
     private static long blizzardUntil;
@@ -40,6 +42,7 @@ public final class ClientTowerEnv {
                 dark = false;
                 sky = data.getString("sky");
                 weather = data.getString("weather");
+                silent = data.getBoolean("silent");
                 blizzard = 0.0F;
                 if (data.contains("fogEnd")) {
                     fogStart = data.getFloat("fogStart");
@@ -75,6 +78,11 @@ public final class ClientTowerEnv {
 
     public static String sky() {
         return sky;
+    }
+
+    /** 今いる階の音が消えているか（8階の湖の鐘を鳴らす前）。 */
+    public static boolean silent() {
+        return silent;
     }
 
     public static String weather() {

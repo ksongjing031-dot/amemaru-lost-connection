@@ -28,7 +28,7 @@ import java.util.Set;
  */
 public class VillageStatueRenderer implements BlockEntityRenderer<VillageStatueBlockEntity> {
     /** 体の細い見た目（腕が3ピクセル）。 */
-    private static final Set<String> SLIM = Set.of("woman", "mother", "buyer", "child_girl");
+    private static final Set<String> SLIM = Set.of("woman", "mother", "buyer", "child_girl", "singer");
     private static final Map<String, ResourceLocation> TEXTURES = new HashMap<>();
 
     private final PlayerModel<LivingEntity> wide;
@@ -69,6 +69,8 @@ public class VillageStatueRenderer implements BlockEntityRenderer<VillageStatueB
         POSES.put("pray", new Pose(r(25, 0, 0), r(5, 0, 0), r(-60, -25, 0), r(-60, 25, 0), Z, Z, false));
         POSES.put("sit_write", new Pose(r(25, 0, 0), r(10, 0, 0), r(-50, 0, 0), r(-40, 10, 0), r(-90, 8, 0), r(-90, -8, 0), true));
         POSES.put("fish", new Pose(r(20, 0, 0), r(5, 0, 0), r(-60, 5, 0), r(-55, -5, 0), r(-90, 10, 0), r(-90, -10, 0), true));
+        // 11月25日（8階）：湖底の祠の、最後の歌い手（顔を上げ、両手を胸の前で開いて歌っている）
+        POSES.put("sing", new Pose(r(-28, 0, 0), r(-4, 0, 0), r(-58, -28, 10), r(-58, 28, -10), Z, r(6, 0, 0), false));
     }
 
     public VillageStatueRenderer(BlockEntityRendererProvider.Context context) {

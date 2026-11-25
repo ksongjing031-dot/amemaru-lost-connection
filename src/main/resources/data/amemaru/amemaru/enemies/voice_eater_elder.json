@@ -1,0 +1,59 @@
+{
+  "_comment": "千声喰い（8階の名のある魔物。東の声の洞の宝箱の守り手）。声喰いの長。静寂の届く所が広く（silence_range）、ときどき大きく息を吸いこんで（inhale。地面の円の予兆のあと seconds 秒、range の中の人を引き寄せ、最後にかみつく。かまれると静寂 silence_seconds 秒）。数値は【補完】",
+  "name": "千声喰い",
+  "model": "amemaru:voice_eater",
+  "floor": 8,
+  "level": 36,
+  "description": "千の声を食べたという、大きな声喰い。のどの奥では、食べた声がいまも小さく響きあっている。千声喰いの洞では、仲間を呼ぶ声も届かない。",
+  "stats": {
+    "hp": 20000,
+    "attack": 236,
+    "defense": 14,
+    "move_speed": 0.22,
+    "follow_range": 28,
+    "aggro_range": 16
+  },
+  "exp": 560,
+  "skills": {
+    "needle": {
+      "power": 1.0,
+      "windup": 0.8,
+      "cooldown": 2.6,
+      "range": 14,
+      "speed": 1.0
+    },
+    "inhale": {
+      "power": 1.4,
+      "windup": 1.6,
+      "cooldown": 14.0,
+      "range": 10.0,
+      "seconds": 2.0,
+      "pull": 0.12,
+      "silence_seconds": 8.0
+    }
+  },
+  "behavior": {
+    "keep_distance": 6,
+    "hover_height": 2.0,
+    "silence_range": 12.0,
+    "silence_seconds": 3.0,
+    "scale": 1.6
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/voice_eater",
+    "rare": [
+      {
+        "item": "amemaru:lake_pearl",
+        "chance": 40.0
+      },
+      {
+        "item": "amemaru:thousand_voice_stone",
+        "chance": 5.0
+      },
+      {
+        "item": "amemaru:crystal_fruit_violet",
+        "chance": 6.0
+      }
+    ]
+  }
+}

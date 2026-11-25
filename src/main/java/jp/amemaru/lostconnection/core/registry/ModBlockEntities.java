@@ -31,7 +31,9 @@ public final class ModBlockEntities {
                     ModBlocks.MURAL_PANEL.get(), ModBlocks.CHIME_STONE.get(), ModBlocks.KNIGHT_RELIC.get(),
                     // 11月25日：6階の熱の炉・7階の光の泉・氷の鏡・光の受け石
                     ModBlocks.VILLAGE_HEARTH.get(), ModBlocks.LIGHT_SPRING.get(), ModBlocks.ICE_MIRROR.get(),
-                    ModBlocks.LIGHT_TARGET.get()).build(null));
+                    ModBlocks.LIGHT_TARGET.get(),
+                    // 11月25日：8階の湖の鐘・歌の碑・湖底の祠の石板
+                    ModBlocks.LAKE_BELL.get(), ModBlocks.SONG_STELE.get(), ModBlocks.LAKE_TABLET.get()).build(null));
 
     /** 6階の凍った村人の氷像（どの姿・格好・向き・記憶か。11月25日）。 */
     @SuppressWarnings("DataFlowIssue")

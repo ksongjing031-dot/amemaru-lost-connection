@@ -1,0 +1,29 @@
+{
+  "_comment": "湖の鐘をすべて正しい順番で鳴らしたとき（BellService が、階にいる人に流す）。音が戻り、祠の氷のふたが開く【補完】",
+  "title": "音が戻る",
+  "trigger": {
+    "type": "amemaru:admin"
+  },
+  "scope": "player",
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "……鐘の音が、聞こえた。",
+      "ticks": 90,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "氷のきしむ音。風の音。自分の足音。湖に、音が戻ってくる。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "湖の北で、祠への氷のふたが静かに開いた。",
+      "ticks": 110,
+      "wait": false
+    }
+  ]
+}

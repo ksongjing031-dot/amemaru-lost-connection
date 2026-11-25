@@ -1,0 +1,23 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "accessory",
+  "mastery": 4,
+  "mastery_exp": 26,
+  "ingredients": [
+    {
+      "item": "amemaru:crane_plume",
+      "count": 3
+    },
+    {
+      "item": "amemaru:frost_silver",
+      "count": 2
+    },
+    {
+      "item": "amemaru:pedestal_cloth",
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "amemaru:frost_crane_bracelet"
+  }
+}

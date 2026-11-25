@@ -493,6 +493,11 @@ public final class TowerService {
                 && !jp.amemaru.lostconnection.tower.iceforest.PassphraseService.passed(player, def.number())) {
             return false;
         }
+        // 11月25日（8階）：鐘の組をすべて正しい順番で鳴らしたら（みんな）
+        if (features.requires(FloorFeatures.SEAL_BELLS)
+                && !jp.amemaru.lostconnection.tower.lake.BellService.allSolved(player.server, def)) {
+            return false;
+        }
         if (!features.requires(FloorFeatures.SEAL_PILLARS) || def.pillars().isEmpty()) {
             return true;
         }
@@ -726,6 +731,11 @@ public final class TowerService {
                 && !jp.amemaru.lostconnection.tower.iceforest.LightMazeService.allSolved(player.server, def)) {
             int[] mazes = jp.amemaru.lostconnection.tower.iceforest.LightMazeService.count(player.server, def);
             return Component.translatable("message.amemaru.seal.lights", mazes[0], mazes[1]);
+        }
+        if (features.requires(FloorFeatures.SEAL_BELLS)
+                && !jp.amemaru.lostconnection.tower.lake.BellService.allSolved(player.server, def)) {
+            int[] bells = jp.amemaru.lostconnection.tower.lake.BellService.count(player.server, def);
+            return Component.translatable("message.amemaru.seal.bells", bells[0], bells[1]);
         }
         if (features.requires(FloorFeatures.SEAL_GUARDIANS)) {
             int done = guardiansDefeated(player, def);

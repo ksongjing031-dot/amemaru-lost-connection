@@ -1,0 +1,37 @@
+{
+  "_comment": "湖底の祠（本人だけ。一人一度）。古代記録の石板と、歌い手の氷像【補完】",
+  "title": "湖底の祠",
+  "trigger": {
+    "type": "amemaru:floor_zone",
+    "floor": 8,
+    "zone": "shrine"
+  },
+  "scope": "player",
+  "once": false,
+  "replayable": true,
+  "conditions": {
+    "flags_none": [
+      "amemaru:story/lake_shrine_seen"
+    ]
+  },
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "湖の底の祠。天井の上で、湖の水が静かに揺れている。",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "奥の台に、古い石板がまつられている。手前には、歌うように口を開けたまま凍った人の像。",
+      "ticks": 130,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/lake_shrine_seen"
+      ]
+    }
+  ]
+}

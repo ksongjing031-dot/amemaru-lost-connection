@@ -283,6 +283,10 @@ public final class StoryHud {
         if (minecraft.level == null || minecraft.player == null) {
             return;
         }
+        // 11月25日（8階）：ボスの「静寂の帳」の間は、技の名前（予兆の表示）も出ない
+        if (LakeSoundFilter.deepSilence()) {
+            return;
+        }
         jp.amemaru.lostconnection.enemy.boss.AmemaruBoss boss = null;
         double best = 48.0 * 48.0;
         for (net.minecraft.world.entity.Entity entity : minecraft.level.entitiesForRendering()) {

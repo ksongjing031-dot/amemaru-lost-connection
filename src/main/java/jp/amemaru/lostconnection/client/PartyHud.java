@@ -47,6 +47,11 @@ public final class PartyHud {
         if (minecraft.player == null || minecraft.options.renderDebug || minecraft.options.hideGui) {
             return;
         }
+        // 11月25日（8階）：ボスの「静寂の帳」の間は、パーティの欄も消える（Phase 0-A 9章の8階のボス）
+        if (LakeSoundFilter.deepSilence()) {
+            bottom = 0;
+            return;
+        }
         PartyStateS2C state = ClientParty.state();
         Font font = minecraft.font;
         UUID self = minecraft.player.getUUID();
@@ -113,6 +118,13 @@ public final class PartyHud {
             graphics.fill(X + 2, barY, X + 2 + Math.round(BAR_W * ratio), barY + BAR_H, alpha | (DOWN & 0xFFFFFF));
             Component text = Component.translatable("hud.amemaru.party.down", (left + 19) / 20).withStyle(ChatFormatting.RED);
             graphics.drawString(font, text, X + WIDTH - 6 - font.width(text), y, DOWN, true);
+            return;
+        }
+        // 11月25日：ロスト状態「断線」の間は、仲間のHPが消える（切れた糸のような、とぎれとぎれの線だけ）
+        if (LostClientEvents.severed()) {
+            for (int x = 0; x < BAR_W; x += 7) {
+                graphics.fill(X + 2 + x, barY + 2, X + 2 + Math.min(BAR_W, x + 4), barY + 3, 0xFF8892A6);
+            }
             return;
         }
         float hp = Mth.clamp(member.hp(), 0.0F, 1.0F);

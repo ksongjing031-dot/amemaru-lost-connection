@@ -61,9 +61,9 @@ public final class LostService {
     private LostService() {
     }
 
-    /** ロスト状態の一覧（今は「薄れ」。断線・静寂・忘却などは、その階を作るときに足す）。 */
+    /** ロスト状態の一覧（7階の「薄れ」・8階の「断線」「静寂」。忘却などは、その階を作るときに足す）。 */
     public static List<MobEffect> states() {
-        return List.of(ModEffects.LOST_FADE.get());
+        return List.of(ModEffects.LOST_FADE.get(), ModEffects.LOST_SEVER.get(), ModEffects.LOST_SILENCE.get());
     }
 
     public static boolean isLost(MobEffect effect) {
@@ -93,16 +93,31 @@ public final class LostService {
 
     /** ロスト状態にする（ticks はロスト耐性の分だけ短くなる。今の残りより短ければ、のばさない）。 */
     public static void inflict(ServerPlayer player, MobEffect state, int ticks) {
+        inflict(player, state, ticks, 0);
+    }
+
+    /**
+     * 強さつきでロスト状態にする（11月25日：8階のボスの「静寂の帳」は、静寂の強さ1。強い方を残す）。今の残りの方が長く、
+     * 強さも同じか強ければ、何もしない。
+     */
+    public static void inflict(ServerPlayer player, MobEffect state, int ticks, int amplifier) {
         if (!player.isAlive() || player.isCreative() || player.isSpectator() || ticks <= 0) {
             return;
         }
         int length = (int) Math.round(ticks * (1.0 - resist(player) / 100.0));
         MobEffectInstance current = player.getEffect(state);
-        if (length <= 0 || current != null && current.getDuration() >= length) {
+        if (length <= 0 || current != null && current.getDuration() >= length && current.getAmplifier() >= amplifier) {
             return;
         }
+        if (current != null && current.getAmplifier() > amplifier) {
+            amplifier = current.getAmplifier();
+        }
         boolean was = player.hasEffect(state);
-        player.addEffect(new MobEffectInstance(state, length, 0, false, true, true));
+        if (was && current != null && current.getAmplifier() < amplifier) {
+            player.removeEffect(state);
+        }
+        player.addEffect(new MobEffectInstance(state, Math.max(length, current == null ? 0 : current.getDuration()), amplifier, false, true,
+                true));
         if (!was) {
             player.serverLevel().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.AMETHYST_BLOCK_RESONATE,
                     SoundSource.PLAYERS, 0.8F, 0.5F);

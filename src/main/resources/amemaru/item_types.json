@@ -171,6 +171,10 @@
     {
       "id": "mirror_ice_daggers",
       "kind": "daggers"
+    },
+    {
+      "id": "lake_lord_whisker_bow",
+      "kind": "bow"
     }
   ],
   "shields": [
@@ -592,6 +596,37 @@
     {
       "id": "blizzard_lamp_charm",
       "slot": "charm"
+    },
+    {
+      "id": "silent_ice_battle_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "silent_ice_wisdom_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "fish_scale_necklace",
+      "slot": "necklace",
+      "model": "geckolib"
+    },
+    {
+      "id": "frost_crane_bracelet",
+      "slot": "bracelet",
+      "model": "geckolib"
+    },
+    {
+      "id": "bell_charm",
+      "slot": "charm",
+      "model": "geckolib"
+    },
+    {
+      "id": "frost_crown_plume",
+      "slot": "charm"
+    },
+    {
+      "id": "thousand_voice_stone",
+      "slot": "charm"
     }
   ],
   "materials": [
@@ -767,6 +802,34 @@
     },
     {
       "id": "prism_shard",
+      "rarity": "rare"
+    },
+    {
+      "id": "silent_ice",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "fish_scale",
+      "rarity": "common"
+    },
+    {
+      "id": "voice_stone",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "crane_plume",
+      "rarity": "common"
+    },
+    {
+      "id": "mist_thread",
+      "rarity": "common"
+    },
+    {
+      "id": "lake_pearl",
+      "rarity": "rare"
+    },
+    {
+      "id": "lake_shrine_tablet",
       "rarity": "rare"
     }
   ],

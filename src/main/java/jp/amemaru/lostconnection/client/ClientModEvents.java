@@ -179,6 +179,12 @@ public final class ClientModEvents {
         event.registerEntityRenderer(ModEntities.ICICLE_BAT.get(), context -> new AmemaruMobRenderer<>(context, "icicle_bat", 0.3F));
         event.registerEntityRenderer(ModEntities.BLIZZARD_SPIRIT.get(), context -> new AmemaruMobRenderer<>(context, "blizzard_spirit", 0.4F));
         event.registerEntityRenderer(ModEntities.REFLECTA.get(), context -> new AmemaruMobRenderer<>(context, "reflecta", 1.3F));
+        // 11月25日：8階（大魚と湖主は、氷の下にいる間は暗い影に見える）
+        event.registerEntityRenderer(ModEntities.SILENT_FISH.get(), jp.amemaru.lostconnection.client.render.LakeShadowRenderer::fish);
+        event.registerEntityRenderer(ModEntities.VOICE_EATER.get(), context -> new AmemaruMobRenderer<>(context, "voice_eater", 0.4F));
+        event.registerEntityRenderer(ModEntities.FROST_CRANE.get(), context -> new AmemaruMobRenderer<>(context, "frost_crane", 0.5F));
+        event.registerEntityRenderer(ModEntities.FOG_WRAITH.get(), context -> new AmemaruMobRenderer<>(context, "fog_wraith", 0.0F, true));
+        event.registerEntityRenderer(ModEntities.MUNE.get(), jp.amemaru.lostconnection.client.render.LakeShadowRenderer::mune);
         event.registerEntityRenderer(ModEntities.YODOMI_SLIME.get(), context -> new AmemaruMobRenderer<>(context, "yodomi_slime", 0.6F));
         event.registerEntityRenderer(ModEntities.SOUJIKIHEI.get(), context -> new AmemaruMobRenderer<>(context, "soujikihei", 0.7F));
         event.registerEntityRenderer(ModEntities.KIBA_NAMAZU.get(), context -> new AmemaruMobRenderer<>(context, "kiba_namazu", 0.6F));

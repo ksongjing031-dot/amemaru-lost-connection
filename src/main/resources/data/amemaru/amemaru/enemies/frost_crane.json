@@ -1,0 +1,65 @@
+{
+  "_comment": "凍て鶴（8階の雑魚。Phase 0-A 9章の8階）。くちばしで突き（bite）、低く翼を広げて滑るように突進し（charge。1階の欠け牙の狼と同じ動き）、翼を振って前の扇に吹雪を叩きつける（gust。押し返し、凍える）。くちばしに当たると凍える（behavior.chill_stacks 段）。数値は【補完】",
+  "name": "凍て鶴",
+  "floor": 8,
+  "level": 32,
+  "description": "白い羽に黒い風切り、頭には霜の冠。凍った湖の岸に一本足で立ち、近づく者を、音もなく翼で払う。鳴くはずの喉からは、何も聞こえない。",
+  "stats": {
+    "hp": 2200,
+    "attack": 228,
+    "defense": 18,
+    "move_speed": 0.28,
+    "follow_range": 22,
+    "aggro_range": 12
+  },
+  "exp": 70,
+  "skills": {
+    "bite": {
+      "power": 1.05,
+      "windup": 0.6,
+      "cooldown": 1.6,
+      "range": 2.6,
+      "angle": 80
+    },
+    "charge": {
+      "power": 1.6,
+      "windup": 1.1,
+      "cooldown": 8.0,
+      "range": 12.0,
+      "min_range": 4.0,
+      "speed": 0.9,
+      "width": 1.2,
+      "recover": 1.2
+    },
+    "gust": {
+      "power": 1.2,
+      "windup": 1.1,
+      "cooldown": 9.0,
+      "range": 6.0,
+      "angle": 100,
+      "push": 1.0,
+      "chill": 1
+    }
+  },
+  "behavior": {
+    "chill_stacks": 1,
+    "chill_seconds": 4.0
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/frost_crane",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_white",
+        "chance": 0.6
+      },
+      {
+        "item": "amemaru:crystal_fruit_azure",
+        "chance": 0.3
+      },
+      {
+        "item": "amemaru:lake_pearl",
+        "chance": 1.0
+      }
+    ]
+  }
+}

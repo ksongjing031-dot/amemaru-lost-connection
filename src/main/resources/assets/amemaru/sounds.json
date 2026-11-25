@@ -1569,5 +1569,13 @@
         "stream": true
       }
     ]
+  },
+  "music.boss.mune": {
+    "sounds": [
+      {
+        "name": "amemaru:music/boss_mune",
+        "stream": true
+      }
+    ]
   }
 }

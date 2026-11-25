@@ -1,0 +1,37 @@
+{
+  "_comment": "南の岸の入江（本人だけ。一人一度）。入江の鐘3つと、入江の歌の碑【補完】",
+  "title": "入江の鐘",
+  "trigger": {
+    "type": "amemaru:floor_zone",
+    "floor": 8,
+    "zone": "cove"
+  },
+  "scope": "player",
+  "once": false,
+  "replayable": true,
+  "conditions": {
+    "flags_none": [
+      "amemaru:story/lake_cove_seen"
+    ]
+  },
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "小さな入江のまわりに、古い鐘が三つ。鳴らしても、音はしない。",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "入江の歌の碑に触れて、今日の歌（鐘を鳴らす順番）を確かめよう。歌は、毎日かわるらしい。",
+      "ticks": 130,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/lake_cove_seen"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,67 @@
+{
+  "_comment": "8階のボスの初撃破（倒したパーティの画面だけ。サーバー全体には知らせが出る）。台詞は【補完】",
+  "title": "声なき湖主ムーネ",
+  "trigger": {
+    "type": "amemaru:floor_first_kill",
+    "floor": 8
+  },
+  "scope": "party",
+  "once": true,
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:wait",
+      "ticks": 60
+    },
+    {
+      "type": "amemaru:hud",
+      "hide": true
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "none",
+      "to": "white",
+      "ticks": 30
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "white",
+      "to": "none",
+      "ticks": 60
+    },
+    {
+      "type": "amemaru:title",
+      "title": "沈黙の湖　踏破",
+      "subtitle": "第2章　凍てついた記憶",
+      "ticks": 110
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "湖主の体が、ゆっくりと湖の底へ沈んでいく。光るひげが、最後に一度だけ揺れた。",
+      "ticks": 130,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "その瞬間、湖じゅうに音があふれた。氷の割れる音、水の音、仲間の声。",
+      "ticks": 130,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "沈黙は、争いを止めた。だが、歌も止めた。――湖主は、ずっとその両方を守っていたのかもしれない。",
+      "ticks": 150,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "祠の石板を、セレナのところへ持ち帰ろう。",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:hud",
+      "hide": false
+    }
+  ]
+}

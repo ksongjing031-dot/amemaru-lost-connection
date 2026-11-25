@@ -1,0 +1,67 @@
+{
+  "_comment": "凍て鶴の長「霜冠」（8階の名のある魔物。西の葦原の宝箱の守り手）。大きく、吹雪が強く広い（gust。押し返しが強く、凍えが2つ）。数値は【補完】",
+  "name": "霜冠",
+  "model": "amemaru:frost_crane",
+  "floor": 8,
+  "level": 36,
+  "description": "雪のように白い、大きな凍て鶴。頭の霜の冠は、朝の光を受けると七色に光る。霜冠が舞うと、葦原じゅうの凍った葦が、音もなく倒れる。",
+  "stats": {
+    "hp": 22000,
+    "attack": 242,
+    "defense": 22,
+    "move_speed": 0.3,
+    "follow_range": 28,
+    "aggro_range": 16
+  },
+  "exp": 580,
+  "skills": {
+    "bite": {
+      "power": 1.25,
+      "windup": 0.6,
+      "cooldown": 1.5,
+      "range": 3.2,
+      "angle": 90
+    },
+    "charge": {
+      "power": 2.0,
+      "windup": 1.0,
+      "cooldown": 6.0,
+      "range": 16.0,
+      "min_range": 5.0,
+      "speed": 1.05,
+      "width": 2.0,
+      "recover": 1.0
+    },
+    "gust": {
+      "power": 1.4,
+      "windup": 1.0,
+      "cooldown": 6.0,
+      "range": 8.0,
+      "angle": 120,
+      "push": 1.6,
+      "chill": 2
+    }
+  },
+  "behavior": {
+    "chill_stacks": 2,
+    "chill_seconds": 5.0,
+    "scale": 1.5
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/frost_crane",
+    "rare": [
+      {
+        "item": "amemaru:lake_pearl",
+        "chance": 40.0
+      },
+      {
+        "item": "amemaru:frost_crown_plume",
+        "chance": 5.0
+      },
+      {
+        "item": "amemaru:crystal_fruit_crimson",
+        "chance": 6.0
+      }
+    ]
+  }
+}

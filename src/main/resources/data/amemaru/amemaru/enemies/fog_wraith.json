@@ -1,0 +1,55 @@
+{
+  "_comment": "氷霧の亡霊（8階の雑魚。Phase 0-A 9章の8階）。宙に浮き、冷たい手で触れる（claw）。触れられると、ロスト状態「断線」（パーティの欄から仲間のHPが消える。behavior.sever_seconds 秒。13章の表「主な原因は8階」）。ときどき霧に溶けて、狙った人の後ろへ移る（blink）。数値は【補完】",
+  "name": "氷霧の亡霊",
+  "floor": 8,
+  "level": 33,
+  "description": "霧の衣をまとった、足のない亡霊。湖の霧にまぎれて近づき、仲間とのあいだに、冷たい手を差しこんでくる。触れられた所から、つながりが白くほつれる。",
+  "stats": {
+    "hp": 1700,
+    "attack": 224,
+    "defense": 10,
+    "move_speed": 0.26,
+    "follow_range": 22,
+    "aggro_range": 14
+  },
+  "exp": 68,
+  "skills": {
+    "claw": {
+      "power": 1.1,
+      "windup": 0.7,
+      "cooldown": 1.8,
+      "range": 2.4,
+      "angle": 90
+    },
+    "blink": {
+      "power": 0.0,
+      "windup": 0.8,
+      "cooldown": 9.0,
+      "range": 16.0,
+      "min_range": 6.0
+    }
+  },
+  "behavior": {
+    "hover_height": 0.5,
+    "keep_distance": 2,
+    "sever_seconds": 10.0
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/fog_wraith",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_white",
+        "chance": 0.6
+      },
+      {
+        "item": "amemaru:crystal_fruit_azure",
+        "chance": 0.3
+      },
+      {
+        "item": "amemaru:lake_pearl",
+        "chance": 1.0
+      }
+    ]
+  },
+  "lost": true
+}

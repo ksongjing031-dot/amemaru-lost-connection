@@ -82,6 +82,10 @@ public class AmemaruMobRenderer<T extends AmemaruMob> extends GeoEntityRenderer<
         if (kind == AmemaruMob.TELEGRAPH_NONE || kind == AmemaruMob.TELEGRAPH_WINDUP) {
             return;
         }
+        // 11月25日（8階）：ボスの「静寂の帳」の間は、予兆の印が見えない（Phase 0-A 9章の8階のボス）
+        if (jp.amemaru.lostconnection.client.LakeSoundFilter.deepSilence()) {
+            return;
+        }
         float total = Math.max(1, entity.telegraphTicks());
         float age = entity.telegraphAge(partialTick);
         float progress = Mth.clamp(age / total, 0.0F, 1.0F);

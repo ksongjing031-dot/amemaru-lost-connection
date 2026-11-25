@@ -76,6 +76,8 @@ def effect_text(effect):
         return "寒さ（凍え・凍結）と、遅くなる効果の時間 −%s%%" % fmt(effect["percent"])
     if kind == "lost_resist":
         return "ロスト耐性 +%s%%（ロスト状態の時間が短くなる）" % fmt(effect["percent"])
+    if kind == "ally_power":
+        return "%sブロック以内の味方1人ごとに、与えるダメージ +%s%%（5人まで）" % (fmt(effect["threshold"]), fmt(effect["percent"]))
     raise ValueError(kind)
 
 
@@ -215,6 +217,30 @@ ACCESSORIES = [
     ("blizzard_lamp_charm", "吹雪の灯", "charm", None, 7, "rare", False, None, 0, 0,
      [{"type": "lost_resist", "percent": 20}],
      "吹雪の大精の衣のすそに灯っていた、オーロラ色の小さな灯。吹雪の中でも、仲間の名前を見失わない。7階の名のある魔物が落とす。"),
+    # 8階「沈黙の湖」（11月25日）：静氷と湖の生きもののひと揃い。腕輪は Phase 0-A 21章の第2章の一覧の「凍て鶴の腕輪」（確定）。
+    # ほかの名前と中身は【補完】。素材は tools/datagen/build_floor8_data.py（静氷・大魚の鱗・声石・凍て鶴の冠羽・霧の糸・湖の真珠）。
+    # レアのお守りは、霜冠（名のある凍て鶴。「鶴は千年」で、HPが少しずつ戻る）と千声喰い（仲間の声を集めて力に変える）が落とす
+    ("silent_ice_battle_ring", "静氷の闘環", "ring", ["attack"], 8, "uncommon", False,
+     ing(("silent_ice", 3), ("fish_scale", 2), ("lake_pearl", 1), ("pedestal_cloth", 1)), 4, 26, [],
+     "音を吸う静氷を、霜銀の芯に巻いた指輪。拳を握っても、音ひとつ立たない。"),
+    ("silent_ice_wisdom_ring", "静氷の智環", "ring", ["magic"], 8, "uncommon", False,
+     ing(("silent_ice", 3), ("voice_stone", 2), ("lake_pearl", 1), ("pedestal_cloth", 1)), 4, 26, [],
+     "静氷の輪に、青く光る声石を一粒はめた指輪。魔力を通すと、遠い誰かの声が、かすかに指先へ響く。"),
+    ("fish_scale_necklace", "大魚の鱗の首飾り", "necklace", None, 8, "uncommon", True,
+     ing(("fish_scale", 3), ("mist_thread", 1), ("silent_ice", 1), ("pedestal_cloth", 1)), 4, 26, [],
+     "霧の糸に、無音の大魚の白い鱗を重ねて下げた首飾り。光にかざすと、湖の底の色に変わる。"),
+    ("frost_crane_bracelet", "凍て鶴の腕輪", "bracelet", None, 8, "uncommon", True,
+     ing(("crane_plume", 3), ("frost_silver", 2), ("pedestal_cloth", 1)), 4, 26, [],
+     "凍て鶴の冠羽を、霜銀の輪に編みこんだ腕輪。冬の朝の光の色をしている。"),
+    ("bell_charm", "鐘の音のお守り", "charm", None, 8, "uncommon", True,
+     ing(("silent_ice", 2), ("voice_stone", 1), ("echo_fragment", 1), ("pedestal_cloth", 1)), 4, 26, [],
+     "静氷を小さな鐘の形に削ったお守り。振っても鳴らないが、仲間を呼びたいときだけ、胸の中で鳴る気がする。"),
+    ("frost_crown_plume", "霜冠の冠羽", "charm", None, 8, "rare", False, None, 0, 0,
+     [{"type": "regen", "percent": 1.5}],
+     "凍て鶴の長「霜冠」の、七色に光る霜の冠羽。鶴は千年――持つ者の傷を、ゆっくりと癒やす。8階の名のある魔物が落とす。"),
+    ("thousand_voice_stone", "千の声の喉石", "charm", None, 8, "rare", False, None, 0, 0,
+     [{"type": "ally_power", "threshold": 8, "percent": 3}],
+     "千声喰いののどの奥にあった、青い石。そばにいる仲間の声を集めて、力に変える。8階の名のある魔物が落とす。"),
 ]
 
 # 1階の品（Phase 3 からある）：階の印と、効き目の説明だけ足す

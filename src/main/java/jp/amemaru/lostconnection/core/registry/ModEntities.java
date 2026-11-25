@@ -274,6 +274,33 @@ public final class ModEntities {
             EntityType.Builder.<jp.amemaru.lostconnection.enemy.boss.Reflecta>of(jp.amemaru.lostconnection.enemy.boss.Reflecta::new, MobCategory.MONSTER)
                     .sized(2.4F, 2.8F).clientTrackingRange(16).updateInterval(2).build(AmemaruMod.id("reflecta").toString()));
 
+    // ---- 11月25日：8階「沈黙の湖」の敵（Phase 0-A 9章）
+    /** 無音の大魚（氷の下から襲う。割れ目が予兆）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.lake.SilentFish>> SILENT_FISH =
+            ENTITIES.register("silent_fish", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.lake.SilentFish>of(jp.amemaru.lostconnection.enemy.lake.SilentFish::new, MobCategory.MONSTER)
+                    .sized(1.6F, 0.9F).clientTrackingRange(10).build(AmemaruMod.id("silent_fish").toString()));
+    /** 声喰い（近くにいると効果音が消える）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.lake.VoiceEater>> VOICE_EATER =
+            ENTITIES.register("voice_eater", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.lake.VoiceEater>of(jp.amemaru.lostconnection.enemy.lake.VoiceEater::new, MobCategory.MONSTER)
+                    .sized(1.0F, 1.1F).clientTrackingRange(10).build(AmemaruMod.id("voice_eater").toString()));
+    /** 凍て鶴（くちばしで突き、翼で吹雪を叩きつける）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.lake.FrostCrane>> FROST_CRANE =
+            ENTITIES.register("frost_crane", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.lake.FrostCrane>of(jp.amemaru.lostconnection.enemy.lake.FrostCrane::new, MobCategory.MONSTER)
+                    .sized(0.8F, 1.9F).clientTrackingRange(10).build(AmemaruMod.id("frost_crane").toString()));
+    /** 氷霧の亡霊（触れられると「断線」）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.lake.FogWraith>> FOG_WRAITH =
+            ENTITIES.register("fog_wraith", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.lake.FogWraith>of(jp.amemaru.lostconnection.enemy.lake.FogWraith::new, MobCategory.MONSTER)
+                    .sized(0.8F, 1.8F).clientTrackingRange(10).build(AmemaruMod.id("fog_wraith").toString()));
+    /** 8階のボス、声なき湖主ムーネ（Phase 0-A 9章）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.boss.Mune>> MUNE =
+            ENTITIES.register("mune", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.boss.Mune>of(jp.amemaru.lostconnection.enemy.boss.Mune::new, MobCategory.MONSTER)
+                    .sized(3.2F, 2.0F).clientTrackingRange(16).updateInterval(2).build(AmemaruMod.id("mune").toString()));
+
     /** 1階のボス、草原の主ヴェルドホーン（Phase 0-A 9章）。 */
     public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.boss.Veldhorn>> VELDHORN = ENTITIES.register("veldhorn", () ->
             EntityType.Builder.<jp.amemaru.lostconnection.enemy.boss.Veldhorn>of(jp.amemaru.lostconnection.enemy.boss.Veldhorn::new,
@@ -348,5 +375,13 @@ public final class ModEntities {
         event.put(ICICLE_BAT.get(), CrystalBee.createBeeAttributes().build());
         event.put(BLIZZARD_SPIRIT.get(), CrystalBee.createBeeAttributes().build());
         event.put(REFLECTA.get(), jp.amemaru.lostconnection.enemy.boss.AmemaruBoss.createBossAttributes().build());
+        // 11月25日：8階
+        event.put(SILENT_FISH.get(), AmemaruMob.createAttributes().add(
+                net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE, 1.0).build());
+        event.put(VOICE_EATER.get(), CrystalBee.createBeeAttributes().build());
+        event.put(FROST_CRANE.get(), AmemaruMob.createAttributes().add(
+                net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE, 0.3).build());
+        event.put(FOG_WRAITH.get(), CrystalBee.createBeeAttributes().build());
+        event.put(MUNE.get(), jp.amemaru.lostconnection.enemy.boss.AmemaruBoss.createBossAttributes().build());
     }
 }

@@ -24,6 +24,8 @@ import jp.amemaru.lostconnection.tower.forest.WaypointService;
 import jp.amemaru.lostconnection.tower.iceforest.IceForestBlocks;
 import jp.amemaru.lostconnection.tower.iceforest.LightMazeService;
 import jp.amemaru.lostconnection.tower.iceforest.PassphraseService;
+import jp.amemaru.lostconnection.tower.lake.BellService;
+import jp.amemaru.lostconnection.tower.lake.LakeBlocks;
 import jp.amemaru.lostconnection.tower.temple.TempleBlocks;
 import jp.amemaru.lostconnection.tower.temple.TempleService;
 import jp.amemaru.lostconnection.tower.village.VillageBlocks;
@@ -124,6 +126,12 @@ public final class FloorRealPlayGameTests {
         run(helper, 7);
     }
 
+    // 11月25日：8階「沈黙の湖」（歌の碑で今日の順番を見て、鐘を鳴らす。祠の石板・最後の歌い手の氷像）
+    @GameTest(template = EMPTY, batch = "floor_real_8", timeoutTicks = 6000)
+    public static void floor8RealPlay(GameTestHelper helper) {
+        run(helper, 8);
+    }
+
     /** 1つの階を建てて、すべての仕掛けを触る。 */
     private static void run(GameTestHelper helper, int floor) {
         // 11月25日：クライアントの確かめ（CIの写真を撮る世界）では行わない。写真の台本が同じ階を建てて仕掛けを解くので、ぶつかって
@@ -174,6 +182,9 @@ public final class FloorRealPlayGameTests {
                         VillageService.reconcile(tower, def);
                     } else if (floor == 7) {
                         LightMazeService.reconcile(tower, def);
+                    } else if (floor == 8) {
+                        BellService.reconcile(tower, def);
+                        VillageService.reconcile(tower, def);
                     }
                     List<String> problems = structure(tower, def);
                     check(helper, problems.isEmpty(), floor + "階の仕掛けのブロックがおかしい（" + problems.size() + "）："
@@ -189,6 +200,10 @@ public final class FloorRealPlayGameTests {
             case 4 -> temple(helper, seq, tower, def, player, data);
             case 6 -> village(helper, seq, tower, def, player);
             case 7 -> iceForest(helper, seq, tower, def, player);
+            case 8 -> {
+                lake(helper, seq, tower, def, player, data);
+                village(helper, seq, tower, def, player);
+            }
             default -> {
             }
         }
@@ -257,7 +272,10 @@ public final class FloorRealPlayGameTests {
             }
         }
         for (FloorFeatures.Relic relic : fx.relics()) {
-            thing(out, tower, def, relic.pos(), TempleBlocks.KnightRelic.class, -1, relic.id(), "遺品 " + relic.id());
+            // 4階は騎士団の遺品、8階は湖底の祠の石板（どちらも右クリックで受け取る）
+            Class<? extends Block> type = tower.getBlockState(def.world(relic.pos())).getBlock() instanceof LakeBlocks.Tablet
+                    ? LakeBlocks.Tablet.class : TempleBlocks.KnightRelic.class;
+            thing(out, tower, def, relic.pos(), type, -1, relic.id(), "遺品 " + relic.id());
         }
         // 6階：熱の炉（右クリックで結晶をもらう）・記憶の氷像（どの記憶か）・オルドの結晶の台（乗れる）
         for (FloorFeatures.Hearth hearth : fx.hearths()) {
@@ -302,6 +320,31 @@ public final class FloorRealPlayGameTests {
             if (maze.door() != null && tower.getBlockState(def.world(maze.door().min())).isAir()) {
                 out.add(maze.name() + "の門が、はじめから開いている");
             }
+        }
+        // 8階：歌の碑と鐘（組・番号）。開く所は閉じていて、浮かぶ所はまだない。湖心の鳴り石（組 arena）
+        for (FloorFeatures.BellGroup group : fx.bells()) {
+            thing(out, tower, def, group.stele(), LakeBlocks.Stele.class, -1, group.id(), "歌の碑 " + group.id());
+            for (int i = 0; i < group.bells().size(); i++) {
+                thing(out, tower, def, group.bells().get(i).pos(), LakeBlocks.Bell.class, i, group.id(), "鐘 " + group.id() + "#" + i);
+                BlockState bell = tower.getBlockState(def.world(group.bells().get(i).pos()));
+                if (bell.getBlock() instanceof LakeBlocks.Bell && bell.getValue(LakeBlocks.LIT)) {
+                    out.add("鐘 " + group.id() + "#" + i + "が、はじめから灯っている");
+                }
+            }
+            for (FloorFeatures.Door door : group.opens()) {
+                if (tower.getBlockState(def.world(door.min())).isAir()) {
+                    out.add(group.name() + "で開く所が、はじめから開いている " + local(door.min()));
+                }
+            }
+            for (FloorFeatures.Door raise : group.raises()) {
+                if (!tower.getBlockState(def.world(raise.min())).isAir()) {
+                    out.add(group.name() + "で浮かぶ所が、はじめから浮かんでいる " + local(raise.min()));
+                }
+            }
+        }
+        List<BlockPos> arenaBells = fx.bossMarks("arena_bells");
+        for (int i = 0; i < arenaBells.size(); i++) {
+            thing(out, tower, def, arenaBells.get(i), LakeBlocks.Bell.class, i, BellService.ARENA, "湖心の鳴り石#" + i);
         }
         List<BlockPos> bossPlates = fx.bossMarks("sound_plates");
         for (int i = 0; i < bossPlates.size(); i++) {
@@ -748,6 +791,64 @@ public final class FloorRealPlayGameTests {
         });
     }
 
+    // ---------------------------------------------------------------- 8階：鐘と、湖底の祠の石板
+
+    private static void lake(GameTestHelper helper, GameTestSequence seq, ServerLevel tower, FloorDef def, FakePlayer player, PlayerData data) {
+        int n = def.number();
+        MinecraftServer server = tower.getServer();
+        seq.thenExecute(() -> {
+            check(helper, !BellService.soundRestored(server, def), n + "階：鐘を鳴らす前から、音が戻っています");
+            check(helper, def.features().environment() != null && def.features().environment().silent(), n + "階の決まりに、音の消えた湖がありません");
+        });
+        for (FloorFeatures.BellGroup group : def.features().bells()) {
+            seq.thenExecute(() -> {
+                // 歌の碑：触ると今日の順番が出る（それだけでは解けない）
+                use(helper, tower, player, def.world(group.stele()), "歌の碑 " + group.id());
+                check(helper, !BellService.solved(server, n, group.id()), group.name() + "：歌の碑を触っただけで、解けたことになりました");
+                List<Integer> song = BellService.song(server, def, group);
+                check(helper, song.size() == group.bells().size() && song.stream().distinct().count() == song.size(),
+                        group.name() + "：今日の歌が、鐘をひとつずつ使う順番になっていません：" + song);
+                // 違う鐘から鳴らすと、灯らない（はじめから）
+                BlockPos wrong = def.world(group.bells().get(song.get(song.size() - 1)).pos());
+                use(helper, tower, player, wrong, "鐘 " + group.id() + "（違う鐘）");
+                check(helper, !tower.getBlockState(wrong).getValue(LakeBlocks.LIT), group.name() + "：違う鐘を鳴らしたのに、灯りました");
+                // 今日の歌のとおりに鳴らす
+                for (int k = 0; k < song.size(); k++) {
+                    BlockPos pos = def.world(group.bells().get(song.get(k)).pos());
+                    use(helper, tower, player, pos, "鐘 " + group.id() + "#" + song.get(k));
+                    check(helper, tower.getBlockState(pos).getValue(LakeBlocks.LIT),
+                            group.name() + "：順番どおりに鳴らしたのに、鐘#" + song.get(k) + "が灯りません（" + (k + 1) + "つ目）");
+                }
+                check(helper, BellService.solved(server, n, group.id()), group.name() + "：今日の歌のとおりに鳴らしても、解けたことになりません");
+                for (FloorFeatures.Door door : group.opens()) {
+                    BlockPos at = def.world(door.min());
+                    check(helper, tower.getBlockState(at).getCollisionShape(tower, at).isEmpty(), group.name() + "：解けたのに、開くはずの所が開きません "
+                            + local(door.min()));
+                }
+                for (FloorFeatures.Door raise : group.raises()) {
+                    check(helper, !tower.getBlockState(def.world(raise.min())).isAir(), group.name() + "：解けたのに、沈んだ石橋が浮かびません "
+                            + local(raise.min()));
+                }
+            });
+        }
+        seq.thenExecute(() -> {
+            check(helper, BellService.allSolved(server, def), n + "階：鐘の組をすべて鳴らしても、そろったことになりません");
+            check(helper, BellService.soundRestored(server, def), n + "階：湖の鐘を鳴らしても、音が戻りません");
+            // 湖底の祠の石板：右クリックで受け取る（セレナへの頼みごとが始まる）
+            for (FloorFeatures.Relic relic : def.features().relics()) {
+                data.getStory().remove(relic.flag());
+                use(helper, tower, player, def.world(relic.pos()), "石板 " + relic.id());
+                check(helper, data.getStory().has(relic.flag()), "石板 " + relic.id() + "：右クリックしても受け取れません");
+                for (ResourceLocation id : relic.items()) {
+                    Item item = ForgeRegistries.ITEMS.getValue(id);
+                    check(helper, item != null && player.getInventory().countItem(item) > 0, "石板 " + relic.id() + "：" + id + " が持ち物に入りません");
+                }
+                data.getStory().remove(relic.flag());
+            }
+            player.getInventory().clearContent();
+        });
+    }
+
     // ---------------------------------------------------------------- 封印
 
     /** ボスの部屋の封印を、その人が通れるか（封印のブロックの当たり判定が、その人には空か）。 */
@@ -788,6 +889,10 @@ public final class FloorRealPlayGameTests {
             case 4 -> TempleService.onDayChanged(server);
             case 6 -> VillageService.onDayChanged(server);
             case 7 -> LightMazeService.onDayChanged(server);
+            case 8 -> {
+                BellService.onDayChanged(server);
+                VillageService.onDayChanged(server);
+            }
             default -> {
             }
         }

@@ -18,6 +18,10 @@
 - 7階 鏡像獣リフレクタ「鏡の湖」：ホ短調・4拍子・140。ガラスの鈴の分散和音が左右を行き来する（湖の鏡に映る音）。
   はじめは旋律を、半小節遅れの小さな「映り」が追いかける。なかほどは、旋律を上下にひっくり返した「鏡の旋律」を合唱と弦で。
   終わりは金管と太鼓で、もとの旋律をはっきりと（11月25日）
+- 8階 声なき湖主ムーネ「声なき湖」：嬰ヘ短調・4拍子・126。氷の下の心音（低い太鼓の2つ打ち）が、ずっと鳴っている。
+  湖の鐘（5つの音の動機）が、向こう岸からこだまして返る。はじめは笛の旋律が、ところどころ半小節だけ途切れる（声が消える）。
+  なかほどは合唱がゆっくり歌い、8小節ごとに1小節、心音と氷のきしみだけを残して、すべての音が消える。
+  終わりは金管と太鼓と鐘で、旋律をはっきりと（11月25日）
 """
 
 import json
@@ -44,6 +48,7 @@ TITLES = {
     "ancient_guardian": "祭壇の守護者",
     "ordo": "凍てついた村の灯",
     "reflecta": "鏡の湖",
+    "mune": "声なき湖",
 }
 
 
@@ -695,6 +700,118 @@ def reflecta():
     return song, S.reverb_ir(3.2, 0.03, 7200.0, seed=23)
 
 
+# ---------------------------------------------------------------- 8階 声なき湖主ムーネ
+
+def mune():
+    song = S.Song(126, 48, seed=88)
+    rng = song.rng
+    song.bus("bells", -22.0, 0.75, echo_beats=1.5, echo_fb=0.38)   # 湖の鐘（向こう岸から、こだまが返る）
+    song.bus("deep", -22.0, 0.7)
+    song.bus("strings", -22.0, 0.5)
+    song.bus("choir", -21.0, 0.6)
+    song.bus("lead", -19.0, 0.5)
+    song.bus("bass", -20.0, 0.2)
+    song.bus("heart", -18.0, 0.25)
+    song.bus("taiko", -20.0, 0.35)
+    song.bus("ice", -27.0, 0.55)
+    song.bus("timp", -19.0, 0.4)
+    song.bus("ost", -24.0, 0.35)
+    song.bus("brass", -22.0, 0.4)
+    song.bus("riser", -28.0, 0.5)
+
+    names_a = ["F#m", "F#m", "D", "E", "F#m", "A", "Bm", "C#", "A", "D", "Bm", "E", "D", "Bm", "C#", "C#"]
+    names_b = ["D", "Bm", "E", "A", "Bm", "D", "E", "E", "D", "F#m", "Bm", "D", "Bm", "C#", "C#", "C#"]
+    names = names_a + names_b + names_a
+    voice = {"F#m": "F#3 A3 C#4 F#4", "D": "D3 F#3 A3 D4", "E": "E3 G#3 B3 E4", "Bm": "B2 D3 F#3 B3", "A": "A2 C#3 E3 A3",
+             "C#": "C#3 F3 G#3 C#4"}
+    low = {"F#m": "F#1", "D": "D2", "E": "E2", "Bm": "B1", "A": "A1", "C#": "C#2"}
+    ost = {"F#m": "F#4 A4 C#5", "D": "F#4 A4 D5", "E": "G#4 B4 E5", "Bm": "F#4 B4 D5", "A": "A4 C#5 E5", "C#": "F4 G#4 C#5"}
+    # 途切れる所（半小節：はじめの3つ。1小節まるごと：なかほどの2つ）
+    half_cut = {3, 7, 11}
+    full_cut = {23, 31}
+    lake_bell = lambda f, on: S.bell(f, 3.0, index=2.6, ratio=1.41)  # noqa: E731
+    motif = ["F#5", "A5", "B5", "C#6", "E6"]
+    drum = [S.taiko(rng, 70.0, 0.9, 0.7) for _ in range(2)]
+    pick = lambda xs: (lambda: xs[int(rng.integers(len(xs)))])  # noqa: E731
+
+    for bar in range(48):
+        sec = bar // 16
+        name = names[bar]
+        chord = triad(voice[name])
+        cut_half = bar in half_cut
+        cut_full = bar in full_cut
+        # 氷の下の心音（2つ打ち）。ずっと。終わりへ向かって強く
+        for k, g in ((0.0, 1.0), (0.5, 0.6)):
+            song.put("heart", song.beat(bar, k), S.kick(rng, punch=0.6, length=0.55, low=38.0), gain=g * (0.7 + 0.15 * sec))
+        # 氷のきしみ（高い金属の打撃を、ときどき）
+        if bar % 4 == 2 or cut_full:
+            song.put("ice", song.beat(bar, 2.5 if not cut_full else 1.0), S.metal_hit(rng, 2400.0 + 300.0 * (bar % 3), 1.4, 7.0),
+                     pan=0.5 if bar % 8 < 4 else -0.5, gain=0.6)
+        if cut_full:
+            continue
+        hold = 2.0 if cut_half else 4.0
+        # 弦の和音（低く、長く）
+        song.put("strings", song.beat(bar), S.strings(chord, song.dur(hold) * 0.98, a=0.6 if sec == 0 else 0.3, r=0.5,
+                                                         bright=2000.0 if sec == 0 else 2600.0), pan=-0.1, gain=0.65 if sec == 0 else 0.85)
+        # 湖の鐘：はじめは2小節ごとに5つの音の動機。なかほどは1小節に1つ、低い鐘。終わりは毎小節の動機
+        if sec == 0 and bar % 2 == 0:
+            for k, n in enumerate(motif):
+                song.put("bells", song.beat(bar, k * 0.5), lake_bell(S.freq(n), 0), pan=-0.4 + 0.2 * k, gain=0.6)
+        elif sec == 1:
+            song.put("deep", song.beat(bar), S.bell(S.freq(low[name]) * 4, 4.0, index=3.2, ratio=1.41), pan=0.0, gain=0.8)
+        elif sec == 2 and not cut_half:
+            order = motif if bar % 2 == 0 else list(reversed(motif))
+            for k, n in enumerate(order):
+                song.put("bells", song.beat(bar, k * 0.5), lake_bell(S.freq(n), 0), pan=-0.4 + 0.2 * k, gain=0.45)
+        # ベース：はじめは全音符、なかほどから8分で脈打つ
+        if sec == 0:
+            song.put("bass", song.beat(bar), S.bass(S.freq(low[name]), song.dur(hold * 0.95), rng, bright=420.0, kind="sine", sub=0.8))
+        else:
+            for k in range(8):
+                song.put("bass", song.beat(bar, k * 0.5), S.bass(S.freq(low[name]), song.dur(0.42), rng, bright=800.0, kind="saw",
+                                                                  sub=0.6), gain=1.0 if k % 2 == 0 else 0.7)
+        # 合唱（なかほどから。2小節ずつ）
+        if sec >= 1 and bar % 2 == 0 and (bar + 1) not in full_cut:
+            song.put("choir", song.beat(bar), S.choir(chord, song.dur(8) * 0.97, vowel="o" if sec == 1 else "a", a=0.7, r=1.0),
+                     gain=0.7 if sec == 1 else 0.95)
+        # 太鼓（なかほどから）・刻み（終わり）・金管
+        if sec >= 1:
+            song.put("taiko", song.beat(bar), pick(drum)(), pan=-0.1)
+            if sec == 2:
+                song.put("taiko", song.beat(bar, 2), pick(drum)(), pan=0.1, gain=0.7)
+                song.put("taiko", song.beat(bar, 3.5), pick(drum)(), pan=0.15, gain=0.5)
+        if sec == 2:
+            arpeggio(song, "ost", bar, ost[name], [0, 1, 2, 1], 0.25, S.staccato_strings, pan=0.25, gain=0.7)
+            if bar % 2 == 0:
+                song.put("brass", song.beat(bar), S.brass(chord, song.dur(3.6), a=0.1, bright=2200.0), pan=-0.2, gain=0.7)
+        if bar % 8 == 0 and sec >= 1:
+            song.put("timp", song.beat(bar), S.timpani(rng, S.freq(low[name]) * 2))
+        if bar in (46, 47):
+            for k in range(16):
+                song.put("timp", song.beat(bar, k * 0.25), S.timpani(rng, S.freq("C#2") * 2, 0.6),
+                         gain=0.3 + 0.04 * k + 0.35 * (bar - 46))
+        if bar == 46:
+            song.put("riser", song.beat(bar), S.riser(rng, song.dur(8), 6500.0))
+        if bar % 16 == 15 and bar != 47:
+            song.put("riser", song.beat(bar), S.riser(rng, song.dur(4), 5500.0))
+
+    melody_a = ("F#5:2 A5:1 C#6:1 | B5:1.5 A5:.5 F#5:2 | D6:2 C#6:1 B5:1 | C#6:2 r:2 |"
+                " F#5:2 A5:1 C#6:1 | E6:1.5 D6:.5 C#6:1 B5:1 | A5:1 B5:1 C#6:1 D6:1 | C#6:2 r:2 |"
+                " A5:2 C#6:1 E6:1 | F#6:1.5 E6:.5 D6:2 | B5:1 D6:1 F#6:1 E6:1 | E6:2 r:2 |"
+                " D6:1 C#6:1 B5:1 A5:1 | B5:1 A5:1 F#5:2 | G#5:1 A5:1 B5:1 C#6:1 | C#6:4")
+    melody_b = ("D5:3 E5:1 | F#5:4 | E5:2 D5:2 | C#5:4 |"
+                " B4:3 C#5:1 | D5:2 F#5:2 | E5:4 | r:4 |"
+                " D5:2 F#5:2 | A5:3 G#5:1 | F#5:2 E5:2 | D5:4 |"
+                " B4:2 D5:2 | C#5:2 F5:2 | G#5:4 | r:4")
+    flute = lambda f, on: S.flute(f, on, rng)  # noqa: E731
+    play(song, "lead", 0, melody_a, flute, pan=-0.2, gain=0.9)
+    play(song, "choir", 16, melody_b, lambda f, on: S.choir([f], on, vowel="a", a=0.1, r=0.5), pan=0.1, gain=1.4)
+    play(song, "lead", 16, melody_b, flute, pan=-0.2, gain=0.45, octave=1)
+    play(song, "lead", 32, melody_a, lambda f, on: S.bell(f, 1.8, index=2.4, ratio=3.5), pan=-0.15, gain=0.85)
+    play(song, "brass", 32, melody_a, lambda f, on: S.brass([f], on, bright=2400.0), pan=0.1, gain=0.9, octave=-1)
+    return song, S.reverb_ir(4.2, 0.04, 6000.0, seed=29)
+
+
 SONGS = {
     "veldhorn": veldhorn,
     "old_ward": old_ward,
@@ -703,6 +820,7 @@ SONGS = {
     "ancient_guardian": ancient_guardian,
     "ordo": ordo,
     "reflecta": reflecta,
+    "mune": mune,
 }
 
 

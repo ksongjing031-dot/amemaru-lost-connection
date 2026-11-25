@@ -66,6 +66,20 @@ public final class ModEffects {
     public static final RegistryObject<MobEffect> LOST_FADE = EFFECTS.register("lost_fade", () ->
             new AmemaruEffect(MobEffectCategory.HARMFUL, 0xE8EEF5, false));
 
+    /**
+     * ロスト状態「断線」（Phase 0-A 13章の表「パーティHUDから味方のHPが消える。主な原因は8階、14階」。8階から）。
+     * 解き方は「薄れ」と同じ（{@link jp.amemaru.lostconnection.combat.LostService}）。
+     */
+    public static final RegistryObject<MobEffect> LOST_SEVER = EFFECTS.register("lost_sever", () ->
+            new AmemaruEffect(MobEffectCategory.HARMFUL, 0xC8D0DC, false));
+
+    /**
+     * ロスト状態「静寂」（同じ表「効果音と予兆の音が消える。主な原因は8階、18階」。8階から）。強さ1（{@code amplifier} 1）は、
+     * 8階のボスの「静寂の帳」：音に加えて、予兆の印とパーティHUDも消える（Phase 0-A 9章の8階のボス）。
+     */
+    public static final RegistryObject<MobEffect> LOST_SILENCE = EFFECTS.register("lost_silence", () ->
+            new AmemaruEffect(MobEffectCategory.HARMFUL, 0xA9B4C2, false));
+
     /** 凍結：凍えが5つ重なると、しばらく動けず、攻撃もできない。 */
     public static final RegistryObject<MobEffect> FROZEN = EFFECTS.register("frozen", () ->
             new AmemaruEffect(MobEffectCategory.HARMFUL, 0xBFF2FF, true).freezing()

@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "crack=0": {
+      "model": "amemaru:block/thin_ice_0"
+    },
+    "crack=1": {
+      "model": "amemaru:block/thin_ice_1"
+    },
+    "crack=2": {
+      "model": "amemaru:block/thin_ice_2"
+    },
+    "crack=3": {
+      "model": "amemaru:block/thin_ice_3"
+    }
+  }
+}

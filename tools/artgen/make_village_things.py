@@ -98,6 +98,9 @@ PEOPLE = {
                     hat="cap", hat_c="#55483C"),
     "guard": dict(slim=False, hair="#4A3A2A", skin="#E6C2A0", top="#8E949C", pants="#3E4450", shoes="#2A2A2E", tabard="#2E5A9A",
                   hat="helm", hat_c="#A8AEB6"),
+    # 11月25日（8階）：湖底の祠の、最後の歌い手（長い黒髪・白い衣・青い肩掛け・水色の縁取り）。絵は make_lake_things.py が書く【補完】
+    "singer": dict(slim=True, hair="#232A3A", skin="#F0D6C2", top="#E6ECF2", pants="#C4D0DE", shoes="#6E7A8C", shawl="#4E74A8",
+                   trim="#8EC4DA", long_hair=True),
 }
 
 
