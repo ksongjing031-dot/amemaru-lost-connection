@@ -247,6 +247,33 @@ public final class ModEntities {
             EntityType.Builder.<jp.amemaru.lostconnection.enemy.boss.Ordo>of(jp.amemaru.lostconnection.enemy.boss.Ordo::new, MobCategory.MONSTER)
                     .sized(1.3F, 3.2F).clientTrackingRange(16).updateInterval(2).build(AmemaruMod.id("ordo").toString()));
 
+    // ---- 11月25日：7階「氷の森林」の敵（Phase 0-A 9章）
+    /** 写し身（プレイヤーの姿を真似る。名前は「？？？」。斬られると「薄れ」）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.iceforest.Mimic>> MIMIC =
+            ENTITIES.register("mimic", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.iceforest.Mimic>of(jp.amemaru.lostconnection.enemy.iceforest.Mimic::new, MobCategory.MONSTER)
+                    .sized(0.6F, 1.8F).clientTrackingRange(10).build(AmemaruMod.id("mimic").toString()));
+    /** 氷角鹿（角で突き、突進する）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.iceforest.IceStag>> ICE_STAG =
+            ENTITIES.register("ice_stag", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.iceforest.IceStag>of(jp.amemaru.lostconnection.enemy.iceforest.IceStag::new, MobCategory.MONSTER)
+                    .sized(0.9F, 1.5F).clientTrackingRange(10).build(AmemaruMod.id("ice_stag").toString()));
+    /** つらら蝙蝠（つららを撃つ）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.iceforest.IcicleBat>> ICICLE_BAT =
+            ENTITIES.register("icicle_bat", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.iceforest.IcicleBat>of(jp.amemaru.lostconnection.enemy.iceforest.IcicleBat::new, MobCategory.MONSTER)
+                    .sized(0.7F, 0.6F).clientTrackingRange(10).build(AmemaruMod.id("icicle_bat").toString()));
+    /** 吹雪の精（吹雪に打たれると「薄れ」）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.iceforest.BlizzardSpirit>> BLIZZARD_SPIRIT =
+            ENTITIES.register("blizzard_spirit", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.iceforest.BlizzardSpirit>of(jp.amemaru.lostconnection.enemy.iceforest.BlizzardSpirit::new, MobCategory.MONSTER)
+                    .sized(0.8F, 1.7F).clientTrackingRange(10).build(AmemaruMod.id("blizzard_spirit").toString()));
+    /** 7階のボス、鏡像獣リフレクタ（Phase 0-A 9章）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.boss.Reflecta>> REFLECTA =
+            ENTITIES.register("reflecta", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.boss.Reflecta>of(jp.amemaru.lostconnection.enemy.boss.Reflecta::new, MobCategory.MONSTER)
+                    .sized(2.4F, 2.8F).clientTrackingRange(16).updateInterval(2).build(AmemaruMod.id("reflecta").toString()));
+
     /** 1階のボス、草原の主ヴェルドホーン（Phase 0-A 9章）。 */
     public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.boss.Veldhorn>> VELDHORN = ENTITIES.register("veldhorn", () ->
             EntityType.Builder.<jp.amemaru.lostconnection.enemy.boss.Veldhorn>of(jp.amemaru.lostconnection.enemy.boss.Veldhorn::new,
@@ -314,5 +341,12 @@ public final class ModEntities {
         event.put(FROST_BEAR.get(), AmemaruMob.createAttributes().add(
                 net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE, 0.7).build());
         event.put(ORDO.get(), jp.amemaru.lostconnection.enemy.boss.AmemaruBoss.createBossAttributes().build());
+        // 11月25日：7階
+        event.put(MIMIC.get(), AmemaruMob.createAttributes().build());
+        event.put(ICE_STAG.get(), AmemaruMob.createAttributes().add(
+                net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE, 0.4).build());
+        event.put(ICICLE_BAT.get(), CrystalBee.createBeeAttributes().build());
+        event.put(BLIZZARD_SPIRIT.get(), CrystalBee.createBeeAttributes().build());
+        event.put(REFLECTA.get(), jp.amemaru.lostconnection.enemy.boss.AmemaruBoss.createBossAttributes().build());
     }
 }

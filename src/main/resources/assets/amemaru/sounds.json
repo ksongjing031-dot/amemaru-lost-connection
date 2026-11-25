@@ -1561,5 +1561,13 @@
         "stream": true
       }
     ]
+  },
+  "music.boss.reflecta": {
+    "sounds": [
+      {
+        "name": "amemaru:music/boss_reflecta",
+        "stream": true
+      }
+    ]
   }
 }

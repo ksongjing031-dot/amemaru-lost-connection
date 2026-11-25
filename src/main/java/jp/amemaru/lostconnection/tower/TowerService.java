@@ -484,6 +484,15 @@ public final class TowerService {
                 && !jp.amemaru.lostconnection.tower.village.VillageService.allThawed(player.server, def)) {
             return false;
         }
+        // 11月25日（7階）：光の迷路をすべて解いたら（みんな）・合言葉の扉で合言葉がそろった人（人ごと）
+        if (features.requires(FloorFeatures.SEAL_LIGHTS)
+                && !jp.amemaru.lostconnection.tower.iceforest.LightMazeService.allSolved(player.server, def)) {
+            return false;
+        }
+        if (features.requires(FloorFeatures.SEAL_PASSPHRASE)
+                && !jp.amemaru.lostconnection.tower.iceforest.PassphraseService.passed(player, def.number())) {
+            return false;
+        }
         if (!features.requires(FloorFeatures.SEAL_PILLARS) || def.pillars().isEmpty()) {
             return true;
         }
@@ -713,12 +722,21 @@ public final class TowerService {
             int[] statues = jp.amemaru.lostconnection.tower.village.VillageService.count(player.server, def);
             return Component.translatable("message.amemaru.seal.statues", statues[0], statues[1]);
         }
+        if (features.requires(FloorFeatures.SEAL_LIGHTS)
+                && !jp.amemaru.lostconnection.tower.iceforest.LightMazeService.allSolved(player.server, def)) {
+            int[] mazes = jp.amemaru.lostconnection.tower.iceforest.LightMazeService.count(player.server, def);
+            return Component.translatable("message.amemaru.seal.lights", mazes[0], mazes[1]);
+        }
         if (features.requires(FloorFeatures.SEAL_GUARDIANS)) {
             int done = guardiansDefeated(player, def);
             int total = namedGuardians(def).size();
             if (done < total) {
                 return Component.translatable("message.amemaru.seal.guardians", done, total);
             }
+        }
+        if (features.requires(FloorFeatures.SEAL_PASSPHRASE)
+                && !jp.amemaru.lostconnection.tower.iceforest.PassphraseService.passed(player, def.number())) {
+            return Component.translatable("message.amemaru.seal.passphrase");
         }
         if (!pillarsComplete(player, def.number())) {
             int count = PlayerDataCapability.get(player).map(d -> Integer.bitCount(d.getStory().pillars(def.number()))).orElse(0);

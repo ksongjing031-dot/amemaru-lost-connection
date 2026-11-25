@@ -227,6 +227,31 @@ public final class StoryCommands {
                                             ctx.getSource().sendSuccess(() -> Component.translatable("commands.amemaru.floor.statues_reset"), true);
                                             return 1;
                                         }))))
+                // 11月25日（7階）：光の迷路を解く・朝に戻す。合言葉の扉の印をつける・消す（確かめ用）
+                .then(Commands.literal("lights")
+                        .then(Commands.argument("floor", IntegerArgumentType.integer(1, 99)).suggests(FLOORS)
+                                .then(Commands.literal("solve")
+                                        .executes(ctx -> solveLights(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"), ""))
+                                        .then(Commands.argument("maze", com.mojang.brigadier.arguments.StringArgumentType.word())
+                                                .executes(ctx -> solveLights(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"),
+                                                        com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "maze")))))
+                                .then(Commands.literal("reset")
+                                        .executes(ctx -> {
+                                            jp.amemaru.lostconnection.tower.iceforest.LightMazeService.onDayChanged(ctx.getSource().getServer());
+                                            AdminCommands.log(ctx.getSource(), "floor lights reset");
+                                            ctx.getSource().sendSuccess(() -> Component.translatable("commands.amemaru.floor.lights_reset"), true);
+                                            return 1;
+                                        }))))
+                .then(Commands.literal("passphrase")
+                        .then(Commands.argument("floor", IntegerArgumentType.integer(1, 99)).suggests(FLOORS)
+                                .then(Commands.literal("done")
+                                        .then(Commands.argument("targets", EntityArgument.players())
+                                                .executes(ctx -> passphrase(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"),
+                                                        EntityArgument.getPlayers(ctx, "targets"), true))))
+                                .then(Commands.literal("reset")
+                                        .then(Commands.argument("targets", EntityArgument.players())
+                                                .executes(ctx -> passphrase(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"),
+                                                        EntityArgument.getPlayers(ctx, "targets"), false))))))
                 .then(Commands.literal("heat")
                         .then(Commands.argument("targets", EntityArgument.players())
                                 .executes(ctx -> {
@@ -262,6 +287,46 @@ public final class StoryCommands {
                                         .then(Commands.argument("targets", EntityArgument.players())
                                                 .executes(ctx -> setGuardians(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"),
                                                         EntityArgument.getPlayers(ctx, "targets"), false))))));
+    }
+
+    /** 7階の光の迷路を解く（maze が "" なら、すべて）。 */
+    private static int solveLights(CommandSourceStack source, int floor, String which) {
+        FloorDef def = FloorDefs.byNumber(floor);
+        if (def == null || def.features().lightMazes().isEmpty()) {
+            source.sendFailure(Component.translatable("commands.amemaru.floor.no_lights", floor));
+            return 0;
+        }
+        int n = 0;
+        for (jp.amemaru.lostconnection.tower.FloorFeatures.LightMaze maze : def.features().lightMazes()) {
+            if (which.isEmpty() || maze.id().equals(which)) {
+                // 鏡も解き方の向きに回す（光の道が受け石まで届いて見える）
+                jp.amemaru.lostconnection.tower.iceforest.LightMazeService.solveByMirrors(source.getServer(), def, maze, null);
+                n++;
+            }
+        }
+        AdminCommands.log(source, "floor lights " + floor + " solve " + which);
+        int count = n;
+        source.sendSuccess(() -> Component.translatable("commands.amemaru.floor.lights_solved", count), true);
+        return n;
+    }
+
+    /** 7階の合言葉の扉の印をつける・消す。 */
+    private static int passphrase(CommandSourceStack source, int floor, Collection<ServerPlayer> players, boolean done) {
+        net.minecraft.resources.ResourceLocation flag = jp.amemaru.lostconnection.tower.iceforest.PassphraseService.flag(floor);
+        for (ServerPlayer player : players) {
+            PlayerDataCapability.get(player).ifPresent(data -> {
+                if (done) {
+                    data.getStory().add(flag);
+                } else {
+                    data.getStory().remove(flag);
+                }
+                data.markDirty(jp.amemaru.lostconnection.player.PlayerData.SYNC_STORY);
+            });
+        }
+        AdminCommands.log(source, "floor passphrase " + floor + (done ? " done" : " reset") + " x" + players.size());
+        source.sendSuccess(() -> Component.translatable(done ? "commands.amemaru.floor.passphrase_done" : "commands.amemaru.floor.passphrase_reset",
+                floor, players.size()), true);
+        return players.size();
     }
 
     /** 6階の記憶の氷像を溶かす（statue が "" なら、すべて）。 */

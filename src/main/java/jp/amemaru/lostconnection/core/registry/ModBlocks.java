@@ -153,6 +153,22 @@ public final class ModBlocks {
             new jp.amemaru.lostconnection.tower.village.VillageBlocks.Hearth(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.COLOR_ORANGE).strength(-1.0F, 3600000.0F).sound(SoundType.STONE).lightLevel(state -> 14)
                     .pushReaction(PushReaction.BLOCK)));
+    /** 11月25日：7階の光の迷路の、光の泉（決まった向きへ光を出す）。 */
+    public static final RegistryObject<Block> LIGHT_SPRING = BLOCKS.register("light_spring", () ->
+            new jp.amemaru.lostconnection.tower.iceforest.IceForestBlocks.Spring(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.ICE).strength(-1.0F, 3600000.0F).sound(SoundType.AMETHYST).lightLevel(state -> 15)
+                    .noOcclusion().pushReaction(PushReaction.BLOCK)));
+    /** 11月25日：7階の氷の鏡（右クリックで「／」と「＼」が入れ替わる）。 */
+    public static final RegistryObject<Block> ICE_MIRROR = BLOCKS.register("ice_mirror", () ->
+            new jp.amemaru.lostconnection.tower.iceforest.IceForestBlocks.Mirror(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.ICE).strength(-1.0F, 3600000.0F).sound(SoundType.GLASS).lightLevel(state -> 6)
+                    .noOcclusion().pushReaction(PushReaction.BLOCK)));
+    /** 11月25日：7階の光の受け石（光が届くと灯る）。 */
+    public static final RegistryObject<Block> LIGHT_TARGET = BLOCKS.register("light_target", () ->
+            new jp.amemaru.lostconnection.tower.iceforest.IceForestBlocks.Target(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.ICE).strength(-1.0F, 3600000.0F).sound(SoundType.AMETHYST)
+                    .lightLevel(state -> state.getValue(jp.amemaru.lostconnection.tower.iceforest.IceForestBlocks.LIT) ? 15 : 3)
+                    .pushReaction(PushReaction.BLOCK)));
     /** 凍った村人の氷像（人の形は、ブロックの実体が描く）。 */
     public static final RegistryObject<Block> VILLAGE_STATUE = BLOCKS.register("village_statue", () ->
             new jp.amemaru.lostconnection.tower.village.VillageBlocks.Statue(BlockBehaviour.Properties.of()

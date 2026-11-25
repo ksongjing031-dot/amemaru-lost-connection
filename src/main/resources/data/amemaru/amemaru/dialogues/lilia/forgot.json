@@ -1,0 +1,69 @@
+{
+  "_comment": "7日目から（物語フラグ ch2/lilia_forgot。7階に誰かが初めて入ったとき）、リリアはプレイヤーを忘れている（Phase 0-A 13章・12章「7日目 プレイヤーを忘れる（『はじめまして……ですよね？』）→ プレイヤーの『ただいま』で少しずつ思い出す」）。段階：まだ何も思い出していない。「ただいま」は1人1日1回、サーバー全体で数える（LiliaMemoryService）。ギルドの窓口と職業の画面は、忘れていても開ける。10日目のボス撃破（ch2/queen_down）で完全に戻る。台詞は【補完】",
+  "npc": "amemaru:lilia",
+  "priority": 35,
+  "conditions": {
+    "opening": 2,
+    "has_job": true,
+    "flags_all": [
+      "amemaru:ch2/lilia_forgot"
+    ],
+    "flags_none": [
+      "amemaru:ch2/lilia_name",
+      "amemaru:ch2/queen_down"
+    ]
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "expression": "worried",
+      "text": "いらっしゃいませ。冒険者ギルドへようこそ。……はじめまして、ですよね？",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "ごめんなさい。登録の記録はあるのに、お顔とお名前が、どうしても出てこなくて……",
+      "choices": [
+        {
+          "text": "ただいま",
+          "actions": [
+            {
+              "type": "amemaru:greet_lilia"
+            }
+          ],
+          "next": "g1"
+        },
+        {
+          "text": "ギルドの窓口を見たい",
+          "actions": [
+            {
+              "type": "amemaru:open_guild",
+              "tab": "quests"
+            }
+          ],
+          "next": "end"
+        },
+        {
+          "text": "職業を変えたい",
+          "actions": [
+            {
+              "type": "amemaru:open_job_screen"
+            }
+          ],
+          "next": "end"
+        },
+        {
+          "text": "またね",
+          "next": "end"
+        }
+      ]
+    },
+    "g1": {
+      "expression": "smile",
+      "text": "……ただいま、ですか？ ふしぎ。そう言われると、胸のあたりが少しだけ温かくなるんです",
+      "next": "g2"
+    },
+    "g2": {
+      "text": "……おかえりなさい、で、いいんでしょうか。また明日も、来てくださいね"
+    }
+  }
+}

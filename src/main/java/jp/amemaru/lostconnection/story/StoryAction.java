@@ -43,6 +43,7 @@ import java.util.Set;
  *       {@code amemaru:rent_rod}（竿を借りる）</li>
  *   <li>Phase 7 その3：{@code amemaru:open_casino}（カジノの画面。{@code tab}：roulette・highlow・fishrace・cashier・prizes）</li>
  *   <li>Phase 7 その4：{@code amemaru:open_restaurant}（ペトラ・ポムの料理屋の画面）</li>
+ *   <li>11月25日（7日目）：{@code amemaru:greet_lilia}（リリアに「ただいま」と声をかける。{@link jp.amemaru.lostconnection.npc.LiliaMemoryService}）</li>
  * </ul>
  * 大結晶の「記憶の再生」で見返すときは、処理を行わない（見るだけ）。
  */
@@ -52,7 +53,7 @@ public record StoryAction(String type, JsonObject params) {
             "amemaru:open_guild", "amemaru:start_quest", "amemaru:report_quest", "amemaru:bond", "amemaru:give_record_book",
             "amemaru:decipher_records", "amemaru:grant_title", "amemaru:open_titles", "amemaru:open_record_book",
             "amemaru:open_connections", "amemaru:open_donation", "amemaru:open_fishing", "amemaru:rent_rod",
-            "amemaru:open_casino", "amemaru:open_restaurant");
+            "amemaru:open_casino", "amemaru:open_restaurant", "amemaru:greet_lilia");
 
     public static List<StoryAction> parseList(JsonArray array) {
         List<StoryAction> list = new ArrayList<>();
@@ -124,6 +125,7 @@ public record StoryAction(String type, JsonObject params) {
             // ---- Phase 6 その3：ギルド・クエスト・親密度・古代記録・称号
             case "amemaru:open_guild" -> jp.amemaru.lostconnection.guild.GuildService.openGuild(player,
                     Json.optionalString(params, "tab", "quests"));
+            case "amemaru:greet_lilia" -> jp.amemaru.lostconnection.npc.LiliaMemoryService.greet(player);
             case "amemaru:start_quest" -> {
                 ResourceLocation quest = Json.optionalId(params, "quest");
                 if (quest != null) {

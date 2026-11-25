@@ -1,0 +1,58 @@
+{
+  "_comment": "吹雪の大精（7階の名のある魔物。東の凍った滝の宝箱の守り手）。大きく、吹雪の間が短く、範囲が広い。薄れも長い。数値は【補完】",
+  "name": "吹雪の大精",
+  "model": "amemaru:blizzard_spirit",
+  "floor": 7,
+  "level": 32,
+  "description": "凍った滝に棲む、大きな吹雪の精。衣のすそが、オーロラの色に光る。大精が歌うと、森じゅうの雪が舞い上がり、誰が誰だか分からなくなる。",
+  "stats": {
+    "hp": 18000,
+    "attack": 222,
+    "defense": 14,
+    "move_speed": 0.22,
+    "follow_range": 28,
+    "aggro_range": 16
+  },
+  "exp": 540,
+  "skills": {
+    "needle": {
+      "power": 1.05,
+      "windup": 0.8,
+      "cooldown": 2.4,
+      "range": 16,
+      "speed": 1.0
+    },
+    "blizzard": {
+      "power": 0.4,
+      "windup": 1.6,
+      "cooldown": 11.0,
+      "range": 20.0,
+      "radius": 8.0,
+      "seconds": 6.0,
+      "chill_seconds": 5.0
+    }
+  },
+  "behavior": {
+    "keep_distance": 9,
+    "hover_height": 3.5,
+    "fade_seconds": 12.0,
+    "scale": 1.6
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/blizzard_spirit",
+    "rare": [
+      {
+        "item": "amemaru:prism_shard",
+        "chance": 40.0
+      },
+      {
+        "item": "amemaru:blizzard_lamp_charm",
+        "chance": 5.0
+      },
+      {
+        "item": "amemaru:crystal_fruit_violet",
+        "chance": 6.0
+      }
+    ]
+  }
+}

@@ -1,0 +1,73 @@
+{
+  "_comment": "7階のボスの初撃破（倒したパーティの画面だけ。サーバー全体には知らせが出る）。台詞は【補完】",
+  "title": "鏡像獣リフレクタ",
+  "trigger": {
+    "type": "amemaru:floor_first_kill",
+    "floor": 7
+  },
+  "scope": "party",
+  "once": true,
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:wait",
+      "ticks": 60
+    },
+    {
+      "type": "amemaru:hud",
+      "hide": true
+    },
+    {
+      "type": "amemaru:sound",
+      "sound": "minecraft:block.glass.break",
+      "volume": 1.0,
+      "pitch": 0.6
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "none",
+      "to": "white",
+      "ticks": 30
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "white",
+      "to": "none",
+      "ticks": 60
+    },
+    {
+      "type": "amemaru:title",
+      "title": "氷の森林　踏破",
+      "subtitle": "第2章　凍てついた記憶",
+      "ticks": 110
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "鏡像獣の体に、ひびが走った。鏡のたてがみが、ひとつ、またひとつと割れていく。",
+      "ticks": 130,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "割れた鏡のかけらの一枚一枚に、仲間たちの顔が映っている。……名前も、ちゃんと読める。",
+      "ticks": 130,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "隣にいるのが誰か、もう間違えない。",
+      "ticks": 100,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "街では、リリアが待っている。「はじめまして」と言われても――「ただいま」を言いに帰ろう。",
+      "ticks": 140,
+      "wait": true
+    },
+    {
+      "type": "amemaru:hud",
+      "hide": false
+    }
+  ]
+}

@@ -26,7 +26,7 @@ final class CiPhase8 {
     static boolean action(Minecraft minecraft, String[] shot, boolean first) {
         String kind = shot[0];
         if (!List.of("p8_bell", "p8_listen", "p8_knot", "p8_hold", "p8_valve", "p8_bench", "p8_bench_open", "p8_charm", "p8_lock",
-                "p8_bossfx", "p8_tooltip").contains(kind)) {
+                "p8_bossfx", "p8_tooltip", "p8_say").contains(kind)) {
             return false;
         }
         if (!first) {
@@ -72,6 +72,9 @@ final class CiPhase8 {
                             minecraft.player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.CHEST).copy())));
                 }
             }
+            // 11月25日：7階の合言葉の扉の前で、チャットに言葉を打ったのと同じ（サーバーの PassphraseService.say）
+            case "p8_say" -> CiPhase3.onServer(minecraft, player -> jp.amemaru.lostconnection.AmemaruMod.LOGGER.info(
+                    "[amemaru-ci] passphrase \"{}\": {}", shot[3], jp.amemaru.lostconnection.tower.iceforest.PassphraseService.say(player, shot[3])));
             // 11月24日：ロックオンのキー（B）を1回押したのと同じ（見ている敵をロック。照準の印と名前・距離・HPを撮る）
             case "p8_lock" -> TargetLock.ciPress(minecraft);
             // 11月24日：お守りの枠に付ける（「-」で外す）。5階のユニーク「第七の門鍵」の、体に表示するモデルを撮る

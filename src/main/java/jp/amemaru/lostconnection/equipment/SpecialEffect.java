@@ -27,6 +27,10 @@ import java.util.Locale;
  *       −{@code percent}%（5階のユニーク「第七の門鍵」）</li>
  *   <li>{@code cold_resist}：寒さ（凍え・凍結）と、遅くなる効果の時間 −{@code percent}%（6階のボスのレア「村長の毛皮」。
  *       Phase 0-A 20章「寒さと遅くなる効果を減らす」。11月25日。いくつあっても 80% まで）</li>
+ *   <li>{@code double_hit}：攻撃が当たると {@code chance}% の確率で、鏡の写しがもう一度当たる（与えたダメージの {@code percent}%。
+ *       7階のボスのレア「鏡氷の短剣」。Phase 0-A 20章「一定確率で攻撃が二重に当たる」。11月25日）</li>
+ *   <li>{@code lost_resist}：ロスト耐性 +{@code percent}%（ロスト状態の時間が短くなる。ステータスのロスト耐性と足して 50% まで。
+ *       7階の名のある魔物のレアのお守り【補完】。11月25日）</li>
  * </ul>
  *
  * <p>{@code source} は効く攻撃の種類（{@code any}：すべて、{@code melee}：近接攻撃だけ、{@code skill}：スキルだけ）。</p>
@@ -42,7 +46,9 @@ public record SpecialEffect(Type type, double chance, double percent, double thr
         HEAL_WARD("heal_ward"),
         ALLY_POWER("ally_power"),
         PARTY_WARD("party_ward"),
-        COLD_RESIST("cold_resist");
+        COLD_RESIST("cold_resist"),
+        DOUBLE_HIT("double_hit"),
+        LOST_RESIST("lost_resist");
 
         private final String id;
 
@@ -61,7 +67,8 @@ public record SpecialEffect(Type type, double chance, double percent, double thr
                 }
             }
             throw new DefinitionException("特殊効果の種類「" + id + "」はありません（extra_damage・execute・heal_on_hit・"
-                    + "damage_reduction・regen・move_speed・heal_ward・ally_power・party_ward・cold_resist のどれかにしてください）");
+                    + "damage_reduction・regen・move_speed・heal_ward・ally_power・party_ward・cold_resist・double_hit・lost_resist "
+                    + "のどれかにしてください）");
         }
     }
 
@@ -113,7 +120,7 @@ public record SpecialEffect(Type type, double chance, double percent, double thr
     /** 説明文の1行。 */
     public MutableComponent describe() {
         String key = "effect.amemaru." + type.id();
-        if (type == Type.EXTRA_DAMAGE || type == Type.HEAL_ON_HIT) {
+        if (type == Type.EXTRA_DAMAGE || type == Type.HEAL_ON_HIT || type == Type.DOUBLE_HIT) {
             return Component.translatable(key + (source == Source.ANY ? "" : "." + source.id), number(chance), number(percent));
         }
         if (type == Type.EXECUTE || type == Type.ALLY_POWER || type == Type.PARTY_WARD) {

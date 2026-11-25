@@ -74,6 +74,8 @@ def effect_text(effect):
         return "5秒ごとに、最大HPの%s%%だけHPが回復する" % fmt(effect["percent"])
     if kind == "cold_resist":
         return "寒さ（凍え・凍結）と、遅くなる効果の時間 −%s%%" % fmt(effect["percent"])
+    if kind == "lost_resist":
+        return "ロスト耐性 +%s%%（ロスト状態の時間が短くなる）" % fmt(effect["percent"])
     raise ValueError(kind)
 
 
@@ -189,6 +191,30 @@ ACCESSORIES = [
     ("bear_frost_charm", "霜熊の氷の棘", "charm", None, 6, "rare", False, None, 0, 0,
      [{"type": "cold_resist", "percent": 25}],
      "霜の欠け熊の主の背に生えていた、溶けない氷の棘。持つ者の体から、寒さを遠ざける。6階の名のある魔物が落とす。"),
+    # 7階「氷の森林」（11月25日）：鏡氷と氷角のひと揃い。素材は tools/datagen/build_floor7_data.py（鏡氷・氷角・つらら蝙蝠の翼・
+    # 吹雪の芯・プリズムの欠片）。第2章の品なので、防具職人の「台座布」を1つ使う。レアのお守りは、白角（名のある氷角鹿）と
+    # 吹雪の大精が落とす。「吹雪の灯」のロスト耐性は、7階から出るロスト状態に（Phase 0-A 11章「ロスト耐性で短くなる」）【補完】
+    ("mirror_ice_battle_ring", "鏡氷の闘環", "ring", ["attack"], 7, "uncommon", False,
+     ing(("mirror_ice", 3), ("ice_antler", 2), ("prism_shard", 1), ("pedestal_cloth", 1)), 4, 24, [],
+     "鏡氷を霜銀の芯に巻いた指輪。拳を握ると、映りこんだ自分の拳が、ほんの少し遅れて握られる。"),
+    ("mirror_ice_wisdom_ring", "鏡氷の智環", "ring", ["magic"], 7, "uncommon", False,
+     ing(("mirror_ice", 3), ("blizzard_core", 2), ("prism_shard", 1), ("pedestal_cloth", 1)), 4, 24, [],
+     "鏡氷の輪に、プリズムの欠片を一粒はめた指輪。魔力を通すと、指先に小さな虹がかかる。"),
+    ("ice_antler_necklace", "氷角の首飾り", "necklace", None, 7, "uncommon", True,
+     ing(("ice_antler", 3), ("frozen_fur", 1), ("mirror_ice", 1), ("pedestal_cloth", 1)), 4, 24, [],
+     "凍て毛皮の紐に、枝分かれした氷角のかけらを下げた首飾り。歩くたびに、角の先が鈴のように鳴る。"),
+    ("icicle_bracelet", "つららの腕輪", "bracelet", None, 7, "uncommon", True,
+     ing(("icicle_wing", 3), ("frost_silver", 2), ("pedestal_cloth", 1)), 4, 24, [],
+     "つらら蝙蝠の翼の骨を、霜銀の留め具でとめた腕輪。外側に、溶けないつららが三本下がる。"),
+    ("passphrase_charm", "合言葉の札", "charm", None, 7, "uncommon", True,
+     ing(("mirror_ice", 2), ("blizzard_core", 1), ("echo_fragment", 1), ("pedestal_cloth", 1)), 4, 24, [],
+     "鏡氷の小さな札に、仲間と決めた合言葉を刻んで腰に下げるお守り。名前を呼べなくなっても、同じ言葉を言えるように。"),
+    ("white_horn_charm", "白角の欠片", "charm", None, 7, "rare", False, None, 0, 0,
+     [{"type": "move_speed", "percent": 6}],
+     "氷角鹿の主「白角」の角の先を、革紐で結んだ飾り。鏡の森を音もなく駆けた鹿の、軽い足どりが宿る。7階の名のある魔物が落とす。"),
+    ("blizzard_lamp_charm", "吹雪の灯", "charm", None, 7, "rare", False, None, 0, 0,
+     [{"type": "lost_resist", "percent": 20}],
+     "吹雪の大精の衣のすそに灯っていた、オーロラ色の小さな灯。吹雪の中でも、仲間の名前を見失わない。7階の名のある魔物が落とす。"),
 ]
 
 # 1階の品（Phase 3 からある）：階の印と、効き目の説明だけ足す

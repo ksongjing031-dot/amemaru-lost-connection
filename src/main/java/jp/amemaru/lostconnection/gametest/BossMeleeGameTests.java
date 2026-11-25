@@ -355,12 +355,12 @@ public final class BossMeleeGameTests {
     // ---------------------------------------------------------------- ボス戦の曲と演出（11月25日）
 
     /**
-     * 1〜6階のボスに、それぞれの曲（sounds.json の {@code music.boss.<ボス>} と、Mod に入った Ogg のファイル）があり、HPの帯に
+     * 1〜7階のボスに、それぞれの曲（sounds.json の {@code music.boss.<ボス>} と、Mod に入った Ogg のファイル）があり、HPの帯に
      * 「曲を流す」印が立っている。戦いの様子と段階は、クライアントへ送る値に写る（部屋のないボスは「戦っていない」）。
      */
     @GameTest(template = EMPTY, timeoutTicks = 100)
     public static void bossMusicAndFightSync(GameTestHelper helper) {
-        for (int floor = 1; floor <= 6; floor++) {
+        for (int floor = 1; floor <= 7; floor++) {
             jp.amemaru.lostconnection.tower.FloorDef def = jp.amemaru.lostconnection.tower.FloorDefs.byNumber(floor);
             check(helper, def != null && def.bossRoom() != null, floor + "階のボスの部屋がありません");
             String id = def.bossRoom().boss().getPath();

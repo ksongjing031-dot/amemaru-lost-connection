@@ -61,6 +61,18 @@ MATERIALS = {
     "amemaru:sentinel_plate": 60,       # 防衛兵から60%で1〜2個
     "amemaru:drone_spring": 70,         # 修復ドローンから50%
     "amemaru:jade_core_shard": 900,     # 名のある魔物から35%・古代守護者から100%（2〜3個）（レア。守護者シリーズの芯）
+    # 6階の素材（11月25日。霜銀シリーズと6階のアクセサリーの材料）【補完】。6階の敵は5階の敵より少し硬い
+    "amemaru:frost_silver": 90,         # 氷像の残響から25%・霜の欠け熊から40%・オルドから3〜5個・宝箱（霜銀シリーズの地金）
+    "amemaru:ice_crystal": 70,          # 氷像の残響から55%で1〜2個・凍て鳥から30%・霜狼から15%
+    "amemaru:frozen_fur": 40,           # 霜狼から55%・霜の欠け熊から70%で1〜2個
+    "amemaru:frost_fang": 45,           # 霜狼から35%
+    "amemaru:ice_feather": 45,          # 凍て鳥から60%
+    # 7階の素材（11月25日。7階のアクセサリーと鏡氷の短剣の修理の材料）【補完】
+    "amemaru:mirror_ice": 80,           # 写し身から55%・吹雪の精から15%
+    "amemaru:ice_antler": 45,           # 氷角鹿から60%
+    "amemaru:icicle_wing": 45,          # つらら蝙蝠から60%
+    "amemaru:blizzard_core": 90,        # 吹雪の精から55%
+    "amemaru:prism_shard": 950,         # 名のある魔物から40%・リフレクタから3〜4個・写し身から1%（レア）
 }
 DROPS = {
     "amemaru:ancient_stone": 0.7 * 1.5,
@@ -87,8 +99,14 @@ FIXED = {
     "amemaru:water_mirror_charm": 2600,
     "amemaru:broken_seal_charm": 2800,
     "amemaru:altar_knot_charm": 3000,
+    # 11月25日：6階・7階の名のある魔物のレアのお守りと、7階のボスのレア（5%。1回8分 → 160分 × 33）【補完】
+    "amemaru:white_fang_charm": 3200,
+    "amemaru:bear_frost_charm": 3200,
+    "amemaru:white_horn_charm": 3400,
+    "amemaru:blizzard_lamp_charm": 3600,
+    "amemaru:mirror_ice_daggers": 5300,
 }
-# 表にない物：レアリティごとの基準額（×（1＋0.08×装備レベル）はゲームの中で計算する）【補完】
+# 表にない物：レアリティごとの基準額（×（1＋0.035×装備レベル）はゲームの中で計算する。11月24日にレベルの上限を上げたため 0.08 から）【補完】
 RARITY_BASE = {"common": 30, "uncommon": 100, "rare": 400, "epic": 1600, "legendary": 6000, "unique": 20000}
 
 TOWER_MATERIALS = ["amemaru:ancient_stone", "amemaru:moss_iron", "amemaru:crystal_shard", "amemaru:tsunomofu_fluff",
@@ -109,7 +127,7 @@ SHOPS = [
                                   ("melon_slice", 3)], None),
     ("apothecary", "薬屋", "", [("amemaru:healing_potion_small", 100), ("amemaru:healing_potion_medium", 260),
                                ("amemaru:mana_water_small", 120), ("amemaru:mana_water_medium", 300), ("amemaru:antidote", 60),
-                               ("honey_bottle", 24), ("glow_berries", 8)], None),
+                               ("amemaru:knot_cord", 150), ("honey_bottle", 24), ("glow_berries", 8)], None),
     ("tools", "道具屋", "", [("amemaru:return_feather", 150), ("amemaru:repair_kit", 200), ("spyglass", 120)], None),
     ("lights", "ろうそくと灯り", "", [("amemaru:hand_lantern", 300), ("amemaru:lantern_vial", 40)], None),
     ("cloth", "布と仕立て", "", [
@@ -149,6 +167,8 @@ USES = {
     "amemaru:mana_water_medium": "MPが60%戻る（戦いの最中に使える）",
     "amemaru:herb_tea": "飲むとMPが15%戻る（食べ物の仲間）",
     "amemaru:antidote": "毒を治し、そのあと30秒は毒にならない（2階のポコダケの胞子に）",
+    # 11月25日：7階からのロスト状態（Phase 0-A 11章「消耗品『結び紐』でも解除」）
+    "amemaru:knot_cord": "自分とまわりの仲間のロスト状態（薄れなど）をほどく（7階から）",
     "amemaru:return_feather": "塔の中で3秒持つと、街の塔の門へ帰る",
     "amemaru:repair_kit": "防具とホットバーの装備の耐久を30%ずつ戻す",
     "amemaru:hand_lantern": "手に持つと、まわりが明るくなる（暗い所で）",
@@ -209,16 +229,31 @@ def material_prices():
 
 
 def crafted_prices(materials):
-    prices = {}
+    """工房で作る品：材料の基準価格の合計の1.2倍。11月25日：第2章の生産職どうしの部品（補強金具・台座布・結晶細工）は、
+    素材から先に値段を決め（1回で作る数で割る）、それを材料に使う品の値段に入れる"""
+    recipes = []
     for path in sorted(glob.glob(os.path.join(DATA, "recipes", "workshop", "*.json"))):
         recipe = json.load(open(path, encoding="utf-8"))
         item = "amemaru:" + os.path.splitext(os.path.basename(path))[0]
-        total = 0
-        for ing in recipe["ingredients"]:
-            if ing["item"] not in materials:
-                raise SystemExit("基準価格のない材料: %s（%s）" % (ing["item"], item))
-            total += materials[ing["item"]] * ing.get("count", 1)
-        prices[item] = round_to(total * 1.2, 10)
+        recipes.append((item, recipe))
+    known = dict(materials)
+    prices = {}
+    left = recipes
+    while left:
+        later = []
+        for item, recipe in left:
+            if any(ing["item"] not in known for ing in recipe["ingredients"]):
+                later.append((item, recipe))
+                continue
+            total = sum(known[ing["item"]] * ing.get("count", 1) for ing in recipe["ingredients"])
+            made = recipe.get("result", {}).get("count", 1)
+            prices[item] = max(10, round_to(total * 1.2 / made, 10))
+            known[item] = prices[item]
+        if len(later) == len(left):
+            item, recipe = later[0]
+            missing = [ing["item"] for ing in recipe["ingredients"] if ing["item"] not in known]
+            raise SystemExit("基準価格のない材料: %s（%s）" % (missing[0], item))
+        left = later
     return prices
 
 
@@ -276,7 +311,7 @@ def main():
         "prices": dict(sorted(prices.items())),
         "rarity_base": RARITY_BASE,
         "accessory_quality": [0.6, 0.8, 1.0, 1.6, 3.0],
-        "level_step": 0.08,
+        "level_step": 0.035,
         # クエストの品（Phase 0-A 20章：取引できない）。光のかけらは1階の石柱の核に使う
         "untradeable": UNTRADEABLE,
     }

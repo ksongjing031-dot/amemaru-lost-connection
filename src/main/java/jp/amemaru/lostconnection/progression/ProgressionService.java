@@ -129,6 +129,7 @@ public final class ProgressionService {
         jp.amemaru.lostconnection.tower.temple.TempleService.onDayChanged(server);
         // 11月25日（6階）：記憶の氷像は、朝にはまた凍っている
         jp.amemaru.lostconnection.tower.village.VillageService.onDayChanged(server);
+        jp.amemaru.lostconnection.tower.iceforest.LightMazeService.onDayChanged(server);
         broadcastWorldState(server);
         TowerHall.update(server);
         return now;

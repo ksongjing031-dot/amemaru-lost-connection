@@ -1,0 +1,52 @@
+{
+  "_comment": "吹雪の精（7階の雑魚）。宙に浮き、氷のつぶて（needle）と吹雪（blizzard。6階の凍て鳥と同じ動き）。吹雪に巻かれると、凍えと、ロスト状態「薄れ」（behavior.fade_seconds 秒）。数値は【補完】",
+  "name": "吹雪の精",
+  "floor": 7,
+  "level": 29,
+  "description": "雪の衣のフードをかぶった、顔のない精。フードの闇に、2つの目だけが光っている。精が通ったあとは、足あとも、名前も、雪に埋もれる。",
+  "stats": {
+    "hp": 1450,
+    "attack": 206,
+    "defense": 10,
+    "move_speed": 0.22,
+    "follow_range": 24,
+    "aggro_range": 14
+  },
+  "exp": 66,
+  "skills": {
+    "needle": {
+      "power": 0.9,
+      "windup": 0.8,
+      "cooldown": 3.0,
+      "range": 14,
+      "speed": 0.9
+    },
+    "blizzard": {
+      "power": 0.32,
+      "windup": 1.8,
+      "cooldown": 16.0,
+      "range": 16.0,
+      "radius": 6.0,
+      "seconds": 5.0,
+      "chill_seconds": 4.0
+    }
+  },
+  "behavior": {
+    "keep_distance": 8,
+    "hover_height": 3.0,
+    "fade_seconds": 8.0
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/blizzard_spirit",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_white",
+        "chance": 0.6
+      },
+      {
+        "item": "amemaru:crystal_fruit_azure",
+        "chance": 0.3
+      }
+    ]
+  }
+}

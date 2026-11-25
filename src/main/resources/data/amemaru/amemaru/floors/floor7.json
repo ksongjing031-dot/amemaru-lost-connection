@@ -1,0 +1,1020 @@
+{
+  "_comment": "塔の7階「氷の森林」（tools/mapgen/build_floor7.py が書き出す。手で直すときは、スクリプトを直して作り直す）",
+  "floor": 7,
+  "chapter": 2,
+  "name": "氷の森林",
+  "chapter_title": "第2章　凍てついた記憶",
+  "recommended_level": [
+    28,
+    35
+  ],
+  "origin": [
+    28336,
+    60,
+    -336
+  ],
+  "size": [
+    672,
+    96,
+    672
+  ],
+  "structure": "amemaru:map/floor7/",
+  "piece_size": 48,
+  "entrance": {
+    "pos": [
+      336.5,
+      17,
+      636.5
+    ],
+    "yaw": 180
+  },
+  "return_circle": {
+    "center": [
+      336.5,
+      17,
+      644.5
+    ],
+    "radius": 2.6
+  },
+  "boss_room": {
+    "boss": "amemaru:reflecta",
+    "name": "鏡の湖",
+    "spawn": {
+      "pos": [
+        336.5,
+        17,
+        101.5
+      ],
+      "yaw": 0
+    },
+    "arena": {
+      "center": [
+        336.5,
+        17,
+        110.5
+      ],
+      "radius": 52.0,
+      "y_min": 14,
+      "y_max": 44
+    },
+    "seal": [
+      [
+        331,
+        17,
+        176
+      ],
+      [
+        341,
+        25,
+        176
+      ]
+    ],
+    "start_radius": 30,
+    "respawn_seconds": 150,
+    "max_players": 8,
+    "hp_min_players": 2,
+    "hp_per_extra_player": 0.6,
+    "attack_per_extra_player": 0.1,
+    "pace_per_extra_player": 0.05,
+    "enrage_seconds": 1800,
+    "exit": {
+      "center": [
+        332.5,
+        17,
+        72.5
+      ],
+      "radius": 2.6
+    },
+    "next": {
+      "center": [
+        339.5,
+        17,
+        72.5
+      ],
+      "radius": 2.6
+    }
+  },
+  "pillars": [],
+  "pillars_done": "合言葉が、そろった。凍った扉が、あなたたちを通す……",
+  "tablet": {
+    "pos": [
+      336,
+      17,
+      243
+    ],
+    "title": "森林監視所の記録",
+    "text": "森林監視所より通達。侵食域では、隣にいる者が誰か分からなくなる。合言葉を決めよ。合言葉は、互いにしか分からない言葉にすること。名前は、侵食に最初に奪われる。"
+  },
+  "spawns": [
+    {
+      "id": "grove_mimics",
+      "enemy": "amemaru:mimic",
+      "center": [
+        336,
+        17,
+        600
+      ],
+      "radius": 10,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "grove_stags",
+      "enemy": "amemaru:ice_stag",
+      "center": [
+        300,
+        16,
+        610
+      ],
+      "radius": 12,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "grove_bats",
+      "enemy": "amemaru:icicle_bat",
+      "center": [
+        372,
+        24,
+        590
+      ],
+      "radius": 12,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "entry_garden_bats",
+      "enemy": "amemaru:icicle_bat",
+      "center": [
+        336,
+        24,
+        548
+      ],
+      "radius": 10,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "fork_mimics",
+      "enemy": "amemaru:mimic",
+      "center": [
+        336,
+        17,
+        470
+      ],
+      "radius": 10,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "west_road_stags",
+      "enemy": "amemaru:ice_stag",
+      "center": [
+        270,
+        17,
+        440
+      ],
+      "radius": 12,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "east_road_stags",
+      "enemy": "amemaru:ice_stag",
+      "center": [
+        404,
+        17,
+        440
+      ],
+      "radius": 12,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "west_garden_spirits",
+      "enemy": "amemaru:blizzard_spirit",
+      "center": [
+        196,
+        22,
+        430
+      ],
+      "radius": 12,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "east_garden_spirits",
+      "enemy": "amemaru:blizzard_spirit",
+      "center": [
+        472,
+        21,
+        430
+      ],
+      "radius": 12,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "west_woods_bats",
+      "enemy": "amemaru:icicle_bat",
+      "center": [
+        130,
+        23,
+        400
+      ],
+      "radius": 14,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "east_woods_bats",
+      "enemy": "amemaru:icicle_bat",
+      "center": [
+        540,
+        23,
+        400
+      ],
+      "radius": 14,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "west_woods_stags",
+      "enemy": "amemaru:ice_stag",
+      "center": [
+        120,
+        17,
+        470
+      ],
+      "radius": 14,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "east_woods_stags",
+      "enemy": "amemaru:ice_stag",
+      "center": [
+        560,
+        18,
+        470
+      ],
+      "radius": 14,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "west_mimics",
+      "enemy": "amemaru:mimic",
+      "center": [
+        200,
+        17,
+        360
+      ],
+      "radius": 8,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "east_mimics",
+      "enemy": "amemaru:mimic",
+      "center": [
+        472,
+        17,
+        360
+      ],
+      "radius": 8,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "north_w_spirits",
+      "enemy": "amemaru:blizzard_spirit",
+      "center": [
+        250,
+        21,
+        270
+      ],
+      "radius": 12,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "north_e_spirits",
+      "enemy": "amemaru:blizzard_spirit",
+      "center": [
+        420,
+        21,
+        270
+      ],
+      "radius": 12,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 44
+    },
+    {
+      "id": "station_mimics",
+      "enemy": "amemaru:mimic",
+      "center": [
+        336,
+        17,
+        228
+      ],
+      "radius": 10,
+      "max": 3,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "north_stags",
+      "enemy": "amemaru:ice_stag",
+      "center": [
+        290,
+        16,
+        230
+      ],
+      "radius": 12,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "north_bats",
+      "enemy": "amemaru:icicle_bat",
+      "center": [
+        380,
+        22,
+        236
+      ],
+      "radius": 12,
+      "max": 3,
+      "respawn_seconds": 70,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 44
+    },
+    {
+      "id": "door_mimics",
+      "enemy": "amemaru:mimic",
+      "center": [
+        336,
+        17,
+        200
+      ],
+      "radius": 8,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    }
+  ],
+  "guardians": [
+    {
+      "id": "white_horn",
+      "enemy": "amemaru:ice_stag",
+      "variant": "amemaru:ice_stag_lord",
+      "pos": [
+        92.5,
+        17,
+        436.5
+      ],
+      "respawn_seconds": 300,
+      "activation": 26,
+      "pillar": -1
+    },
+    {
+      "id": "great_spirit",
+      "enemy": "amemaru:blizzard_spirit",
+      "variant": "amemaru:blizzard_great_spirit",
+      "pos": [
+        588.5,
+        19,
+        432.5
+      ],
+      "respawn_seconds": 300,
+      "activation": 28,
+      "pillar": -1
+    }
+  ],
+  "chests": [
+    {
+      "pos": [
+        348,
+        17,
+        640
+      ],
+      "loot": "amemaru:chests/floor7_iceforest"
+    },
+    {
+      "pos": [
+        330,
+        17,
+        241
+      ],
+      "loot": "amemaru:chests/floor7_iceforest"
+    },
+    {
+      "pos": [
+        342,
+        17,
+        251
+      ],
+      "loot": "amemaru:chests/floor7_iceforest"
+    },
+    {
+      "pos": [
+        92,
+        17,
+        427
+      ],
+      "loot": "amemaru:chests/floor7_iceforest",
+      "guardian": "white_horn"
+    },
+    {
+      "pos": [
+        586,
+        17,
+        426
+      ],
+      "loot": "amemaru:chests/floor7_iceforest",
+      "guardian": "great_spirit"
+    },
+    {
+      "pos": [
+        352,
+        17,
+        600
+      ],
+      "loot": "amemaru:chests/floor7_iceforest"
+    },
+    {
+      "pos": [
+        318,
+        16,
+        560
+      ],
+      "loot": "amemaru:chests/floor7_iceforest"
+    },
+    {
+      "pos": [
+        300,
+        17,
+        488
+      ],
+      "loot": "amemaru:chests/floor7_iceforest"
+    },
+    {
+      "pos": [
+        380,
+        16,
+        486
+      ],
+      "loot": "amemaru:chests/floor7_iceforest"
+    },
+    {
+      "pos": [
+        250,
+        17,
+        446
+      ],
+      "loot": "amemaru:chests/floor7_iceforest"
+    },
+    {
+      "pos": [
+        430,
+        17,
+        446
+      ],
+      "loot": "amemaru:chests/floor7_iceforest"
+    },
+    {
+      "pos": [
+        150,
+        18,
+        380
+      ],
+      "loot": "amemaru:chests/floor7_iceforest"
+    },
+    {
+      "pos": [
+        530,
+        16,
+        380
+      ],
+      "loot": "amemaru:chests/floor7_iceforest"
+    },
+    {
+      "pos": [
+        230,
+        17,
+        330
+      ],
+      "loot": "amemaru:chests/floor7_iceforest"
+    },
+    {
+      "pos": [
+        440,
+        16,
+        330
+      ],
+      "loot": "amemaru:chests/floor7_iceforest"
+    },
+    {
+      "pos": [
+        300,
+        17,
+        220
+      ],
+      "loot": "amemaru:chests/floor7_iceforest"
+    },
+    {
+      "pos": [
+        380,
+        16,
+        220
+      ],
+      "loot": "amemaru:chests/floor7_iceforest"
+    }
+  ],
+  "environment": {
+    "fog": [
+      30,
+      170
+    ],
+    "fog_color": "#BFD3EA",
+    "sky": "aurora",
+    "weather": "snow"
+  },
+  "waypoints": [
+    {
+      "id": "gate1",
+      "name": "崖の門の北",
+      "pos": [
+        341,
+        17,
+        488
+      ],
+      "arrive": {
+        "pos": [
+          341.5,
+          17,
+          486.5
+        ],
+        "yaw": 180
+      }
+    },
+    {
+      "id": "west",
+      "name": "西の鏡の庭",
+      "pos": [
+        207,
+        17,
+        418
+      ],
+      "arrive": {
+        "pos": [
+          207.5,
+          17,
+          416.5
+        ],
+        "yaw": 180
+      }
+    },
+    {
+      "id": "east",
+      "name": "東の鏡の庭",
+      "pos": [
+        483,
+        17,
+        418
+      ],
+      "arrive": {
+        "pos": [
+          483.5,
+          17,
+          416.5
+        ],
+        "yaw": 180
+      }
+    },
+    {
+      "id": "station",
+      "name": "森林監視所の跡",
+      "pos": [
+        347,
+        17,
+        262
+      ],
+      "arrive": {
+        "pos": [
+          347.5,
+          17,
+          260.5
+        ],
+        "yaw": 180
+      }
+    }
+  ],
+  "travel_stone": [
+    328,
+    17,
+    638
+  ],
+  "seal_requires": "lights+guardians+passphrase",
+  "light_mazes": [
+    {
+      "id": "entry",
+      "name": "入口の鏡の庭",
+      "source": [
+        331,
+        17,
+        540
+      ],
+      "direction": "north",
+      "target": [
+        328,
+        17,
+        528
+      ],
+      "mirrors": [
+        {
+          "pos": [
+            331,
+            17,
+            534
+          ],
+          "slash": false
+        },
+        {
+          "pos": [
+            339,
+            17,
+            534
+          ],
+          "slash": true
+        },
+        {
+          "pos": [
+            339,
+            17,
+            528
+          ],
+          "slash": true
+        },
+        {
+          "pos": [
+            336,
+            17,
+            537
+          ],
+          "slash": true
+        },
+        {
+          "pos": [
+            334,
+            17,
+            531
+          ],
+          "slash": false
+        }
+      ],
+      "door": {
+        "box": [
+          330,
+          17,
+          499,
+          342,
+          25,
+          501
+        ],
+        "block": "minecraft:blue_ice"
+      }
+    },
+    {
+      "id": "west",
+      "name": "西の鏡の庭",
+      "source": [
+        204,
+        17,
+        405
+      ],
+      "direction": "west",
+      "target": [
+        188,
+        17,
+        404
+      ],
+      "mirrors": [
+        {
+          "pos": [
+            198,
+            17,
+            405
+          ],
+          "slash": true
+        },
+        {
+          "pos": [
+            198,
+            17,
+            398
+          ],
+          "slash": false
+        },
+        {
+          "pos": [
+            192,
+            17,
+            398
+          ],
+          "slash": false
+        },
+        {
+          "pos": [
+            192,
+            17,
+            404
+          ],
+          "slash": true
+        },
+        {
+          "pos": [
+            201,
+            17,
+            395
+          ],
+          "slash": true
+        },
+        {
+          "pos": [
+            195,
+            17,
+            401
+          ],
+          "slash": false
+        },
+        {
+          "pos": [
+            201,
+            17,
+            402
+          ],
+          "slash": true
+        }
+      ],
+      "door": {
+        "box": [
+          196,
+          17,
+          299,
+          204,
+          25,
+          301
+        ],
+        "block": "minecraft:blue_ice"
+      }
+    },
+    {
+      "id": "east",
+      "name": "東の鏡の庭",
+      "source": [
+        474,
+        17,
+        408
+      ],
+      "direction": "north",
+      "target": [
+        480,
+        17,
+        401
+      ],
+      "mirrors": [
+        {
+          "pos": [
+            474,
+            17,
+            404
+          ],
+          "slash": true
+        },
+        {
+          "pos": [
+            467,
+            17,
+            404
+          ],
+          "slash": false
+        },
+        {
+          "pos": [
+            467,
+            17,
+            397
+          ],
+          "slash": false
+        },
+        {
+          "pos": [
+            476,
+            17,
+            397
+          ],
+          "slash": false
+        },
+        {
+          "pos": [
+            476,
+            17,
+            401
+          ],
+          "slash": true
+        },
+        {
+          "pos": [
+            470,
+            17,
+            401
+          ],
+          "slash": true
+        },
+        {
+          "pos": [
+            474,
+            17,
+            394
+          ],
+          "slash": false
+        },
+        {
+          "pos": [
+            466,
+            17,
+            400
+          ],
+          "slash": true
+        },
+        {
+          "pos": [
+            478,
+            17,
+            405
+          ],
+          "slash": false
+        }
+      ],
+      "door": {
+        "box": [
+          468,
+          17,
+          299,
+          476,
+          25,
+          301
+        ],
+        "block": "minecraft:blue_ice"
+      }
+    }
+  ],
+  "passphrase": {
+    "area": [
+      330,
+      16,
+      178,
+      342,
+      22,
+      190
+    ],
+    "seconds": 20
+  },
+  "story_zones": [
+    {
+      "id": "mirror_grove",
+      "box": [
+        328,
+        16,
+        566,
+        344,
+        22,
+        586
+      ]
+    },
+    {
+      "id": "watch_station",
+      "box": [
+        328,
+        16,
+        239,
+        344,
+        22,
+        253
+      ]
+    },
+    {
+      "id": "passphrase_door",
+      "box": [
+        330,
+        16,
+        179,
+        342,
+        22,
+        190
+      ]
+    }
+  ]
+}

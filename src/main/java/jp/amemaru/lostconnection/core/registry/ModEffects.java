@@ -59,6 +59,13 @@ public final class ModEffects {
     public static final RegistryObject<MobEffect> ANTIDOTE = EFFECTS.register("antidote", () ->
             new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0xD8F0A0, false));
 
+    /**
+     * ロスト状態「薄れ」（Phase 0-A 13章の表。7階から）：味方の名前が「？？？」に見える。味方のそばでしゃがむ「結び直し」・ヒーラーの
+     * ほどく技・消耗品「結び紐」で解ける（{@link jp.amemaru.lostconnection.combat.LostService}）。
+     */
+    public static final RegistryObject<MobEffect> LOST_FADE = EFFECTS.register("lost_fade", () ->
+            new AmemaruEffect(MobEffectCategory.HARMFUL, 0xE8EEF5, false));
+
     /** 凍結：凍えが5つ重なると、しばらく動けず、攻撃もできない。 */
     public static final RegistryObject<MobEffect> FROZEN = EFFECTS.register("frozen", () ->
             new AmemaruEffect(MobEffectCategory.HARMFUL, 0xBFF2FF, true).freezing()

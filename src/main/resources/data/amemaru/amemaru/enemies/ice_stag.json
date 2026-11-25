@@ -1,0 +1,52 @@
+{
+  "_comment": "氷角鹿（7階の雑魚）。細い脚の鹿で、透きとおった氷の角。角で突く（bite。1階の欠け牙の狼と同じ動き）・頭を下げて突進（charge）。角に当たると凍える（behavior.chill_stacks 段・chill_seconds 秒）。数値は【補完】",
+  "name": "氷角鹿",
+  "floor": 7,
+  "level": 28,
+  "description": "霜の毛並みに、透きとおった氷の角を持つ鹿。鏡の木々の間を音もなく駆け、近づく者を角で突き上げる。角の先が、鈴のように鳴る。",
+  "stats": {
+    "hp": 1900,
+    "attack": 212,
+    "defense": 16,
+    "move_speed": 0.28,
+    "follow_range": 22,
+    "aggro_range": 12
+  },
+  "exp": 64,
+  "skills": {
+    "bite": {
+      "power": 1.05,
+      "windup": 0.6,
+      "cooldown": 1.6,
+      "range": 2.4,
+      "angle": 90
+    },
+    "charge": {
+      "power": 1.7,
+      "windup": 1.2,
+      "cooldown": 8.0,
+      "range": 14.0,
+      "min_range": 5.0,
+      "speed": 0.95,
+      "width": 1.4,
+      "recover": 1.2
+    }
+  },
+  "behavior": {
+    "chill_stacks": 1,
+    "chill_seconds": 4.0
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/ice_stag",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_white",
+        "chance": 0.6
+      },
+      {
+        "item": "amemaru:crystal_fruit_azure",
+        "chance": 0.3
+      }
+    ]
+  }
+}

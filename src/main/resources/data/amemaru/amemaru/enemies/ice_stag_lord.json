@@ -1,0 +1,58 @@
+{
+  "_comment": "氷角鹿の主「白角」（7階の名のある魔物。西の林の空き地の宝箱の守り手）。大きく、角に当たると凍えが2つ。数値は【補完】",
+  "name": "白角",
+  "model": "amemaru:ice_stag",
+  "floor": 7,
+  "level": 32,
+  "description": "雪よりも白い、大きな氷角鹿。枝分かれした角は、森の鏡の木々よりも長い。白角が駆けると、林じゅうの氷の枝が鳴る。",
+  "stats": {
+    "hp": 20000,
+    "attack": 228,
+    "defense": 22,
+    "move_speed": 0.29,
+    "follow_range": 28,
+    "aggro_range": 16
+  },
+  "exp": 560,
+  "skills": {
+    "bite": {
+      "power": 1.25,
+      "windup": 0.6,
+      "cooldown": 1.6,
+      "range": 3.0,
+      "angle": 100
+    },
+    "charge": {
+      "power": 2.0,
+      "windup": 1.1,
+      "cooldown": 6.0,
+      "range": 18.0,
+      "min_range": 5.0,
+      "speed": 1.05,
+      "width": 2.2,
+      "recover": 1.0
+    }
+  },
+  "behavior": {
+    "chill_stacks": 2,
+    "chill_seconds": 5.0,
+    "scale": 1.5
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/ice_stag",
+    "rare": [
+      {
+        "item": "amemaru:prism_shard",
+        "chance": 40.0
+      },
+      {
+        "item": "amemaru:white_horn_charm",
+        "chance": 5.0
+      },
+      {
+        "item": "amemaru:crystal_fruit_crimson",
+        "chance": 6.0
+      }
+    ]
+  }
+}

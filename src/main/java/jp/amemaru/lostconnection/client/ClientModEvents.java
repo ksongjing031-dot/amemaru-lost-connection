@@ -104,6 +104,8 @@ public final class ClientModEvents {
         event.registerAbove(VanillaGuiOverlay.CROSSHAIR.id(), "lock_on", TargetLock.OVERLAY);
         // 11月25日：ボス戦の演出（画面のふち・白い光・はじまりの名前・段階の字）。HUDとボスのHPの帯の下に描く
         event.registerAbove(VanillaGuiOverlay.VIGNETTE.id(), "boss_fx", BossFx.OVERLAY);
+        // 11月25日：ロスト状態の画面の縁の白いノイズ
+        event.registerAbove(VanillaGuiOverlay.VIGNETTE.id(), "lost_noise", LostClientEvents.OVERLAY);
         // Phase 3：レアドロップ・工房などの特別な演出の帯
         event.registerAboveAll("special_moment", SpecialMomentFx.OVERLAY);
         // Phase 5：暗転・章題・字幕・古代文字・知らせ・カウントダウン・はじめの手引き
@@ -171,6 +173,12 @@ public final class ClientModEvents {
         event.registerEntityRenderer(ModEntities.FROST_BIRD.get(), context -> new AmemaruMobRenderer<>(context, "frost_bird", 0.4F));
         event.registerEntityRenderer(ModEntities.FROST_BEAR.get(), context -> new AmemaruMobRenderer<>(context, "frost_bear", 0.9F));
         event.registerEntityRenderer(ModEntities.ORDO.get(), context -> new AmemaruMobRenderer<>(context, "ordo", 1.0F));
+        // 11月25日：7階
+        event.registerEntityRenderer(ModEntities.MIMIC.get(), jp.amemaru.lostconnection.client.render.MimicRenderer::new);
+        event.registerEntityRenderer(ModEntities.ICE_STAG.get(), context -> new AmemaruMobRenderer<>(context, "ice_stag", 0.6F));
+        event.registerEntityRenderer(ModEntities.ICICLE_BAT.get(), context -> new AmemaruMobRenderer<>(context, "icicle_bat", 0.3F));
+        event.registerEntityRenderer(ModEntities.BLIZZARD_SPIRIT.get(), context -> new AmemaruMobRenderer<>(context, "blizzard_spirit", 0.4F));
+        event.registerEntityRenderer(ModEntities.REFLECTA.get(), context -> new AmemaruMobRenderer<>(context, "reflecta", 1.3F));
         event.registerEntityRenderer(ModEntities.YODOMI_SLIME.get(), context -> new AmemaruMobRenderer<>(context, "yodomi_slime", 0.6F));
         event.registerEntityRenderer(ModEntities.SOUJIKIHEI.get(), context -> new AmemaruMobRenderer<>(context, "soujikihei", 0.7F));
         event.registerEntityRenderer(ModEntities.KIBA_NAMAZU.get(), context -> new AmemaruMobRenderer<>(context, "kiba_namazu", 0.6F));

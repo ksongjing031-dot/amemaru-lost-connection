@@ -1,0 +1,56 @@
+{
+  "_comment": "写し身（7階の雑魚。Phase 0-A 9章の7階「プレイヤーの姿を真似る敵。名前が『？？？』」）。はじめに近づいた人の姿を写す（enemy/iceforest/Mimic.java・client/render/MimicRenderer.java）。剣で斬る（slash）・踏みこんで突く（charge）。斬られると、ロスト状態「薄れ」（behavior.fade_seconds 秒。仲間の名前が「？？？」に見える）。名前はいつも「？？？」（氷の色）。数値は【補完】",
+  "name": "写し身",
+  "floor": 7,
+  "level": 29,
+  "description": "氷に映った誰かの姿が、そのまま歩き出したもの。近づいた人と同じ顔、同じ服、同じ武器。名前を呼んでも、答えない。",
+  "stats": {
+    "hp": 2050,
+    "attack": 216,
+    "defense": 18,
+    "move_speed": 0.26,
+    "follow_range": 22,
+    "aggro_range": 12
+  },
+  "exp": 70,
+  "skills": {
+    "slash": {
+      "power": 1.1,
+      "windup": 0.7,
+      "cooldown": 1.8,
+      "range": 2.6,
+      "angle": 100
+    },
+    "charge": {
+      "power": 1.6,
+      "windup": 1.1,
+      "cooldown": 8.0,
+      "range": 12.0,
+      "min_range": 4.0,
+      "speed": 0.9,
+      "width": 1.2,
+      "recover": 1.2
+    }
+  },
+  "behavior": {
+    "fade_seconds": 8.0
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/mimic",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_white",
+        "chance": 0.6
+      },
+      {
+        "item": "amemaru:crystal_fruit_azure",
+        "chance": 0.3
+      },
+      {
+        "item": "amemaru:prism_shard",
+        "chance": 1.0
+      }
+    ]
+  },
+  "lost": true
+}

@@ -1,0 +1,43 @@
+{
+  "_comment": "合言葉の扉の前（本人だけ。一人一度）。パーティ全員が同じ合言葉をチャットに打つと開く（Phase 0-A 9章の7階）【補完】",
+  "title": "合言葉の扉",
+  "trigger": {
+    "type": "amemaru:floor_zone",
+    "floor": 7,
+    "zone": "passphrase_door"
+  },
+  "scope": "player",
+  "once": false,
+  "replayable": true,
+  "conditions": {
+    "flags_none": [
+      "amemaru:story/passphrase_door_seen"
+    ]
+  },
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "凍った扉の碑に、こう刻まれている。「名を呼べぬときは、同じ言葉を」",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "扉の前で、パーティの全員が、同じ合言葉をチャットに打とう（20秒のうちに）。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "……互いにしか分からない言葉を。名前は、侵食に最初に奪われるのだから。",
+      "ticks": 120,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/passphrase_door_seen"
+      ]
+    }
+  ]
+}
