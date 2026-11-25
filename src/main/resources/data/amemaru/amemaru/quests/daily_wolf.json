@@ -13,7 +13,13 @@
   ],
   "rewards": {
     "knots": 200,
-    "exp": 160
+    "exp": 160,
+    "items": [
+      {
+        "item": "amemaru:binding_thread",
+        "count": 1
+      }
+    ]
   },
   "order": 30
 }

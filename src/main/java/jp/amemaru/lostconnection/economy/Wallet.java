@@ -122,6 +122,35 @@ public final class Wallet {
         jp.amemaru.lostconnection.guild.GuildHooks.onKnotsChanged(player, data, before, data.getKnots());
     }
 
+    /**
+     * 預ける（依頼台。Phase 6 その4）：ちょうどその額を取って、サーバーが預かる。世界からは消えないので、発行にも回収にも
+     * 記録しない（使った分は {@link #recordCollect}、手数料は {@link #recordMove}、戻す分は {@link #receive}）。
+     * 足りなければ何もしないで false。
+     */
+    public static boolean hold(ServerPlayer player, PlayerData data, long amount, String reason) {
+        if (amount < 0 || data.getKnots() < amount) {
+            return false;
+        }
+        if (amount == 0) {
+            return true;
+        }
+        long before = data.getKnots();
+        data.setKnots(before - amount);
+        log(player, reason + " (held)", -amount, data.getKnots());
+        jp.amemaru.lostconnection.guild.GuildHooks.onKnotsChanged(player, data, before, data.getKnots());
+        return true;
+    }
+
+    /** 預かったノットを費用として使った（回収として記録だけする）。 */
+    public static void recordCollect(MinecraftServer server, String reason, String from, long amount) {
+        record(server, EconomyLog.Flow.COLLECT, reason, from, "", amount);
+    }
+
+    /** 預かったノットを、人から人へ渡した（移動として記録だけする。依頼の手数料）。 */
+    public static void recordMove(MinecraftServer server, String reason, String from, String to, long amount) {
+        record(server, EconomyLog.Flow.MOVE, reason, from, to, amount);
+    }
+
     /** 所持金の何%か（切り捨て）。デスペナルティで失う量。 */
     public static long percentOf(long balance, double percent) {
         if (balance <= 0 || percent <= 0) {

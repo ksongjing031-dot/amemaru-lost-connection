@@ -479,12 +479,12 @@ def shop():
         frame(13, v, Y1 + 3, "west", item, name=nm)
     put(13, 4, Y1 + 4, block("spruce_wall_sign", facing="west", waterlogged=False),
         sign_nbt(["型紙", "", "", ""], ["型紙", "", "", ""]))
-    # カウンター（v=8）：西は棚（樽2段）、u=4 は客の側から使う作業台（MOD の作業台の代わりの鍛冶台）、
+    # カウンター（v=8）：西は棚（樽2段）、u=4 は客の側から使う作業台（MOD の防具工房の作業台。Phase 6 その4 で鍛冶台から置き替えた）、
     # u 5..9 はカウンター（皮をはいだトウヒの丸太に、濃い木の天板。1.5 の高さ）、u=10 は柵の門、東は棚
     for u in (1, 2, 3, 11, 12, 13):
         put(u, 8, Y1 + 1, block("barrel", facing="north", open=False))
         put(u, 8, Y1 + 2, block("barrel", facing="up", open=False))
-    put(4, 8, Y1 + 1, block("smithing_table"))
+    put(4, 8, Y1 + 1, block("amemaru:armor_workbench", facing="north"))
     for u in range(5, 10):
         put(u, 8, Y1 + 1, log("spruce", "x", stripped=True))
         put(u, 8, Y1 + 2, slab(pal.trim, "bottom"))
@@ -518,11 +518,11 @@ def workshop():
     put(1, 15, Y1, block("spruce_planks"))
     # ベルタの金床（入口からの軸の上。カウンターの奥）
     put(7, 11, Y1 + 1, block("anvil", facing="east"))
-    # 奥（裏の壁ぎわ）：織機（当て布と革ひも）・焼き入れの水・強化の作業台（入口からの軸の先。MOD の作業台の代わりの
-    # 鍛冶台）・溶鉱炉・小さな炉（腰の高さの炉床に焚き火、上に覆い）・砥石
+    # 奥（裏の壁ぎわ）：織機（当て布と革ひも）・焼き入れの水・強化の作業台（入口からの軸の先。MOD の防具工房の
+    # 作業台。Phase 6 その4 で鍛冶台から置き替えた）・溶鉱炉・小さな炉（腰の高さの炉床に焚き火、上に覆い）・砥石
     put(4, 15, Y1 + 1, block("loom", facing="north"))
     put(6, 15, Y1 + 1, block("water_cauldron", level=3))
-    put(7, 15, Y1 + 1, block("smithing_table"))
+    put(7, 15, Y1 + 1, block("amemaru:armor_workbench", facing="north"))
     put(8, 15, Y1 + 1, block("blast_furnace", facing="north", lit=True))
     put(8, 15, Y1 + 2, block("deepslate_bricks"))
     for u in (9, 10):
@@ -636,9 +636,9 @@ def surroundings():
     for v in (7, 11, 15):
         put(-2, v, 1, log(pal.trim, "y", stripped=True))
         put(-2, v, 2, log(pal.trim, "y", stripped=True))
-    # 屋根の下：作業台（防具職人のプレイヤーが使う。MOD の作業台の代わりの鍛冶台）、道具、織機、材料
-    put(-1, 8, 1, block("smithing_table"))
-    put(-1, 12, 1, block("smithing_table"))
+    # 屋根の下：作業台（防具職人のプレイヤーが使う。MOD の防具工房の作業台。Phase 6 その4 で鍛冶台から置き替えた）、道具、織機、材料
+    put(-1, 8, 1, block("amemaru:armor_workbench", facing="east"))
+    put(-1, 12, 1, block("amemaru:armor_workbench", facing="east"))
     frame(-1, 9, 3, "west", "shears")
     frame(-1, 11, 3, "west", "iron_ingot")
     put(-1, 13, 1, block("loom", facing="west"))

@@ -139,6 +139,9 @@ public class PartyScreen extends Screen {
             addRenderableWidget(new CrystalButton(left + 12, buttonY, 64, 16, Component.translatable("screen.amemaru.party.leave"),
                     b -> send(PartyActionC2S.Action.LEAVE, null)));
         }
+        // 決闘（Phase 6 その4）：申し込む・受ける・観戦する画面
+        addRenderableWidget(new CrystalButton(left + PANEL_WIDTH - 108, buttonY, 50, 16,
+                Component.translatable("screen.amemaru.party.duel"), b -> jp.amemaru.lostconnection.client.ClientSocial.send("duel_open")));
         addRenderableWidget(new CrystalButton(left + PANEL_WIDTH - 54, buttonY, 42, 16,
                 Component.translatable("screen.amemaru.status.close"), b -> onClose()));
     }

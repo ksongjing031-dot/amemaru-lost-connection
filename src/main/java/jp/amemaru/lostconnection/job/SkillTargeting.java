@@ -187,7 +187,7 @@ public final class SkillTargeting {
      */
     public static boolean valid(ServerPlayer player, LivingEntity entity, double range, Affects affects, boolean includeSelf,
                                 double minDot) {
-        boolean kind = affects == Affects.ENEMIES ? CombatTargets.isEnemy(entity) : CombatTargets.isAlly(player, entity, includeSelf);
+        boolean kind = affects == Affects.ENEMIES ? CombatTargets.isEnemyOf(player, entity) : CombatTargets.isAlly(player, entity, includeSelf);
         if (!kind) {
             return false;
         }
@@ -236,9 +236,14 @@ public final class SkillTargeting {
 
     /** 地点のまわりの敵（高さは上下3ブロックまで）。 */
     public static List<LivingEntity> enemiesNear(ServerLevel level, Vec3 center, double radius) {
+        return enemiesNear(null, level, center, radius);
+    }
+
+    /** 地点のまわりの、{@code caster} から見た敵（決闘の相手を含む。Phase 6 その4）。 */
+    public static List<LivingEntity> enemiesNear(@Nullable ServerPlayer caster, ServerLevel level, Vec3 center, double radius) {
         AABB box = new AABB(center.x - radius, center.y - 3.0, center.z - radius, center.x + radius, center.y + 3.0, center.z + radius);
         List<LivingEntity> list = new ArrayList<>(level.getEntitiesOfClass(LivingEntity.class, box, entity -> {
-            if (!CombatTargets.isEnemy(entity)) {
+            if (!CombatTargets.isEnemyOf(caster, entity)) {
                 return false;
             }
             double dx = entity.getX() - center.x;
@@ -252,10 +257,15 @@ public final class SkillTargeting {
 
     /** 線（from → to、太さ width）に触れる敵。近い順。 */
     public static List<LivingEntity> alongLine(ServerLevel level, Vec3 from, Vec3 to, double width) {
+        return alongLine(null, level, from, to, width);
+    }
+
+    /** 線に触れる、{@code caster} から見た敵（決闘の相手を含む。Phase 6 その4）。 */
+    public static List<LivingEntity> alongLine(@Nullable ServerPlayer caster, ServerLevel level, Vec3 from, Vec3 to, double width) {
         double half = width / 2.0;
         AABB box = new AABB(from, to).inflate(half + 1.0);
         List<LivingEntity> list = new ArrayList<>(level.getEntitiesOfClass(LivingEntity.class, box, entity ->
-                CombatTargets.isEnemy(entity) && (entity.getBoundingBox().inflate(half).contains(from)
+                CombatTargets.isEnemyOf(caster, entity) && (entity.getBoundingBox().inflate(half).contains(from)
                         || entity.getBoundingBox().inflate(half).clip(from, to).isPresent())));
         list.sort(Comparator.comparingDouble(entity -> entity.distanceToSqr(from)));
         return list;
@@ -280,7 +290,7 @@ public final class SkillTargeting {
     public static List<LivingEntity> branded(ServerPlayer player, double range) {
         AABB box = player.getBoundingBox().inflate(range, Math.min(range, 8.0), range);
         List<LivingEntity> list = new ArrayList<>(player.level().getEntitiesOfClass(LivingEntity.class, box, entity ->
-                CombatTargets.isEnemy(entity) && StatusService.brands(entity) > 0 && entity.distanceToSqr(player) <= range * range));
+                CombatTargets.isEnemyOf(player, entity) && StatusService.brands(entity) > 0 && entity.distanceToSqr(player) <= range * range));
         list.sort(Comparator.comparingDouble(entity -> entity.distanceToSqr(player)));
         return list;
     }
@@ -307,7 +317,8 @@ public final class SkillTargeting {
     public static List<LivingEntity> around(ServerPlayer player, double radius, Affects affects, boolean includeSelf) {
         AABB box = player.getBoundingBox().inflate(radius, 3.0, radius);
         List<LivingEntity> list = new ArrayList<>(player.level().getEntitiesOfClass(LivingEntity.class, box, entity -> {
-            boolean kind = affects == Affects.ENEMIES ? CombatTargets.isEnemy(entity) : CombatTargets.isAlly(player, entity, includeSelf);
+            boolean kind = affects == Affects.ENEMIES ? CombatTargets.isEnemyOf(player, entity)
+                    : CombatTargets.isAlly(player, entity, includeSelf);
             if (!kind) {
                 return false;
             }

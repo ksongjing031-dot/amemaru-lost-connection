@@ -312,6 +312,8 @@ public final class GuildService {
             one.putInt("trades", c.trades());
             one.putInt("revived", c.revived());
             one.putInt("revivedBy", c.revivedBy());
+            one.putInt("commissions", c.commissions());
+            one.putInt("duels", c.duels());
             one.putInt("first", c.firstDay());
             one.putInt("last", c.lastDay());
             one.putBoolean("online", player.server.getPlayerList().getPlayer(list.get(i).getKey()) != null);

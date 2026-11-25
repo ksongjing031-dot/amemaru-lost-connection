@@ -70,6 +70,10 @@ public final class CombatService {
         final LivingEntity target;
         final double amount;
         boolean applied;
+        /** 決闘で、受ける側の守りを入れたあとの量（-1 なら amount のまま。Phase 6 その4）。 */
+        double dealt = -1;
+        /** 外れた・かわされた（数字は受けた側で出した）。 */
+        boolean avoided;
 
         PendingHit(LivingEntity target, double amount) {
             this.target = target;
@@ -199,14 +203,33 @@ public final class CombatService {
             // スキルとほかの攻撃が、無敵時間で打ち消し合わないようにする
             target.invulnerableTime = 0;
         }
-        if (!hit.applied) {
+        if (!hit.applied || hit.avoided) {
             return -1;
         }
-        CombatTextS2C.send(target, amount, kind);
-        return amount;
+        double shown = hit.dealt >= 0 ? hit.dealt : amount;
+        CombatTextS2C.send(target, shown, kind);
+        return shown;
     }
 
     // ---------------------------------------------------------------- イベント
+
+    /**
+     * プレイヤーどうしの攻撃を止めるか。決闘（Phase 6 その4）の相手どうしは届く。決闘している人（と観客）には、戦っている相手の
+     * 攻撃のほかは届かず、決闘している人も相手のほかは攻撃しない。ほかは config の allowPvp（初期値 false）で決める。
+     */
+    public static boolean pvpBlocked(@Nullable Entity attackerEntity, LivingEntity victim, DamageSource source) {
+        if (attackerEntity instanceof ServerPlayer hitter && victim instanceof ServerPlayer hit
+                && jp.amemaru.lostconnection.social.DuelService.canHurt(hitter, hit)) {
+            return false;
+        }
+        if (!source.is(DamageTypeTags.BYPASSES_INVULNERABILITY)
+                && ((victim instanceof ServerPlayer duelVictim && jp.amemaru.lostconnection.social.DuelService.isolated(duelVictim))
+                || (attackerEntity instanceof ServerPlayer duelAttacker && attackerEntity != victim
+                && jp.amemaru.lostconnection.social.DuelService.isolated(duelAttacker)))) {
+            return true;
+        }
+        return !ServerConfig.ALLOW_PVP.get() && victim instanceof Player && attackerEntity instanceof Player attacker && attacker != victim;
+    }
 
     /** 攻撃そのものを止める：プレイヤーどうし（configで許していなければ）・凍結した魔物・受け流された攻撃。 */
     @SubscribeEvent
@@ -222,7 +245,7 @@ public final class CombatService {
             event.setCanceled(true);
             return;
         }
-        if (!ServerConfig.ALLOW_PVP.get() && victim instanceof Player && attackerEntity instanceof Player attacker && attacker != victim) {
+        if (pvpBlocked(attackerEntity, victim, source)) {
             event.setCanceled(true);
             return;
         }
@@ -242,14 +265,25 @@ public final class CombatService {
         }
         PendingHit hit = pending;
         if (hit != null && hit.target == target) {
-            resolveOnTarget(event, target, hit.amount);
+            double result = resolveOnTarget(event, target, hit.amount);
             hit.applied = true;
+            if (result < 0) {
+                hit.avoided = true;
+            } else if (Math.abs(result - hit.amount) > 1.0E-9) {
+                hit.dealt = result;
+            }
             if (target instanceof AmemaruMob mob) {
                 mob.onDamagedBy(event.getSource().getEntity(), hit.amount);
             }
             return;
         }
         DamageSource source = event.getSource();
+        // 決闘の相手の近接攻撃（Phase 6 その4）：魔物を殴るときと同じ計算で
+        if (target instanceof ServerPlayer victim && source.is(DamageTypes.PLAYER_ATTACK) && source.getEntity() instanceof ServerPlayer attacker
+                && source.getDirectEntity() == attacker && jp.amemaru.lostconnection.social.DuelService.canHurt(attacker, victim)) {
+            onMelee(event, attacker, victim);
+            return;
+        }
         if (target instanceof ServerPlayer player) {
             onPlayerDamaged(event, player, source);
             return;
@@ -271,8 +305,12 @@ public final class CombatService {
         }
     }
 
-    /** 独自のダメージを、相手の種類に合わせて引く。 */
-    private static void resolveOnTarget(LivingDamageEvent event, LivingEntity target, double amount) {
+    /**
+     * 独自のダメージを、相手の種類に合わせて引く。
+     *
+     * @return 引いた量（決闘で外れた・かわされたときは -1。受ける側の守りで減ったときは減った後の量）
+     */
+    private static double resolveOnTarget(LivingDamageEvent event, LivingEntity target, double amount) {
         if (target instanceof TrainingDummy dummy) {
             dummy.applyCustomDamage(amount);
             event.setAmount(0.0F);
@@ -283,9 +321,72 @@ public final class CombatService {
             float wanted = remaining <= 0 ? 0.0F
                     : (float) Math.max(0.01, remaining / mob.getEnemyMaxHp() * mob.getMaxHealth());
             event.setAmount(Math.max(0.0F, mob.getHealth() - wanted));
+        } else if (target instanceof ServerPlayer player && event.getSource().getEntity() instanceof ServerPlayer attacker
+                && attacker != player && jp.amemaru.lostconnection.social.DuelService.canHurt(attacker, player)) {
+            return resolveOnDuel(event, player, amount, attacker);
         } else {
             event.setAmount((float) (amount / TargetVitals.vanillaMultiplier()));
         }
+        return amount;
+    }
+
+    /**
+     * 決闘の相手からのダメージ（Phase 6 その4）：受ける側の守り（外れ・回避・軽減・障壁・不屈・身代わりの鈴）を入れる。
+     * 倒れるほどの一撃は、HPを1残して決闘を終える（ダウン・デスペナルティはない）。防具の耐久は減らない。
+     *
+     * @return 引いた量（外れた・かわされたときは -1）
+     */
+    private static double resolveOnDuel(LivingDamageEvent event, ServerPlayer player, double amount, ServerPlayer attacker) {
+        PlayerData data = PlayerDataCapability.get(player).orElse(null);
+        if (data == null || !data.isStatsReady() || data.getStats().maxHp() <= 0 || player.getMaxHealth() <= 0) {
+            event.setAmount(0.0F);
+            return -1;
+        }
+        double maxHp = data.getStats().maxHp();
+        float vanillaMax = player.getMaxHealth();
+        long now = player.level().getGameTime();
+        if (CombatBonuses.misses(player, data, attacker, now)) {
+            event.setAmount(0.0F);
+            data.markCombat(now);
+            CombatTextS2C.send(player, 0, CombatTextS2C.Kind.MISS);
+            return -1;
+        }
+        if (SpeedService.dodges(player, data)) {
+            event.setAmount(0.0F);
+            data.markCombat(now);
+            CombatTextS2C.send(player, 0, CombatTextS2C.Kind.DODGE);
+            ReactiveSkills.onDodged(player, data, now);
+            return -1;
+        }
+        double damage = amount * GearEffects.incomingMultiplier(player, data);
+        damage *= CombatBonuses.incoming(player, data, attacker, now);
+        damage = reduce(player, data, damage, attacker, now, true);
+        damage = absorbBarrier(player, data, damage, now);
+        if (data.getBuffs().unyielding(now)) {
+            damage = Math.min(damage, Math.max(0.0, data.getHp() - 1.0));
+        }
+        damage = Math.max(0.0, damage);
+        if (damage >= data.getHp() && data.getBuffs().guarded(now)) {
+            BuffState buffs = data.getBuffs();
+            double hp = Math.max(1.0, maxHp * buffs.guardianHp / 100.0);
+            buffs.guardianUntil = 0;
+            player.removeEffect(ModEffects.GUARDIAN_BELL.get());
+            data.setHp(Math.max(data.getHp(), hp));
+            event.setAmount(0.0F);
+            VitalsService.pushVanillaHealth(player, data);
+            CombatTextS2C.send(player, 0, CombatTextS2C.Kind.SAVED);
+            player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.BELL_BLOCK, SoundSource.PLAYERS,
+                    1.2F, 1.6F);
+            StatusService.sync(player, StatusFxS2C.Event.GUARDIAN_SAVED);
+            return 0.0;
+        }
+        damage = jp.amemaru.lostconnection.social.DuelService.clampLethal(player, data, damage);
+        event.setAmount((float) (damage / maxHp * vanillaMax));
+        if (damage > 0) {
+            data.markCombat(now);
+            GaugeService.onDamageTaken(player, data, damage, now);
+        }
+        return damage;
     }
 
     /** 近接攻撃（左クリック）。 */
@@ -308,9 +409,13 @@ public final class CombatService {
         DamageCalculator.Result result = DamageCalculator.compute(power, data.getStats().get(StatType.CRIT) + offense.critBonus(),
                 data.getStats().get(StatType.CRIT_DAMAGE) + offense.critDamageBonus(), TargetVitals.defense(target),
                 ServerConfig.DAMAGE_VARIANCE.get(), attacker.getRandom());
-        resolveOnTarget(event, target, result.amount());
+        double dealt = resolveOnTarget(event, target, result.amount());
         data.markCombat(now);
-        CombatTextS2C.send(target, result.amount(), result.crit() ? CombatTextS2C.Kind.CRIT : CombatTextS2C.Kind.DAMAGE);
+        if (dealt < 0) {
+            // 決闘の相手にかわされた（Phase 6 その4）
+            return;
+        }
+        CombatTextS2C.send(target, dealt, result.crit() ? CombatTextS2C.Kind.CRIT : CombatTextS2C.Kind.DAMAGE);
         if (target instanceof AmemaruMob mob) {
             mob.onDamagedBy(attacker, result.amount());
         }

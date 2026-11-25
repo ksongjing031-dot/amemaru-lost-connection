@@ -166,7 +166,7 @@ public final class StorageService {
             // 画面を開いていなければ、取り出した後の空いた所を詰める（開いている間は、枠の並びを変えない）
             box.compactReceived();
         }
-        if (box.receivedCount() >= ServerConfig.STORAGE_RECEIVED_MAX.get()) {
+        if (box.receivedCount() >= ServerConfig.value(ServerConfig.STORAGE_RECEIVED_MAX)) {
             return false;
         }
         box.received().add(stack.copy());
@@ -182,7 +182,7 @@ public final class StorageService {
     public static int receivedRoom(MinecraftServer server, UUID owner) {
         StorageData.Box box = StorageData.get(server).peek(owner);
         int used = box == null ? 0 : box.receivedCount();
-        return Math.max(0, ServerConfig.STORAGE_RECEIVED_MAX.get() - used);
+        return Math.max(0, ServerConfig.value(ServerConfig.STORAGE_RECEIVED_MAX) - used);
     }
 
     /** 受け取り箱の品を、持ち物に入るだけ移す。移した品の数を返す。 */

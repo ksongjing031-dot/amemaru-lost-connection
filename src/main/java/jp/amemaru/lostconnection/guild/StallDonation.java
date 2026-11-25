@@ -44,7 +44,7 @@ public final class StallDonation {
     /** 目標（参加人数で増減。25人基準）。 */
     public static long goal() {
         long base = ServerConfig.GUILD_STALL_DONATION_GOAL.get();
-        int participants = ServerConfig.GUILD_PARTICIPANTS.get();
+        int participants = ServerConfig.value(ServerConfig.GUILD_PARTICIPANTS);
         return Math.max(1L, Math.round(base * participants / 25.0));
     }
 

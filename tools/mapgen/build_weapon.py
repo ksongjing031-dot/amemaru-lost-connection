@@ -543,9 +543,10 @@ def shop():
     for (v, item) in ((3, "iron_sword"), (4, "iron_axe"), (5, "golden_sword")):
         put(7, v, Y1 + 1, slab("spruce", "top"))
         frame(7, v, Y1 + 2, "up", item, rotation=1)
-    # カウンター（v=9）：皮をはいだトウヒの丸太。u=3 は客の側から使う作業台（MOD の作業台の代わりの鍛冶台）、u=7 は柵の門
+    # カウンター（v=9）：皮をはいだトウヒの丸太。u=3 は客の側から使う作業台（MOD の武器工房の作業台。Phase 6 その4 で鍛冶台から置き替えた）、
+    # u=7 は柵の門
     for u in range(1, 7):
-        put(u, 9, Y1 + 1, block("smithing_table") if u == 3 else log("spruce", "x", stripped=True))
+        put(u, 9, Y1 + 1, block("amemaru:weapon_workbench", facing="south") if u == 3 else log("spruce", "x", stripped=True))
     put(7, 9, Y1 + 1, block("spruce_fence_gate", facing="south", open=False, powered=False, in_wall=False))
     put(1, 9, Y1 + 2, lantern(False))
     frame(5, 9, Y1 + 2, "up", "iron_sword", rotation=3)
@@ -599,9 +600,9 @@ def forge():
     put(10, 2, 1, block("grindstone", face="floor", facing="north"))
     put(12, 3, 1, block("anvil", facing="north"))
     put(14, 2, 1, block("water_cauldron", level=3))
-    # 職人の作業台（MOD の作業台の代わりの鍛冶台）3つと、その間の材料
+    # 職人の作業台（MOD の武器工房の作業台。Phase 6 その4 で鍛冶台から置き替えた）3つと、その間の材料
     for v in (5, 7, 9):
-        put(9, v, 1, block("smithing_table"))
+        put(9, v, 1, block("amemaru:weapon_workbench", facing="east"))
     put(9, 6, 1, block("barrel", facing="up", open=False))
     put(9, 8, 1, block("chipped_anvil", facing="east"))
     # 日々の炉（東の壁、v 7..9）：腰の高さの炉床、焚き火の火と、両脇の溶鉱炉、上の覆い

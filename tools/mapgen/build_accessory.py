@@ -527,9 +527,9 @@ def shop():
         frame(10, v, Y1 + 2, "west", item)
     for v in (2, 4):
         candle(9, v, Y1 + 4, n=2, color="white")
-    # カウンター（v=6）：西は装飾師の作業台（MOD の作業台の代わりの鍛冶台。客の側から使う）、
+    # カウンター（v=6）：西は装飾工房の作業台（MOD の作業台。客の側から使う。厳選と依頼台もここで。Phase 6 その4 で鍛冶台から置き替えた）、
     # u 3..8 はガラスのカウンター（下の床に宝石の原石を敷く。参考 jewelry_01）、東の端に柵の門
-    put(1, 6, Y1 + 1, block("smithing_table"))
+    put(1, 6, Y1 + 1, block("amemaru:accessory_workbench", facing="south"))
     put(2, 6, Y1 + 1, block("dark_oak_planks"))
     candle(2, 6, Y1 + 2, n=3, color="white")
     bed_of_gems = ["amethyst_block", "calcite", "amethyst_block", "gold_block", "calcite", "amethyst_block"]
@@ -587,9 +587,9 @@ def workshop():
             put(u, v, y, stairs("spruce", "south"))
             for yy in range(Y1 + 1, y):
                 put(u, v, yy, block("spruce_planks"))
-    # 細工の机（裏の窓の下、u 4..7）：磨きの砥石、細工の作業台（MOD の作業台の代わりの鍛冶台）、拡大鏡（望遠鏡）、ろうそく
+    # 細工の机（裏の窓の下、u 4..7）：磨きの砥石、細工の作業台（MOD の作業台。Phase 6 その4 で鍛冶台から置き替えた）、拡大鏡（望遠鏡）、ろうそく
     put(4, 12, Y1 + 1, block("grindstone", face="floor", facing="east"))
-    put(5, 12, Y1 + 1, block("smithing_table"))
+    put(5, 12, Y1 + 1, block("amemaru:accessory_workbench", facing="south"))
     put(6, 12, Y1 + 1, block("dark_oak_planks"))
     put(7, 12, Y1 + 1, block("dark_oak_planks"))
     frame(6, 12, Y1 + 2, "up", "spyglass", rotation=3)

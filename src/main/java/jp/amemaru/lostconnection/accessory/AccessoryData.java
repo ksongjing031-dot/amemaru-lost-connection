@@ -23,11 +23,38 @@ import java.util.UUID;
 public final class AccessoryData {
     public static final String TAG = "AmemaruAccessory";
 
-    /** ステータスの1行（今の値・幅の下限・上限・固定の有無）。 */
-    public record StatLine(StatType type, double value, double min, double max, boolean locked) {
+    /**
+     * ステータスの1行（今の値・幅の下限・上限・固定の有無・何回分か）。
+     *
+     * <p>{@code rolls} は「1回分」の数（Phase 6 その4）。強化の +3・+6・+9・+12 でサブが4つあるときは、ランダムな一つが
+     * 「1回分」伸びる（Phase 0-A 21章）。そのとき下限と上限も1回分ずつ足すので、割合（上限に対する値）は 50〜100% のまま。</p>
+     */
+    public record StatLine(StatType type, double value, double min, double max, boolean locked, int rolls) {
+        public StatLine(StatType type, double value, double min, double max, boolean locked) {
+            this(type, value, min, max, locked, 1);
+        }
+
         /** 上限に対する割合（0〜1）。 */
         public double ratio() {
             return max <= 0 ? 0.0 : Math.max(0.0, Math.min(1.0, value / max));
+        }
+
+        /** 1回分の下限。 */
+        public double minPerRoll() {
+            return min / Math.max(1, rolls);
+        }
+
+        /** 1回分の上限。 */
+        public double maxPerRoll() {
+            return max / Math.max(1, rolls);
+        }
+
+        public StatLine withValue(double newValue) {
+            return new StatLine(type, newValue, min, max, locked, rolls);
+        }
+
+        public StatLine withLocked(boolean newLocked) {
+            return new StatLine(type, value, min, max, newLocked, rolls);
         }
 
         CompoundTag save() {
@@ -39,6 +66,9 @@ public final class AccessoryData {
             if (locked) {
                 tag.putBoolean("locked", true);
             }
+            if (rolls > 1) {
+                tag.putInt("rolls", rolls);
+            }
             return tag;
         }
 
@@ -48,7 +78,8 @@ public final class AccessoryData {
             if (type == null) {
                 return null;
             }
-            return new StatLine(type, tag.getDouble("value"), tag.getDouble("min"), tag.getDouble("max"), tag.getBoolean("locked"));
+            return new StatLine(type, tag.getDouble("value"), tag.getDouble("min"), tag.getDouble("max"), tag.getBoolean("locked"),
+                    Math.max(1, tag.getInt("rolls")));
         }
     }
 
@@ -138,9 +169,103 @@ public final class AccessoryData {
         return tag == null ? 0 : tag.getInt("enhance");
     }
 
+    public static void setEnhance(ItemStack stack, int value) {
+        stack.getOrCreateTagElement(TAG).putInt("enhance", Math.max(0, value));
+    }
+
     public static int rerolls(ItemStack stack) {
         CompoundTag tag = stack.getTagElement(TAG);
         return tag == null ? 0 : tag.getInt("rerolls");
+    }
+
+    public static void setRerolls(ItemStack stack, int value) {
+        stack.getOrCreateTagElement(TAG).putInt("rerolls", Math.max(0, value));
+    }
+
+    /**
+     * メインとサブの行を入れかえる（厳選。Phase 6 その4）。枠・世代・強化値・再抽選の回数・作り手などは、そのまま残す。
+     */
+    public static void replaceLines(ItemStack stack, StatLine main, List<StatLine> subs) {
+        CompoundTag tag = stack.getOrCreateTagElement(TAG);
+        tag.put("main", main.save());
+        ListTag list = new ListTag();
+        for (StatLine sub : subs) {
+            list.add(sub.save());
+        }
+        tag.put("subs", list);
+    }
+
+    /** 固定しているサブの数。 */
+    public static int lockedCount(ItemStack stack) {
+        int count = 0;
+        for (StatLine sub : subs(stack)) {
+            if (sub.locked()) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    // ---------------------------------------------------------------- 振り直すほど高くなる（Phase 0-A 21章）
+
+    /**
+     * 振り直しの費用の上乗せ（%）。同じアクセサリーを振り直すたびに +10%（最大 +200%）。日付（進行日）が変わると、
+     * 増えた分が半分に戻る（1日ごとに半分。切り捨て）。
+     */
+    public static int costUp(ItemStack stack, int today) {
+        CompoundTag tag = stack.getTagElement(TAG);
+        if (tag == null) {
+            return 0;
+        }
+        int up = tag.getInt("costUp");
+        int day = tag.getInt("costDay");
+        if (up <= 0) {
+            return 0;
+        }
+        int days = today - day;
+        if (days <= 0) {
+            return up;
+        }
+        return days >= 31 ? 0 : up >> days;
+    }
+
+    /** 振り直したので、上乗せを足す（その日の分に直してから）。 */
+    public static void addCostUp(ItemStack stack, int today, int step, int max) {
+        int now = costUp(stack, today);
+        CompoundTag tag = stack.getOrCreateTagElement(TAG);
+        tag.putInt("costUp", Math.max(0, Math.min(max, now + step)));
+        tag.putInt("costDay", today);
+    }
+
+    /** 強化1段ごとのメインの伸び（%。強化したときの決まりを品に残す。強化していなければ0）。 */
+    public static double mainPercent(ItemStack stack) {
+        CompoundTag tag = stack.getTagElement(TAG);
+        return tag != null && tag.contains("mainPct") ? tag.getDouble("mainPct") : 0.0;
+    }
+
+    public static void setMainPercent(ItemStack stack, double percent) {
+        stack.getOrCreateTagElement(TAG).putDouble("mainPct", Math.max(0.0, percent));
+    }
+
+    /** メインの、強化を入れた値（品に残した伸びで計算する。クライアントの説明文でも同じ値になる）。 */
+    public static double effectiveMain(ItemStack stack, StatLine main) {
+        return effectiveValue(stack, main, true, mainPercent(stack));
+    }
+
+    /**
+     * 強化を入れた、ステータスとして足す値（メインは強化1段ごとに +{@code mainPercent}%。%で表すステータスは小数1けた、
+     * ほかは整数に丸める。サブはそのまま）。
+     */
+    public static double effectiveValue(ItemStack stack, StatLine line, boolean isMain, double mainPercent) {
+        if (!isMain) {
+            return line.value();
+        }
+        int enhance = enhance(stack);
+        if (enhance <= 0 || mainPercent <= 0) {
+            return line.value();
+        }
+        double raw = line.value() * (1.0 + enhance * mainPercent / 100.0);
+        return line.type().isPercent() ? Math.round(raw * 10.0) / 10.0 : Math.round(raw);
     }
 
     public static boolean isGreat(ItemStack stack) {

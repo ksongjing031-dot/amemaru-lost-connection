@@ -254,7 +254,7 @@ public final class SkillScheduler {
             if (zone.mode == EffectDef.ZoneMode.CONE && caster != null) {
                 enemies = SkillTargeting.inCone(caster, zone.radius, zone.angle);
             } else {
-                enemies = SkillTargeting.enemiesNear(zone.ctx.level, zone.center, zone.radius);
+                enemies = SkillTargeting.enemiesNear(zone.ctx.caster(), zone.ctx.level, zone.center, zone.radius);
             }
             if (zone.mode == EffectDef.ZoneMode.NEAREST) {
                 enemies = enemies.isEmpty() ? List.of() : List.of(enemies.get(0));

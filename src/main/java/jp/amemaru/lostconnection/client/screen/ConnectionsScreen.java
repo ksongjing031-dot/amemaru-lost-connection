@@ -88,6 +88,8 @@ public class ConnectionsScreen extends Screen {
             add(together, "trades", one.getInt("trades"));
             add(together, "revived", one.getInt("revived"));
             add(together, "revived_by", one.getInt("revivedBy"));
+            add(together, "commissions", one.getInt("commissions"));
+            add(together, "duels", one.getInt("duels"));
             graphics.drawString(font, UiStyle.clip(font, String.join("・", together), W - 36), left + 16, y + 13, UiStyle.TEXT_HEADER, false);
             y += ROW;
         }

@@ -37,5 +37,7 @@ public final class GuildClientEvents {
     @SubscribeEvent
     public static void onLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
         ClientGuild.clear();
+        ClientSocial.clear();
+        ClientRefine.clear();
     }
 }

@@ -24,6 +24,7 @@ public class WorkshopMenu extends AbstractContainerMenu {
 
     private final WorkshopType type;
     private final BlockPos pos;
+    private final Player owner;
     private final Container work = new SimpleContainer(1) {
         @Override
         public void setChanged() {
@@ -37,6 +38,7 @@ public class WorkshopMenu extends AbstractContainerMenu {
         super(ModMenus.WORKSHOP.get(), id);
         this.type = type;
         this.pos = pos;
+        this.owner = inventory.player;
         addSlot(new Slot(work, 0, WORK_X, WORK_Y) {
             @Override
             public boolean mayPlace(ItemStack stack) {
@@ -76,6 +78,20 @@ public class WorkshopMenu extends AbstractContainerMenu {
     /** 台に置いた品。 */
     public ItemStack workStack() {
         return work.getItem(0);
+    }
+
+    /** 台の品を消す（分解。Phase 6 その4）。 */
+    public void clearWork() {
+        work.setItem(0, ItemStack.EMPTY);
+    }
+
+    /** 台の品が変わった：装飾工房なら、サーバーから厳選の見積もりを送る（Phase 6 その4）。 */
+    @Override
+    public void slotsChanged(Container container) {
+        super.slotsChanged(container);
+        if (container == work && type == WorkshopType.ACCESSORY && owner instanceof net.minecraft.server.level.ServerPlayer player) {
+            jp.amemaru.lostconnection.accessory.RefineService.sendQuote(player, this);
+        }
     }
 
     @Override

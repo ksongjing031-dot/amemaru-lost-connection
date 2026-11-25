@@ -233,7 +233,7 @@ public class LampBolt extends Projectile {
 
     @Override
     protected boolean canHitEntity(Entity entity) {
-        return super.canHitEntity(entity) && CombatTargets.isEnemy(entity);
+        return super.canHitEntity(entity) && CombatTargets.isEnemyOf(getOwner(), entity);
     }
 
     @Override

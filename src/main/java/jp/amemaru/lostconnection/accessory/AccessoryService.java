@@ -96,7 +96,7 @@ public final class AccessoryService {
         return stacks.getStacks().getStackInSlot(index);
     }
 
-    /** 付けているアクセサリーのステータスを足す（メインとサブ。%のステータスは%のまま足す）。 */
+    /** 付けているアクセサリーのステータスを足す（メインとサブ。%のステータスは%のまま足す。メインは強化の伸びを入れる）。 */
     @SubscribeEvent
     public static void onCollectStats(CollectStatsEvent event) {
         ServerPlayer player = event.getPlayer();
@@ -104,7 +104,12 @@ public final class AccessoryService {
             return;
         }
         for (ItemStack stack : equipped(player)) {
-            for (AccessoryData.StatLine line : AccessoryData.allLines(stack)) {
+            // メインは強化1段ごとに +5%（Phase 6 その4。Phase 0-A 21章）
+            AccessoryData.StatLine main = AccessoryData.main(stack);
+            if (main != null) {
+                event.addFlat(main.type(), AccessoryData.effectiveMain(stack, main));
+            }
+            for (AccessoryData.StatLine line : AccessoryData.subs(stack)) {
                 event.addFlat(line.type(), line.value());
             }
         }

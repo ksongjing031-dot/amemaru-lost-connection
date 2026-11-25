@@ -53,7 +53,7 @@ public final class StarRingService {
         if (ctx == null) {
             return;
         }
-        List<LivingEntity> near = SkillTargeting.enemiesNear(player.serverLevel(), player.position(), REACH);
+        List<LivingEntity> near = SkillTargeting.enemiesNear(player, player.serverLevel(), player.position(), REACH);
         if (near.isEmpty()) {
             return;
         }

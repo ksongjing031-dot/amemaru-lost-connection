@@ -51,8 +51,7 @@ public final class MarketGameTests {
     @GameTest(template = EMPTY)
     public static void marketListBuyCollect(GameTestHelper helper) {
         MinecraftServer server = helper.getLevel().getServer();
-        int openDay = ServerConfig.MARKET_OPEN_DAY.get();
-        ServerConfig.MARKET_OPEN_DAY.set(1);
+        ServerConfig.overrideForTest(ServerConfig.MARKET_OPEN_DAY, 1);
         FakePlayer seller = fake(helper, "mkt_seller");
         FakePlayer buyer = fake(helper, "mkt_buyer");
         try {
@@ -117,7 +116,7 @@ public final class MarketGameTests {
             check(helper, market.history(seller.getUUID()).get(0).kind() == MarketData.Kind.COLLECTED
                     && market.history(buyer.getUUID()).get(0).kind() == MarketData.Kind.BOUGHT, "履歴が残っていません");
         } finally {
-            ServerConfig.MARKET_OPEN_DAY.set(openDay);
+            ServerConfig.overrideForTest(ServerConfig.MARKET_OPEN_DAY, null);
             clear(server, seller, buyer);
         }
         helper.succeed();
@@ -130,8 +129,7 @@ public final class MarketGameTests {
     @GameTest(template = EMPTY)
     public static void marketLimitsAndStalls(GameTestHelper helper) {
         MinecraftServer server = helper.getLevel().getServer();
-        int openDay = ServerConfig.MARKET_OPEN_DAY.get();
-        ServerConfig.MARKET_OPEN_DAY.set(1);
+        ServerConfig.overrideForTest(ServerConfig.MARKET_OPEN_DAY, 1);
         FakePlayer owner = fake(helper, "mkt_owner");
         FakePlayer other = fake(helper, "mkt_other");
         try {
@@ -195,7 +193,7 @@ public final class MarketGameTests {
                     && "xの露店".equals(MarketService.cleanName("  ", "x")), "店名の長さの上限か、空の店名の扱いが違います");
             market.setExpanded(expanded);
         } finally {
-            ServerConfig.MARKET_OPEN_DAY.set(openDay);
+            ServerConfig.overrideForTest(ServerConfig.MARKET_OPEN_DAY, null);
             clear(server, owner, other);
         }
         helper.succeed();

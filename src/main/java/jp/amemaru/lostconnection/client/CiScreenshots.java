@@ -823,6 +823,50 @@ public final class CiScreenshots {
             {"p6g_donation", null, "20"},
             {"snap", null, "10", "phase6g_donation"},
             {"screen", null, "10", "hold"},
+            // Phase 6 その4（11月23日）：厳選と決闘。装飾工房のカウンターの作業台で、品質82%・サブ4つの闘環を厳選する。装飾師（熟練度5）
+            {"cmd", null, "80", "tp @p {at:27.5,2,-11.5} 180 35"},
+            {"cmd", null, "5", "clear @p"},
+            {"cmd", null, "5", "amemaru admin production set @p accessory 5"},
+            {"cmd", null, "5", "amemaru admin accessory give @p amemaru:moss_iron_battle_ring 4 82"},
+            {"cmd", null, "5", "give @p amemaru:echo_fragment 40"},
+            {"cmd", null, "5", "give @p amemaru:wavering_crystal 4"},
+            {"cmd", null, "5", "give @p amemaru:binding_thread 8"},
+            {"cmd", null, "5", "give @p amemaru:polishing_powder 30"},
+            {"cmd", null, "5", "amemaru admin money @p set 60000"},
+            {"p6r_bench", null, "10"},
+            {"screen", null, "5", "hold"},
+            {"p6r_open", null, "15"},
+            {"p6r_place", null, "10"},
+            {"p6r_tab", null, "15", "1"},
+            {"snap", null, "15", "phase6r_refine"},
+            {"p6r_lock", null, "10", "0"},
+            {"p6r_reroll", null, "10", "values"},
+            {"snap", null, "8", "phase6r_refine_locked"},
+            {"p6r_tab", null, "10", "2"},
+            {"snap", null, "10", "phase6r_enhance"},
+            {"p6r_tab", null, "10", "3"},
+            {"p6r_confirm", null, "5"},
+            {"snap", null, "5", "phase6r_dismantle"},
+            {"p6r_tab", null, "10", "4"},
+            {"snap", null, "10", "phase6r_commission_tab"},
+            {"p6r_commission", null, "20"},
+            {"p6r_ctab", null, "20", "create"},
+            {"snap", null, "20", "phase6r_commission_create"},
+            {"p6r_create", null, "20"},
+            {"p6r_ctab", null, "20", "mine"},
+            {"snap", null, "10", "phase6r_commission_mine"},
+            {"screen", null, "10", "hold"},
+            // 決闘：決闘の画面と、決闘場（観客席から・上から）
+            {"p6r_duel", null, "20"},
+            {"snap", null, "10", "phase6r_duel_screen"},
+            {"screen", null, "10", "hold"},
+            // 決闘場へ行くコマンドは、プレイヤーとして打つ（サーバーとして打つと「プレイヤーが要る」で止まる）。別の世界をまたぐ
+            // テレポートでは向きが反映されないので、塔の空間に移ってから、もう一度同じ所へ移る
+            {"cmd", null, "80", "execute as @p at @p run amemaru admin duel arena 0"},
+            {"cmd", null, "40", "execute as @p at @p run amemaru admin duel arena 0"},
+            {"snap", null, "40", "phase6r_arena"},
+            {"cmd", null, "60", "execute as @p at @p run amemaru admin duel arena 0 above"},
+            {"snap", null, "40", "phase6r_arena_above"},
             {"cmd", null, "10", "gamemode spectator @p"},
             {"hud", null, "5", "off"}};
 
@@ -2056,7 +2100,8 @@ public final class CiScreenshots {
                     }
                 }
             }
-        } else if (CiPhase6.action(minecraft, shot, first) || CiPhase6Guild.action(minecraft, shot, first)) {
+        } else if (CiPhase6.action(minecraft, shot, first) || CiPhase6Guild.action(minecraft, shot, first)
+                || CiPhase6Refine.action(minecraft, shot, first)) {
             next(stage + 1, first ? waitTicks : 0);
         } else if (phase5Action(minecraft, shot, first)) {
             next(stage + 1, first ? waitTicks : 0);
@@ -2645,6 +2690,19 @@ public final class CiScreenshots {
         public boolean shouldCloseOnEsc() {
             return false;
         }
+    }
+
+    /**
+     * 何も描かない画面にする（Phase 6 その4 の段取りから）。画面が空（null）になると、mc-runtime-test がその間に自動テストを
+     * 始めて、サーバーが遅れる（run 163 で、依頼を出す前に「出した依頼」を撮ってしまった）。画面を閉じたら、同じ tick でこれにする。
+     */
+    static void hold(Minecraft minecraft) {
+        minecraft.setScreen(new HoldScreen());
+    }
+
+    /** サーバーとしてコマンドを打つ（Phase 6 その4 の段取りから）。 */
+    static void runCommand(Minecraft minecraft, String command) {
+        command(minecraft, command);
     }
 
     private static void command(Minecraft minecraft, String command) {

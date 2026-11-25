@@ -137,7 +137,12 @@ public class AccessoryScreen extends AbstractContainerScreen<AccessoryMenu> {
         Map<StatType, Double> totals = new EnumMap<>(StatType.class);
         for (int i = 0; i < AccessoryMenu.LAYOUT.length; i++) {
             ItemStack stack = menu.slots.get(i).getItem();
-            for (AccessoryData.StatLine line : AccessoryData.allLines(stack)) {
+            AccessoryData.StatLine main = AccessoryData.main(stack);
+            if (main != null) {
+                // メインは強化の伸びを入れる（Phase 6 その4）
+                totals.merge(main.type(), AccessoryData.effectiveMain(stack, main), Double::sum);
+            }
+            for (AccessoryData.StatLine line : AccessoryData.subs(stack)) {
                 totals.merge(line.type(), line.value(), Double::sum);
             }
         }

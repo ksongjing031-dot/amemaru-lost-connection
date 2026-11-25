@@ -23,6 +23,12 @@
     },
     "flags": [
       "amemaru:bond/gard_2_done"
+    ],
+    "items": [
+      {
+        "item": "amemaru:binding_thread",
+        "count": 2
+      }
     ]
   },
   "order": 419

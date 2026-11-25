@@ -182,6 +182,21 @@
     {
       "id": "light_shard",
       "rarity": "uncommon"
+    },
+    {
+      "id": "polishing_powder"
+    },
+    {
+      "id": "binding_thread",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "wavering_crystal",
+      "rarity": "rare"
+    },
+    {
+      "id": "clear_echo",
+      "rarity": "rare"
     }
   ],
   "fruits": [

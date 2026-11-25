@@ -126,12 +126,12 @@ public final class GuildGameTests {
 
             check(helper, TitleService.required(TitleDefs.get(id("hello_3"))) == 20 * participants / 25 || participants != 25,
                     "25人のとき「コネリアの縁結び」が20人ではありません");
-            ServerConfig.GUILD_PARTICIPANTS.set(10);
+            ServerConfig.overrideForTest(ServerConfig.GUILD_PARTICIPANTS, 10);
             check(helper, TitleService.required(TitleDefs.get(id("hello_3"))) == 8 && TitleService.required(TitleDefs.get(id("hello_1"))) == 2,
                     "10人のときの「組んだ人数」の条件が 8・2 ではありません");
-            ServerConfig.GUILD_PARTICIPANTS.set(3);
+            ServerConfig.overrideForTest(ServerConfig.GUILD_PARTICIPANTS, 3);
             check(helper, TitleService.required(TitleDefs.get(id("hello_3"))) == 2, "3人のとき、自分のほかの人数より多い条件になっています");
-            ServerConfig.GUILD_PARTICIPANTS.set(participants);
+            ServerConfig.overrideForTest(ServerConfig.GUILD_PARTICIPANTS, null);
 
             custom = TitleService.createUnique(server, "名場面メーカー", "ゲームテスト", -1, true, "gametest");
             TitleDef def = TitleService.def(server, custom.id());
@@ -139,7 +139,7 @@ public final class GuildGameTests {
             check(helper, !TitleService.uniqueTaken(server, custom.id()) && TitleService.grant(player, custom.id(), "gametest")
                     && TitleService.uniqueTaken(server, custom.id()), "1人限定のユニーク称号の「もう持っている人がいる」が働きません");
         } finally {
-            ServerConfig.GUILD_PARTICIPANTS.set(participants);
+            ServerConfig.overrideForTest(ServerConfig.GUILD_PARTICIPANTS, null);
             if (custom != null) {
                 GuildState.get(server).removeCustom(custom.id());
             }

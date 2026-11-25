@@ -32,7 +32,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
  * {@link #PROTOCOL_VERSION} を上げる。クライアントが送るのは「何をしたいか」だけで、数値の計算はサーバーで行う。</p>
  */
 public final class ModNetwork {
-    public static final String PROTOCOL_VERSION = "7";
+    public static final String PROTOCOL_VERSION = "8";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.newSimpleChannel(
             AmemaruMod.id("main"),
@@ -320,6 +320,27 @@ public final class ModNetwork {
                 .encoder(jp.amemaru.lostconnection.network.c2s.GuildActionC2S::encode)
                 .decoder(jp.amemaru.lostconnection.network.c2s.GuildActionC2S::decode)
                 .consumerMainThread(jp.amemaru.lostconnection.network.c2s.GuildActionC2S::handle)
+                .add();
+        // Phase 6 その4：厳選と、交流（依頼台・決闘）
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.c2s.AccessoryOperationC2S.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(jp.amemaru.lostconnection.network.c2s.AccessoryOperationC2S::encode)
+                .decoder(jp.amemaru.lostconnection.network.c2s.AccessoryOperationC2S::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.c2s.AccessoryOperationC2S::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.RefineQuoteS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.RefineQuoteS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.RefineQuoteS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.RefineQuoteS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.SocialS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.SocialS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.SocialS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.SocialS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.c2s.SocialActionC2S.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(jp.amemaru.lostconnection.network.c2s.SocialActionC2S::encode)
+                .decoder(jp.amemaru.lostconnection.network.c2s.SocialActionC2S::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.c2s.SocialActionC2S::handle)
                 .add();
     }
 

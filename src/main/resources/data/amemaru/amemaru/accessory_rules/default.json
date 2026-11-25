@@ -99,5 +99,86 @@
     "subs": 4,
     "min_ratio": 95
   },
-  "max_enhance": 12
+  "max_enhance": 12,
+  "refine": {
+    "_comment": "厳選（Phase 6 その4。Phase 0-A 21章「厳選の操作とコスト」）。ノットは第3章の目安で、knots_chapter_factor をかける【補完】。振り直すほどの上乗せと固定の倍率はノットにかけ、素材の数は変えない【補完】。config の refine.costMultiplier は素材とノットの両方にかける",
+    "knots_chapter_factor": [
+      0.4,
+      0.7,
+      1.0,
+      1.3
+    ],
+    "reroll_values": {
+      "knots": 2000,
+      "items": [
+        {
+          "item": "amemaru:echo_fragment",
+          "count": 3
+        }
+      ]
+    },
+    "reroll_types": {
+      "knots": 4000,
+      "items": [
+        {
+          "item": "amemaru:echo_fragment",
+          "count": 6
+        },
+        {
+          "item": "amemaru:wavering_crystal",
+          "count": 1
+        }
+      ]
+    },
+    "lock": {
+      "item": "amemaru:binding_thread",
+      "counts": [
+        1,
+        2,
+        4
+      ],
+      "knots_multiplier": [
+        1.5,
+        2.5,
+        4.0
+      ]
+    },
+    "escalation": {
+      "step": 10,
+      "max": 200
+    },
+    "enhance": {
+      "item": "amemaru:polishing_powder",
+      "items_per_level": 1,
+      "knots_per_level": 500,
+      "main_percent": 5,
+      "milestones": [
+        3,
+        6,
+        9,
+        12
+      ]
+    },
+    "dismantle": {
+      "echo_item": "amemaru:echo_fragment",
+      "echo_base": 1,
+      "echo_per_star": 1,
+      "enhance_per_echo": 2,
+      "powder_return_percent": 50,
+      "clear_echo_item": "amemaru:clear_echo",
+      "clear_echo_by_star": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        2
+      ],
+      "clear_echo_perfect_bonus": 1
+    },
+    "crafter_discount": {
+      "per_mastery": 2,
+      "max": 20
+    }
+  }
 }
