@@ -1249,7 +1249,8 @@ def floor_json(f):
             "boss": "amemaru:mune",
             "name": "湖心",
             "spawn": {"pos": [cx + 0.5, GROUND - 5, cz + 0.5], "yaw": 180},
-            "arena": {"center": [cx + 0.5, GROUND + 1, cz + 0.5], "radius": 52.0, "y_min": 8, "y_max": GROUND + 28},
+            # 部屋の円は、北の岸のくぼみの出口の円と次の階への円（まん中から52ブロック）まで入るように56（11月25日）
+            "arena": {"center": [cx + 0.5, GROUND + 1, cz + 0.5], "radius": 56.0, "y_min": 8, "y_max": GROUND + 28},
             "seal": [[min(xs), min(ys), min(zs)], [max(xs), max(ys), max(zs)]],
             "start_radius": 34,
             "respawn_seconds": 150,
