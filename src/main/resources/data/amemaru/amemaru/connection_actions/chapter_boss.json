@@ -1,0 +1,7 @@
+{
+  "_comment": "Phase 0-A 13章「増える行動と量」。5・10・15・20階のボス。同じボスは1日1回",
+  "name": "章ボスを倒す",
+  "category": "combat",
+  "cp": 50,
+  "same_target_daily": 1
+}

@@ -47,6 +47,8 @@ public final class LevelService {
         if (source == ExpSource.GAMEPLAY) {
             scaled *= ServerConfig.EXP_MULTIPLIER.get();
             scaled *= 1.0 + catchUpBonus(player, data, growth) / 100.0;
+            // Phase 7 その1：大結晶の輝き段階（段階4で+3%、段階8で+6%）
+            scaled *= 1.0 + jp.amemaru.lostconnection.connection.ConnectionService.expBonusPercent(player.server) / 100.0;
         }
         long gained = Math.max(0L, Math.round(scaled));
         int cap = Math.min(growth.maxLevel(), ProgressionData.currentLevelCap(player.server));

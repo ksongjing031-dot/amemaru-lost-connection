@@ -1,0 +1,7 @@
+{
+  "_comment": "Phase 0-A 13章「増える行動と量」。ほかの人の装備（最後に身に着けた人がほかの人）を修理した。同じ相手は1日3回",
+  "name": "他人の装備の修理",
+  "category": "production",
+  "cp": 5,
+  "same_target_daily": 3
+}

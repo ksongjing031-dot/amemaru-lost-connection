@@ -1,0 +1,7 @@
+{
+  "_comment": "Phase 0-A 13章「増える行動と量」。作った装備を、ほかの人が初めて身に着けた（手渡し）。同じ相手は1日3回",
+  "name": "他人のための制作",
+  "category": "production",
+  "cp": 15,
+  "same_target_daily": 3
+}

@@ -620,6 +620,11 @@ public final class CommissionBoard {
             addCounter(server, c.crafter, GuildCounters.HELPED, 1);
             connect(server, c.owner, c.crafter, c.crafterName, day);
             connect(server, c.crafter, c.owner, c.ownerName, day);
+            // Phase 7 その1：ほかの人のアクセサリーの厳選の依頼を終えた（装飾師に。同じ相手は1日3回）
+            if (c.crafter != null && !c.crafter.equals(c.owner)) {
+                jp.amemaru.lostconnection.connection.ConnectionService.awardLater(server, c.crafter,
+                        jp.amemaru.lostconnection.connection.ConnectionActions.REFINE_COMMISSION, c.owner, 1);
+            }
         }
         board.changed();
         Component itemName = c.item.getHoverName();

@@ -282,6 +282,8 @@ public final class WorkshopService {
                 .withStyle(ChatFormatting.GREEN), false);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.GRINDSTONE_USE, SoundSource.PLAYERS, 0.8F, 1.0F);
         PlayerDataCapability.get(player).ifPresent(PlayerData::invalidateStats);
+        // Phase 7 その1：ほかの人の装備（持ち主の印がほかの人）を修理した
+        jp.amemaru.lostconnection.connection.ConnectionHandover.onRepaired(player, stack);
         return true;
     }
 

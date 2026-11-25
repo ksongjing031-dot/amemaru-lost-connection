@@ -1,0 +1,8 @@
+{
+  "_comment": "Phase 0-A 13章「増える行動と量」。100ノットごとに1、1日50まで",
+  "name": "施設への寄付",
+  "category": "town",
+  "cp": 1,
+  "per": 100,
+  "daily_limit": 50
+}

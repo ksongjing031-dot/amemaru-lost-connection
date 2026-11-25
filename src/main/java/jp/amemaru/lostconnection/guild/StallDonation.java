@@ -97,6 +97,9 @@ public final class StallDonation {
         }
         state.addStallDonation(player.getUUID(), player.getGameProfile().getName(), pay);
         player.displayClientMessage(Component.translatable("message.amemaru.donation.thanks", pay).withStyle(ChatFormatting.GOLD), false);
+        // Phase 7 その1：施設への寄付（100ノットごとに1CP、1日50まで）
+        jp.amemaru.lostconnection.connection.ConnectionService.award(player,
+                jp.amemaru.lostconnection.connection.ConnectionActions.DONATION, null, (int) Math.min(Integer.MAX_VALUE, pay));
         player.level().playSound(null, player.blockPosition(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1.0F, 1.2F);
         if (state.stallDonated() >= goal()) {
             int day = ProgressionData.get(player.server).day();

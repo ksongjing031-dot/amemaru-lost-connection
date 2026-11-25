@@ -63,9 +63,11 @@ public final class PlayerData {
     public static final int SYNC_STORY = 1 << 10;
     /** 同期するまとまり：ギルド（Phase 6 その3。称号・古代記録・親密度・クエスト・縁帳）。別のパケットで送る。 */
     public static final int SYNC_GUILD = 1 << 11;
+    /** コネクション量（Phase 7 その1）：今日の分野別CP・累計。 */
+    public static final int SYNC_CONNECTION = 1 << 12;
     /** すべてのまとまり。 */
     public static final int SYNC_ALL = SYNC_GROWTH | SYNC_STATS | SYNC_VITALS | SYNC_JOB | SYNC_SKILLS | SYNC_GAUGE
-            | SYNC_COOLDOWNS | SYNC_CAST | SYNC_ADVENTURE | SYNC_WALLET | SYNC_STORY | SYNC_GUILD;
+            | SYNC_COOLDOWNS | SYNC_CAST | SYNC_ADVENTURE | SYNC_WALLET | SYNC_STORY | SYNC_GUILD | SYNC_CONNECTION;
 
     // ---- 保存する項目
     private int level = 1;
@@ -123,6 +125,9 @@ public final class PlayerData {
     /** ギルド（Phase 6 その3）：称号・古代記録・親密度・クエスト・縁帳。 */
     private final jp.amemaru.lostconnection.guild.GuildData guild =
             new jp.amemaru.lostconnection.guild.GuildData(() -> markDirty(SYNC_GUILD));
+    /** コネクション量（Phase 7 その1）：今日の分野別CP・行動ごとの回数・累計。 */
+    private final jp.amemaru.lostconnection.connection.ConnectionRecord connection =
+            new jp.amemaru.lostconnection.connection.ConnectionRecord(() -> markDirty(SYNC_CONNECTION));
     /** 記録（Phase 4）：ダウンした・仲間を起こした・教会に戻った回数（称号・ランキングは後のPhase） */
     private int downCount;
     private int reviveCount;
@@ -614,6 +619,11 @@ public final class PlayerData {
         return guild;
     }
 
+    /** コネクション量（Phase 7 その1）。 */
+    public jp.amemaru.lostconnection.connection.ConnectionRecord getConnection() {
+        return connection;
+    }
+
     public int getDownCount() {
         return downCount;
     }
@@ -737,6 +747,7 @@ public final class PlayerData {
         tag.put("records", records);
         tag.put("story", story.save());
         tag.put("guild", guild.save());
+        tag.put("connection", connection.save());
         return tag;
     }
 
@@ -817,6 +828,8 @@ public final class PlayerData {
         story.load(tag.getCompound("story"));
         // 版5 → 版6：ギルド（称号・古代記録・親密度・クエスト・縁帳）が増えた。版5のデータには無いので、空で始まる
         guild.load(tag.getCompound("guild"));
+        // Phase 7 その1：コネクション量。前の版のデータには無いので、空で始まる（初めて来た日は、次に入ったときに決める）
+        connection.load(tag.getCompound("connection"));
         resetTransient();
     }
 
@@ -848,6 +861,7 @@ public final class PlayerData {
         churchCount = other.churchCount;
         story.copyFrom(other.story);
         guild.copyFrom(other.guild);
+        connection.copyFrom(other.connection);
         // バニラの死亡（奈落・/kill）のあとは、リスポーンで教会へ戻す（DownHandler）。ダウンそのものは引き継がない
         down.clear();
         down.setDiedForReal(other.down.diedForReal() || other.down.isDown());

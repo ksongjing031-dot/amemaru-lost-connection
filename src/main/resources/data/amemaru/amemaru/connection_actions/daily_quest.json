@@ -1,0 +1,7 @@
+{
+  "_comment": "Phase 0-A 13章「増える行動と量」。1日3回まで",
+  "name": "デイリークエスト",
+  "category": "story",
+  "cp": 5,
+  "daily_limit": 3
+}

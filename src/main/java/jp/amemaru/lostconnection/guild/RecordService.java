@@ -69,6 +69,9 @@ public final class RecordService {
         QuestService.onRecord(player);
         TitleService.check(player);
         GuildService.syncSelf(player, data);
+        // Phase 7 その1：古代記録の発見（物語）
+        jp.amemaru.lostconnection.connection.ConnectionService.award(player,
+                jp.amemaru.lostconnection.connection.ConnectionActions.RECORD_FOUND);
         return true;
     }
 

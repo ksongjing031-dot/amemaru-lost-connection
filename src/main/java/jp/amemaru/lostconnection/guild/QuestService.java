@@ -419,6 +419,17 @@ public final class QuestService {
             data.getGuild().countDailyDone();
         }
         data.getGuild().addCounter(GuildCounters.QUESTS, 1);
+        // Phase 7 その1：コネクション量（デイリー＝物語・1日3回／NPCの個人的な依頼＝街／ストーリークエスト＝物語）
+        switch (def.kind()) {
+            case DAILY -> jp.amemaru.lostconnection.connection.ConnectionService.award(player,
+                    jp.amemaru.lostconnection.connection.ConnectionActions.DAILY_QUEST);
+            case PERSONAL -> jp.amemaru.lostconnection.connection.ConnectionService.award(player,
+                    jp.amemaru.lostconnection.connection.ConnectionActions.NPC_REQUEST);
+            case STORY -> jp.amemaru.lostconnection.connection.ConnectionService.award(player,
+                    jp.amemaru.lostconnection.connection.ConnectionActions.STORY_QUEST);
+            default -> {
+            }
+        }
         QuestDef.Rewards r = def.rewards();
         if (r.knots() > 0) {
             Wallet.give(player, data, r.knots(), "quest " + def.id());

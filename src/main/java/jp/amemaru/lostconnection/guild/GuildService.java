@@ -317,12 +317,19 @@ public final class GuildService {
             one.putInt("first", c.firstDay());
             one.putInt("last", c.lastDay());
             one.putBoolean("online", player.server.getPlayerList().getPlayer(list.get(i).getKey()) != null);
+            // Phase 7 その1：結び札（今日この人へ贈ったか）
+            one.putUUID("id", list.get(i).getKey());
+            one.putBoolean("thanked", data.getConnection().targetToday(
+                    jp.amemaru.lostconnection.connection.ConnectionActions.THANKS_SEND, list.get(i).getKey()) > 0);
             people.add(one);
         }
         CompoundTag tag = new CompoundTag();
         tag.putString("screen", "connections");
         tag.put("people", people);
         tag.putInt("total", list.size());
+        data.getConnection().rollover(jp.amemaru.lostconnection.connection.ConnectionService.today());
+        tag.putInt("thanksLeft", Math.max(0, jp.amemaru.lostconnection.connection.ConnectionService.thanksDailyLimit()
+                - data.getConnection().actionsToday(jp.amemaru.lostconnection.connection.ConnectionActions.THANKS_SEND)));
         ModNetwork.sendTo(player, new GuildS2C("screen", tag));
     }
 

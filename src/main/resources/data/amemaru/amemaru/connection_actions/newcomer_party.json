@@ -1,0 +1,8 @@
+{
+  "_comment": "Phase 0-A 13章「増える行動と量」。途中参加者（来てから3日のうち）と組んだ先導者。1日3回。同じ途中参加者は1日1回【補完】",
+  "name": "途中参加者とパーティ",
+  "category": "social",
+  "cp": 15,
+  "daily_limit": 3,
+  "same_target_daily": 1
+}
