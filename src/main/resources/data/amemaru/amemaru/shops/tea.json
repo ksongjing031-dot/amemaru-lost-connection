@@ -1,0 +1,39 @@
+{
+  "name": "茶と香辛料",
+  "sells": [
+    {
+      "item": "minecraft:cocoa_beans",
+      "price": 6
+    },
+    {
+      "item": "minecraft:sweet_berries",
+      "price": 4
+    },
+    {
+      "item": "minecraft:sugar",
+      "price": 4
+    },
+    {
+      "item": "minecraft:honey_bottle",
+      "price": 24
+    }
+  ],
+  "buys": [
+    {
+      "item": "minecraft:cocoa_beans",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:sweet_berries",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:sugar",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:honey_bottle",
+      "ratio": 0.5
+    }
+  ]
+}

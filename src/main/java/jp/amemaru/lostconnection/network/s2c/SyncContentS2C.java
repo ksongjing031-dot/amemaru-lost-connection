@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.function.Supplier;
 
 /**
- * 装備の定義・装備の決まり・図鑑に要る敵の情報を、クライアントへ配る（ログイン時と /reload の後。Phase 3）。
+ * 装備の定義・装備の決まり・図鑑に要る敵の情報・消耗品の数値（Phase 6）を、クライアントへ配る（ログイン時と /reload の後。Phase 3）。
  *
  * <p>装備の説明文（ステータスの数値・幅・割合）は、品のNBT（抽選の割合）と定義の数値から、クライアントで計算する。</p>
  */
@@ -36,14 +36,17 @@ public final class SyncContentS2C {
     private final List<EnemyDef.Info> enemies;
     private final ProductionRules production;
     private final List<ProductionJobInfo> productionJobs;
+    /** 消耗品の数値（説明文に使う。Phase 6） */
+    private final List<jp.amemaru.lostconnection.item.ConsumableDef> consumables;
 
     public SyncContentS2C(GearRules rules, List<EquipmentDef> equipment, List<EnemyDef.Info> enemies, ProductionRules production,
-                          List<ProductionJobInfo> productionJobs) {
+                          List<ProductionJobInfo> productionJobs, List<jp.amemaru.lostconnection.item.ConsumableDef> consumables) {
         this.rules = rules;
         this.equipment = equipment;
         this.enemies = enemies;
         this.production = production;
         this.productionJobs = productionJobs;
+        this.consumables = consumables;
     }
 
     /** サーバーで、今の定義から作る。 */
@@ -54,7 +57,7 @@ public final class SyncContentS2C {
             jobs.add(new ProductionJobInfo(job.id(), job.name(), job.description(), job.color(), job.workshop()));
         }
         return new SyncContentS2C(snapshot.rules(), new ArrayList<>(snapshot.equipment().values()), EnemyDefs.infos(),
-                ProductionRules.current(), jobs);
+                ProductionRules.current(), jobs, jp.amemaru.lostconnection.item.ConsumableDefs.server());
     }
 
     public void encode(FriendlyByteBuf buf) {
@@ -76,6 +79,10 @@ public final class SyncContentS2C {
         for (EnemyDef.Info info : enemies) {
             info.write(buf);
         }
+        buf.writeVarInt(consumables.size());
+        for (jp.amemaru.lostconnection.item.ConsumableDef def : consumables) {
+            def.write(buf);
+        }
     }
 
     public static SyncContentS2C decode(FriendlyByteBuf buf) {
@@ -96,7 +103,12 @@ public final class SyncContentS2C {
         for (int i = 0; i < enemyCount; i++) {
             enemies.add(EnemyDef.Info.read(buf));
         }
-        return new SyncContentS2C(rules, equipment, enemies, production, jobs);
+        int consumableCount = check(buf.readVarInt());
+        List<jp.amemaru.lostconnection.item.ConsumableDef> consumables = new ArrayList<>();
+        for (int i = 0; i < consumableCount; i++) {
+            consumables.add(jp.amemaru.lostconnection.item.ConsumableDef.read(buf));
+        }
+        return new SyncContentS2C(rules, equipment, enemies, production, jobs, consumables);
     }
 
     private static int check(int length) {
@@ -128,5 +140,9 @@ public final class SyncContentS2C {
 
     public List<ProductionJobInfo> productionJobs() {
         return productionJobs;
+    }
+
+    public List<jp.amemaru.lostconnection.item.ConsumableDef> consumables() {
+        return consumables;
     }
 }

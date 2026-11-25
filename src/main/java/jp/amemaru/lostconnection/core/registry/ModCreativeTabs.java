@@ -16,7 +16,7 @@ import net.minecraftforge.registries.RegistryObject;
  * <ul>
  *   <li>「AMEMARU」：施設・やり直しのアイテム・敵を呼ぶ卵</li>
  *   <li>「AMEMARU：装備」：武器・盾・防具・アクセサリー（取り出すと、持ち物に入ったときに抽選される）</li>
- *   <li>「AMEMARU：素材」：素材と結晶果</li>
+ *   <li>「AMEMARU：素材」：素材・結晶果・消耗品（Phase 6）</li>
  * </ul>
  */
 public final class ModCreativeTabs {
@@ -34,6 +34,7 @@ public final class ModCreativeTabs {
                 output.accept(ModItems.FORGET_WATER.get());
                 output.accept(ModItems.BLANK_OATH.get());
                 output.accept(ModItems.JOB_CHANGE_TOKEN.get());
+                output.accept(ModItems.MARKET_NOTEBOOK.get());
                 output.accept(ModItems.TSUNOMOFU_SPAWN_EGG.get());
                 output.accept(ModItems.ISHIKURE_SOLDIER_SPAWN_EGG.get());
                 output.accept(ModItems.CRYSTAL_BEE_SPAWN_EGG.get());
@@ -61,7 +62,7 @@ public final class ModCreativeTabs {
             .withTabsBefore(GEAR.getKey())
             .displayItems((parameters, output) -> {
                 for (ItemManifest.Category category : new ItemManifest.Category[]{ItemManifest.Category.MATERIAL,
-                        ItemManifest.Category.FRUIT}) {
+                        ItemManifest.Category.FRUIT, ItemManifest.Category.CONSUMABLE}) {
                     for (RegistryObject<Item> item : ModItems.MANIFEST.category(category)) {
                         output.accept(item.get());
                     }

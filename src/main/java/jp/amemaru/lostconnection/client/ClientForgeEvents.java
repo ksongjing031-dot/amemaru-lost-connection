@@ -44,6 +44,28 @@ public final class ClientForgeEvents {
     }
 
     /**
+     * Phase 6（11月22日に決定）：しゃがんでほかのプレイヤーを右クリックすると、ノットを渡す画面を、その人を選んだ形で開く
+     * 【補完】。渡すかどうかは画面で確かめる。
+     */
+    @SubscribeEvent
+    public static void onEntityInteract(net.minecraftforge.event.entity.player.PlayerInteractEvent.EntityInteract event) {
+        if (!event.getLevel().isClientSide() || event.getHand() != net.minecraft.world.InteractionHand.MAIN_HAND) {
+            return;
+        }
+        Minecraft minecraft = Minecraft.getInstance();
+        if (minecraft.player == null || event.getEntity() != minecraft.player || !minecraft.player.isShiftKeyDown()
+                || minecraft.screen != null) {
+            return;
+        }
+        if (event.getTarget() instanceof net.minecraft.world.entity.player.Player other && other != minecraft.player) {
+            minecraft.setScreen(new jp.amemaru.lostconnection.client.screen.TransferScreen(other.getUUID(),
+                    other.getGameProfile().getName()));
+            event.setCanceled(true);
+            event.setCancellationResult(net.minecraft.world.InteractionResult.SUCCESS);
+        }
+    }
+
+    /**
      * このModのサーバーにつながっている間は、バニラのハート・防御・満腹度・経験値・ホットバーを隠す
      * （AmemaruHud が同じ場所に描く）。観戦モードのホットバーは、バニラのものをそのまま使う。
      */

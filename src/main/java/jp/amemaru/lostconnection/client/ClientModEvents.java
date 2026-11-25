@@ -70,6 +70,7 @@ public final class ClientModEvents {
             // 画面
             MenuScreens.register(ModMenus.WORKSHOP.get(), WorkshopScreen::new);
             MenuScreens.register(ModMenus.ACCESSORY.get(), AccessoryScreen::new);
+            MenuScreens.register(ModMenus.STORAGE.get(), jp.amemaru.lostconnection.client.screen.StorageScreen::new);
             // 体に表示するアクセサリー（Curios の描画）
             for (RegistryObject<Item> item : ModItems.MANIFEST.category(ItemManifest.Category.ACCESSORY)) {
                 if (item.get() instanceof AccessoryItem accessory && accessory.visibleOnBody()) {

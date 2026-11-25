@@ -1,0 +1,80 @@
+{
+  "name": "雑貨屋",
+  "keeper": "マルタ・ポム",
+  "sells": [
+    {
+      "item": "amemaru:healing_potion_small",
+      "price": 100
+    },
+    {
+      "item": "amemaru:mana_water_small",
+      "price": 120
+    },
+    {
+      "item": "minecraft:bread",
+      "price": 12
+    },
+    {
+      "item": "minecraft:apple",
+      "price": 8
+    },
+    {
+      "item": "minecraft:torch",
+      "price": 4
+    },
+    {
+      "item": "minecraft:lead",
+      "price": 30
+    },
+    {
+      "item": "minecraft:glass_bottle",
+      "price": 6
+    },
+    {
+      "item": "minecraft:string",
+      "price": 6
+    },
+    {
+      "item": "minecraft:paper",
+      "price": 6
+    }
+  ],
+  "buys": [
+    {
+      "item": "amemaru:ancient_stone",
+      "ratio": 0.5
+    },
+    {
+      "item": "amemaru:moss_iron",
+      "ratio": 0.5
+    },
+    {
+      "item": "amemaru:crystal_shard",
+      "ratio": 0.5
+    },
+    {
+      "item": "amemaru:tsunomofu_fluff",
+      "ratio": 0.5
+    },
+    {
+      "item": "amemaru:bee_stinger",
+      "ratio": 0.5
+    },
+    {
+      "item": "amemaru:chipped_fang",
+      "ratio": 0.5
+    },
+    {
+      "item": "amemaru:echo_fragment",
+      "ratio": 0.5
+    },
+    {
+      "item": "amemaru:soft_horn",
+      "ratio": 0.5
+    },
+    {
+      "item": "amemaru:ishikure_core",
+      "ratio": 0.5
+    }
+  ]
+}

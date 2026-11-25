@@ -1,0 +1,39 @@
+{
+  "name": "薬屋",
+  "sells": [
+    {
+      "item": "minecraft:honey_bottle",
+      "price": 24
+    },
+    {
+      "item": "minecraft:glow_berries",
+      "price": 8
+    },
+    {
+      "item": "minecraft:sugar",
+      "price": 4
+    },
+    {
+      "item": "minecraft:glass_bottle",
+      "price": 6
+    }
+  ],
+  "buys": [
+    {
+      "item": "minecraft:honey_bottle",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:glow_berries",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:sugar",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:glass_bottle",
+      "ratio": 0.5
+    }
+  ]
+}

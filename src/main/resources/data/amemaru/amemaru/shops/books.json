@@ -1,0 +1,47 @@
+{
+  "name": "本と地図",
+  "sells": [
+    {
+      "item": "minecraft:book",
+      "price": 30
+    },
+    {
+      "item": "minecraft:writable_book",
+      "price": 40
+    },
+    {
+      "item": "minecraft:map",
+      "price": 40
+    },
+    {
+      "item": "minecraft:paper",
+      "price": 6
+    },
+    {
+      "item": "minecraft:feather",
+      "price": 4
+    }
+  ],
+  "buys": [
+    {
+      "item": "minecraft:book",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:writable_book",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:map",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:paper",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:feather",
+      "ratio": 0.5
+    }
+  ]
+}

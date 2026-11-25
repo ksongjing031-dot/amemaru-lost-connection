@@ -1,0 +1,8 @@
+{
+  "_comment": "回復薬（小）（Phase 6）。右クリックで、最大HPの25%がすぐに戻る。使ったあと10秒は、HPを戻す薬（group hp）が使えない【補完】",
+  "restore": "hp",
+  "percent": 25,
+  "flat": 0,
+  "cooldown": 10,
+  "group": "hp"
+}

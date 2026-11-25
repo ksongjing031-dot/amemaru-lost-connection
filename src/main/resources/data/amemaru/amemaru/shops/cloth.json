@@ -1,0 +1,63 @@
+{
+  "name": "布と仕立て",
+  "sells": [
+    {
+      "item": "minecraft:white_wool",
+      "price": 10
+    },
+    {
+      "item": "minecraft:magenta_wool",
+      "price": 12
+    },
+    {
+      "item": "minecraft:light_blue_wool",
+      "price": 12
+    },
+    {
+      "item": "minecraft:yellow_wool",
+      "price": 12
+    },
+    {
+      "item": "minecraft:string",
+      "price": 6
+    },
+    {
+      "item": "minecraft:feather",
+      "price": 4
+    },
+    {
+      "item": "minecraft:leather",
+      "price": 12
+    }
+  ],
+  "buys": [
+    {
+      "item": "minecraft:white_wool",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:magenta_wool",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:light_blue_wool",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:yellow_wool",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:string",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:feather",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:leather",
+      "ratio": 0.5
+    }
+  ]
+}

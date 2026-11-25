@@ -196,6 +196,7 @@ def hook(facing):
 
 
 BOX = block("lodestone")                       # 封印箱（地下1層の棚。鉄の帯の箱に見える。開けられない）
+ACCESS_BOX = block("amemaru:storage_access", facing="south", mode="box")   # 小部屋の呼び出しの封印箱（倉庫の画面が開く。Phase 6）
 ANCIENT_BOX = block("chiseled_quartz_block")   # 古代の封印箱（地下2層）
 ANCIENT_LID = block("waxed_oxidized_cut_copper")
 
@@ -302,7 +303,8 @@ def basement_users():
         frame(c, 3, 1, "south", "name_tag")                   # 扉の上の名札（参考画像 warehouse_01）
         wall_sign(ub, 3, 0, "south", ["", "小部屋 " + ROOM_NAMES[i], "", ""])
         put(c, 7, -1, block("polished_andesite"))
-        put(c, 7, 0, BOX)
+        # 11月22日（Phase 6）：呼び出しの封印箱は、右クリックで倉庫の画面が開く窓口（見た目は今までの封印箱のまま）
+        put(c, 7, 0, ACCESS_BOX)
         put(c, 6, 0, hook("south"))
         put(c, 6, -1, stairs("spruce", "south"))
         put(ua, 7, -1, fence(pal.frame))
@@ -756,6 +758,9 @@ def hall():
             put(u, 7, y, bars())
     put(8, 7, F1 + 2, AIR)
     put(12, 7, F1 + 2, AIR)
+    # 11月22日（Phase 6）：窓口の天板は、右クリックで画面が開く「契約・拡張」の呼び鈴と「受け取り口」の包み
+    put(8, 7, F1 + 1, block("amemaru:storage_access", facing="south", mode="contract"))
+    put(12, 7, F1 + 1, block("amemaru:storage_access", facing="south", mode="receive"))
     for u in (1, 15):
         for y in range(F1, Y2):
             put(u, 7, y, block("stone_bricks"))

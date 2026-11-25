@@ -55,6 +55,11 @@ public final class ServerEvents {
         event.addListener(jp.amemaru.lostconnection.story.StoryEventManager.loader());
         event.addListener(jp.amemaru.lostconnection.story.GuideService.loader());
         event.addListener(jp.amemaru.lostconnection.progression.DaySchedule.loader());
+        // Phase 6：店・相場・消耗品・フリーマーケットの露店の区画
+        event.addListener(jp.amemaru.lostconnection.economy.MarketStalls.loader());
+        event.addListener(jp.amemaru.lostconnection.economy.MarketPrices.loader());
+        event.addListener(jp.amemaru.lostconnection.economy.ShopDefs.loader());
+        event.addListener(jp.amemaru.lostconnection.item.ConsumableDefs.loader());
     }
 
     @SubscribeEvent
@@ -76,10 +81,13 @@ public final class ServerEvents {
         SyncContentS2C content = SyncContentS2C.current();
         ServerPlayer joining = event.getPlayer();
         jp.amemaru.lostconnection.network.s2c.SyncNpcsS2C npcs = jp.amemaru.lostconnection.network.s2c.SyncNpcsS2C.current();
+        jp.amemaru.lostconnection.network.s2c.MarketStallsS2C stalls =
+                jp.amemaru.lostconnection.network.s2c.MarketStallsS2C.current(event.getPlayerList().getServer());
         if (joining != null) {
             ModNetwork.sendTo(joining, definitions);
             ModNetwork.sendTo(joining, content);
             ModNetwork.sendTo(joining, npcs);
+            ModNetwork.sendTo(joining, stalls);
             DataReport.notifyAdmins(List.of(joining));
             return;
         }
@@ -88,6 +96,7 @@ public final class ServerEvents {
             ModNetwork.sendTo(player, definitions);
             ModNetwork.sendTo(player, content);
             ModNetwork.sendTo(player, npcs);
+            ModNetwork.sendTo(player, stalls);
             PlayerDataCapability.get(player).ifPresent(data -> {
                 LevelService.recompute(player, data);
                 // 定義の番号が変わっているかもしれないので、すべて送り直す

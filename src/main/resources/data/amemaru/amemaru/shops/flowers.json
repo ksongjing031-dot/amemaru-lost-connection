@@ -1,0 +1,71 @@
+{
+  "name": "花と種",
+  "sells": [
+    {
+      "item": "minecraft:poppy",
+      "price": 4
+    },
+    {
+      "item": "minecraft:dandelion",
+      "price": 4
+    },
+    {
+      "item": "minecraft:cornflower",
+      "price": 4
+    },
+    {
+      "item": "minecraft:allium",
+      "price": 6
+    },
+    {
+      "item": "minecraft:wheat_seeds",
+      "price": 2
+    },
+    {
+      "item": "minecraft:pumpkin_seeds",
+      "price": 4
+    },
+    {
+      "item": "minecraft:beetroot_seeds",
+      "price": 2
+    },
+    {
+      "item": "minecraft:bone_meal",
+      "price": 4
+    }
+  ],
+  "buys": [
+    {
+      "item": "minecraft:poppy",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:dandelion",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:cornflower",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:allium",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:wheat_seeds",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:pumpkin_seeds",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:beetroot_seeds",
+      "ratio": 0.5
+    },
+    {
+      "item": "minecraft:bone_meal",
+      "ratio": 0.5
+    }
+  ]
+}

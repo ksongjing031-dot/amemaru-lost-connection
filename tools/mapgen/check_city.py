@@ -275,7 +275,9 @@ NONSOLID = ("_stairs", "_slab", "_fence", "_fence_gate", "_wall", "_pane", "_tra
             "tripwire_hook", "tripwire", "cobweb", "vine", "azalea", "decorated_pot", "stonecutter", "enchanting_table",
             "chest", "rail", "glass", "_leaves", "dirt_path", "farmland", "head", "skull", "candle_cake", "cake",
             "lily_pad", "sea_pickle", "_coral", "bamboo", "sugar_cane", "flower", "petals", "carpet", "conduit",
-            "daylight_detector", "repeater", "comparator", "redstone_wire", "lever", "seagrass", "kelp")
+            "daylight_detector", "repeater", "comparator", "redstone_wire", "lever", "seagrass", "kelp",
+            # Phase 6 の店の呼び鈴（上の面が平らでないので、上に魔物は湧かない。倉庫の封印箱は1マスの箱なので入れない）
+            "shop_counter")
 GLOW15 = {"sea_lantern", "glowstone", "shroomlight", "jack_o_lantern", "lava", "beacon", "redstone_lamp",
           "ochre_froglight", "pearlescent_froglight", "verdant_froglight"}
 EMIT = {"lantern": 15, "sea_lantern": 15, "glowstone": 15, "shroomlight": 15, "jack_o_lantern": 15, "campfire": 15,

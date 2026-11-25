@@ -72,6 +72,7 @@ public final class ClientPacketHandler {
         EnemyDefs.setClientInfo(message.enemies());
         ProductionRules.setClient(message.production());
         ClientContent.setProductionJobs(message.productionJobs());
+        jp.amemaru.lostconnection.item.ConsumableDefs.setClient(message.consumables());
     }
 
     public static void handleAccessoryVisibility(AccessoryVisibilityS2C message) {
@@ -157,5 +158,56 @@ public final class ClientPacketHandler {
 
     public static void handleNpcs(jp.amemaru.lostconnection.network.s2c.SyncNpcsS2C message) {
         jp.amemaru.lostconnection.npc.NpcDefs.setClient(message.npcs());
+    }
+
+    // ---------------------------------------------------------------- Phase 6：経済
+
+    public static void handleStorageContents(jp.amemaru.lostconnection.network.s2c.StorageContentsS2C message) {
+        ClientStorage.set(message.containerId(), message.items(), message.received(), message.nextPrice(), message.maxPages());
+    }
+
+    public static void handleOpenShop(jp.amemaru.lostconnection.network.s2c.OpenShopS2C message) {
+        net.minecraft.client.Minecraft minecraft = net.minecraft.client.Minecraft.getInstance();
+        if (minecraft.player != null) {
+            minecraft.setScreen(new jp.amemaru.lostconnection.client.screen.ShopScreen(message.pos(), message.shop()));
+        }
+    }
+
+    // ---------------------------------------------------------------- Phase 6：フリーマーケット
+
+    public static void handleOpenMarket(jp.amemaru.lostconnection.network.s2c.OpenMarketS2C message) {
+        net.minecraft.client.Minecraft minecraft = net.minecraft.client.Minecraft.getInstance();
+        if (minecraft.player != null) {
+            ClientMarket.resetViews();
+            minecraft.setScreen(new jp.amemaru.lostconnection.client.screen.MarketScreen(message));
+        }
+    }
+
+    public static void handleMarketPage(jp.amemaru.lostconnection.network.s2c.MarketPageS2C message) {
+        ClientMarket.setPage(message);
+    }
+
+    public static void handleMarketPrice(jp.amemaru.lostconnection.network.s2c.MarketPriceS2C message) {
+        ClientMarket.setPrice(message);
+    }
+
+    public static void handleMarketMine(jp.amemaru.lostconnection.network.s2c.MarketMineS2C message) {
+        ClientMarket.setMine(message);
+    }
+
+    public static void handleMarketStalls(jp.amemaru.lostconnection.network.s2c.MarketStallsS2C message) {
+        ClientMarket.setStalls(message);
+    }
+
+    public static void handleMarketResult(jp.amemaru.lostconnection.network.s2c.MarketResultS2C message) {
+        if (net.minecraft.client.Minecraft.getInstance().screen instanceof jp.amemaru.lostconnection.client.screen.MarketScreen screen) {
+            screen.showResult(message.message(), message.ok());
+        }
+    }
+
+    public static void handleShopResult(jp.amemaru.lostconnection.network.s2c.ShopResultS2C message) {
+        if (net.minecraft.client.Minecraft.getInstance().screen instanceof jp.amemaru.lostconnection.client.screen.ShopScreen screen) {
+            screen.showResult(message.message(), message.ok());
+        }
     }
 }

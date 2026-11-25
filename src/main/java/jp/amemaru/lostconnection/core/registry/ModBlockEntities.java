@@ -8,7 +8,7 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
-/** ブロックエンティティの登録（Phase 5：塔の石柱の核・ボスの部屋の封印）。 */
+/** ブロックエンティティの登録（Phase 5：塔の石柱の核・ボスの部屋の封印。Phase 6：店のカウンター）。 */
 public final class ModBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES,
             AmemaruMod.MOD_ID);
@@ -26,6 +26,12 @@ public final class ModBlockEntities {
     public static final RegistryObject<BlockEntityType<jp.amemaru.lostconnection.tower.FloorThingBlockEntity>> FLOOR_THING =
             BLOCK_ENTITIES.register("floor_thing", () -> BlockEntityType.Builder.of(jp.amemaru.lostconnection.tower.FloorThingBlockEntity::new,
                     ModBlocks.TOWER_SWITCH.get(), ModBlocks.TOWER_CHEST.get()).build(null));
+
+    /** 店のカウンターの呼び鈴（どの店か。Phase 6）。 */
+    @SuppressWarnings("DataFlowIssue")
+    public static final RegistryObject<BlockEntityType<jp.amemaru.lostconnection.block.ShopCounterBlockEntity>> SHOP_COUNTER =
+            BLOCK_ENTITIES.register("shop_counter", () -> BlockEntityType.Builder.of(jp.amemaru.lostconnection.block.ShopCounterBlockEntity::new,
+                    ModBlocks.SHOP_COUNTER.get()).build(null));
 
     private ModBlockEntities() {
     }

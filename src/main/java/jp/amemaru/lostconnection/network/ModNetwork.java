@@ -243,6 +243,67 @@ public final class ModNetwork {
                 .decoder(jp.amemaru.lostconnection.network.c2s.RetireC2S::decode)
                 .consumerMainThread(jp.amemaru.lostconnection.network.c2s.RetireC2S::handle)
                 .add();
+        // Phase 6：経済（ノットの受け渡し）
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.c2s.TransferKnotsC2S.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(jp.amemaru.lostconnection.network.c2s.TransferKnotsC2S::encode)
+                .decoder(jp.amemaru.lostconnection.network.c2s.TransferKnotsC2S::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.c2s.TransferKnotsC2S::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.StorageContentsS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.StorageContentsS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.StorageContentsS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.StorageContentsS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.OpenShopS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.OpenShopS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.OpenShopS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.OpenShopS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.c2s.ShopActionC2S.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(jp.amemaru.lostconnection.network.c2s.ShopActionC2S::encode)
+                .decoder(jp.amemaru.lostconnection.network.c2s.ShopActionC2S::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.c2s.ShopActionC2S::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.ShopResultS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.ShopResultS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.ShopResultS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.ShopResultS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.OpenMarketS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.OpenMarketS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.OpenMarketS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.OpenMarketS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.MarketPageS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.MarketPageS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.MarketPageS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.MarketPageS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.MarketPriceS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.MarketPriceS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.MarketPriceS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.MarketPriceS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.MarketMineS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.MarketMineS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.MarketMineS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.MarketMineS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.MarketStallsS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.MarketStallsS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.MarketStallsS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.MarketStallsS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.MarketResultS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.MarketResultS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.MarketResultS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.MarketResultS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.c2s.MarketActionC2S.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(jp.amemaru.lostconnection.network.c2s.MarketActionC2S::encode)
+                .decoder(jp.amemaru.lostconnection.network.c2s.MarketActionC2S::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.c2s.MarketActionC2S::handle)
+                .add();
     }
 
     /** 1人のプレイヤーに送る。 */

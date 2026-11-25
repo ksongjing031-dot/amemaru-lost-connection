@@ -127,6 +127,27 @@ public final class ModBlocks {
                     .strength(-1.0F, 3600000.0F)
                     .noLootTable(), net.minecraft.world.level.block.state.properties.BlockSetType.IRON));
 
+    /**
+     * 個人倉庫の窓口（Phase 6）：地下の小部屋の呼び出しの封印箱（box）と、1階のカウンターの「契約・拡張」（contract）・
+     * 「受け取り口」（receive）。右クリックで倉庫の画面を開く（11月22日に決定：施設はGUIで使う）。
+     */
+    public static final RegistryObject<Block> STORAGE_ACCESS = BLOCKS.register("storage_access", () -> new jp.amemaru.lostconnection.block.StorageAccessBlock(
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL)
+                    .strength(-1.0F, 3600000.0F)
+                    .sound(SoundType.LODESTONE)
+                    .noOcclusion()
+                    .pushReaction(PushReaction.BLOCK)));
+
+    /** 店のカウンターの呼び鈴（Phase 6）：右クリックで、その店の「買う・売る」の画面を開く。どの店かはブロックエンティティが持つ。 */
+    public static final RegistryObject<Block> SHOP_COUNTER = BLOCKS.register("shop_counter", () -> new jp.amemaru.lostconnection.block.ShopCounterBlock(
+            BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD)
+                    .strength(-1.0F, 3600000.0F)
+                    .sound(SoundType.WOOD)
+                    .noOcclusion()
+                    .pushReaction(PushReaction.BLOCK)));
+
     /** 工房の作業台（サバイバル・アドベンチャーでは壊せない。街の施設のため）。 */
     private static BlockBehaviour.Properties workbench(MapColor color) {
         return BlockBehaviour.Properties.of()
