@@ -155,9 +155,9 @@ public final class ConnectionService {
         return effect(server, "barrier_plaza") > 0;
     }
 
-    /** 最終決戦の加護（段階10で1。最終決戦は後のPhaseで使う）。 */
+    /** 最終決戦の加護（段階10で1。共同事業⑦「大結晶の強化」で、もう一段。最終決戦は後のPhaseで使う）。 */
     public static double finalBlessing(MinecraftServer server) {
-        return effect(server, "blessing");
+        return effect(server, "blessing") + jp.amemaru.lostconnection.town.ProjectService.blessing(server);
     }
 
     /** 段階と星を、累計と人数補正から計算し直す（上がったら知らせる）。 */
@@ -172,6 +172,8 @@ public final class ConnectionService {
             for (int s = before + 1; s <= now; s++) {
                 announceStage(server, s, rules);
             }
+            // Phase 7 その4：輝き段階を待っていた共同事業が完成するか
+            jp.amemaru.lostconnection.town.ProjectService.checkAll(server);
         }
         if (data.stageReached() >= rules.maxStage()) {
             int stars = rules.starsFor(data.total(), scale);
@@ -369,6 +371,7 @@ public final class ConnectionService {
                 announceStage(server, s, rules);
             }
             broadcastPending = true;
+            jp.amemaru.lostconnection.town.ProjectService.checkAll(server);
         } else if (target < before) {
             data.setTotal(at);
             data.lowerStage(target);

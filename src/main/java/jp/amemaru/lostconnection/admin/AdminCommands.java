@@ -116,6 +116,8 @@ public final class AdminCommands {
                         .then(EventCommands.eventCommand())
                         // Phase 7 その3：カジノ
                         .then(CasinoCommands.casinoCommand())
+                        // Phase 7 その4：寄付と共同事業
+                        .then(ProjectCommands.projectCommand())
                         .then(debugCommand())));
     }
 

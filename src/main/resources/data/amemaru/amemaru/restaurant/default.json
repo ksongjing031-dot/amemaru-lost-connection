@@ -1,0 +1,113 @@
+{
+  "_comment": "ペトラ・ポムの料理屋（Phase 7 その4。共同事業③「料理屋の開店」：料理による一時強化。Phase 0-A 7章「魚や素材から、戦闘用の料理（一時的な強化）を作る。釣りが戦闘を支える導線」）。料理・材料・強化の数は【補完】。ingredients の fish_stars は「★がその数以上の魚」、item は品物。強化は1つだけ（新しく食べると入れかわる）で、倒れると消える",
+  "flag": "amemaru:project/restaurant",
+  "minutes": 20,
+  "dishes": [
+    {
+      "item": "amemaru:dish_grilled_fish",
+      "stat": "attack",
+      "mode": "percent",
+      "amount": 5,
+      "fee": 20,
+      "ingredients": [
+        {
+          "fish_stars": 1,
+          "count": 3
+        }
+      ]
+    },
+    {
+      "item": "amemaru:dish_fish_soup",
+      "stat": "hp",
+      "mode": "percent",
+      "amount": 6,
+      "fee": 30,
+      "ingredients": [
+        {
+          "fish_stars": 1,
+          "count": 2
+        },
+        {
+          "item": "minecraft:potato",
+          "count": 1
+        },
+        {
+          "item": "minecraft:carrot",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "item": "amemaru:dish_herb_trout",
+      "stat": "magic",
+      "mode": "percent",
+      "amount": 5,
+      "fee": 40,
+      "ingredients": [
+        {
+          "fish_stars": 2,
+          "count": 2
+        },
+        {
+          "item": "minecraft:beetroot",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "item": "amemaru:dish_simmered_fish",
+      "stat": "defense",
+      "mode": "percent",
+      "amount": 6,
+      "fee": 40,
+      "ingredients": [
+        {
+          "fish_stars": 2,
+          "count": 2
+        },
+        {
+          "item": "minecraft:sugar",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "item": "amemaru:dish_honey_glazed",
+      "stat": "crit",
+      "mode": "flat",
+      "amount": 3,
+      "fee": 60,
+      "ingredients": [
+        {
+          "fish_stars": 3,
+          "count": 1
+        },
+        {
+          "item": "minecraft:honey_bottle",
+          "count": 1
+        }
+      ]
+    },
+    {
+      "item": "amemaru:dish_lake_feast",
+      "stat": "lost_resist",
+      "mode": "flat",
+      "amount": 5,
+      "fee": 80,
+      "ingredients": [
+        {
+          "fish_stars": 3,
+          "count": 2
+        },
+        {
+          "item": "minecraft:bread",
+          "count": 1
+        },
+        {
+          "item": "minecraft:apple",
+          "count": 1
+        }
+      ]
+    }
+  ]
+}

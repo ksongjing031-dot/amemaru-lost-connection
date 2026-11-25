@@ -5,7 +5,8 @@
     "weapons.kind：sword（片手剣）・greatsword（両手剣）・staff（杖）・bell_staff（鈴杖）・bow（弓）・daggers（二刀の短剣）・fist（籠手）。model が geckolib なら GeckoLib で描く（動く・光る武器）",
     "armor：series（見た目のシリーズ。geo/armor/<series>.geo.json）と、場所ごとのアイテムのID",
     "accessories.slot：ring・necklace・bracelet・charm・clasp。model が geckolib なら体に表示する（geo/accessory/<ID>.geo.json）",
-    "materials.rarity：名前の色。fruits.stat：結晶果が上げるステータス"
+    "materials.rarity：名前の色。fruits.stat：結晶果が上げるステータス",
+    "dishes：ペトラ・ポムの料理屋の料理（Phase 7 その4。食べると、しばらく強くなる。強化の数は data/amemaru/amemaru/restaurant/）"
   ],
   "weapons": [
     {
@@ -399,6 +400,26 @@
     {
       "id": "fish_memory_lord",
       "rarity": 5
+    }
+  ],
+  "dishes": [
+    {
+      "id": "dish_grilled_fish"
+    },
+    {
+      "id": "dish_fish_soup"
+    },
+    {
+      "id": "dish_herb_trout"
+    },
+    {
+      "id": "dish_simmered_fish"
+    },
+    {
+      "id": "dish_honey_glazed"
+    },
+    {
+      "id": "dish_lake_feast"
     }
   ]
 }

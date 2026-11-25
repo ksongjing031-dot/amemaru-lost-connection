@@ -10,6 +10,8 @@
          麦わら帽子、釣り堀の色（青緑と白）のシャツに、ポケットの多い生成りの釣りベスト、まくった袖、深緑のゴム長靴）
   gisele（ジゼル・ノワール。カジノの支配人。Phase 0-A 8章：年齢不詳。洒落た女性。【補完】長い黒髪、右に寄せた小さな紫の帽子と
           金の帯と黒い羽根、カジノの色（紫・金・黒。docs/map_style.md）のドレス、黒い長い手袋、金の耳飾りと首飾り、赤い口紅）
+  petra（ペトラ・ポム。料理人。Phase 0-A 8章：20代。マルタの娘。魚料理が得意。【補完】赤茶の髪をうしろで結び、白い料理人の帽子、
+         料理屋の色（橙。tools/mapgen/build_market.py）の前かけ、まくった白い袖、緑の目とそばかす）
 """
 import os
 import sys
@@ -233,7 +235,102 @@ def gisele():
     return s, pal, faces
 
 
-NPCS = {"pokka": pokka, "gisele": gisele}
+def petra():
+    s = Skin(True, 131)
+    r = s.rng
+    hair, hair_d = "#B8673A", "#8E4A28"
+    skin, skin_d = "#F2CFB4", "#DDB096"
+    cap, cap_d = "#F6F4EE", "#D9D5CA"
+    shirt, shirt_d = "#F0E6D2", "#D6C9AE"
+    apron, apron_d, apron_l = "#E2822E", "#B9661F", "#F2A24E"
+    skirt, skirt_d = "#5B3A2A", "#3F281C"
+    boot = "#4A3324"
+
+    def head(face, x, y, w, h):
+        if face == "top":
+            return noisy(r, hair, 0.05)
+        if face == "bottom":
+            return noisy(r, hair_d, 0.05)
+        if face == "front":
+            return skin
+        if face == "back":
+            return noisy(r, hair if y < 7 else hair_d, 0.05)       # うしろで結んだ髪
+        if y <= 2 or (face == "right" and x <= 1) or (face == "left" and x >= 6):
+            return noisy(r, hair, 0.05)
+        return skin
+    s.head(head)
+
+    def hat(face, x, y, w, h):
+        # 白い料理人の帽子（低い形）と、うしろで結んだ髪の房
+        if face == "top":
+            return noisy(r, cap, 0.03)
+        if face == "bottom":
+            return None
+        if y <= 1:
+            return noisy(r, cap if y == 0 else cap_d, 0.03)
+        if face == "back" and 2 <= y <= 6 and 3 <= x <= 4:
+            return noisy(r, hair_d, 0.05)                          # 髪の房
+        return None
+    s.hat(hat)
+
+    def body(face, x, y, w, h):
+        if face == "front":
+            if y <= 1 and 2 <= x <= 5:
+                return skin if y == 0 else shirt
+            if 1 <= x <= 6 and y >= 2:
+                if y == 5:
+                    return apron_d                                 # 前かけのひも
+                if y in (8, 9) and x in (2, 5):
+                    return apron_l                                 # ポケット
+                return noisy(r, apron, 0.04)                       # 橙の前かけ（料理屋の色）
+            return noisy(r, shirt, 0.04)
+        if face == "back":
+            if y == 5:
+                return apron_d
+            return noisy(r, shirt if y < 10 else shirt_d, 0.04)
+        if face in ("top", "bottom"):
+            return shirt_d
+        return noisy(r, shirt, 0.04) if y != 5 else apron_d
+    s.body(body)
+
+    def arm(face, x, y, w, h):
+        if face == "top":
+            return shirt
+        if face == "bottom":
+            return skin_d
+        if y <= 4:
+            return noisy(r, shirt, 0.04)                           # まくった白い袖
+        if y == 5:
+            return shirt_d
+        return noisy(r, skin, 0.04)
+    s.arm("right", arm)
+    s.arm("left", arm)
+
+    def leg(face, x, y, w, h):
+        if face == "top":
+            return skirt_d
+        if face == "bottom":
+            return boot
+        if y <= 6:
+            return noisy(r, skirt if (x + y) % 4 else skirt_d, 0.04)
+        if y >= 10:
+            return boot
+        return noisy(r, "#3A2A20", 0.04)
+    s.leg("right", leg)
+    s.leg("left", leg)
+    pal = {"H": hair, "h": hair_d, "S": skin, "s": skin_d, "W": "#FFFFFF", "E": "#3C5A2A", "L": "#3A2418", "M": "#C8504A",
+           "T": "#FFFFFF", "P": "#F0A8A0", "F": "#D8A070"}
+    faces = {
+        # 明るい緑の目、そばかす、にこやかな口
+        "": ["H H H H H H H H", "H h S S S S h H", "S L L S S L L S", "S W E S S E W S",
+             "S F S S S S F S", "S P S s s S P S", "S S S M M S S S", "S S S S S S S S"],
+        "laugh": ["H H H H H H H H", "H h S S S S h H", "S S S S S S S S", "S L L S S L L S",
+                  "S F S S S S F S", "S P S s s S P S", "S S M T T M S S", "S S S M M S S S"],
+    }
+    return s, pal, faces
+
+
+NPCS = {"pokka": pokka, "gisele": gisele, "petra": petra}
 
 
 def build(root):

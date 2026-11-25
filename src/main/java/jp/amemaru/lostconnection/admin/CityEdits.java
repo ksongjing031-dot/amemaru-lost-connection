@@ -307,6 +307,17 @@ final class CityEdits {
     }
 
     /** 建てた形を控える（tags は PLACEMENTS と同じ並び。建てなかった構造物は null で、控えを消す） */
+    /** 建てた形の控えを、ひとつだけ書く（Phase 7 その4：育ったあとの形をひとつ重ねたとき）。 */
+    static void saveBuiltOne(ServerLevel level, CityCommands.Placement placement, CompoundTag tag) {
+        Path file = builtFile(level.getServer(), placement.name());
+        try {
+            Files.createDirectories(file.getParent());
+            NbtIo.writeCompressed(tag, file.toFile());
+        } catch (IOException e) {
+            AmemaruMod.LOGGER.error("[amemaru] city: cannot save {}", file, e);
+        }
+    }
+
     static void saveBuilt(ServerLevel level, List<CompoundTag> tags) {
         for (int i = 0; i < CityCommands.PLACEMENTS.size(); i++) {
             Path file = builtFile(level.getServer(), CityCommands.PLACEMENTS.get(i).name());
@@ -495,8 +506,10 @@ final class CityEdits {
     private static Analysis analyze(ServerLevel level, BlockPos origin, boolean grown, boolean scanOutside) throws EditsException {
         Analysis a = new Analysis();
         HolderLookup<Block> blocks = blocks(level);
+        CityCommands.CityData city = CityCommands.CityData.get(level);
         for (CityCommands.Placement placement : CityCommands.PLACEMENTS) {
-            if (placement.grown() && !grown) {
+            // ふつうの形と、まとめて建てた育ったあとの形・ひとつずつ重ねた育ったあとの形（Phase 7 その4）
+            if (placement.grown() && !grown && !city.overlays.contains(placement.name())) {
                 continue;
             }
             CompoundTag tag = knownTag(level, placement);
