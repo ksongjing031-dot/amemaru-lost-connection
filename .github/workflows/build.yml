@@ -122,7 +122,7 @@ jobs:
     name: クライアントで起動を確かめる
     needs: build
     runs-on: ubuntu-latest
-    timeout-minutes: 85
+    timeout-minutes: 100
     steps:
       - name: Java 17 を用意する
         uses: actions/setup-java@v5
@@ -148,7 +148,7 @@ jobs:
       # 11月23日（Phase 8 その1）：Phase 7 までで約35分。2階を建てて写真を足すので、55分にした（ジョブは65分）
       # 11月25日：5階までで約52分。6階を建てて写真を足すので、75分にした（ジョブは85分）
       - name: クライアントを起動し、ワールドに入って出る（画面写真も撮る）
-        timeout-minutes: 75
+        timeout-minutes: 90
         uses: headlesshq/mc-runtime-test@5.0.0
         with:
           mc: 1.20.1

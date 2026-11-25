@@ -1,0 +1,27 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "accessory",
+  "mastery": 4,
+  "mastery_exp": 24,
+  "ingredients": [
+    {
+      "item": "amemaru:mirror_ice",
+      "count": 2
+    },
+    {
+      "item": "amemaru:blizzard_core",
+      "count": 1
+    },
+    {
+      "item": "amemaru:echo_fragment",
+      "count": 1
+    },
+    {
+      "item": "amemaru:pedestal_cloth",
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "amemaru:passphrase_charm"
+  }
+}

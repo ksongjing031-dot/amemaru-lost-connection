@@ -165,6 +165,17 @@ public final class ModItems {
             new ForgeSpawnEggItem(ModEntities.FROST_BEAR, 0xD0E0EE, 0x2A344A, new Item.Properties()));
     public static final RegistryObject<Item> ORDO_SPAWN_EGG = ITEMS.register("ordo_spawn_egg", () ->
             new ForgeSpawnEggItem(ModEntities.ORDO, 0x2A3A62, 0x9FD8FF, new Item.Properties()));
+    // 11月25日：7階
+    public static final RegistryObject<Item> MIMIC_SPAWN_EGG = ITEMS.register("mimic_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.MIMIC, 0xE8EEF5, 0x8C9AAE, new Item.Properties()));
+    public static final RegistryObject<Item> ICE_STAG_SPAWN_EGG = ITEMS.register("ice_stag_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.ICE_STAG, 0xB6CADC, 0x9CC8E8, new Item.Properties()));
+    public static final RegistryObject<Item> ICICLE_BAT_SPAWN_EGG = ITEMS.register("icicle_bat_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.ICICLE_BAT, 0x2A344A, 0xBEDDF4, new Item.Properties()));
+    public static final RegistryObject<Item> BLIZZARD_SPIRIT_SPAWN_EGG = ITEMS.register("blizzard_spirit_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.BLIZZARD_SPIRIT, 0xF2F7FC, 0xB6A0E0, new Item.Properties()));
+    public static final RegistryObject<Item> REFLECTA_SPAWN_EGG = ITEMS.register("reflecta_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.REFLECTA, 0xDDEEFA, 0xC7A6F0, new Item.Properties()));
     // 11月24日：5階の結び台
     public static final RegistryObject<Item> BINDING_DAIS = ITEMS.register("binding_dais", () ->
             new BlockItem(ModBlocks.BINDING_DAIS.get(), new Item.Properties().rarity(Rarity.RARE)));
@@ -174,6 +185,12 @@ public final class ModItems {
             new BlockItem(ModBlocks.VILLAGE_HEARTH.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> VILLAGE_STATUE = ITEMS.register("village_statue", () ->
             new BlockItem(ModBlocks.VILLAGE_STATUE.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> LIGHT_SPRING = ITEMS.register("light_spring", () ->
+            new BlockItem(ModBlocks.LIGHT_SPRING.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> ICE_MIRROR = ITEMS.register("ice_mirror", () ->
+            new BlockItem(ModBlocks.ICE_MIRROR.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> LIGHT_TARGET = ITEMS.register("light_target", () ->
+            new BlockItem(ModBlocks.LIGHT_TARGET.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> MURAL_PANEL = ITEMS.register("mural_panel", () ->
             new BlockItem(ModBlocks.MURAL_PANEL.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> SOUND_PLATE = ITEMS.register("sound_plate", () ->

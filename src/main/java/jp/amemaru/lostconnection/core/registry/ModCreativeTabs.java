@@ -67,6 +67,11 @@ public final class ModCreativeTabs {
                 output.accept(ModItems.FROST_BIRD_SPAWN_EGG.get());
                 output.accept(ModItems.FROST_BEAR_SPAWN_EGG.get());
                 output.accept(ModItems.ORDO_SPAWN_EGG.get());
+                output.accept(ModItems.MIMIC_SPAWN_EGG.get());
+                output.accept(ModItems.ICE_STAG_SPAWN_EGG.get());
+                output.accept(ModItems.ICICLE_BAT_SPAWN_EGG.get());
+                output.accept(ModItems.BLIZZARD_SPIRIT_SPAWN_EGG.get());
+                output.accept(ModItems.REFLECTA_SPAWN_EGG.get());
                 output.accept(ModItems.SENTINEL_SPAWN_EGG.get());
                 output.accept(ModItems.REPAIR_DRONE_SPAWN_EGG.get());
             })

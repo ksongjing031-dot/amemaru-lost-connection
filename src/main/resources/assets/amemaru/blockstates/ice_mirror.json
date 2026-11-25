@@ -1,0 +1,11 @@
+{
+  "variants": {
+    "slash=true": {
+      "model": "amemaru:block/ice_mirror"
+    },
+    "slash=false": {
+      "model": "amemaru:block/ice_mirror",
+      "y": 90
+    }
+  }
+}

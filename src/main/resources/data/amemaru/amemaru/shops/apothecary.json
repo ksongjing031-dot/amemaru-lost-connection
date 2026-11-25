@@ -22,6 +22,10 @@
       "price": 60
     },
     {
+      "item": "amemaru:knot_cord",
+      "price": 150
+    },
+    {
       "item": "minecraft:honey_bottle",
       "price": 24
     },
@@ -49,6 +53,10 @@
     },
     {
       "item": "amemaru:antidote",
+      "ratio": 0.5
+    },
+    {
+      "item": "amemaru:knot_cord",
       "ratio": 0.5
     },
     {

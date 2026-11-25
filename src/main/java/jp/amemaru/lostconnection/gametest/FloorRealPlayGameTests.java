@@ -21,6 +21,9 @@ import jp.amemaru.lostconnection.tower.altar.AltarBlocks;
 import jp.amemaru.lostconnection.tower.forest.ForestBlocks;
 import jp.amemaru.lostconnection.tower.forest.LostWoodsService;
 import jp.amemaru.lostconnection.tower.forest.WaypointService;
+import jp.amemaru.lostconnection.tower.iceforest.IceForestBlocks;
+import jp.amemaru.lostconnection.tower.iceforest.LightMazeService;
+import jp.amemaru.lostconnection.tower.iceforest.PassphraseService;
 import jp.amemaru.lostconnection.tower.temple.TempleBlocks;
 import jp.amemaru.lostconnection.tower.temple.TempleService;
 import jp.amemaru.lostconnection.tower.village.VillageBlocks;
@@ -115,6 +118,12 @@ public final class FloorRealPlayGameTests {
         run(helper, 6);
     }
 
+    // 11月25日：7階「氷の森林」（鏡を回して光を受け石へ。扉の前で合言葉）
+    @GameTest(template = EMPTY, batch = "floor_real_7", timeoutTicks = 6000)
+    public static void floor7RealPlay(GameTestHelper helper) {
+        run(helper, 7);
+    }
+
     /** 1つの階を建てて、すべての仕掛けを触る。 */
     private static void run(GameTestHelper helper, int floor) {
         MinecraftServer server = helper.getLevel().getServer();
@@ -156,6 +165,8 @@ public final class FloorRealPlayGameTests {
                         TempleService.reconcile(tower, def);
                     } else if (floor == 6) {
                         VillageService.reconcile(tower, def);
+                    } else if (floor == 7) {
+                        LightMazeService.reconcile(tower, def);
                     }
                     List<String> problems = structure(tower, def);
                     check(helper, problems.isEmpty(), floor + "階の仕掛けのブロックがおかしい（" + problems.size() + "）："
@@ -170,6 +181,7 @@ public final class FloorRealPlayGameTests {
             case 3 -> floodgates(helper, seq, tower, def, player);
             case 4 -> temple(helper, seq, tower, def, player, data);
             case 6 -> village(helper, seq, tower, def, player);
+            case 7 -> iceForest(helper, seq, tower, def, player);
             default -> {
             }
         }
@@ -262,6 +274,26 @@ public final class FloorRealPlayGameTests {
             if (!tower.getBlockState(pos.below()).isFaceSturdy(tower, pos.below(), Direction.UP)
                     || !tower.getBlockState(pos).getCollisionShape(tower, pos).isEmpty()) {
                 out.add("オルドの結晶の台 " + local(spot) + "の上がふさがっているか、下が固くない");
+            }
+        }
+        // 7階：光の迷路（光の泉・鏡・受け石。鏡のはじめの向きは、階の定義のとおり）
+        for (FloorFeatures.LightMaze maze : fx.lightMazes()) {
+            thing(out, tower, def, maze.source(), IceForestBlocks.Spring.class, -1, maze.id(), "光の泉 " + maze.id());
+            BlockState spring = tower.getBlockState(def.world(maze.source()));
+            if (spring.getBlock() instanceof IceForestBlocks.Spring && spring.getValue(IceForestBlocks.FACING) != maze.direction()) {
+                out.add("光の泉 " + maze.id() + "の向きが " + spring.getValue(IceForestBlocks.FACING) + "（定義は " + maze.direction() + "）");
+            }
+            thing(out, tower, def, maze.target(), IceForestBlocks.Target.class, -1, maze.id(), "受け石 " + maze.id());
+            for (int i = 0; i < maze.mirrors().size(); i++) {
+                FloorFeatures.Mirror mirror = maze.mirrors().get(i);
+                thing(out, tower, def, mirror.pos(), IceForestBlocks.Mirror.class, i, maze.id(), "氷の鏡 " + maze.id() + "#" + i);
+                BlockState state = tower.getBlockState(def.world(mirror.pos()));
+                if (state.getBlock() instanceof IceForestBlocks.Mirror && state.getValue(IceForestBlocks.SLASH) != mirror.slash()) {
+                    out.add("氷の鏡 " + maze.id() + "#" + i + "のはじめの向きが違う");
+                }
+            }
+            if (maze.door() != null && tower.getBlockState(def.world(maze.door().min())).isAir()) {
+                out.add(maze.name() + "の門が、はじめから開いている");
             }
         }
         List<BlockPos> bossPlates = fx.bossMarks("sound_plates");
@@ -640,6 +672,75 @@ public final class FloorRealPlayGameTests {
         seq.thenExecute(() -> check(helper, VillageService.allThawed(server, def), n + "階：記憶の氷像をすべて溶かしても、そろったことになりません"));
     }
 
+    // ---------------------------------------------------------------- 7階：光の迷路と合言葉の扉
+
+    private static void iceForest(GameTestHelper helper, GameTestSequence seq, ServerLevel tower, FloorDef def, FakePlayer player) {
+        int n = def.number();
+        MinecraftServer server = tower.getServer();
+        for (FloorFeatures.LightMaze maze : def.features().lightMazes()) {
+            seq.thenExecute(() -> {
+                LightMazeService.Data data = LightMazeService.Data.get(server);
+                check(helper, !LightMazeService.trace(tower, def, maze).reached(), maze.name() + "：はじめから光が受け石に届いています");
+                // 光の泉を右クリックすると光の道を見せる（それだけでは解けない）
+                use(helper, tower, player, def.world(maze.source()), "光の泉 " + maze.id());
+                check(helper, !LightMazeService.solved(server, n, maze.id()), maze.name() + "：光の泉を触っただけで、解けたことになりました");
+                // 解き方（鏡の向きの組み合わせ）を探す
+                int count = maze.mirrors().size();
+                boolean[] start = new boolean[count];
+                for (int i = 0; i < count; i++) {
+                    start[i] = data.slash(n, maze, i);
+                }
+                int answer = -1;
+                for (int bits = 0; bits < (1 << count) && answer < 0; bits++) {
+                    for (int i = 0; i < count; i++) {
+                        data.setSlash(n, maze, i, (bits >> i & 1) == 1);
+                    }
+                    if (LightMazeService.trace(tower, def, maze).reached()) {
+                        answer = bits;
+                    }
+                }
+                for (int i = 0; i < count; i++) {
+                    data.setSlash(n, maze, i, start[i]);
+                }
+                check(helper, answer >= 0, maze.name() + "：どう鏡を回しても、光が受け石に届きません");
+                // 鏡を右クリックで回す（遊ぶ人と同じ）
+                for (int i = 0; i < count && !LightMazeService.solved(server, n, maze.id()); i++) {
+                    boolean want = (answer >> i & 1) == 1;
+                    if (data.slash(n, maze, i) != want) {
+                        BlockPos pos = def.world(maze.mirrors().get(i).pos());
+                        use(helper, tower, player, pos, "氷の鏡 " + maze.id() + "#" + i);
+                        check(helper, tower.getBlockState(pos).getValue(IceForestBlocks.SLASH) == want,
+                                "氷の鏡 " + maze.id() + "#" + i + "：右クリックしても、鏡の向きが変わりません");
+                    }
+                }
+                check(helper, LightMazeService.solved(server, n, maze.id()), maze.name() + "：鏡を解き方の向きにしたのに、解けたことになりません");
+                check(helper, tower.getBlockState(def.world(maze.target())).getValue(IceForestBlocks.LIT), maze.name() + "：解けても、受け石が灯りません");
+                check(helper, maze.door() == null || tower.getBlockState(def.world(maze.door().min())).isAir(), maze.name() + "：解けても、氷の門が開きません");
+                // 解けたあとは、鏡は回らない
+                BlockPos first = def.world(maze.mirrors().get(0).pos());
+                boolean before = tower.getBlockState(first).getValue(IceForestBlocks.SLASH);
+                use(helper, tower, player, first, "氷の鏡 " + maze.id() + "#0");
+                check(helper, tower.getBlockState(first).getValue(IceForestBlocks.SLASH) == before, maze.name() + "：解けたあとも、鏡が回ります");
+            });
+        }
+        seq.thenExecute(() -> {
+            check(helper, LightMazeService.allSolved(server, def), n + "階：光の迷路をすべて解いても、そろったことになりません");
+            check(helper, !TowerService.pillarsComplete(player, n), n + "階：合言葉を言う前に、封印の条件がそろいました");
+            // 合言葉：扉の前でなければ数えない。コマンドは合言葉にならない。扉の前で（ひとりで）言うと通れる
+            FloorFeatures.Passphrase door = def.features().passphrase();
+            Vec3 origin = def.originVec();
+            Vec3 entry = def.world(def.entrance().pos());
+            player.setPos(entry.x, entry.y, entry.z);
+            check(helper, !PassphraseService.say(player, "しろいはな"), n + "階：扉の前でないのに、合言葉が通りました");
+            double x = origin.x + (door.area().minX + door.area().maxX) / 2.0;
+            double z = origin.z + (door.area().minZ + door.area().maxZ) / 2.0;
+            player.setPos(x, origin.y + door.area().minY + 1.0, z);
+            check(helper, !PassphraseService.say(player, "/me しろいはな"), n + "階：コマンドが合言葉になりました");
+            check(helper, PassphraseService.say(player, "  しろい　はな "), n + "階：扉の前で言っても、合言葉が通りません");
+            check(helper, PassphraseService.passed(player, n), n + "階：合言葉の印が付きません");
+        });
+    }
+
     // ---------------------------------------------------------------- 封印
 
     /** ボスの部屋の封印を、その人が通れるか（封印のブロックの当たり判定が、その人には空か）。 */
@@ -679,9 +780,11 @@ public final class FloorRealPlayGameTests {
             case 3 -> FloodgateService.onDayChanged(server);
             case 4 -> TempleService.onDayChanged(server);
             case 6 -> VillageService.onDayChanged(server);
+            case 7 -> LightMazeService.onDayChanged(server);
             default -> {
             }
         }
+        data.getStory().remove(PassphraseService.flag(def.number()));
         WaypointService.Data.get(server).clear(player.getUUID());
         for (FloorDef.Guardian guardian : TowerService.namedGuardians(def)) {
             data.getStory().remove(TowerService.guardianFlag(def.number(), guardian.id()));

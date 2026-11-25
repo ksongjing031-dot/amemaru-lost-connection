@@ -1,0 +1,42 @@
+{
+  "_comment": "つらら蝙蝠（7階の雑魚）。空に浮き、翼のつららを撃つ（needle。1階の結晶蜂と同じ動き）。当たると少し凍える。数値は【補完】",
+  "name": "つらら蝙蝠",
+  "floor": 7,
+  "level": 28,
+  "description": "夜の色の小さな体に、大きな膜の翼。翼のふちに下がったつららを、羽ばたきひとつで撃ち出す。群れで、鏡の木々の枝にぶら下がっている。",
+  "stats": {
+    "hp": 1250,
+    "attack": 202,
+    "defense": 9,
+    "move_speed": 0.24,
+    "follow_range": 24,
+    "aggro_range": 14
+  },
+  "exp": 56,
+  "skills": {
+    "needle": {
+      "power": 0.95,
+      "windup": 0.8,
+      "cooldown": 2.8,
+      "range": 14,
+      "speed": 0.95
+    }
+  },
+  "behavior": {
+    "keep_distance": 7,
+    "hover_height": 4.5
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/icicle_bat",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_white",
+        "chance": 0.6
+      },
+      {
+        "item": "amemaru:crystal_fruit_azure",
+        "chance": 0.3
+      }
+    ]
+  }
+}

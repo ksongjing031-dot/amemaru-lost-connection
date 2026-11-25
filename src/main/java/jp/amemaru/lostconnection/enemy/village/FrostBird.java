@@ -92,6 +92,7 @@ public class FrostBird extends CrystalBee {
                 }
                 EnemyCombat.strike(this, player, skill.power(), null);
                 PlayerColdService.chill(player, 1, (int) Math.round(skill.param("chill_seconds", 4.0) * 20));
+                onStormHit(player);
                 CompoundTag tag = new CompoundTag();
                 tag.putFloat("strength", 0.8F);
                 tag.putInt("ticks", 30);
@@ -101,6 +102,16 @@ public class FrostBird extends CrystalBee {
         if (--stormTicks <= 0) {
             storm = null;
         }
+    }
+
+    /** 吹雪に打たれた人への、ほかの効き目（7階の吹雪の精は「薄れ」。11月25日）。 */
+    protected void onStormHit(ServerPlayer player) {
+    }
+
+    /** 自動テスト・管理者：その場所に、すぐ吹雪を起こす。 */
+    public void testStartStorm(Vec3 at) {
+        storm = at;
+        stormTicks = (int) Math.round(blizzard().param("seconds", 5.0) * 20);
     }
 
     /** 自動テスト用：吹雪の真ん中（なければ null）。 */

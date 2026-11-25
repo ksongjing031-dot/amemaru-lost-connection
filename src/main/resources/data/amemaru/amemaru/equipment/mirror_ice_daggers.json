@@ -1,0 +1,35 @@
+{
+  "slot": "weapon",
+  "generation": 2,
+  "series": "7階のレア装備",
+  "rarity": "epic",
+  "required_level": 30,
+  "jobs": [
+    "amemaru:rogue"
+  ],
+  "stats": {
+    "attack": 32,
+    "crit": 6
+  },
+  "durability": 600,
+  "binding": "on_equip",
+  "effects": [
+    {
+      "type": "double_hit",
+      "chance": 15,
+      "percent": 100
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:mirror_ice",
+      "count": 2
+    },
+    {
+      "item": "amemaru:prism_shard",
+      "count": 1
+    }
+  ],
+  "description": "鏡像獣リフレクタの、鏡のたてがみから削り出した二本ひと組の短剣。刃に映る自分の姿が、ほんの一瞬遅れて動く。斬りつけると、ときどき刃の中の写しも、同じ所を斬る。"
+}

@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "amemaru:block/light_target"
+    },
+    "lit=true": {
+      "model": "amemaru:block/light_target_lit"
+    }
+  }
+}

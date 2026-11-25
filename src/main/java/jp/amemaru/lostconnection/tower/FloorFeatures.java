@@ -33,19 +33,55 @@ import java.util.List;
  *       その日の村の短い場面 {@code event} が流れる。Phase 0-A 9章の6階「記憶の解凍」。11月25日）。封印の条件 {@code statues}：
  *       記憶の氷像がすべて溶けた（みんなで同じ。その日のうち）。{@code environment} の {@code sky}（{@code aurora}：オーロラの空）・
  *       {@code weather}（{@code snow}：雪が降る）</li>
+ *   <li>{@code light_mazes}：7階「氷の森林」の光の迷路（Phase 0-A 9章の7階「氷の鏡を動かして光を導く迷路」。11月25日）。光の泉
+ *       {@code source} から {@code direction} へ伸びる光が、氷の鏡（右クリックで「／」と「＼」が入れ替わる）で折れ、受け石
+ *       {@code target} に届くと、{@code door} の箱が開く（みんなで同じ。その日のうち）。封印の条件 {@code lights}：光の迷路を
+ *       すべて解いた</li>
+ *   <li>{@code passphrase}：合言葉の扉（7階。同じ表の「最奥の合言葉の扉は、パーティ全員が同じ合言葉をチャットに打つと開く」）。
+ *       {@code area} の中にいるパーティの全員が、{@code seconds} 秒のうちに同じ言葉をチャットに打つと、その人たちは封印を通れる
+ *       （封印の条件 {@code passphrase}。人ごと）</li>
  * </ul>
  */
 public record FloorFeatures(@Nullable Environment environment, List<LostWoods> lostWoods, List<Waypoint> waypoints,
                             @Nullable BlockPos travelStone, String sealRequires, List<StoryZone> storyZones,
                             List<Floodgate> floodgates, List<WaterSection> waterSections, List<Mural> murals, List<Song> songs,
                             List<Relic> relics, java.util.Map<String, List<BlockPos>> bossMarks, int abyssY,
-                            List<Hearth> hearths, List<MemoryStatue> memoryStatues) {
+                            List<Hearth> hearths, List<MemoryStatue> memoryStatues, List<LightMaze> lightMazes,
+                            @Nullable Passphrase passphrase) {
     /** 奈落のない階の {@link #abyssY}。 */
     public static final int NO_ABYSS = Integer.MIN_VALUE;
     public static final FloorFeatures NONE = new FloorFeatures(null, List.of(), List.of(), null, "pillars", List.of(), List.of(),
-            List.of(), List.of(), List.of(), List.of(), java.util.Map.<String, List<BlockPos>>of(), NO_ABYSS, List.of(), List.of());
+            List.of(), List.of(), List.of(), List.of(), java.util.Map.<String, List<BlockPos>>of(), NO_ABYSS, List.of(), List.of(),
+            List.of(), null);
     /** 11月25日（6階）：記憶の氷像がすべて溶けた（みんなで同じ。その日のうち）。 */
     public static final String SEAL_STATUES = "statues";
+    /** 11月25日（7階）：光の迷路をすべて解いた（みんなで同じ。その日のうち）。 */
+    public static final String SEAL_LIGHTS = "lights";
+    /** 11月25日（7階）：合言葉の扉で、パーティの全員が同じ合言葉を言った（人ごと）。 */
+    public static final String SEAL_PASSPHRASE = "passphrase";
+
+    /** 氷の鏡（7階）。{@code slash}：はじめ（朝）の向きが「／」か（でなければ「＼」）。 */
+    public record Mirror(BlockPos pos, boolean slash) {
+    }
+
+    /** 光の迷路（7階）。 */
+    public record LightMaze(String id, String name, BlockPos source, net.minecraft.core.Direction direction, BlockPos target,
+                            List<Mirror> mirrors, @Nullable Door door) {
+    }
+
+    /** 合言葉の扉（7階）。{@code area}：扉の前の、合言葉を言う所。 */
+    public record Passphrase(AABB area, int seconds) {
+    }
+
+    @Nullable
+    public LightMaze lightMaze(String id) {
+        for (LightMaze maze : lightMazes) {
+            if (maze.id().equals(id)) {
+                return maze;
+            }
+        }
+        return null;
+    }
 
     /** 熱の炉（6階。右クリックで熱の結晶をもらう）。 */
     public record Hearth(String id, String name, BlockPos pos) {
@@ -306,8 +342,10 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
         String seal = Json.optionalString(json, "seal_requires", SEAL_PILLARS);
         for (String token : seal.split("\\+")) {
             if (!token.equals(SEAL_PILLARS) && !token.equals(SEAL_LOST_WOODS) && !token.equals(SEAL_GUARDIANS)
-                    && !token.equals(SEAL_FLOODGATES) && !token.equals(SEAL_MURALS) && !token.equals(SEAL_STATUES)) {
-                throw new DefinitionException("「seal_requires」は pillars・lost_woods・guardians・floodgates・murals・statues を + でつないだものにしてください（今は "
+                    && !token.equals(SEAL_FLOODGATES) && !token.equals(SEAL_MURALS) && !token.equals(SEAL_STATUES)
+                    && !token.equals(SEAL_LIGHTS) && !token.equals(SEAL_PASSPHRASE)) {
+                throw new DefinitionException("「seal_requires」は pillars・lost_woods・guardians・floodgates・murals・statues・lights・passphrase を"
+                        + " + でつないだものにしてください（今は "
                         + seal + "）");
             }
         }
@@ -452,9 +490,40 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
         if (statues.size() > 16) {
             throw new DefinitionException("「memory_statues」は16までにしてください");
         }
+        List<LightMaze> mazes = new ArrayList<>();
+        for (JsonElement element : Json.optionalArray(json, "light_mazes")) {
+            JsonObject m = Json.asObject(element, "light_mazes");
+            String dirText = Json.string(m, "direction");
+            net.minecraft.core.Direction dir = net.minecraft.core.Direction.byName(dirText);
+            if (dir == null || dir.getAxis().isVertical()) {
+                throw new DefinitionException("「light_mazes.direction」は north・south・east・west のどれかにしてください（今は " + dirText + "）");
+            }
+            List<Mirror> mirrors = new ArrayList<>();
+            for (JsonElement me : Json.array(m, "mirrors")) {
+                JsonObject mo = Json.asObject(me, "light_mazes.mirrors");
+                mirrors.add(new Mirror(FloorDef.blockPos(Json.array(mo, "pos"), "mirrors.pos"), Json.optionalBoolean(mo, "slash", true)));
+            }
+            if (mirrors.isEmpty() || mirrors.size() > 32) {
+                throw new DefinitionException("「light_mazes.mirrors」は1〜32にしてください");
+            }
+            mazes.add(new LightMaze(Json.string(m, "id"), Json.optionalString(m, "name", ""), FloorDef.blockPos(Json.array(m, "source"),
+                    "light_mazes.source"), dir, FloorDef.blockPos(Json.array(m, "target"), "light_mazes.target"), List.copyOf(mirrors),
+                    door(Json.optionalObject(m, "door"), "light_mazes.door")));
+        }
+        if (requires(seal, SEAL_LIGHTS) && mazes.isEmpty()) {
+            throw new DefinitionException("「seal_requires」が lights なのに、「light_mazes」がありません");
+        }
+        Passphrase passphrase = null;
+        JsonObject pp = Json.optionalObject(json, "passphrase");
+        if (pp != null) {
+            passphrase = new Passphrase(box(Json.array(pp, "area"), "passphrase.area"), Json.optionalInt(pp, "seconds", 20, 5, 120));
+        }
+        if (requires(seal, SEAL_PASSPHRASE) && passphrase == null) {
+            throw new DefinitionException("「seal_requires」が passphrase なのに、「passphrase」がありません");
+        }
         return new FloorFeatures(env, List.copyOf(woods), List.copyOf(waypoints), travel, seal, List.copyOf(zones), List.copyOf(gates),
                 List.copyOf(sections), List.copyOf(murals), List.copyOf(songs), List.copyOf(relics), java.util.Map.copyOf(marks), abyss,
-                List.copyOf(hearths), List.copyOf(statues));
+                List.copyOf(hearths), List.copyOf(statues), List.copyOf(mazes), passphrase);
     }
 
     @Nullable

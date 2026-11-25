@@ -86,7 +86,8 @@ public final class PartyHud {
     private static void drawMember(GuiGraphics graphics, Font font, PartyStateS2C.Member member, int y) {
         graphics.fill(X - 2, y - 2, X - 2 + WIDTH, y + ROW - 4, PANEL);
         graphics.fill(X - 2, y - 2, X - 1, y + ROW - 4, member.down() ? DOWN : PANEL_EDGE);
-        String name = (member.leader() ? "★" : "") + member.name();
+        // 11月25日：ロスト状態「薄れ」のあいだは、仲間の名前が「？？？」に見える（この欄に自分は出ない）
+        String name = (member.leader() ? "★" : "") + (LostClientEvents.fade() ? LostClientEvents.HIDDEN : member.name());
         int nameColor = !member.online() ? TEXT_DIM : member.leader() ? LEADER : TEXT;
         graphics.drawString(font, font.plainSubstrByWidth(name, WIDTH - 34), X + 2, y, nameColor, true);
         // ダウンの間は、レベルの代わりに「ダウン 残りの秒」を同じ所に書く（重ならないように）

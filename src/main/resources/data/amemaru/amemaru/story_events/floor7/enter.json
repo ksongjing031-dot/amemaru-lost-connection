@@ -1,0 +1,53 @@
+{
+  "_comment": "初めて7階に入ったとき（本人だけ）。鏡のような氷の木々の森。氷に映る自分の姿が、ときどき別の仲間の姿になる（Phase 0-A 9章の7階の地形・環境）。7日目：リリアがプレイヤーを忘れる（物語フラグ ch2/lilia_forgot。サーバー全体。知らせは LiliaMemoryService が出す）。台詞は【補完】",
+  "title": "氷の森林",
+  "trigger": {
+    "type": "amemaru:floor_enter",
+    "floor": 7
+  },
+  "scope": "player",
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:wait",
+      "ticks": 60
+    },
+    {
+      "type": "amemaru:sound",
+      "sound": "minecraft:block.amethyst_block.resonate",
+      "volume": 0.9,
+      "pitch": 0.6
+    },
+    {
+      "type": "amemaru:title",
+      "title": "第2章　凍てついた記憶",
+      "subtitle": "7階　氷の森林",
+      "ticks": 110
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "氷の木々が、鏡のように光っている。枝のすきまに、自分の姿が映っていた……。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "……いや。映っているのは、隣を歩く仲間の顔だ。自分の顔は、どこにも映っていない。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "森の奥から、冷たい風が吹いてくる。誰かの名前を呼ぶ声が、途中でかすれて消えた。",
+      "ticks": 120,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "scope": "server",
+      "add": [
+        "amemaru:ch2/lilia_forgot"
+      ]
+    }
+  ]
+}

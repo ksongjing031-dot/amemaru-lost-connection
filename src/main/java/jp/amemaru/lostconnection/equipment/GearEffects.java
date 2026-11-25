@@ -125,6 +125,15 @@ public final class GearEffects {
             }
             if (effect.type() == SpecialEffect.Type.EXTRA_DAMAGE && target.isAlive()) {
                 PENDING.add(new PendingProc(target, dealt * effect.percent() / 100.0, source));
+            } else if (effect.type() == SpecialEffect.Type.DOUBLE_HIT && target.isAlive()) {
+                // 鏡の写しが、もう一度当たる（7階のボスのレア「鏡氷の短剣」）。白い光のかけらと、ガラスの鳴る音
+                PENDING.add(new PendingProc(target, dealt * effect.percent() / 100.0, source));
+                if (attacker.level() instanceof net.minecraft.server.level.ServerLevel level) {
+                    level.sendParticles(net.minecraft.core.particles.ParticleTypes.END_ROD, target.getX(), target.getY() + target.getBbHeight() * 0.6,
+                            target.getZ(), 8, 0.3, 0.4, 0.3, 0.05);
+                    level.playSound(null, target.getX(), target.getY(), target.getZ(), net.minecraft.sounds.SoundEvents.AMETHYST_BLOCK_HIT,
+                            net.minecraft.sounds.SoundSource.PLAYERS, 0.8F, 1.7F);
+                }
             } else if (effect.type() == SpecialEffect.Type.HEAL_ON_HIT) {
                 heal(attacker, data, dealt * effect.percent() / 100.0);
             }
@@ -152,6 +161,17 @@ public final class GearEffects {
     }
 
     // ---------------------------------------------------------------- 受ける
+
+    /** 装備の特殊効果のロスト耐性（%）の合計（7階の名のある魔物のレアのお守り）。上限は {@code LostService} が決める。 */
+    public static double lostResist(ServerPlayer player, PlayerData data) {
+        double sum = 0.0;
+        for (SpecialEffect effect : active(player, data)) {
+            if (effect.type() == SpecialEffect.Type.LOST_RESIST) {
+                sum += effect.percent();
+            }
+        }
+        return sum;
+    }
 
     /** 受けるダメージ（敵から）にかける倍率（被ダメージ減少と、近くの味方の「第七の門鍵」）。 */
     public static double incomingMultiplier(ServerPlayer player, PlayerData data) {

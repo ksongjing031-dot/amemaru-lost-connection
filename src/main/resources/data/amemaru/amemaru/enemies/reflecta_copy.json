@@ -1,0 +1,45 @@
+{
+  "_comment": "鏡像獣リフレクタが作る写し身（7階のボスの技 mirror。戦う人ひとりずつを写す。見た目は写し身と同じ）。写し身が残っている間、リフレクタは鏡の守りで硬い（ward 倍）。すべて倒すと、しばらく守りが割れる。図鑑には載せない。数値は【補完】",
+  "name": "写し身",
+  "model": "amemaru:mimic",
+  "floor": 7,
+  "level": 33,
+  "description": "鏡像獣のたてがみの鏡から生まれた、仲間の写し身。本物と同じ顔をしているが、名前は氷の色で、斬ればHPのバーが減っていく。",
+  "stats": {
+    "hp": 3600,
+    "attack": 175,
+    "defense": 12,
+    "move_speed": 0.27,
+    "follow_range": 40,
+    "aggro_range": 32
+  },
+  "exp": 0,
+  "skills": {
+    "slash": {
+      "power": 1.0,
+      "windup": 0.7,
+      "cooldown": 1.9,
+      "range": 2.6,
+      "angle": 100
+    },
+    "charge": {
+      "power": 1.4,
+      "windup": 1.1,
+      "cooldown": 9.0,
+      "range": 12.0,
+      "min_range": 4.0,
+      "speed": 0.9,
+      "width": 1.2,
+      "recover": 1.2
+    }
+  },
+  "behavior": {
+    "fade_seconds": 6.0
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/reflecta_copy",
+    "rare": []
+  },
+  "lost": true,
+  "bestiary": false
+}

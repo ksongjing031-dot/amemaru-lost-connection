@@ -1,0 +1,37 @@
+{
+  "_comment": "森林監視所の跡（本人だけ。一人一度）。古代記録「森林監視所の記録」の書見台がある【補完】",
+  "title": "森林監視所の跡",
+  "trigger": {
+    "type": "amemaru:floor_zone",
+    "floor": 7,
+    "zone": "watch_station"
+  },
+  "scope": "player",
+  "once": false,
+  "replayable": true,
+  "conditions": {
+    "flags_none": [
+      "amemaru:story/watch_station_seen"
+    ]
+  },
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "崩れた見張り所。昔、この森を見張っていた人たちがいたらしい。",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "書見台に、古い記録が残っている。……読めば、この森で何が起きたのか分かるかもしれない。",
+      "ticks": 120,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/watch_station_seen"
+      ]
+    }
+  ]
+}

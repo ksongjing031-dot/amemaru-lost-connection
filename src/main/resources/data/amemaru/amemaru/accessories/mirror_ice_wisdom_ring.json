@@ -1,0 +1,10 @@
+{
+  "_comment": "鏡氷の智環（7階。11月24日「階層ごとにアクセサリーも追加しましょう」【補完】。tools/datagen/build_floor_accessories.py）",
+  "slot": "ring",
+  "generation": 2,
+  "floor": 7,
+  "rarity": "uncommon",
+  "main": [
+    "magic"
+  ]
+}

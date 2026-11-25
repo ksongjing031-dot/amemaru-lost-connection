@@ -1,0 +1,43 @@
+{
+  "_comment": "入口の先の鏡の木立（本人だけ。一人一度）。ロストの侵食：映り込みが間違っている・名前が読めなくなる（Phase 0-A 9章の7階）【補完】",
+  "title": "鏡の木立",
+  "trigger": {
+    "type": "amemaru:floor_zone",
+    "floor": 7,
+    "zone": "mirror_grove"
+  },
+  "scope": "player",
+  "once": false,
+  "replayable": true,
+  "conditions": {
+    "flags_none": [
+      "amemaru:story/mirror_grove_seen"
+    ]
+  },
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "どの氷の幹にも、誰かが映っている。ひとつ、またひとつ。",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "……その中のひとりが、こちらを見て笑った。映っているはずの誰かは、隣にいないのに。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "名前を呼ぼうとして、気づく。――その人の名前が、読めない。",
+      "ticks": 120,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/mirror_grove_seen"
+      ]
+    }
+  ]
+}

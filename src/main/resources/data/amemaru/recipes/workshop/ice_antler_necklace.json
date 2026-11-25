@@ -1,0 +1,27 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "accessory",
+  "mastery": 4,
+  "mastery_exp": 24,
+  "ingredients": [
+    {
+      "item": "amemaru:ice_antler",
+      "count": 3
+    },
+    {
+      "item": "amemaru:frozen_fur",
+      "count": 1
+    },
+    {
+      "item": "amemaru:mirror_ice",
+      "count": 1
+    },
+    {
+      "item": "amemaru:pedestal_cloth",
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "amemaru:ice_antler_necklace"
+  }
+}

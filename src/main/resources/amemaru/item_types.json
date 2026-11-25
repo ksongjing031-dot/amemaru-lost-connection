@@ -167,6 +167,10 @@
     {
       "id": "frost_silver_gauntlets",
       "kind": "fist"
+    },
+    {
+      "id": "mirror_ice_daggers",
+      "kind": "daggers"
     }
   ],
   "shields": [
@@ -557,6 +561,37 @@
     {
       "id": "bear_frost_charm",
       "slot": "charm"
+    },
+    {
+      "id": "mirror_ice_battle_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "mirror_ice_wisdom_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "ice_antler_necklace",
+      "slot": "necklace",
+      "model": "geckolib"
+    },
+    {
+      "id": "icicle_bracelet",
+      "slot": "bracelet",
+      "model": "geckolib"
+    },
+    {
+      "id": "passphrase_charm",
+      "slot": "charm",
+      "model": "geckolib"
+    },
+    {
+      "id": "white_horn_charm",
+      "slot": "charm"
+    },
+    {
+      "id": "blizzard_lamp_charm",
+      "slot": "charm"
     }
   ],
   "materials": [
@@ -713,6 +748,26 @@
     {
       "id": "ice_feather",
       "rarity": "common"
+    },
+    {
+      "id": "mirror_ice",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "ice_antler",
+      "rarity": "common"
+    },
+    {
+      "id": "icicle_wing",
+      "rarity": "common"
+    },
+    {
+      "id": "blizzard_core",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "prism_shard",
+      "rarity": "rare"
     }
   ],
   "fruits": [
@@ -812,6 +867,11 @@
       "id": "memory_crystal",
       "kind": "memory",
       "stack": 1
+    },
+    {
+      "id": "knot_cord",
+      "kind": "knot_cord",
+      "stack": 16
     }
   ],
   "fish": [

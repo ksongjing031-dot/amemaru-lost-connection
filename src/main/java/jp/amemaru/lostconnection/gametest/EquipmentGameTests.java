@@ -121,7 +121,8 @@ public final class EquipmentGameTests {
         // Phase 8 その2 で、3階のボスのレア「水門の鍵盾」と、3階からの職業ごとの装備「流紋シリーズ」（6職業の防具24・武器7・盾1）が増えた
         // 11月25日：5階の守護者シリーズを防具一式に（6職業の頭・脚・足の18）と、6階のボスのレア「村長の毛皮」一式4、
         // 第2章の職業ごとの装備「霜銀シリーズ」（6職業の防具24・武器7・盾1）で132
-        check(helper, gear.equipment().size() == 132, "装備の定義が132ではありません：" + gear.equipment().size());
+        // 11月25日：7階のボスのレア「鏡氷の短剣」で133
+        check(helper, gear.equipment().size() == 133, "装備の定義が133ではありません：" + gear.equipment().size());
         for (ItemManifest.Category category : new ItemManifest.Category[]{
                 ItemManifest.Category.WEAPON, ItemManifest.Category.SHIELD, ItemManifest.Category.ARMOR}) {
             for (RegistryObject<Item> item : ModItems.MANIFEST.category(category)) {
@@ -131,7 +132,8 @@ public final class EquipmentGameTests {
         // Phase 5 で、1階のボスのレアのお守り「草原の角笛」が増えた
         // 11月24日：2〜5階のアクセサリー（階ごとに、作る5つと、名のある魔物が落とすレアのお守り1つ）の24が増えた
         // 11月25日：6階のアクセサリー（作る5つと、名のある魔物2体が落とすレアのお守り2つ）の7で38
-        check(helper, AccessoryDefs.all().size() == 38, "アクセサリーの定義が38ではありません：" + AccessoryDefs.all().size());
+        // 11月25日：7階のアクセサリー（作る5つと、名のある魔物2体が落とすレアのお守り2つ）の7で45
+        check(helper, AccessoryDefs.all().size() == 45, "アクセサリーの定義が45ではありません：" + AccessoryDefs.all().size());
         for (RegistryObject<Item> item : ModItems.MANIFEST.category(ItemManifest.Category.ACCESSORY)) {
             check(helper, AccessoryDefs.get(item.get()) != null, "アクセサリーの定義がありません：" + item.getId());
         }
@@ -143,7 +145,9 @@ public final class EquipmentGameTests {
         // Phase 8 その2：3階の雑魚4種（水門ネズミ・澱みスライムと小さな澱みスライム・水路掃除機兵・牙ナマズ）と名のある魔物3体、
         // ボス「大水門の番人ハイドラム」
         // 11月25日：6階の雑魚4種（霜狼・氷像の残響・凍て鳥・霜の欠け熊）と名のある魔物2体、ボス「村長の残響オルド」で44
-        check(helper, EnemyDefs.all().size() == 44, "敵の定義が44ではありません：" + EnemyDefs.all().keySet());
+        // 11月25日：7階の雑魚4種（写し身・氷角鹿・つらら蝙蝠・吹雪の精）と名のある魔物2体（白角・吹雪の大精）、
+        // ボス「鏡像獣リフレクタ」と、その写し身（図鑑には載せない）で52
+        check(helper, EnemyDefs.all().size() == 52, "敵の定義が52ではありません：" + EnemyDefs.all().keySet());
         EnemyDef alpha = EnemyDefs.get(AmemaruMod.id("tsunomofu_alpha"));
         check(helper, alpha != null && AmemaruMod.id("tsunomofu").equals(alpha.entity()) && alpha.behavior().getOrDefault("scale", 1.0) > 1.0,
                 "群れの長が、ツノモフの見た目を借りる大きな個体になっていません");
@@ -176,7 +180,8 @@ public final class EquipmentGameTests {
         // Phase 8 その2 で、流紋シリーズの32が増えた
         // 11月24日：2〜5階のアクセサリーの20が増えた
         // 11月25日：6階のアクセサリーの5と、霜銀シリーズの32、生産職どうしの部品3（補強金具・台座布・結晶細工）が増えた
-        check(helper, recipes.size() == 117, "工房のレシピが117ではありません：" + recipes.size());
+        // 11月25日：7階のアクセサリーの5が増えた
+        check(helper, recipes.size() == 122, "工房のレシピが122ではありません：" + recipes.size());
         for (WorkshopRecipe recipe : recipes) {
             check(helper, recipe.workshop().makes(recipe.result()), recipe.getId() + " の品が、その工房で作る品ではありません");
             check(helper, !recipe.ingredients().isEmpty(), recipe.getId() + " に素材がありません");
