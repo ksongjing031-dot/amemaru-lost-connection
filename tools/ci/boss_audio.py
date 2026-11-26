@@ -37,6 +37,10 @@ MIN_SCORE = 0.30
 MIN_RATIO = 1.6
 # 追いこんだあとは、曲が少しずつ 1.04 倍の速さになる
 PITCHES = (1.0, 1.02, 1.04)
+# 追いこんだ場面（〜_intense）は、雷の音（追いこんだ合図）が消え、曲の速さが 1.04 倍に落ち着いてから聞く
+# （速さは1 tickに残りの4%ずつ近づく。5.5秒で 1.039 倍。11月26日の最初の CI では、合図の直後の6秒に雷の音と
+#   速さの変わり目が入り、曲は鳴っていたのに「似ている度合い」が 0.25 にとどまった）
+INTENSE_FROM = 5.5
 
 
 def read_wav(path):
@@ -185,8 +189,9 @@ def main():
         clock = int(clock)
         start = max([c for c in clocks if c <= clock], default=clocks[0])
         offset = (clock - start) / 1000.0
-        a = int((offset + WINDOW_FROM) * rate)
-        b = int((offset + WINDOW_FROM + WINDOW_SECONDS) * rate)
+        start_from = INTENSE_FROM if label.endswith("_intense") else WINDOW_FROM
+        a = int((offset + start_from) * rate)
+        b = int((offset + start_from + WINDOW_SECONDS) * rate)
         engine = f"{active}（かけ直し{retries}）"
         if b > len(samples):
             row = f"| {label} | {boss} | {engine} | - | - | - | 録音の外（{offset:.0f}秒） |"
