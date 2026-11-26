@@ -72,8 +72,8 @@ public final class AwakeningGameTests {
             }
         }
         check(helper, monkLast >= latestOther, "モンクの最後の覚醒（Lv" + monkLast + "）が、ほかの職業（Lv" + latestOther + "）より早いです");
-        for (String name : List.of("weaponsmith", "armorsmith", "jeweler")) {
-            check(helper, job(name).awakenings().isEmpty(), name + "（生産職）に覚醒があります");
+        for (JobDef production : SkillRegistry.get().productionJobs()) {
+            check(helper, production.awakenings().isEmpty(), production.id() + "（生産職）に覚醒があります");
         }
         helper.succeed();
     }

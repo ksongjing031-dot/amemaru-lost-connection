@@ -192,8 +192,10 @@ public final class SkillMechanicsGameTests {
         try {
             Vec3 flat = flatLook(player);
             zombie.moveTo(player.getX() + flat.x * 1.5, player.getY(), player.getZ() + flat.z * 1.5, 0.0F, 0.0F);
+            // 11月27日：Lv12からのナイトの覚醒「誓いの火」の受けるダメージ −8% も入れる
             double base = 4.0 * ServerConfig.VANILLA_MOB_DAMAGE_MULTIPLIER.get()
-                    * DamageCalculator.mitigation(data.getStats().get(StatType.DEFENSE));
+                    * DamageCalculator.mitigation(data.getStats().get(StatType.DEFENSE))
+                    * (1.0 - jp.amemaru.lostconnection.job.AwakeningService.value(data, "taken") / 100.0);
             long now = helper.getLevel().getGameTime();
             SkillExecutor.applyBuff(player, BuffKind.WARD, 20, 20.0, now, null);
             check(helper, player.hasEffect(ModEffects.WARD.get()), "誓いの円陣のアイコン（効果）が付いていません");
