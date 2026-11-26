@@ -156,6 +156,8 @@ public final class LevelService {
                     .withStyle(ChatFormatting.GOLD), false);
             player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                     SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 0.8F, 1.0F);
+            // 覚醒（11月27日）：このレベルで目覚めたものを知らせる
+            jp.amemaru.lostconnection.job.AwakeningService.onLevelChanged(player, data, oldLevel, newLevel);
         }
         data.markDirty(PlayerData.SYNC_GROWTH);
     }

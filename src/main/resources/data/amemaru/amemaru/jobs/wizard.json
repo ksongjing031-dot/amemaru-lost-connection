@@ -61,5 +61,33 @@
     },
     "chant_level": 3,
     "charge_level": 3
-  }
+  },
+  "awakenings": [
+    {
+      "id": "star_cycle",
+      "level": 16,
+      "name": "星の巡り",
+      "description": "星の巡りと呼吸が合う。スキルのクールダウン−15%・スキルのダメージ+10%（奥義のクールダウンは変わらない）。",
+      "values": {
+        "cooldown": 15,
+        "skill_damage": 10
+      }
+    },
+    {
+      "id": "archmage",
+      "level": 30,
+      "name": "大魔導",
+      "description": "ひとつの詠唱が、ふたつの響きになる。詠唱か溜めのある攻撃のスキルは、少し遅れてもう一度響く（ダメージの50%。二重詠唱）。スキルのダメージ+10%。",
+      "values": {
+        "skill_damage": 10
+      },
+      "echo": {
+        "when": [
+          "cast"
+        ],
+        "percent": 50,
+        "delay": 10
+      }
+    }
+  ]
 }

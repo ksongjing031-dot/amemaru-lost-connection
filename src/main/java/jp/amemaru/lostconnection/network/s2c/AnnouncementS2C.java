@@ -19,7 +19,9 @@ public record AnnouncementS2C(Kind kind, String text) {
         SCHEDULE("announce.amemaru.kind.schedule", 0xFFE9A8),
         EVENT("announce.amemaru.kind.event", 0xFFD9F0),
         STORY("announce.amemaru.kind.story", 0xCFF5FF),
-        BOSS("announce.amemaru.kind.boss", 0xFFB08A);
+        BOSS("announce.amemaru.kind.boss", 0xFFB08A),
+        /** 覚醒（11月27日。本人だけに送る）。 */
+        AWAKEN("announce.amemaru.kind.awaken", 0xFFC46B);
 
         private final String labelKey;
         private final int color;

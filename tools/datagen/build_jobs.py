@@ -279,10 +279,22 @@ def table(all_skills):
              "11月26日から、ウィザード・アーチャー・ヒーラーの攻撃のスキルは、放ったあと少しの間、足がほぼ止まります（硬直。職業の "
              "`attack_lock`。ウィザード 0.4〜1.2秒・アーチャー 0.25〜0.6秒・ヒーラーは攻撃の鈴だけ。移動の技と、仲間を支える技には"
              "つきません）。スキルごとの秒は [`docs/phase8_1126.md`](phase8_1126.md) の「遠距離職の硬直」。", ""]
+    lines += ["11月27日から、どの職業にも「覚醒」があります（ご指示「どの役職もどこかのタイミングで強くなるタイミングを（パワースパイク）」"
+              "【補完】）。そのレベルになると、スキルポイントを使わずに自動で効きます。職業の `awakenings`。"
+              "くわしくは [`docs/phase8_1127.md`](phase8_1127.md) の「覚醒」。", ""]
     original = original_names()
     for job in ["knight", "wizard", "healer", "archer", "rogue", "monk"]:
         lines.append(f"## {JOB_NAMES[job]}")
         lines.append("")
+        awakenings = job_awakenings(job)
+        if awakenings:
+            lines.append("### 覚醒（11月27日）")
+            lines.append("")
+            lines.append("| Lv | 覚醒 | 効果 |")
+            lines.append("| --- | --- | --- |")
+            for a in awakenings:
+                lines.append(f"| Lv{a['level']} | {a['name']} | {a['description']} |")
+            lines.append("")
         schools = []
         for s in all_skills:
             if s["job"] == job and s["school"] not in schools:
@@ -339,6 +351,15 @@ def mp_text(mp, job, min_level):
     values = mp if isinstance(mp, list) else [mp]
     shown = [int(round(max(0.0, v) * scale)) for v in values]
     return "→".join(str(v) for v in shown) if len(set(shown)) > 1 else str(shown[0])
+
+
+def job_awakenings(job):
+    """職業の覚醒（knight・wizard はデータパックの JSON、ほかはこのスクリプトの JOB）。"""
+    if job in NEW_JOBS:
+        return NEW_JOBS[job].get("awakenings", [])
+    path = os.path.join(DATA, "jobs", job + ".json")
+    with open(path, encoding="utf-8") as f:
+        return json.load(f).get("awakenings", [])
 
 
 def original_names():

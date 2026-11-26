@@ -47,6 +47,10 @@ public final class SkillContext {
     public boolean presenceCounted;
     /** 影分身の「もう一度斬る」のダメージか（影分身をくり返さないため）。 */
     public boolean echo;
+    /** 覚醒の「もう一度」の割合（%。0なら出ない。11月27日）と、遅れ（tick）と、このスキルで出した数。 */
+    public double awakenEcho;
+    public int awakenEchoDelay = 6;
+    public int awakenEchoCount;
     /** 必ず会心にするか（極めの一撃で、連撃が最大のとき）。 */
     public boolean forceCrit;
     /** いま与えているダメージが無視する防御の割合（%。ダメージの効果ごとに決める）。 */

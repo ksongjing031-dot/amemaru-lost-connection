@@ -163,6 +163,8 @@ public final class CombatTextRenderer {
             case ABSORBED -> addAbove(entity, amount + " " + Component.translatable("combat.amemaru.absorbed").getString(),
                     0xFFF2A8, 0x3A2A00, 0.9F, now);
             case POISON -> addAbove(entity, amount, 0x9CF060, 0x143A00, 0.9F, now);
+            // 覚醒の「もう一度」（11月27日）：大きめの橙
+            case ECHO -> addAbove(entity, "✦" + amount, 0xFFB86B, 0x4A1600, 1.6F, now);
             default -> {
             }
         }

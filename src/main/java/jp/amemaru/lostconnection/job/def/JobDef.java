@@ -111,6 +111,49 @@ public final class JobDef {
         }
     }
 
+    /**
+     * 覚醒（11月27日のご指示「どの役職もどこかのタイミングで強くなるタイミングを追加する（パワースパイクのようなもの）」【補完】）。
+     * そのレベルになると、スキルポイントを使わずに自動で効く（職業を変えれば、その職業の覚醒に入れ替わる）。
+     *
+     * <p>{@code values} に書ける数（どれも足し算。%は与える・受ける量に掛ける）：</p>
+     * <ul>
+     *   <li>{@code damage}：与えるダメージ +%（通常の攻撃も）・{@code skill_damage}：スキルのダメージ +%・
+     *       {@code finisher_damage}：締めの技（【極】と、連携の「追撃」）のダメージ +%</li>
+     *   <li>{@code crit}：会心の確率 +・{@code crit_damage}：会心ダメージ +%・{@code taken}：受けるダメージ −%</li>
+     *   <li>{@code cooldown}：スキルのクールダウン −%・{@code heal}：回復の量 +%</li>
+     *   <li>{@code gauge_max}：専用ゲージの最大 +・{@code combo_max}：連撃の最大 +・{@code combo_finisher_per_step}：【極】の、
+     *       連撃1つごとの上乗せ +%・{@code combo_mp}：連撃が1つ増えるたびに、最大MPの何%が戻るか</li>
+     *   <li>{@code ally_power}：回復した仲間の与えるダメージ +%（{@code ally_power_seconds} 秒）</li>
+     * </ul>
+     * <p>{@code scaling}：レベルで伸びる与えるダメージ（{@code from} を超えた1レベルにつき {@code per_level}%、{@code cap}% まで）。
+     * {@code echo}：条件を満たしたスキルのダメージが、少し遅れてもう一度（与えたダメージの {@code percent}%）。条件は
+     * {@code combo_full}（連撃が最大のまま【極】）・{@code gauge_burst}（ゲージを {@code min_gauge} 以上使った技）・
+     * {@code cast}（詠唱か溜めのある技）・{@code charge_full}（最大まで溜めた技）・{@code gauge_cost}（ゲージを使う技）。</p>
+     */
+    public record Awakening(String id, int level, String name, String description, Map<String, Double> values,
+                            @Nullable LevelScaling scaling, @Nullable Echo echo) {
+        public double value(String key) {
+            Double v = values.get(key);
+            return v == null ? 0.0 : v;
+        }
+    }
+
+    /** 覚醒の、レベルで伸びる与えるダメージ。 */
+    public record LevelScaling(int from, double perLevel, double cap) {
+        public double at(int level) {
+            return Math.min(cap, Math.max(0, level - from) * perLevel);
+        }
+    }
+
+    /** 覚醒の「もう一度」。 */
+    public record Echo(Set<String> when, double percent, double minGauge, int delayTicks) {
+        public static final Set<String> CONDITIONS = Set.of("combo_full", "gauge_burst", "cast", "charge_full", "gauge_cost");
+    }
+
+    /** 覚醒の {@code values} に書ける名前。 */
+    public static final Set<String> AWAKENING_KEYS = Set.of("damage", "skill_damage", "finisher_damage", "crit", "crit_damage", "taken",
+            "cooldown", "heal", "gauge_max", "combo_max", "combo_finisher_per_step", "combo_mp", "ally_power", "ally_power_seconds");
+
     private final ResourceLocation id;
     private final Kind kind;
     private final int order;
@@ -145,6 +188,8 @@ public final class JobDef {
     /** 攻撃のあとの硬直（ない職業は null。11月26日）。 */
     @Nullable
     private AttackLock attackLock;
+    /** 覚醒（レベルの低い順。11月27日）。 */
+    private List<Awakening> awakenings = List.of();
 
     private JobDef(ResourceLocation id, Kind kind, int order, String name, String role, String description, int color,
                    ResourceLocation icon, @Nullable TagKey<Item> weapons, String weaponText, Set<String> tags,
@@ -290,7 +335,69 @@ public final class JobDef {
                     basic == null ? 0.0 : Json.optionalDouble(basic, "seconds", 0.0, 0.0, 5.0),
                     basic == null ? 0 : Json.optionalInt(basic, "level", 0, 0, AttackLock.MAX_LEVEL));
         }
+        def.awakenings = parseAwakenings(json);
         return def;
+    }
+
+    private static List<Awakening> parseAwakenings(JsonObject json) {
+        if (!json.has("awakenings")) {
+            return List.of();
+        }
+        JsonArray array = Json.array(json, "awakenings");
+        List<Awakening> list = new ArrayList<>();
+        Set<String> ids = new HashSet<>();
+        for (int i = 0; i < array.size(); i++) {
+            String where = "awakenings[" + i + "]";
+            if (!array.get(i).isJsonObject()) {
+                throw new DefinitionException("「" + where + "」はオブジェクトにしてください");
+            }
+            JsonObject entry = array.get(i).getAsJsonObject();
+            String awakeningId = Json.string(entry, "id");
+            if (!ids.add(awakeningId)) {
+                throw new DefinitionException("覚醒「" + awakeningId + "」が2つあります");
+            }
+            Map<String, Double> values = new LinkedHashMap<>();
+            JsonObject valuesJson = Json.optionalObject(entry, "values");
+            if (valuesJson != null) {
+                for (Map.Entry<String, JsonElement> value : valuesJson.entrySet()) {
+                    if (!AWAKENING_KEYS.contains(value.getKey())) {
+                        throw new DefinitionException("「" + where + ".values」の「" + value.getKey() + "」は使えません（使えるのは "
+                                + String.join("・", new java.util.TreeSet<>(AWAKENING_KEYS)) + "）");
+                    }
+                    values.put(value.getKey(), Json.optionalDouble(valuesJson, value.getKey(), 0.0, -100.0, 1000.0));
+                }
+            }
+            LevelScaling scaling = null;
+            JsonObject scalingJson = Json.optionalObject(entry, "scaling");
+            if (scalingJson != null) {
+                scaling = new LevelScaling(Json.optionalInt(scalingJson, "from", 1, 0, 200),
+                        Json.optionalDouble(scalingJson, "per_level", 0.0, 0.0, 100.0),
+                        Json.optionalDouble(scalingJson, "cap", 100.0, 0.0, 1000.0));
+            }
+            Echo echo = null;
+            JsonObject echoJson = Json.optionalObject(entry, "echo");
+            if (echoJson != null) {
+                Set<String> when = new HashSet<>();
+                JsonArray whenJson = Json.array(echoJson, "when");
+                for (JsonElement element : whenJson) {
+                    String condition = element.getAsString();
+                    if (!Echo.CONDITIONS.contains(condition)) {
+                        throw new DefinitionException("「" + where + ".echo.when」の「" + condition + "」は使えません（使えるのは "
+                                + String.join("・", new java.util.TreeSet<>(Echo.CONDITIONS)) + "）");
+                    }
+                    when.add(condition);
+                }
+                if (when.isEmpty()) {
+                    throw new DefinitionException("「" + where + ".echo.when」に条件を1つ以上書いてください");
+                }
+                echo = new Echo(Collections.unmodifiableSet(when), Json.optionalDouble(echoJson, "percent", 50.0, 1.0, 500.0),
+                        Json.optionalDouble(echoJson, "min_gauge", 0.0, 0.0, 1000.0), Json.optionalInt(echoJson, "delay", 6, 1, 40));
+            }
+            list.add(new Awakening(awakeningId, Json.optionalInt(entry, "level", 1, 1, 200), Json.string(entry, "name"),
+                    Json.optionalString(entry, "description", ""), Collections.unmodifiableMap(values), scaling, echo));
+        }
+        list.sort(java.util.Comparator.comparingInt(Awakening::level));
+        return Collections.unmodifiableList(list);
     }
 
     private static void readStats(@Nullable JsonObject object, double[] target, String where, double min, double max) {
@@ -383,6 +490,11 @@ public final class JobDef {
     @Nullable
     public AttackLock attackLock() {
         return attackLock;
+    }
+
+    /** 覚醒（レベルの低い順。ない職業は空。11月27日）。 */
+    public List<Awakening> awakenings() {
+        return awakenings;
     }
 
     public List<SchoolDef> schools() {

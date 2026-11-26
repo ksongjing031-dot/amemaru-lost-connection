@@ -208,6 +208,8 @@ public class SkillTreeScreen extends Screen {
     private Rect helpRect;
     @Nullable
     private Rect upperRect;
+    /** 覚醒の行（11月27日。ツールチップで説明を出す）。 */
+    private final List<Rect> awakenRects = new ArrayList<>();
     @Nullable
     private Rect descriptionRect;
     @Nullable
@@ -939,6 +941,7 @@ public class SkillTreeScreen extends Screen {
         pointsRect = null;
         helpRect = null;
         upperRect = null;
+        awakenRects.clear();
         descriptionRect = null;
         linesRect = null;
         rankTabsCount = 0;
@@ -1392,6 +1395,25 @@ public class SkillTreeScreen extends Screen {
             graphics.drawString(font, UiStyle.clip(font, gauge, width), x, y, 0xFF000000 | job.gaugeColor(), false);
             y += 14;
         }
+        // 覚醒（11月27日）：レベルで自動で目覚める。目覚めたものは金色、まだのものは暗く（くわしくはツールチップ）
+        awakenRects.clear();
+        if (!job.awakenings().isEmpty() && y + 10 <= bottom) {
+            graphics.drawString(font, UiStyle.clip(font, Component.translatable("screen.amemaru.skill_tree.awaken").getString(), width), x, y,
+                    UiStyle.TEXT_HEADER, false);
+            y += 11;
+            for (SyncDefinitionsS2C.AwakeningInfo awakening : job.awakenings()) {
+                if (y + 10 > bottom) {
+                    break;
+                }
+                boolean on = state.level() >= awakening.level();
+                String line = Component.translatable(on ? "screen.amemaru.skill_tree.awaken_on" : "screen.amemaru.skill_tree.awaken_off",
+                        awakening.level(), awakening.name()).getString();
+                graphics.drawString(font, UiStyle.clip(font, line, width), x + 2, y, on ? UiStyle.TEXT_GOLD : UiStyle.TEXT_DIM, false);
+                awakenRects.add(new Rect(x, y - 1, right, y + 9));
+                y += 10;
+            }
+            y += 4;
+        }
         if (y + 10 <= bottom) {
             UiStyle.wrapped(graphics, font, Component.translatable("screen.amemaru.skill_tree.core_hint").getString(), x, y, width,
                     UiStyle.TEXT_DIM, Math.max(1, (bottom - y) / 10));
@@ -1693,6 +1715,26 @@ public class SkillTreeScreen extends Screen {
 
     // ---------------------------------------------------------------- ツールチップ
 
+    /** 覚醒の行にマウスがあれば、その説明（11月27日）。 */
+    @Nullable
+    private List<FormattedCharSequence> awakenTooltip(JobInfo job, ClientPlayerState state, int mouseX, int mouseY) {
+        for (int i = 0; i < awakenRects.size() && i < job.awakenings().size(); i++) {
+            if (!awakenRects.get(i).contains(mouseX, mouseY)) {
+                continue;
+            }
+            SyncDefinitionsS2C.AwakeningInfo awakening = job.awakenings().get(i);
+            List<FormattedCharSequence> lines = new ArrayList<>();
+            lines.add(Component.literal(awakening.name()).withStyle(ChatFormatting.GOLD).getVisualOrderText());
+            boolean on = state.level() >= awakening.level();
+            lines.add(Component.translatable(on ? "screen.amemaru.skill_tree.awaken_done" : "screen.amemaru.skill_tree.awaken_todo",
+                    awakening.level()).withStyle(on ? ChatFormatting.YELLOW : ChatFormatting.GRAY).getVisualOrderText());
+            lines.addAll(UiStyle.tooltipLines(font, awakening.description(), 220));
+            lines.add(Component.translatable("screen.amemaru.skill_tree.awaken_help").withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+            return lines;
+        }
+        return null;
+    }
+
     private void renderTooltips(GuiGraphics graphics, ClientPlayerState state, JobInfo job, int mouseX, int mouseY, int hovered,
                                 int hoveredSlot) {
         List<FormattedCharSequence> lines = null;
@@ -1701,6 +1743,8 @@ public class SkillTreeScreen extends Screen {
             lines = UiStyle.tooltipLines(font, Component.translatable("screen.amemaru.skill_tree.points_help").getString(), 220);
         } else if (helpRect != null && helpRect.contains(mouseX, mouseY)) {
             lines = UiStyle.tooltipLines(font, Component.translatable("screen.amemaru.skill_tree.help").getString(), 220);
+        } else if (awakenTooltip(job, state, mouseX, mouseY) != null) {
+            lines = awakenTooltip(job, state, mouseX, mouseY);
         } else if (upperRect != null && upperRect.contains(mouseX, mouseY) && job.hasUpper()) {
             lines = UiStyle.tooltipLines(font, Component.translatable("screen.amemaru.skill_tree.upper_help", job.upperName(), job.upperMinDay(),
                     job.upperMinLevel()).getString(), 220);

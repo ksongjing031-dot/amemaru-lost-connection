@@ -16,6 +16,15 @@ JOB = {
     "weapon_text": "鈴杖",
     "tags": ["magic", "support", "healer"],
     "stats": {"percent": {"mp": 40, "magic": 15, "defense": 5, "attack": -20}},
+    # 11月27日のご指示「どの役職もどこかのタイミングで強くなるタイミングを（パワースパイク）」【補完】
+    "awakenings": [
+        {"id": "blessing_tune", "level": 14, "name": "祝福の調べ",
+         "description": "鈴の音が、まっすぐ届くようになる。回復の量+20%・スキルのクールダウン−10%（奥義は変わらない）。",
+         "values": {"heal": 20, "cooldown": 10}},
+        {"id": "festival", "level": 30, "name": "祝祭",
+         "description": "癒しが、仲間の力になる。回復した仲間は6秒、与えるダメージ+12%。回復の量+10%。",
+         "values": {"ally_power": 12, "ally_power_seconds": 6, "heal": 10}},
+    ],
     "schools": [
         {"id": "healing", "name": "癒し",
          "description": "仲間の傷を癒し、倒れた仲間を呼び戻す流派。ひとりを大きく癒す鈴、みんなを包む輪と雨、命の糸。",

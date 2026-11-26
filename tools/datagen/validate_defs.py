@@ -357,6 +357,36 @@ class Validator:
 
     # ------------------------------------------------------------------ 全体
 
+    AWAKENING_KEYS = {"damage", "skill_damage", "finisher_damage", "crit", "crit_damage", "taken", "cooldown", "heal", "gauge_max",
+                      "combo_max", "combo_finisher_per_step", "combo_mp", "ally_power", "ally_power_seconds"}
+    ECHO_CONDITIONS = {"combo_full", "gauge_burst", "cast", "charge_full", "gauge_cost"}
+
+    def check_awakenings(self, job_id: str, data: dict) -> None:
+        """覚醒（11月27日。JobDef.parseAwakenings と同じ決まり）。"""
+        ids = set()
+        for i, entry in enumerate(data.get("awakenings", [])):
+            where = f"jobs/{job_id}：awakenings[{i}]"
+            if not isinstance(entry, dict) or not entry.get("id") or not entry.get("name"):
+                self.problems.append(f"{where} に id と name を書いてください")
+                continue
+            if entry["id"] in ids:
+                self.problems.append(f"{where}：覚醒「{entry['id']}」が2つあります")
+            ids.add(entry["id"])
+            if not 1 <= int(entry.get("level", 1)) <= 200:
+                self.problems.append(f"{where}：level は 1〜200")
+            for key in entry.get("values", {}):
+                if key not in self.AWAKENING_KEYS:
+                    self.problems.append(f"{where}：values の「{key}」は使えません")
+            echo = entry.get("echo")
+            if echo is not None:
+                when = echo.get("when", [])
+                if not when or any(w not in self.ECHO_CONDITIONS for w in when):
+                    self.problems.append(f"{where}：echo.when は {sorted(self.ECHO_CONDITIONS)} から1つ以上")
+            if "combo_max" in entry.get("values", {}) and "combo" not in data:
+                self.problems.append(f"{where}：連撃のない職業に combo_max があります")
+            if "gauge_max" in entry.get("values", {}) and "gauge" not in data:
+                self.problems.append(f"{where}：専用ゲージのない職業に gauge_max があります")
+
     def run(self) -> int:
         jobs = {}
         for path in sorted((DATA / "jobs").glob("*.json")):
@@ -369,6 +399,7 @@ class Validator:
             schools = data.get("schools", [])
             if data.get("kind", "combat") == "combat" and not 1 <= len(schools) <= 3:
                 self.problems.append(f"jobs/{job_id}：流派は1〜3つにしてください")
+            self.check_awakenings(job_id, data)
             if len(data.get("starting_skills", [])) > 6:
                 self.problems.append(f"jobs/{job_id}：「starting_skills」は6つまで")
         skills = {}

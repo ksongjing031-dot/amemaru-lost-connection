@@ -24,6 +24,16 @@ JOB = {
         "still_gain": 6,
         "hit_gain": 5,
     },
+    # 11月27日のご指示「どの役職もどこかのタイミングで強くなるタイミングを（パワースパイク）」【補完】
+    "awakenings": [
+        {"id": "archer_eye", "level": 14, "name": "射手の眼",
+         "description": "急所の在りかが、ひと目で分かる。会心+10・会心ダメージ+30%・与えるダメージ+5%。",
+         "values": {"crit": 10, "crit_damage": 30, "damage": 5}},
+        {"id": "heaven_bow", "level": 30, "name": "天弓",
+         "description": "放った矢が、光の矢を連れてくる。最大まで溜めた矢と、集中を使う技は、少し遅れて光の矢がもう一度（ダメージの50%）。スキルのダメージ+5%。",
+         "values": {"skill_damage": 5},
+         "echo": {"when": ["charge_full", "gauge_cost"], "percent": 50, "delay": 8}},
+    ],
     "schools": [
         {"id": "sniping", "name": "狙撃",
          "description": "一矢を研ぎすます流派。標の矢で仲間を導き、縫い止めで足を止め、集中を込めた矢で遠くから射抜く。",

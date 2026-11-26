@@ -197,6 +197,25 @@ public class JobSelectScreen extends Screen {
                     0xFF000000 | job.gaugeColor(), false);
             lineY += 10;
         }
+        // 覚醒（11月27日）：強くなるレベル。マウスを乗せると、それぞれの説明
+        if (!job.awakenings().isEmpty()) {
+            List<String> levels = new ArrayList<>();
+            for (SyncDefinitionsS2C.AwakeningInfo awakening : job.awakenings()) {
+                levels.add("Lv" + awakening.level());
+            }
+            Component text = Component.translatable("screen.amemaru.job.awaken", String.join("・", levels));
+            graphics.drawString(font, text, x + 6, lineY, 0xFFFFC46B, false);
+            if (mouseX >= x + 6 && mouseX < x + 6 + font.width(text) && mouseY >= lineY - 1 && mouseY < lineY + 9) {
+                List<net.minecraft.util.FormattedCharSequence> lines = new ArrayList<>();
+                for (SyncDefinitionsS2C.AwakeningInfo awakening : job.awakenings()) {
+                    lines.add(Component.translatable("screen.amemaru.job.awaken_line", awakening.level(), awakening.name())
+                            .withStyle(net.minecraft.ChatFormatting.GOLD).getVisualOrderText());
+                    lines.addAll(UiStyle.tooltipLines(font, awakening.description(), 200));
+                }
+                setTooltipForNextRenderPass(lines);
+            }
+            lineY += 10;
+        }
         String stats = statText(job);
         if (!stats.isEmpty()) {
             lineY += 10 * UiStyle.wrapped(graphics, font, stats, x + 6, lineY, CARD_WIDTH - 12, UiStyle.TEXT_GOOD, 2);

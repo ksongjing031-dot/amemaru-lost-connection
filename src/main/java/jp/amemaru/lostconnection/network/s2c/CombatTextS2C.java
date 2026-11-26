@@ -56,7 +56,9 @@ public final class CombatTextS2C {
         /** 起き上がった（呼び戻し）。 */
         REVIVE,
         /** 身代わりの鈴が砕けた。 */
-        SAVED;
+        SAVED,
+        /** 覚醒の「もう一度」のダメージ（11月27日）。 */
+        ECHO;
 
         private static final Kind[] VALUES = values();
 
