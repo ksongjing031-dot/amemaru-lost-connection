@@ -83,6 +83,8 @@ public final class VitalsService {
         }
         double delta = (actual - expected) / vanillaMax * data.getStats().maxHp();
         data.setHp(data.getHp() + delta);
+        // 写した分は、もう一度写さない（11月27日：置き直す前にも写すようにしたので、同じ変化を2回写さないように）
+        data.setExpectedVanillaHealth(actual);
         if (delta < 0) {
             data.markCombat(player.level().getGameTime());
         }
