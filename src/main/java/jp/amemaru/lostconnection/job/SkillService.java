@@ -207,6 +207,8 @@ public final class SkillService {
         int ticks = Math.max(1, Mth.ceil(skill.chargeTime() * 20.0));
         data.setCasting(new CastState(skill.id(), rank, slot, now, now + ticks, -1, null, true));
         player.addEffect(new MobEffectInstance(ModEffects.CHARGING.get(), ticks + CHARGE_HOLD_TICKS + 4, 0, false, false, true));
+        // 11月26日：遠距離職の攻撃の溜め（引き絞り）の間は、足がほぼ止まる（職業の attack_lock）
+        AttackLockService.duringCast(player, skill, ticks + CHARGE_HOLD_TICKS + 2, true);
         new SkillFxS2C(SkillFxS2C.Phase.CHARGE_START, player.getId(), index, player.position(), player.position(),
                 (float) skill.delivery().radius(rank), ticks, new int[0], 0.0F).sendNear(player.level().dimension(), player.position());
         SoundEvent sound = ModSounds.byId(skill.castSound());
@@ -235,6 +237,7 @@ public final class SkillService {
                                         @Nullable Vec3 pointAim) {
         data.setCasting(null);
         player.removeEffect(ModEffects.CHARGING.get());
+        AttackLockService.endCast(player, casting.skill(), true);
         SkillRegistry.Snapshot snapshot = SkillRegistry.get();
         SkillDef skill = snapshot.skill(casting.skill());
         JobDef job = snapshot.job(data.getCombatJob());
@@ -320,6 +323,8 @@ public final class SkillService {
                                   SkillTargeting.Aim aim, long now) {
         data.setCasting(new CastState(skill.id(), rank, slot, now, now + ticks, aim.entityId(), aim.point(), false));
         player.addEffect(new MobEffectInstance(ModEffects.CHANTING.get(), ticks + 2, 0, false, false, true));
+        // 11月26日：遠距離職の攻撃の魔法の詠唱の間は、足がほぼ止まる（職業の attack_lock）
+        AttackLockService.duringCast(player, skill, ticks, false);
         Vec3 to = aim.point() != null ? aim.point() : aim.entity() != null ? aim.entity().position() : player.position();
         // 線の技は、詠唱の間に向く先の印を出すため、半径の代わりに長さを送る
         float shape = (float) (skill.delivery().type() == DeliveryDef.Type.LINE ? skill.delivery().range(rank) : skill.delivery().radius(rank));
@@ -342,6 +347,7 @@ public final class SkillService {
         }
         data.setCasting(null);
         player.removeEffect(casting.charging() ? ModEffects.CHARGING.get() : ModEffects.CHANTING.get());
+        AttackLockService.endCast(player, casting.skill(), casting.charging());
         int index = SkillRegistry.get().skillIndex(casting.skill());
         new SkillFxS2C(SkillFxS2C.Phase.CAST_CANCEL, player.getId(), index, player.position(), player.position(), 0, 0, new int[0])
                 .sendNear(player.level().dimension(), player.position());
@@ -354,6 +360,7 @@ public final class SkillService {
     private static void finishCast(ServerPlayer player, PlayerData data, CastState casting, long now) {
         data.setCasting(null);
         player.removeEffect(ModEffects.CHANTING.get());
+        AttackLockService.endCast(player, casting.skill(), false);
         SkillRegistry.Snapshot snapshot = SkillRegistry.get();
         SkillDef skill = snapshot.skill(casting.skill());
         JobDef job = snapshot.job(data.getCombatJob());
@@ -456,6 +463,8 @@ public final class SkillService {
         SkillExecutor.deliver(ctx, player, aim);
         // スキルを使うたびに、武器の耐久が減る（Phase 3）
         jp.amemaru.lostconnection.equipment.GearService.wearWeapon(player, true);
+        // 11月26日：遠距離職の攻撃のスキルのあとの硬直（職業の attack_lock。移動の技・支える技にはつかない）
+        AttackLockService.afterSkill(player, skill, rank);
     }
 
     /** クールダウンの長さ（tick）。クールダウン短縮をかける。 */

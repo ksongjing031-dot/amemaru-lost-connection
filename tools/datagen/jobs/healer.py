@@ -32,6 +32,12 @@ JOB = {
         "min_level": 60,
         "min_day": 11,
     },
+    # 11月26日のご指示「遠距離職は攻撃の際に…硬直やほぼほぼ動けないスロウ効果」【補完】：攻撃の鈴だけ、ウィザードと同じ硬直
+    # （0.4〜1.2秒、ほぼ止まる）。回復・強化・障壁などで仲間も支える鈴（exempt_support）は、今までどおり動ける
+    "_comment_attack_lock": "11月26日【補完】：攻撃の鈴だけ、放ったあと0.4〜1.2秒ほぼ止まる（ウィザードと同じ）。仲間も支える鈴は動ける",
+    "attack_lock": {
+        "skill": {"base": 0.3, "per_cooldown": 0.05, "min": 0.4, "max": 1.2, "level": 3, "exempt_support": True},
+    },
 }
 
 ALLY = d_target(20, allies=True, fallback_self=True, smart=True)

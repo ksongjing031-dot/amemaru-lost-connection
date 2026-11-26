@@ -163,7 +163,7 @@ public class Veldhorn extends AmemaruBoss {
     }
 
     private EnemyDef.Skill earthRoarSkill() {
-        return skill("earth_roar", 1.6, 9.0, 60.0, 40.0);
+        return skill("earth_roar", 3.2, 9.0, 60.0, 40.0);
     }
 
     private int cooldown(EnemyDef.Skill skill) {

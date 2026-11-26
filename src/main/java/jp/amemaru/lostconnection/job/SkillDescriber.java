@@ -45,10 +45,37 @@ public final class SkillDescriber {
             if (skill.cast(rank) > 0 && skill.castSupportMultiplier() < 1.0) {
                 lines.add("味方の支援を受けていると、詠唱が" + percent(1.0 - skill.castSupportMultiplier()) + "短くなる");
             }
+            describeLock(skill, job, rank, lines);
         } else if (skill.passive() != null) {
             describePassive(skill.passive(), rank, gaugeName, lines);
         }
         return lines;
+    }
+
+    /** 遠距離職の攻撃のあとの硬直（11月26日。職業の attack_lock）。 */
+    private static void describeLock(SkillDef skill, @Nullable JobDef job, int rank, List<String> lines) {
+        JobDef.AttackLock lock = job != null && job.id().equals(skill.job()) ? job.attackLock() : AttackLockService.rule(skill);
+        if (!AttackLockService.applies(lock, skill)) {
+            return;
+        }
+        if (skill.cast(rank) > 0 && lock.chantLevel() > 0) {
+            lines.add("詠唱の間も、" + legs(lock.chantLevel()));
+        }
+        if (skill.isCharged() && lock.chargeLevel() > 0) {
+            lines.add("溜めている間も、" + legs(lock.chargeLevel()));
+        }
+        int ticks = AttackLockService.skillTicks(lock, skill, rank);
+        if (ticks > 0) {
+            lines.add("放ったあと" + num(ticks / 20.0) + "秒の硬直：" + legs(lock.skillLevel()));
+        }
+    }
+
+    /** 硬直の段階の、足の様子。 */
+    private static String legs(int level) {
+        if (level >= JobDef.AttackLock.MAX_LEVEL) {
+            return "足がほぼ止まる（ジャンプとダッシュもできない）";
+        }
+        return "足が" + (level * 30) + "%遅くなる";
     }
 
     /** モンクの連撃の役（【起】【継】【極】）。 */
