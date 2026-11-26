@@ -95,7 +95,8 @@ public final class ItemManifest {
                 throw new IllegalStateException(PATH + "：アクセサリー " + id + " の slot が分かりません");
             }
             boolean visible = "geckolib".equals(optional(entry, "model", "none"));
-            manifest.add(register, Category.ACCESSORY, id, () -> new AccessoryItem(slot, visible, new Item.Properties()));
+            boolean ear = entry.has("warning_ear") && entry.get("warning_ear").getAsBoolean();
+            manifest.add(register, Category.ACCESSORY, id, () -> new AccessoryItem(slot, visible, ear, new Item.Properties()));
         }
         for (JsonObject entry : objects(json, "materials")) {
             String id = string(entry, "id");

@@ -43,13 +43,28 @@ public class AccessoryItem extends Item implements ICurioItem, GeoItem {
 
     private final AccessorySlot slot;
     private final boolean visibleOnBody;
+    /**
+     * 付けると、ロスト状態「静寂」の間も予兆の音が聞こえる（特殊効果 warning_ear。11月27日の祈願の「真珠のお守り」）。
+     * アクセサリーの定義はサーバーにしかないので、クライアントが分かるように、アイテムの種類（item_types.json）にも書く。
+     */
+    private final boolean hearsWarnings;
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
     private RawAnimation idle;
 
     public AccessoryItem(AccessorySlot slot, boolean visibleOnBody, Properties properties) {
+        this(slot, visibleOnBody, false, properties);
+    }
+
+    public AccessoryItem(AccessorySlot slot, boolean visibleOnBody, boolean hearsWarnings, Properties properties) {
         super(properties.stacksTo(1));
         this.slot = slot;
         this.visibleOnBody = visibleOnBody && slot.shownOnBody();
+        this.hearsWarnings = hearsWarnings;
+    }
+
+    /** 付けると、静寂の間も予兆の音が聞こえるか。 */
+    public boolean hearsWarnings() {
+        return hearsWarnings;
     }
 
     public AccessorySlot slot() {

@@ -1,0 +1,33 @@
+{
+  "_comment": "潮鳴りの弓（3階の祈願の★5。ガチャ限のユニーク武器。11月27日【補完】。tools/datagen/build_gacha.py）",
+  "slot": "weapon",
+  "generation": 1,
+  "series": "3階の祈願",
+  "rarity": "unique",
+  "required_level": 17,
+  "jobs": [
+    "amemaru:archer"
+  ],
+  "stats": {
+    "attack": 16,
+    "crit": 3
+  },
+  "fixed": true,
+  "durability": 560,
+  "binding": "bound",
+  "effects": [
+    {
+      "type": "double_hit",
+      "chance": 25,
+      "percent": 50
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:crystal_shard",
+      "count": 3
+    }
+  ],
+  "description": "大水門の青銅の管を、そのまま弓に曲げたもの。握りに小さな水門のハンドルがあり、弦を引くと管の中で水が鳴る。放った矢のあとを、水の写しがもう一本追いかける。（3階の祈願の品）"
+}

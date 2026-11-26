@@ -1,0 +1,27 @@
+{
+  "_comment": "祈願所の巫女ユノ（11月27日のご指示「ガチャを各層ごとに」の引く所【補完】）。立つ所は塔の入口の広間の西の側廊（腰かけの列の東。門番バルドと向かい合う。tools/mapgen/build_tower.py の hall_inside_things）。見た目はプレイヤーと同じ形のスキン（tools/artgen/make_facility_npcs.py）。前から遊んでいるワールドにも現れるように、appears を1日目からにしている",
+  "name": "ユノ",
+  "title": "祈願所の巫女",
+  "skin": "amemaru:textures/entity/npc/yuno.png",
+  "slim": true,
+  "portrait_y": 1.32,
+  "expressions": [
+    "smile"
+  ],
+  "home": {
+    "place": "conelia",
+    "pos": [
+      -10.5,
+      4,
+      -164.5
+    ],
+    "yaw": -90
+  },
+  "appears": {
+    "day_min": 1
+  },
+  "roles": [
+    "gacha"
+  ],
+  "talk_range": 5
+}

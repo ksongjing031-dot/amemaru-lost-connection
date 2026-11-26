@@ -1,0 +1,13 @@
+{
+  "_comment": "真珠のお守り（8階の祈願の★4。ガチャ限のアクセサリー。11月27日【補完】。tools/datagen/build_gacha.py）",
+  "slot": "charm",
+  "generation": 2,
+  "floor": 8,
+  "rarity": "legendary",
+  "effects": [
+    {
+      "type": "warning_ear",
+      "percent": 100
+    }
+  ]
+}

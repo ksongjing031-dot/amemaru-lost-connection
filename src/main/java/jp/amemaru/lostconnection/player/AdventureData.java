@@ -54,6 +54,45 @@ public final class AdventureData {
     private int hiddenAccessories;
     private long overflowExp;
     private final Set<String> pendingTitles = new LinkedHashSet<>();
+    /** ガチャ（祈願）の記録（祈願のID → 記録。11月27日）。 */
+    private final Map<String, GachaProgress> gacha = new LinkedHashMap<>();
+
+    /**
+     * 祈願ひとつの記録（11月27日）：引いた回数・★5から数えた回数（天井まで）・10連の★4の保証の残り・★5を引いた数。
+     */
+    public static final class GachaProgress {
+        private int pulls;
+        private int sinceFive;
+        private int fives;
+
+        public int pulls() {
+            return pulls;
+        }
+
+        public int sinceFive() {
+            return sinceFive;
+        }
+
+        public int fives() {
+            return fives;
+        }
+
+        /** 管理者のコマンド用：★5が出ないまま引いた回数を決める。 */
+        public void setSinceFive(int value) {
+            sinceFive = Math.max(0, value);
+        }
+
+        /** 1回引いた。★5なら天井の数を戻す。 */
+        public void record(boolean five) {
+            pulls++;
+            if (five) {
+                fives++;
+                sinceFive = 0;
+            } else {
+                sinceFive++;
+            }
+        }
+    }
 
     public AdventureData(Runnable onChange) {
         this.onChange = onChange;
@@ -238,6 +277,17 @@ public final class AdventureData {
         return added;
     }
 
+    // ---------------------------------------------------------------- 祈願（ガチャ。11月27日）
+
+    public GachaProgress gacha(String banner) {
+        return gacha.computeIfAbsent(banner, key -> new GachaProgress());
+    }
+
+    /** 引いたあとに呼ぶ（保存と同期の印）。 */
+    public void gachaChanged() {
+        changed();
+    }
+
     // ---------------------------------------------------------------- 保存
 
     public CompoundTag save() {
@@ -289,6 +339,15 @@ public final class AdventureData {
             titles.add(StringTag.valueOf(title));
         }
         tag.put("pendingTitles", titles);
+        CompoundTag gachaTag = new CompoundTag();
+        for (Map.Entry<String, GachaProgress> entry : gacha.entrySet()) {
+            CompoundTag one = new CompoundTag();
+            one.putInt("pulls", entry.getValue().pulls);
+            one.putInt("since", entry.getValue().sinceFive);
+            one.putInt("fives", entry.getValue().fives);
+            gachaTag.put(entry.getKey(), one);
+        }
+        tag.put("gacha", gachaTag);
         return tag;
     }
 
@@ -346,6 +405,16 @@ public final class AdventureData {
         ListTag titles = tag.getList("pendingTitles", Tag.TAG_STRING);
         for (int i = 0; i < titles.size(); i++) {
             pendingTitles.add(titles.getString(i));
+        }
+        gacha.clear();
+        CompoundTag gachaTag = tag.getCompound("gacha");
+        for (String key : gachaTag.getAllKeys()) {
+            CompoundTag one = gachaTag.getCompound(key);
+            GachaProgress progress = new GachaProgress();
+            progress.pulls = Math.max(0, one.getInt("pulls"));
+            progress.sinceFive = Math.max(0, one.getInt("since"));
+            progress.fives = Math.max(0, one.getInt("fives"));
+            gacha.put(key, progress);
         }
     }
 

@@ -1,0 +1,38 @@
+{
+  "_comment": "静湖の真珠杖（8階の祈願の★5。ガチャ限のユニーク武器。11月27日【補完】。tools/datagen/build_gacha.py）",
+  "slot": "weapon",
+  "generation": 2,
+  "series": "8階の祈願",
+  "rarity": "unique",
+  "required_level": 38,
+  "jobs": [
+    "amemaru:wizard"
+  ],
+  "stats": {
+    "magic": 40,
+    "mp": 100
+  },
+  "fixed": true,
+  "durability": 760,
+  "binding": "bound",
+  "effects": [
+    {
+      "type": "extra_damage",
+      "chance": 25,
+      "percent": 60,
+      "source": "skill"
+    },
+    {
+      "type": "warning_ear",
+      "percent": 100
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:crystal_shard",
+      "count": 3
+    }
+  ],
+  "description": "沈黙の湖の底で眠っていた真珠を、波紋の環が囲む杖。湖主のひげのような細い糸が、杖の先から流れる。静寂の中でも、迫る音だけは聞こえる。（8階の祈願の品）"
+}

@@ -10,6 +10,8 @@
          麦わら帽子、釣り堀の色（青緑と白）のシャツに、ポケットの多い生成りの釣りベスト、まくった袖、深緑のゴム長靴）
   gisele（ジゼル・ノワール。カジノの支配人。Phase 0-A 8章：年齢不詳。洒落た女性。【補完】長い黒髪、右に寄せた小さな紫の帽子と
           金の帯と黒い羽根、カジノの色（紫・金・黒。docs/map_style.md）のドレス、黒い長い手袋、金の耳飾りと首飾り、赤い口紅）
+  yuno（祈願所の巫女ユノ。11月27日。塔の入口の広間で、階ごとの祈願＝ガチャを引かせる。【補完】銀の長い髪と金の星の髪飾り、
+        白い衣に塔の色（水色）の帯と袖の飾り紐、肩の金の縁、白い長い袴）
   petra（ペトラ・ポム。料理人。Phase 0-A 8章：20代。マルタの娘。魚料理が得意。【補完】赤茶の髪をうしろで結び、白い料理人の帽子、
          料理屋の色（橙。tools/mapgen/build_market.py）の前かけ、まくった白い袖、緑の目とそばかす）
 """
@@ -375,7 +377,105 @@ def petra():
     return s, pal, faces
 
 
-NPCS = {"pokka": pokka, "gisele": gisele, "petra": petra}
+def yuno():
+    """祈願所の巫女ユノ（11月27日。塔の入口の広間で、階ごとの祈願＝ガチャを引かせる【補完】）。
+    銀の長い髪を、金の星の髪飾りで留める。白い衣に、塔の色（水色）の帯と袖の飾り紐、肩に金の縁。白い長い袴と、白い足袋。
+    """
+    s = Skin(True, 177)
+    r = s.rng
+    hair, hair_d, hair_l = "#D9DDE6", "#AEB3C2", "#F2F4F8"
+    skin, skin_d = "#F4D8C2", "#DFBCA4"
+    robe, robe_d, robe_l = "#F4F3EE", "#D8D6CE", "#FFFFFF"
+    sash, sash_d = "#6FC4EC", "#3E8FC2"
+    gold, gold_d = "#E2B65A", "#B88A34"
+    hakama, hakama_d = "#ECEBE5", "#C9C7BF"
+    tabi = "#F8F8F8"
+
+    def head(face, x, y, w, h):
+        if face == "top":
+            return noisy(r, hair if (x + y) % 5 else hair_l, 0.04)
+        if face == "bottom":
+            return noisy(r, hair_d, 0.04)
+        if face == "front":
+            return skin
+        if face == "back":
+            return noisy(r, hair if (x + y) % 4 else hair_d, 0.04)        # 長い銀の髪
+        if y <= 2 or (face == "right" and x <= 2) or (face == "left" and x >= 5):
+            return noisy(r, hair, 0.04)
+        return skin
+    s.head(head)
+
+    def hat(face, x, y, w, h):
+        # 金の星の髪飾り（右の横）と、前髪のひと房
+        if face == "right" and 1 <= y <= 3 and 2 <= x <= 4:
+            return gold if (x, y) != (3, 2) else "#FFF2C0"
+        if face == "front" and y == 1 and x in (0, 7):
+            return hair
+        return None
+    s.hat(hat)
+
+    def body(face, x, y, w, h):
+        if face == "front":
+            if y == 0 and 3 <= x <= 4:
+                return skin
+            if y <= 1 and x in (2, 5):
+                return gold                                            # 衿の金の縁
+            if 6 <= y <= 7:
+                return sash if y == 6 else sash_d                      # 水色の帯
+            if y >= 8 and x in (3, 4):
+                return noisy(r, sash, 0.04)                            # 帯の結びの垂れ
+            return noisy(r, robe if x not in (0, 7) else robe_d, 0.03)
+        if face == "back":
+            if 6 <= y <= 7:
+                return sash if y == 6 else sash_d
+            if 2 <= y <= 9 and 3 <= x <= 4:
+                return noisy(r, hair, 0.04)                            # 背に落ちる髪
+            return noisy(r, robe, 0.03)
+        if face in ("top", "bottom"):
+            return robe_d
+        if 6 <= y <= 7:
+            return sash if y == 6 else sash_d
+        return noisy(r, robe, 0.03)
+    s.body(body)
+
+    def arm(face, x, y, w, h):
+        if face == "top":
+            return gold if x in (0, 2) else robe
+        if face == "bottom":
+            return skin_d
+        if y == 0:
+            return gold                                                # 肩の金の縁
+        if y >= 10:
+            return skin                                                # 手
+        if y in (7, 8):
+            return sash if y == 7 else robe_l                          # 袖の水色の飾り紐
+        return noisy(r, robe if y < 9 else robe_d, 0.03)               # 広い白い袖
+    s.arm("right", arm)
+    s.arm("left", arm)
+
+    def leg(face, x, y, w, h):
+        if face == "top":
+            return hakama_d
+        if face == "bottom":
+            return tabi
+        if y >= 11:
+            return tabi
+        return noisy(r, hakama if (x + y) % 5 else hakama_d, 0.03)    # 白い長い袴
+    s.leg("right", leg)
+    s.leg("left", leg)
+    pal = {"H": hair, "h": hair_d, "S": skin, "s": skin_d, "W": "#FFFFFF", "E": "#4A8FC8", "L": "#5A6070", "M": "#D46A78",
+           "T": "#FFFFFF", "P": "#F2B4B0", "G": gold}
+    faces = {
+        # 水色の目、静かにほほえむ口
+        "": ["H H H H H H H H", "H h S S S S h H", "S L L S S L L S", "S W E S S E W S",
+             "S S S S S S S S", "S P S s s S P S", "S S S M M S S S", "S S S S S S S S"],
+        "smile": ["H H H H H H H H", "H h S S S S h H", "S S S S S S S S", "S L L S S L L S",
+                  "S S S S S S S S", "S P S s s S P S", "S S M S S M S S", "S S S M M S S S"],
+    }
+    return s, pal, faces
+
+
+NPCS = {"pokka": pokka, "gisele": gisele, "petra": petra, "yuno": yuno}
 
 
 def build(root):

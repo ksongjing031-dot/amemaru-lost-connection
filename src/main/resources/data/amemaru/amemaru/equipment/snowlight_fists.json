@@ -1,0 +1,37 @@
+{
+  "_comment": "雪灯の拳甲（6階の祈願の★5。ガチャ限のユニーク武器。11月27日【補完】。tools/datagen/build_gacha.py）",
+  "slot": "weapon",
+  "generation": 2,
+  "series": "6階の祈願",
+  "rarity": "unique",
+  "required_level": 30,
+  "jobs": [
+    "amemaru:monk"
+  ],
+  "stats": {
+    "attack": 26,
+    "hp": 50
+  },
+  "fixed": true,
+  "durability": 680,
+  "binding": "bound",
+  "effects": [
+    {
+      "type": "double_hit",
+      "chance": 30,
+      "percent": 40
+    },
+    {
+      "type": "cold_resist",
+      "percent": 30
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:crystal_shard",
+      "count": 3
+    }
+  ],
+  "description": "凍った村の暖炉の火を、そのまま閉じこめた籠手。毛皮のふちと金の鎖、甲には雪灯のように光る結晶。拳が当たると、もう一つの雪の拳が続く。（6階の祈願の品）"
+}

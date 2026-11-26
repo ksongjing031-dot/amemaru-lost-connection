@@ -175,6 +175,38 @@
     {
       "id": "lake_lord_whisker_bow",
       "kind": "bow"
+    },
+    {
+      "id": "earth_horn_greatsword",
+      "kind": "greatsword"
+    },
+    {
+      "id": "millennium_tree_staff",
+      "kind": "staff"
+    },
+    {
+      "id": "tide_chime_bow",
+      "kind": "bow"
+    },
+    {
+      "id": "hymn_great_bell",
+      "kind": "bell_staff"
+    },
+    {
+      "id": "jade_oath_sword",
+      "kind": "sword"
+    },
+    {
+      "id": "snowlight_fists",
+      "kind": "fist"
+    },
+    {
+      "id": "mirror_moon_daggers",
+      "kind": "daggers"
+    },
+    {
+      "id": "still_lake_pearl_staff",
+      "kind": "staff"
     }
   ],
   "shields": [
@@ -627,6 +659,71 @@
     {
       "id": "thousand_voice_stone",
       "slot": "charm"
+    },
+    {
+      "id": "reed_whistle_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "sunny_spot_charm",
+      "slot": "charm"
+    },
+    {
+      "id": "moss_cloak_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "forest_light_charm",
+      "slot": "charm"
+    },
+    {
+      "id": "cogwheel_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "clear_water_charm",
+      "slot": "charm"
+    },
+    {
+      "id": "echo_note_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "bell_tone_charm",
+      "slot": "charm"
+    },
+    {
+      "id": "knot_lattice_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "record_core_charm",
+      "slot": "charm"
+    },
+    {
+      "id": "frost_weave_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "hearth_fire_charm",
+      "slot": "charm"
+    },
+    {
+      "id": "mirror_shard_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "twilight_charm",
+      "slot": "charm"
+    },
+    {
+      "id": "ripple_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "pearl_charm",
+      "slot": "charm",
+      "warning_ear": true
     }
   ],
   "materials": [
@@ -831,6 +928,38 @@
     {
       "id": "lake_shrine_tablet",
       "rarity": "rare"
+    },
+    {
+      "id": "wish_tag_grassland",
+      "rarity": "epic"
+    },
+    {
+      "id": "wish_tag_forest",
+      "rarity": "epic"
+    },
+    {
+      "id": "wish_tag_waterway",
+      "rarity": "epic"
+    },
+    {
+      "id": "wish_tag_temple",
+      "rarity": "epic"
+    },
+    {
+      "id": "wish_tag_altar",
+      "rarity": "epic"
+    },
+    {
+      "id": "wish_tag_village",
+      "rarity": "epic"
+    },
+    {
+      "id": "wish_tag_iceforest",
+      "rarity": "epic"
+    },
+    {
+      "id": "wish_tag_lake",
+      "rarity": "epic"
     }
   ],
   "fruits": [

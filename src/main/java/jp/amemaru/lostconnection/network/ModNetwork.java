@@ -403,6 +403,17 @@ public final class ModNetwork {
                 .consumerMainThread(jp.amemaru.lostconnection.network.s2c.BossImpactS2C::handle)
                 .add();
         // 11月27日：塔を進む・戻るときの魔法陣
+        // 11月27日：祈願（ガチャ）
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.GachaS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.GachaS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.GachaS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.GachaS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.c2s.GachaC2S.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(jp.amemaru.lostconnection.network.c2s.GachaC2S::encode)
+                .decoder(jp.amemaru.lostconnection.network.c2s.GachaC2S::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.c2s.GachaC2S::handle)
+                .add();
         CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.AwakenFxS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(jp.amemaru.lostconnection.network.s2c.AwakenFxS2C::encode)
                 .decoder(jp.amemaru.lostconnection.network.s2c.AwakenFxS2C::decode)

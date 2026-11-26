@@ -1,0 +1,904 @@
+{
+  "_comment": [
+    "祈願（ガチャ）の決まり（11月27日のご指示。tools/datagen/build_gacha.py で書き出す。数は【補完】）。",
+    "boss_tokens：その階のボスを2回目以降に倒すと、参加した一人ずつにその階の祈願札をいくつ渡すか。",
+    "ten：10回まとめて引くと、guarantee の星以上が1つは出る。npc_range：祈願所の巫女から何ブロックまで離れて引けるか。",
+    "banners：階ごとの祈願。rates は★5・★4の確率（%。のこりは★3）、pity は★5が出ないまま何回目で必ず★5か（天井）。"
+  ],
+  "boss_tokens": 5,
+  "ten": {
+    "count": 10,
+    "guarantee": 4
+  },
+  "npc_range": 8,
+  "banners": [
+    {
+      "id": "grassland",
+      "floor": 1,
+      "name": "草原の祈願",
+      "text": "草原の主ヴェルドホーンの記憶を引く。★5は「大地角の大剣」（ナイト）。",
+      "token": "amemaru:wish_tag_grassland",
+      "color": "#E2B65A",
+      "rates": {
+        "5": 1.5,
+        "4": 13.5
+      },
+      "pity": 60,
+      "pool": {
+        "5": [
+          {
+            "item": "amemaru:earth_horn_greatsword"
+          }
+        ],
+        "4": [
+          {
+            "item": "amemaru:reed_whistle_ring",
+            "weight": 3
+          },
+          {
+            "item": "amemaru:sunny_spot_charm",
+            "weight": 3
+          },
+          {
+            "item": "amemaru:crystal_fruit_crimson",
+            "weight": 2
+          },
+          {
+            "item": "amemaru:crystal_fruit_jade",
+            "weight": 2
+          }
+        ],
+        "3": [
+          {
+            "item": "amemaru:crystal_shard",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 6
+          },
+          {
+            "item": "amemaru:healing_potion_small",
+            "count": [
+              2,
+              3
+            ],
+            "weight": 5
+          },
+          {
+            "item": "amemaru:mana_water_small",
+            "count": [
+              2,
+              3
+            ],
+            "weight": 5
+          },
+          {
+            "item": "amemaru:repair_kit",
+            "weight": 2
+          },
+          {
+            "item": "amemaru:return_feather",
+            "count": [
+              1,
+              2
+            ],
+            "weight": 2
+          },
+          {
+            "item": "amemaru:ancient_stone",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:moss_iron",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:tsunomofu_fluff",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:bee_stinger",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:chipped_fang",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          }
+        ]
+      }
+    },
+    {
+      "id": "forest",
+      "floor": 2,
+      "name": "森の祈願",
+      "text": "森番の古樹オールドウォードの記憶を引く。★5は「千年樹の杖」（ウィザード）。",
+      "token": "amemaru:wish_tag_forest",
+      "color": "#7ED957",
+      "rates": {
+        "5": 1.5,
+        "4": 13.5
+      },
+      "pity": 60,
+      "pool": {
+        "5": [
+          {
+            "item": "amemaru:millennium_tree_staff"
+          }
+        ],
+        "4": [
+          {
+            "item": "amemaru:moss_cloak_ring",
+            "weight": 3
+          },
+          {
+            "item": "amemaru:forest_light_charm",
+            "weight": 3
+          },
+          {
+            "item": "amemaru:crystal_fruit_azure",
+            "weight": 2
+          },
+          {
+            "item": "amemaru:crystal_fruit_jade",
+            "weight": 2
+          }
+        ],
+        "3": [
+          {
+            "item": "amemaru:crystal_shard",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 6
+          },
+          {
+            "item": "amemaru:healing_potion_small",
+            "count": [
+              2,
+              3
+            ],
+            "weight": 5
+          },
+          {
+            "item": "amemaru:mana_water_small",
+            "count": [
+              2,
+              3
+            ],
+            "weight": 5
+          },
+          {
+            "item": "amemaru:repair_kit",
+            "weight": 2
+          },
+          {
+            "item": "amemaru:return_feather",
+            "count": [
+              1,
+              2
+            ],
+            "weight": 2
+          },
+          {
+            "item": "amemaru:old_bark",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:glowcap",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:wisp_wick",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:shade_tail",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:moss_iron",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          }
+        ]
+      }
+    },
+    {
+      "id": "waterway",
+      "floor": 3,
+      "name": "水路の祈願",
+      "text": "大水門の番人ハイドラムの記憶を引く。★5は「潮鳴りの弓」（アーチャー）。",
+      "token": "amemaru:wish_tag_waterway",
+      "color": "#4FB6F0",
+      "rates": {
+        "5": 1.5,
+        "4": 13.5
+      },
+      "pity": 60,
+      "pool": {
+        "5": [
+          {
+            "item": "amemaru:tide_chime_bow"
+          }
+        ],
+        "4": [
+          {
+            "item": "amemaru:cogwheel_ring",
+            "weight": 3
+          },
+          {
+            "item": "amemaru:clear_water_charm",
+            "weight": 3
+          },
+          {
+            "item": "amemaru:crystal_fruit_amber",
+            "weight": 2
+          },
+          {
+            "item": "amemaru:crystal_fruit_azure",
+            "weight": 2
+          }
+        ],
+        "3": [
+          {
+            "item": "amemaru:crystal_shard",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 6
+          },
+          {
+            "item": "amemaru:healing_potion_small",
+            "count": [
+              2,
+              3
+            ],
+            "weight": 5
+          },
+          {
+            "item": "amemaru:mana_water_small",
+            "count": [
+              2,
+              3
+            ],
+            "weight": 5
+          },
+          {
+            "item": "amemaru:repair_kit",
+            "weight": 2
+          },
+          {
+            "item": "amemaru:return_feather",
+            "count": [
+              1,
+              2
+            ],
+            "weight": 2
+          },
+          {
+            "item": "amemaru:gnawed_cog",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:murky_gel",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:waterway_bronze",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:catfish_whisker",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:flow_crystal",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          }
+        ]
+      }
+    },
+    {
+      "id": "temple",
+      "floor": 4,
+      "name": "神殿の祈願",
+      "text": "祈りの残響カンターレの記憶を引く。★5は「聖歌の大鈴」（ヒーラー）。",
+      "token": "amemaru:wish_tag_temple",
+      "color": "#F2C94C",
+      "rates": {
+        "5": 1.5,
+        "4": 13.5
+      },
+      "pity": 60,
+      "pool": {
+        "5": [
+          {
+            "item": "amemaru:hymn_great_bell"
+          }
+        ],
+        "4": [
+          {
+            "item": "amemaru:echo_note_ring",
+            "weight": 3
+          },
+          {
+            "item": "amemaru:bell_tone_charm",
+            "weight": 3
+          },
+          {
+            "item": "amemaru:crystal_fruit_white",
+            "weight": 2
+          },
+          {
+            "item": "amemaru:crystal_fruit_azure",
+            "weight": 2
+          }
+        ],
+        "3": [
+          {
+            "item": "amemaru:crystal_shard",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 6
+          },
+          {
+            "item": "amemaru:healing_potion_medium",
+            "count": [
+              2,
+              3
+            ],
+            "weight": 5
+          },
+          {
+            "item": "amemaru:mana_water_medium",
+            "count": [
+              2,
+              3
+            ],
+            "weight": 5
+          },
+          {
+            "item": "amemaru:repair_kit",
+            "weight": 2
+          },
+          {
+            "item": "amemaru:return_feather",
+            "count": [
+              1,
+              2
+            ],
+            "weight": 2
+          },
+          {
+            "item": "amemaru:statue_shard",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:song_crystal",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:beetle_shell",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:sacred_mane",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          }
+        ]
+      }
+    },
+    {
+      "id": "altar",
+      "floor": 5,
+      "name": "祭壇の祈願",
+      "text": "古代守護者の記憶を引く。★5は「翠晶の誓剣」（ナイト）。",
+      "token": "amemaru:wish_tag_altar",
+      "color": "#4FCC9E",
+      "rates": {
+        "5": 1.5,
+        "4": 13.5
+      },
+      "pity": 60,
+      "pool": {
+        "5": [
+          {
+            "item": "amemaru:jade_oath_sword"
+          }
+        ],
+        "4": [
+          {
+            "item": "amemaru:knot_lattice_ring",
+            "weight": 3
+          },
+          {
+            "item": "amemaru:record_core_charm",
+            "weight": 3
+          },
+          {
+            "item": "amemaru:crystal_fruit_gold",
+            "weight": 2
+          },
+          {
+            "item": "amemaru:crystal_fruit_violet",
+            "weight": 2
+          }
+        ],
+        "3": [
+          {
+            "item": "amemaru:crystal_shard",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 6
+          },
+          {
+            "item": "amemaru:healing_potion_medium",
+            "count": [
+              2,
+              3
+            ],
+            "weight": 5
+          },
+          {
+            "item": "amemaru:mana_water_medium",
+            "count": [
+              2,
+              3
+            ],
+            "weight": 5
+          },
+          {
+            "item": "amemaru:repair_kit",
+            "weight": 2
+          },
+          {
+            "item": "amemaru:return_feather",
+            "count": [
+              1,
+              2
+            ],
+            "weight": 2
+          },
+          {
+            "item": "amemaru:watcher_lens",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:sentinel_plate",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:drone_spring",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:jade_core_shard",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          }
+        ]
+      }
+    },
+    {
+      "id": "village",
+      "floor": 6,
+      "name": "雪村の祈願",
+      "text": "村長の残響オルドの記憶を引く。★5は「雪灯の拳甲」（モンク）。",
+      "token": "amemaru:wish_tag_village",
+      "color": "#BFEFFF",
+      "rates": {
+        "5": 1.5,
+        "4": 13.5
+      },
+      "pity": 60,
+      "pool": {
+        "5": [
+          {
+            "item": "amemaru:snowlight_fists"
+          }
+        ],
+        "4": [
+          {
+            "item": "amemaru:frost_weave_ring",
+            "weight": 3
+          },
+          {
+            "item": "amemaru:hearth_fire_charm",
+            "weight": 3
+          },
+          {
+            "item": "amemaru:crystal_fruit_crimson",
+            "weight": 2
+          },
+          {
+            "item": "amemaru:crystal_fruit_white",
+            "weight": 2
+          }
+        ],
+        "3": [
+          {
+            "item": "amemaru:crystal_shard",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 6
+          },
+          {
+            "item": "amemaru:healing_potion_medium",
+            "count": [
+              2,
+              3
+            ],
+            "weight": 5
+          },
+          {
+            "item": "amemaru:mana_water_medium",
+            "count": [
+              2,
+              3
+            ],
+            "weight": 5
+          },
+          {
+            "item": "amemaru:repair_kit",
+            "weight": 2
+          },
+          {
+            "item": "amemaru:return_feather",
+            "count": [
+              1,
+              2
+            ],
+            "weight": 2
+          },
+          {
+            "item": "amemaru:frost_silver",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:ice_crystal",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:frozen_fur",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:frost_fang",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          }
+        ]
+      }
+    },
+    {
+      "id": "iceforest",
+      "floor": 7,
+      "name": "氷林の祈願",
+      "text": "鏡像獣リフレクタの記憶を引く。★5は「鏡月の双刃」（ローグ）。",
+      "token": "amemaru:wish_tag_iceforest",
+      "color": "#C9A8FF",
+      "rates": {
+        "5": 1.5,
+        "4": 13.5
+      },
+      "pity": 60,
+      "pool": {
+        "5": [
+          {
+            "item": "amemaru:mirror_moon_daggers"
+          }
+        ],
+        "4": [
+          {
+            "item": "amemaru:mirror_shard_ring",
+            "weight": 3
+          },
+          {
+            "item": "amemaru:twilight_charm",
+            "weight": 3
+          },
+          {
+            "item": "amemaru:crystal_fruit_violet",
+            "weight": 2
+          },
+          {
+            "item": "amemaru:crystal_fruit_gold",
+            "weight": 2
+          }
+        ],
+        "3": [
+          {
+            "item": "amemaru:crystal_shard",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 6
+          },
+          {
+            "item": "amemaru:healing_potion_medium",
+            "count": [
+              2,
+              3
+            ],
+            "weight": 5
+          },
+          {
+            "item": "amemaru:mana_water_medium",
+            "count": [
+              2,
+              3
+            ],
+            "weight": 5
+          },
+          {
+            "item": "amemaru:repair_kit",
+            "weight": 2
+          },
+          {
+            "item": "amemaru:return_feather",
+            "count": [
+              1,
+              2
+            ],
+            "weight": 2
+          },
+          {
+            "item": "amemaru:ice_feather",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:mirror_ice",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:ice_antler",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:icicle_wing",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          }
+        ]
+      }
+    },
+    {
+      "id": "lake",
+      "floor": 8,
+      "name": "湖の祈願",
+      "text": "声なき湖主ムーネの記憶を引く。★5は「静湖の真珠杖」（ウィザード）。",
+      "token": "amemaru:wish_tag_lake",
+      "color": "#A8F7FF",
+      "rates": {
+        "5": 1.5,
+        "4": 13.5
+      },
+      "pity": 60,
+      "pool": {
+        "5": [
+          {
+            "item": "amemaru:still_lake_pearl_staff"
+          }
+        ],
+        "4": [
+          {
+            "item": "amemaru:ripple_ring",
+            "weight": 3
+          },
+          {
+            "item": "amemaru:pearl_charm",
+            "weight": 3
+          },
+          {
+            "item": "amemaru:crystal_fruit_azure",
+            "weight": 2
+          },
+          {
+            "item": "amemaru:crystal_fruit_amber",
+            "weight": 2
+          }
+        ],
+        "3": [
+          {
+            "item": "amemaru:crystal_shard",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 6
+          },
+          {
+            "item": "amemaru:healing_potion_medium",
+            "count": [
+              2,
+              3
+            ],
+            "weight": 5
+          },
+          {
+            "item": "amemaru:mana_water_medium",
+            "count": [
+              2,
+              3
+            ],
+            "weight": 5
+          },
+          {
+            "item": "amemaru:repair_kit",
+            "weight": 2
+          },
+          {
+            "item": "amemaru:return_feather",
+            "count": [
+              1,
+              2
+            ],
+            "weight": 2
+          },
+          {
+            "item": "amemaru:fish_scale",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:voice_stone",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:crane_plume",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          },
+          {
+            "item": "amemaru:mist_thread",
+            "count": [
+              2,
+              4
+            ],
+            "weight": 4
+          }
+        ]
+      }
+    }
+  ]
+}

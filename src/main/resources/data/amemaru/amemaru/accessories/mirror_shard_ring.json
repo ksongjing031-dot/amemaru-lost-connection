@@ -1,0 +1,14 @@
+{
+  "_comment": "鏡片の指輪（7階の祈願の★4。ガチャ限のアクセサリー。11月27日【補完】。tools/datagen/build_gacha.py）",
+  "slot": "ring",
+  "generation": 2,
+  "floor": 7,
+  "rarity": "legendary",
+  "effects": [
+    {
+      "type": "double_hit",
+      "chance": 15,
+      "percent": 30
+    }
+  ]
+}

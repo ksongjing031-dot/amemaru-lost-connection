@@ -373,6 +373,8 @@ public final class BossRoom {
             names.add(player.getGameProfile().getName());
             PlayerData data = PlayerDataCapability.get(player).orElse(null);
             if (data != null) {
+                // 11月27日：2回目からは、その階の祈願札（ガチャ）。倒した数を足す前に見る
+                jp.amemaru.lostconnection.gacha.GachaService.onBossDefeated(player, data, floor.number());
                 data.getStory().addBossKill(floor.number());
                 GuideService.refresh(player, data);
             }

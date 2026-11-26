@@ -1,0 +1,14 @@
+{
+  "_comment": "波紋の指輪（8階の祈願の★4。ガチャ限のアクセサリー。11月27日【補完】。tools/datagen/build_gacha.py）",
+  "slot": "ring",
+  "generation": 2,
+  "floor": 8,
+  "rarity": "legendary",
+  "effects": [
+    {
+      "type": "extra_damage",
+      "chance": 15,
+      "percent": 40
+    }
+  ]
+}

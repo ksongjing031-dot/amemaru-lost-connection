@@ -136,6 +136,7 @@ public final class PlayerEvents {
             jp.amemaru.lostconnection.job.ComboService.forget(player.getUUID());
             jp.amemaru.lostconnection.job.HitHooks.forget(player.getUUID());
             jp.amemaru.lostconnection.job.StarRingService.forget(player.getUUID());
+            jp.amemaru.lostconnection.gacha.GachaService.forget(player);
             jp.amemaru.lostconnection.combat.BasicShotService.forget(player.getUUID());
         }
     }

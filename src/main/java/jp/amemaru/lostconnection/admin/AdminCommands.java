@@ -120,6 +120,8 @@ public final class AdminCommands {
                         .then(ProjectCommands.projectCommand())
                         // 11月26日：ひとり確認モード（ひとりで1〜8階のギミックとボスの仕掛けを確かめる）
                         .then(SoloCommands.soloCommand())
+                        // 11月27日：祈願（ガチャ）
+                        .then(GachaCommands.gachaCommand())
                         .then(debugCommand())));
     }
 
