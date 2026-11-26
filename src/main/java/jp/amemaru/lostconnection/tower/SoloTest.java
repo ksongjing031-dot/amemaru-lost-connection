@@ -65,6 +65,48 @@ public final class SoloTest {
         return on ? Math.max(seconds, soloSeconds) : seconds;
     }
 
+    /**
+     * 「何秒のうちに」の秒。モードの間か、ひとりで挑んでいるとき（{@code alone}）は {@code soloSeconds}。
+     *
+     * <p>11月27日のご指示「あくまでパーティー推奨だが、推奨レベルよりもかなり高めの時はソロでも攻略できるようにする。そのため、
+     * ソロプレイヤーだと攻略できないようなギミックを減らす（後半やレイドボスは別）」【補完】：その階（ボス戦なら戦い）にほかの
+     * 挑戦者がいなければ、モードでなくても、ひとり用の秒にする（2階のこだま・3階の水門と排水・8階の鐘と静寂の帳）。</p>
+     */
+    public static int seconds(int seconds, int soloSeconds, boolean alone) {
+        return on || alone ? Math.max(seconds, soloSeconds) : seconds;
+    }
+
+    /** 「何秒のうちに」の秒（小数）。モードの間か、ひとりで挑んでいるときは {@code soloSeconds}。 */
+    public static double seconds(double seconds, double soloSeconds, boolean alone) {
+        return on || alone ? Math.max(seconds, soloSeconds) : seconds;
+    }
+
+    /** その階にいる、スペクテイターでないプレイヤーの数（11月27日）。 */
+    public static int playersOnFloor(net.minecraft.server.MinecraftServer server, int floor) {
+        ServerLevel tower = FloorDefs.towerLevel(server);
+        FloorDef def = FloorDefs.byNumber(floor);
+        if (tower == null || def == null) {
+            return 0;
+        }
+        int count = 0;
+        for (net.minecraft.server.level.ServerPlayer player : tower.players()) {
+            if (!player.isSpectator() && def.contains(player.position())) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /** その階で、ひとりで挑んでいるか（ほかのプレイヤーがその階にいない。11月27日）。 */
+    public static boolean aloneOnFloor(net.minecraft.server.MinecraftServer server, int floor) {
+        return playersOnFloor(server, floor) <= 1;
+    }
+
+    /** ボス戦を、ひとりで戦っているか（参加者が1人以下。11月27日）。 */
+    public static boolean aloneInFight(java.util.Collection<?> participants) {
+        return participants.size() <= 1;
+    }
+
     /** 「何秒のうちに」の秒（小数）。モードの間は {@code soloSeconds}（ふだんの方が長ければ、ふだんのまま）。 */
     public static double seconds(double seconds, double soloSeconds) {
         return on ? Math.max(seconds, soloSeconds) : seconds;

@@ -61,9 +61,29 @@ public final class FloodgateService {
      * では、ひとりで離れた部屋へ走れるように延ばす（水門 {@code FLOODGATE_SECONDS}・ボスの部屋の排水 {@code DRAIN_SECONDS}）。
      */
     public static int windowTicks(String gateId) {
+        return windowTicks(gateId, false);
+    }
+
+    /**
+     * 11月27日：ひとりで挑んでいるとき（水門はその階にほかの人がいない、排水はボス戦の参加者が1人）も、モードと同じように延ばす
+     * （「推奨レベルよりかなり高いときは、ソロでも攻略できるように」）。
+     */
+    public static int windowTicks(net.minecraft.server.MinecraftServer server, int floor, String gateId) {
+        boolean alone;
+        if (FloorFeatures.DRAIN.equals(gateId)) {
+            jp.amemaru.lostconnection.tower.FloorRuntime runtime = jp.amemaru.lostconnection.tower.TowerService.runtime(floor);
+            alone = runtime == null || runtime.bossRoom() == null
+                    || jp.amemaru.lostconnection.tower.SoloTest.aloneInFight(runtime.bossRoom().participants());
+        } else {
+            alone = jp.amemaru.lostconnection.tower.SoloTest.aloneOnFloor(server, floor);
+        }
+        return windowTicks(gateId, alone);
+    }
+
+    private static int windowTicks(String gateId, boolean alone) {
         int solo = FloorFeatures.DRAIN.equals(gateId) ? jp.amemaru.lostconnection.tower.SoloTest.DRAIN_SECONDS
                 : jp.amemaru.lostconnection.tower.SoloTest.FLOODGATE_SECONDS;
-        return jp.amemaru.lostconnection.tower.SoloTest.seconds(WINDOW_TICKS / 20, solo) * 20;
+        return jp.amemaru.lostconnection.tower.SoloTest.seconds(WINDOW_TICKS / 20, solo, alone) * 20;
     }
     /** 1 tick に変えるブロックの数。 */
     private static final int CHANGES_PER_TICK = 1500;
@@ -232,7 +252,7 @@ public final class FloodgateService {
         level.playSound(null, pos, SoundEvents.CHAIN_PLACE, SoundSource.BLOCKS, 1.2F, 0.5F);
         level.sendParticles(ParticleTypes.SPLASH, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 12, 0.4, 0.3, 0.4, 0.1);
         Long other = TURNED.get(key(floor, gate.id(), 1 - side));
-        int window = windowTicks(gate.id());
+        int window = windowTicks(player.server, floor, gate.id());
         if (other != null && now - other <= window) {
             TURNED.remove(key(floor, gate.id(), 0));
             TURNED.remove(key(floor, gate.id(), 1));
@@ -275,7 +295,7 @@ public final class FloodgateService {
         long now = server.overworld().getGameTime();
         TURNED.entrySet().removeIf(entry -> {
             String[] parts = entry.getKey().split(":");
-            if (now - entry.getValue() <= windowTicks(parts[1])) {
+            if (now - entry.getValue() <= windowTicks(server, Integer.parseInt(parts[0]), parts[1])) {
                 return false;
             }
             FloorDef def = FloorDefs.byNumber(Integer.parseInt(parts[0]));

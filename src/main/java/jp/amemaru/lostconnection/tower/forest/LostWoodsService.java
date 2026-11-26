@@ -188,8 +188,10 @@ public final class LostWoodsService {
             return;
         }
         long now = level.getGameTime();
-        // こだま（正しい出口と、まぎらわしい出口）。11月26日：ひとり確認モードでは、鐘から離れる間があるように、返るのを遅らせる
-        long delay = jp.amemaru.lostconnection.tower.SoloTest.seconds(woods.echoDelay(), jp.amemaru.lostconnection.tower.SoloTest.ECHO_SECONDS) * 20L;
+        // こだま（正しい出口と、まぎらわしい出口）。11月26日：ひとり確認モードでは、鐘から離れる間があるように、返るのを遅らせる。
+        // 11月27日：その階にほかの人がいない（ひとりで挑んでいる）ときも、同じように遅らせる
+        long delay = jp.amemaru.lostconnection.tower.SoloTest.seconds(woods.echoDelay(), jp.amemaru.lostconnection.tower.SoloTest.ECHO_SECONDS,
+                jp.amemaru.lostconnection.tower.SoloTest.aloneOnFloor(player.server, floor)) * 20L;
         FloorFeatures.Exit correct = woods.correctExit();
         if (correct != null) {
             ECHOES.add(new Echo(floor, woodsId, now + delay, false, correct.post(), pos));

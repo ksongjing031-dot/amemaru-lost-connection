@@ -1,11 +1,11 @@
 {
-  "_comment": "3階のボス（Phase 0-A 9章「水の大砲を撃つ。水位を下げると胸の炉心が露出して弱点になる」）。部屋に水が満ちている間は、受けるダメージが drain.flooded 倍（水の鎧）。部屋の東と西の排水のハンドル（階の水門 drain）を2人で同時に回すと水が引き、stagger_seconds よろめいて、exposed_seconds の間、炉心がむき出し（受けるダメージ drain.exposed 倍。HP30%からは rage_exposed 倍の長さ）。そのあと水が戻り、drain.cooldown 秒はハンドルが回らない。技：水の大砲（cannon。長い線。押し流す。HP30%から2連）・水の薙ぎ払い（sweep。扇）・渦（whirl。何人かの足もとの円。引き寄せて遅くする）・大放流（share。みんなで受ける一撃）。HP60%で水門ネズミを呼ぶ（call）。部屋のまん中から leash より離れない。HPは2人のときの基準（ひとりでも2人ぶん）。数値は【補完】（2人で16分・4人で13分ほど）。11月25日：みんなで受ける一撃（share）はレイドのボスだけにしたので外した。予兆（windup）と間（cooldown）を長くした（anim_windup は前の予兆で、アニメーションの速さに使う）。11月25日：固有のギミック「大放水」（flood。HP first_at・second_at で、windup 秒の構え。番人のまわり wall_radius に青銅の堤が walls 枚せり上がり、番人から見えている人だけ power で押し流される。堤のかげは無事）【提案】",
+  "_comment": "3階のボス（Phase 0-A 9章「水の大砲を撃つ。水位を下げると胸の炉心が露出して弱点になる」）。部屋に水が満ちている間は、受けるダメージが drain.flooded 倍（水の鎧）。部屋の東と西の排水のハンドル（階の水門 drain）を2人で同時に回すと水が引き、stagger_seconds よろめいて、exposed_seconds の間、炉心がむき出し（受けるダメージ drain.exposed 倍。HP30%からは rage_exposed 倍の長さ）。そのあと水が戻り、drain.cooldown 秒はハンドルが回らない。技：水の大砲（cannon。長い線。押し流す。HP30%から2連）・水の薙ぎ払い（sweep。扇）・渦（whirl。何人かの足もとの円。引き寄せて遅くする）・大放流（share。みんなで受ける一撃）。HP60%で水門ネズミを呼ぶ（call）。部屋のまん中から leash より離れない。HPは2人のときの基準（ひとりでも2人ぶん）。数値は【補完】（2人で16分・4人で13分ほど）。11月25日：みんなで受ける一撃（share）はレイドのボスだけにしたので外した。予兆（windup）と間（cooldown）を長くした（anim_windup は前の予兆で、アニメーションの速さに使う）。11月25日：固有のギミック「大放水」（flood。HP first_at・second_at で、windup 秒の構え。番人のまわり wall_radius に青銅の堤が walls 枚せり上がり、番人から見えている人だけ power で押し流される。堤のかげは無事）【提案】 11月27日のご指示「ボスはもっとHPが多くていい（パーティー推奨）」「どんな攻撃があるかを理解しないとクリアできない形に」「何回も挑戦してやっと勝てる形に」【補完】：HPを1.5倍、予兆のある強い技（power 1.2以上）を1.25倍、固有のギミックをしくじったときの一撃を、ほかのどの技よりも強くした（HP 38000→57000・cannon 1.7→2.1・sweep 1.3→1.6・flood 2.2→3.0） 11月27日のご指示「ボスのHPバーはオリジナルでそれぞれのボスのデザインに。一層は1ゲージ、強くなるにつれて本数を増やす」【補完】：HPの帯を 2 本に分ける（behavior.hp_bars）。",
   "name": "大水門の番人ハイドラム",
   "floor": 3,
   "level": 22,
   "description": "古代の水路の大水門を守り続ける、石と青銅の大きな番人。右の腕は水の大砲で、胸の炉心は水の外套に包まれている。水路の水がすべて流れるか止まるかは、この番人の門ひとつで決まる。",
   "stats": {
-    "hp": 38000,
+    "hp": 57000,
     "attack": 169,
     "defense": 14,
     "move_speed": 0.16,
@@ -15,7 +15,7 @@
   "exp": 1200,
   "skills": {
     "cannon": {
-      "power": 1.7,
+      "power": 2.1,
       "windup": 2.0,
       "anim_windup": 1.6,
       "cooldown": 9,
@@ -24,7 +24,7 @@
       "push": 1.4
     },
     "sweep": {
-      "power": 1.3,
+      "power": 1.6,
       "windup": 1.6,
       "anim_windup": 1.1,
       "cooldown": 6,
@@ -58,7 +58,7 @@
       "leash": 14
     },
     "flood": {
-      "power": 2.2,
+      "power": 3.0,
       "windup": 6.0,
       "cooldown": 60,
       "range": 30,
@@ -68,7 +68,9 @@
       "second_at": 0.3
     }
   },
-  "behavior": {},
+  "behavior": {
+    "hp_bars": 2
+  },
   "drops": {
     "loot_table": "amemaru:entities/hydram",
     "pity": true,

@@ -123,6 +123,38 @@ public final class SoloModeGameTests {
         });
     }
 
+    /**
+     * 11月27日のご指示「推奨レベルよりもかなり高めの時はソロでも攻略できるように。ソロプレイヤーだと攻略できないギミックを減らす」：
+     * モードを切っていても、ひとりで挑んでいる（その階にほかの人がいない・ボス戦の参加者が1人）なら、時間の決まりはひとり用になる。
+     * 2人以上なら、ふだんのまま。
+     */
+    @GameTest(template = EMPTY, batch = "solo_alone")
+    public static void aloneGetsSoloTimes(GameTestHelper helper) {
+        ServerLevel level = helper.getLevel();
+        MinecraftServer server = level.getServer();
+        SoloTest.set(false);
+        FloorDef floor8 = FloorDefs.byNumber(8);
+        ServerLevel tower = FloorDefs.towerLevel(server);
+        guard(helper, floor8 != null && !floor8.features().bells().isEmpty() && tower != null, "8階か塔の定義がありません");
+        FloorFeatures.BellGroup cove = floor8.features().bells().get(0);
+        guard(helper, SoloTest.seconds(3, 120, true) == 120 && SoloTest.seconds(3, 120, false) == 3
+                && SoloTest.seconds(300, 10, true) == 300, "ひとりで挑むときの秒の決まりが違います");
+        // 自動テストのサーバーでは、3階・8階に誰もいない＝ひとり
+        guard(helper, SoloTest.aloneOnFloor(server, 3) && SoloTest.playersOnFloor(server, 3) == 0, "誰もいない階が、ひとりと判定されません");
+        guard(helper, FloodgateService.windowTicks(server, 3, "first") == SoloTest.FLOODGATE_SECONDS * 20
+                && FloodgateService.windowTicks(server, 3, FloorFeatures.DRAIN) == SoloTest.DRAIN_SECONDS * 20,
+                "ひとりで挑んでいるのに、水門・排水の時間が延びません");
+        guard(helper, BellService.limitSeconds(tower, floor8, cove) == cove.seconds() * SoloTest.BELL_FACTOR,
+                "ひとりで挑んでいるのに、鐘の組の時間が延びません");
+        // ボス戦：参加者が2人なら、ふだんのまま
+        FakePlayer a = fake(helper, "alone_a");
+        FakePlayer b = fake(helper, "alone_b");
+        guard(helper, SoloTest.aloneInFight(List.of(a)) && !SoloTest.aloneInFight(List.of(a, b)), "ボス戦の参加者の数で、ひとりが判定されません");
+        // モードの間の決まり（古い呼び方）は、ひとりかどうかに関係なく、モードだけで決まる
+        guard(helper, FloodgateService.windowTicks("first") == FloodgateService.WINDOW_TICKS, "モードを切っているのに、水門の時間が延びています");
+        helper.succeed();
+    }
+
     /** 組が終わったら（テストが失敗しても）、モードを切る。 */
     @AfterBatch(batch = "solo_mode")
     public static void soloModeOff(ServerLevel level) {

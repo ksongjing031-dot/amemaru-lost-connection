@@ -142,9 +142,10 @@ public final class WaypointService {
         }
         ServerLevel level = player.serverLevel();
         Vec3 at = def.originVec().add(best.arrive().pos());
-        level.sendParticles(ParticleTypes.PORTAL, player.getX(), player.getY() + 1.0, player.getZ(), 30, 0.5, 0.8, 0.5, 0.2);
+        // 11月27日：バニラの光の粒とエンダーマンの音の代わりに、発つ所と着く所に魔法陣
+        jp.amemaru.lostconnection.network.s2c.TravelFxS2C.depart(level, player.position());
         player.teleportTo(level, at.x, at.y, at.z, best.arrive().yaw(), 0.0F);
-        level.playSound(null, at.x, at.y, at.z, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.7F, 1.2F);
+        jp.amemaru.lostconnection.network.s2c.TravelFxS2C.arrive(level, at);
         player.displayClientMessage(Component.translatable("message.amemaru.waypoint.travel", best.name()).withStyle(ChatFormatting.AQUA), true);
     }
 

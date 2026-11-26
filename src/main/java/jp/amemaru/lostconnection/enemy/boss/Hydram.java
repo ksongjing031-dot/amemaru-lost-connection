@@ -573,6 +573,7 @@ public class Hydram extends AmemaruBoss implements Drains.Listener {
         level.sendParticles(ParticleTypes.CLOUD, getX(), getY() + 0.5, getZ(), 60, 10.0, 0.4, 10.0, 0.1);
         level.playSound(null, getX(), getY(), getZ(), SoundEvents.GENERIC_SPLASH, SoundSource.HOSTILE, 2.4F, 0.5F);
         level.playSound(null, getX(), getY(), getZ(), SoundEvents.TRIDENT_THUNDER, SoundSource.HOSTILE, 1.6F, 0.6F);
+        impactFx("flood");  // 11月27日：当たった瞬間の演出
         clearTelegraph();
         setStatus("", 0);
         dikeTicks = 30;
@@ -666,6 +667,7 @@ public class Hydram extends AmemaruBoss implements Drains.Listener {
             }
             return;
         }
+        impactFx("cannon");  // 11月27日：当たった瞬間の演出
         clearTelegraph();
         EnemyDef.Skill cannon = cannonSkill();
         double half = cannon.param("width", 2.6) / 2.0 + 0.4;
@@ -737,6 +739,7 @@ public class Hydram extends AmemaruBoss implements Drains.Listener {
         if (--timer > 0) {
             return;
         }
+        impactFx("sweep");  // 11月27日：当たった瞬間の演出
         clearTelegraph();
         EnemyDef.Skill sweep = sweepSkill();
         double half = sweep.param("angle", 150.0) / 2.0;
@@ -820,6 +823,7 @@ public class Hydram extends AmemaruBoss implements Drains.Listener {
         int slowTicks = (int) Math.round(whirl.param("slow_seconds", 2.0) * 20);
         Set<UUID> struck = new HashSet<>();
         for (Vec3 spot : whirlSpots) {
+            impactFx("whirl", TELEGRAPH_CIRCLE, spot, 0.0F, (float) hitRadius, 0.0F);  // 11月27日：当たった瞬間の演出
             for (ServerPlayer player : targets(level)) {
                 double dx = player.getX() - spot.x;
                 double dz = player.getZ() - spot.z;

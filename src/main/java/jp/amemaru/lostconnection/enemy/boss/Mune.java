@@ -491,6 +491,7 @@ public class Mune extends AmemaruBoss {
         for (Vec3 at : marks) {
             ThinIceService.breakIce(level, new Vec3(at.x, iceY + 0.5, at.z), rise.param("hole", 2.0), holeTicks);
             level.sendParticles(ParticleTypes.SPLASH, at.x, at.y + 0.4, at.z, 80, 1.4, 0.5, 1.4, 0.25);
+            impactFx("rise", TELEGRAPH_CIRCLE, at, 0.0F, (float) radius, 0.0F);  // 11月27日：当たった瞬間の演出
             for (ServerPlayer player : targets(level)) {
                 double dx = player.getX() - at.x;
                 double dz = player.getZ() - at.z;
@@ -565,6 +566,7 @@ public class Mune extends AmemaruBoss {
         if (--timer > 0) {
             return;
         }
+        impactFx("sweep");  // 11月27日：当たった瞬間の演出
         clearTelegraph();
         EnemyDef.Skill sweep = sweepSkill();
         double half = sweep.param("angle", 120.0) / 2.0;
@@ -609,6 +611,7 @@ public class Mune extends AmemaruBoss {
         if (--timer > 0) {
             return;
         }
+        impactFx("tail");  // 11月27日：当たった瞬間の演出
         clearTelegraph();
         EnemyDef.Skill tail = tailSkill();
         for (ServerPlayer player : targets(level)) {
@@ -664,9 +667,10 @@ public class Mune extends AmemaruBoss {
     /** 静寂の帳を広げる（管理者・自動テストからも）。 */
     public void castVeil(ServerLevel level) {
         EnemyDef.Skill veil = veilSkill();
-        // 11月26日：ひとり確認モードでは、ひとりで鳴り石を2つ回れるように、帳を長くする
+        // 11月26日：ひとり確認モードでは、ひとりで鳴り石を2つ回れるように、帳を長くする。11月27日：ひとりで戦っているときも
         int ticks = (int) Math.round(jp.amemaru.lostconnection.tower.SoloTest.seconds(veil.param("seconds", 20.0),
-                jp.amemaru.lostconnection.tower.SoloTest.VEIL_LAST_SECONDS) * 20);
+                jp.amemaru.lostconnection.tower.SoloTest.VEIL_LAST_SECONDS,
+                jp.amemaru.lostconnection.tower.SoloTest.aloneInFight(targets(level))) * 20);
         for (ServerPlayer player : targets(level)) {
             LostService.inflict(player, ModEffects.LOST_SILENCE.get(), ticks, 1);
         }
@@ -704,9 +708,10 @@ public class Mune extends AmemaruBoss {
             return false;
         }
         EnemyDef.Skill veil = veilSkill();
-        // 11月26日：ひとり確認モードでは、ひとりで次の鳴り石へ走れるように延ばす
+        // 11月26日：ひとり確認モードでは、ひとりで次の鳴り石へ走れるように延ばす。11月27日：ひとりで戦っているときも
         int window = (int) Math.round(jp.amemaru.lostconnection.tower.SoloTest.seconds(veil.param("window", 3.0),
-                jp.amemaru.lostconnection.tower.SoloTest.VEIL_SECONDS) * 20);
+                jp.amemaru.lostconnection.tower.SoloTest.VEIL_SECONDS,
+                jp.amemaru.lostconnection.tower.SoloTest.aloneInFight(targets(level))) * 20);
         bellRings.entrySet().removeIf(e -> tickCount - e.getValue() > window);
         bellRings.put(pos.immutable(), tickCount);
         if (bellRings.size() < 2) {
@@ -786,6 +791,7 @@ public class Mune extends AmemaruBoss {
         waveCenter = onIce(c);
         waveRadius = 1.5;
         waveHit.clear();
+        impactFx("wave", TELEGRAPH_CIRCLE, waveCenter, 0.0F, (float) waveSkill().range(), 0.0F);  // 11月27日：当たった瞬間の演出
         level.playSound(null, waveCenter.x, waveCenter.y, waveCenter.z, SoundEvents.GENERIC_EXPLODE, SoundSource.HOSTILE, 1.6F, 0.5F);
     }
 

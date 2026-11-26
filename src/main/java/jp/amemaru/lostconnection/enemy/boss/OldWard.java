@@ -319,6 +319,7 @@ public class OldWard extends AmemaruBoss {
         if (--timer > 0) {
             return;
         }
+        impactFx("sweep");  // 11月27日：当たった瞬間の演出
         clearTelegraph();
         EnemyDef.Skill sweep = skill("sweep", 1.2, 0.9, 4.0, 7.0);
         double half = sweep.param("angle", 120.0) / 2.0;
@@ -386,6 +387,7 @@ public class OldWard extends AmemaruBoss {
             }
             return;
         }
+        impactFx("crack");  // 11月27日：当たった瞬間の演出
         clearTelegraph();
         EnemyDef.Skill crack = skill("crack", 1.4, 1.2, 6.0, 22.0);
         double half = crack.param("width", 2.4) / 2.0 + 0.4;
@@ -485,6 +487,7 @@ public class OldWard extends AmemaruBoss {
         BlockParticleOption moss = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MOSS_BLOCK.defaultBlockState());
         Set<UUID> struck = new HashSet<>();
         for (Vec3 spot : cageSpots) {
+            impactFx("cage", TELEGRAPH_CIRCLE, spot, 0.0F, (float) radius, 0.0F);  // 11月27日：当たった瞬間の演出
             for (ServerPlayer player : targets(level)) {
                 double dx = player.getX() - spot.x;
                 double dz = player.getZ() - spot.z;
