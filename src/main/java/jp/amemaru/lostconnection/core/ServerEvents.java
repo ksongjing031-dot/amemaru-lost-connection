@@ -75,6 +75,8 @@ public final class ServerEvents {
         event.addListener(jp.amemaru.lostconnection.fishing.FishingRules.loader());
         // Phase 7 その3：カジノの倍率と上限・景品
         event.addListener(jp.amemaru.lostconnection.casino.CasinoRules.loader());
+        // 11月27日：地下遊技場の機種（パチンコとスロット）
+        event.addListener(jp.amemaru.lostconnection.casino.parlor.ParlorModels.loader());
         event.addListener(jp.amemaru.lostconnection.gacha.GachaRules.loader());
         // Phase 7 その4：共同事業
         event.addListener(jp.amemaru.lostconnection.town.ProjectDefs.loader());

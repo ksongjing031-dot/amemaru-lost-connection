@@ -34,7 +34,7 @@ SCRIPTS = {
     "church": "build_church.py", "church_garden": "build_church.py", "church_counsel": "build_church.py",
     "fishing_pond": "build_fishing.py", "water_gate": "build_fishing.py", "fishing_alley": "build_fishing.py",
     "fishing_lakeside": "build_fishing.py", "fishing_pond_frozen": "build_fishing.py",
-    "casino": "build_casino.py", "casino_highlow": "build_casino.py", "casino_fishrace": "build_casino.py",
+    "casino": "build_casino.py", "casino_highlow": "build_casino.py", "casino_new_machines": "build_casino.py", "casino_parlor": "build_casino.py",
     "tower_entrance": "build_tower.py", "tower_plaza": "build_tower.py", "tower_plaza_monument": "build_tower.py",
 }
 MAX_FILE = 8 * 1024 * 1024

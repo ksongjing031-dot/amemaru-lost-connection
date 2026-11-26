@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import jp.amemaru.lostconnection.AmemaruMod;
+import jp.amemaru.lostconnection.casino.parlor.ParlorRules;
 import jp.amemaru.lostconnection.core.data.DefinitionException;
 import jp.amemaru.lostconnection.core.data.DefinitionLoader;
 import jp.amemaru.lostconnection.core.data.Json;
@@ -29,8 +30,10 @@ import java.util.Map;
  *   <li>{@code table_players}：「4人以上の卓」の人数（13章のCP・カジノナイトの配当のおまけ）。{@code night_bonus}：おまけの割合</li>
  *   <li>{@code watch_range}：画面を開いた所から、卓を離れたことになる距離</li>
  *   <li>{@code zones}：右クリックで画面が開く所（中央広場の真ん中からの位置。tools/mapgen/build_casino.py の卓と窓口）</li>
- *   <li>{@code highlow}・{@code fishrace}：共同事業②・⑥で遊べるようになる遊び（物語の印）と、配当の決め方</li>
+ *   <li>{@code highlow}：共同事業②で遊べるようになるハイ＆ロー（物語の印）と、配当の決め方。11月27日のご指示「ルーレットとハイ＆ロー
+ *       以外を廃止」で、⑥の魚レースはやめた（⑥は「カジノの新台入替」）</li>
  *   <li>{@code prizes}：景品（15章「見た目の品、称号、留め糸など、強さに直結しない物」）</li>
+ *   <li>{@code parlor}：地下遊技場（パチンコとスロット。11月27日のご指示）の決まりと台の並び（{@link ParlorRules}）</li>
  * </ul>
  */
 public final class CasinoRules {
@@ -67,20 +70,16 @@ public final class CasinoRules {
     private final Map<String, Zone> zones;
     private final ResourceLocation highLowFlag;
     private final double highLowEdge;
-    private final ResourceLocation fishRaceFlag;
-    private final double fishRaceEdge;
-    private final double fishRaceMin;
-    private final double fishRaceMax;
-    private final long entryWinChips;
     private final List<Prize> prizes;
+    private final ParlorRules parlor;
 
     public static final CasinoRules FALLBACK = new CasinoRules(3, 10, 500, 1, 100, 300, 25, 6, 5, 4, 0.1, 60, 24, Map.of(),
-            AmemaruMod.id("project/highlow"), 0.97, AmemaruMod.id("project/fishrace"), 0.97, 1.1, 30.0, 20, List.of());
+            AmemaruMod.id("project/highlow"), 0.97, List.of(), ParlorRules.EMPTY);
 
     private CasinoRules(int openDay, long knotsPerChip, long dailyChipLimit, long minBet, long maxBet, long maxRoundBet, int betSeconds,
                         int rollSeconds, int resultSeconds, int tablePlayers, double nightBonus, int nightMinutes, int watchRange,
-                        Map<String, Zone> zones, ResourceLocation highLowFlag, double highLowEdge, ResourceLocation fishRaceFlag,
-                        double fishRaceEdge, double fishRaceMin, double fishRaceMax, long entryWinChips, List<Prize> prizes) {
+                        Map<String, Zone> zones, ResourceLocation highLowFlag, double highLowEdge, List<Prize> prizes,
+                        ParlorRules parlor) {
         this.openDay = openDay;
         this.knotsPerChip = knotsPerChip;
         this.dailyChipLimit = dailyChipLimit;
@@ -97,12 +96,8 @@ public final class CasinoRules {
         this.zones = zones;
         this.highLowFlag = highLowFlag;
         this.highLowEdge = highLowEdge;
-        this.fishRaceFlag = fishRaceFlag;
-        this.fishRaceEdge = fishRaceEdge;
-        this.fishRaceMin = fishRaceMin;
-        this.fishRaceMax = fishRaceMax;
-        this.entryWinChips = entryWinChips;
         this.prizes = prizes;
+        this.parlor = parlor;
     }
 
     public static DefinitionLoader<CasinoRules> loader() {
@@ -134,7 +129,6 @@ public final class CasinoRules {
             }
         }
         JsonObject hl = Json.object(json, "highlow");
-        JsonObject fr = Json.object(json, "fishrace");
         List<Prize> prizes = new ArrayList<>();
         JsonArray prizeJson = Json.optionalArray(json, "prizes");
         if (prizeJson != null) {
@@ -175,12 +169,8 @@ public final class CasinoRules {
                 Collections.unmodifiableMap(zones),
                 Json.parseId(Json.string(hl, "flag"), "highlow.flag"),
                 Json.optionalDouble(hl, "edge", 0.97, 0.5, 1.0),
-                Json.parseId(Json.string(fr, "flag"), "fishrace.flag"),
-                Json.optionalDouble(fr, "edge", 0.97, 0.5, 1.0),
-                Json.optionalDouble(fr, "min_multiplier", 1.1, 1.0, 100.0),
-                Json.optionalDouble(fr, "max_multiplier", 30.0, 1.0, 1000.0),
-                (long) Json.optionalDouble(fr, "entry_win_chips", 20, 0, 1.0E6),
-                List.copyOf(prizes));
+                List.copyOf(prizes),
+                ParlorRules.parse(Json.optionalObject(json, "parlor")));
     }
 
     private static int[] triple(JsonArray array, String name) {
@@ -254,28 +244,13 @@ public final class CasinoRules {
         return highLowEdge;
     }
 
-    public ResourceLocation fishRaceFlag() {
-        return fishRaceFlag;
-    }
-
-    public double fishRaceEdge() {
-        return fishRaceEdge;
-    }
-
-    public double fishRaceMin() {
-        return fishRaceMin;
-    }
-
-    public double fishRaceMax() {
-        return fishRaceMax;
-    }
-
-    public long entryWinChips() {
-        return entryWinChips;
-    }
-
     public List<Prize> prizes() {
         return prizes;
+    }
+
+    /** 地下遊技場の決まりと台の並び。 */
+    public ParlorRules parlor() {
+        return parlor;
     }
 
     @Nullable

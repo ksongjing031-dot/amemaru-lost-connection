@@ -9,7 +9,7 @@ import net.minecraftforge.network.NetworkEvent;
 import java.util.function.Supplier;
 
 /**
- * カジノの操作（Phase 7 その3）：卓を見る・賭ける・賭けを取り消す・魚レースに魚を出す・チップを買う・ノットに戻す・景品と取りかえる。
+ * カジノの操作（Phase 7 その3）：卓を見る・賭ける・賭けを取り消す・チップを買う・ノットに戻す・景品と取りかえる・地下遊技場の持ち玉と持ちメダルをチップに戻す。
  * クライアントが送るのは「何をしたいか」だけで、できるかどうかはサーバーで確かめる（{@link CasinoService#onAction}）。
  */
 public record CasinoC2S(String action, CompoundTag args) {

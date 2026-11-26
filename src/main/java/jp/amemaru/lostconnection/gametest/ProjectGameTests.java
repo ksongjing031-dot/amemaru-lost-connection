@@ -69,8 +69,10 @@ public final class ProjectGameTests {
             check(helper, flags.add(def.flag().toString()), "物語の印が重なっています：" + def.flag());
             check(helper, def.overlay().isEmpty() || CityCommands.isGrownForm(def.overlay()), def.id() + " の重ねる形がありません：" + def.overlay());
         }
+        // 11月27日：⑥は魚レースをやめて「カジノの新台入替」（2階の新台の間の印）
         check(helper, flags.contains(FishingRules.current().lakeFlag().toString()) && flags.contains(CasinoRules.current().highLowFlag().toString())
-                && flags.contains(CasinoRules.current().fishRaceFlag().toString()), "湖畔の釣り場・ハイ＆ロー・魚レースの印が、釣りとカジノの印とちがいます");
+                && flags.contains(CasinoRules.current().parlor().newFlag().toString()),
+                "湖畔の釣り場・ハイ＆ロー・新台入替の印が、釣りとカジノの印とちがいます");
         check(helper, ProjectDefs.get(AmemaruMod.id("crystal")).blessing() == 1, "大結晶の強化で、結晶の加護が一段上がりません");
         helper.succeed();
     }

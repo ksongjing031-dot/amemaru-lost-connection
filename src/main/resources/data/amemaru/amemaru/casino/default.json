@@ -1,5 +1,5 @@
 {
-  "_comment": "カジノの倍率と上限（Phase 7 その3。Phase 0-B 6章のフォルダの一覧「casino/：カジノの倍率と上限」。Phase 0-A 15章「娯楽の設計（カジノ）」）。数は【補完】。zones は中央広場の真ん中からの位置（tools/mapgen/build_casino.py の卓と窓口。y は道の高さから）",
+  "_comment": "カジノの倍率と上限（Phase 7 その3。Phase 0-B 6章のフォルダの一覧「casino/：カジノの倍率と上限」。Phase 0-A 15章「娯楽の設計（カジノ）」）。数は【補完】。zones は中央広場の真ん中からの位置（tools/mapgen/build_casino.py の卓と窓口。y は道の高さから）。11月27日のご指示「ルーレットとハイ＆ロー以外を廃止」で魚レースはやめた。parlor は地下遊技場（tools/datagen/build_parlor.py が書く）",
   "open_day": 3,
   "knots_per_chip": 10,
   "daily_chip_limit": 500,
@@ -50,18 +50,6 @@
         95
       ]
     },
-    "fishrace": {
-      "min": [
-        22,
-        10,
-        81
-      ],
-      "max": [
-        32,
-        11,
-        89
-      ]
-    },
     "cashier": {
       "min": [
         15,
@@ -90,13 +78,6 @@
   "highlow": {
     "flag": "amemaru:project/highlow",
     "edge": 0.97
-  },
-  "fishrace": {
-    "flag": "amemaru:project/fishrace",
-    "edge": 0.97,
-    "min_multiplier": 1.1,
-    "max_multiplier": 30,
-    "entry_win_chips": 20
   },
   "prizes": [
     {
@@ -174,5 +155,935 @@
       "title": "amemaru:golden_knot",
       "chips": 2000
     }
-  ]
+  ],
+  "parlor": {
+    "_comment": "地下遊技場（11月27日【補完】）。玉とメダルはチップで借りる（1枚で25個・5枚）。台を離れても keep 秒はその人の台（ボーナス・確変・AT の最中は keep_feature 秒）。new の島は共同事業⑥「カジノの新台入替」のあと。台の並びは tools/mapgen/parlor_layout.py（tools/datagen/build_parlor.py が書く）",
+    "balls_per_chip": 25,
+    "medals_per_chip": 5,
+    "lend": [
+      1,
+      10,
+      40
+    ],
+    "keep_seconds": 120,
+    "keep_feature_seconds": 600,
+    "reach": 6,
+    "new_flag": "amemaru:project/new_machines",
+    "counter": {
+      "min": [
+        24,
+        -9,
+        94
+      ],
+      "max": [
+        31,
+        -8,
+        94
+      ]
+    },
+    "islands": [
+      {
+        "id": "b1",
+        "name": "輝きの塔",
+        "model": "p_tower",
+        "floor": "base",
+        "boards": [
+          [
+            17,
+            -8,
+            80
+          ],
+          [
+            18,
+            -8,
+            80
+          ]
+        ]
+      },
+      {
+        "id": "b2",
+        "name": "結び目の森 甘",
+        "model": "p_forest",
+        "floor": "base",
+        "boards": [
+          [
+            23,
+            -8,
+            80
+          ],
+          [
+            24,
+            -8,
+            80
+          ]
+        ]
+      },
+      {
+        "id": "b3",
+        "name": "ノットランプ",
+        "model": "s_knot",
+        "floor": "base",
+        "boards": [
+          [
+            30,
+            -8,
+            80
+          ],
+          [
+            31,
+            -8,
+            80
+          ]
+        ]
+      },
+      {
+        "id": "b4",
+        "name": "星詠みの塔",
+        "model": "s_star",
+        "floor": "base",
+        "boards": [
+          [
+            36,
+            -8,
+            80
+          ],
+          [
+            37,
+            -8,
+            80
+          ]
+        ]
+      },
+      {
+        "id": "n1",
+        "name": "沈黙の湖 LT",
+        "model": "p_lake",
+        "floor": "new",
+        "boards": [
+          [
+            23,
+            11,
+            80
+          ],
+          [
+            24,
+            11,
+            80
+          ]
+        ]
+      },
+      {
+        "id": "n2",
+        "name": "月影の大鐘",
+        "model": "s_moon",
+        "floor": "new",
+        "boards": [
+          [
+            29,
+            11,
+            80
+          ],
+          [
+            30,
+            11,
+            80
+          ]
+        ]
+      }
+    ],
+    "machines": [
+      {
+        "no": 1,
+        "model": "p_tower",
+        "island": "b1",
+        "pos": [
+          17,
+          -8,
+          81
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 2,
+        "model": "p_tower",
+        "island": "b1",
+        "pos": [
+          17,
+          -8,
+          82
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 3,
+        "model": "p_tower",
+        "island": "b1",
+        "pos": [
+          17,
+          -8,
+          83
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 5,
+        "model": "p_tower",
+        "island": "b1",
+        "pos": [
+          17,
+          -8,
+          84
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 6,
+        "model": "p_tower",
+        "island": "b1",
+        "pos": [
+          17,
+          -8,
+          85
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 7,
+        "model": "p_tower",
+        "island": "b1",
+        "pos": [
+          17,
+          -8,
+          86
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 8,
+        "model": "p_tower",
+        "island": "b1",
+        "pos": [
+          18,
+          -8,
+          86
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 10,
+        "model": "p_tower",
+        "island": "b1",
+        "pos": [
+          18,
+          -8,
+          85
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 11,
+        "model": "p_tower",
+        "island": "b1",
+        "pos": [
+          18,
+          -8,
+          84
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 12,
+        "model": "p_tower",
+        "island": "b1",
+        "pos": [
+          18,
+          -8,
+          83
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 13,
+        "model": "p_tower",
+        "island": "b1",
+        "pos": [
+          18,
+          -8,
+          82
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 15,
+        "model": "p_tower",
+        "island": "b1",
+        "pos": [
+          18,
+          -8,
+          81
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 16,
+        "model": "p_forest",
+        "island": "b2",
+        "pos": [
+          23,
+          -8,
+          81
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 17,
+        "model": "p_forest",
+        "island": "b2",
+        "pos": [
+          23,
+          -8,
+          82
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 18,
+        "model": "p_forest",
+        "island": "b2",
+        "pos": [
+          23,
+          -8,
+          83
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 20,
+        "model": "p_forest",
+        "island": "b2",
+        "pos": [
+          23,
+          -8,
+          84
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 21,
+        "model": "p_forest",
+        "island": "b2",
+        "pos": [
+          23,
+          -8,
+          85
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 22,
+        "model": "p_forest",
+        "island": "b2",
+        "pos": [
+          23,
+          -8,
+          86
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 23,
+        "model": "p_forest",
+        "island": "b2",
+        "pos": [
+          24,
+          -8,
+          86
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 25,
+        "model": "p_forest",
+        "island": "b2",
+        "pos": [
+          24,
+          -8,
+          85
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 26,
+        "model": "p_forest",
+        "island": "b2",
+        "pos": [
+          24,
+          -8,
+          84
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 27,
+        "model": "p_forest",
+        "island": "b2",
+        "pos": [
+          24,
+          -8,
+          83
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 28,
+        "model": "p_forest",
+        "island": "b2",
+        "pos": [
+          24,
+          -8,
+          82
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 30,
+        "model": "p_forest",
+        "island": "b2",
+        "pos": [
+          24,
+          -8,
+          81
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 101,
+        "model": "s_knot",
+        "island": "b3",
+        "pos": [
+          30,
+          -8,
+          81
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 102,
+        "model": "s_knot",
+        "island": "b3",
+        "pos": [
+          30,
+          -8,
+          82
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 103,
+        "model": "s_knot",
+        "island": "b3",
+        "pos": [
+          30,
+          -8,
+          83
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 105,
+        "model": "s_knot",
+        "island": "b3",
+        "pos": [
+          30,
+          -8,
+          84
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 106,
+        "model": "s_knot",
+        "island": "b3",
+        "pos": [
+          30,
+          -8,
+          85
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 107,
+        "model": "s_knot",
+        "island": "b3",
+        "pos": [
+          30,
+          -8,
+          86
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 108,
+        "model": "s_knot",
+        "island": "b3",
+        "pos": [
+          31,
+          -8,
+          86
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 110,
+        "model": "s_knot",
+        "island": "b3",
+        "pos": [
+          31,
+          -8,
+          85
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 111,
+        "model": "s_knot",
+        "island": "b3",
+        "pos": [
+          31,
+          -8,
+          84
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 112,
+        "model": "s_knot",
+        "island": "b3",
+        "pos": [
+          31,
+          -8,
+          83
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 113,
+        "model": "s_knot",
+        "island": "b3",
+        "pos": [
+          31,
+          -8,
+          82
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 115,
+        "model": "s_knot",
+        "island": "b3",
+        "pos": [
+          31,
+          -8,
+          81
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 116,
+        "model": "s_star",
+        "island": "b4",
+        "pos": [
+          36,
+          -8,
+          81
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 117,
+        "model": "s_star",
+        "island": "b4",
+        "pos": [
+          36,
+          -8,
+          82
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 118,
+        "model": "s_star",
+        "island": "b4",
+        "pos": [
+          36,
+          -8,
+          83
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 120,
+        "model": "s_star",
+        "island": "b4",
+        "pos": [
+          36,
+          -8,
+          84
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 121,
+        "model": "s_star",
+        "island": "b4",
+        "pos": [
+          36,
+          -8,
+          85
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 122,
+        "model": "s_star",
+        "island": "b4",
+        "pos": [
+          36,
+          -8,
+          86
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 123,
+        "model": "s_star",
+        "island": "b4",
+        "pos": [
+          37,
+          -8,
+          86
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 125,
+        "model": "s_star",
+        "island": "b4",
+        "pos": [
+          37,
+          -8,
+          85
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 126,
+        "model": "s_star",
+        "island": "b4",
+        "pos": [
+          37,
+          -8,
+          84
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 127,
+        "model": "s_star",
+        "island": "b4",
+        "pos": [
+          37,
+          -8,
+          83
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 128,
+        "model": "s_star",
+        "island": "b4",
+        "pos": [
+          37,
+          -8,
+          82
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 130,
+        "model": "s_star",
+        "island": "b4",
+        "pos": [
+          37,
+          -8,
+          81
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 201,
+        "model": "p_lake",
+        "island": "n1",
+        "pos": [
+          23,
+          11,
+          81
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 202,
+        "model": "p_lake",
+        "island": "n1",
+        "pos": [
+          23,
+          11,
+          82
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 203,
+        "model": "p_lake",
+        "island": "n1",
+        "pos": [
+          23,
+          11,
+          83
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 205,
+        "model": "p_lake",
+        "island": "n1",
+        "pos": [
+          23,
+          11,
+          84
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 206,
+        "model": "p_lake",
+        "island": "n1",
+        "pos": [
+          23,
+          11,
+          85
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 207,
+        "model": "p_lake",
+        "island": "n1",
+        "pos": [
+          23,
+          11,
+          86
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 208,
+        "model": "p_lake",
+        "island": "n1",
+        "pos": [
+          24,
+          11,
+          86
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 210,
+        "model": "p_lake",
+        "island": "n1",
+        "pos": [
+          24,
+          11,
+          85
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 211,
+        "model": "p_lake",
+        "island": "n1",
+        "pos": [
+          24,
+          11,
+          84
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 212,
+        "model": "p_lake",
+        "island": "n1",
+        "pos": [
+          24,
+          11,
+          83
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 213,
+        "model": "p_lake",
+        "island": "n1",
+        "pos": [
+          24,
+          11,
+          82
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 215,
+        "model": "p_lake",
+        "island": "n1",
+        "pos": [
+          24,
+          11,
+          81
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 301,
+        "model": "s_moon",
+        "island": "n2",
+        "pos": [
+          29,
+          11,
+          81
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 302,
+        "model": "s_moon",
+        "island": "n2",
+        "pos": [
+          29,
+          11,
+          82
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 303,
+        "model": "s_moon",
+        "island": "n2",
+        "pos": [
+          29,
+          11,
+          83
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 305,
+        "model": "s_moon",
+        "island": "n2",
+        "pos": [
+          29,
+          11,
+          84
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 306,
+        "model": "s_moon",
+        "island": "n2",
+        "pos": [
+          29,
+          11,
+          85
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 307,
+        "model": "s_moon",
+        "island": "n2",
+        "pos": [
+          29,
+          11,
+          86
+        ],
+        "facing": "west"
+      },
+      {
+        "no": 308,
+        "model": "s_moon",
+        "island": "n2",
+        "pos": [
+          30,
+          11,
+          86
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 310,
+        "model": "s_moon",
+        "island": "n2",
+        "pos": [
+          30,
+          11,
+          85
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 311,
+        "model": "s_moon",
+        "island": "n2",
+        "pos": [
+          30,
+          11,
+          84
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 312,
+        "model": "s_moon",
+        "island": "n2",
+        "pos": [
+          30,
+          11,
+          83
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 313,
+        "model": "s_moon",
+        "island": "n2",
+        "pos": [
+          30,
+          11,
+          82
+        ],
+        "facing": "east"
+      },
+      {
+        "no": 315,
+        "model": "s_moon",
+        "island": "n2",
+        "pos": [
+          30,
+          11,
+          81
+        ],
+        "facing": "east"
+      }
+    ]
+  }
 }

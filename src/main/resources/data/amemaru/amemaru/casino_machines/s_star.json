@@ -1,0 +1,256 @@
+{
+  "_comment": "カジノの地下遊技場の機種（11月27日のご指示「パチンコとスロットを追加する。本物ように設定を作る」【補完】）。tools/datagen/build_parlor.py が書き出す。数は tools/balance/ParlorSim.java で確かめた値",
+  "kind": "slot",
+  "type": "at",
+  "name": "星詠みの塔",
+  "spec": "AT（押し順ナビ・CZ・上乗せ・天井）",
+  "bet": 3,
+  "wait_ms": 3200,
+  "rpm": 60,
+  "symbols": [
+    {
+      "id": "7",
+      "name": "赤7",
+      "color": "#E8283C"
+    },
+    {
+      "id": "B",
+      "name": "BAR",
+      "color": "#202028"
+    },
+    {
+      "id": "L",
+      "name": "ベル",
+      "color": "#F0C830"
+    },
+    {
+      "id": "R",
+      "name": "リプレイ",
+      "color": "#3C8CE0"
+    },
+    {
+      "id": "C",
+      "name": "チェリー",
+      "color": "#E04060"
+    },
+    {
+      "id": "S",
+      "name": "スイカ",
+      "color": "#40B050"
+    },
+    {
+      "id": "X",
+      "name": "星",
+      "color": "#F4F0E0"
+    }
+  ],
+  "reels": [
+    "RLBRLLCRRLRRSSLLRXC7L",
+    "7LRSLRBLRSLRXLRSLRCLR",
+    "7RLSRLBRLSRLXRLSRLBRL"
+  ],
+  "lines": [
+    [
+      1,
+      1,
+      1
+    ]
+  ],
+  "roles": [
+    {
+      "id": "replay",
+      "pattern": "RRR",
+      "replay": true,
+      "p": 7.3
+    },
+    {
+      "id": "obell",
+      "type": "order",
+      "pattern": "LLL",
+      "pay": 9,
+      "miss_pay": 0,
+      "p": 1.8
+    },
+    {
+      "id": "cbell",
+      "pattern": "LLL",
+      "pay": 9,
+      "p": 40.0
+    },
+    {
+      "id": "wcherry",
+      "type": "cherry",
+      "pattern": "C",
+      "rows": [
+        0,
+        2
+      ],
+      "pay": 2,
+      "rare": true,
+      "p": [
+        100,
+        98,
+        96,
+        94,
+        92,
+        90
+      ]
+    },
+    {
+      "id": "scherry",
+      "type": "cherry",
+      "pattern": "C",
+      "rows": [
+        1
+      ],
+      "pay": 2,
+      "rare": true,
+      "p": 400
+    },
+    {
+      "id": "melon",
+      "pattern": "SSS",
+      "pay": 5,
+      "rare": true,
+      "p": [
+        120,
+        118,
+        116,
+        114,
+        112,
+        110
+      ]
+    },
+    {
+      "id": "chance",
+      "pattern": "RRB",
+      "pay": 0,
+      "rare": true,
+      "p": 250
+    }
+  ],
+  "at": {
+    "ceiling": 800,
+    "initial": 50,
+    "cz_games": 10,
+    "cz": {
+      "wcherry": [
+        10,
+        11,
+        11.5,
+        13,
+        15,
+        16
+      ],
+      "melon": [
+        12,
+        13,
+        14,
+        16,
+        18,
+        20
+      ],
+      "chance": [
+        30,
+        32,
+        33,
+        36,
+        40,
+        42
+      ],
+      "scherry": [
+        70,
+        70,
+        71,
+        73,
+        76,
+        78
+      ],
+      "other": [
+        0.08,
+        0.09,
+        0.093,
+        0.108,
+        0.13,
+        0.14
+      ]
+    },
+    "direct": {
+      "scherry": [
+        25,
+        26,
+        26,
+        27,
+        29,
+        30
+      ],
+      "chance": [
+        6,
+        6,
+        6.5,
+        7,
+        8,
+        9
+      ],
+      "other": [
+        0.01,
+        0.01,
+        0.011,
+        0.013,
+        0.018,
+        0.02
+      ]
+    },
+    "cz_win": {
+      "replay": 3,
+      "obell": 3,
+      "cbell": 12,
+      "wcherry": 45,
+      "melon": 55,
+      "scherry": 100,
+      "chance": 100,
+      "other": 1
+    },
+    "add": {
+      "wcherry": {
+        "pct": 50,
+        "games": 20
+      },
+      "melon": {
+        "pct": 60,
+        "games": 20
+      },
+      "scherry": {
+        "pct": 100,
+        "games": 50
+      },
+      "chance": {
+        "pct": 100,
+        "games": 30
+      },
+      "other": {
+        "pct": 1.9,
+        "games": 15
+      }
+    }
+  },
+  "payout": [
+    97.5,
+    98.8,
+    100.5,
+    103.5,
+    107.0,
+    111.5
+  ],
+  "theme": {
+    "frame": "#1C2A5C",
+    "accent": "#F4D27A",
+    "screen": "#0A1028",
+    "glow": "#7AB8FF"
+  },
+  "labels": {
+    "stage": "星の回廊",
+    "cz": "星の扉",
+    "at": "星詠みラッシュ"
+  }
+}

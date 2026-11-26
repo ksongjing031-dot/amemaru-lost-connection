@@ -1,0 +1,75 @@
+{
+  "_comment": "カジノの地下遊技場の機種（11月27日のご指示「パチンコとスロットを追加する。本物ように設定を作る」【補完】）。tools/datagen/build_parlor.py が書き出す。数は tools/balance/ParlorSim.java で確かめた値",
+  "kind": "pachinko",
+  "name": "P 輝きの塔",
+  "spec": "ミドル（確変ループ）",
+  "border": 18.2,
+  "normal": 319.7,
+  "high": 39.9,
+  "count": 10,
+  "ball_pay": 15,
+  "heso_pay": 3,
+  "denchu_pay": 1,
+  "denchu": 0.95,
+  "nails": {
+    "normal": [
+      15.0,
+      20.0
+    ],
+    "event": [
+      16.5,
+      22.5
+    ]
+  },
+  "jackpots": [
+    {
+      "id": "k10",
+      "name": "10R確変",
+      "rounds": 10,
+      "next": "kakuhen",
+      "heso": 10,
+      "denchu": 55
+    },
+    {
+      "id": "k4",
+      "name": "4R確変",
+      "rounds": 4,
+      "next": "kakuhen",
+      "heso": 52,
+      "denchu": 10
+    },
+    {
+      "id": "n10",
+      "name": "10R通常",
+      "rounds": 10,
+      "next": "jitan",
+      "spins": 100,
+      "heso": 0,
+      "denchu": 35
+    },
+    {
+      "id": "n4",
+      "name": "4R通常",
+      "rounds": 4,
+      "next": "jitan",
+      "spins": 100,
+      "heso": 38,
+      "denchu": 0
+    }
+  ],
+  "theme": {
+    "frame": "#1E3C78",
+    "accent": "#F2C84A",
+    "screen": "#08142E",
+    "glow": "#7FD8FF"
+  },
+  "labels": {
+    "normal": "リーチ",
+    "super": "塔の守り手リーチ",
+    "special": "輝きの大結晶リーチ",
+    "all": "全回転",
+    "kakuhen": "輝きラッシュ",
+    "jitan": "チャンスタイム",
+    "stage": "塔のふもと"
+  }
+}

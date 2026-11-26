@@ -76,6 +76,17 @@ public final class TownData extends SavedData {
         return server.overworld().getDataStorage().computeIfAbsent(TownData::load, TownData::new, NAME);
     }
 
+    /** 11月27日：共同事業の ID を替える（前の版の⑥「魚レース」の寄付を「カジノの新台入替」に引きつぐ）。替えたら true。 */
+    public boolean renameProject(ResourceLocation from, ResourceLocation to) {
+        Project p = projects.remove(from.toString());
+        if (p == null) {
+            return false;
+        }
+        projects.putIfAbsent(to.toString(), p);
+        setDirty();
+        return true;
+    }
+
     public Project project(ResourceLocation id) {
         return projects.computeIfAbsent(id.toString(), k -> new Project());
     }

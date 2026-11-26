@@ -74,6 +74,7 @@ public final class MapDisplayGameTests {
     private static final String FISHING_LAKESIDE = "map/conelia/fishing_lakeside";
     private static final String CASINO = "map/conelia/casino";
     private static final String CASINO_HIGHLOW = "map/conelia/casino_highlow";
+    private static final String CASINO_PARLOR = "map/conelia/casino_parlor";
     private static final String TOWER = "map/conelia/tower_entrance";
 
     /** 防具立てを右クリックする高さ（足・脚・胴・手・頭のあたり）。 */
@@ -169,7 +170,7 @@ public final class MapDisplayGameTests {
 
     /** カジノ：額縁14（吊り看板の下の金のリンゴ、景品の台の称号の札・留め糸・旗の模様・金のリンゴ、景品の交換所の壁の楽の円盤、
      *  地下の噂の間の地図の壁の地図と紙8）、防具立て4（景品の見た目の服2、2階の働く人の部屋の係の服2）。
-     *  魚レース（casino_fishrace）には、額縁も防具立てもない。 */
+     *  新台の間（casino_new_machines。11月27日。前は魚レース）には、額縁も防具立てもない。 */
     @GameTest(template = EMPTY)
     public static void casinoDisplaysCannotBeTaken(GameTestHelper helper) {
         checkBuilding(helper, CASINO, "casino", 14, 4);
@@ -179,6 +180,12 @@ public final class MapDisplayGameTests {
     @GameTest(template = EMPTY)
     public static void casinoHighLowDisplaysCannotBeTaken(GameTestHelper helper) {
         checkBuilding(helper, CASINO_HIGHLOW, "casino_highlow", 4, 0);
+    }
+
+    /** 地下遊技場（11月27日。カジノの地下に重ねて置く形）：額縁8（交換所の奥の棚の景品）。 */
+    @GameTest(template = EMPTY)
+    public static void casinoParlorDisplaysCannotBeTaken(GameTestHelper helper) {
+        checkBuilding(helper, CASINO_PARLOR, "casino_parlor", 8, 0);
     }
 
     /** 塔の入口：額縁7（受付の塔の地図2、衛兵の間の武器掛けの剣2と弩、控えの間の机の地図2）、防具立て3（衛兵の間の予備の鎧2、

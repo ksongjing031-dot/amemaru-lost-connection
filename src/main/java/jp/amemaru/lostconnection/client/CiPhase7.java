@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * 自動の確認の写真（Phase 7：コネクション量と大結晶の輝き・釣り・カジノ）の段取り：大結晶の台の西の「記憶の石」を右クリックする・
  * 輝きの画面のタブを変える・縁帳を開く・縁帳から結び札を贈る・釣り具屋の画面のタブと図鑑の魚を選ぶ・糸の張りを自動で巻く・
- * カジノのルーレットの卓を右クリックする・カジノの画面のタブとチップの額を選ぶ・賭ける・魚レースに魚を出す・寄付の台座を右クリック
+ * カジノのルーレットの卓を右クリックする・カジノの画面のタブとチップの額を選ぶ・賭ける・寄付の台座を右クリック
  * する・寄付台の画面で共同事業を選ぶ・寄付する。
  */
 final class CiPhase7 {
@@ -34,7 +34,7 @@ final class CiPhase7 {
     static boolean action(Minecraft minecraft, String[] shot, boolean first) {
         String kind = shot[0];
         if (!List.of("p7_stone", "p7_glow", "p7_glow_tab", "p7_book", "p7_thanks", "p7f_tab", "p7f_select", "p7f_auto",
-                "p7c_use", "p7c_tab", "p7c_chip", "p7c_bet", "p7c_enter", "p7p_use", "p7p_select", "p7p_donate", "p7p_cook").contains(kind)) {
+                "p7c_use", "p7c_tab", "p7c_chip", "p7c_bet", "p7p_use", "p7p_select", "p7p_donate", "p7p_cook").contains(kind)) {
             return false;
         }
         if (!first) {
@@ -111,11 +111,6 @@ final class CiPhase7 {
             case "p7p_cook" -> {
                 if (minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.RestaurantScreen screen) {
                     screen.ciCook(Integer.parseInt(shot[3]));
-                }
-            }
-            case "p7c_enter" -> {
-                if (minecraft.screen instanceof jp.amemaru.lostconnection.client.screen.CasinoScreen screen) {
-                    screen.ciEnter();
                 }
             }
             default -> {

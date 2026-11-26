@@ -261,6 +261,44 @@ public final class ModBlocks {
                     .noOcclusion()
                     .pushReaction(PushReaction.BLOCK)));
 
+    // ---- 11月27日：カジノの地下遊技場（パチンコとスロット）
+
+    /** パチンコの台（機種ごと）。 */
+    public static final RegistryObject<Block> PARLOR_P_TOWER = machine("parlor_p_tower", "p_tower", MapColor.COLOR_BLUE);
+    public static final RegistryObject<Block> PARLOR_P_FOREST = machine("parlor_p_forest", "p_forest", MapColor.COLOR_GREEN);
+    public static final RegistryObject<Block> PARLOR_P_LAKE = machine("parlor_p_lake", "p_lake", MapColor.COLOR_LIGHT_BLUE);
+    /** スロットの台（機種ごと）。 */
+    public static final RegistryObject<Block> PARLOR_S_KNOT = machine("parlor_s_knot", "s_knot", MapColor.COLOR_PURPLE);
+    public static final RegistryObject<Block> PARLOR_S_STAR = machine("parlor_s_star", "s_star", MapColor.COLOR_BLUE);
+    public static final RegistryObject<Block> PARLOR_S_MOON = machine("parlor_s_moon", "s_moon", MapColor.COLOR_GRAY);
+    /** 台の下の受け皿（パチンコ・スロット）。 */
+    public static final RegistryObject<Block> PARLOR_BASE_P = BLOCKS.register("parlor_base_p", () ->
+            new jp.amemaru.lostconnection.casino.parlor.block.MachineBaseBlock(parlor(MapColor.COLOR_BLACK).lightLevel(s -> 3)));
+    public static final RegistryObject<Block> PARLOR_BASE_S = BLOCKS.register("parlor_base_s", () ->
+            new jp.amemaru.lostconnection.casino.parlor.block.MachineBaseBlock(parlor(MapColor.COLOR_BLACK).lightLevel(s -> 3)));
+    /** 島の端のデータの掲示板。 */
+    public static final RegistryObject<Block> PARLOR_BOARD = BLOCKS.register("parlor_board", () ->
+            new jp.amemaru.lostconnection.casino.parlor.block.ParlorBoardBlock(parlor(MapColor.COLOR_BLACK).lightLevel(s -> 8)));
+    /** 台の前の丸い腰かけ（通り抜けられる）。 */
+    public static final RegistryObject<Block> PARLOR_STOOL = BLOCKS.register("parlor_stool", () ->
+            new jp.amemaru.lostconnection.casino.parlor.block.ParlorStoolBlock(parlor(MapColor.COLOR_RED).noCollission()));
+
+    private static RegistryObject<Block> machine(String name, String model, MapColor color) {
+        return BLOCKS.register(name, () -> new jp.amemaru.lostconnection.casino.parlor.block.GameMachineBlock(model,
+                parlor(color).lightLevel(state -> state.getValue(jp.amemaru.lostconnection.casino.parlor.block.GameMachineBlock.LIT)
+                        ? 12 : 7)));
+    }
+
+    /** 遊技場のブロック（サバイバル・アドベンチャーでは壊せない。街の施設のため）。 */
+    private static BlockBehaviour.Properties parlor(MapColor color) {
+        return BlockBehaviour.Properties.of()
+                .mapColor(color)
+                .strength(-1.0F, 3600000.0F)
+                .sound(SoundType.METAL)
+                .noOcclusion()
+                .pushReaction(PushReaction.BLOCK);
+    }
+
     /** 工房の作業台（サバイバル・アドベンチャーでは壊せない。街の施設のため）。 */
     private static BlockBehaviour.Properties workbench(MapColor color) {
         return BlockBehaviour.Properties.of()

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=north": {
+      "model": "amemaru:block/parlor_base_s"
+    },
+    "facing=east": {
+      "model": "amemaru:block/parlor_base_s",
+      "y": 90
+    },
+    "facing=south": {
+      "model": "amemaru:block/parlor_base_s",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "amemaru:block/parlor_base_s",
+      "y": 270
+    }
+  }
+}

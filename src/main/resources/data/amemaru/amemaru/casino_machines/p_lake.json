@@ -1,0 +1,101 @@
+{
+  "_comment": "カジノの地下遊技場の機種（11月27日のご指示「パチンコとスロットを追加する。本物ように設定を作る」【補完】）。tools/datagen/build_parlor.py が書き出す。数は tools/balance/ParlorSim.java で確かめた値",
+  "kind": "pachinko",
+  "name": "P 沈黙の湖 LT",
+  "spec": "ハイスペック（ST・ラッキートリガー・設定付き）",
+  "border": 18.2,
+  "normal": [
+    349.9,
+    339.6,
+    329.8,
+    319.9,
+    309.7,
+    299.6
+  ],
+  "settings": true,
+  "high": 99.6,
+  "count": 10,
+  "ball_pay": 15,
+  "heso_pay": 3,
+  "denchu_pay": 1,
+  "denchu": 0.95,
+  "nails": {
+    "normal": [
+      15.5,
+      20.5
+    ],
+    "event": [
+      17.0,
+      23.0
+    ]
+  },
+  "jackpots": [
+    {
+      "id": "r3",
+      "name": "3R＋ラッシュ",
+      "rounds": 3,
+      "next": "st",
+      "spins": 160,
+      "heso": 50,
+      "denchu": 0,
+      "denchu_lt": 0
+    },
+    {
+      "id": "n3",
+      "name": "3R通常",
+      "rounds": 3,
+      "next": "jitan",
+      "spins": 100,
+      "heso": 50,
+      "denchu": 0,
+      "denchu_lt": 0
+    },
+    {
+      "id": "s10",
+      "name": "10R＋ラッシュ",
+      "rounds": 10,
+      "next": "st",
+      "spins": 160,
+      "heso": 0,
+      "denchu": 55,
+      "denchu_lt": 0
+    },
+    {
+      "id": "s3",
+      "name": "3R＋ラッシュ",
+      "rounds": 3,
+      "next": "st",
+      "spins": 160,
+      "heso": 0,
+      "denchu": 35,
+      "denchu_lt": 0
+    },
+    {
+      "id": "lt10",
+      "name": "10R＋ラッキートリガー",
+      "rounds": 10,
+      "next": "st",
+      "spins": 230,
+      "lt": true,
+      "heso": 0,
+      "denchu": 10,
+      "denchu_lt": 100
+    }
+  ],
+  "theme": {
+    "frame": "#2A4A66",
+    "accent": "#E4F2FF",
+    "screen": "#06121E",
+    "glow": "#9CD4FF"
+  },
+  "labels": {
+    "normal": "リーチ",
+    "super": "湖の底リーチ",
+    "special": "声なき湖主リーチ",
+    "all": "全回転",
+    "st": "湖面ラッシュ",
+    "lt": "ラッキートリガー 静寂の極み",
+    "jitan": "チャンスタイム",
+    "stage": "沈黙の湖"
+  }
+}

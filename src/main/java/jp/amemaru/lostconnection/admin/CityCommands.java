@@ -126,6 +126,8 @@ public final class CityCommands {
             new Placement("water_gate", "lake", -131, -9, 48, false),
             new Placement("fishing_alley", "fishing", -66, -1, 66, false),
             new Placement("casino", "casino", 5, -3, 68, false),                     // 商店街の南の後に置く
+            // 11月27日：カジノの地下遊技場（カジノの後に置く。1階の休み場の所と、階段の通る土台を上書きする）
+            new Placement("casino_parlor", "casino", 13, -11, 72, false),
             new Placement("tower_entrance", "tower", -22, 1, -177, false),
             new Placement("tower_plaza", "tower", -23, -1, -147, false),
             new Placement("weapon_forge_lit", "weapon", 92, 1, -23, true),
@@ -135,7 +137,8 @@ public final class CityCommands {
             new Placement("fishing_lakeside", "lake", -131, -9, 48, true),
             new Placement("fishing_pond_frozen", "fishing", -95, -9, 23, true),
             new Placement("casino_highlow", "casino", 5, -3, 68, true),
-            new Placement("casino_fishrace", "casino", 5, -3, 68, true),
+            // 11月27日：共同事業⑥は魚レースをやめて「カジノの新台入替」（2階の宴の間を新台の間に）
+            new Placement("casino_new_machines", "casino", 5, -3, 68, true),
             new Placement("tower_plaza_monument", "tower", -23, -1, -147, true));
 
     /** ゾーニングの図の道と広場（x0, z0, x1, z1。両端を含む）。中央広場と城壁沿いの道は丸いので別に見る。 */
@@ -167,6 +170,8 @@ public final class CityCommands {
             new View("fishing", -49.5, 1, 56.5, 90, 5),
             new View("lake", -99.5, 1, 88.5, 140, 15),
             new View("casino", -1.5, 1, 84.5, -90, -25),
+            // 11月27日：カジノの地下遊技場（ロビーから、島の並ぶ南を見る）
+            new View("parlor", 28.5, -9, 76.5, 0, 12),
             new View("tower", 0.5, 1, -109.5, 180, -20),
             // Phase 5：街並み（北西の環状路の家並み・南の門・北東の倉庫地区・北東の角の塔と城壁）
             new View("houses", -30.5, 1, -56.5, 90, -5),
@@ -183,7 +188,7 @@ public final class CityCommands {
             new View("stalls", -33.5, 30, 76.5, 180, 90),
             new View("frozen_pond", -79.5, 30, 46.5, 180, 90),
             new View("highlow", 22.5, 3, 92.5, 0, 20),
-            new View("fishrace", 25.5, 10, 80.5, 0, 35),
+            new View("new_machines", 26.5, 10, 78.5, 0, 22),
             new View("monument", -5.5, 2, -127.5, 108, -5),
             new View("forge", 93.5, 1, -14.5, 180, -10));
 
@@ -423,6 +428,49 @@ public final class CityCommands {
         data.setDirty();
         AmemaruMod.LOGGER.info("[amemaru][city] placed the grown form {} at {}", name, at.toShortString());
         return true;
+    }
+
+    /**
+     * 11月27日：あとから足したふつうの形（地下遊技場）を、前の版で街を建てたワールドに置く。街を建てていない・もう置いてある
+     * （建てた形の控えがある）・形がないときは false。置いた形は控えに入れる（あとの直しの書き出しで、施設の直しとまちがえない）。
+     */
+    public static boolean placeMissingBase(ServerLevel level, String name) {
+        CityData data = CityData.get(level);
+        Placement placement = null;
+        for (Placement p : PLACEMENTS) {
+            if (!p.grown() && p.name().equals(name)) {
+                placement = p;
+            }
+        }
+        if (placement == null || !data.built || CityEdits.hasBuiltCopy(level, name)) {
+            return false;
+        }
+        CompoundTag tag;
+        try {
+            tag = CityEdits.buildTag(level, placement);
+        } catch (CityEdits.EditsException e) {
+            AmemaruMod.LOGGER.error("[amemaru][city] cannot place {}: {}", name, e.getMessage());
+            return false;
+        }
+        if (tag == null) {
+            return false;
+        }
+        BlockPos at = data.origin.offset(placement.x(), placement.y(), placement.z());
+        StructureTemplate template = level.getStructureManager().readStructure(CityEdits.placementTag(tag, at));
+        template.placeInWorld(level, at, at, new StructurePlaceSettings(), level.getRandom(), Block.UPDATE_CLIENTS);
+        CityEdits.saveBuiltOne(level, placement, tag);
+        AmemaruMod.LOGGER.info("[amemaru][city] placed the new structure {} at {}", name, at.toShortString());
+        return true;
+    }
+
+    /** 11月27日：前の版の「育ったあと」の形の名前を、新しい名前に替える（共同事業⑥の魚レース → 新台入替）。替えたら true。 */
+    public static boolean renameOverlay(ServerLevel level, String from, String to) {
+        CityData data = CityData.get(level);
+        if (!data.overlays.remove(from)) {
+            return false;
+        }
+        data.setDirty();
+        return placeOverlay(level, to);
     }
 
     @Nullable

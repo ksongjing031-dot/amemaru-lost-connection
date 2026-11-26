@@ -41,7 +41,7 @@ import java.util.Set;
  *       {@code amemaru:open_record_book}（記録帳）・{@code amemaru:open_connections}（縁帳）・{@code amemaru:open_donation}（露店の寄付）</li>
  *   <li>Phase 7 その2：{@code amemaru:open_fishing}（ポッカ爺の釣り具屋の画面。{@code tab}：dex・sell・trade・tournament）・
  *       {@code amemaru:rent_rod}（竿を借りる）</li>
- *   <li>Phase 7 その3：{@code amemaru:open_casino}（カジノの画面。{@code tab}：roulette・highlow・fishrace・cashier・prizes）</li>
+ *   <li>Phase 7 その3：{@code amemaru:open_casino}（カジノの画面。{@code tab}：roulette・highlow・cashier・prizes。11月27日に魚レースはやめた）</li>
  *   <li>Phase 7 その4：{@code amemaru:open_restaurant}（ペトラ・ポムの料理屋の画面）</li>
  *   <li>11月25日（7日目）：{@code amemaru:greet_lilia}（リリアに「ただいま」と声をかける。{@link jp.amemaru.lostconnection.npc.LiliaMemoryService}）</li>
  * </ul>
