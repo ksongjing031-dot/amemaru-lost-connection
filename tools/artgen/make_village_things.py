@@ -7,8 +7,8 @@
   textures/entity/village/<名前>_statue.png  同じ人の氷像の見た目：色を白と淡い青に寄せ、顔を白く抜く（ロストの侵食。Phase 0-A 9章の6階
                                              「氷像の顔が空白」）。tower の VillageStatueRenderer が氷の色で半分すけて描く
   textures/item/heat_crystal.png・memory_crystal.png（16×16。tools/artgen/enhance_icons.py で 32×32 にする）
-  村長の毛皮（6階のボスのレア。頭・胴・脚・足の一式）：古代石の法衣の形（geo/armor）と絵を、紺の外套と白い毛皮・金の縁取りの色に
-  塗り直す（geo/armor/mayor_fur.geo.json・textures/armor/mayor_fur.png・持ち物の絵と models/item）
+  村長の毛皮（6階のボスのレア。頭・胴・脚・足の一式）：11月26日から、古代石の法衣の形の塗り直しをやめ、形から作り直した
+  （tools/artgen/make_gear_rare_reshape.py。このスクリプトは、その村長の毛皮の分を呼ぶ）
   6階の素材（霜銀・氷晶・凍て毛皮・霜狼の牙・凍て鳥の羽根）の models/item（絵は tools/artgen/make_floor_accessory_art.py）
 村人：merchant（値切る商人）・buyer（客）・mother（母）・child_girl（女の子。日記の子）・child_boy・ringer（鐘を鳴らす若者）・
       ordo（村長オルド）・man・woman・old_man・guard（門番）
@@ -276,100 +276,21 @@ def crystal_icon(memory):
     return img
 
 
-# ================================================================ 村長の毛皮（6階のボスのレア。11月25日「防具は一式全部揃えた形に」）
+# ================================================================ 村長の毛皮（6階のボスのレア。11月26日に形から作り直した）
 
-FUR_PIECES = {"ancient_stone_hood": "mayor_fur_hat", "ancient_stone_robe": "mayor_fur_coat",
-              "ancient_stone_legwear": "mayor_fur_leggings", "ancient_stone_boots": "mayor_fur_boots"}
-NAVY = [(14, 20, 38), (22, 32, 56), (31, 44, 76), (42, 58, 98), (56, 74, 120), (74, 94, 144), (98, 118, 168)]
-FUR = [(106, 102, 94), (131, 126, 116), (156, 150, 139), (181, 175, 163), (203, 198, 187), (223, 219, 210), (240, 237, 231)]
-GOLD = [(105, 75, 22), (139, 101, 29), (173, 130, 40), (201, 160, 58), (223, 189, 88), (241, 217, 133)]
-
-
-def fur_recolor(img):
-    """古代石の法衣の形を、紺の外套と白い毛皮の色に塗り直す：明るい所は毛皮、暗い所は紺、黄みの強い所は金の縁取り"""
-    out = img.convert("RGBA").copy()
-    px = out.load()
-    for y in range(out.size[1]):
-        for x in range(out.size[0]):
-            r, g, b, a = px[x, y]
-            if a == 0:
-                continue
-            lum = (r * 0.3 + g * 0.59 + b * 0.11) / 255.0
-            warm = (r - b) / 255.0
-            if warm > 0.18 and lum > 0.35:
-                c = GOLD[min(len(GOLD) - 1, int(lum * len(GOLD)))]
-            elif lum > 0.62:
-                c = FUR[min(len(FUR) - 1, int((lum - 0.62) / 0.38 * len(FUR)))]
-            else:
-                c = NAVY[min(len(NAVY) - 1, int(lum / 0.62 * len(NAVY)))]
-            px[x, y] = (c[0], c[1], c[2], a)
-    return out
-
-
-def fur_series(base):
-    import json
-    with open(os.path.join(base, "geo/armor/ancient_stone_robe.geo.json"), encoding="utf-8") as fp:
-        geo = json.load(fp)
-    for g in geo.get("minecraft:geometry", []):
-        g["description"]["identifier"] = "geometry.mayor_fur"
-    with open(os.path.join(base, "geo/armor/mayor_fur.geo.json"), "w", encoding="utf-8") as fp:
-        json.dump(geo, fp, ensure_ascii=False, indent=1)
-        fp.write("\n")
-    painted = fur_recolor(Image.open(os.path.join(base, "textures/armor/ancient_stone_robe.png")))
-    painted.save(os.path.join(base, "textures/armor/mayor_fur.png"))
-    # エピックの「光る部分」：金の縁取りとボタンだけ（OptionalGlowLayer が <絵>_glowmask.png を重ねる）
-    glow = painted.copy()
-    gp = glow.load()
-    golds = set(GOLD)
-    for y in range(glow.size[1]):
-        for x in range(glow.size[0]):
-            r, g, b, a = gp[x, y]
-            if (r, g, b) not in golds:
-                gp[x, y] = (0, 0, 0, 0)
-    glow.save(os.path.join(base, "textures/armor/mayor_fur_glowmask.png"))
-    for src, gid in FUR_PIECES.items():
-        fur_recolor(Image.open(os.path.join(base, "textures/item", src + ".png"))).save(os.path.join(base, "textures/item", gid + ".png"))
-        with open(os.path.join(base, "models/item", src + ".json"), encoding="utf-8") as fp:
-            model = json.load(fp)
-        with open(os.path.join(base, "models/item", gid + ".json"), "w", encoding="utf-8") as fp:
-            fp.write(json.dumps(json.loads(json.dumps(model).replace(src, gid)), ensure_ascii=False, indent=2) + "\n")
+def fur_series(repo, out=None):
+    """村長の毛皮の体のモデル・絵・持ち物の絵・docs/gear/mayor_fur_sheet.png を、make_gear_rare_reshape.py で作る。"""
+    import make_gear_rare_reshape
+    make_gear_rare_reshape.export_mayor(repo, out or "/tmp/gear_rare")
 
 
 MATERIAL_MODELS = ["frost_silver", "ice_crystal", "frozen_fur", "frost_fang", "ice_feather"]
 
 
-def fur_sheet(repo):
-    """docs/gear/mayor_fur_sheet.png：古代石の法衣の形（make_gear_ancient_armor.py）に、村長の毛皮の絵を着せて撮る。"""
-    import numpy as np
-    import make_gear_ancient_armor as AA
-    from geomodel import mannequin, paint_mannequin
-    from make_floor_accessory_art import disk_icon
-    from setsheet import make_set_sheet
-    base = os.path.join(repo, "src/main/resources/assets/amemaru")
-    g = AA.build_robe()
-    AA.paint(g)
-    tex = np.asarray(Image.open(os.path.join(base, "textures/armor/mayor_fur.png")).convert("RGBA"))
-    man = mannequin()
-    mtex = man.paint(paint_mannequin, frames=1)[0]
-    full = [(man, mtex), (g, tex)]
-    pieces = (("帽", "head", "mayor_fur_hat"), ("外套", "chest", "mayor_fur_coat"), ("脚衣", "legs", "mayor_fur_leggings"),
-              ("長靴", "feet", "mayor_fur_boots"))
-    icons = [(label, disk_icon(repo, item)) for label, _, item in pieces]
-    piece_views = [(label, -145, 14, [(man, mtex), (AA.subset(g, AA.PIECE_BONES[slot]), tex)]) for label, slot, _ in pieces]
-    items = [
-        {"label": "フルセット", "rarity": "エピック・Lv26・全職業", "pairs": full, "views": [(lab, y, p) for y, p, lab in AA.VIEWS],
-         "icons": icons, "note": "村長オルドの冬の装い。\n紺の外套に白い毛皮の縁、\n金の縁取り。一式で寒さに強い。"},
-        {"label": "部位ごと", "rarity": "着た場所だけ表示", "note": "", "pairs": full, "views": piece_views, "icons": icons,
-         "icon_cell": 40},
-    ]
-    make_set_sheet(os.path.join(repo, "docs/gear", "mayor_fur_sheet.png"), "村長の毛皮（6階のボスのレア）",
-                   "エピック ／ 古代石の法衣の形を、紺と白い毛皮の色に塗り直したもの【補完】／ 128×64の絵", items, row_h=420)
-
-
 def main():
     repo = sys.argv[1] if len(sys.argv) > 1 else "."
     if "--fur-sheet" in sys.argv:
-        fur_sheet(repo)
+        fur_series(repo)
         return
     out = sys.argv[2] if len(sys.argv) > 2 else None
     base = os.path.join(repo, "src/main/resources/assets/amemaru")
@@ -382,7 +303,7 @@ def main():
         made.append(name)
     for memory, name in ((False, "heat_crystal"), (True, "memory_crystal")):
         crystal_icon(memory).save(os.path.join(base, "textures/item", name + ".png"))
-    fur_series(base)
+    fur_series(repo, out)
     import json
     for name in MATERIAL_MODELS:
         with open(os.path.join(base, "models/item", name + ".json"), "w", encoding="utf-8") as fp:

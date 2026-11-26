@@ -9,17 +9,15 @@
   light_target       光の受け石：白い石の立方体の四方に、光を受ける氷の目。上に小さな結晶
   light_target_lit   （灯った）目と結晶が、淡い金色に光る
 品：
-  mirror_ice_daggers 鏡氷の短剣（7階のボスのレア。エピック）：霜銀の双短剣の形を、鏡氷の白銀と、プリズムの淡い紫に塗り替える。
-                     紫の部品は光る（forge_data の明るさ15）。持ち物の絵（32×32）も同じ色に塗り替える
+  mirror_ice_daggers 鏡氷の短剣（7階のボスのレア。エピック）：11月26日から、形から作り直した（make_gear_rare_reshape.py を呼ぶ）。
+                     紫の部品は光る（forge_data の明るさ15）。持ち物の絵は16×16（続けて enhance_icons.py で32×32）
 状態のアイコン（18×18）：
   mob_effect/lost_fade  薄れ：白く薄れていく人の胸像と、紫の「？」
 """
-import colorsys
 import json
 import os
 import sys
 
-import numpy as np
 from PIL import Image
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -133,74 +131,13 @@ def build_light_target(lit):
 BLOCKS = [build_light_spring, build_ice_mirror, lambda: build_light_target(False), lambda: build_light_target(True)]
 
 
-# ---------------------------------------------------------------- 鏡氷の短剣（霜銀の双短剣の塗り替え）
-
-def recolor(img):
-    """霜銀の色を鏡氷の色へ：灰・白 → 少し青みの強い白銀（明るく）、青・水色 → プリズムの淡い紫（光る部分）"""
-    a = np.asarray(img.convert("RGBA")).astype(float) / 255.0
-    out = a.copy()
-    prism = np.zeros(a.shape[:2], dtype=bool)
-    for y in range(a.shape[0]):
-        for x in range(a.shape[1]):
-            r, g, b, al = a[y, x]
-            if al == 0:
-                continue
-            hh, ss, vv = colorsys.rgb_to_hsv(r, g, b)
-            deg = hh * 360
-            if ss >= 0.22 and 170 <= deg <= 250:
-                nr, ng, nb = colorsys.hsv_to_rgb(262 / 360.0, min(1.0, ss * 0.9 + 0.12), min(1.0, vv * 1.08 + 0.06))
-                prism[y, x] = True
-            elif ss < 0.3:
-                nr, ng, nb = colorsys.hsv_to_rgb(214 / 360.0, min(0.16, ss * 0.8 + 0.04), min(1.0, 0.12 + vv * 0.95))
-            else:
-                nr, ng, nb = colorsys.hsv_to_rgb(hh, ss * 0.5, vv)
-            out[y, x, :3] = (nr, ng, nb)
-    return Image.fromarray((out * 255).astype(np.uint8), "RGBA"), prism
-
-
-def glow_elements(model, mask, tex_w, tex_h, share=0.4):
-    lit = 0
-    for e in model.get("elements", []):
-        total = hit = 0
-        for face in e.get("faces", {}).values():
-            u0, v0, u1, v1 = face["uv"]
-            x0, x1 = sorted((int(round(u0 / 16 * tex_w)), int(round(u1 / 16 * tex_w))))
-            y0, y1 = sorted((int(round(v0 / 16 * tex_h)), int(round(v1 / 16 * tex_h))))
-            sub = mask[y0:max(y1, y0 + 1), x0:max(x1, x0 + 1)]
-            total += sub.size
-            hit += int(sub.sum())
-        if total and hit / total > share:
-            e["forge_data"] = {"block_light": 15, "sky_light": 15}
-            lit += 1
-        else:
-            e.pop("forge_data", None)
-    return lit
-
+# ---------------------------------------------------------------- 鏡氷の短剣（11月26日に形から作り直した）
 
 def daggers(base):
-    tex = os.path.join(base, "textures/item")
-    item = os.path.join(base, "models/item")
-    model_tex, mask = recolor(Image.open(os.path.join(tex, "frost_silver_daggers_model.png")))
-    if mask.sum() < 12:
-        # 青の少ない絵：刃のふちの明るい所を光らせる
-        a = np.asarray(model_tex).astype(float)
-        value = a[..., :3].max(axis=2) * (a[..., 3] > 0)
-        ys, xs = np.nonzero(value > np.percentile(value[value > 0], 92))
-        mask[ys, xs] = True
-    model_tex.save(os.path.join(tex, "mirror_ice_daggers_model.png"))
-    icon, _ = recolor(Image.open(os.path.join(tex, "frost_silver_daggers.png")))
-    icon.save(os.path.join(tex, "mirror_ice_daggers.png"))
-    with open(os.path.join(item, "frost_silver_daggers_3d.json"), encoding="utf-8") as fp:
-        three = json.load(fp)
-    three["credit"] = CREDIT
-    three["textures"] = {"0": "amemaru:item/mirror_ice_daggers_model", "particle": "amemaru:item/mirror_ice_daggers_model"}
-    w, h = three.get("texture_size", [64, 64])
-    lit = glow_elements(three, mask, w, h)
-    write_json(os.path.join(item, "mirror_ice_daggers_3d.json"), three)
-    with open(os.path.join(item, "frost_silver_daggers.json"), encoding="utf-8") as fp:
-        flat = fp.read()
-    write_json(os.path.join(item, "mirror_ice_daggers.json"), json.loads(flat.replace("frost_silver_daggers", "mirror_ice_daggers")))
-    return model_tex, icon, lit
+    """鏡氷の短剣：tools/artgen/make_gear_rare_reshape.py で作る（前は霜銀の双短剣の塗り替え）。(モデルの絵, 持ち物の絵, 光る部品の数)。"""
+    import make_gear_rare_reshape
+    repo = os.path.normpath(os.path.join(base, "..", "..", "..", "..", ".."))
+    return make_gear_rare_reshape.export_rare_weapon(repo, "mirror_ice_daggers")
 
 
 # ---------------------------------------------------------------- 状態のアイコン
