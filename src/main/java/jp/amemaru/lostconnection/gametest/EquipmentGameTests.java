@@ -134,7 +134,9 @@ public final class EquipmentGameTests {
         // 11月24日：2〜5階のアクセサリー（階ごとに、作る5つと、名のある魔物が落とすレアのお守り1つ）の24が増えた
         // 11月25日：6階のアクセサリー（作る5つと、名のある魔物2体が落とすレアのお守り2つ）の7で38
         // 11月25日：7階のアクセサリー（作る5つと、名のある魔物2体が落とすレアのお守り2つ）の7で45
-        check(helper, AccessoryDefs.all().size() == 52, "アクセサリーの定義が52ではありません：" + AccessoryDefs.all().size());
+        // 8階のアクセサリー（作る5つと、名のある魔物2体が落とすレアのお守り2つ）の7で52
+        // 11月27日：祈願（ガチャ）の★4、ガチャ限のアクセサリー（1〜8階に2つずつ）の16で68
+        check(helper, AccessoryDefs.all().size() == 68, "アクセサリーの定義が68ではありません：" + AccessoryDefs.all().size());
         for (RegistryObject<Item> item : ModItems.MANIFEST.category(ItemManifest.Category.ACCESSORY)) {
             check(helper, AccessoryDefs.get(item.get()) != null, "アクセサリーの定義がありません：" + item.getId());
         }
