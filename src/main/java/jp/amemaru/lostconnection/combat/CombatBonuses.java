@@ -88,8 +88,16 @@ public final class CombatBonuses {
                 multiplier *= 1.0 + PassiveService.value(data, PassiveDef.Type.WIND_READING) / 100.0;
             }
         }
-        double critBonus = 0.0;
-        double critDamageBonus = 0.0;
+        // 覚醒（11月27日）：与えるダメージ・スキル・締めの技・会心
+        multiplier *= 1.0 + jp.amemaru.lostconnection.job.AwakeningService.value(data, "damage") / 100.0;
+        if (skill != null) {
+            multiplier *= 1.0 + jp.amemaru.lostconnection.job.AwakeningService.value(data, "skill_damage") / 100.0;
+            if (skill.combo() == SkillDef.ComboRole.FINISHER || skill.link() == jp.amemaru.lostconnection.job.def.LinkType.FINISHER) {
+                multiplier *= 1.0 + jp.amemaru.lostconnection.job.AwakeningService.value(data, "finisher_damage") / 100.0;
+            }
+        }
+        double critBonus = jp.amemaru.lostconnection.job.AwakeningService.value(data, "crit");
+        double critDamageBonus = jp.amemaru.lostconnection.job.AwakeningService.value(data, "crit_damage");
         if (AfflictionService.poisoned(target)) {
             critBonus += PassiveService.value(data, PassiveDef.Type.EXPLOIT);
         }
@@ -143,6 +151,11 @@ public final class CombatBonuses {
         double steadfast = PassiveService.value(data, PassiveDef.Type.STEADFAST_SHIELD);
         if (steadfast > 0 && (buffs.rampart(now) || buffs.warded(now) || ReactiveSkills.parrying(player, now))) {
             result *= 1.0 - Math.min(95.0, steadfast) / 100.0;
+        }
+        // 覚醒（11月27日）：受けるダメージ
+        double taken = jp.amemaru.lostconnection.job.AwakeningService.value(data, "taken");
+        if (taken > 0) {
+            result *= 1.0 - Math.min(95.0, taken) / 100.0;
         }
         return result;
     }

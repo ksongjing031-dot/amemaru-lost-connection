@@ -54,9 +54,10 @@ public final class GaugeService {
         return gauge == null ? "" : gauge.type();
     }
 
+    /** 専用ゲージの最大（覚醒で増える。11月27日）。 */
     public static int max(PlayerData data) {
         JobDef.GaugeDef gauge = gaugeOf(data);
-        return gauge == null ? 0 : gauge.max();
+        return gauge == null ? 0 : gauge.max() + AwakeningService.gaugeMaxBonus(data);
     }
 
     /** ゲージをためる（最大値で止まる）。 */
@@ -65,7 +66,7 @@ public final class GaugeService {
         if (gauge == null || amount <= 0) {
             return;
         }
-        data.setGauge(Math.min(gauge.max(), data.getGauge() + amount));
+        data.setGauge(Math.min(max(data), data.getGauge() + amount));
     }
 
     /**

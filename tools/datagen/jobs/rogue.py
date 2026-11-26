@@ -25,6 +25,16 @@ JOB = {
         "max": 5,
         "color": "#B58CFF",
     },
+    # 11月27日のご指示「どの役職もどこかのタイミングで強くなるタイミングを（パワースパイク）」【補完】
+    "awakenings": [
+        {"id": "shadow_edge", "level": 18, "name": "影の刃",
+         "description": "影に溶ける感覚をつかむ。気配の最大+2（7まで）・会心+5・与えるダメージ+8%。",
+         "values": {"gauge_max": 2, "crit": 5, "damage": 8}},
+        {"id": "no_shadow", "level": 32, "name": "無影",
+         "description": "影さえ残さない。気配を5つ以上使った締めの技は、少し遅れて影がもう一度斬る（ダメージの60%）。会心ダメージ+20%。",
+         "values": {"crit_damage": 20},
+         "echo": {"when": ["gauge_burst"], "min_gauge": 5, "percent": 60, "delay": 6}},
+    ],
     "schools": [
         {"id": "shadow", "name": "影",
          "description": "影を渡って背後を取る流派。素早い連撃で気配を研ぎ、影から急所をひと突きにする。",

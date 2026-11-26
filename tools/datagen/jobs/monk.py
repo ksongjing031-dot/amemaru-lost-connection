@@ -43,6 +43,20 @@ JOB = {
         "finisher_per_step": 15,
         "ki_per_step": 5,
     },
+    # 11月27日のご指示「モンクが弱すぎる、火力が低すぎる（序盤は弱めでいいが後半で爆発的な攻撃力を）」「どの役職もどこかのタイミングで
+    # 強くなるタイミングを（パワースパイク）」【補完】：練気でレベルとともに伸び、気の器（Lv20）と崩天（Lv32）で大きく跳ねる
+    "awakenings": [
+        {"id": "rentai", "level": 10, "name": "練気",
+         "description": "拳を重ねるほど、気が練られていく。Lv10を超えた1レベルにつき、与えるダメージ+0.75%（Lv50で+30%まで）。",
+         "scaling": {"from": 10, "per_level": 0.75, "cap": 30}},
+        {"id": "ki_vessel", "level": 20, "name": "気の器",
+         "description": "体が気の器として目覚める。気の最大+50・連撃の最大+2（7まで）。連撃が1つ増えるたびに、最大MPの1.5%が戻る。",
+         "values": {"gauge_max": 50, "combo_max": 2, "combo_mp": 1.5}},
+        {"id": "houten", "level": 32, "name": "崩天",
+         "description": "重ねた連撃のすべてを、一撃に。【極】の、連撃1つごとの上乗せ+10%。連撃が最大のまま【極】で締めると、少し遅れて同じだけの余震がもう一度入る。",
+         "values": {"combo_finisher_per_step": 10},
+         "echo": {"when": ["combo_full"], "percent": 100, "delay": 8}},
+    ],
     "schools": [
         {"id": "hard", "name": "剛",
          "description": "拳と脚で打ち砕く流派。連打で連撃を始め、蹴りと崩拳でつなぎ、発勁と破山撃で締めくくる。",

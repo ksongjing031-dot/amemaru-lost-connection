@@ -32,15 +32,31 @@ public final class SyncDefinitionsS2C {
     public record SchoolInfo(String id, String name, String description, int color) {
     }
 
+    /** 覚醒の、画面に要る分（11月27日）。 */
+    public record AwakeningInfo(int level, String name, String description, int comboMax) {
+    }
+
     /** 職業の、画面に要る分。 */
     public record JobInfo(int index, ResourceLocation id, String name, String role, String description, int color,
                           ResourceLocation icon, String weaponText, boolean hasGauge, String gaugeName, String gaugeDescription,
                           int gaugeMax, int gaugeColor, List<SchoolInfo> schools, boolean hasUpper, String upperName,
                           String upperDescription, int upperMinLevel, int upperMinDay, int[] startingSkills,
-                          List<ResourceLocation> kitItems, double[] statPercent, String gaugeType, int comboMax) {
+                          List<ResourceLocation> kitItems, double[] statPercent, String gaugeType, int comboMax,
+                          List<AwakeningInfo> awakenings) {
         /** 連撃（モンク）がある職業か。 */
         public boolean hasCombo() {
             return comboMax > 0;
+        }
+
+        /** そのレベルの連撃の最大（覚醒で増える）。 */
+        public int comboMaxAt(int level) {
+            int max = comboMax;
+            for (AwakeningInfo awakening : awakenings) {
+                if (level >= awakening.level()) {
+                    max += awakening.comboMax();
+                }
+            }
+            return max;
         }
     }
 
@@ -122,7 +138,7 @@ public final class SyncDefinitionsS2C {
                     gauge == null ? 0 : gauge.max(), gauge == null ? 0 : gauge.color(), schools,
                     upper != null, upper == null ? "" : upper.name(), upper == null ? "" : upper.description(),
                     upper == null ? 0 : upper.minLevel(), upper == null ? 0 : upper.minDay(), starting, kit, percent,
-                    gauge == null ? "" : gauge.type(), job.combo() == null ? 0 : job.combo().max()));
+                    gauge == null ? "" : gauge.type(), job.combo() == null ? 0 : job.combo().max(), awakeningInfos(job)));
         }
         List<SkillInfo> skills = new ArrayList<>();
         for (int i = 0; i < snapshot.skills().size(); i++) {
@@ -246,6 +262,13 @@ public final class SyncDefinitionsS2C {
             }
             buf.writeUtf(job.gaugeType());
             buf.writeVarInt(job.comboMax());
+            buf.writeVarInt(job.awakenings().size());
+            for (AwakeningInfo awakening : job.awakenings()) {
+                buf.writeVarInt(awakening.level());
+                buf.writeUtf(awakening.name());
+                buf.writeUtf(awakening.description());
+                buf.writeVarInt(awakening.comboMax());
+            }
         }
         buf.writeVarInt(skills.size());
         for (SkillInfo skill : skills) {
@@ -360,9 +383,14 @@ public final class SyncDefinitionsS2C {
             }
             String gaugeType = buf.readUtf();
             int comboMax = buf.readVarInt();
+            int awakeningCount = check(buf.readVarInt(), 8);
+            List<AwakeningInfo> awakenings = new ArrayList<>(awakeningCount);
+            for (int a = 0; a < awakeningCount; a++) {
+                awakenings.add(new AwakeningInfo(buf.readVarInt(), buf.readUtf(), buf.readUtf(), buf.readVarInt()));
+            }
             jobs.add(new JobInfo(index, id, name, role, description, color, icon, weaponText, hasGauge, gaugeName,
                     gaugeDescription, gaugeMax, gaugeColor, schools, hasUpper, upperName, upperDescription, upperMinLevel,
-                    upperMinDay, starting, kit, percent, gaugeType, comboMax));
+                    upperMinDay, starting, kit, percent, gaugeType, comboMax, List.copyOf(awakenings)));
         }
         int skillCount = check(buf.readVarInt(), MAX_ENTRIES);
         List<SkillInfo> skills = new ArrayList<>(skillCount);
@@ -477,6 +505,16 @@ public final class SyncDefinitionsS2C {
             values[i] = buf.readFloat();
         }
         return values;
+    }
+
+    /** 覚醒を、画面に要る分にする（11月27日）。 */
+    private static List<AwakeningInfo> awakeningInfos(JobDef job) {
+        List<AwakeningInfo> out = new ArrayList<>();
+        for (JobDef.Awakening awakening : job.awakenings()) {
+            out.add(new AwakeningInfo(awakening.level(), awakening.name(), awakening.description(),
+                    (int) Math.round(awakening.value("combo_max"))));
+        }
+        return List.copyOf(out);
     }
 
     private static int check(int value, int max) {

@@ -430,6 +430,8 @@ public final class SkillService {
         ComboService.Step step = ComboService.onSkillUse(player, data, skill, now);
         ctx.multiplier *= step.multiplier();
         ctx.forceCrit = step.forceCrit();
+        // 覚醒の「もう一度」（11月27日）：条件に合うスキルは、当たった後にもう一度（ゲージを使う技は、使った量が分かってから決める）
+        armEcho(ctx, data, skill, rank, step.fullFinish(), gaugeSpent);
         BuffState stateNow = data.getBuffs();
         // 百烈・結：次のスキルが強くなる（使うと消える）
         double empower = stateNow.empower(now);
@@ -476,8 +478,41 @@ public final class SkillService {
         double reduction = Math.min(ServerConfig.COOLDOWN_REDUCTION_CAP.get(), data.getStats().get(StatType.COOLDOWN_REDUCTION));
         // 速射の心得など（その流派のスキルのクールダウン -%）
         double school = PassiveService.schoolValue(data, jp.amemaru.lostconnection.job.def.PassiveDef.Type.SCHOOL_HASTE, skill);
-        double ticks = seconds * (1.0 - Math.max(0.0, reduction) / 100.0) * (1.0 - Math.min(80.0, school) / 100.0) * 20.0;
+        // 覚醒（11月27日）：奥義は短くしない
+        double awaken = skill.isUltimate() ? 0.0 : AwakeningService.value(data, "cooldown");
+        double ticks = seconds * (1.0 - Math.max(0.0, reduction) / 100.0) * (1.0 - Math.min(80.0, school) / 100.0)
+                * (1.0 - Math.min(50.0, Math.max(0.0, awaken)) / 100.0) * 20.0;
         return Math.max(1, Mth.ceil(ticks));
+    }
+
+    /**
+     * 覚醒の「もう一度」を、このスキルにつけるか決める（11月27日）。{@code gauge_burst}（ゲージを残らず使う技）は、使った量が
+     * 分かる {@code SkillExecutor} の準備のところで決める。
+     */
+    public static void armEcho(SkillContext ctx, PlayerData data, SkillDef skill, int rank, boolean fullFinish, double gaugeSpent) {
+        if (!skill.dealsDamage()) {
+            return;
+        }
+        java.util.List<String> conditions = new java.util.ArrayList<>();
+        if (fullFinish) {
+            conditions.add("combo_full");
+        }
+        if (skill.cast(rank) > 0 || skill.isCharged()) {
+            conditions.add("cast");
+        }
+        if (ctx.fullCharge) {
+            conditions.add("charge_full");
+        }
+        if (gaugeSpent > 0) {
+            conditions.add("gauge_cost");
+        }
+        for (String condition : conditions) {
+            jp.amemaru.lostconnection.job.def.JobDef.Echo echo = AwakeningService.echo(data, condition);
+            if (echo != null && echo.percent() > ctx.awakenEcho) {
+                ctx.awakenEcho = echo.percent();
+                ctx.awakenEchoDelay = echo.delayTicks();
+            }
+        }
     }
 
     /** クールダウンの長さ（tick）。疾風の弓舞の間は、早く戻る（Phase 6 その2）。 */

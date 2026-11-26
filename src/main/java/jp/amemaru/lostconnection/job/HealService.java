@@ -92,6 +92,10 @@ public final class HealService {
                 double barrier = Math.min(data.getStats().maxHp() * OVERHEAL_CAP, overheal * overflow / 100.0);
                 SkillExecutor.applyBarrier(target, barrier, OVERHEAL_TICKS, target.level().getGameTime(), 0.0, null);
             }
+            // 覚醒「聖域」（ヒーラー。11月27日）：回復した仲間の与えるダメージが、しばらく上がる
+            if (healed > 0 || overheal > 0) {
+                AwakeningService.afterHealAlly(caster, casterData, target, data);
+            }
             double heartMp = PassiveService.value(casterData, PassiveDef.Type.HEAL_MP);
             if (heartMp > 0 && healed > 0 && target != caster && casterData.isStatsReady()) {
                 double before = casterData.getMp();
@@ -110,7 +114,8 @@ public final class HealService {
         if (caster == null || data == null || !data.isStatsReady()) {
             return 1.0;
         }
-        double bonus = data.getStats().get(StatType.HEAL_POWER) + PassiveService.value(data, PassiveDef.Type.HEAL_POWER);
+        double bonus = data.getStats().get(StatType.HEAL_POWER) + PassiveService.value(data, PassiveDef.Type.HEAL_POWER)
+                + AwakeningService.value(data, "heal");  // 覚醒（11月27日）
         PassiveService.Active bond = PassiveService.find(data, PassiveDef.Type.BOND_HEAL);
         if (bond != null) {
             int members = 0;

@@ -66,5 +66,34 @@
     "description": "誓いの盾で城を築き、誓いの剣で天ごと敵を断つ騎士。奥義（守りの「不落の城」か、攻めの「天断ち」）と、各スキルの第5段が開く。",
     "min_level": 60,
     "min_day": 11
-  }
+  },
+  "awakenings": [
+    {
+      "id": "oath_fire",
+      "level": 12,
+      "name": "誓いの火",
+      "description": "守ると決めた心に、火がともる。与えるダメージ+12%・受けるダメージ−8%。",
+      "values": {
+        "damage": 12,
+        "taken": 8
+      }
+    },
+    {
+      "id": "citadel",
+      "level": 28,
+      "name": "堅城",
+      "description": "誓いは城となる。誓気の最大+50・受けるダメージ−5%。最大まで溜めた技は、少し遅れて剣圧がもう一度（ダメージの60%）。",
+      "values": {
+        "gauge_max": 50,
+        "taken": 5
+      },
+      "echo": {
+        "when": [
+          "charge_full"
+        ],
+        "percent": 60,
+        "delay": 8
+      }
+    }
+  ]
 }

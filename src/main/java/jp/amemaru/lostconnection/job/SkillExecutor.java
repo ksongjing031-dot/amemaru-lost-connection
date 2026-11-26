@@ -435,6 +435,12 @@ public final class SkillExecutor {
                     ctx.gaugeSpent = spent;
                     ctx.multiplier *= 1.0 + spent * effect.value("per_gauge", ctx.rank);
                     ctx.empowered = spent > 0;
+                    // 覚醒の「もう一度」（11月27日）：ゲージを決まった量より多く使った締めの技（ローグの「無影」）
+                    jp.amemaru.lostconnection.job.def.JobDef.Echo echo = AwakeningService.echo(data, "gauge_burst");
+                    if (echo != null && spent + 1.0E-6 >= echo.minGauge() && echo.percent() > ctx.awakenEcho) {
+                        ctx.awakenEcho = echo.percent();
+                        ctx.awakenEchoDelay = echo.delayTicks();
+                    }
                 }
                 default -> {
                 }
@@ -829,6 +835,8 @@ public final class SkillExecutor {
         if (dealt > 0 && lifesteal > 0 && caster != null) {
             heal(caster, dealt * lifesteal / 100.0);
         }
+        // 覚醒の「もう一度」（11月27日）
+        AwakeningService.afterSkillHit(ctx, target, dealt);
     }
 
     private static void chill(SkillContext ctx, EffectDef effect, LivingEntity target, @Nullable Entity source) {

@@ -403,6 +403,11 @@ public final class ModNetwork {
                 .consumerMainThread(jp.amemaru.lostconnection.network.s2c.BossImpactS2C::handle)
                 .add();
         // 11月27日：塔を進む・戻るときの魔法陣
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.AwakenFxS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.AwakenFxS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.AwakenFxS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.AwakenFxS2C::handle)
+                .add();
         CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.TravelFxS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(jp.amemaru.lostconnection.network.s2c.TravelFxS2C::encode)
                 .decoder(jp.amemaru.lostconnection.network.s2c.TravelFxS2C::decode)

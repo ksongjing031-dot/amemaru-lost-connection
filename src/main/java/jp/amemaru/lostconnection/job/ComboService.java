@@ -58,9 +58,22 @@ public final class ComboService {
     private ComboService() {
     }
 
-    /** 連撃の結果：ダメージの倍率と、必ず会心にするか。 */
-    public record Step(double multiplier, boolean forceCrit) {
-        static final Step NONE = new Step(1.0, false);
+    /** 連撃の結果：ダメージの倍率と、必ず会心にするか。{@code fullFinish}：連撃が最大のまま【極】で締めた（覚醒の「崩天」。11月27日）。 */
+    public record Step(double multiplier, boolean forceCrit, boolean fullFinish) {
+        static final Step NONE = new Step(1.0, false, false);
+    }
+
+    /** 連撃の最大（覚醒で増える。11月27日）。 */
+    public static int max(PlayerData data, JobDef.ComboDef combo) {
+        return combo.max() + AwakeningService.comboMaxBonus(data);
+    }
+
+    /** 連撃が1つ増えたとき：覚醒の「気の器」で、MPが少し戻る。 */
+    private static void onStepUp(ServerPlayer player, PlayerData data) {
+        double percent = AwakeningService.value(data, "combo_mp");
+        if (percent > 0 && data.isStatsReady()) {
+            data.setMp(Math.min(data.getStats().maxMp(), data.getMp() + data.getStats().maxMp() * percent / 100.0));
+        }
     }
 
     /**
@@ -84,21 +97,24 @@ public final class ComboService {
         }
         double perStep = combo.perStep() + PassiveService.value(data, PassiveDef.Type.CHAIN_MASTERY);
         long until = now + combo.windowTicks();
+        int max = max(data, combo);
         double multiplier = 1.0;
         boolean forceCrit = false;
+        boolean fullFinish = false;
         switch (skill.combo()) {
             case OPENER, LINK -> {
                 int next;
                 if (count == 0) {
                     next = skill.combo() == SkillDef.ComboRole.OPENER ? 1 : 0;
                 } else if (different) {
-                    next = Math.min(combo.max(), count + 1);
+                    next = Math.min(max, count + 1);
                 } else {
                     next = skill.combo() == SkillDef.ComboRole.OPENER ? 1 : 0;
                 }
                 if (next > count || (next == 1 && count != 1)) {
                     GaugeService.add(data, combo.gaugePerStep());
                     announce(player, next);
+                    onStepUp(player, data);
                 }
                 data.setCombo(next, until);
                 multiplier = 1.0 + perStep * next / 100.0;
@@ -109,11 +125,13 @@ public final class ComboService {
             case FINISHER -> {
                 multiplier = 1.0 + perStep * count / 100.0;
                 if (count > 0) {
-                    multiplier *= 1.0 + combo.finisherPerStep() * count / 100.0;
+                    double finisherStep = combo.finisherPerStep() + AwakeningService.value(data, "combo_finisher_per_step");
+                    multiplier *= 1.0 + finisherStep * count / 100.0;
+                    fullFinish = count >= max;
                     double finishing = PassiveService.value(data, PassiveDef.Type.FINISHING_BLOW);
                     if (finishing > 0) {
                         multiplier *= 1.0 + finishing / 100.0;
-                        forceCrit = count >= combo.max();
+                        forceCrit = count >= max;
                     }
                     double flowing = PassiveService.value(data, PassiveDef.Type.FLOWING_KI);
                     if (flowing > 0 && data.isStatsReady()) {
@@ -138,7 +156,7 @@ public final class ComboService {
             chain.lastSkill = skill.id();
             chain.lastTick = now;
         }
-        return new Step(multiplier, forceCrit);
+        return new Step(multiplier, forceCrit, fullFinish);
     }
 
     /** 天地流転の反撃：連撃を1つ足す。 */
@@ -149,10 +167,11 @@ public final class ComboService {
             return;
         }
         int count = data.getCombo() > 0 && now <= data.getComboUntil() ? data.getCombo() : 0;
-        int next = Math.min(combo.max(), count + 1);
+        int next = Math.min(max(data, combo), count + 1);
         if (next > count) {
             GaugeService.add(data, combo.gaugePerStep());
             announce(player, next);
+            onStepUp(player, data);
         }
         data.setCombo(next, now + combo.windowTicks());
     }

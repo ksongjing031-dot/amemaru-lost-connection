@@ -218,7 +218,7 @@ public final class SkillHud {
         if (combo <= 0) {
             return;
         }
-        boolean max = combo >= job.comboMax();
+        boolean max = combo >= job.comboMaxAt(state.level());  // 覚醒で増える（11月27日）
         String text = net.minecraft.network.chat.Component.translatable("hud.amemaru.combo", combo).getString();
         float pulse = max ? 0.7F + 0.3F * Mth.sin(Util.getMillis() / 80.0F) : 1.0F;
         int r = (int) (255 * pulse);
