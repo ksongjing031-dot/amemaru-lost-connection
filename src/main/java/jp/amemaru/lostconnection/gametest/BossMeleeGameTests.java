@@ -359,6 +359,27 @@ public final class BossMeleeGameTests {
         helper.succeed();
     }
 
+    /**
+     * 11月27日：ボスごとのHPの帯。1階は1本、強くなるにつれて増える（5本まで）。HPは前の1.5倍（2人ぶんで1階24000以上）。
+     */
+    @GameTest(template = EMPTY)
+    public static void bossHpBarsGrowWithFloors(GameTestHelper helper) {
+        String[] bosses = {"veldhorn", "old_ward", "hydram", "cantare", "ancient_guardian", "ordo", "reflecta", "mune"};
+        int before = 0;
+        for (int i = 0; i < bosses.length; i++) {
+            EnemyDef def = EnemyDefs.get(AmemaruMod.id(bosses[i]));
+            check(helper, def != null, bosses[i] + " の定義がありません");
+            int bars = jp.amemaru.lostconnection.enemy.boss.AmemaruBoss.hpBars(def);
+            check(helper, i > 0 || bars == 1, "1階のボスのHPの帯が1本ではありません：" + bars);
+            check(helper, bars >= before && bars <= 5, bosses[i] + " のHPの帯が、前の階より少ないか5本より多い：" + bars);
+            before = bars;
+        }
+        check(helper, before >= 4, "8階のボスのHPの帯が少なすぎます：" + before);
+        EnemyDef veldhorn = EnemyDefs.get(AmemaruMod.id("veldhorn"));
+        check(helper, veldhorn.hp() >= 24000, "1階のボスのHPが1.5倍になっていません：" + veldhorn.hp());
+        helper.succeed();
+    }
+
     // ---------------------------------------------------------------- ボス戦の曲と演出（11月25日）
 
     /**

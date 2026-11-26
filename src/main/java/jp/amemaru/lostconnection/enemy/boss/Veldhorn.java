@@ -163,7 +163,7 @@ public class Veldhorn extends AmemaruBoss {
     }
 
     private EnemyDef.Skill earthRoarSkill() {
-        return skill("earth_roar", 3.2, 9.0, 60.0, 40.0);
+        return skill("earth_roar", 3.6, 9.0, 60.0, 40.0);
     }
 
     private int cooldown(EnemyDef.Skill skill) {
@@ -472,6 +472,7 @@ public class Veldhorn extends AmemaruBoss {
         level.sendParticles(ParticleTypes.SWEEP_ATTACK, getX() + getLookAngle().x * 2.5, getY() + 1.5, getZ() + getLookAngle().z * 2.5,
                 3, 1.0, 0.3, 1.0, 0.0);
         startCooldown("sweep", cooldown(sweep));
+        impactFx("sweep");  // 11月27日：当たった瞬間の演出
         clearTelegraph();
         action = Action.NONE;
     }
@@ -514,6 +515,7 @@ public class Veldhorn extends AmemaruBoss {
             level.sendParticles(ParticleTypes.CRIT, getX() + dir.x * d, getY() + 0.3, getZ() + dir.z * d, 4, 0.4, 0.5, 0.4, 0.15);
         }
         startCooldown("upthrust", cooldown(upthrust));
+        impactFx("upthrust");  // 11月27日：当たった瞬間の演出
         clearTelegraph();
         action = Action.RECOVER;
         timer = 6;
@@ -550,6 +552,7 @@ public class Veldhorn extends AmemaruBoss {
         Vec3 back = getLookAngle().multiply(-1, 0, -1).normalize();
         level.sendParticles(ParticleTypes.CLOUD, getX() + back.x * 2.5, getY() + 0.4, getZ() + back.z * 2.5, 12, 1.0, 0.2, 1.0, 0.04);
         startCooldown("kick", cooldown(kick));
+        impactFx("kick");  // 11月27日：当たった瞬間の演出
         clearTelegraph();
         action = Action.NONE;
     }
@@ -590,6 +593,7 @@ public class Veldhorn extends AmemaruBoss {
         }
         if (--timer <= 0) {
             action = Action.CHARGING;
+            impactFx("charge");  // 11月27日：当たった瞬間の演出
             clearTelegraph();
             level.playSound(null, getX(), getY(), getZ(), SoundEvents.RAVAGER_ROAR, SoundSource.HOSTILE, 1.4F, 1.3F);
         }
@@ -695,6 +699,7 @@ public class Veldhorn extends AmemaruBoss {
                     getZ() + Math.sin(a) * stomp.range() * 0.8, 1, 0.1, 0.0, 0.1, 0.01);
         }
         startCooldown("stomp", cooldown(stomp));
+        impactFx("stomp");  // 11月27日：当たった瞬間の演出
         clearTelegraph();
         action = Action.NONE;
     }
@@ -764,6 +769,7 @@ public class Veldhorn extends AmemaruBoss {
         }
         // 降りた：円の中の人を打つ
         double radius = leap.param("radius", 4.0);
+        impactFx("leap", TELEGRAPH_CIRCLE, leapTo, 0.0F, (float) radius, 0.0F);  // 11月27日：当たった瞬間の演出
         for (ServerPlayer player : targets(level)) {
             double dx = player.getX() - leapTo.x;
             double dz = player.getZ() - leapTo.z;
@@ -823,6 +829,7 @@ public class Veldhorn extends AmemaruBoss {
         BlockParticleOption dirt = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.ROOTED_DIRT.defaultBlockState());
         BlockParticleOption moss = new BlockParticleOption(ParticleTypes.BLOCK, Blocks.MOSS_BLOCK.defaultBlockState());
         for (Vec3 spot : rootSpots) {
+            impactFx("roots", TELEGRAPH_CIRCLE, spot, 0.0F, (float) radius, 0.0F);  // 11月27日：当たった瞬間の演出
             for (ServerPlayer player : targets(level)) {
                 double dx = player.getX() - spot.x;
                 double dz = player.getZ() - spot.z;
@@ -987,6 +994,9 @@ public class Veldhorn extends AmemaruBoss {
     /** 止められなかった：部屋じゅうに大地の衝撃。 */
     private void releaseEarthRoar(ServerLevel level) {
         EnemyDef.Skill earth = earthRoarSkill();
+        Vec3 roarCenter = room != null ? room.arenaCenter() : position();
+        impactFx("earth_roar", TELEGRAPH_CIRCLE, new Vec3(roarCenter.x, getY(), roarCenter.z), 0.0F, (float) Math.min(28.0, earth.range()),
+                0.0F);  // 11月27日：当たった瞬間の演出
         discardRoarMarker();
         clearTelegraph();
         action = Action.RECOVER;

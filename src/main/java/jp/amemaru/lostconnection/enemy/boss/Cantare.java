@@ -416,6 +416,7 @@ public class Cantare extends AmemaruBoss {
         EnemyDef.Skill echo = echoSkill();
         List<BlockPos> plates = plates();
         double safe = echo.param("safe", 3.0) + 0.5;
+        impactFx("echo", TELEGRAPH_CIRCLE, position(), 0.0F, 12.0F, 0.0F);  // 11月27日：当たった瞬間の演出
         for (ServerPlayer player : targets(level)) {
             Integer color = echoColors.get(player.getUUID());
             if (color == null || color >= plates.size()) {
@@ -475,6 +476,7 @@ public class Cantare extends AmemaruBoss {
         if (--timer > 0) {
             return;
         }
+        impactFx("wave");  // 11月27日：当たった瞬間の演出
         clearTelegraph();
         EnemyDef.Skill wave = waveSkill();
         double half = wave.param("angle", 120.0) / 2.0;
@@ -546,6 +548,7 @@ public class Cantare extends AmemaruBoss {
         EnemyDef.Skill pillars = pillarsSkill();
         double radius = pillars.param("radius", 2.4) + 0.3;
         for (Vec3 at : pillarSpots) {
+            impactFx("pillars", TELEGRAPH_CIRCLE, at, 0.0F, (float) radius, 0.0F);  // 11月27日：当たった瞬間の演出
             for (ServerPlayer player : targets(level)) {
                 double dx = player.getX() - at.x;
                 double dz = player.getZ() - at.z;

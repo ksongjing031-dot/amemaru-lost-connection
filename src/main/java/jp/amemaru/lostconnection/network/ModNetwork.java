@@ -396,6 +396,18 @@ public final class ModNetwork {
                 .decoder(jp.amemaru.lostconnection.network.c2s.ProjectC2S::decode)
                 .consumerMainThread(jp.amemaru.lostconnection.network.c2s.ProjectC2S::handle)
                 .add();
+        // 11月27日：ボスの技が当たった瞬間の演出
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.BossImpactS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.BossImpactS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.BossImpactS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.BossImpactS2C::handle)
+                .add();
+        // 11月27日：塔を進む・戻るときの魔法陣
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.TravelFxS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.TravelFxS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.TravelFxS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.TravelFxS2C::handle)
+                .add();
     }
 
     /** 1人のプレイヤーに送る。 */

@@ -544,6 +544,7 @@ public class AncientGuardian extends AmemaruBoss {
         if (--timer > 0) {
             return;
         }
+        impactFx("sweep");  // 11月27日：当たった瞬間の演出
         clearTelegraph();
         double half = sweep.param("angle", 140.0) / 2.0;
         for (ServerPlayer player : targets(level)) {
@@ -598,6 +599,7 @@ public class AncientGuardian extends AmemaruBoss {
             }
             return;
         }
+        impactFx("beam");  // 11月27日：当たった瞬間の演出
         clearTelegraph();
         EnemyDef.Skill beam = beamSkill();
         double half = beam.param("width", 2.4) / 2.0 + 0.4;
@@ -646,6 +648,7 @@ public class AncientGuardian extends AmemaruBoss {
         }
         EnemyDef.Skill slam = slamSkill();
         double radius = slam.param("radius", 3.2) + 0.3;
+        impactFx("slam", TELEGRAPH_CIRCLE, slamAt, 0.0F, (float) radius, 0.0F);  // 11月27日：当たった瞬間の演出
         for (ServerPlayer player : targets(level)) {
             double dx = player.getX() - slamAt.x;
             double dz = player.getZ() - slamAt.z;

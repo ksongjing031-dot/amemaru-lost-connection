@@ -535,6 +535,34 @@ public abstract class AmemaruBoss extends AmemaruMob {
         }
     }
 
+    /**
+     * 技が当たった瞬間の演出（11月27日のご指示「ボスの攻撃エフェクトがほぼ存在しない…プレイヤーがスキルを使った時のような
+     * エフェクトを追加する」【補完】）。今出している予兆と同じ形（扇・線・円）を、ボスごとの色と材質で光らせる。予兆を消す前に呼ぶ。
+     */
+    protected void impactFx(String skill) {
+        impactFx(skill, telegraph(), position(), telegraphYaw(), telegraphSize(), telegraphArg());
+    }
+
+    /** 技が当たった瞬間の演出（形と場所を指定する：足もとの円・着地した所など）。{@code shape} は {@code TELEGRAPH_*}。 */
+    protected void impactFx(String skill, int shape, Vec3 at, float yaw, float size, float arg) {
+        if (!(level() instanceof ServerLevel level)) {
+            return;
+        }
+        new jp.amemaru.lostconnection.network.s2c.BossImpactS2C(getId(), barKey(), skill, shape, at, yaw, size, arg)
+                .sendNear(level.dimension());
+    }
+
+    /** HPの帯の本数（敵の定義の {@code behavior.hp_bars}。1〜5。11月27日）。 */
+    public static int hpBars(EnemyDef def) {
+        return (int) Math.max(1, Math.min(5, Math.round(def.behavior("hp_bars", 1.0))));
+    }
+
+    /** HPの帯の見た目の名前（エンティティの種類の名前。veldhorn など）。 */
+    public String barKey() {
+        net.minecraft.resources.ResourceLocation type = net.minecraftforge.registries.ForgeRegistries.ENTITY_TYPES.getKey(getType());
+        return type == null ? "" : type.getPath();
+    }
+
     /** 参加者に、ボスの台詞を字幕で出す。 */
     protected void line(String key) {
         if (room == null) {
@@ -563,7 +591,9 @@ public abstract class AmemaruBoss extends AmemaruMob {
         if (level() instanceof ServerLevel level && isAlive()) {
             EnemyDef def = def();
             if (def != null && bossEvent.getName().getString().isEmpty()) {
-                bossEvent.setName(Component.literal(def.name()));
+                // 11月27日：ボスごとのHPの帯（クライアントの BossHpBar が、この名前の中の「ボスの種類」と「帯の本数」で描く。
+                // バニラの帯として描くときは、名前だけが出る）
+                bossEvent.setName(Component.translatable("boss.amemaru.bar", def.name(), hpBars(def), barKey()));
             }
             double ratio = getEnemyHp() / getEnemyMaxHp();
             bossEvent.setProgress((float) Math.max(0.0, Math.min(1.0, ratio)));

@@ -313,6 +313,7 @@ public class Reflecta extends AmemaruBoss {
         if (--timer > 0) {
             return;
         }
+        impactFx("claw");  // 11月27日：当たった瞬間の演出
         clearTelegraph();
         EnemyDef.Skill claw = clawSkill();
         double half = claw.param("angle", 110.0) / 2.0;
@@ -363,6 +364,7 @@ public class Reflecta extends AmemaruBoss {
         if (--timer > 0 || lineDir == null) {
             return;
         }
+        impactFx("shards");  // 11月27日：当たった瞬間の演出
         clearTelegraph();
         EnemyDef.Skill shards = shardsSkill();
         double half = shards.param("width", 2.4) / 2.0 + 0.4;
@@ -414,6 +416,7 @@ public class Reflecta extends AmemaruBoss {
             }
             return;
         }
+        impactFx("prism");  // 11月27日：当たった瞬間の演出
         clearTelegraph();
         EnemyDef.Skill prism = prismSkill();
         double half = prism.param("angle", 50.0) / 2.0;
@@ -462,6 +465,9 @@ public class Reflecta extends AmemaruBoss {
         }
         EnemyDef.Skill scatter = scatterSkill();
         double radius = scatter.range() + 0.3;
+        for (Vec3 at : marks) {
+            impactFx("scatter", TELEGRAPH_CIRCLE, at, 0.0F, (float) radius, 0.0F);  // 11月27日：当たった瞬間の演出
+        }
         for (ServerPlayer player : targets(level)) {
             for (Vec3 at : marks) {
                 double dx = player.getX() - at.x;

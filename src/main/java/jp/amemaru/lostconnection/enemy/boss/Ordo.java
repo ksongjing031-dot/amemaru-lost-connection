@@ -557,6 +557,7 @@ public class Ordo extends AmemaruBoss {
         if (--timer > 0) {
             return;
         }
+        impactFx("sweep");  // 11月27日：当たった瞬間の演出
         clearTelegraph();
         EnemyDef.Skill sweep = sweepSkill();
         double half = sweep.param("angle", 120.0) / 2.0;
@@ -607,6 +608,7 @@ public class Ordo extends AmemaruBoss {
         if (--timer > 0 || lineDir == null) {
             return;
         }
+        impactFx("icicle");  // 11月27日：当たった瞬間の演出
         clearTelegraph();
         EnemyDef.Skill icicle = icicleSkill();
         double half = icicle.param("width", 2.6) / 2.0 + 0.4;
@@ -657,6 +659,7 @@ public class Ordo extends AmemaruBoss {
         }
         EnemyDef.Skill blizzard = blizzardSkill();
         double radius = blizzard.range() + 0.3;
+        impactFx("blizzard", TELEGRAPH_CIRCLE, position(), 0.0F, (float) radius, 0.0F);  // 11月27日：当たった瞬間の演出
         for (ServerPlayer player : targets(level)) {
             double dx = player.getX() - getX();
             double dz = player.getZ() - getZ();
@@ -708,6 +711,7 @@ public class Ordo extends AmemaruBoss {
             }
             return;
         }
+        impactFx("gaze");  // 11月27日：当たった瞬間の演出
         clearTelegraph();
         EnemyDef.Skill gaze = gazeSkill();
         double half = gaze.param("angle", 70.0) / 2.0;

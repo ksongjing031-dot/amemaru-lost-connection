@@ -294,9 +294,10 @@ public final class TowerService {
             return;
         }
         Vec3 at = def.world(def.entrance().pos());
+        // 11月27日：バニラのエンダーマンの音と光の粒の代わりに、発つ所と着く所に魔法陣（TravelFxS2C）
+        jp.amemaru.lostconnection.network.s2c.TravelFxS2C.depart(player.serverLevel(), player.position());
         player.teleportTo(tower, at.x, at.y, at.z, def.entrance().yaw(), 0.0F);
-        tower.playSound(null, at.x, at.y, at.z, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.8F, 1.2F);
-        tower.sendParticles(ParticleTypes.END_ROD, at.x, at.y + 1.0, at.z, 30, 0.6, 1.0, 0.6, 0.05);
+        jp.amemaru.lostconnection.network.s2c.TravelFxS2C.arrive(tower, at);
         PlayerData data = PlayerDataCapability.get(player).orElse(null);
         boolean first = data != null && data.getStory().markVisited(def.number());
         String upper = first && !def.chapterTitle().isEmpty() ? def.chapterTitle()
@@ -325,8 +326,10 @@ public final class TowerService {
             yaw = overworld.getSharedSpawnAngle();
         }
         GATE_COOLDOWN.put(player.getUUID(), overworld.getGameTime() + 60);
+        // 11月27日：発つ所と着く所に魔法陣
+        jp.amemaru.lostconnection.network.s2c.TravelFxS2C.depart(player.serverLevel(), player.position());
         player.teleportTo(overworld, at.x, at.y, at.z, yaw, 0.0F);
-        overworld.playSound(null, at.x, at.y, at.z, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 0.8F, 1.0F);
+        jp.amemaru.lostconnection.network.s2c.TravelFxS2C.arrive(overworld, at);
     }
 
     // ---------------------------------------------------------------- 次の階への円（11月24日）

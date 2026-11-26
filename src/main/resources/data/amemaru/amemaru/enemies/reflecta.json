@@ -1,11 +1,11 @@
 {
-  "_comment": "7階のボス、鏡像獣リフレクタ（Phase 0-A 9章の7階：パーティメンバーの写し身を作る。本物の見分け方は、名前の表示とHPバーの動き。ロスト状態「薄れ」の初登場）。技：claw（前の扇。押す）・shards（線。凍え chill）・prism（見ている方の細い扇 angle。当たると薄れ fade_seconds 秒）・scatter（第2段階から。みんなの足もとに円 range）・mirror（戦う人ひとりずつの写し身を、max 体まで range の所に作り、全員を薄れ fade_seconds 秒。写し身が残っている間は受けるダメージが ward 倍。すべて倒すと open_seconds 秒、受けるダメージが broken 倍。last 秒残った写し身は本体へ戻り、1体ごとにHPが heal% 戻る。first 秒から。段階が変わるたびにも使う）。HPは2人のときの基準（ひとりでも2人ぶん）。数値は【補完】（tools/balance/estimate.py の目安）",
+  "_comment": "7階のボス、鏡像獣リフレクタ（Phase 0-A 9章の7階：パーティメンバーの写し身を作る。本物の見分け方は、名前の表示とHPバーの動き。ロスト状態「薄れ」の初登場）。技：claw（前の扇。押す）・shards（線。凍え chill）・prism（見ている方の細い扇 angle。当たると薄れ fade_seconds 秒）・scatter（第2段階から。みんなの足もとに円 range）・mirror（戦う人ひとりずつの写し身を、max 体まで range の所に作り、全員を薄れ fade_seconds 秒。写し身が残っている間は受けるダメージが ward 倍。すべて倒すと open_seconds 秒、受けるダメージが broken 倍。last 秒残った写し身は本体へ戻り、1体ごとにHPが heal% 戻る。first 秒から。段階が変わるたびにも使う）。HPは2人のときの基準（ひとりでも2人ぶん）。数値は【補完】（tools/balance/estimate.py の目安） 11月27日のご指示「ボスはもっとHPが多くていい（パーティー推奨）」「どんな攻撃があるかを理解しないとクリアできない形に」「何回も挑戦してやっと勝てる形に」【補完】：HPを1.5倍、予兆のある強い技（power 1.2以上）を1.25倍、固有のギミックをしくじったときの一撃を、ほかのどの技よりも強くした（HP 96000→144000・claw 1.35→1.7・shards 1.45→1.8） 11月27日のご指示「ボスのHPバーはオリジナルでそれぞれのボスのデザインに。一層は1ゲージ、強くなるにつれて本数を増やす」【補完】：HPの帯を 4 本に分ける（behavior.hp_bars）。",
   "name": "鏡像獣リフレクタ",
   "floor": 7,
   "level": 35,
   "description": "氷と鏡の板でできた、獅子のような獣。放射状に並ぶ鏡のたてがみに、近づく者の姿を映し取る。映し取られた姿は、たてがみから歩き出し、本物の隣に並ぶ。……どちらが本物か、名前を呼んで確かめることは、もうできない。",
   "stats": {
-    "hp": 96000,
+    "hp": 144000,
     "attack": 214,
     "defense": 20,
     "move_speed": 0.17,
@@ -15,7 +15,7 @@
   "exp": 2600,
   "skills": {
     "claw": {
-      "power": 1.35,
+      "power": 1.7,
       "windup": 1.3,
       "anim_windup": 1.1,
       "cooldown": 6.0,
@@ -24,7 +24,7 @@
       "push": 0.9
     },
     "shards": {
-      "power": 1.45,
+      "power": 1.8,
       "windup": 1.6,
       "anim_windup": 1.4,
       "cooldown": 10.0,
@@ -65,7 +65,9 @@
       "heal": 3.0
     }
   },
-  "behavior": {},
+  "behavior": {
+    "hp_bars": 4
+  },
   "drops": {
     "loot_table": "amemaru:entities/reflecta",
     "pity": true,
