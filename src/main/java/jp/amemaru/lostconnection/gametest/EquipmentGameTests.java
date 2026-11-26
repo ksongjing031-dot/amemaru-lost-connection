@@ -122,7 +122,8 @@ public final class EquipmentGameTests {
         // 11月25日：5階の守護者シリーズを防具一式に（6職業の頭・脚・足の18）と、6階のボスのレア「村長の毛皮」一式4、
         // 第2章の職業ごとの装備「霜銀シリーズ」（6職業の防具24・武器7・盾1）で132
         // 11月25日：7階のボスのレア「鏡氷の短剣」で133
-        check(helper, gear.equipment().size() == 134, "装備の定義が134ではありません：" + gear.equipment().size());
+        // 11月27日：祈願（ガチャ）の★5、ガチャ限のユニーク武器8本で142
+        check(helper, gear.equipment().size() == 142, "装備の定義が142ではありません：" + gear.equipment().size());
         for (ItemManifest.Category category : new ItemManifest.Category[]{
                 ItemManifest.Category.WEAPON, ItemManifest.Category.SHIELD, ItemManifest.Category.ARMOR}) {
             for (RegistryObject<Item> item : ModItems.MANIFEST.category(category)) {
@@ -133,7 +134,9 @@ public final class EquipmentGameTests {
         // 11月24日：2〜5階のアクセサリー（階ごとに、作る5つと、名のある魔物が落とすレアのお守り1つ）の24が増えた
         // 11月25日：6階のアクセサリー（作る5つと、名のある魔物2体が落とすレアのお守り2つ）の7で38
         // 11月25日：7階のアクセサリー（作る5つと、名のある魔物2体が落とすレアのお守り2つ）の7で45
-        check(helper, AccessoryDefs.all().size() == 52, "アクセサリーの定義が52ではありません：" + AccessoryDefs.all().size());
+        // 8階のアクセサリー（作る5つと、名のある魔物2体が落とすレアのお守り2つ）の7で52
+        // 11月27日：祈願（ガチャ）の★4、ガチャ限のアクセサリー（1〜8階に2つずつ）の16で68
+        check(helper, AccessoryDefs.all().size() == 68, "アクセサリーの定義が68ではありません：" + AccessoryDefs.all().size());
         for (RegistryObject<Item> item : ModItems.MANIFEST.category(ItemManifest.Category.ACCESSORY)) {
             check(helper, AccessoryDefs.get(item.get()) != null, "アクセサリーの定義がありません：" + item.getId());
         }

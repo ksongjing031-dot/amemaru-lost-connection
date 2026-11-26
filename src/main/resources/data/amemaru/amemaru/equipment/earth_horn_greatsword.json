@@ -1,0 +1,32 @@
+{
+  "_comment": "大地角の大剣（1階の祈願の★5。ガチャ限のユニーク武器。11月27日【補完】。tools/datagen/build_gacha.py）",
+  "slot": "weapon",
+  "generation": 1,
+  "series": "1階の祈願",
+  "rarity": "unique",
+  "required_level": 8,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "attack": 22
+  },
+  "fixed": true,
+  "durability": 460,
+  "binding": "bound",
+  "effects": [
+    {
+      "type": "extra_damage",
+      "chance": 25,
+      "percent": 50
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:crystal_shard",
+      "count": 3
+    }
+  ],
+  "description": "草原の主が祈願に残した記憶から、もう一度形になった大剣。刃は苔むした大地の石、鍔からは象牙の角が二本、空へ反り返る。振り下ろすたびに刃の琥珀の筋が光り、地の底が遅れてうなる。（1階の祈願の品）"
+}

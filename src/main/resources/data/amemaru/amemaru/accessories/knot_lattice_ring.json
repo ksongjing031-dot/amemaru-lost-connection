@@ -1,0 +1,14 @@
+{
+  "_comment": "結び目の指輪（5階の祈願の★4。ガチャ限のアクセサリー。11月27日【補完】。tools/datagen/build_gacha.py）",
+  "slot": "ring",
+  "generation": 1,
+  "floor": 5,
+  "rarity": "legendary",
+  "effects": [
+    {
+      "type": "party_ward",
+      "threshold": 8,
+      "percent": 3
+    }
+  ]
+}

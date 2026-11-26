@@ -1,0 +1,13 @@
+{
+  "_comment": "苔衣の指輪（2階の祈願の★4。ガチャ限のアクセサリー。11月27日【補完】。tools/datagen/build_gacha.py）",
+  "slot": "ring",
+  "generation": 1,
+  "floor": 2,
+  "rarity": "legendary",
+  "effects": [
+    {
+      "type": "damage_reduction",
+      "percent": 4
+    }
+  ]
+}

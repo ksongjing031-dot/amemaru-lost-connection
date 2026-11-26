@@ -1,0 +1,14 @@
+{
+  "_comment": "歯車の指輪（3階の祈願の★4。ガチャ限のアクセサリー。11月27日【補完】。tools/datagen/build_gacha.py）",
+  "slot": "ring",
+  "generation": 1,
+  "floor": 3,
+  "rarity": "legendary",
+  "effects": [
+    {
+      "type": "extra_damage",
+      "chance": 10,
+      "percent": 30
+    }
+  ]
+}

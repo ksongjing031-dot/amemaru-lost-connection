@@ -1,0 +1,13 @@
+{
+  "_comment": "霜編みの指輪（6階の祈願の★4。ガチャ限のアクセサリー。11月27日【補完】。tools/datagen/build_gacha.py）",
+  "slot": "ring",
+  "generation": 2,
+  "floor": 6,
+  "rarity": "legendary",
+  "effects": [
+    {
+      "type": "cold_resist",
+      "percent": 30
+    }
+  ]
+}

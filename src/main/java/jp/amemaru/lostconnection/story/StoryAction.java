@@ -53,7 +53,7 @@ public record StoryAction(String type, JsonObject params) {
             "amemaru:open_guild", "amemaru:start_quest", "amemaru:report_quest", "amemaru:bond", "amemaru:give_record_book",
             "amemaru:decipher_records", "amemaru:grant_title", "amemaru:open_titles", "amemaru:open_record_book",
             "amemaru:open_connections", "amemaru:open_donation", "amemaru:open_fishing", "amemaru:rent_rod",
-            "amemaru:open_casino", "amemaru:open_restaurant", "amemaru:greet_lilia");
+            "amemaru:open_casino", "amemaru:open_restaurant", "amemaru:greet_lilia", "amemaru:open_gacha");
 
     public static List<StoryAction> parseList(JsonArray array) {
         List<StoryAction> list = new ArrayList<>();
@@ -164,6 +164,9 @@ public record StoryAction(String type, JsonObject params) {
             case "amemaru:open_casino" -> jp.amemaru.lostconnection.casino.CasinoService.open(player,
                     Json.optionalString(params, "tab", "roulette"), false);
             case "amemaru:open_restaurant" -> jp.amemaru.lostconnection.town.RestaurantService.open(player, false);
+            // 11月27日：祈願所の巫女（ガチャ）
+            case "amemaru:open_gacha" -> jp.amemaru.lostconnection.gacha.GachaService.open(player,
+                    Json.optionalString(params, "banner", ""), false);
             default -> {
                 // close は会話の側で扱う
             }

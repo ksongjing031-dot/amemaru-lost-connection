@@ -1,0 +1,13 @@
+{
+  "_comment": "薄明のお守り（7階の祈願の★4。ガチャ限のアクセサリー。11月27日【補完】。tools/datagen/build_gacha.py）",
+  "slot": "charm",
+  "generation": 2,
+  "floor": 7,
+  "rarity": "legendary",
+  "effects": [
+    {
+      "type": "lost_resist",
+      "percent": 20
+    }
+  ]
+}

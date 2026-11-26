@@ -1,0 +1,38 @@
+{
+  "_comment": "聖歌の大鈴（4階の祈願の★5。ガチャ限のユニーク武器。11月27日【補完】。tools/datagen/build_gacha.py）",
+  "slot": "weapon",
+  "generation": 1,
+  "series": "4階の祈願",
+  "rarity": "unique",
+  "required_level": 20,
+  "jobs": [
+    "amemaru:healer"
+  ],
+  "stats": {
+    "magic": 24,
+    "mp": 60,
+    "heal_power": 7
+  },
+  "fixed": true,
+  "durability": 600,
+  "binding": "bound",
+  "effects": [
+    {
+      "type": "heal_ward",
+      "percent": 10
+    },
+    {
+      "type": "ally_power",
+      "threshold": 8,
+      "percent": 3
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:crystal_shard",
+      "count": 3
+    }
+  ],
+  "description": "崩れた神殿で、最後まで鳴っていた大鈴。白い大理石の柄の先で金の鈴が揺れ、まわりに紫の音の羽が浮かぶ。鈴の音に包まれた仲間は、少しだけ強くなる。（4階の祈願の品）"
+}

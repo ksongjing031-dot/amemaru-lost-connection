@@ -1,0 +1,72 @@
+{
+  "_comment": "祈願所の巫女ユノ（11月27日【補完】）。祈願（ガチャ）の画面を開く。祈願札の手に入れ方と、天井の話",
+  "npc": "amemaru:yuno",
+  "priority": 10,
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "text": "ようこそ、祈願所へ。塔の主たちが残した記憶を、祈願札と引き換えに、もう一度形にします",
+      "expression": "smile",
+      "choices": [
+        {
+          "text": "祈願する",
+          "next": "end",
+          "actions": [
+            {
+              "type": "amemaru:open_gacha"
+            }
+          ]
+        },
+        {
+          "text": "祈願札のことを聞く",
+          "next": "t1"
+        },
+        {
+          "text": "またね",
+          "next": "end"
+        }
+      ]
+    },
+    "t1": {
+      "text": "祈願札は、一度倒したことのある階の主を、もう一度倒すと手に入ります。札は階ごとにちがって、その階の祈願にしか使えません",
+      "choices": [
+        {
+          "text": "なかなか出ないときは？",
+          "next": "t2"
+        },
+        {
+          "text": "祈願する",
+          "next": "end",
+          "actions": [
+            {
+              "type": "amemaru:open_gacha"
+            }
+          ]
+        },
+        {
+          "text": "またね",
+          "next": "end"
+        }
+      ]
+    },
+    "t2": {
+      "text": "強い記憶が出ないまま60回祈ると、次は必ず届きます。10回まとめて祈れば、強い記憶が1つは混ざります",
+      "expression": "smile",
+      "choices": [
+        {
+          "text": "祈願する",
+          "next": "end",
+          "actions": [
+            {
+              "type": "amemaru:open_gacha"
+            }
+          ]
+        },
+        {
+          "text": "またね",
+          "next": "end"
+        }
+      ]
+    }
+  }
+}

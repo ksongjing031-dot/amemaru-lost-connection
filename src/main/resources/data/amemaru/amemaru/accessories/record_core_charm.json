@@ -1,0 +1,14 @@
+{
+  "_comment": "記録核のお守り（5階の祈願の★4。ガチャ限のアクセサリー。11月27日【補完】。tools/datagen/build_gacha.py）",
+  "slot": "charm",
+  "generation": 1,
+  "floor": 5,
+  "rarity": "legendary",
+  "effects": [
+    {
+      "type": "execute",
+      "threshold": 30,
+      "percent": 8
+    }
+  ]
+}

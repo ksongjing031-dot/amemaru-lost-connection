@@ -1,0 +1,13 @@
+{
+  "_comment": "草笛の指輪（1階の祈願の★4。ガチャ限のアクセサリー。11月27日【補完】。tools/datagen/build_gacha.py）",
+  "slot": "ring",
+  "generation": 1,
+  "floor": 1,
+  "rarity": "legendary",
+  "effects": [
+    {
+      "type": "move_speed",
+      "percent": 5
+    }
+  ]
+}

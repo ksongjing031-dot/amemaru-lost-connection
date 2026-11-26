@@ -1,0 +1,37 @@
+{
+  "_comment": "翠晶の誓剣（5階の祈願の★5。ガチャ限のユニーク武器。11月27日【補完】。tools/datagen/build_gacha.py）",
+  "slot": "weapon",
+  "generation": 1,
+  "series": "5階の祈願",
+  "rarity": "unique",
+  "required_level": 25,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "attack": 22,
+    "hp": 40
+  },
+  "fixed": true,
+  "durability": 640,
+  "binding": "bound",
+  "effects": [
+    {
+      "type": "damage_reduction",
+      "percent": 6
+    },
+    {
+      "type": "execute",
+      "threshold": 30,
+      "percent": 15
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:crystal_shard",
+      "count": 3
+    }
+  ],
+  "description": "古代守護者の誓いを写した片手剣。白い石の刃の根もとに、翠の結晶の環が浮かんで回る。持ち主が、倒れかけた敵へ踏みこむとき、環が強く光る。（5階の祈願の品）"
+}

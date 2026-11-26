@@ -67,7 +67,7 @@ public final class LakeSoundFilter {
         return silence != null && silence.getAmplifier() >= 1;
     }
 
-    /** 予兆の音が聞こえる武器（湖主の髭弓）を持っているか。 */
+    /** 予兆の音が聞こえる武器（湖主の髭弓）を持っているか、アクセサリー（真珠のお守り）を付けているか。 */
     public static boolean hearsWarnings() {
         Minecraft minecraft = Minecraft.getInstance();
         if (minecraft.player == null) {
@@ -85,6 +85,12 @@ public final class LakeSoundFilter {
                 if (effect.type() == SpecialEffect.Type.WARNING_EAR) {
                     return true;
                 }
+            }
+        }
+        // 11月27日：付けているアクセサリー（祈願の「真珠のお守り」）
+        for (ItemStack stack : jp.amemaru.lostconnection.accessory.AccessoryService.equipped(minecraft.player)) {
+            if (stack.getItem() instanceof jp.amemaru.lostconnection.accessory.AccessoryItem accessory && accessory.hearsWarnings()) {
+                return true;
             }
         }
         return false;

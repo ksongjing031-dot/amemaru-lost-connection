@@ -1,0 +1,13 @@
+{
+  "_comment": "鈴音のお守り（4階の祈願の★4。ガチャ限のアクセサリー。11月27日【補完】。tools/datagen/build_gacha.py）",
+  "slot": "charm",
+  "generation": 1,
+  "floor": 4,
+  "rarity": "legendary",
+  "effects": [
+    {
+      "type": "heal_ward",
+      "percent": 6
+    }
+  ]
+}

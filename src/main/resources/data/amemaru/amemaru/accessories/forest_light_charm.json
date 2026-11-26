@@ -1,0 +1,14 @@
+{
+  "_comment": "森灯のお守り（2階の祈願の★4。ガチャ限のアクセサリー。11月27日【補完】。tools/datagen/build_gacha.py）",
+  "slot": "charm",
+  "generation": 1,
+  "floor": 2,
+  "rarity": "legendary",
+  "effects": [
+    {
+      "type": "heal_on_hit",
+      "chance": 30,
+      "percent": 3
+    }
+  ]
+}

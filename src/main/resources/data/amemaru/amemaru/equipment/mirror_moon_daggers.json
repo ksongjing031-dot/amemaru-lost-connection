@@ -1,0 +1,37 @@
+{
+  "_comment": "鏡月の双刃（7階の祈願の★5。ガチャ限のユニーク武器。11月27日【補完】。tools/datagen/build_gacha.py）",
+  "slot": "weapon",
+  "generation": 2,
+  "series": "7階の祈願",
+  "rarity": "unique",
+  "required_level": 34,
+  "jobs": [
+    "amemaru:rogue"
+  ],
+  "stats": {
+    "attack": 30,
+    "crit": 6
+  },
+  "fixed": true,
+  "durability": 720,
+  "binding": "bound",
+  "effects": [
+    {
+      "type": "double_hit",
+      "chance": 30,
+      "percent": 60
+    },
+    {
+      "type": "lost_resist",
+      "percent": 15
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:crystal_shard",
+      "count": 3
+    }
+  ],
+  "description": "氷の森の鏡が映した、三日月の形の双刃。刃の面がプリズムのように光を割り、振るたびに、鏡の写しの刃がもう一度走る。薄れにも、少し強い。（7階の祈願の品）"
+}

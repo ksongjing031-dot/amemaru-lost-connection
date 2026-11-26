@@ -1,0 +1,13 @@
+{
+  "_comment": "暖炉火のお守り（6階の祈願の★4。ガチャ限のアクセサリー。11月27日【補完】。tools/datagen/build_gacha.py）",
+  "slot": "charm",
+  "generation": 2,
+  "floor": 6,
+  "rarity": "legendary",
+  "effects": [
+    {
+      "type": "regen",
+      "percent": 1.5
+    }
+  ]
+}

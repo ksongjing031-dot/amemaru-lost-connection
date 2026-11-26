@@ -1,0 +1,38 @@
+{
+  "_comment": "千年樹の杖（2階の祈願の★5。ガチャ限のユニーク武器。11月27日【補完】。tools/datagen/build_gacha.py）",
+  "slot": "weapon",
+  "generation": 1,
+  "series": "2階の祈願",
+  "rarity": "unique",
+  "required_level": 13,
+  "jobs": [
+    "amemaru:wizard"
+  ],
+  "stats": {
+    "magic": 21,
+    "mp": 50
+  },
+  "fixed": true,
+  "durability": 520,
+  "binding": "bound",
+  "effects": [
+    {
+      "type": "heal_on_hit",
+      "chance": 100,
+      "percent": 4,
+      "source": "skill"
+    },
+    {
+      "type": "regen",
+      "percent": 1
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:crystal_shard",
+      "count": 3
+    }
+  ],
+  "description": "森番の古樹が千年かけて抱いてきた種を、生きた枝が包む杖。杖の先で種が灯のように脈を打ち、葉のあいだを小さな光が飛ぶ。魔法が当たるたびに、樹液の光が持ち手へ戻ってくる。（2階の祈願の品）"
+}
