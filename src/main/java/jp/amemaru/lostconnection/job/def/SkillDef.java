@@ -102,6 +102,8 @@ public final class SkillDef {
     // 演出
     private final String animation;
     private final String castAnimation;
+    /** 使ったあとの硬直の秒（11月26日）。負なら職業の決まり（{@code JobDef.AttackLock}）で計算、0なら硬直なし。 */
+    private final double lockSeconds;
     private final String chargeAnimation;
     private final String fx;
     @Nullable
@@ -145,6 +147,7 @@ public final class SkillDef {
         this.passive = b.passive;
         this.animation = b.animation;
         this.castAnimation = b.castAnimation;
+        this.lockSeconds = b.lockSeconds;
         this.chargeAnimation = b.chargeAnimation;
         this.fx = b.fx;
         this.sound = b.sound;
@@ -240,6 +243,7 @@ public final class SkillDef {
         String defaultFx = id.getPath().replace('/', '_');
         b.animation = Json.optionalString(json, "animation", b.kind == SkillKind.ACTIVE ? defaultFx : "");
         b.castAnimation = Json.optionalString(json, "cast_animation", "");
+        b.lockSeconds = Json.optionalDouble(json, "lock", -1.0, -1.0, 5.0);
         b.chargeAnimation = Json.optionalString(json, "charge_animation", "");
         b.fx = Json.optionalString(json, "fx", defaultFx);
         b.sound = Json.optionalId(json, "sound");
@@ -460,6 +464,38 @@ public final class SkillDef {
         return castAnimation;
     }
 
+    /** 使ったあとの硬直の秒（定義の {@code lock}）。負なら職業の決まりで計算する（11月26日）。 */
+    public double lockSeconds() {
+        return lockSeconds;
+    }
+
+    /**
+     * ダメージを与えるスキルか（陣の中のダメージも数える）。11月26日：遠距離職の硬直をつけるスキルを決めるのに使う。
+     */
+    public boolean dealsDamage() {
+        return hasEffect(effects, DAMAGING) || hasEffect(fullChargeEffects, DAMAGING);
+    }
+
+    /** 回復・強化・障壁・蘇生などで、仲間も支えるスキルか（11月26日）。 */
+    public boolean supportsAllies() {
+        return hasEffect(effects, SUPPORTING) || hasEffect(fullChargeEffects, SUPPORTING);
+    }
+
+    private static final java.util.EnumSet<EffectDef.Type> DAMAGING = java.util.EnumSet.of(EffectDef.Type.DAMAGE,
+            EffectDef.Type.DETONATE, EffectDef.Type.GAUGE_BURST, EffectDef.Type.DETONATE_POISON);
+    private static final java.util.EnumSet<EffectDef.Type> SUPPORTING = java.util.EnumSet.of(EffectDef.Type.HEAL,
+            EffectDef.Type.HEAL_PERCENT, EffectDef.Type.REGEN, EffectDef.Type.CLEANSE, EffectDef.Type.REVIVE, EffectDef.Type.BARRIER,
+            EffectDef.Type.SHIELD_BOND, EffectDef.Type.BUFF, EffectDef.Type.MP_TRANSFER);
+
+    private static boolean hasEffect(List<EffectDef> list, java.util.EnumSet<EffectDef.Type> types) {
+        for (EffectDef effect : list) {
+            if (types.contains(effect.type()) || hasEffect(effect.nested(), types)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /** 溜めている間のモーションの名前。空ならなし。 */
     public String chargeAnimation() {
         return chargeAnimation;
@@ -531,6 +567,7 @@ public final class SkillDef {
         String animation;
         String castAnimation;
         String chargeAnimation;
+        double lockSeconds = -1.0;
         String fx;
         ResourceLocation sound;
         ResourceLocation castSound;

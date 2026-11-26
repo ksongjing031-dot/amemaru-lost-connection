@@ -49,5 +49,16 @@
     "description": "結びの鈴を守り継ぐ者。奥義（癒しの「大いなる呼び声」か、加護の「結びの聖域」）と、各スキルの第5段が開く。",
     "min_level": 60,
     "min_day": 11
+  },
+  "_comment_attack_lock": "11月26日【補完】：攻撃の鈴だけ、放ったあと0.4〜1.2秒ほぼ止まる（ウィザードと同じ）。仲間も支える鈴は動ける",
+  "attack_lock": {
+    "skill": {
+      "base": 0.3,
+      "per_cooldown": 0.05,
+      "min": 0.4,
+      "max": 1.2,
+      "level": 3,
+      "exempt_support": true
+    }
   }
 }

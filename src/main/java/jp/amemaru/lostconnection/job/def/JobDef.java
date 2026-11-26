@@ -86,6 +86,31 @@ public final class JobDef {
     public record KitEntry(ResourceLocation item, int count) {
     }
 
+    /**
+     * 攻撃のあとの硬直（11月26日のご指示「遠距離職は攻撃の際にスキルなどは硬直やほぼほぼ動けないスロウ効果などをつけましょう。
+     * 動きながら打てるのが強すぎる」【補完】）。段階（{@code level}）は、1つで足が30%遅くなる（3でほぼ止まり、ジャンプとダッシュも
+     * できない）。0の所は硬直なし。
+     *
+     * <ul>
+     *   <li>攻撃のスキル（ダメージを与えるスキル。移動の技〈瞬間移動・跳躍・突進・後ろ跳び〉は除く）を使ったあと、
+     *       {@code skillBase + skillPerCooldown × クールダウンの秒}（{@code skillMin}〜{@code skillMax} 秒）の間、{@code skillLevel}。
+     *       {@code exemptSupport} なら、回復・強化・障壁などで仲間も支えるスキルは除く（ヒーラーの回復の鈴は動ける）</li>
+     *   <li>攻撃のスキルの詠唱の間は {@code chantLevel}、溜めの間は {@code chargeLevel}</li>
+     *   <li>通常の射撃（弓）を射るたびに、{@code basicSeconds} 秒の間 {@code basicLevel}</li>
+     * </ul>
+     * スキルの定義の {@code lock}（秒。0で硬直なし）があれば、そのスキルは計算の代わりにその秒。
+     */
+    public record AttackLock(double skillBase, double skillPerCooldown, double skillMin, double skillMax, int skillLevel,
+                             boolean exemptSupport, int chantLevel, int chargeLevel, double basicSeconds, int basicLevel) {
+        /** 足の遅さの段階の上限（3で −90%）。 */
+        public static final int MAX_LEVEL = 3;
+
+        /** 攻撃のスキルの硬直の秒（クールダウンの秒から）。 */
+        public double skillSeconds(double cooldownSeconds) {
+            return Math.max(skillMin, Math.min(skillMax, skillBase + skillPerCooldown * Math.max(0.0, cooldownSeconds)));
+        }
+    }
+
     private final ResourceLocation id;
     private final Kind kind;
     private final int order;
@@ -117,6 +142,9 @@ public final class JobDef {
     /** 連撃（ない職業は null）。 */
     @Nullable
     private ComboDef combo;
+    /** 攻撃のあとの硬直（ない職業は null。11月26日）。 */
+    @Nullable
+    private AttackLock attackLock;
 
     private JobDef(ResourceLocation id, Kind kind, int order, String name, String role, String description, int color,
                    ResourceLocation icon, @Nullable TagKey<Item> weapons, String weaponText, Set<String> tags,
@@ -242,6 +270,26 @@ public final class JobDef {
                     Json.optionalDouble(comboJson, "finisher_per_step", 15.0, 0.0, 200.0),
                     Json.optionalDouble(comboJson, "ki_per_step", 5.0, 0.0, 1000.0));
         }
+        JsonObject lockJson = Json.optionalObject(json, "attack_lock");
+        if (lockJson != null) {
+            JsonObject skill = Json.optionalObject(lockJson, "skill");
+            JsonObject basic = Json.optionalObject(lockJson, "basic");
+            double min = skill == null ? 0.0 : Json.optionalDouble(skill, "min", 0.0, 0.0, 5.0);
+            double max = skill == null ? 0.0 : Json.optionalDouble(skill, "max", 0.0, 0.0, 5.0);
+            if (max < min) {
+                throw new DefinitionException("「attack_lock.skill」の max は min 以上にしてください");
+            }
+            def.attackLock = new AttackLock(
+                    skill == null ? 0.0 : Json.optionalDouble(skill, "base", 0.0, 0.0, 5.0),
+                    skill == null ? 0.0 : Json.optionalDouble(skill, "per_cooldown", 0.0, 0.0, 1.0),
+                    min, max,
+                    skill == null ? 0 : Json.optionalInt(skill, "level", 0, 0, AttackLock.MAX_LEVEL),
+                    skill != null && Json.optionalBoolean(skill, "exempt_support", false),
+                    Json.optionalInt(lockJson, "chant_level", 0, 0, AttackLock.MAX_LEVEL),
+                    Json.optionalInt(lockJson, "charge_level", 0, 0, AttackLock.MAX_LEVEL),
+                    basic == null ? 0.0 : Json.optionalDouble(basic, "seconds", 0.0, 0.0, 5.0),
+                    basic == null ? 0 : Json.optionalInt(basic, "level", 0, 0, AttackLock.MAX_LEVEL));
+        }
         return def;
     }
 
@@ -329,6 +377,12 @@ public final class JobDef {
     @Nullable
     public ComboDef combo() {
         return combo;
+    }
+
+    /** 攻撃のあとの硬直（ない職業は null。11月26日）。 */
+    @Nullable
+    public AttackLock attackLock() {
+        return attackLock;
     }
 
     public List<SchoolDef> schools() {

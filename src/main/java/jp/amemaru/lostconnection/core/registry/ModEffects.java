@@ -123,6 +123,22 @@ public final class ModEffects {
                             AttributeModifier.Operation.MULTIPLY_TOTAL));
 
     /**
+     * 硬直（11月26日のご指示「遠距離職は攻撃の際にスキルなどは硬直やほぼほぼ動けないスロウ効果などをつけましょう。動きながら
+     * 打てるのが強すぎる」【補完】）：段階（強さ＋1）ごとに足が30%遅くなる（1段階 −30%・2段階 −60%・3段階 −90%）。3段階では、
+     * ジャンプとダッシュもできない（クライアントの {@code AttackLockInput}）。いつ・どれだけつけるかは、職業の定義の
+     * {@code attack_lock}（{@code AttackLockService}）。
+     */
+    public static final RegistryObject<MobEffect> ATTACK_LOCK = EFFECTS.register("attack_lock", () ->
+            new AmemaruEffect(MobEffectCategory.NEUTRAL, 0xC8A86E, false) {
+                // 牛乳では消えない（攻撃の決まりなので、飲んで消せないように）
+                @Override
+                public java.util.List<net.minecraft.world.item.ItemStack> getCurativeItems() {
+                    return new java.util.ArrayList<>();
+                }
+            }.addAttributeModifier(Attributes.MOVEMENT_SPEED, "2f69e591-9f81-4664-a2d7-9a005cabb32d", -0.3,
+                    AttributeModifier.Operation.MULTIPLY_TOTAL));
+
+    /**
      * 衰弱（Phase 4）：教会の呼び戻しの儀で戻った後、しばらくステータスが下がる（Phase 0-A 20章：60秒・−10%。
      * 下がる量は {@code DownHandler}）。牛乳では消えない。
      */

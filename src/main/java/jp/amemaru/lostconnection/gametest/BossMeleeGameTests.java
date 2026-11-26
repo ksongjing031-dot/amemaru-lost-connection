@@ -349,6 +349,13 @@ public final class BossMeleeGameTests {
         EnemyDef veldhorn = EnemyDefs.get(AmemaruMod.id("veldhorn"));
         check(helper, guardian.skills().containsKey("sever") && cantare.skills().containsKey("echo") && hydram.skills().containsKey("flood")
                 && oldWard.skills().containsKey("seeds") && veldhorn.skills().containsKey("earth_roar"), "ボスの固有のギミックの定義がそろっていません");
+        // 11月26日：大地の咆哮を止められなかったときの衝撃は、ほかのどの技（突進 2.2倍）よりも強い（3.2倍）
+        double roarPower = veldhorn.skills().get("earth_roar").power();
+        check(helper, roarPower >= 3.2 - 1.0E-6, "大地の咆哮の衝撃が弱いままです：" + roarPower);
+        for (java.util.Map.Entry<String, EnemyDef.Skill> entry : veldhorn.skills().entrySet()) {
+            check(helper, entry.getKey().equals("earth_roar") || entry.getValue().power() < roarPower,
+                    "大地の咆哮の衝撃が、ほかの技（" + entry.getKey() + "）より弱いです");
+        }
         helper.succeed();
     }
 

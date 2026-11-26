@@ -25,6 +25,8 @@ import java.util.UUID;
  *   <li>ダメージは、攻撃のステータス × 通常の攻撃の係数（近接攻撃と同じ）。標・遠矢・連なる矢・疾風の弓舞が効き、集中がたまる。</li>
  *   <li>射てる間隔は、攻撃の速さ（弓は約0.8秒。素早さで速くなる）。押し続けると、間隔ごとに射続ける。</li>
  *   <li>狙撃の構えの間は、矢1本ごとに構えを使って強くなる。</li>
+ *   <li>11月26日：射るたびに、職業の {@code attack_lock} の {@code basic} の間だけ足が遅くなる（アーチャーは0.9秒・60%。
+ *       押し続けている間は、ずっと遅い）。</li>
  * </ul>
  */
 public final class BasicShotService {
@@ -67,6 +69,8 @@ public final class BasicShotService {
             }
         }
         LampBolt.launchBasic(player, player.getLookAngle(), SPEED, RANGE, coefficient);
+        // 11月26日：射っている間は、足が遅くなる（職業の attack_lock の basic。アーチャーは60%）
+        jp.amemaru.lostconnection.job.AttackLockService.afterBasicShot(player, data.getCombatJob());
         player.swing(InteractionHand.MAIN_HAND, true);
         player.level().playSound(null, player.getX(), player.getY(), player.getZ(), ModSounds.get("skill.archer.basic_shot"),
                 SoundSource.PLAYERS, 0.7F, 0.95F + player.getRandom().nextFloat() * 0.1F);

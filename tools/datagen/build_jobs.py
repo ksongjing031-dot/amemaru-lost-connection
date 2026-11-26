@@ -275,7 +275,10 @@ def table(all_skills):
              f"（11月23日。職業の `skill_mp_per_level`、1レベルにつき +5%。数えるのは Lv{MP_SCALE_LEVEL_CAP} まで）。",
              "11月24日から、スキルとステータスはスキルツリー（`skill_trees/<職業>.json`）で一緒に取ります。すべては取れないので、"
              f"ビルドによって使えるスキルが変わります。段階は最大{common.MAX_RANK}段（第{common.MAX_RANK}段は上位職から）、"
-             "段階ごとのポイントは " + "・".join(str(c) for c in common.RANK_COSTS) + "。", ""]
+             "段階ごとのポイントは " + "・".join(str(c) for c in common.RANK_COSTS) + "。",
+             "11月26日から、ウィザード・アーチャー・ヒーラーの攻撃のスキルは、放ったあと少しの間、足がほぼ止まります（硬直。職業の "
+             "`attack_lock`。ウィザード 0.4〜1.2秒・アーチャー 0.25〜0.6秒・ヒーラーは攻撃の鈴だけ。移動の技と、仲間を支える技には"
+             "つきません）。スキルごとの秒は [`docs/phase8_1126.md`](phase8_1126.md) の「遠距離職の硬直」。", ""]
     original = original_names()
     for job in ["knight", "wizard", "healer", "archer", "rogue", "monk"]:
         lines.append(f"## {JOB_NAMES[job]}")
