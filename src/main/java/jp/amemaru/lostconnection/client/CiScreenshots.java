@@ -1729,9 +1729,10 @@ public final class CiScreenshots {
             {"cmd", null, "3", "item replace entity @a weapon.mainhand with minecraft:air"},
             // 11月27日：祈願（ガチャ）。塔の入口の広間の西に立つ祈願所の巫女ユノと、1階の祈願の画面。天井の1回前にして10回引き、
             // ★5の虹の演出（魔法陣と光の柱）と、めくったカードを撮る
-            // 中央広場から遠い（塔の入口）ので、チャンクが読みこまれるまで長めに待つ
-            {"cmd", null, "120", "tp @p {at:-6.5,4,-164.5} 90 6"},
-            {"snap", null, "120", "p8g_yuno"},
+            // 武器の写真の正面からの視点のままだと、カメラがユノの体の中に入る（何も見えない）ので、一人称に戻してから撮る
+            {"view", null, "3", "first"},
+            {"cmd", null, "60", "tp @p {at:-6.5,4,-164.5} 90 6"},
+            {"snap", null, "60", "p8g_yuno"},
             {"cmd", null, "5", "amemaru admin gacha tokens @p grassland 20"},
             {"cmd", null, "20", "amemaru admin gacha open @p grassland"},
             {"snap", null, "30", "p8g_banner"},
