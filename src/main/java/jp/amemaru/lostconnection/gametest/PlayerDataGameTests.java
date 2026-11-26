@@ -186,6 +186,43 @@ public final class PlayerDataGameTests {
         helper.succeed();
     }
 
+    /**
+     * 11月27日のバグ「防具をつけていると、落下以外のダメージが通らない」：敵の攻撃で防具の耐久が減ると、持ち物が変わった扱いで
+     * ステータスの計算し直しが走る。その前にバニラの体力が減っていても、そのダメージが独自のHPに写る（消えない）。
+     */
+    @GameTest(template = EMPTY)
+    public static void damageSurvivesRecompute(GameTestHelper helper) {
+        ServerPlayer player = fake(helper, "damageSurvivesRecompute");
+        PlayerData data = data(helper, player);
+        LevelService.setLevel(player, data, 10);
+        VitalsService.tick(player, data);
+        double max = data.getStats().maxHp();
+        helper.assertTrue(Math.abs(data.getHp() - max) < 0.5, "HPが満タンではありません：" + data.getHp());
+
+        // 敵の攻撃：バニラの体力が3割減り、同じ tick に防具の耐久が減って、計算し直しの印がつく
+        player.setHealth(player.getMaxHealth() * 0.7F);
+        data.invalidateStats();
+        VitalsService.tick(player, data);
+        helper.assertTrue(data.isStatsReady(), "計算し直されていません");
+        helper.assertTrue(Math.abs(data.getHp() - max * 0.7) < 0.5,
+                "計算し直しで、受けたダメージが消えました：" + max + " → " + data.getHp() + "（" + (max * 0.7) + " のはず）");
+        helper.assertTrue(Math.abs(player.getHealth() - player.getMaxHealth() * 0.7F) < 0.05F,
+                "バニラの体力が、減った分に合っていません：" + player.getHealth());
+
+        // スキルを使うときの計算し直し（LevelService.recompute を直接）でも消えない
+        player.setHealth(player.getMaxHealth() * 0.5F);
+        LevelService.recompute(player, data);
+        helper.assertTrue(Math.abs(data.getHp() - max * 0.5) < 0.5, "計算し直しで、受けたダメージが消えました（2回目）：" + data.getHp());
+
+        // 受けた直後（写す前）に回復が入っても、ダメージは消えない（回復は、まだ減っていないHPに足される）
+        player.setHealth(player.getMaxHealth() * 0.4F);
+        data.setHp(data.getHp() + max * 0.05);
+        VitalsService.pushVanillaHealth(player, data);
+        helper.assertTrue(Math.abs(data.getHp() - max * 0.45) < 0.5,
+                "回復と同じ tick のダメージが消えました：" + data.getHp() + "（" + (max * 0.45) + " のはず）");
+        helper.succeed();
+    }
+
     /** 経験値でレベルが上がり、最大レベルでは経験値がたまらない。 */
     @GameTest(template = EMPTY)
     public static void expRaisesLevel(GameTestHelper helper) {

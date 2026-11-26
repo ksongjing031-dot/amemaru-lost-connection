@@ -51,6 +51,22 @@ public final class VitalsService {
         pushVanillaHealth(player, data);
     }
 
+    /**
+     * ステータスを計算し直す前に、まだ独自のHPに写していないバニラの体力の変化を写す（{@code LevelService.recompute} から）。
+     *
+     * <p>11月27日のバグ「防具をつけていると、落下以外のダメージが通らない（ノックバックとダメージの数字だけ）」：敵の攻撃で
+     * 防具の耐久が減ると、持ち物が変わった扱いになってステータスの計算し直しが走り、そこでバニラの体力を（まだ減っていない）
+     * 独自のHPから置き直していたため、受けたダメージが消えていた。落下は防具の耐久を減らさないので通っていた。
+     * 計算し直す前の最大HP（ダメージを決めたときと同じ値）で写す。</p>
+     */
+    public static void absorbPending(ServerPlayer player, PlayerData data) {
+        if (player.isDeadOrDying() || data.down().isDown() || data.getStats() == null || data.getExpectedVanillaHealth() < 0) {
+            return;
+        }
+        absorbVanillaChanges(player, data);
+        data.setExpectedVanillaHealth(player.getHealth());
+    }
+
     /** バニラの仕組みで体力が変わっていたら、同じ割合を独自のHPに反映する。 */
     private static void absorbVanillaChanges(ServerPlayer player, PlayerData data) {
         float expected = data.getExpectedVanillaHealth();
@@ -101,11 +117,17 @@ public final class VitalsService {
         }
     }
 
-    /** 独自のHPの割合に合わせて、バニラの体力を決める。 */
+    /**
+     * 独自のHPの割合に合わせて、バニラの体力を決める。
+     *
+     * <p>11月27日：置き直す前に、まだ写していないバニラの体力の変化（受けたばかりのダメージ）を写す。写さずに置き直すと、
+     * そのダメージが消える（同じ tick に回復や計算し直しが入ったとき）。</p>
+     */
     public static void pushVanillaHealth(ServerPlayer player, PlayerData data) {
         if (!data.isStatsReady() || player.isDeadOrDying()) {
             return;
         }
+        absorbPending(player, data);
         float vanillaMax = player.getMaxHealth();
         double maxHp = data.getStats().maxHp();
         float target = (float) (data.getHp() / maxHp * vanillaMax);
