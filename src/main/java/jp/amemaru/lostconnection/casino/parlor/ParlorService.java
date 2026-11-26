@@ -796,11 +796,16 @@ public final class ParlorService {
             updateLamp(server, l);
         }
         if (p != null && l.watching) {
+            // データカウンター（回転数・大当たり・当たりの履歴と出玉）が変わった：画面の「本日のデータ」も送りなおす
+            boolean recordChanged = t.started() != null || t.jackpotStart() || t.roundEnd() || !t.jackpotEnd().isEmpty();
             boolean event = t.jackpotStart() || t.roundStart() || t.roundEnd() || !t.jackpotEnd().isEmpty() || t.modeChanged() != null
-                    || held;
+                    || held || recordChanged;
             if (event || ++l.syncClock >= SYNC_TICKS) {
                 l.syncClock = 0;
                 CompoundTag tag = stateTag(p, l);
+                if (recordChanged) {
+                    tag.put("record", recordTag(l));
+                }
                 if (!t.jackpotEnd().isEmpty()) {
                     tag.putString("jackpotEnd", t.jackpotEnd());
                     tag.putInt("jackpotPaid", t.jackpotPaid());

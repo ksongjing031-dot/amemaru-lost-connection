@@ -207,12 +207,12 @@ public class CasinoScreen extends Screen {
                         send("sell", args);
                     }));
                 }
-                // 11月27日：地下遊技場の持ち玉・持ちメダルをチップに戻す（等価）
-                CrystalButton balls = new CrystalButton(left + W - 126, top + 62, 110, 14,
+                // 11月27日：地下遊技場の持ち玉・持ちメダルをチップに戻す（等価）。右上の2行（左の文の短い行の横）
+                CrystalButton balls = new CrystalButton(left + W - 14 - 48, top + 56, 48, 14,
                         Component.translatable("screen.amemaru.casino.cash_balls"), b -> send("cash_balls", new CompoundTag()));
                 balls.active = data.getLong("balls") >= Math.max(1, data.getInt("ballsPerChip"));
                 addRenderableWidget(balls);
-                CrystalButton medals = new CrystalButton(left + W - 126, top + 92, 110, 14,
+                CrystalButton medals = new CrystalButton(left + W - 14 - 48, top + 71, 48, 14,
                         Component.translatable("screen.amemaru.casino.cash_medals"), b -> send("cash_medals", new CompoundTag()));
                 medals.active = data.getLong("medals") >= Math.max(1, data.getInt("medalsPerChip"));
                 addRenderableWidget(medals);
@@ -599,12 +599,14 @@ public class CasinoScreen extends Screen {
         graphics.drawString(font, Component.translatable("screen.amemaru.casino.buy_head"), x0 + 12, top + 120, UiStyle.TEXT_GOLD, false);
         graphics.drawString(font, Component.translatable("screen.amemaru.casino.sell_head"), x0 + 12, top + 164, UiStyle.TEXT_GOLD, false);
         graphics.drawString(font, Component.translatable("screen.amemaru.casino.cashier_note"), x0 + 12, top + 198, UiStyle.TEXT_DIM, false);
-        // 地下遊技場の持ち玉・持ちメダル
-        int px = left + W - 126;
-        graphics.drawString(font, Component.translatable("screen.amemaru.casino.balls_have", data.getLong("balls"),
-                data.getLong("balls") / Math.max(1, data.getInt("ballsPerChip"))), px, top + 52, UiStyle.TEXT, false);
-        graphics.drawString(font, Component.translatable("screen.amemaru.casino.medals_have", data.getLong("medals"),
-                data.getLong("medals") / Math.max(1, data.getInt("medalsPerChip"))), px, top + 82, UiStyle.TEXT, false);
+        // 地下遊技場の持ち玉・持ちメダル（ボタンの左に、右寄せで）
+        int bx = left + W - 14 - 48 - 4;
+        Component balls = Component.translatable("screen.amemaru.casino.balls_have", data.getLong("balls"),
+                data.getLong("balls") / Math.max(1, data.getInt("ballsPerChip")));
+        Component medals = Component.translatable("screen.amemaru.casino.medals_have", data.getLong("medals"),
+                data.getLong("medals") / Math.max(1, data.getInt("medalsPerChip")));
+        graphics.drawString(font, balls, bx - font.width(balls), top + 59, UiStyle.TEXT, false);
+        graphics.drawString(font, medals, bx - font.width(medals), top + 74, UiStyle.TEXT, false);
     }
 
     private void renderPrizes(GuiGraphics graphics, int mouseX, int mouseY) {

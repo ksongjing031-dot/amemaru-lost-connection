@@ -80,9 +80,12 @@ public abstract class MachineScreen extends Screen {
         return recordJson.has(key) ? recordJson.get(key).getAsInt() : 0;
     }
 
-    /** サーバーからの台の様子。 */
+    /** サーバーからの台の様子（データカウンターが変わったときは、それも入っている）。 */
     public void onState(CompoundTag next) {
         state = next;
+        if (next.contains("record")) {
+            setRecord(next.getCompound("record"));
+        }
     }
 
     public void onRecord(CompoundTag next) {
@@ -162,6 +165,9 @@ public abstract class MachineScreen extends Screen {
         g.drawString(font, island, x + 6, top + 28, 0x9A90B0, false);
         g.drawString(font, holdingText(), x + 6, top + 42, 0xFFE070, false);
         g.drawString(font, Component.translatable("screen.amemaru.parlor.chips", state.getLong("chips")), x + 6, top + 52, 0xC8C0E0, false);
+        // 下の3つのボタン（チップで玉・メダルを借りる）の見出し。ボタンには枚数だけを書く
+        Component lendCaption = Component.translatable("screen.amemaru.parlor.lend_caption");
+        g.drawString(font, lendCaption, x + W - PANEL_X - 8 - font.width(lendCaption), top + 52, 0x9A90B0, false);
         if (rules.getBoolean("event")) {
             int c = ParlorDraw.rainbow(now, 2400, 0);
             g.drawString(font, Component.translatable("screen.amemaru.parlor.event_day"), x + W - PANEL_X - 8

@@ -630,10 +630,6 @@ public class SlotScreen extends MachineScreen {
             ParlorDraw.disc(g, x + d[0], y + d[1], 5, c);
         }
         ParlorDraw.disc(g, x + 11, y + 11, 4, lit ? 0xFFFFFFFF : 0xFF2A1828);
-        String name = label("lamp", model.has("lamp") ? model.getAsJsonObject("lamp").get("name").getAsString() : "");
-        if (!name.isEmpty()) {
-            g.drawString(font, name, x - 4, y + 25, lit ? c : 0x705868, false);
-        }
     }
 
     private void renderLcd(GuiGraphics g, int x, int y, int w, int h, long now, boolean freeze) {
