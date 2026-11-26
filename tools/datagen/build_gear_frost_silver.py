@@ -212,6 +212,10 @@ def main():
     tags = {}
     for item, name, workshop, materials, count, mastery, exp, desc in COMPONENTS:
         write(os.path.join(DATA, "recipes/workshop", item + ".json"), recipe(workshop, mastery, exp, materials, item, count))
+        # 持ち物のモデル（絵は tools/artgen/make_floor_accessory_art.py）。11月25日に作ったときは、このモデルが抜けていて、
+        # 持ち物の枠に「モデルのない品」の箱が出ていた（11月26日の CI のログで見つけて足した）
+        write(os.path.join(ASSETS, "models/item", item + ".json"),
+              {"parent": "minecraft:item/generated", "textures": {"layer0": "amemaru:item/" + item}})
         if item not in material_ids:
             manifest["materials"].append({"id": item, "rarity": "uncommon"})
         lang["item.amemaru." + item] = name

@@ -10,16 +10,14 @@
   song_stele         歌の碑：灰白の石の碑。表に五線のような横の刻みと、淡い水色に光る音のしるし
   lake_tablet        湖底の祠の石板：低い台に立てた、丸い頭の石板。歌の刻みと、まん中に青く光る音のしるし
 品：
-  lake_lord_whisker_bow  湖主の髭弓（8階のボスのレア。エピック）：霜銀の弓の形を、湖の主の白い鱗の色に塗り替え、弦と握りの石と
-                         弓の先を、ムーネのひげの光る水色にする（光る部品は forge_data の明るさ15）。持ち物の絵（32×32）も同じ
+  lake_lord_whisker_bow  湖主の髭弓（8階のボスのレア。エピック）：11月26日から、形から作り直した（make_gear_rare_reshape.py を呼ぶ）。
+                         湖の主の白い鱗の腕と、ムーネのひげの光る水色の弦と先（光る部品は forge_data の明るさ15）
 状態のアイコン（18×18）：
   mob_effect/lost_sever    断線：二人の胸像のあいだの赤い糸が、まん中で切れている
   mob_effect/lost_silence  静寂：灰白の鐘に、斜めの線（鳴らない）
 人の姿（村人と同じ 64×64 の肌。make_village_things.py の PEOPLE）：
   textures/entity/village/singer.png・singer_statue.png  最後の歌い手（長い黒髪・白い衣・青い肩掛け）
 """
-import colorsys
-import json
 import os
 import sys
 
@@ -28,7 +26,7 @@ from PIL import Image
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from javamodel import JavaModel  # noqa: E402
-from make_iceforest_things import ICE7, IceThingPainter, write_json  # noqa: E402
+from make_iceforest_things import IceThingPainter, write_json  # noqa: E402
 from materials import hsh, pick, ramp  # noqa: E402
 
 CREDIT = "AMEMARU: 8階の仕掛け（tools/artgen/make_lake_things.py で生成）"
@@ -208,101 +206,13 @@ def cube_model(texture, render_type):
     return {"parent": "minecraft:block/cube_all", "render_type": render_type, "textures": {"all": texture}}
 
 
-# ---------------------------------------------------------------- 湖主の髭弓（霜銀の弓の塗り替え）
-
-def _hsv(h, s, v):
-    return colorsys.hsv_to_rgb(h / 360.0, max(0.0, min(1.0, s)), max(0.0, min(1.0, v)))
-
-
-def recolor_pixel(rgb, kind):
-    r, g, b = rgb
-    _, ss, vv = colorsys.rgb_to_hsv(r, g, b)
-    if kind == "whisker":
-        return _hsv(188, 0.62 - vv * 0.38, 0.5 + vv * 0.5)
-    if kind == "grip":
-        return _hsv(214, 0.28, 0.16 + vv * 0.55)
-    if kind == "band":
-        return _hsv(210, 0.07, 0.36 + vv * 0.62)
-    # 湖の主の白い鱗の色（灰白に、ほんの少し青）
-    return _hsv(208, 0.06 + ss * 0.2, min(1.0, 0.18 + vv * 0.9))
-
-
-ELEMENT_KIND = {"string": "whisker", "rest_gem": "whisker", "nock_top": "whisker", "nock_bottom": "whisker",
-                "tip_top": "whisker", "tip_bottom": "whisker", "grip": "grip", "grip_plate": "grip",
-                "band_0": "band", "band_1": "band"}
-
-
-def bow_model_texture(src, three):
-    a = np.asarray(src.convert("RGBA")).astype(float) / 255.0
-    out = a.copy()
-    done = np.zeros(a.shape[:2], dtype=bool)
-    tw, th = three.get("texture_size", [64, 64])
-    sx, sy = a.shape[1] / tw, a.shape[0] / th
-    for e in three["elements"]:
-        kind = ELEMENT_KIND.get(e.get("name"), "scale")
-        for face in e.get("faces", {}).values():
-            u0, v0, u1, v1 = face["uv"]
-            x0, x1 = sorted((int(round(u0 / 16 * tw * sx)), int(round(u1 / 16 * tw * sx))))
-            y0, y1 = sorted((int(round(v0 / 16 * th * sy)), int(round(v1 / 16 * th * sy))))
-            for y in range(y0, max(y1, y0 + 1)):
-                for x in range(x0, max(x1, x0 + 1)):
-                    if y >= a.shape[0] or x >= a.shape[1] or done[y, x] or a[y, x, 3] == 0:
-                        continue
-                    out[y, x, :3] = recolor_pixel(a[y, x, :3], kind)
-                    done[y, x] = True
-    # どの面にも当たらない画素も、鱗の色へ
-    for y in range(a.shape[0]):
-        for x in range(a.shape[1]):
-            if not done[y, x] and a[y, x, 3] > 0:
-                out[y, x, :3] = recolor_pixel(a[y, x, :3], "scale")
-    return Image.fromarray((out * 255).astype(np.uint8), "RGBA")
-
-
-def bow_icon(src):
-    """持ち物の絵（32×32）：右の弓の体は鱗の色、握りの石と弓の先は光る水色。左上から斜めに入る矢は、光るひげの筋にする"""
-    a = np.asarray(src.convert("RGBA")).astype(float) / 255.0
-    out = a.copy()
-    for y in range(a.shape[0]):
-        for x in range(a.shape[1]):
-            r, g, b, al = a[y, x]
-            if al == 0:
-                continue
-            hh, ss, vv = colorsys.rgb_to_hsv(r, g, b)
-            arrow = -3 <= x - y <= 4 and y <= 21 and x <= 21
-            if ss >= 0.22 and 170 <= hh * 360 <= 250:
-                out[y, x, :3] = recolor_pixel((r, g, b), "whisker")
-            elif arrow:
-                out[y, x, :3] = recolor_pixel((r, g, b), "whisker") if vv > 0.1 else _hsv(196, 0.5, 0.22)
-            elif vv > 0.82 and (y <= 5 or y >= 24):
-                out[y, x, :3] = recolor_pixel((r, g, b), "whisker")   # 弓の先
-            else:
-                out[y, x, :3] = recolor_pixel((r, g, b), "scale")
-    return Image.fromarray((out * 255).astype(np.uint8), "RGBA")
-
+# ---------------------------------------------------------------- 湖主の髭弓（11月26日に形から作り直した）
 
 def whisker_bow(base):
-    tex = os.path.join(base, "textures/item")
-    item = os.path.join(base, "models/item")
-    with open(os.path.join(item, "frost_silver_bow_3d.json"), encoding="utf-8") as fp:
-        three = json.load(fp)
-    model_tex = bow_model_texture(Image.open(os.path.join(tex, "frost_silver_bow_model.png")), three)
-    model_tex.save(os.path.join(tex, "lake_lord_whisker_bow_model.png"))
-    icon = bow_icon(Image.open(os.path.join(tex, "frost_silver_bow.png")))
-    icon.save(os.path.join(tex, "lake_lord_whisker_bow.png"))
-    three["credit"] = CREDIT
-    three["textures"] = {"0": "amemaru:item/lake_lord_whisker_bow_model", "particle": "amemaru:item/lake_lord_whisker_bow_model"}
-    lit = 0
-    for e in three["elements"]:
-        if ELEMENT_KIND.get(e.get("name")) == "whisker":
-            e["forge_data"] = {"block_light": 15, "sky_light": 15}
-            lit += 1
-        else:
-            e.pop("forge_data", None)
-    write_json(os.path.join(item, "lake_lord_whisker_bow_3d.json"), three)
-    with open(os.path.join(item, "frost_silver_bow.json"), encoding="utf-8") as fp:
-        flat = fp.read()
-    write_json(os.path.join(item, "lake_lord_whisker_bow.json"), json.loads(flat.replace("frost_silver_bow", "lake_lord_whisker_bow")))
-    return model_tex, icon, lit
+    """湖主の髭弓：tools/artgen/make_gear_rare_reshape.py で作る（前は霜銀の弓の塗り替え）。(モデルの絵, 持ち物の絵, 光る部品の数)。"""
+    import make_gear_rare_reshape
+    repo = os.path.normpath(os.path.join(base, "..", "..", "..", "..", ".."))
+    return make_gear_rare_reshape.export_rare_weapon(repo, "lake_lord_whisker_bow")
 
 
 # ---------------------------------------------------------------- 状態のアイコン
