@@ -1972,6 +1972,12 @@ public final class CiScreenshots {
             {"snap", null, "30", "phase8_f8_bow"},
             {"p8_hold", null, "5", "-"},
             {"view", null, "5", "first"},
+            // 11月26日：見た目と音の設定の画面（Mod の一覧の「設定」から開く）。「曲を試しに聞く」で2階のボスの曲を流す
+            // （録った音に、その曲が入っているかを tools/ci/boss_audio.py が確かめる）
+            {"p8_settings", null, "20", "open"},
+            {"p8_settings", null, "10", "preview"},
+            {"snap", null, "20", "phase8_settings"},
+            {"p8_settings", null, "200", "-"},
             {"screen", null, "10", "hold"},
             {"cmd", null, "5", "amemaru admin debug guard @p off"},
             {"cmd", null, "10", "gamemode spectator @p"},

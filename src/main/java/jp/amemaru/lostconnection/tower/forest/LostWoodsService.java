@@ -188,10 +188,11 @@ public final class LostWoodsService {
             return;
         }
         long now = level.getGameTime();
-        // こだま（正しい出口と、まぎらわしい出口）
+        // こだま（正しい出口と、まぎらわしい出口）。11月26日：ひとり確認モードでは、鐘から離れる間があるように、返るのを遅らせる
+        long delay = jp.amemaru.lostconnection.tower.SoloTest.seconds(woods.echoDelay(), jp.amemaru.lostconnection.tower.SoloTest.ECHO_SECONDS) * 20L;
         FloorFeatures.Exit correct = woods.correctExit();
         if (correct != null) {
-            ECHOES.add(new Echo(floor, woodsId, now + woods.echoDelay() * 20L, false, correct.post(), pos));
+            ECHOES.add(new Echo(floor, woodsId, now + delay, false, correct.post(), pos));
         }
         List<FloorFeatures.Exit> wrong = new ArrayList<>();
         for (FloorFeatures.Exit exit : woods.exits()) {
@@ -201,7 +202,7 @@ public final class LostWoodsService {
         }
         for (int i = 0; i < woods.decoys() && !wrong.isEmpty(); i++) {
             FloorFeatures.Exit decoy = wrong.remove(level.random.nextInt(wrong.size()));
-            ECHOES.add(new Echo(floor, woodsId, now + woods.echoDelay() * 20L + 10 + i * 8L, true, decoy.post(), pos));
+            ECHOES.add(new Echo(floor, woodsId, now + delay + 10 + i * 8L, true, decoy.post(), pos));
         }
         // 結び目の灯（持っていなければ。30秒に1回）
         Item lantern = ModItems.MANIFEST.get("knot_lantern").get();
@@ -215,7 +216,7 @@ public final class LostWoodsService {
             }
             player.displayClientMessage(Component.translatable("message.amemaru.lost_woods.lantern").withStyle(ChatFormatting.GOLD), false);
         }
-        player.displayClientMessage(Component.translatable("message.amemaru.lost_woods.rang", woods.name(), woods.echoDelay())
+        player.displayClientMessage(Component.translatable("message.amemaru.lost_woods.rang", woods.name(), delay / 20L)
                 .withStyle(ChatFormatting.AQUA), true);
     }
 

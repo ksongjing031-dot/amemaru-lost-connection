@@ -490,13 +490,15 @@ public abstract class AmemaruBoss extends AmemaruMob {
             }
         }
         double percent = share.power() * (enraged() ? 1.25 : 1.0);
-        double each = SharedBlow.split(percent, inside.size());
+        // 11月26日：ひとり確認モードでは、円の中の練習用の人形も、受ける人に数える（人形はダメージを受けない）
+        int count = inside.size() + jp.amemaru.lostconnection.tower.SoloTest.standIns(level, at, radius, 3.0);
+        double each = SharedBlow.split(percent, count);
         for (ServerPlayer player : inside) {
             SharedBlow.hit(player, each);
         }
         for (ServerPlayer player : room.participants()) {
-            player.displayClientMessage(Component.translatable(inside.size() <= 1 ? "boss.amemaru.share.alone" : "boss.amemaru.share.shared",
-                    inside.size(), Math.round(each * 100.0)).withStyle(inside.size() <= 1 ? ChatFormatting.RED : ChatFormatting.AQUA), true);
+            player.displayClientMessage(Component.translatable(count <= 1 ? "boss.amemaru.share.alone" : "boss.amemaru.share.shared",
+                    count, Math.round(each * 100.0)).withStyle(count <= 1 ? ChatFormatting.RED : ChatFormatting.AQUA), true);
         }
         level.sendParticles(ParticleTypes.EXPLOSION, at.x, at.y + 0.5, at.z, 4, 1.0, 0.2, 1.0, 0.0);
         level.sendParticles(ParticleTypes.END_ROD, at.x, at.y + 0.3, at.z, 50, radius * 0.5, 0.2, radius * 0.5, 0.18);

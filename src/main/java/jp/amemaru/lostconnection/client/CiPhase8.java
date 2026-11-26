@@ -26,7 +26,7 @@ final class CiPhase8 {
     static boolean action(Minecraft minecraft, String[] shot, boolean first) {
         String kind = shot[0];
         if (!List.of("p8_bell", "p8_listen", "p8_knot", "p8_hold", "p8_valve", "p8_bench", "p8_bench_open", "p8_charm", "p8_lock",
-                "p8_bossfx", "p8_tooltip", "p8_say").contains(kind)) {
+                "p8_bossfx", "p8_tooltip", "p8_say", "p8_settings").contains(kind)) {
             return false;
         }
         if (!first) {
@@ -57,9 +57,13 @@ final class CiPhase8 {
                 LostWoodsService.placeKnot(player, def.number(), woods.id(), woods.exits().indexOf(exit), post);
             }));
             case "p8_hold" -> CiPhase3.onServer(minecraft, player -> CiGear.hold(player, "-".equals(shot[3]) ? null : shot[3], null));
-            // 11月25日：ボス戦の曲の確かめ（CIの機械には音が出ないので、選んだ曲を記録に書く）
-            case "p8_bossfx" -> jp.amemaru.lostconnection.AmemaruMod.LOGGER.info("[amemaru-ci] boss fx ({}): boss={} track={}", shot[3],
-                    BossFx.currentBoss(), BossFx.playingTrack());
+            // 11月25日：ボス戦の曲の確かめ。11月26日から、CIの機械は鳴った音をファイルに録るので、音のエンジンが曲を鳴らしているか
+            // （active）と、その時刻（clock。録った音の何秒めか）も書く。録った音に、そのボスの曲が入っているかは tools/ci/boss_audio.py が確かめる
+            case "p8_bossfx" -> jp.amemaru.lostconnection.AmemaruMod.LOGGER.info(
+                    "[amemaru-ci] boss fx ({}): boss={} track={} active={} retries={} master={} volume={} clock={}", shot[3],
+                    BossFx.currentBoss(), BossFx.playingTrack(), BossFx.trackActive(), BossFx.trackRetries(),
+                    minecraft.options.getSoundSourceVolume(net.minecraft.sounds.SoundSource.MASTER),
+                    jp.amemaru.lostconnection.core.config.ClientConfig.bossMusicVolume(), System.currentTimeMillis());
             // 11月25日：着ている頭と胴の品の説明文を並べて描く（「一式の効果 今 4/4」を撮る。「-」で閉じる）
             case "p8_tooltip" -> {
                 if ("-".equals(shot[3]) || minecraft.player == null) {
@@ -70,6 +74,22 @@ final class CiPhase8 {
                     minecraft.setScreen(new CiPhase3.TooltipScreen(List.of(
                             minecraft.player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.HEAD).copy(),
                             minecraft.player.getItemBySlot(net.minecraft.world.entity.EquipmentSlot.CHEST).copy())));
+                }
+            }
+            // 11月26日：見た目と音の設定の画面を開く（open）・「曲を試しに聞く」を押したのと同じ（preview。2階のボスの曲）・閉じる（-）
+            case "p8_settings" -> {
+                if ("-".equals(shot[3])) {
+                    // 試しに聞いている曲は止めない（10秒流れて、ひとりでに消える。録った音で確かめる）
+                    minecraft.setScreen(CiScreenshots.screenAfterClose());
+                } else if ("preview".equals(shot[3])) {
+                    boolean started = BossFx.preview("old_ward", 10);
+                    jp.amemaru.lostconnection.AmemaruMod.LOGGER.info(
+                            "[amemaru-ci] boss fx (preview): boss=old_ward track={} active={} retries=0 master={} volume={} clock={}",
+                            started ? "old_ward" : "", BossFx.previewActive(),
+                            minecraft.options.getSoundSourceVolume(net.minecraft.sounds.SoundSource.MASTER),
+                            jp.amemaru.lostconnection.core.config.ClientConfig.bossMusicVolume(), System.currentTimeMillis());
+                } else {
+                    minecraft.setScreen(new jp.amemaru.lostconnection.client.screen.SettingsScreen(CiScreenshots.screenAfterClose()));
                 }
             }
             // 11月25日：7階の合言葉の扉の前で、チャットに言葉を打ったのと同じ（サーバーの PassphraseService.say）

@@ -587,3 +587,19 @@ CIのコマンドはサーバーとして動くので、移る人を `@p` で渡
 9. **8階のアクセサリー**：`/amemaru admin accessory give @s amemaru:fish_scale_necklace`（`frost_crane_bracelet`・`bell_charm`・
    `silent_ice_battle_ring`・`silent_ice_wisdom_ring`・`frost_crown_plume`・`thousand_voice_stone` も）を着けられ、首飾り・腕輪・お守りが
    体に表示されること。装飾工房で、8階のアクセサリーに台座布が要ること。
+
+## 11月26日の改善を確かめる（ひとり確認モード・ボス戦の曲）
+
+新しい jar で入ってください。くわしくは [`docs/phase8_1126.md`](phase8_1126.md)、ひとりで1〜8階を確かめる手順は
+[`docs/solo_check.md`](solo_check.md) にあります。
+
+1. **ボス戦の曲**：Minecraft の「設定 → 音楽と音」で「音楽」を0にしたまま、ボスと戦うと、そのボスの曲が流れること（いつもの曲は流れない）。
+   倒す・部屋を出ると、ゆっくり消えること。ログ（`logs/latest.log`）に「[amemaru] Boss music: <ボス>」と出ること。
+2. **見た目と音の設定**：タイトル画面の「Mods」でこのModを選び「設定」を押すと、「見た目と音の設定」が開くこと。「曲の大きさ」を動かすと、
+   戦いの曲の大きさが変わること。「曲を試しに聞く」を押すたびに、1〜8階のボスの曲が順に10秒ずつ流れること（聞こえなければ、主音量か
+   パソコンの音の出口を見る）。「ボス戦の曲：オフ」で曲が止まること。
+3. **ひとり確認モード**：`/amemaru admin solo on` で、全員に「［ひとり確認モード］…」と出ること。`/amemaru admin solo` で様子が出ること。
+   3階で `/amemaru admin floor tp 3 valve_first_1` のハンドルを回し、`valve_first_2` へ移ってもう片方を回すと、水門が開くこと
+   （モードを切ると、3秒をすぎて戻ること）。8階の薄氷で `/amemaru admin dummy` を置き、そばに立つとひびが入ること。
+4. **はじめに戻す・ボスの前まで**：`/amemaru admin solo reset 3` で水門が閉じて水が戻り、自分の石柱・名のある魔物の印が消えること。
+   `/amemaru admin solo ready 3` で封印を通れるようになり、ボスの部屋の門の前へ移ること。

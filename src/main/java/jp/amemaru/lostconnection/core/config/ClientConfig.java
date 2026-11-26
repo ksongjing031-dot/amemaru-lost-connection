@@ -28,6 +28,7 @@ public final class ClientConfig {
     public static final ForgeConfigSpec.BooleanValue CURIOS_KEY_RELEASED;
     public static final ForgeConfigSpec.BooleanValue GEAR_SPARKLES;
     public static final ForgeConfigSpec.BooleanValue BOSS_MUSIC;
+    public static final ForgeConfigSpec.DoubleValue BOSS_MUSIC_VOLUME;
     public static final ForgeConfigSpec.BooleanValue BOSS_EFFECTS;
 
     static {
@@ -72,8 +73,13 @@ public final class ClientConfig {
         // 11月25日：ボス戦の曲と演出
         b.comment("ボス戦").push("boss");
         BOSS_MUSIC = b
-                .comment("ボス戦の間、ボスごとの曲を流す（音量は「音楽」の音量。いつもの曲は止まる）")
+                .comment("ボス戦の間、ボスごとの曲を流す（いつもの曲は止まる）")
                 .define("music", true);
+        // 11月26日：「ボス戦のBGMがなっていない」のご指摘。「音楽」の音量に従っていたので、「音楽」を0にしている人には鳴らなかった【補完】
+        BOSS_MUSIC_VOLUME = b
+                .comment("ボス戦の曲の大きさ（0.0〜1.0）。Minecraft の「音楽」の音量には従わない（「音楽」を0にしていても鳴る）。主音量には従う。",
+                        "ゲームの中では、Mod の一覧のこのModの「設定」から変えられる")
+                .defineInRange("musicVolume", 0.8, 0.0, 1.0);
         BOSS_EFFECTS = b
                 .comment("ボス戦の演出（はじまりの名前・段階が変わったときの光・ギミックの残りの赤いふちと時を刻む音・",
                         "HPが少ないときの心臓の音・大きく打たれたときの赤いふち）。画面の揺れは skills.screenShake にも従う")
@@ -128,6 +134,15 @@ public final class ClientConfig {
             return BOSS_MUSIC.get();
         } catch (IllegalStateException notLoaded) {
             return true;
+        }
+    }
+
+    /** 設定がまだ読み込まれていないときは初期値を返す。 */
+    public static double bossMusicVolume() {
+        try {
+            return BOSS_MUSIC_VOLUME.get();
+        } catch (IllegalStateException notLoaded) {
+            return 0.8;
         }
     }
 

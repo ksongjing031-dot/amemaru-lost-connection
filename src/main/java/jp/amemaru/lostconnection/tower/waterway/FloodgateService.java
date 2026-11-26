@@ -55,6 +55,16 @@ import java.util.Set;
 public final class FloodgateService {
     /** 2つのハンドルを「同時に」とみなす間（3秒）。 */
     public static final int WINDOW_TICKS = 60;
+
+    /**
+     * 片方を回してから、もう片方を回すまでに待つ tick。11月26日：ひとり確認モード（{@link jp.amemaru.lostconnection.tower.SoloTest}）
+     * では、ひとりで離れた部屋へ走れるように延ばす（水門 {@code FLOODGATE_SECONDS}・ボスの部屋の排水 {@code DRAIN_SECONDS}）。
+     */
+    public static int windowTicks(String gateId) {
+        int solo = FloorFeatures.DRAIN.equals(gateId) ? jp.amemaru.lostconnection.tower.SoloTest.DRAIN_SECONDS
+                : jp.amemaru.lostconnection.tower.SoloTest.FLOODGATE_SECONDS;
+        return jp.amemaru.lostconnection.tower.SoloTest.seconds(WINDOW_TICKS / 20, solo) * 20;
+    }
     /** 1 tick に変えるブロックの数。 */
     private static final int CHANGES_PER_TICK = 1500;
 
@@ -222,7 +232,8 @@ public final class FloodgateService {
         level.playSound(null, pos, SoundEvents.CHAIN_PLACE, SoundSource.BLOCKS, 1.2F, 0.5F);
         level.sendParticles(ParticleTypes.SPLASH, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 12, 0.4, 0.3, 0.4, 0.1);
         Long other = TURNED.get(key(floor, gate.id(), 1 - side));
-        if (other != null && now - other <= WINDOW_TICKS) {
+        int window = windowTicks(gate.id());
+        if (other != null && now - other <= window) {
             TURNED.remove(key(floor, gate.id(), 0));
             TURNED.remove(key(floor, gate.id(), 1));
             if (drain) {
@@ -238,7 +249,7 @@ public final class FloodgateService {
             open(player.server, def, gate, player);
             return true;
         }
-        int seconds = WINDOW_TICKS / 20;
+        int seconds = window / 20;
         player.displayClientMessage(Component.translatable("message.amemaru.floodgate.waiting", name, seconds)
                 .withStyle(ChatFormatting.AQUA, ChatFormatting.BOLD), true);
         // その階のほかの人にも知らせる（もう片方へ声をかけるきっかけ）
@@ -263,10 +274,10 @@ public final class FloodgateService {
         }
         long now = server.overworld().getGameTime();
         TURNED.entrySet().removeIf(entry -> {
-            if (now - entry.getValue() <= WINDOW_TICKS) {
+            String[] parts = entry.getKey().split(":");
+            if (now - entry.getValue() <= windowTicks(parts[1])) {
                 return false;
             }
-            String[] parts = entry.getKey().split(":");
             FloorDef def = FloorDefs.byNumber(Integer.parseInt(parts[0]));
             FloorFeatures.Floodgate gate = def == null ? null : def.features().floodgate(parts[1]);
             ServerLevel tower = FloorDefs.towerLevel(server);

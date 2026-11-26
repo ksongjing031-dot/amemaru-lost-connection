@@ -118,6 +118,8 @@ public final class AdminCommands {
                         .then(CasinoCommands.casinoCommand())
                         // Phase 7 その4：寄付と共同事業
                         .then(ProjectCommands.projectCommand())
+                        // 11月26日：ひとり確認モード（ひとりで1〜8階のギミックとボスの仕掛けを確かめる）
+                        .then(SoloCommands.soloCommand())
                         .then(debugCommand())));
     }
 
