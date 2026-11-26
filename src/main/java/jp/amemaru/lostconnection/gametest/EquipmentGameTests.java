@@ -122,7 +122,8 @@ public final class EquipmentGameTests {
         // 11月25日：5階の守護者シリーズを防具一式に（6職業の頭・脚・足の18）と、6階のボスのレア「村長の毛皮」一式4、
         // 第2章の職業ごとの装備「霜銀シリーズ」（6職業の防具24・武器7・盾1）で132
         // 11月25日：7階のボスのレア「鏡氷の短剣」で133
-        check(helper, gear.equipment().size() == 134, "装備の定義が134ではありません：" + gear.equipment().size());
+        // 11月27日：祈願（ガチャ）の★5、ガチャ限のユニーク武器8本で142
+        check(helper, gear.equipment().size() == 142, "装備の定義が142ではありません：" + gear.equipment().size());
         for (ItemManifest.Category category : new ItemManifest.Category[]{
                 ItemManifest.Category.WEAPON, ItemManifest.Category.SHIELD, ItemManifest.Category.ARMOR}) {
             for (RegistryObject<Item> item : ModItems.MANIFEST.category(category)) {

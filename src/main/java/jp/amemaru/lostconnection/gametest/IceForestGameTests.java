@@ -375,7 +375,8 @@ public final class IceForestGameTests {
                 floor7++;
             }
         }
-        check(helper, floor7 == 7, "7階のアクセサリーが7つ（作る5つ・レアのお守り2つ）ではありません：" + floor7);
+        // 11月27日：祈願（ガチャ）の★4、7階の祈願のガチャ限のアクセサリー（指輪とお守り）2つで9
+        check(helper, floor7 == 9, "7階のアクセサリーが9つ（作る5つ・レアのお守り2つ・ガチャ限2つ）ではありません：" + floor7);
         for (String named : new String[]{"ice_stag_lord", "blizzard_great_spirit"}) {
             EnemyDef def = EnemyDefs.get(AmemaruMod.id(named));
             check(helper, def != null && def.rare().stream().anyMatch(r -> r.item().getPath().endsWith("_charm")),

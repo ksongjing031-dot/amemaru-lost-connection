@@ -351,7 +351,8 @@ public final class LakeGameTests {
                 floor8++;
             }
         }
-        check(helper, floor8 == 7, "8階のアクセサリーが7つ（作る5つ・レアのお守り2つ）ではありません：" + floor8);
+        // 11月27日：祈願（ガチャ）の★4、8階の祈願のガチャ限のアクセサリー（指輪とお守り）2つで9
+        check(helper, floor8 == 9, "8階のアクセサリーが9つ（作る5つ・レアのお守り2つ・ガチャ限2つ）ではありません：" + floor8);
         AccessoryDef plume = AccessoryDefs.get(ModItems.MANIFEST.get("frost_crown_plume").get());
         check(helper, plume != null && plume.effects().stream().anyMatch(e -> e.type() == SpecialEffect.Type.REGEN), "霜冠の冠羽の効き目が「HPが戻る」ではありません");
         AccessoryDef stone = AccessoryDefs.get(ModItems.MANIFEST.get("thousand_voice_stone").get());
