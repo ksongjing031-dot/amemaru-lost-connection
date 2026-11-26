@@ -2,15 +2,12 @@ package jp.amemaru.lostconnection.casino;
 
 import jp.amemaru.lostconnection.casino.CasinoGames.Bet;
 import jp.amemaru.lostconnection.casino.CasinoGames.Game;
-import jp.amemaru.lostconnection.casino.CasinoGames.Runner;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.nbt.FloatTag;
 import net.minecraft.nbt.IntTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.util.RandomSource;
 
 import java.util.ArrayDeque;
-import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -44,15 +41,11 @@ public final class CasinoTable {
     final Set<UUID> watchers = new LinkedHashSet<>();
     /** 結果を払い終えた人（ROLLING の途中でいなくなった人は、その時に払う）。 */
     final Set<UUID> settled = new LinkedHashSet<>();
-    /** その回の結果（ルーレット：目・ハイ＆ロー：次のカード・魚レース：勝った走路）。決まる前は -1。 */
+    /** その回の結果（ルーレット：目・ハイ＆ロー：次のカード）。決まる前は -1。 */
     int outcome = -1;
     /** ハイ＆ロー：今のカード。 */
     int card;
-    /** 魚レース：走る魚・勝つ見込み・倍率・レースの歩み・出した人。 */
-    final List<Runner> runners = new ArrayList<>();
-    double[] multipliers = new double[0];
-    float[][] frames = new float[0][];
-    /** 結果の並び（新しい順。ルーレット：目・ハイ＆ロー：カード・魚レース：勝った魚の名前の番号）。 */
+    /** 結果の並び（新しい順。ルーレット：目・ハイ＆ロー：カード）。 */
     final Deque<Integer> history = new ArrayDeque<>();
     /** その回の結果（人ごと：払い戻し）。 */
     final Map<UUID, Long> payouts = new LinkedHashMap<>();
@@ -86,14 +79,6 @@ public final class CasinoTable {
 
     public int card() {
         return card;
-    }
-
-    public List<Runner> runners() {
-        return List.copyOf(runners);
-    }
-
-    public double multiplier(int lane) {
-        return lane >= 0 && lane < multipliers.length ? multipliers[lane] : 0;
     }
 
     public Set<UUID> watchers() {
@@ -134,7 +119,6 @@ public final class CasinoTable {
         return switch (game) {
             case ROULETTE -> CasinoGames.rouletteWins(b.kind(), b.value(), outcome);
             case HIGHLOW -> CasinoGames.highLowWins(b.kind(), card, outcome);
-            case FISHRACE -> "lane".equals(b.kind()) && b.value() == outcome;
         };
     }
 
@@ -149,7 +133,6 @@ public final class CasinoTable {
         settled.clear();
         payouts.clear();
         outcome = -1;
-        frames = new float[0][];
         bettorsThisRound = 0;
         if (game == Game.HIGHLOW && card == 0) {
             card = CasinoGames.drawCard(random);
@@ -219,31 +202,6 @@ public final class CasinoTable {
             double edge = CasinoRules.current().highLowEdge();
             tag.putDouble("multHigh", CasinoGames.highLowMultiplier("high", card, edge));
             tag.putDouble("multLow", CasinoGames.highLowMultiplier("low", card, edge));
-        }
-        if (game == Game.FISHRACE) {
-            ListTag lanes = new ListTag();
-            for (int i = 0; i < runners.size(); i++) {
-                Runner r = runners.get(i);
-                CompoundTag one = new CompoundTag();
-                one.putString("fish", r.fish());
-                one.putString("name", r.name());
-                one.putString("owner", r.ownerName());
-                one.putInt("stars", r.rarity());
-                one.putDouble("mult", multiplier(i));
-                lanes.add(one);
-            }
-            tag.put("lanes", lanes);
-            if (phase != Phase.BETTING && frames.length > 0) {
-                ListTag fr = new ListTag();
-                for (float[] f : frames) {
-                    ListTag row = new ListTag();
-                    for (float p : f) {
-                        row.add(FloatTag.valueOf(p));
-                    }
-                    fr.add(row);
-                }
-                tag.put("frames", fr);
-            }
         }
         return tag;
     }

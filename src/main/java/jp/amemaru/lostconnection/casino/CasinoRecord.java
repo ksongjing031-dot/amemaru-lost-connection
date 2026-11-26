@@ -4,7 +4,8 @@ import net.minecraft.nbt.CompoundTag;
 
 /**
  * プレイヤーごとのカジノの記録（Phase 7 その3）：持っているチップ・今日買ったチップ（日は毎日4時に切り替わる）・ルーレットで
- * 続けて外した回数（称号「運命の女神に笑われた」）・勝負の数と勝った数・いちばん大きな勝ち。
+ * 続けて外した回数（称号「運命の女神に笑われた」）・勝負の数と勝った数・いちばん大きな勝ち。11月27日から、地下遊技場の持ち玉・
+ * 持ちメダル（貯玉。台を離れても残り、交換所か台の画面でチップに戻す）と、遊んでいる台。
  */
 public final class CasinoRecord {
     private long chips;
@@ -14,6 +15,8 @@ public final class CasinoRecord {
     private int rounds;
     private int wins;
     private long bestWin;
+    private long balls;
+    private long medals;
 
     public long chips() {
         return chips;
@@ -69,6 +72,32 @@ public final class CasinoRecord {
         }
     }
 
+    /** 持ち玉（パチンコ）。 */
+    public long balls() {
+        return balls;
+    }
+
+    public void setBalls(long value) {
+        balls = Math.max(0, value);
+    }
+
+    public void addBalls(long delta) {
+        balls = Math.max(0, balls + delta);
+    }
+
+    /** 持ちメダル（スロット）。 */
+    public long medals() {
+        return medals;
+    }
+
+    public void setMedals(long value) {
+        medals = Math.max(0, value);
+    }
+
+    public void addMedals(long delta) {
+        medals = Math.max(0, medals + delta);
+    }
+
     public void clear() {
         chips = 0;
         boughtDay = "";
@@ -77,6 +106,8 @@ public final class CasinoRecord {
         rounds = 0;
         wins = 0;
         bestWin = 0;
+        balls = 0;
+        medals = 0;
     }
 
     public CompoundTag save() {
@@ -88,6 +119,8 @@ public final class CasinoRecord {
         tag.putInt("rounds", rounds);
         tag.putInt("wins", wins);
         tag.putLong("bestWin", bestWin);
+        tag.putLong("balls", balls);
+        tag.putLong("medals", medals);
         return tag;
     }
 
@@ -99,6 +132,8 @@ public final class CasinoRecord {
         rounds = tag.getInt("rounds");
         wins = tag.getInt("wins");
         bestWin = tag.getLong("bestWin");
+        balls = Math.max(0, tag.getLong("balls"));
+        medals = Math.max(0, tag.getLong("medals"));
     }
 
     public void copyFrom(CasinoRecord other) {

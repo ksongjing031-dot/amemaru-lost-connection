@@ -30,8 +30,8 @@ python3 tools/mapgen/build_church.py /tmp/out --ci        # 自動の確認の�
 python3 tools/mapgen/build_fishing.py                     # fishing_pond.nbt（釣り堀）・water_gate.nbt（水門と湖）・fishing_alley.nbt（路地）・fishing_lakeside.nbt（湖畔の釣り場）・fishing_pond_frozen.nbt（第2章の氷）を書き直す
 python3 tools/mapgen/build_fishing.py /tmp/out --render /tmp/out   # 見本の絵も描く（はじめの形16枚・湖畔の釣り場4枚・氷1枚、高さ1・3で切った絵2枚。水門と湖・路地を並べて描く）
 python3 tools/mapgen/build_fishing.py /tmp/out --ci       # 自動の確認の写真の座標（CiScreenshots.java の MAP_VIEWS の行）を出す
-python3 tools/mapgen/build_casino.py                      # casino.nbt（カジノ）・casino_highlow.nbt（共同事業②のハイ＆ロー）・casino_fishrace.nbt（共同事業⑥の魚レース）を書き直す
-python3 tools/mapgen/build_casino.py /tmp/out --render /tmp/out   # 見本の絵も描く（外6枚・中13枚・ハイ＆ロー1枚・魚レース2枚、地下・1階・2階で切った絵3枚）
+python3 tools/mapgen/build_casino.py                      # casino.nbt（カジノ）・casino_highlow.nbt（共同事業②のハイ＆ロー）・casino_new_machines.nbt（共同事業⑥の新台の間）・casino_parlor.nbt（地下遊技場）を書き直す
+python3 tools/mapgen/build_casino.py /tmp/out --render /tmp/out   # 見本の絵も描く（外6枚・中13枚・ハイ＆ロー1枚・新台の間2枚・地下遊技場5枚と上から1枚、地下・1階・2階で切った絵3枚）
 python3 tools/mapgen/build_casino.py /tmp/out --render /tmp/out --only front,vip   # 一部の絵だけ描く
 python3 tools/mapgen/build_casino.py /tmp/out --ci        # 自動の確認の写真の座標（CiScreenshots.java の MAP_VIEWS の行）を出す
 python3 tools/mapgen/build_tower.py                       # tower_entrance.nbt（塔の入口）・tower_plaza.nbt（塔前広場）・tower_plaza_monument.nbt（1週目の記念碑）を書き直す
@@ -97,7 +97,9 @@ python3 -I tools/mapgen/import_edits.py <フォルダ> --dry-run       # 確か�
 カジノは地下（秘密の階）があり、構造物の底が道より3低いので、道に立って `~ ~-4 ~` で置きます（立った所から東へ43、南へ36。
 建物は東へ8・南へ4の所から 30×26）。城壁沿いの道（中心から半径107より外）・南門の前の東の区画・茶と香辛料の店（商店街の南の東の角の店）の
 南の横の地面より上は書かないので、商店街の南の後に置いても店の入口の段や屋根は消えません。寄付で足すハイ＆ロー
-（`casino_highlow`）と魚レース（`casino_fishrace`）は、カジノと同じ所に重ねます（書き換えるマスだけを書く）。
+（`casino_highlow`）と新台の間（`casino_new_machines`。11月27日に魚レース `casino_fishrace` から替えた）は、カジノと同じ所に重ねます
+（書き換えるマスだけを書く）。地下遊技場（`casino_parlor`。30×20×26）は、カジノの後に、カジノを置いた所から `~8 ~-12 ~4` に置きます
+（1階の北の側廊の休み場を階段の口にするので、カジノのそのマスを書き換える）。台の並びは `parlor_layout.py`、組み立ては `parlor_build.py`。
 塔の入口は足もとの地面（道の高さ）を書かないので、地面に立って `~ ~ ~` で置きます（足もとの1つ上から、東へ45、南へ30、上へ48。
 正面は南）。塔前広場は西へ1・下へ2・南へ30ずらして並べます（上の最後の2行。広場の南の端が北門の外の面に接します）。
 1週目の共同の目標のあとの記念碑（`tower_plaza_monument`）は、塔前広場と同じ所に重ねます（台と碑と碑文のマスだけを書く）。
@@ -121,7 +123,7 @@ python3 -I tools/mapgen/import_edits.py <フォルダ> --dry-run       # 確か�
 | `build_freemarket.py` | コネリアのフリーマーケット（PHASE 7 の設計。30×10×32、北の門と東の門）。露店20区画は `PLOTS`（番号・場所・向き・型・色・縁の木・品）で、7つの型（`STYLES`）の部品を組み替える。はじめの形 `build(False)` と増えたあと `build(True)` は同じ乱数の種で作り、重ねる形は増える8区画の箱だけを書く（`overlay()`）。商店街の南と並べた写しは `combined_world()` |
 | `build_church.py` | コネリアの結びの教会（PHASE 8 の設計。46×41×38、正面は東）と記憶の庭（25×12×18）。平面図の (u, v) と高さ y（道のブロックが 0）で組み立てる。アーチは `arch_row()`、色ガラスの窓は `lancet()` と `rose()`、鐘楼のらせん階段は `spiral()`（1回りめは下を埋め、2回りめは裏に逆さの階段）。記憶の庭を並べた写しは `combined_world()`（見本の絵と確かめで使う）。6日目の記憶の相談所の重ねる形は `counsel_overlay()`（書く所は `COUNSEL_OWNED` の4マスだけ）、重ねたあとは `counsel_world()` |
 | `build_fishing.py` | コネリアの釣り堀（PHASE 9 の設計。36×25×44、入口は東）と、水門と湖（48×34×48）・路地（18×8×14）。平面図の (u, v) と高さ y（道のブロックが 0、水面のブロックは −3）で組み立てる。池の形は `POND_ROWS`、水の深さは `depth()`（岸からの近さ）、岸の斜面は `land_dist()`。釣り堀が書くマスは `mine()`（記憶の庭と城壁沿いの道は書かない）。水は構造物ごとに漏れない（池は `weir()` の堰板、水門は `gate_channel()` の堰板で止まる）。寄付で開く湖畔の釣り場は `lakeside()`（書くマスは `LK_OWNED`）、第2章の氷は `frozen_overlay()`（`FROZEN_OWNED`）。3つの形を並べた写しは `checked_world(which)`（見本の絵と確かめで使う） |
-| `build_casino.py` | コネリアのカジノ「ラッキーノット」（PHASE 10 の設計。43×29×36、正面は西）。建物の中の (u, v)（u 0 = 世界の x 13、v 0 = 世界の z 72）と高さ y（道のブロックが 0、地下は負）で組み立てる。屋根は前と奥の寄棟 `Hip`（金の縁の軒）、大広間の切妻と真ん中の帯の切妻（`Roof`、縁は `dark_rim()` で黒くして外の破風板だけを金に）、正面の両端の小塔。ルーレットの卓は `roulette()`（12の目は `POCKETS`）、大きな吊り灯は `chandelier()`、部屋から見える屋根の下は `roof_boards()` で野地板にする。書くマスは `owned()`（城壁沿いの道・南門の前の東の区画・茶と香辛料の店の横は書かない）。寄付で足すハイ＆ローは `highlow_overlay()`（`HL_OWNED`）、魚レースは `fishrace_overlay()`（`FR_OWNED`）。重ねたあとの写しは `checked_world(which)` |
+| `build_casino.py` | コネリアのカジノ「ラッキーノット」（PHASE 10 の設計。43×29×36、正面は西）。建物の中の (u, v)（u 0 = 世界の x 13、v 0 = 世界の z 72）と高さ y（道のブロックが 0、地下は負）で組み立てる。屋根は前と奥の寄棟 `Hip`（金の縁の軒）、大広間の切妻と真ん中の帯の切妻（`Roof`、縁は `dark_rim()` で黒くして外の破風板だけを金に）、正面の両端の小塔。ルーレットの卓は `roulette()`（12の目は `POCKETS`）、大きな吊り灯は `chandelier()`、部屋から見える屋根の下は `roof_boards()` で野地板にする。書くマスは `owned()`（城壁沿いの道・南門の前の東の区画・茶と香辛料の店の横は書かない）。寄付で足すハイ＆ローは `highlow_overlay()`（`HL_OWNED`）、新台の間は `new_machines_overlay()`（`NM_OWNED`。11月27日に魚レースの `fishrace_overlay()` から替えた）、地下遊技場は `PL`（`PL_OWNED`。`parlor_build.build_parlor()`）。重ねたあとの写しは `checked_world(which)` |
 | `check_city.py` | 街全体の通しの確かめ。構造物ファイル（`src/main/resources/.../map/conelia/*.nbt`）を、地図を組むときの位置と順番（街並みの区画 `town/placements.txt` を先に、次に `PLACEMENTS`。docs/map_style.md の「置き方（地図を組むとき）」と同じ）に並べた街 `City(stage)`（街並みを入れないときは `town=False`）（`"start"` はじめの形、`"grown"` 重ねる形をすべて重ねた形）で、構造物どうしの重なり（`overlaps`）、ゾーニングの図の道と広場（`ROADS`・`ROAD_CENTERS`。まだ作っていない所も）の真ん中と上の物、城壁と城壁沿いの道にかかる物、高さ（`footprints`・`ring_heights`）、灯り（`lamp_kinds`・`chandeliers`・`door_lamps`・`dark_spots`）、つながる道（`walk`・`back_reach`。まだない道は道の高さの地面、施設のない土地は歩けない所）と各 PHASE の行き先（`GOALS`）を確かめる。読んだ構造物は `~/.cache/amemaru-mapgen/city` にためる |
 | `city_figures.py` | 街全体の絵（`check_city.py --render` から呼ぶ）：上から見た街（各柱のいちばん上のブロックの色と陰）・南から見た高さ（施設ごとの影絵と④の線）・夜の灯り（中央広場から歩ける所の明るさと灯りの種類）・つながる道・鳥瞰（`render_aerial()`。池と湖は `render(sunken=...)` で地面の平らな面の下も描く） |
 | `build_city.py` | コネリアの街並み（Phase 5）。11の施設の構造物（`check_city.City("grown", town=False)`）が置かれていない所を、建築の文書 Tab 1 の都市のルールで埋める：道と中央広場の舗装（`paving`・`plaza`。大結晶）、城壁と3つの門と門の塔・斜めの4つの塔（`wall_and_gates`。城壁の上の通路は見張りの所で、上がる階段は作らない）、結界の柱8本、家50軒（`house`。2階＋屋根裏、平入りと妻入り、**内装なし**。扉は手で開かない `amemaru:house_door_*`、中は空洞で見えない灯り）・倉庫3棟（`warehouse`）・小広場と井戸6か所・裏庭の木と花の畑（`yards`）・灯り（`street_lamps`）・案内板（`signposts`）。暗くて湧ける所は、見えない灯り（`minecraft:light`）で埋める（`fill_dark`。街が光をさえぎって暗くなった施設の足もとも、そばの空いたマスで）。街の箱（x −144〜135、z −184〜127）を 48×48 の区画 `town/t<i>_<j>.nbt` に、空気を書かずに書き出し、置く所を `town/placements.txt` に書く。施設の書くマスは書かない（`Town.put`）ので、施設より先に置く |

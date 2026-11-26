@@ -1,0 +1,256 @@
+{
+  "_comment": "カジノの地下遊技場の機種（11月27日のご指示「パチンコとスロットを追加する。本物ように設定を作る」【補完】）。tools/datagen/build_parlor.py が書き出す。数は tools/balance/ParlorSim.java で確かめた値",
+  "kind": "slot",
+  "type": "at",
+  "name": "月影の大鐘",
+  "spec": "AT（荒い・天井600）",
+  "bet": 3,
+  "wait_ms": 3200,
+  "rpm": 60,
+  "symbols": [
+    {
+      "id": "7",
+      "name": "赤7",
+      "color": "#E8283C"
+    },
+    {
+      "id": "B",
+      "name": "BAR",
+      "color": "#202028"
+    },
+    {
+      "id": "L",
+      "name": "ベル",
+      "color": "#F0C830"
+    },
+    {
+      "id": "R",
+      "name": "リプレイ",
+      "color": "#3C8CE0"
+    },
+    {
+      "id": "C",
+      "name": "チェリー",
+      "color": "#E04060"
+    },
+    {
+      "id": "S",
+      "name": "スイカ",
+      "color": "#40B050"
+    },
+    {
+      "id": "X",
+      "name": "星",
+      "color": "#F4F0E0"
+    }
+  ],
+  "reels": [
+    "RLBRLLCRRLRRSSLLRXC7L",
+    "7LRSLRBLRSLRXLRSLRCLR",
+    "7RLSRLBRLSRLXRLSRLBRL"
+  ],
+  "lines": [
+    [
+      1,
+      1,
+      1
+    ]
+  ],
+  "roles": [
+    {
+      "id": "replay",
+      "pattern": "RRR",
+      "replay": true,
+      "p": 7.3
+    },
+    {
+      "id": "obell",
+      "type": "order",
+      "pattern": "LLL",
+      "pay": 9,
+      "miss_pay": 0,
+      "p": 1.8
+    },
+    {
+      "id": "cbell",
+      "pattern": "LLL",
+      "pay": 9,
+      "p": 40.0
+    },
+    {
+      "id": "wcherry",
+      "type": "cherry",
+      "pattern": "C",
+      "rows": [
+        0,
+        2
+      ],
+      "pay": 2,
+      "rare": true,
+      "p": [
+        100,
+        98,
+        96,
+        94,
+        92,
+        90
+      ]
+    },
+    {
+      "id": "scherry",
+      "type": "cherry",
+      "pattern": "C",
+      "rows": [
+        1
+      ],
+      "pay": 2,
+      "rare": true,
+      "p": 400
+    },
+    {
+      "id": "melon",
+      "pattern": "SSS",
+      "pay": 5,
+      "rare": true,
+      "p": [
+        120,
+        118,
+        116,
+        114,
+        112,
+        110
+      ]
+    },
+    {
+      "id": "chance",
+      "pattern": "RRB",
+      "pay": 0,
+      "rare": true,
+      "p": 250
+    }
+  ],
+  "at": {
+    "ceiling": 600,
+    "initial": 30,
+    "cz_games": 8,
+    "cz": {
+      "wcherry": [
+        8,
+        9,
+        10,
+        11,
+        13,
+        15
+      ],
+      "melon": [
+        10,
+        11,
+        12,
+        14,
+        16,
+        18
+      ],
+      "chance": [
+        25,
+        27,
+        30,
+        33,
+        36,
+        40
+      ],
+      "scherry": [
+        60,
+        60,
+        62,
+        65,
+        68,
+        70
+      ],
+      "other": [
+        0.06,
+        0.07,
+        0.08,
+        0.09,
+        0.11,
+        0.13
+      ]
+    },
+    "direct": {
+      "scherry": [
+        30,
+        31,
+        32,
+        34,
+        36,
+        40
+      ],
+      "chance": [
+        8,
+        8,
+        9,
+        10,
+        11,
+        12
+      ],
+      "other": [
+        0.01,
+        0.01,
+        0.012,
+        0.015,
+        0.02,
+        0.025
+      ]
+    },
+    "cz_win": {
+      "replay": 2,
+      "obell": 2,
+      "cbell": 10,
+      "wcherry": 40,
+      "melon": 50,
+      "scherry": 100,
+      "chance": 100,
+      "other": 1
+    },
+    "add": {
+      "wcherry": {
+        "pct": 50,
+        "games": 20
+      },
+      "melon": {
+        "pct": 60,
+        "games": 30
+      },
+      "scherry": {
+        "pct": 100,
+        "games": 100
+      },
+      "chance": {
+        "pct": 100,
+        "games": 50
+      },
+      "other": {
+        "pct": 0.67,
+        "games": 20
+      }
+    }
+  },
+  "payout": [
+    97.0,
+    98.5,
+    100.5,
+    104.0,
+    108.0,
+    113.0
+  ],
+  "theme": {
+    "frame": "#3A3E4A",
+    "accent": "#E8ECF4",
+    "screen": "#0C0E16",
+    "glow": "#C8D8FF"
+  },
+  "labels": {
+    "stage": "月影の塔",
+    "cz": "月夜の鐘",
+    "at": "大鐘ラッシュ"
+  }
+}

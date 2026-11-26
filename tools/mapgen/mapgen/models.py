@@ -49,6 +49,9 @@ def is_model_block(name):
     """見本の絵で、模型（ここ）で描くブロックか。"""
     if name in MODEL_BLOCKS or name.startswith("potted_") or name == "candle" or name.endswith("_candle"):
         return True
+    if name.startswith("amemaru:parlor_"):
+        # 11月27日：地下遊技場の台・受け皿・掲示板・腰かけ（リポジトリの模型で描く）
+        return True
     return is_custom_block(name)
 
 
@@ -59,7 +62,19 @@ def is_custom_block(name):
 
 
 # ---------------------------------------------------------------- 素材を取ってくる
+REPO_ASSETS = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))),
+                           "src", "main", "resources", "assets", "amemaru")
+
+
 def _fetch(rel):
+    # 11月27日：このModのブロック（amemaru:…）は、リポジトリの絵と模型を読む（見本の絵で、遊技台などを描くため）
+    if "amemaru:" in rel:
+        kind, rest = rel.split("/", 1)
+        local = os.path.join(REPO_ASSETS, kind, rest.replace("amemaru:", ""))
+        if os.path.exists(local):
+            with open(local, "rb") as f:
+                return f.read()
+        return None
     path = os.path.join(ROOT, rel)
     if not os.path.exists(path):
         os.makedirs(os.path.dirname(path), exist_ok=True)

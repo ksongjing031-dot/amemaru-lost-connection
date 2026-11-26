@@ -404,6 +404,17 @@ public final class ModNetwork {
                 .add();
         // 11月27日：塔を進む・戻るときの魔法陣
         // 11月27日：祈願（ガチャ）
+        // 11月27日：地下遊技場（パチンコとスロット）
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.ParlorS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.ParlorS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.ParlorS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.ParlorS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.c2s.ParlorC2S.class, id++, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(jp.amemaru.lostconnection.network.c2s.ParlorC2S::encode)
+                .decoder(jp.amemaru.lostconnection.network.c2s.ParlorC2S::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.c2s.ParlorC2S::handle)
+                .add();
         CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.GachaS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(jp.amemaru.lostconnection.network.s2c.GachaS2C::encode)
                 .decoder(jp.amemaru.lostconnection.network.s2c.GachaS2C::decode)

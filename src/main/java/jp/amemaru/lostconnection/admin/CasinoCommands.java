@@ -28,18 +28,22 @@ import java.util.List;
  *
  * <ul>
  *   <li>{@code casino chips <人> <数>}・{@code casino give <人> <数>}：チップを決める・足す</li>
- *   <li>{@code casino open <人> [roulette|highlow|fishrace|cashier|prizes]}：カジノの画面を開く（開場の日と距離を見ない）</li>
+ *   <li>{@code casino open <人> [roulette|highlow|cashier|prizes]}：カジノの画面を開く（開場の日と距離を見ない）</li>
  *   <li>{@code casino table <卓>}：卓の様子。{@code casino next <卓> <結果>}：次の結果を決めておく（ルーレット 0〜36・ハイ＆ロー
- *       1〜13・魚レース 1〜4）。{@code casino card <卓> <1〜13>}：ハイ＆ローの今のカードを決める（だれも賭けていないとき）。
+ *       1〜13）。{@code casino card <卓> <1〜13>}：ハイ＆ローの今のカードを決める（だれも賭けていないとき）。
  *       {@code casino spin <卓>}：賭けを締めて、すぐ回す。{@code casino reset <卓>}：卓を初めに戻す（賭けは返す）</li>
- *   <li>{@code casino unlock <highlow|fishrace> <true|false>}：ハイ＆ロー・魚レースの印（共同事業②・⑥。寄付と共同事業はその4）</li>
+ *   <li>{@code casino unlock <highlow|new_machines> <true|false>}：ハイ＆ローの印（共同事業②）・2階の新台の間の印（共同事業⑥）</li>
+ *   <li>11月27日：地下遊技場。{@code casino machine <台番号> open <人>}（その台の画面。開場の日と距離を見ない）・{@code info}（設定・釘・
+ *       中の状態）・{@code setting <1〜6>}・{@code nail <回転数>}（今日だけ）・{@code force [big|reg|at|大当たりのID]}（次の当たり）・
+ *       {@code reset}。{@code casino balls <人> <数>}・{@code casino medals <人> <数>}：持ち玉・持ちメダル。{@code casino parlor today}：
+ *       今日の設定の分かれ方とイベントの日</li>
  *   <li>{@code casino stats}：館の勘定（賭けられたチップと払い戻したチップ）・カジノナイト</li>
  * </ul>
  * カジノナイトは {@code event start casino_night [分]}・{@code event stop casino_night}（Phase 0-B 10章）。
  */
 public final class CasinoCommands {
     private static final SuggestionProvider<CommandSourceStack> TABLES = (ctx, builder) ->
-            SharedSuggestionProvider.suggest(List.of("roulette", "highlow_a", "highlow_b", "fishrace"), builder);
+            SharedSuggestionProvider.suggest(List.of("roulette", "highlow_a", "highlow_b"), builder);
     private static final SuggestionProvider<CommandSourceStack> TABS = (ctx, builder) ->
             SharedSuggestionProvider.suggest(CasinoService.TABS, builder);
 
@@ -98,11 +102,15 @@ public final class CasinoCommands {
                                 })))
                 .then(Commands.literal("unlock")
                         .then(Commands.argument("game", StringArgumentType.word())
-                                .suggests((ctx, b) -> SharedSuggestionProvider.suggest(List.of("highlow", "fishrace"), b))
+                                .suggests((ctx, b) -> SharedSuggestionProvider.suggest(List.of("highlow", "new_machines"), b))
                                 .then(Commands.argument("open", BoolArgumentType.bool())
                                         .executes(c -> unlock(c.getSource(), StringArgumentType.getString(c, "game"),
                                                 BoolArgumentType.getBool(c, "open"))))))
-                .then(Commands.literal("stats").executes(c -> stats(c.getSource())));
+                .then(Commands.literal("stats").executes(c -> stats(c.getSource())))
+                .then(ParlorCommands.machine())
+                .then(ParlorCommands.holdings("balls"))
+                .then(ParlorCommands.holdings("medals"))
+                .then(ParlorCommands.parlor());
     }
 
     private static int chips(CommandSourceStack source, Collection<ServerPlayer> targets, long count, boolean add) {
@@ -142,8 +150,7 @@ public final class CasinoCommands {
             source.sendFailure(Component.translatable("command.amemaru.casino.unknown_table", id));
             return 0;
         }
-        // 魚レースは 1〜4 番で書く（中では 0〜3）
-        int value = table.game() == jp.amemaru.lostconnection.casino.CasinoGames.Game.FISHRACE ? result - 1 : result;
+        int value = result;
         CasinoService.forceNext(id, value);
         source.sendSuccess(() -> Component.translatable("command.amemaru.casino.next", id, result), true);
         return 1;
@@ -162,7 +169,7 @@ public final class CasinoCommands {
         CasinoRules rules = CasinoRules.current();
         ResourceLocation flag = switch (game) {
             case "highlow" -> rules.highLowFlag();
-            case "fishrace" -> rules.fishRaceFlag();
+            case "new_machines" -> rules.parlor().newFlag();
             default -> null;
         };
         if (flag == null) {

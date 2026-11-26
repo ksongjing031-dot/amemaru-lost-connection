@@ -285,6 +285,11 @@ final class CityEdits {
         }
     }
 
+    /** 建てた形の控えがあるか（11月27日：あとから足した形を、前の版のワールドに置くかどうか） */
+    static boolean hasBuiltCopy(ServerLevel level, String name) {
+        return Files.isRegularFile(builtFile(level.getServer(), name));
+    }
+
     /** この構造物に、書き出した直しがあるか */
     static boolean hasEdits(ServerLevel level, CityCommands.Placement placement) {
         return Files.isRegularFile(editsFile(level.getServer(), placement.name()));

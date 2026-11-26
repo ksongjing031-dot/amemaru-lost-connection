@@ -124,8 +124,8 @@ public final class CiScreenshots {
      *  （釣り堀は {@link #FISH_POND_AT}、水門と湖は {@link #FISH_GATE_AT}、路地は {@link #FISH_ALLEY_AT} だけずらして置く）。
      *  {@link #CASINO_FIRST} からの9枚はカジノ（tools/mapgen/build_casino.py の CI_SHOTS と同じ：正面・南門の内から・上から・
      *  背面・大広間のアーチから・酒場・VIPルーム・地下の噂の間・2階の宴の間）、{@link #CASINO_HIGHLOW_SHOT} の1枚は
-     *  共同事業②の「ハイ＆ロー」を重ねたあと（カードの卓）、{@link #CASINO_FISHRACE_SHOT} の1枚は共同事業⑥の「魚レース」を
-     *  重ねたあと（宴の間の水の走路）。座標はカジノの地面の所から（カジノは {@link #CASINO_AT} だけずらして置く）。
+     *  共同事業②の「ハイ＆ロー」を重ねたあと（カードの卓）、{@link #CASINO_NEW_SHOT} の1枚は共同事業⑥の「カジノの新台入替」を
+     *  重ねたあと（宴の間の新台の島。11月27日。前は魚レース）。座標はカジノの地面の所から（カジノは {@link #CASINO_AT} だけずらして置く）。
      *  {@link #TOWER_FIRST} からの11枚は塔の入口（tools/mapgen/build_tower.py の CI_SHOTS と同じ：北門の外から・広場の南西から・
      *  上から・東から・門の前から通路ごし・広間の入口から転移門・台の上から輪の向こうの大扉・塔の灯りとバルドの書見台・受付・
      *  控えの間・門の上の歩廊）、{@link #TOWER_MONUMENT_SHOT} の1枚は、1週目の共同の目標のあとの記念碑を重ねたあと。
@@ -159,7 +159,7 @@ public final class CiScreenshots {
             "map_fishing_frozen",
             "map_casino_front", "map_casino_gate", "map_casino_aerial", "map_casino_back", "map_casino_in_hall",
             "map_casino_in_bar", "map_casino_vip", "map_casino_rumor", "map_casino_banquet", "map_casino_highlow",
-            "map_casino_fishrace",
+            "map_casino_new_machines",
             "map_tower_approach", "map_tower_plaza", "map_tower_aerial", "map_tower_east", "map_tower_passage",
             "map_tower_hall", "map_tower_ring", "map_tower_board", "map_tower_reception", "map_tower_waiting",
             "map_tower_walk", "map_tower_monument"};
@@ -261,7 +261,7 @@ public final class CiScreenshots {
             {31.6, 0.62, 15.6, 36.6, -0.1, 18},
             {16.6, 11.62, 16.5, 29, 13, 16.5},
             {20.4, 5.4, 24.6, 17.6, 3.6, 26.8},
-            {16.5, 12.62, 16.5, 27.5, 10.2, 17},
+            {22, 12.62, 8.6, 22, 10.6, 18},
             {22.5, 2.62, 59.5, 22.5, 20, 12},
             {9.5, 2.62, 60.5, 30, 9, 31},
             {-14, 44, 69, 22, 14, 27},
@@ -364,10 +364,10 @@ public final class CiScreenshots {
     private static final int CASINO_HIGHLOW_SHOT = 96;
     /** 重ねて置く構造物（ハイ＆ロー。南の側廊のカードの卓の布と仕切りと札、卓のカードとチップの額縁だけを書く）。 */
     private static final String CASINO_HIGHLOW = "casino_highlow";
-    /** 共同事業⑥の「魚レース」の写真。ここで、カジノの上に、宴の間の水の走路を同じ所から重ねて置く（片づけない）。 */
-    private static final int CASINO_FISHRACE_SHOT = 97;
-    /** 重ねて置く構造物（魚レース。宴の間の真ん中の走路と灯りと札だけを書く）。 */
-    private static final String CASINO_FISHRACE = "casino_fishrace";
+    /** 共同事業⑥の「カジノの新台入替」の写真（11月27日。前は魚レース）。ここで、カジノの上に、宴の間の新台の島を同じ所から重ねて置く。 */
+    private static final int CASINO_NEW_SHOT = 97;
+    /** 重ねて置く構造物（新台の間。宴の間の真ん中の島と絨毯と札だけを書く）。 */
+    private static final String CASINO_NEW = "casino_new_machines";
     /** 塔の入口の写真の始まり。ここで、カジノを広く片づけ（{@link #TOWER_CLEAR}）、塔の入口と、その南に塔前広場を置く。 */
     private static final int TOWER_FIRST = 98;
     /** 塔の入口の構造物（門の棟・広間・転移門・両翼・塔の基部の壁。45×48×30。足もとの地面の1つ上から置く）。 */
@@ -456,7 +456,7 @@ public final class CiScreenshots {
             {"city_grown_top_n", "top_n", "200"}, {"city_grown_top_s", "top_s", "200"},
             // 北から東・南・西へ回る（遠くへ移るほど長めに待つ）
             {"city_grown_monument", "monument", "200"}, {"city_grown_forge", "forge", "200"},
-            {"city_grown_highlow", "highlow", "200"}, {"city_grown_fishrace", "fishrace", "100"},
+            {"city_grown_highlow", "highlow", "200"}, {"city_grown_new_machines", "new_machines", "100"},
             {"city_grown_restaurant", "restaurant", "140"}, {"city_grown_stalls", "stalls", "140"},
             {"city_grown_frozen_pond", "frozen_pond", "140"}, {"city_grown_lake", "lake", "140"},
             // Phase 4：パーティのHUDと画面（見本の様子）、起こす手がかり（見本：名前の付いた防具立てをダウンに見せる）、
@@ -1065,16 +1065,38 @@ public final class CiScreenshots {
             {"cmd", null, "5", "amemaru admin casino next highlow_a 11"},
             {"cmd", null, "5", "amemaru admin casino spin highlow_a"},
             {"snap_keep", null, "150", "phase7c_highlow_result"},
-            // 魚レース（共同事業⑥の印のあと）：持っている魚を出して、2番に賭ける
-            {"cmd", null, "5", "amemaru admin casino unlock fishrace true"},
-            {"cmd", null, "20", "amemaru admin casino open @p fishrace"},
-            {"p7c_enter", null, "20"},
-            {"snap", null, "20", "phase7c_fishrace"},
-            {"p7c_bet", null, "10", "lane:1"},
-            {"cmd", null, "5", "amemaru admin casino next fishrace 2"},
-            {"cmd", null, "5", "amemaru admin casino spin fishrace"},
-            {"snap_keep", null, "60", "phase7c_fishrace_run"},
-            {"snap_keep", null, "100", "phase7c_fishrace_result"},
+            // 11月27日：地下遊技場（魚レースはやめた）。ロビー・パチンコ（大当たりを決めておいて、リーチ → 大当たり → 右打ちでラウンド）・
+            // スロット（BIG を決めておき、ランプが光った台で7をねらう → BIG）・島のデータの掲示板
+            {"screen", null, "10", "hold"},
+            {"cmd", null, "5", "amemaru admin casino balls @p 5000"},
+            {"cmd", null, "5", "amemaru admin casino medals @p 1000"},
+            {"cmd", null, "60", "tp @p {at:28.5,-9,76.5} 0 8"},
+            {"snap", null, "40", "p8c_parlor_lobby"},
+            {"cmd", null, "40", "tp @p {at:15.5,-9,81.5} -90 4"},
+            {"snap", null, "20", "p8c_parlor_seat"},
+            {"p8c_use", null, "30", "1"},
+            {"p8c_shoot", null, "10", "on:left:70"},
+            {"snap_keep", null, "60", "p8c_pachinko"},
+            {"cmd", null, "5", "amemaru admin casino machine 1 force k10"},
+            {"snap_keep", null, "150", "p8c_pachinko_reach"},
+            {"snap_keep", null, "190", "p8c_pachinko_jackpot"},
+            {"p8c_shoot", null, "10", "on:right:70"},
+            {"snap_keep", null, "260", "p8c_pachinko_round"},
+            {"screen", null, "10", "hold"},
+            {"cmd", null, "30", "tp @p {at:28.5,-9,81.5} -90 4"},
+            {"p8c_use", null, "30", "101"},
+            {"cmd", null, "5", "amemaru admin casino machine 101 force big"},
+            {"p8c_lever", null, "20"},
+            {"snap_keep", null, "12", "p8c_slot_spin"},
+            {"p8c_aim", null, "12", "0:7"},
+            {"p8c_aim", null, "12", "1:7"},
+            {"p8c_aim", null, "40", "2:7"},
+            {"snap_keep", null, "20", "p8c_slot_big"},
+            {"screen", null, "10", "hold"},
+            {"cmd", null, "30", "tp @p {at:17.5,-9,78.5} 0 10"},
+            {"p8c_board", null, "30"},
+            {"snap", null, "20", "p8c_parlor_data"},
+            {"screen", null, "10", "hold"},
             // カジノナイト（催しのコマンド）
             {"screen", null, "10", "hold"},
             {"cmd", null, "10", "amemaru admin event start casino_night 5"},
@@ -3242,7 +3264,7 @@ public final class CiScreenshots {
                         command(minecraft, "time set noon");
                         clearWide(minecraft, FISH_CLEAR);
                         overlayAt(minecraft, CASINO, CASINO_AT);
-                    } else if (CASINO_HIGHLOW.equals(name) || CASINO_FISHRACE.equals(name)) {
+                    } else if (CASINO_HIGHLOW.equals(name) || CASINO_NEW.equals(name)) {
                         overlayAt(minecraft, name, CASINO_AT);
                     } else if (TOWER.equals(name)) {
                         // 白い石と、広場の結晶灯・転移門の輪を見せるので、日の高いうちに撮る
@@ -3396,6 +3418,7 @@ public final class CiScreenshots {
             }
         } else if (CiPhase6.action(minecraft, shot, first) || CiPhase6Guild.action(minecraft, shot, first)
                 || CiPhase6Refine.action(minecraft, shot, first) || CiPhase7.action(minecraft, shot, first)
+                || CiParlor.action(minecraft, shot, first)
                 || CiPhase8.action(minecraft, shot, first)) {
             next(stage + 1, first ? waitTicks : 0);
         } else if (phase5Action(minecraft, shot, first)) {
@@ -3725,8 +3748,8 @@ public final class CiScreenshots {
         if (view == CASINO_HIGHLOW_SHOT) {
             return CASINO_HIGHLOW;
         }
-        if (view == CASINO_FISHRACE_SHOT) {
-            return CASINO_FISHRACE;
+        if (view == CASINO_NEW_SHOT) {
+            return CASINO_NEW;
         }
         if (view == TOWER_FIRST) {
             return TOWER;

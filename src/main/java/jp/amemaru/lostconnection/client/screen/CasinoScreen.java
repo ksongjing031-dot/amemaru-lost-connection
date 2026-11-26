@@ -22,17 +22,17 @@ import java.util.Locale;
 /**
  * カジノ「遊戯館ラッキーノット」の画面（Phase 7 その3。Phase 0-B 13章「右クリックでGUIを開いて使う。【11月22日に決定】」）。
  *
- * <p>タブ：ルーレット（運命の輪の帯と、賭けの盤）・ハイ＆ロー（共同事業②のあと）・魚レース（共同事業⑥のあと）・両替・景品。
+ * <p>タブ：ルーレット（運命の輪の帯と、賭けの盤）・ハイ＆ロー（共同事業②のあと）・両替（11月27日から、地下遊技場の持ち玉・
+ * 持ちメダルもここでチップに戻せる）・景品。11月27日のご指示「ルーレットとハイ＆ロー以外を廃止」で、魚レースのタブはやめた。
  * 卓のタブでは、右に勝負の流れ（賭ける時間・回る・結果）と、卓を囲む人と、これまでの結果を出す。</p>
  */
 public class CasinoScreen extends Screen {
     private static final int W = 400;
     private static final int H = 226;
-    private static final String[] TABS = {"roulette", "highlow", "fishrace", "cashier", "prizes"};
+    private static final String[] TABS = {"roulette", "highlow", "cashier", "prizes"};
     private static final long[] CHIPS = {1, 5, 10, 50, 100};
     private static final int CW = 16;
     private static final int CH = 14;
-    private static final int[] LANE_COLORS = {0xE05050, 0xE8C840, 0x58C060, 0x60C8E8};
     private static final int PRIZE_ROW = 20;
     private static final int PRIZE_ROWS = 7;
 
@@ -45,7 +45,6 @@ public class CasinoScreen extends Screen {
     private int left;
     private int top;
     private int prizeScroll;
-    private int fishIndex;
 
     public CasinoScreen(CompoundTag data) {
         super(Component.translatable("screen.amemaru.casino.title"));
@@ -82,7 +81,6 @@ public class CasinoScreen extends Screen {
     /** チップ・景品などが変わった（サーバーから）。 */
     public void update(CompoundTag next) {
         data = next;
-        fishIndex = Mth.clamp(fishIndex, 0, Math.max(0, fish().size() - 1));
         rebuild();
     }
 
@@ -106,7 +104,7 @@ public class CasinoScreen extends Screen {
     /** ボタンの並びと文字が変わる所（勝負の流れ・カード・走る魚・賭けた人・自分の賭け）。 */
     private static String signature(CompoundTag s) {
         return s.getString("table") + "|" + s.getString("phase") + "|" + s.getInt("card") + "|" + s.getInt("bettors") + "|"
-                + s.getList("mine", Tag.TAG_COMPOUND).size() + "|" + s.getList("lanes", Tag.TAG_COMPOUND);
+                + s.getList("mine", Tag.TAG_COMPOUND).size();
     }
 
     /** 今「回っている」ところか。 */
@@ -130,15 +128,6 @@ public class CasinoScreen extends Screen {
         bet(kind, value);
     }
 
-    /** 自動の確認の写真：魚レースに、選んでいる魚を出す。 */
-    public void ciEnter() {
-        if (!fish().isEmpty()) {
-            CompoundTag args = table();
-            args.putInt("slot", fish().get(Mth.clamp(fishIndex, 0, fish().size() - 1)).getInt("slot"));
-            send("enter", args);
-        }
-    }
-
     private void switchTab(String name) {
         tab = name;
         prizeScroll = 0;
@@ -159,7 +148,6 @@ public class CasinoScreen extends Screen {
         return switch (name) {
             case "roulette" -> "roulette";
             case "highlow" -> data.getBoolean("highlow") ? highLowTable : "";
-            case "fishrace" -> data.getBoolean("fishrace") ? "fishrace" : "";
             default -> "";
         };
     }
@@ -202,36 +190,6 @@ public class CasinoScreen extends Screen {
                     chipButtons(left + 8, top + 194, betting);
                 }
             }
-            case "fishrace" -> {
-                if (data.getBoolean("fishrace")) {
-                    ListTag lanes = state.getList("lanes", Tag.TAG_COMPOUND);
-                    for (int i = 0; i < lanes.size(); i++) {
-                        int lane = i;
-                        CrystalButton b = new CrystalButton(left + 196, top + 56 + i * 25, 46, 14,
-                                Component.translatable("screen.amemaru.casino.race.bet"), x -> bet("lane", lane));
-                        b.active = betting;
-                        addRenderableWidget(b);
-                    }
-                    boolean canEnter = betting && state.getInt("bettors") == 0 && !fish().isEmpty();
-                    addRenderableWidget(new CrystalButton(left + 8, top + 168, 14, 14, Component.literal("◀"), x -> {
-                        fishIndex = Math.floorMod(fishIndex - 1, Math.max(1, fish().size()));
-                    }));
-                    addRenderableWidget(new CrystalButton(left + 132, top + 168, 14, 14, Component.literal("▶"), x -> {
-                        fishIndex = Math.floorMod(fishIndex + 1, Math.max(1, fish().size()));
-                    }));
-                    CrystalButton enter = new CrystalButton(left + 150, top + 168, 92, 14, Component.translatable("screen.amemaru.casino.race.enter"),
-                            x -> {
-                                if (!fish().isEmpty()) {
-                                    CompoundTag args = table();
-                                    args.putInt("slot", fish().get(Mth.clamp(fishIndex, 0, fish().size() - 1)).getInt("slot"));
-                                    send("enter", args);
-                                }
-                            });
-                    enter.active = canEnter;
-                    addRenderableWidget(enter);
-                    chipButtons(left + 8, top + 194, betting);
-                }
-            }
             case "cashier" -> {
                 long[] amounts = {10, 50, 100, -1};
                 for (int i = 0; i < 4; i++) {
@@ -249,6 +207,15 @@ public class CasinoScreen extends Screen {
                         send("sell", args);
                     }));
                 }
+                // 11月27日：地下遊技場の持ち玉・持ちメダルをチップに戻す（等価）。右上の2行（左の文の短い行の横）
+                CrystalButton balls = new CrystalButton(left + W - 14 - 48, top + 56, 48, 14,
+                        Component.translatable("screen.amemaru.casino.cash_balls"), b -> send("cash_balls", new CompoundTag()));
+                balls.active = data.getLong("balls") >= Math.max(1, data.getInt("ballsPerChip"));
+                addRenderableWidget(balls);
+                CrystalButton medals = new CrystalButton(left + W - 14 - 48, top + 71, 48, 14,
+                        Component.translatable("screen.amemaru.casino.cash_medals"), b -> send("cash_medals", new CompoundTag()));
+                medals.active = data.getLong("medals") >= Math.max(1, data.getInt("medalsPerChip"));
+                addRenderableWidget(medals);
             }
             case "prizes" -> {
                 ListTag prizes = data.getList("prizes", Tag.TAG_COMPOUND);
@@ -306,14 +273,6 @@ public class CasinoScreen extends Screen {
         ModNetwork.sendToServer(new CasinoC2S(action, args));
     }
 
-    private List<CompoundTag> fish() {
-        List<CompoundTag> list = new ArrayList<>();
-        for (Tag t : data.getList("fish", Tag.TAG_COMPOUND)) {
-            list.add((CompoundTag) t);
-        }
-        return list;
-    }
-
     @Override
     public void removed() {
         send("unwatch", new CompoundTag());
@@ -358,7 +317,6 @@ public class CasinoScreen extends Screen {
         switch (tab) {
             case "roulette" -> renderRoulette(graphics, mouseX, mouseY);
             case "highlow" -> renderHighLow(graphics);
-            case "fishrace" -> renderFishRace(graphics);
             case "cashier" -> renderCashier(graphics);
             default -> renderPrizes(graphics, mouseX, mouseY);
         }
@@ -409,10 +367,6 @@ public class CasinoScreen extends Screen {
                 case "highlow" -> {
                     text = jp.amemaru.lostconnection.casino.CasinoService.cardName(v);
                     color = 0xFFFFFF;
-                }
-                case "fishrace" -> {
-                    text = String.valueOf(v + 1);
-                    color = LANE_COLORS[Math.floorMod(v, 4)];
                 }
                 default -> {
                     text = String.valueOf(v);
@@ -629,86 +583,7 @@ public class CasinoScreen extends Screen {
         graphics.drawString(font, name, x + 44 - font.width(name), y + 50, color, false);
     }
 
-    // ---------------------------------------------------------------- 魚レース
-
-    private void renderFishRace(GuiGraphics graphics) {
-        if (!data.getBoolean("fishrace")) {
-            lockedMessage(graphics, "screen.amemaru.casino.locked.fishrace");
-            return;
-        }
-        int x0 = left + 8;
-        int y0 = top + 52;
-        ListTag lanes = state.getList("lanes", Tag.TAG_COMPOUND);
-        ListTag frames = state.getList("frames", Tag.TAG_LIST);
-        float[] pos = new float[lanes.size()];
-        if (!frames.isEmpty()) {
-            float t = rollProgress() * (frames.size() - 1);
-            int f = Mth.clamp((int) Math.floor(t), 0, frames.size() - 1);
-            int g = Math.min(frames.size() - 1, f + 1);
-            ListTag a = frames.getList(f);
-            ListTag b = frames.getList(g);
-            for (int i = 0; i < pos.length && i < a.size(); i++) {
-                pos[i] = Mth.lerp(t - f, a.getFloat(i), b.getFloat(i));
-            }
-        }
-        boolean result = "result".equals(state.getString("phase"));
-        for (int i = 0; i < lanes.size(); i++) {
-            CompoundTag lane = lanes.getCompound(i);
-            int y = y0 + i * 25;
-            int color = LANE_COLORS[i % 4];
-            if (result && state.getInt("outcome") == i) {
-                graphics.fill(x0 - 2, y - 2, x0 + 186, y + 24, 0xFFFFD866);    // 勝った走路を金の縁で
-            }
-            graphics.fill(x0, y, x0 + 184, y + 22, 0xFF1E3A5A);
-            graphics.fill(x0, y, x0 + 3, y + 22, 0xFF000000 | color);
-            graphics.fill(x0 + 176, y, x0 + 178, y + 22, 0xFFFFD866);
-            String owner = lane.getString("owner");
-            String label = (i + 1) + " " + lane.getString("name") + "（" + (owner.isEmpty()
-                    ? Component.translatable("screen.amemaru.casino.race.house").getString() : owner) + "）";
-            graphics.drawString(font, UiStyle.clip(font, label, 150), x0 + 6, y + 1, 0xFFFFFF, false);
-            graphics.drawString(font, "×" + fmt(lane.getDouble("mult")), x0 + 6, y + 12, UiStyle.TEXT_GOLD, false);
-            int fx = x0 + 40 + (int) (pos.length > i ? pos[i] * 124 : 0);
-            ItemStack icon = fishStack(lane.getString("fish"));
-            graphics.renderItem(icon, fx, y + 5);
-            long mine = myBet("lane", i);
-            if (mine > 0) {
-                // 賭けた枚数は走路の右上（ゴールの線の手前）に、走る魚より手前に出す
-                String text = String.valueOf(mine);
-                int tx = x0 + 174 - font.width(text);
-                graphics.pose().pushPose();
-                graphics.pose().translate(0, 0, 300);
-                graphics.fill(tx - 2, y + 1, x0 + 175, y + 10, 0xD0101830);
-                graphics.drawString(font, text, tx, y + 2, 0xFF9CF5, false);
-                graphics.pose().popPose();
-            }
-        }
-        // 出す魚（勝った走路は、結果のあいだ金の縁）
-        List<CompoundTag> fish = fish();
-        Component help = result && state.getInt("outcome") >= 0
-                ? Component.translatable("screen.amemaru.casino.race.won", state.getInt("outcome") + 1)
-                : Component.translatable("screen.amemaru.casino.race.help");
-        graphics.drawString(font, help, x0, top + 156, result ? UiStyle.TEXT_GOLD : UiStyle.TEXT_DIM, false);
-        if (fish.isEmpty()) {
-            graphics.drawString(font, Component.translatable("screen.amemaru.casino.race.no_fish"), x0 + 18, top + 171, UiStyle.TEXT_DIM, false);
-        } else {
-            CompoundTag one = fish.get(Mth.clamp(fishIndex, 0, fish.size() - 1));
-            ItemStack stack = ItemStack.of(one.getCompound("stack"));
-            graphics.renderItem(stack, x0 + 18, top + 167);
-            graphics.drawString(font, UiStyle.clip(font, stack.getHoverName().getString(), 84), x0 + 38, top + 171, UiStyle.TEXT, false);
-        }
-        renderSide(graphics, left + 260, top + 56, W - 260 - 8);
-    }
-
-    private static ItemStack fishStack(String fishId) {
-        ResourceLocation id = ResourceLocation.tryParse(fishId);
-        if (id == null) {
-            return new ItemStack(Items.COD);
-        }
-        var item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(id.getNamespace(), "fish_" + id.getPath()));
-        return item == null || item == Items.AIR ? new ItemStack(Items.COD) : new ItemStack(item);
-    }
-
-    // ---------------------------------------------------------------- 両替・景品
+    // ---------------------------------------------------------------- 両替
 
     private void renderCashier(GuiGraphics graphics) {
         int x0 = left + 8;
@@ -724,6 +599,14 @@ public class CasinoScreen extends Screen {
         graphics.drawString(font, Component.translatable("screen.amemaru.casino.buy_head"), x0 + 12, top + 120, UiStyle.TEXT_GOLD, false);
         graphics.drawString(font, Component.translatable("screen.amemaru.casino.sell_head"), x0 + 12, top + 164, UiStyle.TEXT_GOLD, false);
         graphics.drawString(font, Component.translatable("screen.amemaru.casino.cashier_note"), x0 + 12, top + 198, UiStyle.TEXT_DIM, false);
+        // 地下遊技場の持ち玉・持ちメダル（ボタンの左に、右寄せで）
+        int bx = left + W - 14 - 48 - 4;
+        Component balls = Component.translatable("screen.amemaru.casino.balls_have", data.getLong("balls"),
+                data.getLong("balls") / Math.max(1, data.getInt("ballsPerChip")));
+        Component medals = Component.translatable("screen.amemaru.casino.medals_have", data.getLong("medals"),
+                data.getLong("medals") / Math.max(1, data.getInt("medalsPerChip")));
+        graphics.drawString(font, balls, bx - font.width(balls), top + 59, UiStyle.TEXT, false);
+        graphics.drawString(font, medals, bx - font.width(medals), top + 74, UiStyle.TEXT, false);
     }
 
     private void renderPrizes(GuiGraphics graphics, int mouseX, int mouseY) {

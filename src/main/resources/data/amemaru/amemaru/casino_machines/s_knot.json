@@ -1,0 +1,177 @@
+{
+  "_comment": "カジノの地下遊技場の機種（11月27日のご指示「パチンコとスロットを追加する。本物ように設定を作る」【補完】）。tools/datagen/build_parlor.py が書き出す。数は tools/balance/ParlorSim.java で確かめた値",
+  "kind": "slot",
+  "type": "a",
+  "name": "ノットランプ",
+  "spec": "Aタイプ（告知ランプ）",
+  "bet": 3,
+  "wait_ms": 3200,
+  "rpm": 60,
+  "symbols": [
+    {
+      "id": "7",
+      "name": "赤7",
+      "color": "#E8283C"
+    },
+    {
+      "id": "B",
+      "name": "BAR",
+      "color": "#202028"
+    },
+    {
+      "id": "G",
+      "name": "ぶどう",
+      "color": "#8A4CC8"
+    },
+    {
+      "id": "R",
+      "name": "リプレイ",
+      "color": "#3C8CE0"
+    },
+    {
+      "id": "C",
+      "name": "チェリー",
+      "color": "#E04060"
+    },
+    {
+      "id": "L",
+      "name": "ベル",
+      "color": "#F0C830"
+    },
+    {
+      "id": "K",
+      "name": "結び目",
+      "color": "#D07830"
+    }
+  ],
+  "reels": [
+    "G7CGRGLBRKGBRGGCLRG7R",
+    "R7GLRGCBRGKGR7GLRKGBG",
+    "7GKRLGBRCG7RGLGRBGKRG"
+  ],
+  "lines": [
+    [
+      1,
+      1,
+      1
+    ]
+  ],
+  "roles": [
+    {
+      "id": "big",
+      "type": "bonus",
+      "pattern": "777",
+      "bonus": "big",
+      "p": [
+        273.1,
+        270.8,
+        268.6,
+        259.0,
+        252.1,
+        245.5
+      ]
+    },
+    {
+      "id": "reg",
+      "type": "bonus",
+      "pattern": "77B",
+      "bonus": "reg",
+      "p": [
+        431.2,
+        399.6,
+        358.1,
+        331.0,
+        301.2,
+        268.6
+      ]
+    },
+    {
+      "id": "grape",
+      "pattern": "GGG",
+      "pay": 8,
+      "p": [
+        6.49,
+        6.43,
+        6.36,
+        6.28,
+        6.18,
+        6.02
+      ]
+    },
+    {
+      "id": "replay",
+      "pattern": "RRR",
+      "replay": true,
+      "p": 7.3
+    },
+    {
+      "id": "cherry",
+      "type": "cherry",
+      "pattern": "C",
+      "rows": [
+        0,
+        1,
+        2
+      ],
+      "pay": 2,
+      "p": [
+        35.6,
+        35.4,
+        34.6,
+        35.4,
+        33.6,
+        33.2
+      ]
+    },
+    {
+      "id": "bell",
+      "pattern": "LLL",
+      "pay": 14,
+      "p": 1092.3
+    },
+    {
+      "id": "knot",
+      "pattern": "KKK",
+      "pay": 10,
+      "p": 1092.3
+    }
+  ],
+  "bonuses": {
+    "big": {
+      "cap": 312,
+      "bet": 2,
+      "pay": 14,
+      "role": "grape"
+    },
+    "reg": {
+      "cap": 104,
+      "bet": 2,
+      "pay": 14,
+      "role": "grape"
+    }
+  },
+  "lamp": {
+    "name": "ノットランプ",
+    "pre": 0.25,
+    "premium": 0.05
+  },
+  "payout": [
+    97.0,
+    98.0,
+    99.9,
+    102.8,
+    105.3,
+    109.0
+  ],
+  "theme": {
+    "frame": "#5A2A82",
+    "accent": "#F2C84A",
+    "screen": "#1A0E26",
+    "glow": "#FF5AA8"
+  },
+  "labels": {
+    "big": "BIG BONUS",
+    "reg": "REGULAR BONUS",
+    "stage": "ラッキーノット"
+  }
+}

@@ -3,6 +3,9 @@
 遊戯館「ラッキーノット」は、冒険者と旅人が集まる社交場（Phase 0-A）。支配人はジゼル・ノワール。3日目に開場し、
 はじめはルーレット（0が一つの形式）と景品の交換だけ。寄付の共同事業②で「ハイ＆ロー」（カードの新しい遊び）、
 ⑥で「魚レース」（釣った魚を走らせて賭ける）が足される（育つ前・育った後。都市のルール⑩）。
+11月27日のご指示「ルーレットとハイ＆ロー以外を廃止してパチンコとスロットを追加する。場所が足りない場合は地下なども用意する」で、
+魚レースはやめ、建物の下に地下遊技場（casino_parlor.nbt。tools/mapgen/parlor_build.py）を作り、⑥は「カジノの新台入替」
+（宴の間を新台の間に）にした。
 市場通りの東側、南門の近くに、正面を西（市場通り）へ向けて建つ。前に小広場、北に路地、東に裏の通路、南に城壁沿いの道。
 
   - 建物 26×30（南北×東西。都市のルール⑨）。1階は灰色の石、2階は木組みと漆喰。床は1階 +2（足もと +3）・
@@ -15,7 +18,7 @@
   - 1階：入口の間 → 大広間（真ん中にルーレットの卓と大きな吊り灯、北の側廊に酒場と休み場、南の側廊にカードの卓の場所）
     → 奥の舞台のアーチ → VIPルーム。入口の間の北に両替の窓口（受付）、南に景品の交換所。奥の北は働く人の場所
     （裏口・樽の置き場・働く人の階段）、奥の南は2階への階段。
-  - 2階：大広間の上は「宴の間」（屋根の小屋組みが見える高い部屋。⑥のあとは魚レースの間）。前に帳場・支配人室
+  - 2階：大広間の上は「宴の間」（屋根の小屋組みが見える高い部屋。⑥のあとは新台の間）。前に帳場・支配人室
     （表の露台）・働く人の部屋、奥にジゼルの部屋。
   - 地下（秘密の階）：VIPルームの本棚の扉から下りる。噂の間・初代の金庫。働く人の階段の下は酒と道具の地下室
     （土台の鉄格子の小窓。都市のルール③）。
@@ -26,10 +29,10 @@
 構造物の (0, 0, 0) は世界の (x 5, 道のブロック − 3, z 68)。構造物の中では X = x − 5、Y = y + 3、Z = z − 68。
 
 使い方: python3 tools/mapgen/build_casino.py [出力のフォルダ] [--render 絵のフォルダ] [--only 名前,...] [--ci]
-  - <出力>/casino.nbt（43×29×36）・casino_highlow.nbt（ハイ＆ロー。同じ所に重ねる）・casino_fishrace.nbt（魚レース。
-    同じ所に重ねる）
+  - <出力>/casino.nbt（43×29×36）・casino_highlow.nbt（ハイ＆ロー。同じ所に重ねる）・casino_new_machines.nbt（新台の間。
+    同じ所に重ねる）・casino_parlor.nbt（地下遊技場。30×20×26。(0, 0, 0) は世界の x 13・道 −11・z 72。カジノのあとに置く）
   - --ci：自動の確認の写真の座標（CiScreenshots の MAP_VIEWS の行）を出す
-ゲームの中では /place template amemaru:map/conelia/casino・casino_highlow・casino_fishrace で置ける。
+ゲームの中では /place template amemaru:map/conelia/casino・casino_highlow・casino_new_machines・casino_parlor で置ける。
 """
 import math
 import os
@@ -44,6 +47,7 @@ from mapgen.arch import Palette, Roof
 from mapgen.fixtures import hang_lantern, lamp_post, wall_lantern
 from mapgen.world import (AIR, World, banner_nbt, block, door, fence, lantern, leaves, lectern_nbt, log, pane, sign_nbt,
                           slab, stairs, trapdoor, wall)
+from parlor_build import PH, PW, PD, build_new_machines, build_parlor
 
 X0, Z0, YOFF = 5, 68, 3          # 構造物の (0, 0, 0) の世界の x・z と、y のずれ（Y = y + YOFF）
 W, H, D = 43, 29, 36             # x 5..47、y −3..25、z 68..103
@@ -1289,7 +1293,7 @@ def inner_gables():
 
 def banquet():
     """宴の間（u 8..21、v 1..24、床 +9）：屋根の小屋組みが見える高い部屋。北と南に長い卓、真ん中は空けて（人が集まる所。
-    ⑥のあとは魚レース）、東に小さな舞台。西の壁ぎわに長椅子"""
+    ⑥のあとは新台の間）、東に小さな舞台。西の壁ぎわに長椅子"""
     for u in range(8, 22):
         for v in range(1, 25):
             border = u in (8, 21) or v in (1, 24)
@@ -1601,10 +1605,10 @@ def surroundings():
 # ---------------------------------------------------------------- 寄付で足す遊び（重ねる形。都市のルール⑩の「育つ前・育った後」）
 HL = World(W, H, D)              # 共同事業②「ハイ＆ロー」：南の側廊のカードの卓
 HL_OWNED = set()
-FR = World(W, H, D)              # 共同事業⑥「魚レース」：宴の間の真ん中の水の走路
-FR_OWNED = set()
-RACE = (9, 19, 9, 17)            # 魚レースの台（u 9..19、v 9..17）。走路は v 10・12・14・16、仕切りは v 11・13・15
-LANE_COLORS = ("red", "yellow", "lime", "light_blue")
+NM = World(W, H, D)              # 共同事業⑥「カジノの新台入替」：宴の間の真ん中を新台の間に（11月27日。前は魚レース）
+NM_OWNED = set()
+PL = World(PW, PH, PD)           # 地下遊技場（casino_parlor.nbt。tools/mapgen/parlor_build.py）
+PL_OWNED = set()
 
 
 def overlay_put(world, owned):
@@ -1632,41 +1636,19 @@ def highlow_overlay():
             overlay_frame(HL, HL_OWNED, u, 23, FT + 1, "up", item, name=nm)
 
 
-def fishrace_overlay():
-    """共同事業⑥のあと：宴の間の真ん中に、魚を走らせる水の走路（4本、長さ9）。西が出発、東の金の壁がゴール（舞台が見張りの台）"""
-    fput = overlay_put(FR, FR_OWNED)
-    u0, u1, v0, v1 = RACE
-    for u in range(u0, u1 + 1):
-        for v in range(v0, v1 + 1):
-            for y in (FT2, FT2 + 1):
-                fput(u, v, y, AIR)
-            if u == u1:
-                fput(u, v, FT2, block("chiseled_sandstone") if v in AX else block("cut_sandstone"))
-            elif u == u0 or v in (9, 11, 13, 15, 17):
-                fput(u, v, FT2, block("polished_andesite") if v in (9, 17) or u == u0 else block("polished_deepslate"))
-            else:
-                fput(u, v, FT2, block("water", level=0))
-    # 出発の印（走路ごとの色のろうそく。1〜4番）と、四隅の灯り、ゴールの札
-    for i, v in enumerate((10, 12, 14, 16)):
-        fput(u0, v, FT2 + 1, block(LANE_COLORS[i] + "_candle", candles=1, lit=True, waterlogged=False))
-    for (u, v) in ((u0, v0), (u0, v1), (u1, v0), (u1, v1)):
-        fput(u, v, FT2 + 1, fence("dark_oak"))
-        fput(u, v, FT2 + 2, lantern(False))
-    fput(u1, 13, FT2 + 1, block("spruce_sign", rotation=4, waterlogged=False), sign_nbt(["", "ゴール", "", ""]))
-    # 舞台の後ろの壁に、遊び方の札
-    fput(21, 12, FT2 + 2, block("spruce_wall_sign", facing="west", waterlogged=False),
-         sign_nbt(["魚レース", "釣った魚を", "走らせて", "賭ける"]))
-    fput(21, 13, FT2 + 2, block("spruce_wall_sign", facing="west", waterlogged=False),
-         sign_nbt(["1番 赤", "2番 黄", "3番 緑", "4番 水色"]))
+def new_machines_overlay():
+    """共同事業⑥のあと：宴の間の真ん中に、新台の島を2つ（tools/mapgen/parlor_layout.py の n1・n2）。前の魚レースの所は、はじめの形に
+    戻してから置く（前の版で⑥が完成していたワールドでも、魚レースの走路が残らない）"""
+    build_new_machines(overlay_put(NM, NM_OWNED), bget, FT2)
 
 
 def checked_world(which="base"):
-    """確かめと見本の絵に使う写し：base（はじめ）・highlow（②のあと）・fishrace（⑥のあと）・both（両方のあと）"""
+    """確かめと見本の絵に使う写し：base（はじめ）・highlow（②のあと）・new_machines（⑥のあと）・both（両方のあと）"""
     layers = []
     if which in ("highlow", "both"):
         layers.append((HL, HL_OWNED))
-    if which in ("fishrace", "both"):
-        layers.append((FR, FR_OWNED))
+    if which in ("new_machines", "both"):
+        layers.append((NM, NM_OWNED))
     return overlaid(w, *layers) if layers else w
 
 
@@ -1708,7 +1690,7 @@ def render_quick(out, names=None, world=None):
     os.makedirs(out, exist_ok=True)
     world = world or w
     for (wd, views) in ((world, VIEWS), (checked_world("highlow"), VIEWS_HIGHLOW),
-                        (checked_world("fishrace"), VIEWS_FISHRACE)):
+                        (checked_world("new_machines"), VIEWS_NEW)):
         todo = [k for k in views if not names or k in names]
         if not todo:
             continue
@@ -1723,6 +1705,22 @@ def render_quick(out, names=None, world=None):
                 use = sc
             use.render(eye=e, target=t, width=960, height=540, fov=70, path=os.path.join(out, "casino_%s.png" % k))
             print("描きました:", k)
+    # 地下遊技場（構造物 casino_parlor の中の座標で）
+    todo = [k for k in VIEWS_PARLOR if not names or k in names]
+    if todo:
+        sc = Scene(PL, ground_y=0)
+        for k in todo:
+            e, t = VIEWS_PARLOR[k]
+            sc.render(eye=e, target=t, width=960, height=540, fov=70, path=os.path.join(out, "casino_%s.png" % k))
+            print("描きました:", k)
+    if not names or "parlor_cut" in names:
+        pc = World(PW, PH, PD)
+        pc.blocks = {c: b for c, b in PL.blocks.items() if c[1] < -5 + 11}
+        pc.nbt = {c: n for c, n in PL.nbt.items() if c[1] < -5 + 11}
+        pc.entities = [e for e in PL.entities if e.cell[1] < -5 + 11]
+        Scene(pc, ground_y=0).render(eye=(15.0, 70.0, 13.01), target=(15.0, 0.0, 13.0), width=900, height=820, fov=26,
+                                     path=os.path.join(out, "casino_parlor_cut.png"))
+        print("描きました: parlor_cut")
     for key, y_cut in (("cut0", 2), ("cut1", 9), ("cut2", 15)):
         if names and key not in names:
             continue
@@ -1767,9 +1765,22 @@ VIEWS = {
 VIEWS_HIGHLOW = {
     "highlow": (Bv(12.4, FT + 2.4, 20.6), Bv(9.6, FT + 0.6, 22.8)),        # 共同事業②のあと：ハイ＆ローの卓
 }
-VIEWS_FISHRACE = {
-    "fishrace": (Bv(8.5, FT2 + 2.62, 12.5), Bv(19.5, FT2 + 0.2, 13.0)),    # 共同事業⑥のあと：魚レースの走路（出発の側から）
-    "fishrace_side": (Bv(14.5, FT2 + 3.2, 19.5), Bv(14.5, FT2 + 0.2, 11.0)),  # 南の見物の所から
+def Pv(u, y, v):
+    """地下遊技場の構造物の中の座標（u, 道からの高さ, v）"""
+    return (u, y + 11, v)
+
+
+VIEWS_PARLOR = {
+    "parlor_lobby": (Pv(15.5, -9 + 1.9, 3.5), Pv(21.0, -8.6, 13.0)),      # ロビーの北から、スロットの島
+    "parlor_p": (Pv(7.5, -9 + 1.9, 6.6), Pv(7.5, -8.4, 17.0)),             # パチンコの島の間の通路（北から）
+    "parlor_s": (Pv(20.5, -9 + 1.9, 6.6), Pv(20.5, -8.4, 17.0)),           # スロットの島の間の通路（北から）
+    "parlor_counter": (Pv(14.5, -9 + 1.62, 16.0), Pv(14.5, -8.4, 23.0)),   # 交換所の窓口
+    "parlor_stair": (Pv(10.5, 3 + 1.62, 7.2), Pv(10.0, -2.0, 2.5)),        # 1階の口から、折り返しの階段を見下ろす
+}
+
+VIEWS_NEW = {
+    "new_machines": (Bv(14.0, FT2 + 2.62, 4.6), Bv(14.0, FT2 + 0.6, 14.0)),  # 共同事業⑥のあと：新台の間（北の通路から）
+    "new_machines_side": (Bv(20.2, FT2 + 3.0, 17.5), Bv(11.0, FT2 + 0.6, 10.0)),  # 舞台の南から、島の間
 }
 
 
@@ -1826,18 +1837,20 @@ def fill_closed_passage():
 build()
 highlow_overlay()
 HL.finalize()
-fishrace_overlay()
-FR.finalize()
+new_machines_overlay()
+NM.finalize()
+build_parlor(PL, PL_OWNED)
+PL.finalize()
 
-CI_SHOTS = ["front", "gate", "aerial", "back", "in_hall", "in_bar", "vip", "rumor", "banquet", "highlow", "fishrace"]
+CI_SHOTS = ["front", "gate", "aerial", "back", "in_hall", "in_bar", "vip", "rumor", "banquet", "highlow", "new_machines"]
 
 
 def ci_views():
     """自動の確認の写真の目と見る所（カジノの地面の所から。構造物は y を YOFF だけ下げて、地面を草の高さにそろえて置く）。
-    CiScreenshots の MAP_VIEWS と同じ。最後の2枚は、ハイ＆ロー・魚レースを重ねたあと"""
+    CiScreenshots の MAP_VIEWS と同じ。最後の2枚は、ハイ＆ロー・新台の間を重ねたあと"""
     allv = dict(VIEWS)
     allv.update(VIEWS_HIGHLOW)
-    allv.update(VIEWS_FISHRACE)
+    allv.update(VIEWS_NEW)
     out = []
     for shot in CI_SHOTS:
         e, t = allv[shot]
@@ -1866,9 +1879,12 @@ def save_all(out):
     path = os.path.join(out, "casino_highlow.nbt")
     n = HL.save_structure(path, owned=lambda x, y, z: (x, y, z) in HL_OWNED)
     res.append((path, len(HL_OWNED), n, len(HL.entities), (W, H, D)))
-    path = os.path.join(out, "casino_fishrace.nbt")
-    n = FR.save_structure(path, owned=lambda x, y, z: (x, y, z) in FR_OWNED)
-    res.append((path, len(FR_OWNED), n, len(FR.entities), (W, H, D)))
+    path = os.path.join(out, "casino_new_machines.nbt")
+    n = NM.save_structure(path, owned=lambda x, y, z: (x, y, z) in NM_OWNED)
+    res.append((path, len(NM_OWNED), n, len(NM.entities), (W, H, D)))
+    path = os.path.join(out, "casino_parlor.nbt")
+    n = PL.save_structure(path, owned=lambda x, y, z: (x, y, z) in PL_OWNED)
+    res.append((path, len(PL_OWNED), n, len(PL.entities), (PW, PH, PD)))
     return res
 
 

@@ -7,13 +7,9 @@ import jp.amemaru.lostconnection.casino.CasinoData;
 import jp.amemaru.lostconnection.casino.CasinoGames;
 import jp.amemaru.lostconnection.casino.CasinoRules;
 import jp.amemaru.lostconnection.casino.CasinoService;
-import jp.amemaru.lostconnection.casino.CasinoTable;
 import jp.amemaru.lostconnection.connection.ConnectionCategory;
 import jp.amemaru.lostconnection.connection.ConnectionService;
 import jp.amemaru.lostconnection.economy.Wallet;
-import jp.amemaru.lostconnection.fishing.FishDef;
-import jp.amemaru.lostconnection.fishing.FishDefs;
-import jp.amemaru.lostconnection.fishing.FishingService;
 import jp.amemaru.lostconnection.guild.TitleDefs;
 import jp.amemaru.lostconnection.player.PlayerData;
 import jp.amemaru.lostconnection.player.PlayerDataCapability;
@@ -274,59 +270,12 @@ public final class CasinoGameTests {
         helper.succeed();
     }
 
-    /** 魚レース：共同事業⑥の印のあと。倍率は見込みから（胴元の取り分つき）。釣った魚を出せる（だれかが賭ける前まで）。勝てば払う。 */
-    @GameTest(template = EMPTY, timeoutTicks = 200)
-    public static void casinoFishRace(GameTestHelper helper) {
-        MinecraftServer server = helper.getLevel().getServer();
-        FakePlayer a = fake(helper, "cas_race_a");
-        FakePlayer b = fake(helper, "cas_race_b");
-        StoryState story = StoryState.get(server);
-        boolean had = story.has(CasinoRules.current().fishRaceFlag());
-        try {
-            story.add(CasinoRules.current().fishRaceFlag());
-            CasinoService.resetTable(server, "fishrace");
-            CasinoService.startForTest(server, "fishrace");
-            CasinoTable table = CasinoService.table("fishrace");
-            check(helper, table != null && table.runners().size() == 4, "走る魚が4匹いません");
-            FishDef dace = FishDefs.get(AmemaruMod.id("pebble_dace"));
-            CasinoService.setRunnersForTest("fishrace", List.of(CasinoGames.Runner.of(dace, 0.5, null, ""),
-                    CasinoGames.Runner.of(dace, 0.5, null, ""), CasinoGames.Runner.of(dace, 0.5, null, ""), CasinoGames.Runner.of(dace, 0.5, null, "")));
-            for (int i = 0; i < 4; i++) {
-                double m = table.multiplier(i);
-                check(helper, m >= 3.0 && m <= 4.8, "同じ魚4匹の倍率が ×3.8 前後になりません：" + m);
-            }
-            double[] chances = CasinoGames.raceChances(table.runners(), 7L, 3000);
-            double sum = 0;
-            for (double c : chances) {
-                sum += c;
-            }
-            check(helper, Math.abs(sum - 1.0) < 1e-9, "勝つ見込みの合計が1になりません");
-            // 魚を出す（持っている魚。賭けの前まで）
-            a.getInventory().clearContent();
-            a.getInventory().add(new ItemStack(FishingService.itemOf(FishDefs.get(AmemaruMod.id("amber_carp")))));
-            check(helper, CasinoService.enter(a, "fishrace", 0) == null && a.getUUID().equals(table.runners().get(0).owner()),
-                    "魚を出せません");
-            check(helper, "casino.amemaru.error.entered".equals(CasinoService.enter(a, "fishrace", 0)), "同じ勝負に2匹出せました");
-            data(helper, b).getCasino().setChips(500);
-            check(helper, CasinoService.bet(b, "fishrace", "lane", 2, 100) == null, "走路に賭けられません");
-            double mult = table.multiplier(2);
-            b.getInventory().clearContent();
-            b.getInventory().add(new ItemStack(FishingService.itemOf(dace)));
-            check(helper, "casino.amemaru.error.entry_closed".equals(CasinoService.enter(b, "fishrace", 0)), "賭けのあとに魚を出せました");
-            CasinoService.forceNext("fishrace", 2);
-            CasinoService.finishForTest(server, "fishrace");
-            check(helper, table.outcome() == 2 && data(helper, b).getCasino().chips() == 400 + (long) Math.floor(100 * mult),
-                    "魚レースの払い戻しがちがいます：" + data(helper, b).getCasino().chips() + "（×" + mult + "）");
-        } finally {
-            if (!had) {
-                story.remove(CasinoRules.current().fishRaceFlag());
-            }
-            CasinoService.resetTable(server, "fishrace");
-            data(helper, a).getCasino().clear();
-            data(helper, b).getCasino().clear();
-            a.getInventory().clearContent();
-            b.getInventory().clearContent();
-        }
+    /** 11月27日のご指示「ルーレットとハイ＆ロー以外を廃止」：魚レースの卓・タブ・右クリックの所がない。 */
+    @GameTest(template = EMPTY)
+    public static void casinoHasNoFishRace(GameTestHelper helper) {
+        check(helper, CasinoService.table("fishrace") == null, "魚レースの卓が残っています");
+        check(helper, !CasinoService.TABS.contains("fishrace") && !CasinoService.ZONES.contains("fishrace"), "魚レースのタブ・所が残っています");
+        check(helper, !CasinoRules.current().zones().containsKey("fishrace"), "casino/default.json に魚レースの所が残っています");
         helper.succeed();
     }
 

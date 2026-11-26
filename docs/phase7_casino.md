@@ -7,6 +7,10 @@ Phase 7 は Phase 0-B 13章の「**釣り、カジノ（右クリックでGUIを
 | その1 | コネクション量（CP）と大結晶の輝き段階。交流の常設の仕組み（[`phase7_connection.md`](phase7_connection.md)） |
 | その2 | 釣り（[`phase7_fishing.md`](phase7_fishing.md)） |
 | **その3（この文書）** | カジノ「遊戯館ラッキーノット」（ルーレット・ハイ＆ロー・魚レース・両替・景品・カジノナイト・支配人ジゼル） |
+
+> **11月27日の変更**：ご指示「もっとギャンブル寄りにしてルーレットとハイ＆ロー以外を廃止してパチンコとスロットを追加する」で、
+> 魚レースはやめ、カジノの下に**地下遊技場**（パチンコ・スロット）を作りました。共同事業⑥は「カジノの新台入替」です
+> （[`phase8_1127.md`](phase8_1127.md)）。この文書の魚レースの記述は、その時の決まりとして残します（今は遊べません）。
 | その4 | 寄付と共同事業（寄付の目標と輝き段階の両方で完成し、施設が変わる） |
 
 その3で作ったものの中心は次のとおりです。
@@ -92,13 +96,14 @@ Phase 7 は Phase 0-B 13章の「**釣り、カジノ（右クリックでGUIを
 | --- | --- |
 | `event start casino_night [分]`・`event stop casino_night` | カジノナイトを始める・終える（Phase 0-B 10章） |
 | `casino chips <人> <数>`・`casino give <人> <数>` | チップを決める・足す |
-| `casino open <人> [roulette・highlow・fishrace・cashier・prizes]` | カジノの画面を開く（開場の日と距離を見ない） |
-| `casino table <卓>` | 卓の様子（roulette・highlow_a・highlow_b・fishrace） |
-| `casino next <卓> <結果>` | 次の結果を決めておく（ルーレット 0〜36・ハイ＆ロー 1〜13・魚レース 1〜4番） |
+| `casino open <人> [roulette・highlow・cashier・prizes]` | カジノの画面を開く（開場の日と距離を見ない。11月27日に fishrace をやめた） |
+| `casino table <卓>` | 卓の様子（roulette・highlow_a・highlow_b） |
+| `casino next <卓> <結果>` | 次の結果を決めておく（ルーレット 0〜36・ハイ＆ロー 1〜13） |
 | `casino card <卓> <1〜13>` | ハイ＆ローの今のカードを決める（だれも賭けていないとき） |
 | `casino spin <卓>` | 賭けを締めて、すぐ回す |
 | `casino reset <卓>` | 卓を初めに戻す（賭けは返す） |
-| `casino unlock <highlow・fishrace> <true・false>` | ハイ＆ロー・魚レースの印（共同事業②・⑥。その4の前に確かめるとき） |
+| `casino unlock <highlow・new_machines> <true・false>` | ハイ＆ロー・新台の間の印（共同事業②・⑥。その4の前に確かめるとき。11月27日に fishrace から new_machines に） |
+| `casino machine …`・`casino balls|medals …`・`casino parlor today` | 地下遊技場（11月27日。[`phase8_1127.md`](phase8_1127.md)） |
 | `casino stats` | 館の勘定（賭けられたチップ・払い戻し・館の取り分）とカジノナイト |
 
 ## 4. 確かめ方
@@ -109,7 +114,7 @@ Phase 7 は Phase 0-B 13章の「**釣り、カジノ（右クリックでGUIを
 2. 入口の間の北の両替の窓口を右クリックすると、カジノの画面の「両替」が開くこと。「100枚買う」でチップが増え、ノットが減ること。500枚で「今日はもうチップを買えません」になること。「全部戻す」でノットに戻ること。
 3. ルーレットの卓を右クリックすると「ルーレット」が開き、「賭けの時間 あと○秒」が数えられること。盤のマスを押すと、選んだ枚数がそのマスに賭けられ（マスが紫の枠で囲まれる）、時間が来ると帯が回って止まり、当たればチャットに「当たり！」とチップが戻ること。一点賭けを当てると称号「大当たり！」。
 4. 景品の交換所を右クリックすると「景品」が開き、チップで留め糸・旗・見た目の服・称号と取りかえられること。見た目の帽子を頭に着けても、守りが増えないこと。
-5. `/amemaru admin casino unlock highlow true` のあと、南の側廊のカードの卓で「ハイ＆ロー」が、`casino unlock fishrace true` のあと、2階の宴の間の走路で「魚レース」が遊べること。魚レースで「この魚を出す」を押すと、持っている魚が走路に出ること。
+5. `/amemaru admin casino unlock highlow true` のあと、南の側廊のカードの卓で「ハイ＆ロー」が遊べること（魚レースは11月27日にやめた。地下遊技場の確かめは [`ingame_check.md`](ingame_check.md)）。
 
 ### 2人以上で
 
@@ -118,8 +123,8 @@ Phase 7 は Phase 0-B 13章の「**釣り、カジノ（右クリックでGUIを
 
 ### 自動の確かめ（GameTest と CIの写真）
 
-- `CasinoGameTests`：決まり（右クリックの所・景品・見た目の品に守りがない）／ルーレットの決まり（37の目・どの賭けも 36/37・0は外の賭けの外れ）／両替（1日の上限と4時の切り替え・ノットに戻す・景品と称号）／ルーレットの卓（4人で賭けて払う・4人以上の卓のCP・「大当たり！」・カジノナイトのおまけと参加のCP・10回続けて外す）／ハイ＆ロー（印の前は遊べない・倍率・同じ数は外れ）／魚レース（見込みと倍率・魚を出す・賭けのあとは出せない・払い戻し）。
-- CIの写真：`phase7c_hall`（大広間のルーレットとジゼル）・`phase7c_dialogue`・`phase7c_roulette`（ルーレットの卓の右クリックで開いた画面）・`phase7c_roulette_bets`・`phase7c_roulette_spin`・`phase7c_roulette_result`・`phase7c_cashier`・`phase7c_prizes`・`phase7c_highlow`・`phase7c_highlow_result`・`phase7c_fishrace`・`phase7c_fishrace_run`・`phase7c_fishrace_result`・`phase7c_night`。
+- `CasinoGameTests`：決まり（右クリックの所・景品・見た目の品に守りがない）／ルーレットの決まり（37の目・どの賭けも 36/37・0は外の賭けの外れ）／両替（1日の上限と4時の切り替え・ノットに戻す・景品と称号）／ルーレットの卓（4人で賭けて払う・4人以上の卓のCP・「大当たり！」・カジノナイトのおまけと参加のCP・10回続けて外す）／ハイ＆ロー（印の前は遊べない・倍率・同じ数は外れ）／魚レース（見込みと倍率・魚を出す・賭けのあとは出せない・払い戻し。11月27日に、魚レースが残っていないことの確かめ `casinoHasNoFishRace` に替えた）。地下遊技場は `ParlorGameTests`。
+- CIの写真：`phase7c_hall`（大広間のルーレットとジゼル）・`phase7c_dialogue`・`phase7c_roulette`（ルーレットの卓の右クリックで開いた画面）・`phase7c_roulette_bets`・`phase7c_roulette_spin`・`phase7c_roulette_result`・`phase7c_cashier`・`phase7c_prizes`・`phase7c_highlow`・`phase7c_highlow_result`・`phase7c_night`（魚レースの `phase7c_fishrace*` は11月27日に、地下遊技場の `p8c_*` に替えた）。
 
 ## 5. ファイル
 
@@ -127,7 +132,7 @@ Phase 7 は Phase 0-B 13章の「**釣り、カジノ（右クリックでGUIを
 | --- | --- |
 | `casino/CasinoService.java` | 右クリックの所・画面を開く・賭ける・取り消す・魚を出す・両替・景品・卓の流れ・払う・カジノナイト |
 | `casino/CasinoTable.java` | 卓（勝負の流れ・賭け・結果・画面へ送る様子） |
-| `casino/CasinoGames.java` | 遊びの決まり（ルーレットの賭け方と当たり・ハイ＆ローの倍率・魚レースの走り方と見込み） |
+| `casino/CasinoGames.java` | 遊びの決まり（ルーレットの賭け方と当たり・ハイ＆ローの倍率。魚レースの走り方と見込みは11月27日に削除） |
 | `casino/CasinoRules.java` | 倍率と上限・右クリックの所・景品の読み込み |
 | `casino/CasinoRecord.java`・`casino/CasinoData.java` | 本人（チップ・今日買った数・続けて外した回数）とサーバー全体（カジノナイト・館の勘定） |
 | `admin/CasinoCommands.java`・`admin/EventCommands.java` | 管理者のコマンド（カジノ・催し） |
@@ -139,5 +144,5 @@ Phase 7 は Phase 0-B 13章の「**釣り、カジノ（右クリックでGUIを
 
 ## 6. 次にやること
 
-- **その4（寄付と共同事業）**：共同事業①〜⑦（寄付の目標と輝き段階の両方で完成し、次の朝に施設が変わる）。②でカードの卓（`casino_highlow.nbt`）、⑥で魚レースの走路（`casino_fishrace.nbt`）が重なり、印 `amemaru:project/highlow`・`amemaru:project/fishrace` が付いて遊べるようになる。施設への寄付のCP。
+- **その4（寄付と共同事業）**：共同事業①〜⑦（寄付の目標と輝き段階の両方で完成し、次の朝に施設が変わる）。②でカードの卓（`casino_highlow.nbt`）、⑥で魚レースの走路（`casino_fishrace.nbt`）が重なり、印 `amemaru:project/highlow`・`amemaru:project/fishrace` が付いて遊べるようになる（11月27日：⑥は「カジノの新台入替」。`casino_new_machines.nbt`・`amemaru:project/new_machines`）。施設への寄付のCP。
 - Phase 8・9：ジゼルの噂の話（ノアの目撃情報）・前夜祭の「特別ルーレット」（景品は前夜祭限定の見た目の品。16章）・カジノから手に入るユニーク装備（23章）。

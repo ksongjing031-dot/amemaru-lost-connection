@@ -4,15 +4,11 @@ import jp.amemaru.lostconnection.AmemaruMod;
 import jp.amemaru.lostconnection.admin.CityCommands;
 import jp.amemaru.lostconnection.casino.CasinoGames.Bet;
 import jp.amemaru.lostconnection.casino.CasinoGames.Game;
-import jp.amemaru.lostconnection.casino.CasinoGames.Runner;
 import jp.amemaru.lostconnection.casino.CasinoTable.Phase;
 import jp.amemaru.lostconnection.connection.ConnectionActions;
 import jp.amemaru.lostconnection.connection.ConnectionService;
 import jp.amemaru.lostconnection.core.config.ServerConfig;
 import jp.amemaru.lostconnection.economy.Wallet;
-import jp.amemaru.lostconnection.fishing.FishDef;
-import jp.amemaru.lostconnection.fishing.FishDefs;
-import jp.amemaru.lostconnection.fishing.FishItem;
 import jp.amemaru.lostconnection.guild.TitleDef;
 import jp.amemaru.lostconnection.guild.TitleDefs;
 import jp.amemaru.lostconnection.guild.TitleService;
@@ -65,8 +61,9 @@ import java.util.UUID;
  * 15章「娯楽の設計（カジノ）」。Phase 0-B 13章「カジノ（右クリックでGUIを開いて使う。【11月22日に決定】）」）。
  *
  * <ul>
- *   <li>館の中の卓・窓口（{@code zones}）を右クリックすると画面が開く：ルーレットの卓・カードの卓（ハイ＆ロー）・2階の魚レースの走路・
- *       両替の窓口・景品の交換所。支配人ジゼルの会話からも開ける</li>
+ *   <li>館の中の卓・窓口（{@code zones}）を右クリックすると画面が開く：ルーレットの卓・カードの卓（ハイ＆ロー）・両替の窓口・
+ *       景品の交換所。支配人ジゼルの会話からも開ける。11月27日のご指示「ルーレットとハイ＆ロー以外を廃止」で魚レースはやめ、
+ *       地下遊技場にパチンコとスロット（{@link jp.amemaru.lostconnection.casino.parlor.ParlorService}）</li>
  *   <li>チップ：ノットで買う（1日の上限）・ノットに戻す。賭けるのはチップだけ（ゲーム内通貨のみ）</li>
  *   <li>卓：みんなで同じ勝負を囲む（{@link CasinoTable}）。4人以上で賭けた勝負は、賭けた人にCP（13章）。カジノナイトは配当におまけ</li>
  *   <li>景品：留め糸・見た目の品（強さのない服と冠・ラッキーノットの旗・絵・楽の円盤）・称号</li>
@@ -75,13 +72,11 @@ import java.util.UUID;
 @Mod.EventBusSubscriber(modid = AmemaruMod.MOD_ID)
 public final class CasinoService {
     /** 右クリックで画面が開く所の名前。 */
-    public static final List<String> ZONES = List.of("roulette", "highlow_a", "highlow_b", "fishrace", "cashier", "prizes");
+    public static final List<String> ZONES = List.of("roulette", "highlow_a", "highlow_b", "cashier", "prizes");
     /** 画面のタブ。 */
-    public static final List<String> TABS = List.of("roulette", "highlow", "fishrace", "cashier", "prizes");
+    public static final List<String> TABS = List.of("roulette", "highlow", "cashier", "prizes");
     /** 画面を開いてから操作できる時間（離れてよい距離は {@code watch_range}）。 */
     private static final long OPEN_TICKS = 20L * 60 * 30;
-    /** 魚レースの見込みを数える回数。 */
-    private static final int RACE_TRIALS = 1500;
 
     private record Open(Vec3 at, long tick, boolean admin) {
     }
@@ -97,7 +92,6 @@ public final class CasinoService {
         TABLES.put("roulette", new CasinoTable("roulette", Game.ROULETTE));
         TABLES.put("highlow_a", new CasinoTable("highlow_a", Game.HIGHLOW));
         TABLES.put("highlow_b", new CasinoTable("highlow_b", Game.HIGHLOW));
-        TABLES.put("fishrace", new CasinoTable("fishrace", Game.FISHRACE));
     }
 
     private CasinoService() {
@@ -125,7 +119,6 @@ public final class CasinoService {
         return switch (game) {
             case ROULETTE -> true;
             case HIGHLOW -> StoryState.get(server).has(rules.highLowFlag());
-            case FISHRACE -> StoryState.get(server).has(rules.fishRaceFlag());
         };
     }
 
@@ -183,7 +176,6 @@ public final class CasinoService {
             case "roulette" -> "roulette";
             case "highlow", "highlow_a" -> "highlow_a";
             case "highlow_b" -> "highlow_b";
-            case "fishrace" -> "fishrace";
             default -> "";
         };
         String tab = switch (where) {
@@ -229,8 +221,12 @@ public final class CasinoService {
         tag.putLong("maxBet", rules.maxBet());
         tag.putLong("maxRound", rules.maxRoundBet());
         tag.putInt("loseStreak", rec.loseStreak());
+        // 11月27日：地下遊技場の持ち玉・持ちメダル（両替の窓口でチップに戻せる）
+        tag.putLong("balls", rec.balls());
+        tag.putLong("medals", rec.medals());
+        tag.putInt("ballsPerChip", rules.parlor().ballsPerChip());
+        tag.putInt("medalsPerChip", rules.parlor().medalsPerChip());
         tag.putBoolean("highlow", unlocked(server, Game.HIGHLOW));
-        tag.putBoolean("fishrace", unlocked(server, Game.FISHRACE));
         CasinoData cd = CasinoData.get(server);
         tag.putBoolean("night", cd.night());
         tag.putInt("nightHeld", cd.nightHeld());
@@ -253,25 +249,6 @@ public final class CasinoService {
             prizes.add(one);
         }
         tag.put("prizes", prizes);
-        // 魚レースに出せる魚（持ち物の魚の種類。大物はその大きさで走る）
-        ListTag fish = new ListTag();
-        List<String> seen = new ArrayList<>();
-        for (ItemStack stack : player.getInventory().items) {
-            FishDef def = FishDefs.of(stack);
-            if (def == null) {
-                continue;
-            }
-            String key = def.id() + (FishItem.isBig(stack) ? "@" + FishItem.size(stack) : "");
-            if (seen.contains(key)) {
-                continue;
-            }
-            seen.add(key);
-            CompoundTag one = new CompoundTag();
-            one.putInt("slot", player.getInventory().items.indexOf(stack));
-            one.put("stack", stack.copyWithCount(1).save(new CompoundTag()));
-            fish.add(one);
-        }
-        tag.put("fish", fish);
         return tag;
     }
 
@@ -347,37 +324,7 @@ public final class CasinoService {
     private static void startBetting(MinecraftServer server, CasinoTable table) {
         CasinoRules rules = CasinoRules.current();
         table.startBetting(RANDOM, rules.betTicks());
-        if (table.game() == Game.FISHRACE) {
-            table.runners.clear();
-            List<FishDef> pool = racePool(server);
-            for (int i = 0; i < 4 && !pool.isEmpty(); i++) {
-                FishDef def = pool.get(RANDOM.nextInt(pool.size()));
-                table.runners.add(Runner.of(def, RANDOM.nextDouble(), null, ""));
-            }
-            recomputeOdds(table);
-        }
         sync(server, table);
-    }
-
-    /** 館の魚（今の章までの★1〜3のふつうの魚）。 */
-    private static List<FishDef> racePool(MinecraftServer server) {
-        int chapter = ProgressionData.currentChapter(server);
-        List<FishDef> pool = new ArrayList<>();
-        for (FishDef def : FishDefs.ordered()) {
-            if (def.rarity() <= 3 && !def.isMemory() && !def.legendary() && def.chapter() <= chapter) {
-                pool.add(def);
-            }
-        }
-        return pool;
-    }
-
-    static void recomputeOdds(CasinoTable table) {
-        CasinoRules rules = CasinoRules.current();
-        double[] chances = CasinoGames.raceChances(table.runners, RANDOM.nextLong(), RACE_TRIALS);
-        table.multipliers = new double[chances.length];
-        for (int i = 0; i < chances.length; i++) {
-            table.multipliers[i] = CasinoGames.raceMultiplier(chances[i], rules.fishRaceEdge(), rules.fishRaceMin(), rules.fishRaceMax());
-        }
     }
 
     // ================================================================ 操作
@@ -403,16 +350,24 @@ public final class CasinoService {
             }
             case "bet" -> bet(player, args.getString("table"), args.getString("kind"), args.getInt("value"), args.getLong("chips"));
             case "clear" -> clear(player, args.getString("table"));
-            case "enter" -> enter(player, args.getString("table"), args.getInt("slot"));
             case "buy" -> buy(player, args.getLong("chips"));
             case "sell" -> sell(player, args.getLong("chips"));
             case "prize" -> exchange(player, args.getString("id"));
+            // 11月27日：地下遊技場の持ち玉・持ちメダルを、両替の窓口でチップに戻す
+            case "cash_balls" -> {
+                jp.amemaru.lostconnection.casino.parlor.ParlorService.cashout(player, "balls");
+                yield null;
+            }
+            case "cash_medals" -> {
+                jp.amemaru.lostconnection.casino.parlor.ParlorService.cashout(player, "medals");
+                yield null;
+            }
             default -> null;
         };
         if (error != null) {
             player.displayClientMessage(Component.translatable(error).withStyle(ChatFormatting.RED), true);
         }
-        if (List.of("buy", "sell", "prize", "bet", "clear", "enter").contains(action)) {
+        if (List.of("buy", "sell", "prize", "bet", "clear", "cash_balls", "cash_medals").contains(action)) {
             CompoundTag tag = screenTag(player);
             tag.putBoolean("refresh", true);
             ModNetwork.sendTo(player, new CasinoS2C("screen", tag));
@@ -446,7 +401,6 @@ public final class CasinoService {
         double mult = switch (table.game()) {
             case ROULETTE -> CasinoGames.rouletteMultiplier(kind, value);
             case HIGHLOW -> CasinoGames.highLowMultiplier(kind, table.card, rules.highLowEdge());
-            case FISHRACE -> "lane".equals(kind) ? table.multiplier(value) : 0;
         };
         if (mult <= 0) {
             return "casino.amemaru.error.bad_bet";
@@ -484,44 +438,6 @@ public final class CasinoService {
         long stake = table.stakeOf(player.getUUID());
         table.bets.remove(player.getUUID());
         data.getCasino().addChips(stake);
-        sync(player.server, table);
-        return null;
-    }
-
-    /** 魚レースに魚を出す（だれかが賭ける前まで。1回の勝負に1人1匹。魚はなくならない）。 */
-    @Nullable
-    public static String enter(ServerPlayer player, String tableId, int slot) {
-        CasinoTable table = TABLES.get(tableId);
-        if (table == null || table.game() != Game.FISHRACE || !unlocked(player.server, Game.FISHRACE)) {
-            return "casino.amemaru.error.locked";
-        }
-        if (table.phase != Phase.BETTING || table.anyBet()) {
-            return "casino.amemaru.error.entry_closed";
-        }
-        List<ItemStack> items = player.getInventory().items;
-        if (slot < 0 || slot >= items.size() || FishDefs.of(items.get(slot)) == null) {
-            return "casino.amemaru.error.no_fish";
-        }
-        for (Runner r : table.runners) {
-            if (player.getUUID().equals(r.owner())) {
-                return "casino.amemaru.error.entered";
-            }
-        }
-        int lane = -1;
-        for (int i = 0; i < table.runners.size(); i++) {
-            if (table.runners.get(i).owner() == null) {
-                lane = i;
-                break;
-            }
-        }
-        if (lane < 0) {
-            return "casino.amemaru.error.lanes_full";
-        }
-        ItemStack stack = items.get(slot);
-        FishDef def = FishDefs.of(stack);
-        double ratio = FishItem.isBig(stack) ? def.sizeRatio(FishItem.size(stack)) : 0.5;
-        table.runners.set(lane, Runner.of(def, ratio, player.getUUID(), player.getGameProfile().getName()));
-        recomputeOdds(table);
         sync(player.server, table);
         return null;
     }
@@ -682,16 +598,6 @@ public final class CasinoService {
         switch (table.game()) {
             case ROULETTE -> table.outcome = forced != null && forced >= 0 && forced <= 36 ? forced : CasinoGames.spinRoulette(RANDOM);
             case HIGHLOW -> table.outcome = forced != null && forced >= 1 && forced <= 13 ? forced : CasinoGames.drawCard(RANDOM);
-            case FISHRACE -> {
-                float[][] frames = CasinoGames.runRace(table.runners, RANDOM);
-                if (forced != null && forced >= 0 && forced < table.runners.size()) {
-                    for (int i = 0; i < 300 && CasinoGames.raceWinner(frames) != forced; i++) {
-                        frames = CasinoGames.runRace(table.runners, RANDOM);
-                    }
-                }
-                table.frames = frames;
-                table.outcome = CasinoGames.raceWinner(frames);
-            }
         }
         table.phase = Phase.ROLLING;
         table.timer = rules.rollTicks();
@@ -720,16 +626,6 @@ public final class CasinoService {
                 if (p != null) {
                     settleOne(p, table);
                 }
-            }
-        }
-        // 魚レース：勝った魚を出した人に、出したお礼
-        if (table.game() == Game.FISHRACE && table.outcome >= 0 && table.outcome < table.runners.size()) {
-            Runner winner = table.runners.get(table.outcome);
-            ServerPlayer owner = winner.owner() == null ? null : server.getPlayerList().getPlayer(winner.owner());
-            if (owner != null && rules.entryWinChips() > 0) {
-                PlayerDataCapability.get(owner).ifPresent(d -> d.getCasino().addChips(rules.entryWinChips()));
-                owner.sendSystemMessage(Component.translatable("casino.amemaru.race_owner_win", winner.name(), rules.entryWinChips())
-                        .withStyle(ChatFormatting.GOLD));
             }
         }
         table.remember(table.outcome);
@@ -803,14 +699,12 @@ public final class CasinoService {
         }
     }
 
-    /** 結果の短い文（ルーレット：17 黒・ハイ＆ロー：Q・魚レース：2番 苔ブナ）。 */
+    /** 結果の短い文（ルーレット：17 黒・ハイ＆ロー：Q）。 */
     static Component outcomeText(CasinoTable table) {
         return switch (table.game()) {
             case ROULETTE -> Component.translatable(table.outcome == 0 ? "casino.amemaru.number.green"
                     : CasinoGames.RED.contains(table.outcome) ? "casino.amemaru.number.red" : "casino.amemaru.number.black", table.outcome);
             case HIGHLOW -> Component.literal(cardName(table.card) + " → " + cardName(table.outcome));
-            case FISHRACE -> Component.translatable("casino.amemaru.race.lane_name", table.outcome + 1,
-                    table.outcome >= 0 && table.outcome < table.runners.size() ? table.runners.get(table.outcome).name() : "?");
         };
     }
 
@@ -985,16 +879,6 @@ public final class CasinoService {
         table.card = card;
         sync(server, table);
         return true;
-    }
-
-    /** 自動テスト：魚レースの走る魚を決める。 */
-    public static void setRunnersForTest(String tableId, List<Runner> runners) {
-        CasinoTable table = TABLES.get(tableId);
-        if (table != null) {
-            table.runners.clear();
-            table.runners.addAll(runners);
-            recomputeOdds(table);
-        }
     }
 
     /** チップの数（管理者のコマンドなど）。 */

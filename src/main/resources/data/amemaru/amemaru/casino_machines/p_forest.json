@@ -1,0 +1,75 @@
+{
+  "_comment": "カジノの地下遊技場の機種（11月27日のご指示「パチンコとスロットを追加する。本物ように設定を作る」【補完】）。tools/datagen/build_parlor.py が書き出す。数は tools/balance/ParlorSim.java で確かめた値",
+  "kind": "pachinko",
+  "name": "P 結び目の森 甘",
+  "spec": "甘デジ（確変ループ）",
+  "border": 17.2,
+  "normal": 99.9,
+  "high": 25.1,
+  "count": 10,
+  "ball_pay": 10,
+  "heso_pay": 3,
+  "denchu_pay": 1,
+  "denchu": 0.95,
+  "nails": {
+    "normal": [
+      15.0,
+      20.0
+    ],
+    "event": [
+      16.5,
+      22.5
+    ]
+  },
+  "jackpots": [
+    {
+      "id": "k10",
+      "name": "10R確変",
+      "rounds": 10,
+      "next": "kakuhen",
+      "heso": 0,
+      "denchu": 15
+    },
+    {
+      "id": "k4",
+      "name": "4R確変",
+      "rounds": 4,
+      "next": "kakuhen",
+      "heso": 40,
+      "denchu": 35
+    },
+    {
+      "id": "n10",
+      "name": "10R通常",
+      "rounds": 10,
+      "next": "jitan",
+      "spins": 50,
+      "heso": 0,
+      "denchu": 10
+    },
+    {
+      "id": "n4",
+      "name": "4R通常",
+      "rounds": 4,
+      "next": "jitan",
+      "spins": 50,
+      "heso": 60,
+      "denchu": 40
+    }
+  ],
+  "theme": {
+    "frame": "#2C5A2E",
+    "accent": "#F0E090",
+    "screen": "#0C1E10",
+    "glow": "#9CF08A"
+  },
+  "labels": {
+    "normal": "リーチ",
+    "super": "森の小道リーチ",
+    "special": "結び目の大樹リーチ",
+    "all": "全回転",
+    "kakuhen": "森の確変",
+    "jitan": "木もれ日タイム",
+    "stage": "結び目の森"
+  }
+}
