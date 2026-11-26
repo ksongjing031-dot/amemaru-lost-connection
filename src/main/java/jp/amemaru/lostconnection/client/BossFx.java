@@ -43,7 +43,9 @@ import java.util.Set;
  * <ul>
  *   <li>曲：ボスのHPの帯が出ている間（戦いの参加者）だけ、そのボスの曲（{@code music.boss.<ボス>}。{@code tools/audio/boss_music.py}
  *       で作ったオリジナル曲）を流し、いつもの曲は止める。戦いが終わると、ゆっくり消える。追いこんだ（HP30%以下・怒った）ときは、
- *       少し速く高くなる。大きさは、Minecraft の「音楽」の音量に従う</li>
+ *       少し速く高くなる。11月26日（「ボス戦のBGMがなっていない」のご指摘）から、大きさは設定の「ボス戦の曲の大きさ」
+ *       （{@code boss.musicVolume}）と主音量だけに従う【補完】。前は Minecraft の「音楽」の音量に従っていたので、「音楽」を0にしている人には
+ *       鳴らなかった。鳴っていなければ（音を鳴らす口が足りない・音の読み直し など）、2秒ごとにかけ直す</li>
  *   <li>はじまり：画面の上下に黒い帯と、ボスの名前・階の名前（3秒あまり）。低い雷鳴と、画面の揺れ</li>
  *   <li>段階が変わった：ボスから光の波と柱が立ち、画面が白く光って揺れる。「第N段階」</li>
  *   <li>追いこんだ：「追いこんだ ― ここが正念場」と、ボスのまわりの赤い気配</li>
@@ -85,6 +87,13 @@ public final class BossFx {
     private static BossTrack track;
     private static String trackKey = "";
     private static int hush;
+    /** 今の曲をかけてからの tick（このクラスが数える。音のエンジンが曲を動かしていなくても進む）。 */
+    private static int trackTicks;
+    /** 鳴っていなくて、かけ直した回数（戦いごと）。 */
+    private static int retries;
+    /** 設定の画面の「曲を試しに聞く」で流している曲（戦いの曲とは別。画面を閉じると消える）。 */
+    @Nullable
+    private static BossTrack preview;
     // 演出
     private static int introAge = -1;
     private static Component introName = Component.empty();
@@ -234,6 +243,11 @@ public final class BossFx {
 
     // ---------------------------------------------------------------- 曲
 
+    /** 曲をかけてから、鳴っているかを確かめるまで（tick）。鳴っていなければ、かけ直す。 */
+    private static final int CHECK_TICKS = 40;
+    /** かけ直しがこの回数つづいたら、ログに知らせる（戦いごとに1回）。 */
+    private static final int WARN_RETRIES = 3;
+
     private static void tickMusic(Minecraft mc) {
         String want = bossEntity >= 0 && ClientConfig.bossMusic() ? bossKey : "";
         if (!want.equals(trackKey)) {
@@ -242,8 +256,11 @@ public final class BossFx {
                 track = null;
             }
             trackKey = want;
+            retries = 0;
             if (!want.isEmpty()) {
                 start(mc, want);
+                AmemaruMod.LOGGER.info("[amemaru] Boss music: {} (boss music volume {}%, master volume {}%)", want,
+                        Math.round(ClientConfig.bossMusicVolume() * 100.0), Math.round(mc.options.getSoundSourceVolume(SoundSource.MASTER) * 100.0F));
             }
         }
         if (track == null) {
@@ -255,11 +272,22 @@ public final class BossFx {
             hush = 0;
             mc.getMusicManager().stopPlaying();
         }
-        // 音の読み直し（F3+T など）で止められた：かけ直す
-        if (track.age() > 60 && !mc.getSoundManager().isActive(track)) {
-            track = null;
+        // 鳴っていない（音の読み直し F3+T で止められた・音を鳴らす口が足りなかった・主音量が0だった など）：かけ直す。
+        // 11月26日：前は、曲が音のエンジンに動かされた（鳴りはじめた）ときだけ数えていたので、はじめの1回が鳴らなかったら、
+        // 戦いが終わるまで、かけ直さなかった
+        if (++trackTicks > CHECK_TICKS && audible(mc) && !mc.getSoundManager().isActive(track)) {
+            track.cancel();
+            retries++;
+            if (retries == WARN_RETRIES) {
+                AmemaruMod.LOGGER.warn("[amemaru] Boss music {} does not start (no sound device, or too many sounds at once?)", trackKey);
+            }
             start(mc, trackKey);
         }
+    }
+
+    /** 主音量とボス戦の曲の大きさが0より大きい（0なら、かけ直しても鳴らない）。 */
+    private static boolean audible(Minecraft mc) {
+        return mc.options.getSoundSourceVolume(SoundSource.MASTER) > 0.0F && ClientConfig.bossMusicVolume() > 0.0;
     }
 
     private static void start(Minecraft mc, String key) {
@@ -267,22 +295,54 @@ public final class BossFx {
         if (sound == null) {
             return;
         }
-        track = new BossTrack(sound);
+        track = new BossTrack(sound, 0);
+        trackTicks = 0;
         mc.getSoundManager().play(track);
         mc.getMusicManager().stopPlaying();
         hush = 0;
     }
 
-    /** ボスの曲（くり返す。はじめはふわっと大きくなり、終わりはゆっくり消える）。 */
+    /**
+     * 設定の画面の「曲を試しに聞く」（11月26日【補完】）：そのボスの曲を {@code seconds} 秒だけ流す（前に試していた曲は止める）。
+     * 戦いの外でも、タイトル画面でも鳴る。鳴らせたら true。
+     */
+    public static boolean preview(String key, int seconds) {
+        stopPreview();
+        SoundEvent sound = ForgeRegistries.SOUND_EVENTS.getValue(AmemaruMod.id("music.boss." + key));
+        if (sound == null) {
+            return false;
+        }
+        Minecraft mc = Minecraft.getInstance();
+        preview = new BossTrack(sound, seconds * 20);
+        mc.getSoundManager().play(preview);
+        mc.getMusicManager().stopPlaying();
+        return true;
+    }
+
+    /** 試しに聞いている曲を、ゆっくり消す。 */
+    public static void stopPreview() {
+        if (preview != null) {
+            preview.fadeOut();
+            preview = null;
+        }
+    }
+
+    /**
+     * ボスの曲（くり返す。はじめはふわっと大きくなり、終わりはゆっくり消える）。11月26日から、音の種類は「主音量」
+     * （{@link SoundSource#MASTER}。「音楽」の音量には従わない）で、大きさは設定の {@code boss.musicVolume}。
+     */
     private static final class BossTrack extends AbstractTickableSoundInstance {
         private static final float BASE_VOLUME = 0.85F;
+        /** これだけ tick がたったら、ひとりでに消える（0なら消えない。試しに聞くとき）。 */
+        private final int limit;
         private float level;
         private boolean fading;
         private float pitchGoal = 1.0F;
         private int age;
 
-        BossTrack(SoundEvent sound) {
-            super(sound, SoundSource.MUSIC, SoundInstance.createUnseededRandom());
+        BossTrack(SoundEvent sound, int limit) {
+            super(sound, SoundSource.MASTER, SoundInstance.createUnseededRandom());
+            this.limit = limit;
             this.looping = true;
             this.delay = 0;
             this.relative = true;
@@ -296,13 +356,16 @@ public final class BossFx {
 
         @Override
         public boolean canStartSilent() {
-            // 「音楽」の音量が0でも、かけておく（あとで上げたら聞こえる。かけ直しをくり返さない）
+            // 大きさが0でも、かけておく（あとで上げたら聞こえる。かけ直しをくり返さない）
             return true;
         }
 
         @Override
         public void tick() {
             age++;
+            if (limit > 0 && age >= limit) {
+                fading = true;
+            }
             if (fading) {
                 level -= 1.0F / 50.0F;
                 if (level <= 0.0F) {
@@ -312,7 +375,7 @@ public final class BossFx {
             } else {
                 level = Math.min(1.0F, level + 1.0F / 30.0F);
             }
-            volume = Math.max(0.0001F, level * BASE_VOLUME);
+            volume = Math.max(0.0001F, level * BASE_VOLUME * (float) ClientConfig.bossMusicVolume());
             pitch += (pitchGoal - pitch) * 0.04F;
         }
 
@@ -320,12 +383,13 @@ public final class BossFx {
             fading = true;
         }
 
-        void setIntense(boolean intense) {
-            pitchGoal = intense ? 1.04F : 1.0F;
+        /** すぐに止める（鳴らなかった曲を、かけ直す前に）。 */
+        void cancel() {
+            stop();
         }
 
-        int age() {
-            return age;
+        void setIntense(boolean intense) {
+            pitchGoal = intense ? 1.04F : 1.0F;
         }
     }
 
@@ -524,6 +588,21 @@ public final class BossFx {
     /** 今流しているボスの曲（なければ ""）。 */
     public static String playingTrack() {
         return track != null ? trackKey : "";
+    }
+
+    /** 11月26日：今のボスの曲を、音のエンジンが本当に鳴らしているか（音の出口がない・鳴らす口がないときは false）。 */
+    public static boolean trackActive() {
+        return track != null && Minecraft.getInstance().getSoundManager().isActive(track);
+    }
+
+    /** 11月26日：「曲を試しに聞く」の曲を、音のエンジンが鳴らしているか。 */
+    public static boolean previewActive() {
+        return preview != null && Minecraft.getInstance().getSoundManager().isActive(preview);
+    }
+
+    /** 11月26日：今の戦いで、鳴っていなくて曲をかけ直した回数。 */
+    public static int trackRetries() {
+        return retries;
     }
 
     /** 今の戦いのボス（なければ ""）。 */

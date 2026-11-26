@@ -63,6 +63,10 @@
 - 流れるのは、ボスのHPの帯が出ている人（戦いの参加者）だけ。いつもの曲は止まり、戦いが終わると2.5秒ほどでゆっくり消える
 - 追いこんだ（ボスのHPが30%以下か、怒った）ときは、少し速く高くなる（1.04倍）
 - 大きさは Minecraft の「音楽」の音量に従う。設定 `amemaru-client.toml` の `boss.music = false` で止められる
+  - **11月26日に変更**（ご指摘「ボス戦のBGMがなっていない」）【補完】：「音楽」の音量に従っていたので、「音楽」を0にしている人には鳴らなかった。
+    ボスの曲は「音楽」の音量から切り離し、主音量とこのModの設定「ボス戦の曲の大きさ」（`boss.musicVolume`。初期値 0.8）に従うようにした。
+    Mod の一覧の「設定」から開く「見た目と音の設定」の画面で変えられ、「曲を試しに聞く」で戦わずに鳴るかを確かめられる。
+    鳴っていなければ2秒ごとにかけ直す（前は、はじめの1回が鳴らなかったら戦いの終わりまでかけ直さなかった）。くわしくは [`phase8_1126.md`](phase8_1126.md)
 - 作り直すとき：`python3 tools/audio/boss_music.py`（1曲だけなら `python3 tools/audio/boss_music.py veldhorn`。`--wav <フォルダ>` で確かめ用の WAV も）
 
 ## 演出【補完】
@@ -103,6 +107,7 @@
 `phase8_boss_intro`（はじまり）・`phase8_boss_danger`（残り3秒）・`phase8_boss_phase`（段階が変わる）・`phase8_boss_intense`（追いこんだ）・
 `phase8_boss_low_hp`（HPが少ない）・`phase8_f1_boss_earth_roar`・`phase8_f2_boss_seeds`・`phase8_f2_boss_seeds_rooted`・`phase8_f3_boss_flood`・
 `phase8_f4_boss_echo`・`phase8_f5_boss_sever`。CIの機械には音が出ないので、選んだ曲は記録（`[amemaru-ci] boss fx`）で確かめます。
+11月26日から、CIの機械は鳴った音をファイルに録り、ボス戦のあいだに、そのボスの曲が本当に鳴っているかを確かめます（[`phase8_1126.md`](phase8_1126.md)）。
 
 ## ファイル
 

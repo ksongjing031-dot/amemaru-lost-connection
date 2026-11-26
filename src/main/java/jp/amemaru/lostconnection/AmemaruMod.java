@@ -41,6 +41,10 @@ public final class AmemaruMod {
         context.registerConfig(ModConfig.Type.SERVER, ServerConfig.SPEC, MOD_ID + "-server.toml");
         // 見た目の設定はプレイヤーごと（config/amemaru-client.toml）
         context.registerConfig(ModConfig.Type.CLIENT, ClientConfig.SPEC, MOD_ID + "-client.toml");
+        // 11月26日：Mod の一覧の「設定」から、見た目と音の設定（ボス戦の曲の大きさなど）を開けるように（クライアントだけ）
+        if (net.minecraftforge.fml.loading.FMLEnvironment.dist == net.minecraftforge.api.distmarker.Dist.CLIENT) {
+            jp.amemaru.lostconnection.client.screen.SettingsScreen.register(context);
+        }
 
         modBus.addListener(this::onCommonSetup);
 

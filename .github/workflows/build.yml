@@ -124,6 +124,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 100
     steps:
+      # 11月26日：録った音を確かめるスクリプト（tools/ci）だけを取り出す
+      - name: 確かめのスクリプトを取り出す
+        uses: actions/checkout@v5
+        with:
+          sparse-checkout: tools/ci
+
       - name: Java 17 を用意する
         uses: actions/setup-java@v5
         with:
@@ -147,6 +153,24 @@ jobs:
       # 11月21日（Phase 5）：写真の名前に数字（phase5_*）が入るので、取り出す名前に数字も入れた
       # 11月23日（Phase 8 その1）：Phase 7 までで約35分。2階を建てて写真を足すので、55分にした（ジョブは65分）
       # 11月25日：5階までで約52分。6階を建てて写真を足すので、75分にした（ジョブは85分）
+      # 11月26日（「ボス戦のBGMがなっていない」のご指摘）：CIの機械には音の出口がない（前は「Failed to open OpenAL device」で音が
+      # 止まっていた）。OpenAL Soft の「wave」（鳴った音をそのまま WAV ファイルに書く）を使い、ボス戦の曲が本当に鳴っているかを、
+      # 録った音で確かめる（下の「ボス戦の音を確かめる」）。軽くするため、1チャンネル・11025Hz にする
+      - name: 音をファイルに録る設定
+        run: |
+          cat > "$RUNNER_TEMP/alsoft-ci.conf" <<EOF
+          [general]
+          drivers = wave
+          channels = mono
+          sample-type = int16
+          frequency = 11025
+          [wave]
+          file = $GITHUB_WORKSPACE/run/ci-audio.wav
+          EOF
+          cat "$RUNNER_TEMP/alsoft-ci.conf"
+          echo "ALSOFT_CONF=$RUNNER_TEMP/alsoft-ci.conf" >> "$GITHUB_ENV"
+          echo "ALSOFT_DRIVERS=wave" >> "$GITHUB_ENV"
+
       - name: クライアントを起動し、ワールドに入って出る（画面写真も撮る）
         timeout-minutes: 90
         uses: headlesshq/mc-runtime-test@5.0.0
@@ -194,4 +218,29 @@ jobs:
           name: screenshots-${{ github.run_number }}
           path: screenshots/*.png
           if-no-files-found: warn
+          retention-days: 7
+
+      - name: 録った音を確かめる Python を用意する
+        if: always()
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      # 11月26日：録った音の、ボス戦の段取りの時刻のあたりに、そのボスの曲が入っているか（tools/ci/boss_audio.py）。
+      # 結果はログとジョブのまとめに出す。ボス戦の前後20秒の録音を保存する（聞いて確かめられる）
+      - name: ボス戦の音を確かめる
+        if: always()
+        run: |
+          ls -la run/ci-audio.wav || true
+          grep -h -E "OpenAL|Sound engine|audio clock|boss fx|Boss music" run/logs/*.log | head -n 60 || true
+          python3 -m pip install --quiet numpy scipy soundfile
+          python3 -I tools/ci/boss_audio.py run/ci-audio.wav run/logs/latest.log --mods run/mods --out audio
+
+      - name: ボス戦の音を保存する
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: boss-audio-${{ github.run_number }}
+          path: audio/*.wav
+          if-no-files-found: ignore
           retention-days: 7

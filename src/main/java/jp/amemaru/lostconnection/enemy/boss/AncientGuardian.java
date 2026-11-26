@@ -59,7 +59,8 @@ import java.util.UUID;
  *       修復ドローンを呼ぶ（乗っている人を、残りの人が守る）。解けるとよろめき、しばらく受けるダメージが増える。
  *       第2段階のうちは {@code skills.barrier.cooldown} 秒ごとに張り直す</li>
  *   <li>第3段階（35〜0%）：「接続判定」。予兆のあと、6ブロック（{@code skills.judge.range}）以内に味方がいない人に大ダメージ。
- *       寄り添えば耐えられる（ひとりで戦っているときは判定しない）【補完】</li>
+ *       寄り添えば耐えられる（ひとりで戦っているときは判定しない）【補完】。11月26日：ひとり確認モード
+ *       （{@link jp.amemaru.lostconnection.tower.SoloTest}）では、ひとりでも判定し、練習用の人形を味方に数える</li>
  *   <li>最後：HPが尽きると倒れずに止まり、全員が祭壇の中央（{@code boss_marks.altar_center}）に集まると、膝をつく。
  *       倒れる前に「……登録外の、接続波形……」とつぶやく（確定の前触れ）</li>
  *   <li>警戒：戦いが始まったときの階の警戒（監視眼に見つかった数）1つにつき、攻撃 +10%（{@link AltarService}）</li>
@@ -235,7 +236,7 @@ public class AncientGuardian extends AmemaruBoss {
         if (timer % 3 == 0) {
             // 11月25日（CIの写真で見て濃くした）：48粒の太い輪を、0.15秒ごとに
             for (ServerPlayer player : players) {
-                boolean close = linked(player, players, range);
+                boolean close = linkedOrStandIn(level, player, players, range);
                 for (int i = 0; i < 48; i++) {
                     double a = Math.PI * 2.0 * i / 48.0;
                     level.sendParticles(close ? SEVER_CLOSE : SEVER_APART, player.getX() + Math.cos(a) * range, player.getY() + 0.2,
@@ -251,8 +252,10 @@ public class AncientGuardian extends AmemaruBoss {
         if (--timer > 0) {
             return;
         }
+        // 11月26日：ひとり確認モードでは、ひとりでも判定する（練習用の人形を、ほかの人に数える）
+        boolean judged = players.size() >= 2 || jp.amemaru.lostconnection.tower.SoloTest.on();
         for (ServerPlayer player : players) {
-            if (players.size() >= 2 && linked(player, players, range)) {
+            if (judged && linkedOrStandIn(level, player, players, range)) {
                 EnemyCombat.strike(this, player, sever.power(), null);
                 level.sendParticles(ParticleTypes.FLASH, player.getX(), player.getY() + 1.0, player.getZ(), 1, 0.0, 0.0, 0.0, 0.0);
                 player.displayClientMessage(Component.translatable("boss.amemaru.ancient_guardian.severed").withStyle(ChatFormatting.RED), true);
@@ -470,8 +473,8 @@ public class AncientGuardian extends AmemaruBoss {
             startJudge(level, players);
             return;
         }
-        // 切断判定：第1・第2段階で、2人以上のとき（11月25日）
-        if (phase() <= 2 && severCooldown == 0 && !barrier() && players.size() >= 2) {
+        // 切断判定：第1・第2段階で、2人以上のとき（11月25日）。11月26日：ひとり確認モードでは、ひとりでも
+        if (phase() <= 2 && severCooldown == 0 && !barrier() && (players.size() >= 2 || jp.amemaru.lostconnection.tower.SoloTest.on())) {
             startSever(level);
             return;
         }
@@ -840,7 +843,7 @@ public class AncientGuardian extends AmemaruBoss {
         if (timer % 5 == 0) {
             // ひとりひとりのまわりに、6ブロックの輪（味方が中にいれば緑、いなければ赤）
             for (ServerPlayer player : players) {
-                boolean linked = linked(player, players, range);
+                boolean linked = linkedOrStandIn(level, player, players, range);
                 for (int i = 0; i < 24; i++) {
                     double a = Math.PI * 2.0 * i / 24.0;
                     level.sendParticles(linked ? LINKED : ALONE, player.getX() + Math.cos(a) * range, player.getY() + 0.2,
@@ -852,14 +855,14 @@ public class AncientGuardian extends AmemaruBoss {
         if (--timer > 0) {
             return;
         }
-        if (players.size() <= 1) {
-            // ひとりの挑戦者は、判定しない【補完】
+        if (players.size() <= 1 && !jp.amemaru.lostconnection.tower.SoloTest.on()) {
+            // ひとりの挑戦者は、判定しない【補完】。11月26日：ひとり確認モードでは判定する（練習用の人形を味方に数える）
             for (ServerPlayer player : players) {
                 player.displayClientMessage(Component.translatable("boss.amemaru.ancient_guardian.judge_alone").withStyle(ChatFormatting.GRAY), true);
             }
         } else {
             for (ServerPlayer player : players) {
-                if (linked(player, players, range)) {
+                if (linkedOrStandIn(level, player, players, range)) {
                     EnemyCombat.strike(this, player, judge.power() * judge.param("linked", 0.12), null);
                 } else {
                     EnemyCombat.strike(this, player, judge.power(), null);
@@ -873,6 +876,11 @@ public class AncientGuardian extends AmemaruBoss {
         judgeCooldown = cooldown(judge);
         action = Action.RECOVER;
         timer = 16;
+    }
+
+    /** 味方か、ひとり確認モードの練習用の人形（{@link jp.amemaru.lostconnection.tower.SoloTest#standIns}）が、6ブロック以内にいるか。 */
+    private static boolean linkedOrStandIn(ServerLevel level, ServerPlayer player, List<ServerPlayer> others, double range) {
+        return linked(player, others, range) || jp.amemaru.lostconnection.tower.SoloTest.standIns(level, player.position(), range, 3.0) > 0;
     }
 
     /** 6ブロック以内に、倒れていない味方がいるか。 */

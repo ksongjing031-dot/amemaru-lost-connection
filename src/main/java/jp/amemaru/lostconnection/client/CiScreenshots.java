@@ -650,6 +650,12 @@ public final class CiScreenshots {
             {"cmd", null, "0", "amemaru admin boss hp 1 25"},
             {"await_banner", null, "0", "phase8_boss_intense"},
             {"p8_bossfx", null, "0", "f1_intense"},
+            // 追いこんだあとの曲（1.04倍の速さ）を、CIの録音で確かめる間（tools/ci/boss_audio.py は合図の5.5秒あとから6秒を聞く）。
+            // ほかの音（心臓の音・倒した音）を入れずに13秒待つ。待つ間に倒れないよう、HPをもとに戻し続ける
+            {"cmd", null, "65", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "65", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "65", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "65", "amemaru admin debug vitals @a 100 100"},
             // 自分のHPが少ない（心臓の音と、画面のふちの赤い脈。HPが一気に減ったので、揺れと赤い光も）
             {"cmd", null, "20", "amemaru admin debug vitals @a 20 100"},
             {"snap", null, "12", "phase8_boss_low_hp"},
@@ -1972,6 +1978,12 @@ public final class CiScreenshots {
             {"snap", null, "30", "phase8_f8_bow"},
             {"p8_hold", null, "5", "-"},
             {"view", null, "5", "first"},
+            // 11月26日：見た目と音の設定の画面（Mod の一覧の「設定」から開く）。「曲を試しに聞く」で2階のボスの曲を流す
+            // （録った音に、その曲が入っているかを tools/ci/boss_audio.py が確かめる）
+            {"p8_settings", null, "20", "open"},
+            {"p8_settings", null, "10", "preview"},
+            {"snap", null, "20", "phase8_settings"},
+            {"p8_settings", null, "200", "-"},
             {"screen", null, "10", "hold"},
             {"cmd", null, "5", "amemaru admin debug guard @p off"},
             {"cmd", null, "10", "gamemode spectator @p"},

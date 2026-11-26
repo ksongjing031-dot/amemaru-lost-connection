@@ -151,6 +151,12 @@ public final class BellService {
         }
     }
 
+    /** 組の鐘を鳴らしきるまでの秒。11月26日：ひとり確認モード（{@link jp.amemaru.lostconnection.tower.SoloTest}）では延ばす。 */
+    public static int limitSeconds(FloorFeatures.BellGroup group) {
+        return jp.amemaru.lostconnection.tower.SoloTest.seconds(group.seconds(),
+                group.seconds() * jp.amemaru.lostconnection.tower.SoloTest.BELL_FACTOR);
+    }
+
     public static boolean solved(MinecraftServer server, int floor, String group) {
         return Data.get(server).solved(floor, group);
     }
@@ -244,7 +250,7 @@ public final class BellService {
             where.append(bell.name()).append(bell.where().isEmpty() ? "" : "（" + bell.where() + "）");
         }
         boolean done = solved(server, floor, groupId);
-        String body = Component.translatable(done ? "message.amemaru.bells.song_done" : "message.amemaru.bells.song", song, group.seconds(),
+        String body = Component.translatable(done ? "message.amemaru.bells.song_done" : "message.amemaru.bells.song", song, limitSeconds(group),
                 where.toString()).getString();
         ModNetwork.sendTo(player, new StoryTextS2C(StoryTextS2C.Kind.ANCIENT,
                 Component.translatable("message.amemaru.bells.song_title", group.name()).getString(), body, 200));
@@ -316,7 +322,7 @@ public final class BellService {
             solve(server, def, group, player);
             return;
         }
-        long left = Math.max(0L, group.seconds() - (now - data.started(floor, groupId)) / 20L);
+        long left = Math.max(0L, limitSeconds(group) - (now - data.started(floor, groupId)) / 20L);
         for (ServerPlayer p : playersOn(level, def)) {
             p.displayClientMessage(Component.translatable("message.amemaru.bells.rang", bell.name(), progress, group.bells().size(), left)
                     .withStyle(ChatFormatting.GOLD), true);
@@ -524,7 +530,7 @@ public final class BellService {
             }
             for (FloorFeatures.BellGroup group : def.features().bells()) {
                 int progress = data.progress(def.number(), group.id());
-                if (progress > 0 && now - data.started(def.number(), group.id()) > group.seconds() * 20L) {
+                if (progress > 0 && now - data.started(def.number(), group.id()) > limitSeconds(group) * 20L) {
                     data.setProgress(def.number(), group.id(), 0, 0L);
                     reconcileGroup(tower, def, group, data);
                     for (ServerPlayer p : players) {

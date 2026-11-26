@@ -49,7 +49,8 @@ import java.util.UUID;
  *
  * <ul>
  *   <li>薄氷の上で、{@link #CROWD_RANGE} ブロックのうちに {@link #CROWD} 人以上が乗っていると、足もとの薄氷にひびが入る
- *       （0.5秒ごとに1段。3段で、次にまだ集まっていれば割れる）。ひとりなら割れない。離れれば、ひびは少しずつ消える</li>
+ *       （0.5秒ごとに1段。3段で、次にまだ集まっていれば割れる）。ひとりなら割れない。離れれば、ひびは少しずつ消える。
+ *       ひとり確認モード（{@link jp.amemaru.lostconnection.tower.SoloTest}）では、練習用の人形も1人に数える</li>
  *   <li>割れた所（と、無音の大魚・ボスが割った所）は、しばらく水の穴になる。穴は {@link #HOLE_SECONDS} 秒で凍り直す
  *       （穴の中に誰かがいる間は凍らない）。サーバーが止まっても、次に起きたときに戻す</li>
  *   <li>水に落ちた人は、{@code lake.rescue_seconds} 秒で、最後に立っていた所へ引き上げられる（凍えが2つ）。氷の下に閉じこめられない</li>
@@ -292,6 +293,10 @@ public final class ThinIceService {
                 if (dx * dx + dz * dz <= CROWD_RANGE * CROWD_RANGE && Math.abs(q.getY() - p.getY()) < 1.5) {
                     near++;
                 }
+            }
+            // 11月26日：ひとり確認モードでは、薄氷の上の練習用の人形も、乗っている人に数える
+            if (near < CROWD) {
+                near += jp.amemaru.lostconnection.tower.SoloTest.standIns(level, p.position(), CROWD_RANGE, 1.5);
             }
             if (near < CROWD) {
                 continue;

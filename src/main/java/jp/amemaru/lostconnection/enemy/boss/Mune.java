@@ -664,7 +664,9 @@ public class Mune extends AmemaruBoss {
     /** 静寂の帳を広げる（管理者・自動テストからも）。 */
     public void castVeil(ServerLevel level) {
         EnemyDef.Skill veil = veilSkill();
-        int ticks = (int) Math.round(veil.param("seconds", 20.0) * 20);
+        // 11月26日：ひとり確認モードでは、ひとりで鳴り石を2つ回れるように、帳を長くする
+        int ticks = (int) Math.round(jp.amemaru.lostconnection.tower.SoloTest.seconds(veil.param("seconds", 20.0),
+                jp.amemaru.lostconnection.tower.SoloTest.VEIL_LAST_SECONDS) * 20);
         for (ServerPlayer player : targets(level)) {
             LostService.inflict(player, ModEffects.LOST_SILENCE.get(), ticks, 1);
         }
@@ -702,7 +704,9 @@ public class Mune extends AmemaruBoss {
             return false;
         }
         EnemyDef.Skill veil = veilSkill();
-        int window = (int) Math.round(veil.param("window", 3.0) * 20);
+        // 11月26日：ひとり確認モードでは、ひとりで次の鳴り石へ走れるように延ばす
+        int window = (int) Math.round(jp.amemaru.lostconnection.tower.SoloTest.seconds(veil.param("window", 3.0),
+                jp.amemaru.lostconnection.tower.SoloTest.VEIL_SECONDS) * 20);
         bellRings.entrySet().removeIf(e -> tickCount - e.getValue() > window);
         bellRings.put(pos.immutable(), tickCount);
         if (bellRings.size() < 2) {

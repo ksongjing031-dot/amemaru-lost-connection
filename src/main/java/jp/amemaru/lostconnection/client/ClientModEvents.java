@@ -221,6 +221,18 @@ public final class ClientModEvents {
         event.registerReloadListener((ResourceManagerReloadListener) manager -> OptionalGlowLayer.clearCache());
     }
 
+    /**
+     * 11月26日：CIの確かめ（{@code -Damemaru.ci.screenshots=true}）では、音を鳴らすしくみ（OpenAL）が動きはじめた時刻をログに書く。
+     * CIの機械は、鳴った音をファイルに録る（OpenAL Soft の wave）。録った音の何秒めがボス戦かを、この時刻から求める
+     * （{@code tools/ci/boss_audio.py}）。
+     */
+    @SubscribeEvent
+    public static void onSoundEngineLoad(net.minecraftforge.client.event.sound.SoundEngineLoadEvent event) {
+        if (Boolean.getBoolean("amemaru.ci.screenshots")) {
+            AmemaruMod.LOGGER.info("[amemaru-ci] audio clock start={}", System.currentTimeMillis());
+        }
+    }
+
     @SubscribeEvent
     public static void onRegisterDecorations(RegisterItemDecorationsEvent event) {
         for (RegistryObject<Item> item : ModItems.MANIFEST.category(ItemManifest.Category.ACCESSORY)) {
