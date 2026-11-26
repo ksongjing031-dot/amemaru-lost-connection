@@ -222,6 +222,9 @@ public final class LevelService {
             data.setLevel(growth.maxLevel());
             data.setExp(0);
         }
+        // 11月27日：計算し直す前に、受けたばかりのダメージ（バニラの体力の変化）を独自のHPに写す。写さずに下でバニラの
+        // 体力を置き直すと、そのダメージが消える（防具の耐久が減ったときの計算し直しで、敵のダメージが通らなかった）
+        VitalsService.absorbPending(player, data);
         data.applyStats(StatCalculator.compute(player, data, growth));
         // 素早さ：移動と攻撃の速さ（回避は受けたときに抽選する）
         SpeedService.apply(player, data);

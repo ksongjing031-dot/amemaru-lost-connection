@@ -15,6 +15,8 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 
 import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 霜狼（6階「凍結した村」の雑魚。Phase 0-A 9章の6階）：白く凍った毛の狼。群れで動き、噛みつきと突進（1階の欠け牙の狼と同じ動き）。
@@ -24,6 +26,8 @@ import javax.annotation.Nullable;
  */
 public class FrostWolf extends KakekibaWolf {
     private boolean called;
+    /** 呼んだ仲間（自動テスト用。保存しない）。 */
+    private final List<FrostWolf> pack = new ArrayList<>();
 
     public FrostWolf(EntityType<? extends FrostWolf> type, Level level) {
         super(type, level);
@@ -63,6 +67,7 @@ public class FrostWolf extends KakekibaWolf {
             wolf.setHome(BlockPos.containing(position()));
             wolf.setTransient(true);
             level.addFreshEntity(wolf);
+            pack.add(wolf);
             ServerPlayer target = topThreat();
             if (target != null) {
                 wolf.addThreat(target, 1.0);
@@ -74,6 +79,11 @@ public class FrostWolf extends KakekibaWolf {
     /** 自動テスト用：仲間を呼んだか。 */
     public boolean testCalled() {
         return called;
+    }
+
+    /** 自動テスト用：呼んだ仲間。 */
+    public List<FrostWolf> testPack() {
+        return List.copyOf(pack);
     }
 
     @Override

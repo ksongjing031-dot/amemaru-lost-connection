@@ -391,8 +391,14 @@ public final class VillageGameTests {
             leader.setEnemyHp(leader.getEnemyMaxHp() * 0.4);
             leader.onDamagedBy(null, 1.0);
             helper.runAfterDelay(2, () -> {
-                List<FrostWolf> pack = level.getEntitiesOfClass(FrostWolf.class, leader.getBoundingBox().inflate(8.0), w -> w != leader);
+                // 11月27日：呼んだ仲間は群れ長から4ブロック先に出るので、3×3の試験の場所の外（読み込まれていないチャンク）に出ることが
+                // あり、周りを探すと見つからないことがあった。群れ長が呼んだ仲間そのものを確かめる
+                List<FrostWolf> pack = leader.testPack();
                 check(helper, leader.testCalled() && pack.size() == 3, "霜狼の群れ長が、HP40%で仲間を3匹呼びません：" + pack.size());
+                for (FrostWolf w : pack) {
+                    check(helper, !w.isRemoved() && w.distanceTo(leader) < 8.0F && w.isTransient(),
+                            "呼んだ霜狼が、群れ長のそばにいないか、保存される狼です：" + w.distanceTo(leader));
+                }
                 pack.forEach(w -> w.discard());
                 leader.discard();
                 echo.discard();
