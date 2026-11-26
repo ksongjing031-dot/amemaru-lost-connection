@@ -994,7 +994,7 @@ public class Veldhorn extends AmemaruBoss {
     /** 止められなかった：部屋じゅうに大地の衝撃。 */
     private void releaseEarthRoar(ServerLevel level) {
         EnemyDef.Skill earth = earthRoarSkill();
-        Vec3 roarCenter = room != null ? room.arenaCenter() : position();
+        Vec3 roarCenter = room() != null ? room().arenaCenter() : position();
         impactFx("earth_roar", TELEGRAPH_CIRCLE, new Vec3(roarCenter.x, getY(), roarCenter.z), 0.0F, (float) Math.min(28.0, earth.range()),
                 0.0F);  // 11月27日：当たった瞬間の演出
         discardRoarMarker();

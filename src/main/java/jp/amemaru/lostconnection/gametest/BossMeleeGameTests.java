@@ -360,7 +360,7 @@ public final class BossMeleeGameTests {
     }
 
     /**
-     * 11月27日：ボスごとのHPの帯。1階は1本、強くなるにつれて増える（5本まで）。HPは前の1.5倍（2人ぶんで1階24000以上）。
+     * 11月27日：ボスごとのHPの帯。1階は1本、強くなるにつれて増える（5本まで）。HPは前の1.5倍（定義のHP＝ひとりぶん。1階は24000で、2人までは人数補正で1.6倍）。
      */
     @GameTest(template = EMPTY)
     public static void bossHpBarsGrowWithFloors(GameTestHelper helper) {
