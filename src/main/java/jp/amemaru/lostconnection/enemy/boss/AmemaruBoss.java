@@ -319,9 +319,7 @@ public abstract class AmemaruBoss extends AmemaruMob {
             speed = (float) Math.max(0.3, Math.min(1.0, designed / skill.windup()));
         }
         super.playAction(name, speed);
-        // 11月28日：全員を狙う技（一斉の印・大技）の間は、その名前（「ボスから離れろ」「金の円へ」）を出したままにする。
-        // ボスはその間もほかの技を出すが、名前で上書きすると、部屋じゅうの人がなにから逃げるのか分からなくなる
-        if (!level().isClientSide() && name.startsWith("skill_") && !party.active()) {
+        if (!level().isClientSide() && name.startsWith("skill_")) {
             setCast(name.substring("skill_".length()), 30);
         }
     }
@@ -339,6 +337,12 @@ public abstract class AmemaruBoss extends AmemaruMob {
 
     /** 技の名前を出す（{@code ticks} のあとで消す）。 */
     protected void setCast(String skill, int ticks) {
+        // 11月28日：全員を狙う技（一斉の印・大技・レイドの分かち合い）の間は、その名前（「ボスから離れろ」「金の円へ」）を出した
+        // ままにする。ボスはその間もほかの技を出すが、名前で上書きすると、部屋じゅうの人がなにから逃げるのか分からなくなる
+        // （CI の写真で、7階の大技の予兆の間に「鏡爪」「鏡片の雨」の名前が出ていた。ボスごとの技は、ここで名前を出す）
+        if (party.active() && !PartyAttacks.partyCast(skill)) {
+            return;
+        }
         entityData.set(DATA_CAST, skill);
         castClear = tickCount + Math.max(10, ticks) + 8;
     }

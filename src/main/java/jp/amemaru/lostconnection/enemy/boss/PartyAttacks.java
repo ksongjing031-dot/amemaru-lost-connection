@@ -99,6 +99,11 @@ public final class PartyAttacks {
         safeSpots.clear();
     }
 
+    /** 全員を狙う技の名前か（出ている間、ボスのほかの技の名前で上書きしない）。 */
+    public static boolean partyCast(String skill) {
+        return skill.equals("volley") || skill.startsWith("nova_") || skill.equals("share");
+    }
+
     /** 全員を狙う技を出している途中か（印が残っている・大技の予兆の間）。 */
     public boolean active() {
         return wavesLeft > 0 || !waves.isEmpty() || novaKind != 0;
