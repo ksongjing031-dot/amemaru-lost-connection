@@ -132,6 +132,8 @@ public final class ProgressionService {
         jp.amemaru.lostconnection.tower.iceforest.LightMazeService.onDayChanged(server);
         // 11月25日（8階）：鐘はまた沈黙し、石橋は沈み、祠のふたは閉じる。湖の音も消える
         jp.amemaru.lostconnection.tower.lake.BellService.onDayChanged(server);
+        // 11月28日（9階）：王家の肖像画は、また空白に戻る
+        jp.amemaru.lostconnection.tower.castle.LineageService.onDayChanged(server);
         broadcastWorldState(server);
         TowerHall.update(server);
         return now;

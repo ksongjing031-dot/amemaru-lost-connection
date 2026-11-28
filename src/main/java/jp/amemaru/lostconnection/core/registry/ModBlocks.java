@@ -198,6 +198,38 @@ public final class ModBlocks {
             new jp.amemaru.lostconnection.tower.lake.LakeBlocks.Tablet(BlockBehaviour.Properties.of()
                     .mapColor(MapColor.STONE).strength(-1.0F, 3600000.0F).sound(SoundType.STONE).lightLevel(state -> 5)
                     .noOcclusion().pushReaction(PushReaction.BLOCK)));
+    // ---- 11月28日：9階「氷結した王城」（壊せない）
+    /** 王家の肖像画（名札の台座。絵は上の壁に、ブロックの実体が描く）。 */
+    public static final RegistryObject<Block> ROYAL_PORTRAIT = BLOCKS.register("royal_portrait", () ->
+            new jp.amemaru.lostconnection.tower.castle.CastleBlocks.Portrait(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.GOLD).strength(-1.0F, 3600000.0F).sound(SoundType.WOOD)
+                    .lightLevel(state -> state.getValue(jp.amemaru.lostconnection.tower.castle.CastleBlocks.RESTORED) ? 9 : 3)
+                    .noOcclusion().noCollission().pushReaction(PushReaction.BLOCK)));
+    /** 名前の札の台。 */
+    public static final RegistryObject<Block> NAME_PLATE_STAND = BLOCKS.register("name_plate_stand", () ->
+            new jp.amemaru.lostconnection.tower.castle.CastleBlocks.PlateStand(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.ICE).strength(-1.0F, 3600000.0F).sound(SoundType.STONE).lightLevel(state -> 6)
+                    .noOcclusion().pushReaction(PushReaction.BLOCK)));
+    /** 建国の碑。 */
+    public static final RegistryObject<Block> LINEAGE_STELE = BLOCKS.register("lineage_stele", () ->
+            new jp.amemaru.lostconnection.tower.castle.CastleBlocks.Clue(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.QUARTZ).strength(-1.0F, 3600000.0F).sound(SoundType.STONE).lightLevel(state -> 7)
+                    .pushReaction(PushReaction.BLOCK), net.minecraft.world.level.block.Block.box(1, 0, 3, 15, 16, 13)));
+    /** 系譜の書（台の上の、開いた大きな本）。 */
+    public static final RegistryObject<Block> LINEAGE_BOOK = BLOCKS.register("lineage_book", () ->
+            new jp.amemaru.lostconnection.tower.castle.CastleBlocks.Clue(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.WOOD).strength(-1.0F, 3600000.0F).sound(SoundType.WOOD).lightLevel(state -> 7)
+                    .noOcclusion().pushReaction(PushReaction.BLOCK), net.minecraft.world.level.block.Block.box(2, 0, 2, 14, 14, 14)));
+    /** 女王の書簡（机・腰かけ・鏡台の上の、折りたたんだ手紙）。 */
+    public static final RegistryObject<Block> QUEEN_LETTER = BLOCKS.register("queen_letter", () ->
+            new jp.amemaru.lostconnection.tower.castle.CastleBlocks.Letter(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.SNOW).strength(-1.0F, 3600000.0F).sound(SoundType.WOOL).lightLevel(state -> 4)
+                    .noOcclusion().noCollission().pushReaction(PushReaction.BLOCK)));
+    /** 女王の書斎の内がわの留め金。 */
+    public static final RegistryObject<Block> STUDY_LATCH = BLOCKS.register("study_latch", () ->
+            new jp.amemaru.lostconnection.tower.castle.CastleBlocks.Latch(BlockBehaviour.Properties.of()
+                    .mapColor(MapColor.METAL).strength(-1.0F, 3600000.0F).sound(SoundType.METAL)
+                    .noOcclusion().noCollission().pushReaction(PushReaction.BLOCK)));
     /** 凍った村人の氷像（人の形は、ブロックの実体が描く）。 */
     public static final RegistryObject<Block> VILLAGE_STATUE = BLOCKS.register("village_statue", () ->
             new jp.amemaru.lostconnection.tower.village.VillageBlocks.Statue(BlockBehaviour.Properties.of()

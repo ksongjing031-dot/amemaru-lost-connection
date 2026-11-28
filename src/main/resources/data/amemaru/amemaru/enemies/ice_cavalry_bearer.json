@@ -1,0 +1,62 @@
+{
+  "_comment": "霜蹄の旗手（9階の名のある魔物。西の練兵場の宝箱の守り手）。氷の騎兵の旗手。続けて chain 回突撃し、HPが半分を切ると旗を振って号令をかけ、凍った兵を call 体目覚めさせる（練兵場の碑「霜蹄の旗手が、今も号令を待つ」）。数値は【補完】",
+  "name": "霜蹄の旗手",
+  "model": "amemaru:ice_cavalry",
+  "floor": 9,
+  "level": 40,
+  "description": "近衛騎兵の旗を背負った、大きな氷の騎兵。青い旗は凍って、ひるがえる形のまま止まっている。号令をかける声は、もう誰にも届かない。",
+  "stats": {
+    "hp": 24000,
+    "attack": 252,
+    "defense": 26,
+    "move_speed": 0.31,
+    "follow_range": 28,
+    "aggro_range": 16
+  },
+  "exp": 600,
+  "skills": {
+    "charge": {
+      "power": 2.0,
+      "windup": 1.1,
+      "cooldown": 7.0,
+      "range": 22.0,
+      "min_range": 6.0,
+      "speed": 1.05,
+      "width": 2.0,
+      "recover": 0.8
+    },
+    "stomp": {
+      "power": 1.3,
+      "windup": 0.9,
+      "cooldown": 3.5,
+      "range": 3.6,
+      "angle": 360
+    }
+  },
+  "behavior": {
+    "chain": 2,
+    "call": 2,
+    "stagger_seconds": 4.0,
+    "stagger_taken": 1.5,
+    "chill_stacks": 2,
+    "chill_seconds": 5.0,
+    "scale": 1.15
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/ice_cavalry",
+    "rare": [
+      {
+        "item": "amemaru:royal_seal",
+        "chance": 40.0
+      },
+      {
+        "item": "amemaru:bearer_tassel",
+        "chance": 5.0
+      },
+      {
+        "item": "amemaru:crystal_fruit_violet",
+        "chance": 6.0
+      }
+    ]
+  }
+}

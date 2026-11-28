@@ -1,0 +1,59 @@
+{
+  "_comment": "凍れる近衛兵（9階の雑魚。Phase 0-A 9章の9階）。凍った兵士の像にまじって、像のまま立っている（叩いても硬い：dormant_taken。近づく wake_range・叩くと目を覚ます。誰もいないと、元の場所でまた像になる。enemy/castle/FrozenGuard.java）。斧槍の突き（thrust。前の細い扇。凍える）と盾打ち（bash。前の扇。押し返す bash_push）。塔の盾：前（shield_angle 度）から受けるダメージは shield_taken、formation_range の中にほかの近衛兵がいる（隊列）と formation_taken。横か後ろから攻める。数値は【補完】",
+  "name": "凍れる近衛兵",
+  "floor": 9,
+  "level": 36,
+  "description": "氷に覆われたまま、今も城を守っている近衛の兵。青い外套に、氷の斧槍と塔の盾。兜の中の顔は、白く抜けている。――隊列を組めば、ひとりの盾は、みんなの盾になる。",
+  "stats": {
+    "hp": 2600,
+    "attack": 236,
+    "defense": 30,
+    "move_speed": 0.22,
+    "follow_range": 24,
+    "aggro_range": 10
+  },
+  "exp": 76,
+  "skills": {
+    "thrust": {
+      "power": 1.3,
+      "windup": 1.0,
+      "cooldown": 4.0,
+      "range": 3.6,
+      "angle": 40
+    },
+    "bash": {
+      "power": 1.0,
+      "windup": 0.8,
+      "cooldown": 3.0,
+      "range": 2.6,
+      "angle": 100
+    }
+  },
+  "behavior": {
+    "wake_range": 5.0,
+    "dormant_taken": 0.3,
+    "shield_taken": 0.4,
+    "formation_taken": 0.2,
+    "formation_range": 4.0,
+    "shield_angle": 120.0,
+    "chill_seconds": 4.0,
+    "bash_push": 0.9
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/frozen_guard",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_white",
+        "chance": 0.6
+      },
+      {
+        "item": "amemaru:crystal_fruit_azure",
+        "chance": 0.3
+      },
+      {
+        "item": "amemaru:royal_seal",
+        "chance": 1.0
+      }
+    ]
+  }
+}

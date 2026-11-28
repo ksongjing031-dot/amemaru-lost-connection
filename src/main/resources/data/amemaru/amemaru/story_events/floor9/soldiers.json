@@ -1,0 +1,37 @@
+{
+  "_comment": "外庭の凍った兵士の隊列（本人だけ。一人一度）。像にまじって、目を覚ます近衛兵がいる【補完】",
+  "title": "凍った兵士の隊列",
+  "trigger": {
+    "type": "amemaru:floor_zone",
+    "floor": 9,
+    "zone": "soldiers"
+  },
+  "scope": "player",
+  "once": false,
+  "replayable": true,
+  "conditions": {
+    "flags_none": [
+      "amemaru:story/castle_soldiers_seen"
+    ]
+  },
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "外庭いっぱいに、凍った兵士が隊列を組んでいる。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "……近づくと、盾の向こうで、氷がかすかにきしんだ。全部が、ただの像ではないのかもしれない。",
+      "ticks": 120,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/castle_soldiers_seen"
+      ]
+    }
+  ]
+}

@@ -53,7 +53,8 @@ public final class BossHpBar {
             "ancient_guardian", new int[]{0x4FCC9E, 0xE6E0D2},
             "ordo", new int[]{0xBFEFFF, 0x7FC8F0, 0xF2C94C},
             "reflecta", new int[]{0xF0F4FF, 0xC9A8FF, 0x8FF0FF},
-            "mune", new int[]{0xA8F7FF, 0x7FDDE8, 0x5FA8E0, 0x6F7FE0});
+            "mune", new int[]{0xA8F7FF, 0x7FDDE8, 0x5FA8E0, 0x6F7FE0},
+            "valgrim", new int[]{0xEAF4FF, 0x9CC8FF, 0x5A80DC, 0x3C5A9E});
     private static final int[] DEFAULT_PALETTE = {0xE0C89A, 0xB8A27A, 0x9C8A6A, 0x8A7A5E};
 
     /** 減った分の、遅れて縮む明るい帯（バーごと）。 */

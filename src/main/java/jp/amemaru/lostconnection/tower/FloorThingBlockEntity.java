@@ -74,6 +74,15 @@ public class FloorThingBlockEntity extends BlockEntity {
         }
     }
 
+    /** 11月28日（9階）：肖像画の絵は、台座の上の壁に3×4で描くので、見えるかどうかもその広さで決める。 */
+    @Override
+    public net.minecraft.world.phys.AABB getRenderBoundingBox() {
+        if (getBlockState().getBlock() instanceof jp.amemaru.lostconnection.tower.castle.CastleBlocks.Portrait) {
+            return new net.minecraft.world.phys.AABB(worldPosition).inflate(2.0, 0.0, 2.0).expandTowards(0.0, 5.0, 0.0);
+        }
+        return super.getRenderBoundingBox();
+    }
+
     @Override
     public CompoundTag getUpdateTag() {
         return saveWithoutMetadata();

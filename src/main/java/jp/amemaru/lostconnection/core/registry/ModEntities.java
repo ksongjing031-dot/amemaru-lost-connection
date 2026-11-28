@@ -301,6 +301,38 @@ public final class ModEntities {
             EntityType.Builder.<jp.amemaru.lostconnection.enemy.boss.Mune>of(jp.amemaru.lostconnection.enemy.boss.Mune::new, MobCategory.MONSTER)
                     .sized(3.2F, 2.0F).clientTrackingRange(16).updateInterval(2).build(AmemaruMod.id("mune").toString()));
 
+    // ---------------------------------------------------------------- 11月28日：9階「氷結した王城」
+    /** 凍れる近衛兵（像のまま立ち、近づくと目を覚ます。塔の盾と隊列。近衛長の部下にもなる）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.castle.FrozenGuard>> FROZEN_GUARD =
+            ENTITIES.register("frozen_guard", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.castle.FrozenGuard>of(jp.amemaru.lostconnection.enemy.castle.FrozenGuard::new, MobCategory.MONSTER)
+                    .sized(0.8F, 2.2F).clientTrackingRange(10).build(AmemaruMod.id("frozen_guard").toString()));
+    /** 氷の騎兵（槍の突撃。壁にぶつかると転ぶ）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.castle.IceCavalry>> ICE_CAVALRY =
+            ENTITIES.register("ice_cavalry", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.castle.IceCavalry>of(jp.amemaru.lostconnection.enemy.castle.IceCavalry::new, MobCategory.MONSTER)
+                    .sized(1.4F, 2.8F).clientTrackingRange(10).build(AmemaruMod.id("ice_cavalry").toString()));
+    /** 書架霊（頁を撃つ魔法。当たると「薄れ」）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.castle.ShelfWraith>> SHELF_WRAITH =
+            ENTITIES.register("shelf_wraith", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.castle.ShelfWraith>of(jp.amemaru.lostconnection.enemy.castle.ShelfWraith::new, MobCategory.MONSTER)
+                    .sized(0.8F, 1.9F).clientTrackingRange(10).build(AmemaruMod.id("shelf_wraith").toString()));
+    /** 霜の猟犬（群れで、霜の匂いのついた人を追う）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.castle.FrostHound>> FROST_HOUND =
+            ENTITIES.register("frost_hound", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.castle.FrostHound>of(jp.amemaru.lostconnection.enemy.castle.FrostHound::new, MobCategory.MONSTER)
+                    .sized(0.8F, 1.0F).clientTrackingRange(10).build(AmemaruMod.id("frost_hound").toString()));
+    /** 忘れられた侍女（傷ついた城の敵を介抱する。人が近づくと離れる）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.castle.ForgottenMaid>> FORGOTTEN_MAID =
+            ENTITIES.register("forgotten_maid", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.castle.ForgottenMaid>of(jp.amemaru.lostconnection.enemy.castle.ForgottenMaid::new, MobCategory.MONSTER)
+                    .sized(0.6F, 1.85F).clientTrackingRange(10).build(AmemaruMod.id("forgotten_maid").toString()));
+    /** 9階のボス、氷の近衛長ヴァルグリム（Phase 0-A 9章）。 */
+    public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.boss.Valgrim>> VALGRIM =
+            ENTITIES.register("valgrim", () ->
+            EntityType.Builder.<jp.amemaru.lostconnection.enemy.boss.Valgrim>of(jp.amemaru.lostconnection.enemy.boss.Valgrim::new, MobCategory.MONSTER)
+                    .sized(1.4F, 3.4F).clientTrackingRange(16).updateInterval(2).build(AmemaruMod.id("valgrim").toString()));
+
     /** 1階のボス、草原の主ヴェルドホーン（Phase 0-A 9章）。 */
     public static final RegistryObject<EntityType<jp.amemaru.lostconnection.enemy.boss.Veldhorn>> VELDHORN = ENTITIES.register("veldhorn", () ->
             EntityType.Builder.<jp.amemaru.lostconnection.enemy.boss.Veldhorn>of(jp.amemaru.lostconnection.enemy.boss.Veldhorn::new,
@@ -383,5 +415,14 @@ public final class ModEntities {
                 net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE, 0.3).build());
         event.put(FOG_WRAITH.get(), CrystalBee.createBeeAttributes().build());
         event.put(MUNE.get(), jp.amemaru.lostconnection.enemy.boss.AmemaruBoss.createBossAttributes().build());
+        // 11月28日：9階
+        event.put(FROZEN_GUARD.get(), AmemaruMob.createAttributes().add(
+                net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE, 0.8).build());
+        event.put(ICE_CAVALRY.get(), AmemaruMob.createAttributes().add(
+                net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE, 0.9).build());
+        event.put(SHELF_WRAITH.get(), CrystalBee.createBeeAttributes().build());
+        event.put(FROST_HOUND.get(), AmemaruMob.createAttributes().build());
+        event.put(FORGOTTEN_MAID.get(), AmemaruMob.createAttributes().build());
+        event.put(VALGRIM.get(), jp.amemaru.lostconnection.enemy.boss.AmemaruBoss.createBossAttributes().build());
     }
 }

@@ -1,0 +1,37 @@
+{
+  "_comment": "王家の書庫（本人だけ。一人一度）。頁の舞う書架霊と、系譜の書【補完】",
+  "title": "王家の書庫",
+  "trigger": {
+    "type": "amemaru:floor_zone",
+    "floor": 9,
+    "zone": "library"
+  },
+  "scope": "player",
+  "once": false,
+  "replayable": true,
+  "conditions": {
+    "flags_none": [
+      "amemaru:story/castle_library_seen"
+    ]
+  },
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "王家の書庫。床一面に、ほどけた頁が散らばっている。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "拾い上げた頁は、どれも名前のところだけが、白く消えていた。",
+      "ticks": 120,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/castle_library_seen"
+      ]
+    }
+  ]
+}

@@ -77,6 +77,12 @@ public final class ModCreativeTabs {
                 output.accept(ModItems.FROST_CRANE_SPAWN_EGG.get());
                 output.accept(ModItems.FOG_WRAITH_SPAWN_EGG.get());
                 output.accept(ModItems.MUNE_SPAWN_EGG.get());
+                output.accept(ModItems.FROZEN_GUARD_SPAWN_EGG.get());
+                output.accept(ModItems.ICE_CAVALRY_SPAWN_EGG.get());
+                output.accept(ModItems.SHELF_WRAITH_SPAWN_EGG.get());
+                output.accept(ModItems.FROST_HOUND_SPAWN_EGG.get());
+                output.accept(ModItems.FORGOTTEN_MAID_SPAWN_EGG.get());
+                output.accept(ModItems.VALGRIM_SPAWN_EGG.get());
                 output.accept(ModItems.SENTINEL_SPAWN_EGG.get());
                 output.accept(ModItems.REPAIR_DRONE_SPAWN_EGG.get());
             })

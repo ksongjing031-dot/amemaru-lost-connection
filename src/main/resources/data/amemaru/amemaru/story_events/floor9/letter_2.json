@@ -1,0 +1,23 @@
+{
+  "_comment": "女王の書斎で、女王の書簡（二通目）を手に取ったとき（本人だけ。CastleBlocks.Letter → TempleService.takeRelic。持ち物queen_letter_2 と古代記録 f09_queen_letters）。Phase 0-A 9章の9階の古代記録【補完】",
+  "title": "女王の書簡（二通目）",
+  "trigger": {
+    "type": "amemaru:admin"
+  },
+  "scope": "player",
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "女王の書簡（二通目）を手に取った。字が、ところどころ震えている。名前の一覧の半分が、線で消されている。",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "「書き留めた名前が、朝には知らない文字に見えるのです。……あなたは、誰だったかしら。」",
+      "ticks": 130,
+      "wait": true
+    }
+  ]
+}

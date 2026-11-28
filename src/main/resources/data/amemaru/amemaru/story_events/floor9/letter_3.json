@@ -1,0 +1,36 @@
+{
+  "_comment": "女王の書斎で、女王の書簡（三通目）を手に取ったとき（本人だけ。CastleBlocks.Letter → TempleService.takeRelic。持ち物queen_letter_3 と古代記録 f09_queen_letters）。Phase 0-A 9章の9階の古代記録。三通目で、白き声（NULL の前触れ）の物語フラグ ch2/white_voice【補完】",
+  "title": "女王の書簡（三通目）",
+  "trigger": {
+    "type": "amemaru:admin"
+  },
+  "scope": "player",
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "女王の書簡（三通目）を手に取った。名前の一覧は、どこにもない。最後の一行だけが、強く書かれている。",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "「白き声が言った。忘れれば、もう誰も泣かない、と。わたしは、それでいいと思ってしまった。」",
+      "ticks": 130,
+      "wait": false
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "……白き声。誰かが、女王に、忘れることを勧めたのだ。",
+      "ticks": 120,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "scope": "server",
+      "add": [
+        "amemaru:ch2/white_voice"
+      ]
+    }
+  ]
+}

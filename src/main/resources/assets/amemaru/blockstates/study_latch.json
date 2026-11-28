@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=south": {
+      "model": "amemaru:block/study_latch"
+    },
+    "facing=west": {
+      "model": "amemaru:block/study_latch",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "amemaru:block/study_latch",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "amemaru:block/study_latch",
+      "y": 270
+    }
+  }
+}

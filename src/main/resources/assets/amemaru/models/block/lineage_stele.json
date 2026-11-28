@@ -1,0 +1,329 @@
+{
+  "credit": "AMEMARU: 9階の仕掛け（tools/artgen/make_castle_things.py で生成）",
+  "texture_size": [
+    64,
+    64
+  ],
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "0": "amemaru:block/lineage_stele",
+    "particle": "amemaru:block/lineage_stele"
+  },
+  "elements": [
+    {
+      "name": "plinth",
+      "from": [
+        1,
+        0,
+        3
+      ],
+      "to": [
+        15,
+        2,
+        13
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            6.75,
+            3,
+            10.25,
+            3.5
+          ],
+          "texture": "#0"
+        },
+        "south": {
+          "uv": [
+            10.25,
+            3,
+            13.75,
+            3.5
+          ],
+          "texture": "#0"
+        },
+        "east": {
+          "uv": [
+            0,
+            4.5,
+            2.5,
+            5
+          ],
+          "texture": "#0"
+        },
+        "west": {
+          "uv": [
+            2.5,
+            4.5,
+            5,
+            5
+          ],
+          "texture": "#0"
+        },
+        "up": {
+          "uv": [
+            9,
+            0,
+            12.5,
+            2.5
+          ],
+          "texture": "#0"
+        },
+        "down": {
+          "uv": [
+            12.5,
+            0,
+            16,
+            2.5
+          ],
+          "texture": "#0"
+        }
+      }
+    },
+    {
+      "name": "slab",
+      "from": [
+        2,
+        2,
+        5
+      ],
+      "to": [
+        14,
+        14,
+        11
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            3,
+            3
+          ],
+          "texture": "#0"
+        },
+        "south": {
+          "uv": [
+            3,
+            0,
+            6,
+            3
+          ],
+          "texture": "#0"
+        },
+        "east": {
+          "uv": [
+            6,
+            0,
+            7.5,
+            3
+          ],
+          "texture": "#0"
+        },
+        "west": {
+          "uv": [
+            7.5,
+            0,
+            9,
+            3
+          ],
+          "texture": "#0"
+        },
+        "up": {
+          "uv": [
+            0,
+            3,
+            3,
+            4.5
+          ],
+          "texture": "#0"
+        }
+      }
+    },
+    {
+      "name": "crown",
+      "from": [
+        3,
+        14,
+        5.5
+      ],
+      "to": [
+        13,
+        15.5,
+        10.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            5,
+            4.5,
+            7.5,
+            5
+          ],
+          "texture": "#0"
+        },
+        "south": {
+          "uv": [
+            7.5,
+            4.5,
+            10,
+            5
+          ],
+          "texture": "#0"
+        },
+        "east": {
+          "uv": [
+            10,
+            4.5,
+            11.25,
+            5
+          ],
+          "texture": "#0"
+        },
+        "west": {
+          "uv": [
+            11.25,
+            4.5,
+            12.5,
+            5
+          ],
+          "texture": "#0"
+        },
+        "up": {
+          "uv": [
+            3,
+            3,
+            5.5,
+            4.25
+          ],
+          "texture": "#0"
+        }
+      }
+    },
+    {
+      "name": "crown_top",
+      "from": [
+        5.5,
+        15.5,
+        6
+      ],
+      "to": [
+        10.5,
+        16,
+        10
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            12.5,
+            4.5,
+            13.75,
+            4.75
+          ],
+          "texture": "#0"
+        },
+        "south": {
+          "uv": [
+            13.75,
+            4.5,
+            15,
+            4.75
+          ],
+          "texture": "#0"
+        },
+        "east": {
+          "uv": [
+            15,
+            4.5,
+            16,
+            4.75
+          ],
+          "texture": "#0"
+        },
+        "west": {
+          "uv": [
+            0,
+            5,
+            1,
+            5.25
+          ],
+          "texture": "#0"
+        },
+        "up": {
+          "uv": [
+            5.5,
+            3,
+            6.75,
+            4
+          ],
+          "texture": "#0"
+        }
+      }
+    },
+    {
+      "name": "flower",
+      "from": [
+        7,
+        15.4,
+        7.5
+      ],
+      "to": [
+        9,
+        16.4,
+        8.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            5,
+            1.5,
+            5.25
+          ],
+          "texture": "#0"
+        },
+        "south": {
+          "uv": [
+            1.5,
+            5,
+            2,
+            5.25
+          ],
+          "texture": "#0"
+        },
+        "east": {
+          "uv": [
+            2.5,
+            5,
+            2.75,
+            5.25
+          ],
+          "texture": "#0"
+        },
+        "west": {
+          "uv": [
+            2.75,
+            5,
+            3,
+            5.25
+          ],
+          "texture": "#0"
+        },
+        "up": {
+          "uv": [
+            2,
+            5,
+            2.5,
+            5.25
+          ],
+          "texture": "#0"
+        }
+      },
+      "forge_data": {
+        "block_light": 15,
+        "sky_light": 15
+      },
+      "shade": false
+    }
+  ]
+}

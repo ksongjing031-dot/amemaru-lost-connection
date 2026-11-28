@@ -1,0 +1,74 @@
+{
+  "_comment": "9階のボスの初撃破（倒したパーティの画面だけ。サーバー全体には知らせが出る）。守れなかった隊長（ガルドと重なる）。物語フラグ ch2/valgrim_down（サーバー全体。ガルドの会話）。台詞は【補完】",
+  "title": "氷の近衛長ヴァルグリム",
+  "trigger": {
+    "type": "amemaru:floor_first_kill",
+    "floor": 9
+  },
+  "scope": "party",
+  "once": true,
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:wait",
+      "ticks": 60
+    },
+    {
+      "type": "amemaru:hud",
+      "hide": true
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "none",
+      "to": "white",
+      "ticks": 30
+    },
+    {
+      "type": "amemaru:fade",
+      "from": "white",
+      "to": "none",
+      "ticks": 60
+    },
+    {
+      "type": "amemaru:title",
+      "title": "氷結した王城　踏破",
+      "subtitle": "第2章　凍てついた記憶",
+      "ticks": 110
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "近衛長の大盾が、扉の前で静かに倒れた。",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "「……陛下。わたしは、隊の者たちの名を……最後まで、呼べませんでした」",
+      "ticks": 130,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "氷が砕ける音とともに、隊長の残響は消えた。扉の向こうから、冷たい風が吹きこんでくる。",
+      "ticks": 130,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "守れなかった隊長。……街のギルドにも、同じ痛みを抱えた人がいる。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:hud",
+      "hide": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "scope": "server",
+      "add": [
+        "amemaru:ch2/valgrim_down"
+      ]
+    }
+  ]
+}

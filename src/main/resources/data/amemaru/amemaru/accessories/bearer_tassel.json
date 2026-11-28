@@ -1,0 +1,13 @@
+{
+  "_comment": "旗手の房飾り（9階。11月24日「階層ごとにアクセサリーも追加しましょう」【補完】。tools/datagen/build_floor_accessories.py）",
+  "slot": "charm",
+  "generation": 2,
+  "floor": 9,
+  "rarity": "rare",
+  "effects": [
+    {
+      "type": "move_speed",
+      "percent": 6
+    }
+  ]
+}

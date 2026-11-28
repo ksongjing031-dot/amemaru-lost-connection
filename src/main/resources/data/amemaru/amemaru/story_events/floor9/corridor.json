@@ -1,0 +1,37 @@
+{
+  "_comment": "近衛の間の手前（本人だけ。一人一度）。ボスの前の物語【補完】",
+  "title": "近衛の回廊",
+  "trigger": {
+    "type": "amemaru:floor_zone",
+    "floor": 9,
+    "zone": "corridor"
+  },
+  "scope": "player",
+  "once": false,
+  "replayable": true,
+  "conditions": {
+    "flags_none": [
+      "amemaru:story/castle_corridor_seen"
+    ]
+  },
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "回廊の先から、規則正しい足音が聞こえる。……誰かが、今も扉の前を守っている。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "「ここより先は、女王陛下の間。……名乗れ」　答える前に、声はかすれて消えた。",
+      "ticks": 120,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/castle_corridor_seen"
+      ]
+    }
+  ]
+}

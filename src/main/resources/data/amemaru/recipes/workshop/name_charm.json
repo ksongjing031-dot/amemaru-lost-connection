@@ -1,0 +1,27 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "accessory",
+  "mastery": 4,
+  "mastery_exp": 28,
+  "ingredients": [
+    {
+      "item": "amemaru:guard_ice",
+      "count": 2
+    },
+    {
+      "item": "amemaru:hound_collar",
+      "count": 1
+    },
+    {
+      "item": "amemaru:echo_fragment",
+      "count": 1
+    },
+    {
+      "item": "amemaru:pedestal_cloth",
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "amemaru:name_charm"
+  }
+}

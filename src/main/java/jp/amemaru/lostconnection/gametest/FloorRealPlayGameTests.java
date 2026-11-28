@@ -132,6 +132,12 @@ public final class FloorRealPlayGameTests {
         run(helper, 8);
     }
 
+    // 11月28日：9階「氷結した王城」（城じゅうの札の台から名前の札を取り、肖像画に戻す。最後に女王の名を呼び、書斎の書簡を取る）
+    @GameTest(template = EMPTY, batch = "floor_real_9", timeoutTicks = 6000)
+    public static void floor9RealPlay(GameTestHelper helper) {
+        run(helper, 9);
+    }
+
     /** 1つの階を建てて、すべての仕掛けを触る。 */
     private static void run(GameTestHelper helper, int floor) {
         // 11月25日：クライアントの確かめ（CIの写真を撮る世界）では行わない。写真の台本が同じ階を建てて仕掛けを解くので、ぶつかって
@@ -185,6 +191,8 @@ public final class FloorRealPlayGameTests {
                     } else if (floor == 8) {
                         BellService.reconcile(tower, def);
                         VillageService.reconcile(tower, def);
+                    } else if (floor == 9) {
+                        jp.amemaru.lostconnection.tower.castle.LineageService.reconcile(tower, def);
                     }
                     List<String> problems = structure(tower, def);
                     check(helper, problems.isEmpty(), floor + "階の仕掛けのブロックがおかしい（" + problems.size() + "）："
@@ -204,6 +212,7 @@ public final class FloorRealPlayGameTests {
                 lake(helper, seq, tower, def, player, data);
                 village(helper, seq, tower, def, player);
             }
+            case 9 -> castle(helper, seq, tower, def, player, data);
             default -> {
             }
         }
@@ -273,8 +282,10 @@ public final class FloorRealPlayGameTests {
         }
         for (FloorFeatures.Relic relic : fx.relics()) {
             // 4階は騎士団の遺品、8階は湖底の祠の石板（どちらも右クリックで受け取る）
-            Class<? extends Block> type = tower.getBlockState(def.world(relic.pos())).getBlock() instanceof LakeBlocks.Tablet
-                    ? LakeBlocks.Tablet.class : TempleBlocks.KnightRelic.class;
+            Block relicBlock = tower.getBlockState(def.world(relic.pos())).getBlock();
+            Class<? extends Block> type = relicBlock instanceof LakeBlocks.Tablet ? LakeBlocks.Tablet.class
+                    : relicBlock instanceof jp.amemaru.lostconnection.tower.castle.CastleBlocks.Letter
+                    ? jp.amemaru.lostconnection.tower.castle.CastleBlocks.Letter.class : TempleBlocks.KnightRelic.class;
             thing(out, tower, def, relic.pos(), type, -1, relic.id(), "遺品 " + relic.id());
         }
         // 6階：熱の炉（右クリックで結晶をもらう）・記憶の氷像（どの記憶か）・オルドの結晶の台（乗れる）
@@ -319,6 +330,41 @@ public final class FloorRealPlayGameTests {
             }
             if (maze.door() != null && tower.getBlockState(def.world(maze.door().min())).isAir()) {
                 out.add(maze.name() + "の門が、はじめから開いている");
+            }
+        }
+        // 9階：王家の系譜（肖像画・名前の札の台・手がかり・女王の肖像・書斎の留め金）。組の扉と隠し扉は、はじめは閉じている
+        if (fx.lineage() != null) {
+            FloorFeatures.Lineage lineage = fx.lineage();
+            for (FloorFeatures.Portrait portrait : lineage.portraits()) {
+                thing(out, tower, def, portrait.pos(), jp.amemaru.lostconnection.tower.castle.CastleBlocks.Portrait.class, -1,
+                        "portrait:" + portrait.id(), "肖像画 " + portrait.id());
+                BlockState state = tower.getBlockState(def.world(portrait.pos()));
+                if (state.getBlock() instanceof jp.amemaru.lostconnection.tower.castle.CastleBlocks.Portrait
+                        && state.getValue(jp.amemaru.lostconnection.tower.castle.CastleBlocks.RESTORED)) {
+                    out.add("肖像画 " + portrait.id() + "が、はじめから名前が戻っている");
+                }
+            }
+            for (FloorFeatures.NamePlate plate : lineage.plates()) {
+                thing(out, tower, def, plate.pos(), jp.amemaru.lostconnection.tower.castle.CastleBlocks.PlateStand.class, -1,
+                        "plate:" + plate.id(), "名前の札の台 " + plate.id());
+            }
+            for (FloorFeatures.LineageClue clue : lineage.clues()) {
+                thing(out, tower, def, clue.pos(), jp.amemaru.lostconnection.tower.castle.CastleBlocks.Clue.class, -1,
+                        "clue:" + clue.id(), "手がかり " + clue.id());
+            }
+            for (FloorFeatures.LineageGroup group : lineage.groups()) {
+                if (group.door() != null && tower.getBlockState(def.world(group.door().min())).isAir()) {
+                    out.add(group.name() + "の扉が、はじめから開いている");
+                }
+            }
+            if (lineage.queen() != null) {
+                thing(out, tower, def, lineage.queen().pos(), jp.amemaru.lostconnection.tower.castle.CastleBlocks.Portrait.class, -1,
+                        "queen", "女王の肖像");
+                thing(out, tower, def, lineage.queen().latch(), jp.amemaru.lostconnection.tower.castle.CastleBlocks.Latch.class, -1,
+                        "latch", "書斎の留め金");
+                if (tower.getBlockState(def.world(lineage.queen().door().min())).isAir()) {
+                    out.add("女王の肖像の隠し扉が、はじめから開いている");
+                }
             }
         }
         // 8階：歌の碑と鐘（組・番号）。開く所は閉じていて、浮かぶ所はまだない。湖心の鳴り石（組 arena）
@@ -849,6 +895,114 @@ public final class FloorRealPlayGameTests {
         });
     }
 
+    // ---------------------------------------------------------------- 9階：王家の系譜
+
+    /**
+     * 王家の系譜：手がかりを読む・札なしで肖像画に触れる（戻らない）・まぎらわしい札を入れる（はじかれ、近衛兵が目を覚ます）・
+     * 札の台から正しい札を取って、肖像画ごとに戻す（組がそろうと扉が開く）・女王の名を呼ぶ（隠し扉が開く）・書簡を取る。
+     */
+    private static void castle(GameTestHelper helper, GameTestSequence seq, ServerLevel tower, FloorDef def, FakePlayer player,
+                               PlayerData data) {
+        int n = def.number();
+        MinecraftServer server = tower.getServer();
+        FloorFeatures.Lineage lineage = def.features().lineage();
+        seq.thenExecute(() -> {
+            check(helper, lineage != null && lineage.portraits().size() == 9 && lineage.plates().size() == 11 && lineage.queen() != null,
+                    n + "階の王家の系譜の数が違います");
+            check(helper, !jp.amemaru.lostconnection.tower.castle.LineageService.allSolved(server, def),
+                    n + "階：何もしていないのに、系譜がそろっています");
+            // 手がかり（建国の碑・系譜の書）は、右クリックで読める
+            for (FloorFeatures.LineageClue clue : lineage.clues()) {
+                use(helper, tower, player, def.world(clue.pos()), "手がかり " + clue.id());
+            }
+            // 札を持たずに肖像画に触れても、名前は戻らない
+            FloorFeatures.Portrait first = lineage.portraits().get(0);
+            player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+            use(helper, tower, player, def.world(first.pos()), "肖像画 " + first.id() + "（札なし）");
+            check(helper, !restored(tower, def, first), "肖像画 " + first.id() + "：札を持たずに触れたのに、名前が戻りました");
+            // まぎらわしい札（王家ではない人の名前）：はじかれて、組の近衛兵が目を覚ます
+            FloorFeatures.NamePlate decoy = null;
+            for (FloorFeatures.NamePlate plate : lineage.plates()) {
+                if (lineage.portrait(plate.id()) == null) {
+                    decoy = plate;
+                    break;
+                }
+            }
+            check(helper, decoy != null, n + "階に、まぎらわしい札がありません");
+            use(helper, tower, player, def.world(decoy.pos()), "名前の札の台 " + decoy.id());
+            Item decoyItem = jp.amemaru.lostconnection.tower.castle.LineageService.plateItem(decoy.id());
+            check(helper, decoyItem != null && player.getInventory().countItem(decoyItem) == 1, "札の台 " + decoy.id() + "：札が持ち物に入りません");
+            player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(decoyItem));
+            use(helper, tower, player, def.world(first.pos()), "肖像画 " + first.id() + "（違う札）");
+            check(helper, !restored(tower, def, first), "肖像画 " + first.id() + "：違う札を入れたのに、名前が戻りました");
+            FloorFeatures.LineageGroup group = lineage.group(first.group());
+            check(helper, group != null && !group.guards().isEmpty(), first.group() + "：札を間違えたときに目を覚ます近衛兵の場所がありません");
+            BlockPos guardAt = def.world(group.guards().get(0));
+            List<jp.amemaru.lostconnection.enemy.castle.FrozenGuard> woken = tower.getEntitiesOfClass(
+                    jp.amemaru.lostconnection.enemy.castle.FrozenGuard.class, new net.minecraft.world.phys.AABB(guardAt).inflate(4.0),
+                    e -> e.getTags().contains("amemaru_lineage_woken"));
+            check(helper, !woken.isEmpty() && !woken.get(0).dormant(), first.group() + "：札を間違えても、近衛兵が目を覚ましません");
+            woken.forEach(net.minecraft.world.entity.Entity::discard);
+            player.getInventory().clearContent();
+        });
+        for (FloorFeatures.LineageGroup group : lineage == null ? List.<FloorFeatures.LineageGroup>of() : lineage.groups()) {
+            seq.thenExecute(() -> {
+                for (FloorFeatures.Portrait portrait : lineage.portraitsOf(group.id())) {
+                    FloorFeatures.NamePlate plate = lineage.plate(portrait.id());
+                    check(helper, plate != null, "肖像画 " + portrait.id() + "の札の台がありません");
+                    use(helper, tower, player, def.world(plate.pos()), "名前の札の台 " + plate.id());
+                    Item item = jp.amemaru.lostconnection.tower.castle.LineageService.plateItem(plate.id());
+                    check(helper, item != null && player.getInventory().countItem(item) == 1, "札の台 " + plate.id() + "：札が持ち物に入りません");
+                    player.getInventory().clearContent();
+                    player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(item));
+                    use(helper, tower, player, def.world(portrait.pos()), "肖像画 " + portrait.id());
+                    check(helper, restored(tower, def, portrait), "肖像画 " + portrait.id() + "：正しい札を入れたのに、名前が戻りません");
+                    check(helper, player.getMainHandItem().isEmpty(), "肖像画 " + portrait.id() + "：札が手から消えません");
+                }
+                check(helper, jp.amemaru.lostconnection.tower.castle.LineageService.groupSolved(server, def, group.id()),
+                        group.name() + "：肖像画をすべて戻しても、そろったことになりません");
+                if (group.door() != null) {
+                    BlockPos at = def.world(group.door().min());
+                    check(helper, tower.getBlockState(at).getCollisionShape(tower, at).isEmpty(), group.name() + "：そろったのに、扉が開きません "
+                            + local(group.door().min()));
+                }
+            });
+        }
+        seq.thenExecute(() -> {
+            check(helper, jp.amemaru.lostconnection.tower.castle.LineageService.allSolved(server, def), n + "階：系譜がすべて戻りません");
+            // 女王の肖像：名前を呼ぶと、隠し扉が開く（チャットのことばの見分け）
+            FloorFeatures.QueenPortrait queen = lineage.queen();
+            check(helper, jp.amemaru.lostconnection.tower.castle.LineageService.isQueenName("イゼルナさま、お名前を", queen.names())
+                    && jp.amemaru.lostconnection.tower.castle.LineageService.isQueenName("いぜるな", queen.names())
+                    && !jp.amemaru.lostconnection.tower.castle.LineageService.isQueenName("リーゼロッテ", queen.names()),
+                    "女王の名の見分けがおかしい");
+            use(helper, tower, player, def.world(queen.pos()), "女王の肖像");
+            check(helper, jp.amemaru.lostconnection.tower.castle.LineageService.callQueen(player, def, lineage), "女王の名を呼んでも、隠し扉が開きません");
+            BlockPos door = def.world(queen.door().min());
+            check(helper, tower.getBlockState(door).getCollisionShape(tower, door).isEmpty(), "女王の肖像の隠し扉が開きません");
+            // 書斎の留め金（内がわから開ける）
+            use(helper, tower, player, def.world(queen.latch()), "書斎の留め金");
+            // 女王の書簡3通：右クリックで受け取る（持ち物と、物語の印）
+            for (FloorFeatures.Relic relic : def.features().relics()) {
+                data.getStory().remove(relic.flag());
+                use(helper, tower, player, def.world(relic.pos()), "書簡 " + relic.id());
+                check(helper, data.getStory().has(relic.flag()), "書簡 " + relic.id() + "：右クリックしても受け取れません");
+                for (ResourceLocation id : relic.items()) {
+                    Item item = ForgeRegistries.ITEMS.getValue(id);
+                    check(helper, item != null && player.getInventory().countItem(item) > 0, "書簡 " + relic.id() + "：" + id + " が持ち物に入りません");
+                }
+                data.getStory().remove(relic.flag());
+            }
+            player.getInventory().clearContent();
+        });
+    }
+
+    private static boolean restored(ServerLevel tower, FloorDef def, FloorFeatures.Portrait portrait) {
+        BlockState state = tower.getBlockState(def.world(portrait.pos()));
+        return state.getBlock() instanceof jp.amemaru.lostconnection.tower.castle.CastleBlocks.Portrait
+                && state.getValue(jp.amemaru.lostconnection.tower.castle.CastleBlocks.RESTORED);
+    }
+
     // ---------------------------------------------------------------- 封印
 
     /** ボスの部屋の封印を、その人が通れるか（封印のブロックの当たり判定が、その人には空か）。 */
@@ -893,6 +1047,7 @@ public final class FloorRealPlayGameTests {
                 BellService.onDayChanged(server);
                 VillageService.onDayChanged(server);
             }
+            case 9 -> jp.amemaru.lostconnection.tower.castle.LineageService.onDayChanged(server);
             default -> {
             }
         }

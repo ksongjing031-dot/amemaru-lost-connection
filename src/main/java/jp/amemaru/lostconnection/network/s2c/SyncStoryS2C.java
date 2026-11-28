@@ -79,6 +79,11 @@ public record SyncStoryS2C(int opening, boolean openingPending, Map<Integer, Int
                     bits |= jp.amemaru.lostconnection.tower.lake.BellService.groupBits(player.server, def) << total;
                     total += features.bells().size();
                 }
+                if (features.requires(jp.amemaru.lostconnection.tower.FloorFeatures.SEAL_LINEAGE) && features.lineage() != null) {
+                    // 11月28日（9階）：戻った王家の肖像画（みんなで同じ）
+                    bits |= jp.amemaru.lostconnection.tower.castle.LineageService.portraitBits(player.server, def) << total;
+                    total += features.lineage().portraits().size();
+                }
                 if (features.requires(jp.amemaru.lostconnection.tower.FloorFeatures.SEAL_PASSPHRASE)) {
                     // 11月25日（7階）：合言葉がそろった印（人ごと）
                     if (data.getStory().has(jp.amemaru.lostconnection.tower.iceforest.PassphraseService.flag(def.number()))) {

@@ -64,7 +64,7 @@ public final class BossFx {
     private static final int INTRO_TICKS = 70;
     private static final int BANNER_TICKS = 56;
     /** 時を刻む・赤いふちを出す、ボスの様子（ギミックの構え）。 */
-    private static final Set<String> DANGER = Set.of("earth_roar", "flood", "echo", "sever", "gaze", "veil");
+    private static final Set<String> DANGER = Set.of("earth_roar", "flood", "echo", "sever", "gaze", "veil", "march");
     /** ボスごとの色（名前・光の波・段階の字）。 */
     private static final Map<String, Integer> ACCENT = Map.of(
             "veldhorn", 0xF2B25C,
@@ -74,7 +74,8 @@ public final class BossFx {
             "ancient_guardian", 0xF2D16B,
             "ordo", 0x9FD8FF,
             "reflecta", 0xC6BAF0,
-            "mune", 0xA8DCEC);
+            "mune", 0xA8DCEC,
+            "valgrim", 0x9CC8FF);
 
     // 今の戦い
     private static int bossEntity = -1;
@@ -142,6 +143,11 @@ public final class BossFx {
         tickPlayer(mc, bossEntity >= 0);
         if (introAge >= 0 && ++introAge >= INTRO_TICKS) {
             introAge = -1;
+        }
+        // 11月28日：はじまりの名前が出ている間は、左上の手がかりを出さずに待たせる（手がかりの時計を進めない）。
+        // CI の写真で、9階のボスの名前と「盾の誓い」の手がかりが重なって読めなかった（どのボスも同じ）
+        if (introAge >= 0) {
+            ClientStory.delayTips(50L);
         }
         if (bannerAge >= 0 && ++bannerAge >= BANNER_TICKS) {
             bannerAge = -1;
@@ -608,6 +614,11 @@ public final class BossFx {
     /** 今の戦いのボス（なければ ""）。 */
     public static String currentBoss() {
         return bossKey;
+    }
+
+    /** はじまりの名前が出ている間か（そのあいだ、手がかりは出さない）。 */
+    public static boolean introActive() {
+        return introAge >= 0;
     }
 
     /** CIの写真：はじまりの名前が、すっかり出ている間か（出はじめと消えかけを除く）。 */

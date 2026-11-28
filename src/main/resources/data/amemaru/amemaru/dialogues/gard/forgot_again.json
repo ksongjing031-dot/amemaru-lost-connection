@@ -1,0 +1,26 @@
+{
+  "_comment": "9日目から、忘れていることをもう聞いた人に（短い会話）。台詞は【補完】",
+  "npc": "amemaru:gard",
+  "priority": 37,
+  "conditions": {
+    "opening": 2,
+    "flags_all": [
+      "amemaru:ch2/gard_forgot",
+      "amemaru:story/gard_forgot_seen"
+    ],
+    "flags_none": [
+      "amemaru:ch2/queen_down"
+    ]
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "expression": "stern",
+      "text": "……まだ、出てこない。紙に書いておいた名前さえ、知らない文字に見える",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "それでも呼ぶ。呼べない名前を、呼び続ける。……お前たちは、塔のことだけ考えろ。生きて戻れ"
+    }
+  }
+}

@@ -89,7 +89,43 @@ public final class ClientStory {
         }
         // 同じ種類の古い文は消す（上書き）
         TEXTS.removeIf(t -> t.kind() == message.kind());
-        TEXTS.add(new ShownText(message.kind(), message.speaker(), message.text(), Util.getMillis(), duration));
+        long now = Util.getMillis();
+        long start = now;
+        // 11月28日：ボスの名前などの題（真ん中の大きな字）が出ている間は、左上の手がかりを出さずに待たせ、題が消えてから出す
+        // （CI の写真で、9階のボスの名前と、戦いのはじめの手がかりが重なって読めなかった。どのボスも同じ）
+        if (message.kind() == StoryTextS2C.Kind.TIP) {
+            for (ShownText shown : TEXTS) {
+                if (shown.kind() == StoryTextS2C.Kind.TITLE && !shown.expired()) {
+                    start = Math.max(start, shown.start() + shown.durationMillis());
+                }
+            }
+        } else if (message.kind() == StoryTextS2C.Kind.TITLE) {
+            // 先に出ていた手がかりは、題のあとで出しなおす
+            long after = now + duration;
+            List<ShownText> waiting = new ArrayList<>();
+            TEXTS.removeIf(t -> {
+                if (t.kind() == StoryTextS2C.Kind.TIP && !t.expired()) {
+                    waiting.add(new ShownText(t.kind(), t.speaker(), t.text(), after, t.durationMillis()));
+                    return true;
+                }
+                return false;
+            });
+            TEXTS.addAll(waiting);
+        }
+        TEXTS.add(new ShownText(message.kind(), message.speaker(), message.text(), start, duration));
+    }
+
+    /** 手がかりを {@code millis} だけ後ろへずらす（ボスのはじまりの名前が出ている間、手がかりの時計を進めない）。 */
+    public static void delayTips(long millis) {
+        if (TEXTS.stream().noneMatch(t -> t.kind() == StoryTextS2C.Kind.TIP)) {
+            return;
+        }
+        List<ShownText> list = new ArrayList<>(TEXTS);
+        TEXTS.clear();
+        for (ShownText t : list) {
+            TEXTS.add(t.kind() == StoryTextS2C.Kind.TIP ? new ShownText(t.kind(), t.speaker(), t.text(), t.start() + millis, t.durationMillis())
+                    : t);
+        }
     }
 
     public static void showText(StoryTextS2C.Kind kind, String speaker, String text, int ticks) {

@@ -23,8 +23,16 @@ import net.minecraft.world.phys.Vec3;
  */
 public class CrystalNeedle extends Projectile {
     private static final int MAX_LIFE = 60;
+    /** 見た目（0：結晶の針、1：舞う頁。11月28日：9階の書架霊）。 */
+    private static final net.minecraft.network.syncher.EntityDataAccessor<Byte> DATA_STYLE =
+            net.minecraft.network.syncher.SynchedEntityData.defineId(CrystalNeedle.class,
+                    net.minecraft.network.syncher.EntityDataSerializers.BYTE);
+    public static final int STYLE_CRYSTAL = 0;
+    public static final int STYLE_PAGE = 1;
 
     private double power = 1.0;
+    /** 守りのいくらを通り抜けるか（11月28日。魔法の頁）。 */
+    private double pierce;
     private int life;
 
     public CrystalNeedle(EntityType<? extends CrystalNeedle> type, Level level) {
@@ -36,6 +44,9 @@ public class CrystalNeedle extends Projectile {
         CrystalNeedle needle = new CrystalNeedle(ModEntities.CRYSTAL_NEEDLE.get(), owner.level());
         needle.setOwner(owner);
         needle.power = power;
+        // 11月28日：撃つ敵ごとの見た目と、守りを通り抜ける割合（9階の書架霊の頁）
+        needle.entityData.set(DATA_STYLE, (byte) owner.projectileStyle());
+        needle.pierce = owner.projectilePierce();
         needle.setPos(from.x, from.y, from.z);
         Vec3 motion = direction.lengthSqr() < 1.0E-6 ? new Vec3(0.0, 0.0, speed) : direction.normalize().scale(speed);
         needle.setDeltaMovement(motion);
@@ -45,6 +56,12 @@ public class CrystalNeedle extends Projectile {
 
     @Override
     protected void defineSynchedData() {
+        entityData.define(DATA_STYLE, (byte) STYLE_CRYSTAL);
+    }
+
+    /** 見た目（{@link #STYLE_CRYSTAL}・{@link #STYLE_PAGE}。クライアントでも読める）。 */
+    public int style() {
+        return entityData.get(DATA_STYLE);
     }
 
     @Override
@@ -63,6 +80,10 @@ public class CrystalNeedle extends Projectile {
                 discard();
                 return;
             }
+        } else if (style() == STYLE_PAGE) {
+            // 頁：青白い文字の粒がこぼれる
+            level().addParticle(ParticleTypes.ENCHANT, getX() - motion.x * 0.5, getY() - motion.y * 0.5,
+                    getZ() - motion.z * 0.5, 0.0, 0.0, 0.0);
         } else {
             level().addParticle(ParticleTypes.ELECTRIC_SPARK, getX() - motion.x * 0.5, getY() - motion.y * 0.5,
                     getZ() - motion.z * 0.5, 0.0, 0.0, 0.0);
@@ -79,7 +100,7 @@ public class CrystalNeedle extends Projectile {
     @Override
     protected void onHitEntity(EntityHitResult result) {
         if (result.getEntity() instanceof ServerPlayer player && getOwner() instanceof AmemaruMob mob) {
-            EnemyCombat.strike(mob, player, power, this);
+            EnemyCombat.strike(mob, player, power, this, pierce);
         }
         discard();
     }

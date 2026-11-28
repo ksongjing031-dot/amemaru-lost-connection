@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=south": {
+      "model": "amemaru:block/queen_letter"
+    },
+    "facing=west": {
+      "model": "amemaru:block/queen_letter",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "amemaru:block/queen_letter",
+      "y": 180
+    },
+    "facing=east": {
+      "model": "amemaru:block/queen_letter",
+      "y": 270
+    }
+  }
+}

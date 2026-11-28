@@ -17,6 +17,7 @@
                         オーロラ色の玉（11月25日）
   8階 沈黙の湖        ：静氷（灰白の氷）・無音の大魚の白い鱗・霧の糸・凍て鶴の白い羽と黒い風切り・青く光る声石・
                         湖の真珠（11月25日）
+  9階 氷結した王城    ：近衛の青い氷・前掛けのレース・金の額・霜銀の名札・青い旗の房・銀の綴じ糸（11月28日）
 """
 import os
 import sys
@@ -63,6 +64,11 @@ LOCAL = {
     "crane_white": ramp("#7C8692", "#98A2AE", "#B4BEC8", "#CED6DE", "#E2E8EE", "#F0F4F8", "#FFFFFF"),
     "crane_black": ramp("#08090C", "#101218", "#181B22", "#22262E", "#2E333C", "#3C424C", "#4C535E"),
     "voice": ramp("#1E3C9A", "#2A52BA", "#3E6CD2", "#5E8CE4", "#88AEF0", "#B6D0F8", "#E6F0FF"),
+    # 9階（11月28日）
+    "guard_ice": ramp("#3A5A9A", "#4E70AE", "#6888C2", "#86A4D4", "#A6C0E4", "#C8DAF2", "#EAF2FC"),
+    "lace": ramp("#8A8E98", "#A6AAB2", "#C0C4CA", "#D6D9DE", "#E6E8EC", "#F2F3F5", "#FCFCFD"),
+    "gilt": ramp("#5A3E12", "#7C5A1C", "#A07A2A", "#C49C3C", "#DDBB58", "#F0D684", "#FFF0BC"),
+    "royal_blue": ramp("#0C1430", "#121E46", "#1A2A5E", "#243878", "#304890", "#425CA8", "#5A76C0"),
 }
 
 
@@ -262,6 +268,24 @@ class FloorAccessoryPainter(AccessoryPainter):
 
     def paint_crane_black(self, c):
         return pick(LOCAL["crane_black"], 3.4 + self.bevel(c, up=1.2, down=0.6))
+
+    # ---- 9階 ----
+    def paint_guard_ice(self, c):
+        tone = 4.0 + (self.tex(c, 91) - 0.5) * 0.6 + self.bevel(c, up=1.3, down=0.8)
+        if (c.i + c.j) % 4 == 0:
+            tone += 0.7
+        return pick(LOCAL["guard_ice"], tone)
+
+    def paint_lace(self, c):
+        if c.el.tags.get("lace") and c.edge_dist().get("bottom", 1) == 0 and c.i % 2 == 1:
+            return None
+        return self._std(c, "lace", base=4.6, noise=0.2, blob=0.2, up=0.8, down=0.8)
+
+    def paint_gilt(self, c):
+        return self._std(c, "gilt", base=4.0, noise=0.3, blob=0.2, up=1.4, down=1.0)
+
+    def paint_royal_blue(self, c):
+        return self._std(c, "royal_blue", base=3.6, noise=0.25, blob=0.2, up=1.0, down=1.0)
 
     def paint_voice(self, c):
         """声石：深い青の小石（アンコモンなので光らない。左上に白い点のつや）"""
@@ -584,13 +608,48 @@ def build_bell_charm():
     return g
 
 
+# ---------------------------------------------------------------- 9階（11月28日）
+
+def build_portrait_necklace():
+    g = new_accessory("portrait_necklace")
+    B = "armorBody"
+    neck_cord(g, "lace", inflate=-0.15)
+    # 金の楕円の額（ふち）と、中の白い空白
+    gcube(g, B, "frame", (-1, 19.2, -2.9), (2, 3, 1), "gilt", inflate=-0.1)
+    gcube(g, B, "blank", (-0.5, 19.7, -3.15), (1, 2, 1), "lace", inflate=-0.25)
+    gcube(g, B, "bow", (-0.5, 22.0, -2.8), (1, 1, 1), "royal_blue", inflate=-0.2)
+    return g
+
+
+def build_horseshoe_bracelet():
+    g = new_accessory("horseshoe_bracelet")
+    A = wrist_band(g, "frost_silver", inflate=0.15)
+    y0 = 14.5
+    # 外に、氷の蹄鉄（U の字を横に）
+    gcube(g, A, "shoe_top", (8.4, y0 + 1.6, -1.4), (1, 1, 3), "guard_ice", inflate=-0.2)
+    gcube(g, A, "shoe_l", (8.4, y0 - 0.2, -1.4), (1, 2, 1), "guard_ice", inflate=-0.2)
+    gcube(g, A, "shoe_r", (8.4, y0 - 0.2, 0.6), (1, 2, 1), "guard_ice", inflate=-0.2)
+    return g
+
+
+def build_name_charm():
+    g = new_accessory("name_charm")
+    B = hip_cord(g, "royal_blue", "frost_silver")
+    x = -5.5
+    # 小さな銀の名札（刻みの線）と、上の青い結び
+    gcube(g, B, "plate", (x + 0.25, 7.2, -0.55), (2, 2, 1), "frost_silver", inflate=-0.05, tags={"carved": True})
+    gcube(g, B, "knot", (x + 0.75, 9.2, -0.5), (1, 1, 1), "royal_blue", inflate=-0.2)
+    return g
+
+
 BUILDERS = [build_glowcap_necklace, build_rootknot_bracelet, build_wisp_charm,
             build_clearwater_necklace, build_cogwheel_bracelet, build_whisker_charm,
             build_chime_necklace, build_mural_bracelet, build_mane_charm,
             build_jade_necklace, build_sentinel_bracelet, build_lens_charm,
             build_ice_crystal_necklace, build_frozen_fur_bracelet, build_snowlight_charm,
             build_ice_antler_necklace, build_icicle_bracelet, build_passphrase_charm,
-            build_fish_scale_necklace, build_frost_crane_bracelet, build_bell_charm]
+            build_fish_scale_necklace, build_frost_crane_bracelet, build_bell_charm,
+            build_portrait_necklace, build_horseshoe_bracelet, build_name_charm]
 
 
 # ---------------------------------------------------------------- 持ち物の絵（16×16。enhance_icons.py で 32×32 にする）
@@ -1886,6 +1945,107 @@ ICONS["lake_shrine_tablet"] = ([
     "................",
 ], {"o": "#3A4250", "T": "#AEB8C2", "k": "#5A6470", "b": "#5E8CE4", "B": "#E6F0FF", "S": "#76808C"})
 
+# 9階（11月28日）：近衛の氷の輪（闘環は盾の刻み、智環は青い頁の光）・肖像の首飾り・氷の蹄鉄の腕輪・名札のお守り・
+# 旗手の房飾り・綴じ糸の栞
+ring("guard_ice_battle_ring", RING_KNUCKLE, {"B": "#A6C0E4", "b": "#6888C2", "d": "#3A5A9A", "S": "#8C9AAE", "k": "#EAF2FC"})
+ring("guard_ice_wisdom_ring", RING_GEM, {"B": "#A6C0E4", "b": "#6888C2", "d": "#3A5A9A", "S": "#8C9AAE", "G": "#D2ECF6",
+                                         "g": "#58A2C6"})
+
+ICONS["portrait_necklace"] = ([
+    "................",
+    "....lLlLlLlL....",
+    "...L........l...",
+    "..l..........L..",
+    "..L..........l..",
+    "...l........L...",
+    "....lL....Ll....",
+    "......lbbl......",
+    "......gGGg......",
+    ".....gGWWGg.....",
+    ".....GWWWWG.....",
+    ".....GWWWWG.....",
+    ".....gGWWGg.....",
+    "......gGGg......",
+    "................",
+    "................",
+], {"l": "#A6AAB2", "L": "#E6E8EC", "b": "#304890", "g": "#A07A2A", "G": "#F0D684", "W": "#FCFCFD"})
+
+ICONS["horseshoe_bracelet"] = ([
+    "................",
+    "................",
+    "....bBBBBBBb....",
+    "...B........B...",
+    "..b..........b..",
+    "..B..........B..",
+    "..b..........b..",
+    "...B........B...",
+    "....bBBSSBBb....",
+    "......IIII......",
+    ".....Ii..iI.....",
+    ".....I....I.....",
+    ".....Ii..iI.....",
+    ".....dd..dd.....",
+    "................",
+    "................",
+], {"b": "#6A788C", "B": "#B0BCCC", "S": "#8C9AAE", "I": "#A6C0E4", "i": "#EAF2FC", "d": "#3A5A9A"})
+
+ICONS["name_charm"] = ([
+    "................",
+    ".......bb.......",
+    "......b..b......",
+    ".......bb.......",
+    ".......bb.......",
+    "....oooooooo....",
+    "....oHSSSSHo....",
+    "....oSkkkkSo....",
+    "....oSSSSSSo....",
+    "....oSkkSkSo....",
+    "....oHSSSSHo....",
+    "....oooooooo....",
+    "................",
+    "................",
+    "................",
+    "................",
+], {"b": "#304890", "o": "#4A5668", "H": "#E6EDF4", "S": "#B0BCCC", "k": "#4A5668"})
+
+ICONS["bearer_tassel"] = ([
+    "................",
+    ".......ss.......",
+    "......s..s......",
+    ".......ss.......",
+    "......SSSS......",
+    ".....SHHHHS.....",
+    "......bBBb......",
+    ".....bBBBBb.....",
+    ".....bBbBBb.....",
+    "....bBBbBBBb....",
+    "....bBbBBbBb....",
+    "....bBbBBbBb....",
+    "....b.b.b.b.b...",
+    "....b.b.b.b.....",
+    "................",
+    "................",
+], {"s": "#8C9AAE", "S": "#B0BCCC", "H": "#F8FBFE", "b": "#1A2A5E", "B": "#425CA8"})
+
+ICONS["binder_bookmark"] = ([
+    "................",
+    "........ss......",
+    ".......s..s.....",
+    "........ss......",
+    "........S.......",
+    "......PPPPP.....",
+    "......PkkkP.....",
+    "......PPPPP.....",
+    "......PkkPP.....",
+    "......PPPPP.....",
+    "......PkkkP.....",
+    "......PPPPP.....",
+    "......PP.PP.....",
+    "......P...P.....",
+    "................",
+    "................",
+], {"s": "#CFD8E4", "S": "#8C9AAE", "P": "#E6EDF4", "k": "#58A2C6"})
+
 ICON_NAMES = list(ICONS.keys())
 
 
@@ -1924,6 +2084,9 @@ NOTES = {
     "fish_scale_necklace": ("大魚の鱗の首飾り（8階）", "霧の糸の紐と静氷の留め玉に\n扇のように重ねた白い鱗3枚"),
     "frost_crane_bracelet": ("凍て鶴の腕輪（8階）", "霜銀の輪の外に、凍て鶴の白い冠羽を2枚\n斜めに編みこむ（先は黒い風切り）"),
     "bell_charm": ("鐘の音のお守り（8階）", "霧の糸の紐に、静氷を削った小さな鐘\n中に青い声石の舌"),
+    "portrait_necklace": ("肖像の首飾り（9階）", "前掛けのレースの紐に、青い結びと\n金の楕円の額（中は白い空白）"),
+    "horseshoe_bracelet": ("氷の蹄鉄の腕輪（9階）", "霜銀の輪の外に\n近衛の青い氷の蹄鉄"),
+    "name_charm": ("名札のお守り（9階）", "近衛の青い紐に\n名前を刻む小さな銀の札"),
     "glowcap_necklace": ("光茸の首飾り（2階）", "葉影の尾の黒緑の紐に、光茸のかさを3つ\n（まん中が大きい。淡い青緑に白い斑）"),
     "rootknot_bracelet": ("根結びの腕輪（2階）", "樹皮の4つの部品を、根のこぶで留めた輪\n外に、錆びた古代の管のかけらと苔鉄の輪"),
     "wisp_charm": ("迷い灯のお守り（2階）", "苔鉄の小さな灯籠（笠・4本の柱・台）の中に\n琥珀色の芯。下に葉影の尾の房"),
@@ -1983,7 +2146,7 @@ def sheets(repo, out, accs):
     ptex = AA.paint(plate)[0]
     chest = AA.PIECE_BONES["chest"] + AA.PIECE_BONES["legs"]
     floors = [("2階", accs[0:3]), ("3階", accs[3:6]), ("4階", accs[6:9]), ("5階", accs[9:12]), ("6階", accs[12:15]),
-              ("7階", accs[15:18]), ("8階", accs[18:21])]
+              ("7階", accs[15:18]), ("8階", accs[18:21]), ("9階", accs[21:24])]
     for label, group in floors:
         rows = []
         for g, frames in group:

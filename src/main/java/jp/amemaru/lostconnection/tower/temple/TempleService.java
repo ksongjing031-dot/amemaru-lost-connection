@@ -591,6 +591,10 @@ public final class TempleService {
         level.playSound(null, pos, SoundEvents.ARMOR_EQUIP_IRON, SoundSource.BLOCKS, 1.0F, 0.6F);
         level.playSound(null, pos, SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.BLOCKS, 1.0F, 0.6F);
         level.sendParticles(ParticleTypes.END_ROD, pos.getX() + 0.5, pos.getY() + 1.0, pos.getZ() + 0.5, 16, 0.3, 0.4, 0.3, 0.03);
+        if (relic.record() != null) {
+            // 11月28日（9階）：女王の書簡は、古代記録として記録帳にも残す
+            jp.amemaru.lostconnection.guild.RecordService.find(player, relic.record());
+        }
         if (!relic.event().isEmpty()) {
             StoryEventManager.play(player, ResourceLocation.tryParse(relic.event()), false);
         }

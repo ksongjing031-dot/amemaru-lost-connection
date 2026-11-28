@@ -169,6 +169,10 @@ public final class StoryHud {
     }
 
     private static void renderTip(GuiGraphics graphics, Font font, ClientStory.ShownText text, int width) {
+        // ボスのはじまりの名前が出ている間は出さない（名前が消えてから。BossFx が手がかりの時計を止めている）
+        if (BossFx.introActive()) {
+            return;
+        }
         float a = alpha(text, 0.3F, 0.6F);
         if (a <= 0.02F) {
             return;

@@ -1,0 +1,53 @@
+{
+  "_comment": "初めて9階に入ったとき（本人だけ）。凍った王城。大広間、凍った兵士、王家の書庫。王家の肖像画の顔はすべて空白（Phase 0-A 9章の9階の地形・環境）。9日目：ガルドが団員の名前を思い出せなくなる（物語フラグ ch2/gard_forgot。サーバー全体。知らせは GardMemoryService が出す。10日目の撃破 ch2/queen_down で戻る）。台詞は【補完】",
+  "title": "氷結した王城",
+  "trigger": {
+    "type": "amemaru:floor_enter",
+    "floor": 9
+  },
+  "scope": "player",
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:wait",
+      "ticks": 60
+    },
+    {
+      "type": "amemaru:sound",
+      "sound": "minecraft:block.bell.resonate",
+      "volume": 0.7,
+      "pitch": 0.5
+    },
+    {
+      "type": "amemaru:title",
+      "title": "第2章　凍てついた記憶",
+      "subtitle": "9階　氷結した王城",
+      "ticks": 110
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "雪原の向こうに、凍った王城が立っている。城壁も、塔も、旗も、氷の中で時を止めていた。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "城門の前に、兵士たちが隊列のまま凍りついている。……どの兜の中にも、顔がない。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "名前を呼ぶ声が、どこかで途切れた。この城では、名前と顔から先に消えていく。",
+      "ticks": 120,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "scope": "server",
+      "add": [
+        "amemaru:ch2/gard_forgot"
+      ]
+    }
+  ]
+}
