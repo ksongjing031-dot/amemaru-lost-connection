@@ -319,7 +319,9 @@ public abstract class AmemaruBoss extends AmemaruMob {
             speed = (float) Math.max(0.3, Math.min(1.0, designed / skill.windup()));
         }
         super.playAction(name, speed);
-        if (!level().isClientSide() && name.startsWith("skill_")) {
+        // 11月28日：全員を狙う技（一斉の印・大技）の間は、その名前（「ボスから離れろ」「金の円へ」）を出したままにする。
+        // ボスはその間もほかの技を出すが、名前で上書きすると、部屋じゅうの人がなにから逃げるのか分からなくなる
+        if (!level().isClientSide() && name.startsWith("skill_") && !party.active()) {
             setCast(name.substring("skill_".length()), 30);
         }
     }

@@ -2081,6 +2081,8 @@ public final class CiScreenshots {
             {"cmd", null, "1", "execute in amemaru:tower run tp @p {f7:336.5,40,113.5} 180 90"},
             {"snap", null, "2", "p8p_f7_nova_safe"},
             {"cmd", null, "100", "amemaru admin debug vitals @a 100 100"},
+            // 上から落ちる間に大技に打たれた分を戻してから、次の形を写す（HPが減ったままの写真にしない）
+            {"cmd", null, "2", "amemaru admin debug vitals @a 100 100"},
             {"cmd", null, "2", "execute in amemaru:tower run tp @p {f7:336.5,17,124.5} 180 10"},
             {"cmd", null, "8", "amemaru admin boss skill 7 nova_in"},
             {"cmd", null, "1", "execute in amemaru:tower run tp @p {f7:336.5,40,116.5} 180 90"},
