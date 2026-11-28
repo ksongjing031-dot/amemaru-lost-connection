@@ -188,7 +188,8 @@ public final class EquipmentGameTests {
         // 11月24日：2〜5階のアクセサリーの20が増えた
         // 11月25日：6階のアクセサリーの5と、霜銀シリーズの32、生産職どうしの部品3（補強金具・台座布・結晶細工）が増えた
         // 11月25日：7階のアクセサリーの5が増えた
-        check(helper, recipes.size() == 127, "工房のレシピが127ではありません：" + recipes.size());
+        // 11月28日：9階のアクセサリー（作る品）の5が増えた
+        check(helper, recipes.size() == 132, "工房のレシピが132ではありません：" + recipes.size());
         for (WorkshopRecipe recipe : recipes) {
             check(helper, recipe.workshop().makes(recipe.result()), recipe.getId() + " の品が、その工房で作る品ではありません");
             check(helper, !recipe.ingredients().isEmpty(), recipe.getId() + " に素材がありません");

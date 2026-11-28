@@ -78,13 +78,16 @@ public final class StoryTowerGameTests {
         // 11月25日：6階の記憶をなくした街の人（バルド・ジゼル・ペトラ・ポッカ爺）と、セレナの「記憶の机」で51
         // 11月25日：7日目、プレイヤーを忘れたリリア（思い出した段階ごとに4つ）で55、8日目のセレナの「湖底の祠の石板」で56
         // 11月27日：祈願の巫女ユノの会話で57
-        check(helper, DialogueDefs.all().size() == 57, "会話の数が57ではありません：" + DialogueDefs.all().size() + " " + DialogueDefs.all().keySet());
+        // 11月28日：9日目、団員の名前を忘れたガルド（忘れた・もう一度・近衛長のあと）で60
+        check(helper, DialogueDefs.all().size() == 60, "会話の数が60ではありません：" + DialogueDefs.all().size() + " " + DialogueDefs.all().keySet());
         // Phase 8 その1：2階に入る・2階の初撃破・霧の奥の少女（ノアの初目撃）。その2：3階に入る・3階の初撃破・白い流れ。
         // 11月24日：4階に入る・初撃破・騎士団の野営の跡・遺品・白い壁画、5階に入る・初撃破・奈落のふち・格子の空で19
         // 11月25日：6階に入る・村の入口・凍った市場・オーロラの見晴らし・記憶の氷像4つ・初撃破で28
         // 11月25日：7階に入る・鏡の木立・森林監視所の跡・合言葉の扉・初撃破で33
         // 11月25日：8階に入る・沈んだ峡谷・入江・湖底の祠・氷上の釣り人・石板・最後の歌い手・音が戻る・初撃破で42
-        check(helper, StoryEventManager.all().size() == 42, "ストーリーイベントの数が42ではありません：" + StoryEventManager.all().size());
+        // 11月28日：9階に入る・城下町の跡・凍った兵士の隊列・大広間・王家の書庫・肖像の回廊・女王の書斎・近衛の回廊・女王の名・
+        // 女王の書簡3通・王家の系譜・初撃破で56
+        check(helper, StoryEventManager.all().size() == 56, "ストーリーイベントの数が56ではありません：" + StoryEventManager.all().size());
         for (DialogueDef dialogue : DialogueDefs.all().values()) {
             check(helper, NpcDefs.get(dialogue.npc()) != null, "会話 " + dialogue.id() + " のNPC " + dialogue.npc() + " の定義がありません");
         }

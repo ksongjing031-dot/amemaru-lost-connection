@@ -351,8 +351,8 @@ public final class VillageGameTests {
             check(helper, recipe.ingredients().stream().anyMatch(c -> c.item().equals(need)),
                     recipe.getId() + " に、別の生産職の部品（" + need + "）がありません");
         }
-        // 11月25日：7階のアクセサリーの5が増えて10、8階の5が増えて15
-        check(helper, gear == 32 && accessories == 15, "第2章の工房の品が、霜銀シリーズ32と6〜8階のアクセサリー15ではありません：" + gear + "・"
+        // 11月25日：7階のアクセサリーの5が増えて10、8階の5が増えて15。11月28日：9階の5が増えて20
+        check(helper, gear == 32 && accessories == 20, "第2章の工房の品が、霜銀シリーズ32と6〜9階のアクセサリー20ではありません：" + gear + "・"
                 + accessories);
         for (WorkshopType type : WorkshopType.values()) {
             long made = recipes.stream().filter(r -> r.workshop() == type
