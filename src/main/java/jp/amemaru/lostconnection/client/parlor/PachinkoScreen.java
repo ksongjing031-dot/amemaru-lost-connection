@@ -27,6 +27,11 @@ import java.util.Random;
  *   <li>大当たり：アタッカーが開き、ラウンドごとに10カウント。終わると確変・ST・時短・通常へ。確変の当たりを偶数の図柄で
  *       見せて、ラウンドの中で「昇格」させることもある</li>
  * </ul>
+ * <p>11月28日のご指示「パチンコとスロットにもっとアニメーションをつける」【補完】：図柄が止まるときのはね、リーチの文字の
+ * 飛びこみと揃った図柄の脈、スーパー以上の集中線と揺れ、斜めの帯のカットイン、盤面の上の役物（結晶の飾り）が落ちる演出、
+ * 保留が進むすべりと色が変わる保留変化、大当たりのフラッシュ・紙吹雪・輪・ファンファーレ、ラウンドの飛びこみとカウントの
+ * 「+」、終わりの払い出しの数え上げ、盤面のふちのランプの光り方（待ち・回転・リーチ・大リーチ・大当たり）。
+ * どれも見せ方だけで、当たりは台本のとおり（保留変化は、最後にサーバーが決めた色になる）。</p>
  */
 public class PachinkoScreen extends MachineScreen {
     private static final int[] HOLD_COLORS = {0xFFF0F0F0, 0xFF3C8CFF, 0xFF40D060, 0xFFFF3040, 0xFFFFC830, 0};
@@ -63,6 +68,39 @@ public class PachinkoScreen extends MachineScreen {
     private int endColor;
     private long endUntil;
     private int[] lastHolds = new int[0];
+
+    // 11月28日：動き
+    private final ParlorFx fx = new ParlorFx();
+    private final boolean[] colStopped = new boolean[3];
+    private final long[] colStopAt = new long[3];
+    private long gimmickDropAt;
+    private long gimmickRiseAt;
+    private boolean gimmickDown;
+    private long fanfareAt;
+    private int fanfareNote;
+    private int roundShown = -1;
+    private long roundAt;
+    private int countShown;
+    private long endingAt;
+    private long shiftAt;
+    private final List<HoldView> holdViews = new ArrayList<>();
+    @javax.annotation.Nullable
+    private HoldView pendingCurrent;
+    @javax.annotation.Nullable
+    private HoldView current;
+    private final List<long[]> roundPops = new ArrayList<>();
+    private int boardX;
+    private int boardY;
+    private int boardW;
+    private int boardH;
+
+    /** 保留1つの見え方（保留変化：はじめは低い色で見せ、あとでサーバーが決めた色に変わることがある）。 */
+    private static final class HoldView {
+        int trueColor;
+        int shown;
+        long upgradeAt;
+        long poppedAt;
+    }
 
     private static final class Ball {
         float x;
@@ -248,14 +286,9 @@ public class PachinkoScreen extends MachineScreen {
         lastHeso = next.getLong("hesoIn");
         lastDenchu = next.getLong("denchuIn");
         lastAttacker = next.getLong("attackerIn");
-        // 保留の色が変わった・増えた
+        // 保留の色が変わった・増えた（11月28日：保留が進むすべりと、保留変化）
         int[] holds = next.getIntArray("heso");
-        if (holds.length > lastHolds.length) {
-            int c = holds[holds.length - 1];
-            if (c >= 1) {
-                ParlorDraw.play(SoundEvents.NOTE_BLOCK_BELL.get(), 0.5F, 0.9F + c * 0.2F);
-            }
-        }
+        reconcileHolds(holds, now);
         lastHolds = holds;
         // 大当たりのラウンド
         CompoundTag round = next.getCompound("round");
@@ -266,9 +299,16 @@ public class PachinkoScreen extends MachineScreen {
                     ParlorDraw.play(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 0.7F, 1.0F);
                     ParlorDraw.play(SoundEvents.FIREWORK_ROCKET_BLAST, 0.6F, 1.0F);
                     promotedShown = false;
+                    roundShown = -1;
                 }
                 case "ROUND" -> ParlorDraw.play(SoundEvents.NOTE_BLOCK_PLING.get(), 0.5F, 1.0F + 0.05F * round.getInt("round"));
-                case "ENDING" -> ParlorDraw.play(SoundEvents.PLAYER_LEVELUP, 0.6F, 1.0F);
+                case "ENDING" -> {
+                    ParlorDraw.play(SoundEvents.PLAYER_LEVELUP, 0.6F, 1.0F);
+                    endingAt = now;
+                    if (round.getBoolean("kakuhen") && boardW > 0) {
+                        fx.confetti(boardX, boardX + boardW, boardY, 70, null);
+                    }
+                }
                 default -> {
                 }
             }
@@ -304,6 +344,37 @@ public class PachinkoScreen extends MachineScreen {
         }
     }
 
+    /** 保留の見え方を、サーバーの保留（色の並び）に合わせる。 */
+    private void reconcileHolds(int[] holds, long now) {
+        // 回り始めて減った：先頭が当該（回っている保留）になる
+        while (holdViews.size() > holds.length) {
+            pendingCurrent = holdViews.remove(0);
+            shiftAt = now;
+        }
+        for (int i = 0; i < holdViews.size(); i++) {
+            if (holdViews.get(i).trueColor != holds[i]) {
+                holdViews.clear();
+                break;
+            }
+        }
+        for (int i = holdViews.size(); i < holds.length; i++) {
+            HoldView view = new HoldView();
+            view.trueColor = holds[i];
+            if (view.trueColor >= 1 && random.nextFloat() < 0.5F) {
+                // 保留変化：はじめは低い色で、しばらくしてから本当の色に変わる
+                view.shown = random.nextInt(view.trueColor);
+                view.upgradeAt = now + 1200 + random.nextInt(2600);
+            } else {
+                view.shown = view.trueColor;
+                if (view.trueColor >= 1) {
+                    view.poppedAt = now;
+                    ParlorDraw.play(SoundEvents.NOTE_BLOCK_BELL.get(), 0.5F, 0.9F + view.trueColor * 0.2F);
+                }
+            }
+            holdViews.add(view);
+        }
+    }
+
     /** 図柄が回り始めた（台本）。 */
     public void onSpin(String json) {
         startScript(json, 0);
@@ -320,6 +391,25 @@ public class PachinkoScreen extends MachineScreen {
         spinSoundReach = false;
         spinSoundCut = false;
         spinSoundEnd = false;
+        java.util.Arrays.fill(colStopped, tick > 0);
+        // 当該保留：回り始めた保留の見え方を引き継ぐ（低い色で見せていたら、回っている間に本当の色へ変わる＝当該変化）
+        int truth = si("hold");
+        HoldView view = null;
+        if (pendingCurrent != null && pendingCurrent.trueColor == truth) {
+            view = pendingCurrent;
+        } else if (!holdViews.isEmpty() && holdViews.get(0).trueColor == truth) {
+            view = holdViews.get(0);
+        }
+        if (view == null) {
+            view = new HoldView();
+            view.trueColor = truth;
+            view.shown = truth;
+        }
+        if (view.shown < view.trueColor) {
+            view.upgradeAt = System.currentTimeMillis() + 500 + random.nextInt(1200);
+        }
+        current = view;
+        pendingCurrent = null;
     }
 
     private int si(String key) {
@@ -352,21 +442,49 @@ public class PachinkoScreen extends MachineScreen {
         int cw = 244;
         boolean support = !"NORMAL".equals(state.getString("mode")) && !state.getString("mode").isEmpty();
         boolean inRound = state.contains("round");
-        // 枠
+        double spinT = script == null ? 1.0E9 : (now - spinStart) / 50.0;
+        boolean spinning = script != null && spinT < si("center");
+        String reachKind = ss("reach");
+        boolean reaching = spinning && !reachKind.isEmpty() && spinT >= si("right");
+        boolean bigReach = reaching && ("super".equals(reachKind) || "special".equals(reachKind) || "all".equals(reachKind));
+        boolean fanfare = fanfareAt > 0 && now - fanfareAt < 3500;
+        playFanfare(now);
+        // 枠（11月28日：ランプの光り方を、待ち・回転・リーチ・大リーチ・大当たりで変える）
         ParlorDraw.bevel(g, cx, top + 4, cw, H - 8, frameColor);
         for (int i = 0; i < 24; i++) {
             double a = i / 24.0 * Math.PI * 2;
             int lx = cx + cw / 2 + (int) (Math.cos(a) * 114);
             int ly = top + 102 + (int) (Math.sin(a) * 92);
-            int c = inRound || support ? ParlorDraw.rainbow(now, 1200, i / 24.0F)
-                    : ((now / 120 + i) % 12 < 2 ? accent : ParlorDraw.darker(accent, 0.55F));
-            ParlorDraw.disc(g, lx, ly, 2.5F, c);
+            int c;
+            float size = 2.5F;
+            if (fanfare) {
+                c = (now / 60 + i) % 2 == 0 ? ParlorDraw.rainbow(now, 300, i / 24.0F) : 0xFFFFFFFF;
+                size = 3.0F;
+            } else if (inRound || support) {
+                c = ParlorDraw.rainbow(now, 1200, i / 24.0F);
+            } else if (bigReach) {
+                c = (now / 40 + i) % 6 < 2 ? 0xFFFF3030 : 0xFF501818;
+                size = 3.0F;
+            } else if (reaching) {
+                c = (now / 60 + i) % 8 < 3 ? 0xFFFFFFFF : accent;
+            } else if (spinning) {
+                c = (now / 120 + i) % 12 < 2 ? accent : ParlorDraw.darker(accent, 0.55F);
+            } else {
+                // 待っている間は、ゆっくり息をするように
+                float b = 0.45F + 0.4F * (float) Math.sin(now / 700.0 + i * 0.26);
+                c = ParlorDraw.mix(0xFF000000, accent, b);
+            }
+            ParlorDraw.disc(g, lx, ly, size, c);
         }
         // 盤面（ガラス）
         int bx = cx + 14;
         int by = top + 14;
         int bw = cw - 28;
         int bh = 176;
+        boardX = bx;
+        boardY = by;
+        boardW = bw;
+        boardH = bh;
         g.fill(bx, by, bx + bw, by + bh, ParlorDraw.darker(frameColor, 0.55F));
         g.fillGradient(bx, by, bx + bw, by + bh, 0x30FFFFFF, 0x00000000);
         // 外のレール（左から上へ）
@@ -393,6 +511,8 @@ public class PachinkoScreen extends MachineScreen {
         int lw = bw - 92;
         int lh = 96;
         renderLcd(g, lx, ly, lw, lh, now, support, inRound);
+        // 役物（盤面の上の結晶の飾り）：強いリーチと大当たりで落ちてくる
+        renderGimmick(g, lx + lw / 2, by, ly, now, spinning, reaching && (bigReach || si("cutin") >= 3), fanfare);
         // 保留
         renderHolds(g, lx, ly + lh + 3, lw, now);
         // ヘソ・電チュー・アタッカー
@@ -444,9 +564,75 @@ public class PachinkoScreen extends MachineScreen {
         // 終わりの知らせ
         if (now < endUntil) {
             int c = endColor == -1 ? ParlorDraw.rainbow(now, 900, 0) : endColor == -2 ? ParlorDraw.rainbow(now, 400, 0) : endColor;
-            g.fill(lx, ly + lh / 2 - 12, lx + lw, ly + lh / 2 + 12, 0xC0000000);
-            ParlorDraw.bigCentered(g, font, endText, lx + lw / 2, ly + lh / 2, 1.0F, c, 0xFF000000);
+            float in = ParlorFx.easeOutBack(Math.min(1.0F, (4000 - (endUntil - now)) / 300.0F));
+            int half = Math.max(1, Math.round(12 * in));
+            g.fill(lx, ly + lh / 2 - half, lx + lw, ly + lh / 2 + half, 0xC0000000);
+            if (in > 0.6F) {
+                ParlorDraw.bigCentered(g, font, endText, lx + lw / 2, ly + lh / 2, 1.0F, c, 0xFF000000);
+            }
         }
+        // 紙吹雪・火花・光
+        fx.render(g, now, cx, top + 4, cx + cw, top + H - 4);
+        fx.renderFlash(g, bx, by, bw, bh, now);
+    }
+
+    /** 大当たりのファンファーレ（短い上がりの音の並び）。 */
+    private void playFanfare(long now) {
+        if (fanfareAt <= 0) {
+            return;
+        }
+        int[] at = {0, 130, 260, 390, 650, 780};
+        float[] pitch = {1.0F, 1.26F, 1.5F, 2.0F, 1.5F, 2.0F};
+        while (fanfareNote < at.length && now - fanfareAt >= at[fanfareNote]) {
+            ParlorDraw.play(SoundEvents.NOTE_BLOCK_BELL.get(), 0.55F, pitch[fanfareNote]);
+            fanfareNote++;
+        }
+    }
+
+    /**
+     * 役物（盤面の上の、結晶の飾り）。ふだんは盤面の上にしまってあり、強いリーチ（スーパー以上・カットインが赤以上）と大当たりで、
+     * 液晶の上のふちまで落ちてはずむ。落ちている間は光の筋が回る。止まって終わると、上へ戻る。
+     */
+    private void renderGimmick(GuiGraphics g, int x, int boardTop, int lcdTop, long now, boolean spinning, boolean strong, boolean fanfare) {
+        if ((strong || fanfare) && !gimmickDown) {
+            gimmickDown = true;
+            gimmickDropAt = now;
+            ParlorDraw.play(SoundEvents.ANVIL_LAND, 0.25F, 1.5F);
+            ParlorDraw.play(SoundEvents.AMETHYST_BLOCK_RESONATE, 0.7F, 1.2F);
+            fx.shake(350, 2.0F);
+        } else if (gimmickDown && !spinning && !fanfare) {
+            gimmickDown = false;
+            gimmickRiseAt = now;
+        }
+        float rest = boardTop + 3;
+        float drop = lcdTop - 3;
+        float y;
+        if (gimmickDown) {
+            y = rest + (drop - rest) * ParlorFx.bounce((now - gimmickDropAt) / 450.0F);
+        } else if (now - gimmickRiseAt < 400) {
+            y = drop - (drop - rest) * ParlorFx.easeOut((now - gimmickRiseAt) / 400.0F);
+        } else {
+            y = rest;
+        }
+        int gem = fanfare ? ParlorDraw.rainbow(now, 500, 0) : gimmickDown ? ParlorDraw.mix(accent, 0xFFFFFFFF, 0.35F) : accent;
+        if (gimmickDown || fanfare) {
+            // 回る光の筋
+            for (int k = 0; k < 8; k++) {
+                double a = k / 8.0 * Math.PI * 2 + now / 300.0;
+                ParlorDraw.line(g, x, y, x + (float) Math.cos(a) * 16, y + (float) Math.sin(a) * 16, ParlorDraw.alpha(gem, 0.35F));
+            }
+            ParlorDraw.disc(g, x, y, 9, ParlorDraw.alpha(gem, 0.25F));
+        }
+        // ひし形の結晶（上は明るく、下は暗く）
+        for (int dy = -7; dy <= 7; dy++) {
+            int half = Math.round(6 - Math.abs(dy) * 0.8F);
+            if (half <= 0) {
+                continue;
+            }
+            int c = dy < 0 ? ParlorDraw.lighter(gem, 0.35F) : ParlorDraw.darker(gem, 0.75F);
+            g.fill(x - half, Math.round(y + dy), x + half, Math.round(y + dy + 1), c | 0xFF000000);
+        }
+        g.fill(x - 1, Math.round(y - 5), x, Math.round(y - 2), 0xFFFFFFFF);
     }
 
     private void renderHandle(GuiGraphics g, long now) {
@@ -505,19 +691,23 @@ public class PachinkoScreen extends MachineScreen {
     }
 
     private void renderHolds(GuiGraphics g, int x, int y, int w, long now) {
-        int[] heso = state.getIntArray("heso");
         int[] denchu = state.getIntArray("denchu");
-        // 当該（回っている保留）
+        // 当該（回っている保留）。低い色で見せていた保留は、回っている間に本当の色へ変わる
         if (script != null && state.getBoolean("spinning")) {
-            int c = si("hold");
-            drawHold(g, x + 8, y + 5, 4.5F, c, now);
-        }
-        for (int i = 0; i < 4; i++) {
-            int hx = x + 26 + i * 12;
-            if (i < heso.length) {
-                drawHold(g, hx, y + 5, 3.5F, heso[i], now);
+            if (current != null) {
+                drawHoldView(g, x + 8, y + 5, 4.5F, current, now);
             } else {
-                ParlorDraw.disc(g, hx, y + 5, 3.5F, 0x40FFFFFF);
+                drawHold(g, x + 8, y + 5, 4.5F, si("hold"), now);
+            }
+        }
+        // 保留が1つ進んだら、左へすべる
+        float slide = 12.0F * (1.0F - ParlorFx.easeOut((now - shiftAt) / 180.0F));
+        for (int i = 0; i < 4; i++) {
+            float hx = x + 26 + i * 12 + slide;
+            if (i < holdViews.size()) {
+                drawHoldView(g, hx, y + 5, 3.5F, holdViews.get(i), now);
+            } else {
+                ParlorDraw.disc(g, x + 26 + i * 12, y + 5, 3.5F, 0x40FFFFFF);
             }
         }
         for (int i = 0; i < 4; i++) {
@@ -528,6 +718,21 @@ public class PachinkoScreen extends MachineScreen {
                 ParlorDraw.disc(g, hx, y + 5, 3.0F, 0x30FFFFFF);
             }
         }
+    }
+
+    /** 保留1つ（保留変化の時が来たら本当の色に変え、はじけるように光らせる）。 */
+    private void drawHoldView(GuiGraphics g, float x, float y, float r, HoldView view, long now) {
+        if (view.shown < view.trueColor && view.upgradeAt > 0 && now >= view.upgradeAt) {
+            view.shown = view.trueColor;
+            view.poppedAt = now;
+            int c = view.trueColor == 5 ? 0xFFFFFFFF : HOLD_COLORS[Mth.clamp(view.trueColor, 0, 4)];
+            fx.burst(x, y, 10 + view.trueColor * 4, c, 0.09F, ParlorFx.STAR);
+            fx.ring(x, y, c, 420, 12 + view.trueColor * 2);
+            ParlorDraw.play(SoundEvents.NOTE_BLOCK_CHIME.get(), 0.6F, 0.8F + view.trueColor * 0.2F);
+            ParlorDraw.play(SoundEvents.AMETHYST_BLOCK_CHIME, 0.5F, 1.2F);
+        }
+        float pop = view.poppedAt > 0 && now - view.poppedAt < 320 ? 1.0F + 0.7F * (1.0F - (now - view.poppedAt) / 320.0F) : 1.0F;
+        drawHold(g, x, y, r * pop, view.shown, now);
     }
 
     private void drawHold(GuiGraphics g, float x, float y, float r, int color, long now) {
@@ -565,6 +770,24 @@ public class PachinkoScreen extends MachineScreen {
             float px = x + (i * 37 + now / 30.0F * (1 + i % 3)) % w;
             float py = y + (i * 23) % h;
             g.fill((int) px, (int) py, (int) px + 1, (int) py + 1, ParlorDraw.alpha(glowColor, 0.25F + (i % 4) * 0.12F));
+        }
+        // 11月28日：スーパー以上のリーチは、真ん中へ向かう集中線（回る）。スペシャルは画面が小さく揺れる
+        if (bigReach && t > si("right") + 12) {
+            int mx = x + w / 2;
+            int my = y + h / 2 + 2;
+            for (int k = 0; k < 20; k++) {
+                double a = k / 20.0 * Math.PI * 2 + now / 900.0;
+                float r0 = 24 + (k % 3) * 4;
+                float r1 = 90;
+                ParlorDraw.line(g, mx + (float) Math.cos(a) * r0, my + (float) Math.sin(a) * r0 * 0.7F, mx + (float) Math.cos(a) * r1,
+                        my + (float) Math.sin(a) * r1 * 0.7F, ParlorDraw.alpha(0xFFFFFF, 0.18F + (k % 2) * 0.1F));
+            }
+        }
+        if ("special".equals(reach) && inReach && t > si("right") + 20) {
+            int sx = (int) Math.round(Math.sin(now / 37.0) * 1.5);
+            int sy = (int) Math.round(Math.cos(now / 29.0) * 1.0);
+            x += sx;
+            y += sy;
         }
         if (inRound) {
             renderRound(g, x, y, w, h, now);
@@ -605,11 +828,26 @@ public class PachinkoScreen extends MachineScreen {
         int[] stopAt = {si("left"), si("center"), si("right")};
         boolean all = "all".equals(reach);
         int colW = w / 3;
-        float scale = 3.0F;
         for (int col = 0; col < 3; col++) {
+            float scale = 3.0F;
             int ccx = x + colW * col + colW / 2;
             int ccy = y + h / 2 + 2;
             boolean stopped = script == null || t >= stopAt[col];
+            // 11月28日：止まった瞬間に、図柄が小さくはねて白く光る（カチッと鳴る）
+            if (script != null && stopped && !colStopped[col]) {
+                colStopped[col] = true;
+                colStopAt[col] = now;
+                ParlorDraw.play(SoundEvents.UI_BUTTON_CLICK.get(), 0.12F, 1.7F);
+            }
+            long sinceStop = now - colStopAt[col];
+            if (script != null && stopped && sinceStop < 220) {
+                ccy -= Math.round((float) Math.sin(sinceStop / 220.0 * Math.PI) * 4 * (1.0F - sinceStop / 220.0F));
+            }
+            // リーチの揃った2つ（左と右）は、脈を打つように大きくなり、うしろが光る
+            if (inReach && !all && col != 1) {
+                scale *= 1.0F + 0.07F * (float) Math.sin(now / 90.0);
+                ParlorDraw.glow(g, ccx - 13, ccy - 14, 26, 28, accent, 0.18F);
+            }
             int digit;
             float slide = 0;
             if (stopped) {
@@ -646,6 +884,9 @@ public class PachinkoScreen extends MachineScreen {
                 ParlorDraw.bigCentered(g, font, Integer.toString(digit), ccx, (int) (ccy + slide * 30), scale, color, 0xFF000000);
             } else {
                 ParlorDraw.bigCentered(g, font, Integer.toString(digit), ccx, ccy, scale, color, 0xFF000000);
+                if (script != null && sinceStop < 90) {
+                    g.fill(ccx - 11, ccy - 13, ccx + 11, ccy + 13, ParlorDraw.alpha(0xFFFFFF, 0.5F * (1.0F - sinceStop / 90.0F)));
+                }
             }
         }
         if (script != null && t >= si("center") && !spinSoundEnd) {
@@ -654,13 +895,41 @@ public class PachinkoScreen extends MachineScreen {
             if (sb("hit")) {
                 ParlorDraw.play(SoundEvents.FIREWORK_ROCKET_LARGE_BLAST, 0.7F, 1.0F);
                 ParlorDraw.play(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 0.6F, 1.2F);
+                // 11月28日：大当たり！ 画面が白く光り、紙吹雪と光の輪、ファンファーレ
+                fanfareAt = now;
+                fanfareNote = 0;
+                fx.flash(0xFFFFFFFF, 280);
+                fx.shake(450, 2.5F);
+                if (boardW > 0) {
+                    fx.confetti(boardX, boardX + boardW, boardY, 110, null);
+                }
+                fx.ring(x + w / 2, y + h / 2, 0xFFFFE060, 700, 70);
+                fx.ring(x + w / 2, y + h / 2, 0xFFFFFFFF, 480, 44);
+                fx.burst(x + w / 2, y + h / 2, 40, 0, 0.16F, ParlorFx.STAR);
             } else if (!reach.isEmpty()) {
                 ParlorDraw.play(SoundEvents.NOTE_BLOCK_BASS.get(), 0.5F, 0.5F);
             }
         }
         if (script != null && sb("hit") && t >= si("center")) {
-            ParlorDraw.bigCentered(g, font, Component.translatable("screen.amemaru.parlor.jackpot").getString(), x + w / 2, y + h - 12,
-                    1.4F, ParlorDraw.rainbow(now, 500, 0), 0xFF000000);
+            waveText(g, Component.translatable("screen.amemaru.parlor.jackpot").getString(), x + w / 2, y + h - 12, 1.4F, now);
+        }
+    }
+
+    /** 1文字ずつ波打つ、虹の色の文字（大当たり）。 */
+    private void waveText(GuiGraphics g, String text, int cx, int cy, float scale, long now) {
+        int total = 0;
+        int[] widths = new int[text.length()];
+        for (int i = 0; i < text.length(); i++) {
+            widths[i] = font.width(String.valueOf(text.charAt(i)));
+            total += widths[i];
+        }
+        float x = cx - total * scale / 2.0F;
+        for (int i = 0; i < text.length(); i++) {
+            float wave = (float) Math.sin(now / 90.0 - i * 0.7) * 2.5F;
+            float cw = widths[i] * scale;
+            ParlorDraw.bigCentered(g, font, String.valueOf(text.charAt(i)), Math.round(x + cw / 2.0F), Math.round(cy + wave), scale,
+                    ParlorDraw.rainbow(now, 500, i / (float) Math.max(1, text.length())), 0xFF000000);
+            x += cw;
         }
     }
 
@@ -715,8 +984,12 @@ public class PachinkoScreen extends MachineScreen {
                 ParlorDraw.play(SoundEvents.NOTE_BLOCK_PLING.get(), 0.6F, 2.0F);
             }
             if (since < 30) {
-                ParlorDraw.bigCentered(g, font, Component.translatable("screen.amemaru.parlor.reach").getString(), x + w / 2, y + 18, 1.6F,
-                        0xFFFFE040, 0xFF800000);
+                // 11月28日：大きく飛びこんでから、少し行き過ぎて落ち着く（はじめは小さく震える）
+                float k = ParlorFx.easeOutBack((float) since / 6.0F);
+                float sc = 3.0F - 1.4F * k;
+                int jitter = since < 10 ? (int) Math.round(Math.sin(now / 25.0) * 1.5) : 0;
+                ParlorDraw.bigCentered(g, font, Component.translatable("screen.amemaru.parlor.reach").getString(), x + w / 2 + jitter, y + 18,
+                        sc, 0xFFFFE040, 0xFF800000);
             }
             String title = switch (reach) {
                 case "super" -> label("super", "SUPER");
@@ -740,22 +1013,52 @@ public class PachinkoScreen extends MachineScreen {
             int cut = si("cutin");
             double reachLen = si("center") - si("right");
             double cutAt = reachLen * 0.55;
-            if (cut > 0 && since >= cutAt && since < cutAt + 24) {
+            if (cut > 0 && since >= cutAt && since < cutAt + 28) {
+                // 11月28日：斜めの帯が、行き過ぎるように飛びこみ、止まって、速く抜けていく。うしろに流れる線、左に結晶の印
                 int[] colors = {0, 0xFF3C8CFF, 0xFF40D060, 0xFFFF3040, 0xFFFFC830, 0};
                 int c = cut == 5 ? ParlorDraw.rainbow(now, 400, 0) : colors[cut];
-                float p = (float) ((since - cutAt) / 24.0);
-                int bandX = (int) (x - w + p * w * 2.2F);
-                g.fill(Math.max(x, bandX), y + h / 2 - 14, Math.min(x + w, bandX + w), y + h / 2 + 14, c);
+                float p = (float) ((since - cutAt) / 28.0);
+                float enter = ParlorFx.easeOutBack(Math.min(1.0F, p / 0.25F));
+                float exit = p > 0.75F ? ParlorFx.easeIn((p - 0.75F) / 0.25F) : 0.0F;
+                int off = Math.round((1.0F - enter) * (w + 40) - exit * (w + 40));
+                int cy = y + h / 2;
+                int bandL = x + 6 + off;
+                int bandR = x + w - 6 + off;
+                for (int r = -15; r <= 15; r++) {
+                    int skew = Math.round(-r * 0.6F);
+                    int rowColor = Math.abs(r) >= 14 ? 0xFFFFFFFF : r < 0 ? ParlorDraw.lighter(c, 0.2F) | 0xFF000000 : c;
+                    g.fill(bandL + skew, cy + r, bandR + skew, cy + r + 1, rowColor);
+                }
+                for (int k = 0; k < 9; k++) {
+                    int ly = cy - 12 + (k * 7) % 25;
+                    int len = 10 + (k * 5) % 14;
+                    int lx = bandR - (int) ((now / 2 + k * 37) % Math.max(1, bandR - bandL));
+                    g.fill(lx, ly, lx + len, ly + 1, ParlorDraw.alpha(0xFFFFFF, 0.45F));
+                }
                 String[] words = {"", "CHANCE", "チャンス!", "激アツ!", "大チャンス!!", "確定!!"};
-                ParlorDraw.bigCentered(g, font, words[cut], Math.max(x + 30, Math.min(x + w - 30, bandX + w / 2)), y + h / 2, 1.5F,
-                        0xFFFFFFFF, 0xFF000000);
+                int textX = Math.max(x + 34, Math.min(x + w - 30, (bandL + bandR) / 2 + 8));
+                drawCrest(g, textX - font.width(words[cut]) * 3 / 4 - 12, cy, 0xFFFFFFFF);
+                ParlorDraw.bigCentered(g, font, words[cut], textX, cy, 1.5F, 0xFFFFFFFF, 0xFF000000);
                 if (!spinSoundCut) {
                     spinSoundCut = true;
+                    fx.flash(c, 160);
                     ParlorDraw.play(SoundEvents.AMETHYST_BLOCK_CHIME, 0.8F, 0.8F + cut * 0.2F);
                     ParlorDraw.play(SoundEvents.NOTE_BLOCK_BIT.get(), 0.5F, 1.0F + cut * 0.15F);
+                    ParlorDraw.play(SoundEvents.PLAYER_ATTACK_SWEEP, 0.4F, 1.6F);
                 }
             }
         }
+    }
+
+    /** 小さな結晶の印（カットインの帯の左）。 */
+    private static void drawCrest(GuiGraphics g, int x, int y, int color) {
+        for (int dy = -6; dy <= 6; dy++) {
+            int half = 5 - Math.abs(dy) * 5 / 6;
+            if (half > 0) {
+                g.fill(x - half, y + dy, x + half, y + dy + 1, color);
+            }
+        }
+        g.fill(x - 1, y - 3, x, y, 0xFF000000);
     }
 
     /** 大当たりのラウンド。 */
@@ -788,12 +1091,41 @@ public class PachinkoScreen extends MachineScreen {
                 ParlorDraw.bigCentered(g, font, r.getString("name"), x + w / 2, y + h / 2 + 16, 1.2F, 0xFFFFFFFF, 0xFF000000);
             }
             case "ROUND", "INTERVAL" -> {
-                ParlorDraw.bigCentered(g, font, "ROUND " + round + " / " + rounds, x + w / 2, y + 34, 1.5F, 0xFFFFE060, 0xFF000000);
+                // 11月28日：ラウンドが変わると、文字が左から飛びこむ。1カウントごとに「+」が浮かぶ
+                if (round != roundShown) {
+                    roundShown = round;
+                    roundAt = now;
+                    countShown = 0;
+                    roundPops.clear();
+                }
+                int slideIn = Math.round((1.0F - ParlorFx.easeOutBack(Math.min(1.0F, (now - roundAt) / 300.0F))) * -w);
+                ParlorDraw.bigCentered(g, font, "ROUND " + round + " / " + rounds, x + w / 2 + slideIn, y + 34, 1.5F, 0xFFFFE060, 0xFF000000);
                 int count = r.getInt("count");
                 int barW = w - 30;
                 g.fill(x + 15, y + 50, x + 15 + barW, y + 56, 0xFF202020);
                 int cMax = model.has("count") ? model.get("count").getAsInt() : 10;
-                g.fill(x + 15, y + 50, x + 15 + barW * Math.min(count, cMax) / cMax, y + 56, ParlorDraw.rainbow(now, 1200, 0));
+                int fill = barW * Math.min(count, cMax) / cMax;
+                g.fill(x + 15, y + 50, x + 15 + fill, y + 56, ParlorDraw.rainbow(now, 1200, 0));
+                if (count > countShown) {
+                    int pay = model.has("ball_pay") ? model.get("ball_pay").getAsInt() : 15;
+                    for (int k = countShown; k < count; k++) {
+                        roundPops.add(new long[]{now + (k - countShown) * 60L, pay});
+                    }
+                    countShown = count;
+                    if (boardW > 0) {
+                        fx.burst(boardX + boardW / 2 + 42, boardY + 156, 6, 0xFFFFE060, 0.08F, ParlorFx.SPARK);
+                    }
+                }
+                for (int k = roundPops.size() - 1; k >= 0; k--) {
+                    long[] pop = roundPops.get(k);
+                    long age = now - pop[0];
+                    if (age > 700) {
+                        roundPops.remove(k);
+                    } else if (age >= 0) {
+                        float a = 1.0F - age / 700.0F;
+                        g.drawString(font, "+" + pop[1], x + 15 + fill - 6, y + 46 - (int) (age / 40), ParlorDraw.alpha(0xFFFFE060, a), false);
+                    }
+                }
                 ParlorDraw.bigCentered(g, font, Component.translatable("screen.amemaru.parlor.paid", r.getInt("paid")).getString(),
                         x + w / 2, y + 70, 1.2F, 0xFFFFFFFF, 0xFF000000);
                 if (count != lastCount && count > 0) {
@@ -805,7 +1137,10 @@ public class PachinkoScreen extends MachineScreen {
                 }
             }
             case "ENDING" -> {
-                ParlorDraw.bigCentered(g, font, Component.translatable("screen.amemaru.parlor.paid", r.getInt("paid")).getString(),
+                // 11月28日：払い出しの数を、0から数え上げる
+                int paid = r.getInt("paid");
+                int counted = endingAt > 0 ? Math.round(paid * ParlorFx.easeOut((now - endingAt) / 1200.0F)) : paid;
+                ParlorDraw.bigCentered(g, font, Component.translatable("screen.amemaru.parlor.paid", counted).getString(),
                         x + w / 2, y + h / 2 + 14, 1.3F, 0xFFFFFFFF, 0xFF000000);
                 ParlorDraw.bigCentered(g, font, kakuhen ? Component.translatable("screen.amemaru.parlor.enter",
                                 label(r.getString("jackpot").startsWith("lt") ? "lt" : (label("st", "").isEmpty() ? "kakuhen" : "st"), "確変")).getString()

@@ -29,6 +29,10 @@ import java.util.Map;
  *       遅れ。光ったら7をねらって押す（目押し）</li>
  *   <li>AT：上の液晶に、通常・チャンスゾーン・AT の残りのゲーム数と獲得枚数、上乗せ。AT の間は押し順のナビ（①②③）</li>
  * </ul>
+ * <p>11月28日のご指示「パチンコとスロットにもっとアニメーションをつける」【補完】：回るリールの残像と流れる光、止まるときの
+ * はね、レバーのばね、止めボタンのへこみ、ランプが光る瞬間の光の筋と輪、ボーナス・AT のはじまりの帯の飛びこみと紙吹雪、
+ * 終わりの数え上げ、払い出しのメダルが弧を描いて受け皿へ落ち、クレジットが1枚ずつ増える、揃った段の光、筐体の両わきのランプ。
+ * どれも見せ方だけ（役と払い出しは、サーバーのとおり）。</p>
  */
 public class SlotScreen extends MachineScreen {
     private static final int ROW_H = 26;
@@ -68,6 +72,16 @@ public class SlotScreen extends MachineScreen {
     private long nextFanfare;
     private String error = "";
     private long errorUntil;
+
+    // 11月28日：動き
+    private final ParlorFx fx = new ParlorFx();
+    private final long[] reelStopAt = new long[3];
+    private final long[] buttonAt = new long[3];
+    private long bannerStart;
+    private int bannerCount = -1;
+    private long shownCredit = -1;
+    private long creditStepAt;
+    private long winAt;
 
     private static final class Reel {
         double pos;
@@ -163,6 +177,7 @@ public class SlotScreen extends MachineScreen {
         r.pos = press;
         r.pressed = press;
         r.stage = 2;
+        buttonAt[i] = now;
         ParlorDraw.play(SoundEvents.UI_BUTTON_CLICK.get(), 0.45F, 1.5F);
         CompoundTag args = new CompoundTag();
         args.putInt("reel", i);
@@ -331,6 +346,7 @@ public class SlotScreen extends MachineScreen {
         r.stage = r.slip == 0 ? 0 : 3;
         if (r.slip == 0) {
             r.pos = at;
+            reelStopAt[i] = now;
         }
     }
 
@@ -346,6 +362,13 @@ public class SlotScreen extends MachineScreen {
                 coins.add(new float[]{(float) (Math.random() * 40 - 20), (float) (-i * 6), (float) (Math.random() * 0.6 + 0.6)});
             }
             ParlorDraw.play(SoundEvents.EXPERIENCE_ORB_PICKUP, 0.35F, 1.2F + Math.min(0.6F, lastPay / 30.0F));
+            // 11月28日：揃った段が光り、メダルが弧を描いて受け皿へ落ちる（クレジットは1枚ずつ増えて見える）
+            winAt = now;
+            int cx = cabX() + 122;
+            for (int i = 0; i < Math.min(24, lastPay); i++) {
+                fx.medal(cx + (float) (Math.random() * 60 - 30), reelY() + ROW_H * 3 + 2, (float) (Math.random() - 0.5) * 0.12F,
+                        -0.18F - (float) Math.random() * 0.12F, 1600);
+            }
         }
         if (t.getBoolean("lampNow")) {
             rainbowLamp = "rainbow".equals(effect) || rainbowLamp;
@@ -357,13 +380,22 @@ public class SlotScreen extends MachineScreen {
             bannerText = "big".equals(started) ? label("big", "BIG BONUS") : label("reg", "REGULAR BONUS");
             bannerColor = "big".equals(started) ? 0xFF4060 : 0x60A0FF;
             bannerUntil = now + 3500;
+            bannerStart = now;
+            bannerCount = -1;
             ParlorDraw.play(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 0.6F, 1.0F);
             ParlorDraw.play(SoundEvents.PLAYER_LEVELUP, 0.5F, 1.2F);
+            // 11月28日：光と紙吹雪（BIG は虹、REG は青）
+            fx.flash(0xFFFFFFFF, 260);
+            fx.confetti(cabX() + 6, cabX() + 238, top + 8, "big".equals(started) ? 90 : 50,
+                    "big".equals(started) ? null : new int[]{0xFF60A0FF, 0xFFB0D8FF, 0xFFFFFFFF});
+            fx.ring(cabX() + 122, top + 121, bannerColor | 0xFF000000, 600, 80);
         }
         if (!t.getString("bonusEnded").isEmpty()) {
             bannerText = Component.translatable("screen.amemaru.parlor.bonus_end", t.getInt("bonusPaid")).getString();
             bannerColor = 0xFFE070;
             bannerUntil = now + 2500;
+            bannerStart = now;
+            bannerCount = t.getInt("bonusPaid");
             ParlorDraw.play(SoundEvents.NOTE_BLOCK_CHIME.get(), 0.6F, 1.0F);
         }
         if (!state.getBoolean("lamp") && started.isEmpty()) {
@@ -382,6 +414,8 @@ public class SlotScreen extends MachineScreen {
                 bannerText = label("cz", "CHANCE ZONE");
                 bannerColor = 0x7FE0FF;
                 bannerUntil = now + 2200;
+                bannerStart = now;
+                bannerCount = -1;
                 ParlorDraw.play(SoundEvents.NOTE_BLOCK_BIT.get(), 0.6F, 1.6F);
             } else if ("cz_hit".equals(e)) {
                 popups.add(new Popup("★", ParlorDraw.rainbow(now, 1200, 0) & 0xFFFFFF, now + 1500));
@@ -390,8 +424,13 @@ public class SlotScreen extends MachineScreen {
                 bannerText = label("at", "AT") + "!!";
                 bannerColor = -1;
                 bannerUntil = now + 3500;
+                bannerStart = now;
+                bannerCount = -1;
                 ParlorDraw.play(SoundEvents.FIREWORK_ROCKET_LARGE_BLAST, 0.7F, 1.0F);
                 ParlorDraw.play(SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, 0.6F, 1.1F);
+                fx.flash(0xFFFFFFFF, 260);
+                fx.confetti(cabX() + 6, cabX() + 238, top + 8, 100, new int[]{0xFFFFD040, 0xFFFFF0A0, 0xFFFF8040, 0xFFFFFFFF});
+                fx.ring(cabX() + 122, top + 121, 0xFFFFD040, 600, 80);
             } else if ("cz_fail".equals(e)) {
                 popups.add(new Popup(Component.translatable("screen.amemaru.parlor.cz_fail").getString(), 0xA0A0C0, now + 1800));
             } else if ("ceiling".equals(e)) {
@@ -400,6 +439,8 @@ public class SlotScreen extends MachineScreen {
                 bannerText = Component.translatable("screen.amemaru.parlor.at_end", e.substring(7)).getString();
                 bannerColor = 0xFFE070;
                 bannerUntil = now + 3000;
+                bannerStart = now;
+                bannerCount = -1;
             }
         }
     }
@@ -409,6 +450,19 @@ public class SlotScreen extends MachineScreen {
         lampLitAt = now;
         ParlorDraw.play(SoundEvents.NOTE_BLOCK_BELL.get(), 0.9F, 2.0F);
         ParlorDraw.play(SoundEvents.AMETHYST_BLOCK_CHIME, 0.8F, 1.7F);
+        // 11月28日：光った瞬間に、光の輪と火花（虹のときは虹の火花）
+        float lx = lampCenterX();
+        float ly = lampCenterY();
+        fx.ring(lx, ly, rainbowLamp ? 0xFFFFFFFF : glowColor | 0xFF000000, 520, 34);
+        fx.burst(lx, ly, rainbowLamp ? 30 : 18, rainbowLamp ? 0 : glowColor | 0xFF000000, 0.12F, ParlorFx.STAR);
+    }
+
+    private float lampCenterX() {
+        return reelX(0) - 6 - 26 + 11;
+    }
+
+    private float lampCenterY() {
+        return reelY() - 4 + ROW_H * 3 + 8 - 26 + 11;
     }
 
     // ================================================================ 描く
@@ -427,6 +481,7 @@ public class SlotScreen extends MachineScreen {
                 if (p >= 1.0) {
                     r.pos = r.target;
                     r.stage = 0;
+                    reelStopAt[java.util.Arrays.asList(reel).indexOf(r)] = now;
                     ParlorDraw.play(SoundEvents.UI_BUTTON_CLICK.get(), 0.25F, 1.9F);
                 }
             }
@@ -459,6 +514,26 @@ public class SlotScreen extends MachineScreen {
             }
             g.fill(cx + 6 + i * 13, top + 6, cx + 14 + i * 13, top + 8, c);
         }
+        // 11月28日：筐体の両わきのランプ（待ち：ゆっくり上下・回転：追いかけ・ランプが光っている：明るく脈・ボーナス：虹の波）
+        boolean anyLamp = lampOn && now >= lampLitAt && "a".equals(type);
+        for (int k = 0; k < 10; k++) {
+            int ly = top + 34 + k * 13;
+            int c;
+            if (freeze) {
+                c = 0xFF101010;
+            } else if (bonus || at) {
+                c = ParlorDraw.rainbow(now, 1200, k / 10.0F);
+            } else if (anyLamp) {
+                c = ParlorDraw.mix(0xFF000000, glowColor | 0xFF000000, 0.6F + 0.4F * (float) Math.sin(now / 140.0 + k * 0.5));
+            } else if (gameActive) {
+                c = (now / 70 + k) % 10 < 2 ? accent : ParlorDraw.darker(accent, 0.6F);
+            } else {
+                float b = 0.35F + 0.35F * (float) Math.sin(now / 500.0 - k * 0.6);
+                c = ParlorDraw.mix(0xFF000000, accent, b);
+            }
+            g.fill(cx + 3, ly, cx + 6, ly + 9, c);
+            g.fill(cx + cw - 6, ly, cx + cw - 3, ly + 9, c);
+        }
         // 機種の名前
         ParlorDraw.bigCentered(g, font, modelName(), cx + cw / 2, top + 20, 1.5F, accent, 0xFF000000);
         // 液晶（AT）・飾りの窓（Aタイプ）
@@ -471,6 +546,18 @@ public class SlotScreen extends MachineScreen {
         ParlorDraw.inset(g, rx, ry, rw, rh, 0x101014);
         for (int i = 0; i < 3; i++) {
             renderReel(g, i, now, bonus, freeze);
+        }
+        // 11月28日：揃った段（中段）が光って脈を打つ
+        if (winAt > 0 && now - winAt < 1400 && !gameActive) {
+            float pulse = 0.25F + 0.2F * (float) Math.sin((now - winAt) / 80.0);
+            int wc = ParlorDraw.rainbow(now, 900, 0);
+            for (int i = 0; i < 3; i++) {
+                int x0 = reelX(i);
+                int y0 = reelY() + ROW_H;
+                g.fill(x0, y0, x0 + REEL_W, y0 + ROW_H, ParlorDraw.alpha(wc, pulse));
+                g.fill(x0, y0, x0 + REEL_W, y0 + 1, ParlorDraw.alpha(0xFFFFFF, 0.8F));
+                g.fill(x0, y0 + ROW_H - 1, x0 + REEL_W, y0 + ROW_H, ParlorDraw.alpha(0xFFFFFF, 0.8F));
+            }
         }
         // 有効ライン（中段）
         int ly = reelY() + ROW_H + ROW_H / 2;
@@ -498,7 +585,22 @@ public class SlotScreen extends MachineScreen {
         // クレジット・払い出し・BET
         int dy = top + 166;
         g.drawString(font, "CREDIT", cx + 14, dy, 0xB0A8C0, false);
-        ParlorDraw.segments(g, cx + 14, dy + 10, Math.min(50, state.getLong("medals")), 2, 0xFFFF3030, 0xFF301010, 6);
+        // 11月28日：払い出しのメダルが受け皿に落ちるたびに、クレジットが1枚ずつ増えて見える
+        long realCredit = Math.min(50, state.getLong("medals"));
+        int landed = fx.landedMedals(top + H - 22);
+        if (shownCredit < 0 || shownCredit > realCredit || gameActive && lastPay == 0) {
+            shownCredit = realCredit;
+        } else if (shownCredit < realCredit) {
+            if (landed > 0) {
+                shownCredit = Math.min(realCredit, shownCredit + landed);
+                ParlorDraw.play(SoundEvents.CHAIN_PLACE, 0.15F, 1.8F);
+            }
+            if (now - creditStepAt > 45) {
+                creditStepAt = now;
+                shownCredit++;
+            }
+        }
+        ParlorDraw.segments(g, cx + 14, dy + 10, shownCredit, 2, 0xFFFF3030, 0xFF301010, 6);
         g.drawString(font, "PAY", cx + cw - 52, dy, 0xB0A8C0, false);
         ParlorDraw.segments(g, cx + cw - 52, dy + 10, lastPay, 3, 0xFFFF3030, 0xFF301010, 6);
         for (int i = 0; i < 3; i++) {
@@ -509,10 +611,26 @@ public class SlotScreen extends MachineScreen {
         // レバー
         int lx = cx + 14;
         int lyy = top + 186;
-        boolean leverDown = waitingStart || gameActive && now - lastLeverAt < 250;
+        // 11月28日：レバーは、たたかれて下がり、ばねで少し行き過ぎてから戻る
+        long sinceLever = now - lastLeverAt;
+        float lever;
+        if (waitingStart && sinceLever < 90) {
+            lever = ParlorFx.easeOut(sinceLever / 90.0F);
+        } else if (waitingStart) {
+            lever = 1.0F;
+        } else if (sinceLever < 90) {
+            lever = ParlorFx.easeOut(sinceLever / 90.0F);
+        } else if (sinceLever < 420) {
+            float k = (sinceLever - 90) / 330.0F;
+            lever = 1.0F - ParlorFx.easeOutBack(k) * 1.0F;
+        } else {
+            lever = 0.0F;
+        }
+        int ballY = lyy + 8 + Math.round(22 * lever);
         g.fill(lx + 10, lyy + 8, lx + 14, lyy + 34, 0xFF909098);
-        ParlorDraw.disc(g, lx + 12, lyy + (leverDown ? 30 : 8), 8, 0xFFE02030);
-        ParlorDraw.disc(g, lx + 10, lyy + (leverDown ? 28 : 6), 3, 0xFFFF8090);
+        g.fill(lx + 11, Math.min(ballY, lyy + 8), lx + 13, Math.max(ballY, lyy + 8) + 1, 0xFFB8B8C0);
+        ParlorDraw.disc(g, lx + 12, ballY, 8, 0xFFE02030);
+        ParlorDraw.disc(g, lx + 10, ballY - 2, 3, 0xFFFF8090);
         // 止めボタン
         for (int i = 0; i < 3; i++) {
             int bx = reelX(i) + 7;
@@ -522,8 +640,11 @@ public class SlotScreen extends MachineScreen {
             if (ready && navOrder >= 0 && ORDERS[navOrder][stopIndex()] == i) {
                 c = (now / 150) % 2 == 0 ? 0xFFFF3050 : 0xFF30A0FF;
             }
-            ParlorDraw.bevel(g, bx, by, 30, 14, c & 0xFFFFFF);
-            g.drawString(font, new String[]{"Z", "X", "C"}[i], bx + 12, by + 3, ready ? 0xFFFFFF : 0x808090, false);
+            // 11月28日：押した止めボタンは、少しへこんで暗くなる
+            boolean pushed = now - buttonAt[i] < 160;
+            int press = pushed ? 2 : 0;
+            ParlorDraw.bevel(g, bx, by + press, 30, 14 - press, (pushed ? ParlorDraw.darker(c, 0.6F) : c) & 0xFFFFFF);
+            g.drawString(font, new String[]{"Z", "X", "C"}[i], bx + 12, by + 3 + press / 2, ready ? 0xFFFFFF : 0x808090, false);
         }
         // 受け皿のメダル
         renderCoins(g, cx + cw / 2, top + H - 24, now);
@@ -540,8 +661,27 @@ public class SlotScreen extends MachineScreen {
         if (now < bannerUntil) {
             float a = Mth.clamp((bannerUntil - now) / 400.0F, 0, 1);
             int c = bannerColor < 0 ? ParlorDraw.rainbow(now, 900, 0) : bannerColor;
-            g.fill(cx + 8, top + 108, cx + cw - 8, top + 134, ParlorDraw.alpha(0x000000, 0.7F * a));
-            ParlorDraw.bigCentered(g, font, bannerText, cx + cw / 2, top + 121, 1.8F, c | 0xFF000000, 0xFF000000);
+            // 11月28日：帯は右から行き過ぎるように飛びこみ、文字は1文字ずつ波打つ。終わりの帯は、払い出しを数え上げる
+            float in = ParlorFx.easeOutBack(Math.min(1.0F, (now - bannerStart) / 320.0F));
+            int off = Math.round((1.0F - in) * (cw + 20));
+            g.fill(cx + 8 + off, top + 108, cx + cw - 8 + off, top + 134, ParlorDraw.alpha(0x000000, 0.7F * a));
+            g.fill(cx + 8 + off, top + 108, cx + cw - 8 + off, top + 109, ParlorDraw.alpha(c | 0xFF000000, a));
+            g.fill(cx + 8 + off, top + 133, cx + cw - 8 + off, top + 134, ParlorDraw.alpha(c | 0xFF000000, a));
+            String text = bannerText;
+            if (bannerCount >= 0) {
+                int counted = Math.round(bannerCount * ParlorFx.easeOut((now - bannerStart - 200) / 1000.0F));
+                text = Component.translatable("screen.amemaru.parlor.bonus_end", Math.max(0, counted)).getString();
+            }
+            int textW = font.width(text);
+            float scale = 1.8F;
+            float tx = cx + cw / 2.0F + off - textW * scale / 2.0F;
+            for (int k = 0; k < text.length(); k++) {
+                String ch = String.valueOf(text.charAt(k));
+                float chW = font.width(ch) * scale;
+                float wave = bannerCount >= 0 ? 0.0F : (float) Math.sin(now / 90.0 - k * 0.6) * 2.0F;
+                ParlorDraw.bigCentered(g, font, ch, Math.round(tx + chW / 2.0F), Math.round(top + 121 + wave), scale, c | 0xFF000000, 0xFF000000);
+                tx += chW;
+            }
         }
         for (int i = popups.size() - 1; i >= 0; i--) {
             Popup p = popups.get(i);
@@ -552,6 +692,9 @@ public class SlotScreen extends MachineScreen {
             float rise = (p.until() - now) / 1800.0F;
             ParlorDraw.bigCentered(g, font, p.text(), cx + cw / 2, top + 60 + (int) (rise * 10), 1.6F, p.color() | 0xFF000000, 0xFF000000);
         }
+        // 紙吹雪・火花・メダル・光
+        fx.render(g, now, cx, top + 4, cx + cw, top + H - 4);
+        fx.renderFlash(g, cx + 4, top + 8, cw - 8, H - 20, now);
     }
 
     private static final int[][] ORDERS = {{0, 1, 2}, {0, 2, 1}, {1, 0, 2}, {1, 2, 0}, {2, 0, 1}, {2, 1, 0}};
@@ -579,10 +722,28 @@ public class SlotScreen extends MachineScreen {
         double pos = r.pos;
         int base = (int) Math.floor(pos);
         int cy = y + ROW_H + ROW_H / 2;
+        boolean spinning = r.stage == 1 && now >= startDelayUntil;
+        // 11月28日：止まった瞬間に、リールが小さくはねる
+        long sinceStop = now - reelStopAt[i];
+        if (r.stage == 0 && sinceStop < 160) {
+            cy += Math.round((float) Math.sin(sinceStop / 160.0 * Math.PI) * 3 * (1.0F - sinceStop / 160.0F));
+        }
         for (int k = base - 2; k <= base + 3; k++) {
             char c = reels[i].charAt(Math.floorMod(k, n));
             float sy = (float) (cy + (k - pos) * ROW_H);
-            drawSymbol(g, c, x + REEL_W / 2, Math.round(sy), r.stage == 1 && now >= startDelayUntil);
+            if (spinning) {
+                // 回っている間は、うしろに残像（下へ流れる）
+                drawSymbolAlpha(g, c, x + REEL_W / 2, Math.round(sy - ROW_H * 0.3F), 0.3F);
+                drawSymbolAlpha(g, c, x + REEL_W / 2, Math.round(sy - ROW_H * 0.6F), 0.14F);
+            }
+            drawSymbol(g, c, x + REEL_W / 2, Math.round(sy), spinning);
+        }
+        if (spinning) {
+            // 流れる光の線
+            for (int k = 0; k < 3; k++) {
+                int ly = y + (int) ((now / 3 + k * 29 + i * 11) % (ROW_H * 3));
+                g.fill(x + 2, ly, x + REEL_W - 2, ly + 1, ParlorDraw.alpha(0xFFFFFF, 0.25F));
+            }
         }
         g.disableScissor();
         // 上と下の影（丸いリールに見せる）
@@ -591,6 +752,19 @@ public class SlotScreen extends MachineScreen {
             g.fill(x, y + s, x + REEL_W, y + s + 1, a << 24);
             g.fill(x, y + ROW_H * 3 - s - 1, x + REEL_W, y + ROW_H * 3 - s, a << 24);
         }
+    }
+
+    /** 図柄を、うすく（残像）。 */
+    private void drawSymbolAlpha(GuiGraphics g, char c, int cx, int cy, float alpha) {
+        ResourceLocation tex = textures.get(c);
+        if (tex == null) {
+            return;
+        }
+        int s = 24;
+        ParlorDraw.enableBlend();
+        g.setColor(1.0F, 1.0F, 1.0F, alpha);
+        g.blit(tex, cx - s / 2, cy - s / 2, 0, 0, s, s, s, s);
+        g.setColor(1.0F, 1.0F, 1.0F, 1.0F);
     }
 
     private void drawSymbol(GuiGraphics g, char c, int cx, int cy, boolean blur) {
@@ -624,6 +798,17 @@ public class SlotScreen extends MachineScreen {
         }
         if (lit) {
             ParlorDraw.glow(g, x - 2, y - 2, 24, 24, c, 0.35F);
+            // 11月28日：光った瞬間から1秒ほど、回る光の筋
+            long since = now - lampLitAt;
+            if (since < 1200) {
+                float k = since / 1200.0F;
+                float len = 10 + 16 * ParlorFx.easeOut(k * 2.0F);
+                for (int ray = 0; ray < 8; ray++) {
+                    double a = ray / 8.0 * Math.PI * 2 + since / 260.0;
+                    ParlorDraw.line(g, x + 11, y + 11, x + 11 + (float) Math.cos(a) * len, y + 11 + (float) Math.sin(a) * len,
+                            ParlorDraw.alpha(c, 0.7F * (1.0F - k)));
+                }
+            }
         }
         int[][] dots = {{6, 6}, {16, 6}, {6, 16}, {16, 16}};
         for (int[] d : dots) {

@@ -1079,7 +1079,9 @@ public final class CiScreenshots {
             {"snap_keep", null, "60", "p8c_pachinko"},
             {"cmd", null, "5", "amemaru admin casino machine 1 force k10"},
             {"snap_keep", null, "150", "p8c_pachinko_reach"},
-            {"snap_keep", null, "190", "p8c_pachinko_jackpot"},
+            // 11月28日：大当たりの瞬間（光・紙吹雪・光の輪・落ちてきた役物・波打つ「大当たり」）
+            {"snap_keep", null, "150", "p8c_pachinko_fanfare"},
+            {"snap_keep", null, "38", "p8c_pachinko_jackpot"},
             {"p8c_shoot", null, "10", "on:right:70"},
             {"snap_keep", null, "260", "p8c_pachinko_round"},
             {"screen", null, "10", "hold"},
@@ -1090,8 +1092,10 @@ public final class CiScreenshots {
             {"snap_keep", null, "12", "p8c_slot_spin"},
             {"p8c_aim", null, "12", "0:7"},
             {"p8c_aim", null, "12", "1:7"},
-            {"p8c_aim", null, "40", "2:7"},
-            {"snap_keep", null, "20", "p8c_slot_big"},
+            {"p8c_aim", null, "14", "2:7"},
+            // 11月28日：BIG のはじまり（帯の飛びこみと紙吹雪）
+            {"snap_keep", null, "1", "p8c_slot_bonus_in"},
+            {"snap_keep", null, "43", "p8c_slot_big"},
             {"screen", null, "10", "hold"},
             {"cmd", null, "30", "tp @p {at:17.5,-9,78.5} 0 10"},
             {"p8c_board", null, "30"},

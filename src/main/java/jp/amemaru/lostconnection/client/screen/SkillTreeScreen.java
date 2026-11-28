@@ -1460,9 +1460,9 @@ public class SkillTreeScreen extends Screen {
         if (skill == null) {
             return;
         }
-        int index = selectedIndex();
-        if (ultimateHidden(skill, index, state)) {
-            renderHiddenUltimate(graphics, state, job, skill, index, x, top, right, bottom);
+        int nodeIndex = selectedIndex();
+        if (ultimateHidden(skill, nodeIndex, state)) {
+            renderHiddenUltimate(graphics, state, job, skill, nodeIndex, x, top, right, bottom);
             return;
         }
         int width = right - x;
