@@ -2380,7 +2380,7 @@ public final class CiScreenshots {
             {"snap_keep", null, "10", "p8q_creative_tabs"},
             {"p8_tabs", null, "5", "-"},
             {"screen", null, "5", "hold"},
-            {"p8_tips", null, "20", "candy_strength,candy_keen"},
+            {"p8_tips", null, "20", "candy_strength"},
             {"snap_keep", null, "10", "p8q_candy_tooltips"},
             {"p8_tips", null, "5", "-"},
             {"screen", null, "5", "hold"},

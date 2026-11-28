@@ -80,6 +80,14 @@ MATERIALS = {
     "amemaru:crane_plume": 50,          # 凍て鶴から60%
     "amemaru:mist_thread": 50,          # 氷霧の亡霊から60%
     "amemaru:lake_pearl": 1000,         # 名のある魔物から40%・ムーネから3〜4個・雑魚から1%（レア）
+    # 9階の素材（11月28日。9階のアクセサリーの材料。11月29日にこの表へ足した：前は表になく、このスクリプトが止まっていた）【補完】
+    "amemaru:castle_ice": 90,           # どの雑魚からも15〜25%・ヴァルグリムから・宝箱
+    "amemaru:guard_ice": 80,            # 凍れる近衛兵から55%（像の間は硬い）
+    "amemaru:ice_horseshoe": 55,        # 氷の騎兵から60%
+    "amemaru:torn_page": 50,            # 書架霊から60%
+    "amemaru:hound_collar": 55,         # 霜の猟犬から50%
+    "amemaru:lace_scrap": 50,           # 忘れられた侍女から60%
+    "amemaru:royal_seal": 1050,         # 名のある魔物から40%・ヴァルグリムから2個（レア）
 }
 DROPS = {
     "amemaru:ancient_stone": 0.7 * 1.5,
@@ -116,6 +124,10 @@ FIXED = {
     "amemaru:frost_crown_plume": 3600,
     "amemaru:thousand_voice_stone": 3800,
     "amemaru:lake_lord_whisker_bow": 7400,
+    # 11月28日：9階の名のある魔物のレアのお守りと、9階のボスのレア（4%。1回10分 → 250分 × 33）【補完】
+    "amemaru:bearer_tassel": 4000,
+    "amemaru:binder_bookmark": 4200,
+    "amemaru:royal_oath_shield": 8300,
 }
 # 表にない物：レアリティごとの基準額（×（1＋0.035×装備レベル）はゲームの中で計算する。11月24日にレベルの上限を上げたため 0.08 から）【補完】
 RARITY_BASE = {"common": 30, "uncommon": 100, "rare": 400, "epic": 1600, "legendary": 6000, "unique": 20000}
@@ -133,7 +145,10 @@ SHOPS = [
     ("general", "雑貨屋", "マルタ・ポム", [
         ("amemaru:healing_potion_small", 100), ("amemaru:mana_water_small", 120), ("amemaru:return_feather", 150),
         ("amemaru:repair_kit", 200), ("bread", 12), ("apple", 8)], TOWER_MATERIALS),
-    ("bakery", "パン屋", "", [("bread", 12), ("cookie", 4), ("pumpkin_pie", 18)], None),
+    # 11月29日：キャンディー（食べると3分、ステータスが1つ上がる）
+    ("bakery", "パン屋", "", [("bread", 12), ("cookie", 4), ("pumpkin_pie", 18), ("amemaru:candy_strength", 150),
+                             ("amemaru:candy_wisdom", 150), ("amemaru:candy_iron", 150), ("amemaru:candy_gale", 150),
+                             ("amemaru:candy_keen", 150), ("amemaru:candy_vigor", 150), ("amemaru:candy_mercy", 150)], None),
     ("greengrocer", "八百屋", "", [("potato", 5), ("carrot", 5), ("beetroot", 4), ("apple", 8), ("sweet_berries", 4),
                                   ("melon_slice", 3)], None),
     ("apothecary", "薬屋", "", [("amemaru:healing_potion_small", 100), ("amemaru:healing_potion_medium", 260),
@@ -177,6 +192,14 @@ USES = {
     "amemaru:mana_water_small": "MPが30%戻る（戦いの最中に使える）",
     "amemaru:mana_water_medium": "MPが60%戻る（戦いの最中に使える）",
     "amemaru:herb_tea": "飲むとMPが15%戻る（食べ物の仲間）",
+    # 11月29日：キャンディー（くわしい数は説明文。一度に1つ・料理とは別に重なる）
+    "amemaru:candy_strength": "戦いの前に食べて、しばらく攻撃を上げる",
+    "amemaru:candy_wisdom": "戦いの前に食べて、しばらく魔力を上げる",
+    "amemaru:candy_iron": "戦いの前に食べて、しばらく防御を上げる",
+    "amemaru:candy_gale": "戦いの前に食べて、しばらく素早さを上げる",
+    "amemaru:candy_keen": "戦いの前に食べて、しばらく会心を上げる",
+    "amemaru:candy_vigor": "戦いの前に食べて、しばらく最大HPを上げる",
+    "amemaru:candy_mercy": "戦いの前に食べて、しばらく回復量を上げる",
     "amemaru:antidote": "毒を治し、そのあと30秒は毒にならない（2階のポコダケの胞子に）",
     # 11月25日：7階からのロスト状態（Phase 0-A 11章「消耗品『結び紐』でも解除」）
     "amemaru:knot_cord": "自分とまわりの仲間のロスト状態（薄れなど）をほどく（7階から）",
