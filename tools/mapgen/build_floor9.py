@@ -1225,6 +1225,8 @@ def great_hall(f):
     # 踊り場の下（1階）の灯りと、天井のつらら
     light_grid(f, hx0, 300, hx1, 322, G + 6, 8, 12)
     light_grid(f, hx0, 324, hx1, hz1, G + 10, 9, 13)
+    # 11月28日：天井が高く、上の灯だけでは床がほとんど真っ暗だった（CI の写真で、肖像画の名札と敵が見えなかった）。頭の少し上にも灯
+    light_grid(f, hx0, 324, hx1, hz1, G + 5, 7, 14)
     icicles(f, hx0, 324, hx1, hz1, F3, 0.01, 1)
     frost(f, hx0, hz0, hx1, hz1, G + 1, 0.05, 1)
     waypoint(f, "hall", "大広間", 370, G + 1, 446, 180)
@@ -1533,7 +1535,8 @@ def chapel(f):
     for z in range(z0 + 10, z1 - 10, 12):
         banner(f, x1, F2 + 6, z, "west")
     chest(f, x1 - 2, F2 + 1, z0 + 4, "west")
-    light_grid(f, x0, z0, x1, z1, F2 + 6, 8, 12)
+    # 11月28日：肖像画の前が暗すぎないよう、灯を低く・密に（大広間と同じ）
+    light_grid(f, x0, z0, x1, z1, F2 + 4, 7, 13)
     frost(f, x0, z0, x1, z1, F2 + 1, 0.05, 30)
     icicles(f, x0, z0, x1, z1, F3, 0.008, 30)
     f.story_zones.append({"id": "chapel", "box": [x0, F2, z0, x1, F3, z1]})
@@ -1947,6 +1950,8 @@ def arena(f):
         if k % 4 == 0:
             f.put(x, G + 12, z, light(13))
     light_grid(f, cx - r + 4, cz - r + 4, cx + r - 4, cz + r - 4, G + 14, 12, 12)
+    # 11月28日：天井が高く（30）、壁の灯から遠い部屋の真ん中が真っ暗で、近衛長と部下が影にしか見えなかった。頭の少し上にも灯
+    light_grid(f, cx - r + 4, cz - r + 4, cx + r - 4, cz + r - 4, G + 5, 7, 14)
     icicles(f, cx - r, cz - r, cx + r, cz + r, ceil, 0.01, 50)
     f.boss_marks = {
         "guard_circle": [[gx, G, gz]],

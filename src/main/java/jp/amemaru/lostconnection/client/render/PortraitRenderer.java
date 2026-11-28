@@ -8,6 +8,7 @@ import jp.amemaru.lostconnection.tower.FloorThingBlockEntity;
 import jp.amemaru.lostconnection.tower.castle.CastleBlocks;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.LevelRenderer;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -79,9 +80,18 @@ public class PortraitRenderer implements BlockEntityRenderer<FloorThingBlockEnti
             Component text = restored ? Component.translatable("lineage.amemaru.portrait." + id + ".name")
                     : Component.literal("？？？");
             float width = font.width(text);
-            int color = restored ? 0xFFF2D27A : 0xFF8A93A6;
-            font.drawInBatch(text, -width / 2.0F, 0.0F, color, false, poseStack.last().pose(), buffer, Font.DisplayMode.NORMAL, 0,
-                    LevelRenderer.getLightColor(thing.getLevel(), front));
+            int around = LevelRenderer.getLightColor(thing.getLevel(), front);
+            if (restored) {
+                // 11月28日：CI の写真で、暗い大広間では名前がまったく読めなかった（台座の前の明るさで描いていた）。戻った名前は、
+                // 金色に光る名札と同じく自分で光らせ、縁どりをつける（光るインクの看板と同じ描き方）
+                font.drawInBatch8xOutline(text.getVisualOrderText(), -width / 2.0F, 0.0F, 0xFFF2D27A, 0xFF3A2808, poseStack.last().pose(),
+                        buffer, LightTexture.FULL_BRIGHT);
+            } else {
+                // 空白の間の「？？？」も、ほの暗く見えるように（ブロックの明るさを 9 より下げない）
+                int lit = LightTexture.pack(Math.max(9, LightTexture.block(around)), LightTexture.sky(around));
+                font.drawInBatch(text, -width / 2.0F, 0.0F, 0xFF8A93A6, false, poseStack.last().pose(), buffer, Font.DisplayMode.NORMAL, 0,
+                        lit);
+            }
             poseStack.popPose();
         }
         poseStack.popPose();
