@@ -1,0 +1,37 @@
+{
+  "_comment": "ユニーク武器の固有スキル（11月28日【補完】。tools/datagen/build_unique_skills.py）",
+  "item": "amemaru:mirror_moon_daggers",
+  "name": "鏡月の写し身",
+  "description": "鏡に映った自分と入れ替わるように、狙った敵の背後へ移り、三色の刃で三度斬る。斬った敵には標が残り、しばらくプレイヤーから受けるダメージが上がる。",
+  "color": "#C9A8FF",
+  "cost": {
+    "mp": 22
+  },
+  "cooldown": 35,
+  "delivery": {
+    "type": "behind",
+    "range": 14
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 1.3,
+      "hits": 3,
+      "hit_interval": 4,
+      "backstab": 1.4
+    },
+    {
+      "type": "mark",
+      "value": 15,
+      "duration": 8
+    }
+  ],
+  "tags": [
+    "blade",
+    "move"
+  ],
+  "animation": "rogue_cross",
+  "sound": "amemaru:skill.rogue.shadow_strike",
+  "fx": "unique_mirror_moon"
+}

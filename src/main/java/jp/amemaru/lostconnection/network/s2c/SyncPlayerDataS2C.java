@@ -152,6 +152,10 @@ public final class SyncPlayerDataS2C {
         int cdCount = 0;
         for (Map.Entry<ResourceLocation, SkillCooldown> entry : cooldowns.entrySet()) {
             int index = snapshot.skillIndex(entry.getKey());
+            if (index < 0 && jp.amemaru.lostconnection.equipment.UniqueSkills.isUniqueSkillId(entry.getKey())) {
+                // 11月28日：ユニーク武器の固有スキル（番号は UniqueSkills.INDEX_BASE から）
+                index = jp.amemaru.lostconnection.equipment.UniqueSkills.indexOfSkill(entry.getKey());
+            }
             int remaining = entry.getValue().remaining(now);
             if (index >= 0 && remaining > 0) {
                 cdSkills[cdCount] = index;

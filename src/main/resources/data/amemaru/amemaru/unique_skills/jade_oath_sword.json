@@ -1,0 +1,47 @@
+{
+  "_comment": "ユニーク武器の固有スキル（11月28日【補完】。tools/datagen/build_unique_skills.py）",
+  "item": "amemaru:jade_oath_sword",
+  "name": "翠環の誓い",
+  "description": "古代守護者の誓いの環を、足もとに広げる。環の中の仲間（自分も）は障壁に包まれ、受けるダメージが減る。環の中の敵は、こちらから目を離せなくなる。",
+  "color": "#4FCC9E",
+  "cost": {
+    "mp": 30
+  },
+  "cooldown": 45,
+  "delivery": {
+    "type": "around",
+    "radius": 6,
+    "affects": "allies",
+    "include_self": true
+  },
+  "effects": [
+    {
+      "type": "barrier",
+      "stat": "defense",
+      "coefficient": 4.0,
+      "duration": 6
+    },
+    {
+      "type": "zone",
+      "radius": 6,
+      "duration": 6,
+      "interval": 0.5,
+      "effects": [
+        {
+          "type": "taunt",
+          "duration": 1.5
+        },
+        {
+          "type": "buff",
+          "to": "allies",
+          "buff": "ward",
+          "duration": 1.0,
+          "value": 20
+        }
+      ]
+    }
+  ],
+  "animation": "knight_oath_circle",
+  "sound": "amemaru:skill.knight.oath_circle",
+  "fx": "unique_jade_oath"
+}

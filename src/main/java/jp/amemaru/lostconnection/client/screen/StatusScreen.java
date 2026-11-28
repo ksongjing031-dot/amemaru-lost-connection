@@ -5,11 +5,9 @@ import jp.amemaru.lostconnection.client.AmemaruHudArt;
 import jp.amemaru.lostconnection.client.ClientPlayerState;
 import jp.amemaru.lostconnection.client.KeyBindings;
 import jp.amemaru.lostconnection.network.ModNetwork;
-import jp.amemaru.lostconnection.network.c2s.AllocateStatC2S;
 import jp.amemaru.lostconnection.player.StatType;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -22,17 +20,17 @@ import java.util.Map;
 /**
  * ステータス画面（初期値：Kキー）。HUDと同じ「結晶と糸」のデザイン。
  *
- * <p>レベル・経験値・ポイントを確かめ、ステータスポイントを振り分ける。「＋」で1ポイント、
- * Shiftを押しながらで10ポイント。振り分けはサーバーが確かめてから反映し、結果は同期で返ってくる
- * （この画面は受け取った値を表示するだけ）。</p>
+ * <p>11月28日のご指示「GUIがごちゃついている（特にKキーで開く画面が見ずらい）」で作り直した【補完】：左の列に成長
+ * （レベル・経験値・ツリーポイント・所持金）、右の列にステータス（基本の7つと、装備とアクセサリーで上がる4つ）を並べ、
+ * 下に行き先のボタンをそろえる。文字は列の幅で切り、はみ出さない。ステータスはスキルツリー（J）の節で振る
+ * （11月24日に決定。この画面は受け取った値を表示するだけ）。</p>
  */
 public class StatusScreen extends Screen {
-    private static final int PANEL_WIDTH = 248;
-    private static final int PANEL_HEIGHT = 236;
-    private static final int ROW_HEIGHT = 13;
-    private static final int STATS_TOP = 73;
-    private static final int SUB_TOP = 181;
-    private static final int VALUE_RIGHT = 196;
+    private static final int MAX_WIDTH = 372;
+    private static final int MAX_HEIGHT = 214;
+    private static final int ROW_HEIGHT = 12;
+    /** 所持金の行（上からの距離）。 */
+    private static final int MONEY_Y = 102;
 
     private static final int OUTLINE = 0xFF090C14;
     private static final int BORDER = 0xFF3E5274;
@@ -71,9 +69,21 @@ public class StatusScreen extends Screen {
         return STAT_COLORS.getOrDefault(type, 0xFFFFFFFF);
     }
 
-    private final Map<StatType, Button> plusButtons = new EnumMap<>(StatType.class);
     private int left;
     private int top;
+    private int panelWidth;
+    private int panelHeight;
+    /** 左の列（成長）と右の列（ステータス）の左端と幅。 */
+    private int leftX;
+    private int leftWidth;
+    private int rightX;
+    private int rightWidth;
+    /** 「補助の能力」の見出しの所（マウスを乗せると説明）。 */
+    private int subHeaderY;
+    /** ツリーポイントの行・覚醒の行の所（マウスを乗せると説明）。 */
+    private int pointsTop = -100;
+    private int pointsLeftX;
+    private int awakenTop = -100;
 
     public StatusScreen() {
         super(Component.translatable("screen.amemaru.status.title"));
@@ -81,33 +91,44 @@ public class StatusScreen extends Screen {
 
     @Override
     protected void init() {
-        left = (width - PANEL_WIDTH) / 2;
-        top = (height - PANEL_HEIGHT) / 2;
-        plusButtons.clear();
-        // 11月24日：ステータスはスキルツリーのステータスの節で振る（ここには「+」を置かない）
+        panelWidth = Math.min(MAX_WIDTH, width - 12);
+        panelHeight = Math.min(MAX_HEIGHT, height - 12);
+        left = (width - panelWidth) / 2;
+        top = (height - panelHeight) / 2;
+        leftX = left + 12;
+        leftWidth = (panelWidth - 36) * 46 / 100;
+        rightX = leftX + leftWidth + 12;
+        rightWidth = left + panelWidth - 12 - rightX;
 
-        int buttonY = top + PANEL_HEIGHT - 20;
-        addRenderableWidget(new CrystalButton(left + 12, buttonY, 64, 16,
-                Component.translatable("screen.amemaru.status.skill_tree"), pressed -> {
+        // 下の行：行き先のボタン（同じ幅でそろえる）
+        int buttonY = top + panelHeight - 20;
+        int gap = 6;
+        int buttonWidth = (panelWidth - 24 - gap * 3) / 4;
+        int x = left + 12;
+        addRenderableWidget(new CrystalButton(x, buttonY, buttonWidth, 14,
+                Component.translatable("screen.amemaru.status.skill_tree_key", KeyBindings.OPEN_SKILL_TREE.getTranslatedKeyMessage()), pressed -> {
                     if (minecraft != null) {
                         minecraft.setScreen(new SkillTreeScreen());
                     }
                 }));
+        x += buttonWidth + gap;
         // Phase 3：アクセサリーの枠（サーバーに頼んで開く）と図鑑
-        addRenderableWidget(new CrystalButton(left + 80, buttonY, 64, 16,
+        addRenderableWidget(new CrystalButton(x, buttonY, buttonWidth, 14,
                 Component.translatable("screen.amemaru.status.accessory"),
                 pressed -> ModNetwork.sendToServer(new jp.amemaru.lostconnection.network.c2s.AccessoryActionC2S(
                         jp.amemaru.lostconnection.network.c2s.AccessoryActionC2S.Action.OPEN, 0, false))));
-        addRenderableWidget(new CrystalButton(left + 148, buttonY, 42, 16,
+        x += buttonWidth + gap;
+        addRenderableWidget(new CrystalButton(x, buttonY, buttonWidth, 14,
                 Component.translatable("screen.amemaru.status.bestiary"), pressed -> {
                     if (minecraft != null) {
                         minecraft.setScreen(new BestiaryScreen());
                     }
                 }));
-        addRenderableWidget(new CrystalButton(left + PANEL_WIDTH - 54, buttonY, 42, 16,
+        x += buttonWidth + gap;
+        addRenderableWidget(new CrystalButton(x, buttonY, left + panelWidth - 12 - x, 14,
                 Component.translatable("screen.amemaru.status.close"), pressed -> onClose()));
         // Phase 6：ノットを渡す（11月22日に決定。所持金の行の右）
-        CrystalButton give = new CrystalButton(left + PANEL_WIDTH - 54, top + SUB_TOP + 23, 42, 11,
+        CrystalButton give = new CrystalButton(leftX + leftWidth - 40, top + MONEY_Y - 3, 40, 13,
                 Component.translatable("screen.amemaru.status.give_knots"), pressed -> {
                     if (minecraft != null) {
                         minecraft.setScreen(new TransferScreen(null, null));
@@ -116,7 +137,7 @@ public class StatusScreen extends Screen {
         give.setTooltip(Tooltip.create(Component.translatable("screen.amemaru.status.give_knots_tooltip")));
         addRenderableWidget(give);
         // Phase 6 その3：称号の一覧（右上の角。持っている称号から一つ選んで表示する）
-        CrystalButton titles = new CrystalButton(left + PANEL_WIDTH - 46, top + 5, 36, 11, Component.translatable("screen.amemaru.status.titles"),
+        CrystalButton titles = new CrystalButton(left + panelWidth - 56, top + 4, 48, 13, Component.translatable("screen.amemaru.status.titles"),
                 pressed -> {
                     if (minecraft != null) {
                         minecraft.setScreen(new TitleListScreen(this));
@@ -124,26 +145,6 @@ public class StatusScreen extends Screen {
                 });
         titles.setTooltip(Tooltip.create(Component.translatable("screen.amemaru.status.titles_tooltip")));
         addRenderableWidget(titles);
-        updateButtons();
-    }
-
-    private void allocate(StatType type) {
-        int amount = hasShiftDown() ? AllocateStatC2S.MAX_PER_REQUEST : 1;
-        ModNetwork.sendToServer(new AllocateStatC2S(type, amount));
-    }
-
-    @Override
-    public void tick() {
-        super.tick();
-        updateButtons();
-    }
-
-    private void updateButtons() {
-        ClientPlayerState state = ClientPlayerState.get();
-        boolean canAllocate = state.hasData() && state.statPoints() > 0;
-        for (Button button : plusButtons.values()) {
-            button.active = canAllocate;
-        }
     }
 
     // ---------------------------------------------------------------- 描画
@@ -157,33 +158,56 @@ public class StatusScreen extends Screen {
         jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C.JobInfo job =
                 jp.amemaru.lostconnection.client.ClientDefinitions.get().job(state.jobIndex());
         Component heading = job == null ? title : Component.translatable("screen.amemaru.status.title_job", job.name());
-        graphics.drawCenteredString(font, heading, width / 2, top + 7, TEXT_HEADER);
-        drawDivider(graphics, top + 19);
+        graphics.drawCenteredString(font, heading, left + (panelWidth - 56) / 2 + 28, top + 7, TEXT_HEADER);
+        drawDivider(graphics, left + 12, left + panelWidth - 12, top + 21);
 
         if (!state.hasData()) {
             graphics.drawCenteredString(font, Component.translatable("screen.amemaru.status.no_data"),
-                    width / 2, top + PANEL_HEIGHT / 2, TEXT_DIM);
+                    width / 2, top + panelHeight / 2, TEXT_DIM);
             super.render(graphics, mouseX, mouseY, partialTick);
             return;
         }
+        // 2つの列のあいだの細い線
+        graphics.fill(rightX - 7, top + 28, rightX - 6, top + panelHeight - 28, 0x303E5274);
 
+        awakenTop = -100;
         renderGrowth(graphics, state);
         renderStats(graphics, state);
-        renderSubStats(graphics, state);
-        // 所持金（Phase 4）
-        Component money = Component.translatable("screen.amemaru.status.money",
-                String.format(java.util.Locale.ROOT, "%,d", state.knots()));
-        graphics.drawString(font, money, left + 16, top + SUB_TOP + 25, TEXT_POINTS, true);
-
         super.render(graphics, mouseX, mouseY, partialTick);
+        renderHints(graphics, state, mouseX, mouseY);
+    }
+
+    /** マウスを乗せた所の説明（ツリーポイント・補助の能力・覚醒）。 */
+    private void renderHints(GuiGraphics graphics, ClientPlayerState state, int mouseX, int mouseY) {
+        String text = null;
+        if (mouseY >= pointsTop && mouseY < pointsTop + 10 && mouseX >= pointsLeftX && mouseX < leftX + leftWidth) {
+            text = Component.translatable("screen.amemaru.status.points_hint", KeyBindings.OPEN_SKILL_TREE.getTranslatedKeyMessage()).getString();
+        } else if (mouseY >= subHeaderY - 1 && mouseY < subHeaderY + 9 && mouseX >= rightX && mouseX < rightX + rightWidth) {
+            text = Component.translatable("screen.amemaru.status.sub_tooltip").getString();
+        } else if (mouseY >= awakenTop && mouseY < awakenTop + 10 && mouseX >= leftX && mouseX < leftX + leftWidth) {
+            jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C.JobInfo job =
+                    jp.amemaru.lostconnection.client.ClientDefinitions.get().job(state.jobIndex());
+            if (job != null) {
+                StringBuilder builder = new StringBuilder(Component.translatable("screen.amemaru.skill_tree.awaken").getString());
+                for (jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C.AwakeningInfo awakening : job.awakenings()) {
+                    boolean on = state.level() >= awakening.level();
+                    builder.append('\n').append(Component.translatable(on ? "screen.amemaru.skill_tree.awaken_on"
+                            : "screen.amemaru.skill_tree.awaken_off", awakening.level(), awakening.name()).getString());
+                }
+                text = builder.toString();
+            }
+        }
+        if (text != null) {
+            graphics.renderTooltip(font, UiStyle.tooltipLines(font, text, 220), mouseX, mouseY);
+        }
     }
 
     /** パネル：濃い藍色の地、二重のふち、四隅の小さな結晶。 */
     private void drawPanel(GuiGraphics graphics) {
         int x0 = left;
         int y0 = top;
-        int x1 = left + PANEL_WIDTH;
-        int y1 = top + PANEL_HEIGHT;
+        int x1 = left + panelWidth;
+        int y1 = top + panelHeight;
         graphics.fill(x0 - 2, y0 - 1, x1 + 2, y1 + 1, OUTLINE);
         graphics.fill(x0 - 1, y0 - 2, x1 + 1, y1 + 2, OUTLINE);
         graphics.fill(x0 - 1, y0 - 1, x1 + 1, y1 + 1, BORDER);
@@ -205,22 +229,36 @@ public class StatusScreen extends Screen {
     }
 
     /** 細い区切りの線（糸のように、中央から両端へ薄くなる）。 */
-    private void drawDivider(GuiGraphics graphics, int y) {
-        int x0 = left + 12;
-        int x1 = left + PANEL_WIDTH - 12;
+    private void drawDivider(GuiGraphics graphics, int x0, int x1, int y) {
         int center = (x0 + x1) / 2;
+        int step = Math.max(4, (x1 - x0) / 12);
         for (int i = 0; i < 5; i++) {
-            int half = (x1 - x0) / 2 - i * 20;
+            int half = (x1 - x0) / 2 - i * step;
+            if (half <= 0) {
+                break;
+            }
             int alpha = 0x22 + i * 0x18;
             graphics.fill(center - half, y, center + half, y + 1, (alpha << 24) | (BORDER_LIGHT & 0xFFFFFF));
         }
         graphics.fill(center - 1, y - 1, center + 1, y + 2, 0xFFBFEFFF);
     }
 
-    /** レベルの結晶・レベル・スキルポイント・経験値のバー。 */
+    /** 小さな見出し（文字と、その右へ伸びる細い線）。 */
+    private void drawHeader(GuiGraphics graphics, Component text, int x, int y, int columnWidth) {
+        String shown = UiStyle.clip(font, text.getString(), columnWidth);
+        graphics.drawString(font, shown, x, y, TEXT_HEADER, false);
+        int lineX = x + font.width(shown) + 4;
+        if (lineX < x + columnWidth) {
+            graphics.fill(lineX, y + 4, x + columnWidth, y + 5, 0x403E5274);
+        }
+    }
+
+    /** 左の列：レベルの結晶・レベル・ツリーポイント・経験値のバー・所持金・職業。 */
     private void renderGrowth(GuiGraphics graphics, ClientPlayerState state) {
-        int gemX = left + 14;
-        int gemY = top + 24;
+        int x = leftX;
+        int right = leftX + leftWidth;
+        int gemX = x;
+        int gemY = top + 27;
         boolean pointsLeft = state.skillPoints() > 0;
         RenderSystem.enableBlend();
         if (pointsLeft) {
@@ -241,79 +279,134 @@ public class StatusScreen extends Screen {
         graphics.drawString(font, level, levelX, levelY - 1, 0x0A0F1C, false);
         graphics.drawString(font, level, levelX, levelY, pointsLeft ? TEXT_POINTS : TEXT, false);
 
-        int x = left + 46;
-        int right = left + PANEL_WIDTH - 14;
+        // レベルと、ツリーポイント（残っていれば金色。マウスを乗せると使い道）
+        int textX = gemX + AmemaruHudArt.GEM_W + 8;
         Component levelText = state.isMaxLevel()
                 ? Component.translatable("screen.amemaru.status.level_max", state.level())
                 : Component.translatable("screen.amemaru.status.level", state.level());
-        graphics.drawString(font, levelText, x, top + 27, TEXT, true);
-        Component skill = Component.translatable("screen.amemaru.status.skill_points", state.skillPoints());
-        graphics.drawString(font, skill, right - font.width(skill), top + 27, TEXT_DIM, true);
+        graphics.drawString(font, UiStyle.clip(font, levelText.getString(), right - textX), textX, gemY + 4, TEXT, true);
+        Component points = Component.translatable("screen.amemaru.status.skill_points", state.skillPoints());
+        graphics.drawString(font, UiStyle.clip(font, points.getString(), right - textX), textX, gemY + 16,
+                pointsLeft ? TEXT_POINTS : TEXT_DIM, false);
+        pointsTop = gemY + 15;
+        pointsLeftX = textX;
 
-        // 経験値のバー（HUDと同じ絵）
-        int barY = top + 39;
-        graphics.blit(AmemaruHudArt.TEXTURE, x, barY, 0, AmemaruHudArt.V_EXP_FRAME, AmemaruHudArt.EXP_W, AmemaruHudArt.EXP_H, 256, 256);
-        int filled = Math.round(state.expProgress() * AmemaruHudArt.EXP_INNER);
+        // 経験値：見出しと数・バー・次のレベルまで
+        int expY = top + 64;
+        graphics.drawString(font, Component.translatable("screen.amemaru.status.exp_label"), x, expY, TEXT_DIM, false);
+        String numbers = state.isMaxLevel() ? "―"
+                : String.format(java.util.Locale.ROOT, "%,d / %,d", state.exp(), state.expToNext());
+        graphics.drawString(font, numbers, right - font.width(numbers), expY, TEXT, false);
+        int barY = expY + 11;
+        graphics.fill(x, barY, right, barY + 7, 0xFF0A0F1C);
+        graphics.fill(x + 1, barY + 1, right - 1, barY + 6, 0xFF1C2742);
+        float progress = state.isMaxLevel() ? 1.0F : Mth.clamp(state.expProgress(), 0.0F, 1.0F);
+        int filled = Math.round((right - x - 2) * progress);
         if (filled > 0) {
-            graphics.blit(AmemaruHudArt.TEXTURE, x, barY, 0, AmemaruHudArt.V_EXP_FILL, 1 + filled, AmemaruHudArt.EXP_H, 256, 256);
+            graphics.fillGradient(x + 1, barY + 1, x + 1 + filled, barY + 6, 0xFFFFE27A, 0xFFE0A030);
+            graphics.fill(x + 1, barY + 1, x + 1 + filled, barY + 2, 0x80FFFFFF);
         }
-        Component exp = state.isMaxLevel()
-                ? Component.translatable("screen.amemaru.status.exp_max")
-                : Component.translatable("screen.amemaru.status.exp", state.exp(), state.expToNext());
-        graphics.drawString(font, exp, x, top + 47, TEXT_DIM, true);
-        if (!state.isMaxLevel()) {
-            Component next = Component.translatable("screen.amemaru.status.next", Math.max(0, state.expToNext() - state.exp()));
-            graphics.drawString(font, next, right - font.width(next), top + 47, TEXT_DIM, true);
+        Component under = state.isMaxLevel()
+                ? Component.translatable("screen.amemaru.status.exp_max_hint")
+                : Component.translatable("screen.amemaru.status.next", Math.max(0, state.expToNext() - state.exp()));
+        String underText = UiStyle.clip(font, under.getString(), leftWidth);
+        graphics.drawString(font, underText, right - font.width(underText), barY + 11, TEXT_DIM, false);
+
+        // 所持金（Phase 4）。右に「渡す」のボタン
+        int moneyY = top + MONEY_Y;
+        Component moneyLabel = Component.translatable("screen.amemaru.status.money_label");
+        graphics.drawString(font, moneyLabel, x, moneyY, TEXT_DIM, false);
+        String money = Component.translatable("screen.amemaru.status.money_value",
+                String.format(java.util.Locale.ROOT, "%,d", state.knots())).getString();
+        int moneyX = x + font.width(moneyLabel) + 6;
+        graphics.drawString(font, UiStyle.clip(font, money, right - 44 - moneyX), moneyX, moneyY, TEXT_POINTS, true);
+
+        renderJob(graphics, state, x, right, top + 120);
+    }
+
+    /** 左の列の下：職業（上位職と覚醒も）。 */
+    private void renderJob(GuiGraphics graphics, ClientPlayerState state, int x, int right, int y) {
+        jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C.JobInfo job =
+                jp.amemaru.lostconnection.client.ClientDefinitions.get().job(state.jobIndex());
+        drawHeader(graphics, Component.translatable("screen.amemaru.status.job_section"), x, y, leftWidth);
+        y += 12;
+        if (job == null || !state.hasJob()) {
+            graphics.drawString(font, UiStyle.clip(font, Component.translatable("screen.amemaru.status.no_job").getString(), leftWidth), x, y,
+                    TEXT_DIM, false);
+            return;
+        }
+        // 印・名前（上位職になっていれば上位職の名前）・役割
+        RenderSystem.enableBlend();
+        graphics.blit(job.icon(), x, y - 2, 12, 12, 0, 0, 64, 64, 64, 64);
+        String role = job.role();
+        int roleX = right - font.width(role);
+        String name = state.promoted() && job.hasUpper() ? job.upperName() : job.name();
+        graphics.drawString(font, UiStyle.clip(font, name, roleX - 6 - (x + 16)), x + 16, y, 0xFF000000 | job.color(), false);
+        graphics.drawString(font, role, roleX, y, TEXT_DIM, false);
+        y += 12;
+        if (job.hasUpper()) {
+            Component upper = state.promoted()
+                    ? Component.translatable("screen.amemaru.status.upper_done", job.upperName())
+                    : Component.translatable("screen.amemaru.status.upper_todo", job.upperName(), job.upperMinDay(), job.upperMinLevel());
+            graphics.drawString(font, UiStyle.clip(font, upper.getString(), leftWidth), x, y, state.promoted() ? TEXT_POINTS : TEXT_DIM, false);
+            y += 12;
+        }
+        if (!job.awakenings().isEmpty()) {
+            // 覚醒：目覚めたものは金色の◆、まだのものは暗い◇（入りきらない分は「…」）
+            Component label = Component.translatable("screen.amemaru.status.awaken_label");
+            graphics.drawString(font, label, x, y, TEXT_DIM, false);
+            int cursor = x + font.width(label) + 4;
+            for (int i = 0; i < job.awakenings().size(); i++) {
+                jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C.AwakeningInfo awakening = job.awakenings().get(i);
+                boolean on = state.level() >= awakening.level();
+                String part = (on ? "◆" : "◇") + awakening.name();
+                boolean last = i == job.awakenings().size() - 1;
+                int room = right - cursor;
+                if (font.width(part) > room || (!last && font.width(part) + font.width(" …") > room)) {
+                    graphics.drawString(font, UiStyle.clip(font, part, room), cursor, y, on ? TEXT_POINTS : TEXT_DIM, false);
+                    break;
+                }
+                graphics.drawString(font, part, cursor, y, on ? TEXT_POINTS : TEXT_DIM, false);
+                cursor += font.width(part) + 5;
+            }
+            awakenTop = y - 1;
         }
     }
 
-    /** 振り分けられる7つのステータス。 */
+    /** 右の列：基本の7つと、装備とアクセサリーで上がる4つ（どちらも名前は左、数は右にそろえる）。 */
     private void renderStats(GuiGraphics graphics, ClientPlayerState state) {
-        int x = left + 12;
-        int right = left + PANEL_WIDTH - 12;
-        graphics.drawString(font, Component.translatable("screen.amemaru.status.base_section"), x, top + 60, TEXT_HEADER, true);
-        Component points = Component.translatable("screen.amemaru.status.points", state.skillPoints());
-        boolean pointsLeft = state.skillPoints() > 0;
-        int badgeRight = right - 2;
-        int badgeLeft = badgeRight - font.width(points) - 8;
-        graphics.fill(badgeLeft, top + 58, badgeRight, top + 69, pointsLeft ? 0xC0403A10 : 0x80202638);
-        graphics.fill(badgeLeft, top + 58, badgeRight, top + 59, pointsLeft ? 0xFFE8C860 : 0xFF3E4A66);
-        graphics.drawString(font, points, badgeLeft + 4, top + 60, pointsLeft ? TEXT_POINTS : TEXT_DIM, true);
-
-        int y = top + STATS_TOP;
+        int x = rightX;
+        int right = rightX + rightWidth;
+        drawHeader(graphics, Component.translatable("screen.amemaru.status.base_section"), x, top + 27, rightWidth);
+        int y = top + 39;
         int row = 0;
         for (StatType type : StatType.allocatable()) {
-            if (row % 2 == 0) {
-                graphics.fill(x, y - 1, right, y + ROW_HEIGHT - 1, ROW_STRIPE);
-            }
-            // 小さな結晶の印（ステータスの色）
-            int color = STAT_COLORS.getOrDefault(type, 0xFFFFFFFF);
-            graphics.fill(x + 5, y + 3, x + 7, y + 7, color);
-            graphics.fill(x + 4, y + 4, x + 8, y + 6, color);
-
-            graphics.drawString(font, Component.translatable(type.translationKey()), x + 12, y + 2, TEXT, true);
-            String value = type.format(state.stat(type));
-            graphics.drawString(font, value, left + VALUE_RIGHT - font.width(value), y + 2, TEXT, true);
+            drawStatRow(graphics, state, type, x, right, y, row++);
             y += ROW_HEIGHT;
-            row++;
+        }
+        subHeaderY = y + 5;
+        drawHeader(graphics, Component.translatable("screen.amemaru.status.sub_short"), x, subHeaderY, rightWidth);
+        y = subHeaderY + 12;
+        row = 0;
+        for (StatType type : SUB_STATS) {
+            drawStatRow(graphics, state, type, x, right, y, row++);
+            y += ROW_HEIGHT;
         }
     }
 
-    /** 装備とアクセサリーで上がる4つ（2列に並べる）。 */
-    private void renderSubStats(GuiGraphics graphics, ClientPlayerState state) {
-        int x = left + 12;
-        graphics.drawString(font, Component.translatable("screen.amemaru.status.sub_section"), x, top + SUB_TOP - 12,
-                TEXT_HEADER, true);
-        int columnWidth = (PANEL_WIDTH - 24) / 2;
-        for (int i = 0; i < SUB_STATS.size(); i++) {
-            StatType type = SUB_STATS.get(i);
-            int columnX = x + 4 + (i % 2) * columnWidth;
-            int y = top + SUB_TOP + (i / 2) * 11;
-            Component label = Component.translatable(type.translationKey());
-            String value = type.format(state.stat(type));
-            graphics.drawString(font, label, columnX, y, TEXT_DIM, true);
-            graphics.drawString(font, value, columnX + columnWidth - 8 - font.width(value), y, TEXT, true);
+    private void drawStatRow(GuiGraphics graphics, ClientPlayerState state, StatType type, int x, int right, int y, int row) {
+        if (row % 2 == 0) {
+            graphics.fill(x - 2, y - 2, right + 2, y + ROW_HEIGHT - 2, ROW_STRIPE);
         }
+        // 小さな結晶の印（ステータスの色）
+        int color = STAT_COLORS.getOrDefault(type, 0xFFFFFFFF);
+        graphics.fill(x + 2, y + 2, x + 4, y + 6, color);
+        graphics.fill(x + 1, y + 3, x + 5, y + 5, color);
+        String value = type.format(state.stat(type));
+        int valueX = right - font.width(value);
+        String label = UiStyle.clip(font, Component.translatable(type.translationKey()).getString(), valueX - 6 - (x + 9));
+        graphics.drawString(font, label, x + 9, y, TEXT, false);
+        graphics.drawString(font, value, valueX, y, TEXT, false);
     }
 
     @Override

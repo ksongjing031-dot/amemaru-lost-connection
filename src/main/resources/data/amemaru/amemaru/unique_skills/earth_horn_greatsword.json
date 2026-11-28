@@ -1,0 +1,36 @@
+{
+  "_comment": "ユニーク武器の固有スキル（11月28日【補完】。tools/datagen/build_unique_skills.py）",
+  "item": "amemaru:earth_horn_greatsword",
+  "name": "角鳴りの地裂き",
+  "description": "大剣を地に突き立てると、草原の主の角が目の前の地面を一直線に突き破って立ち上がる。角に貫かれた敵は打ち上げられ、しばらくよろめく。",
+  "color": "#E2B65A",
+  "cost": {
+    "mp": 26
+  },
+  "cooldown": 40,
+  "delivery": {
+    "type": "line",
+    "flat": true,
+    "range": 9,
+    "width": 2.4
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 3.2
+    },
+    {
+      "type": "launch",
+      "strength": 0.6
+    },
+    {
+      "type": "status",
+      "effect": "amemaru:stagger",
+      "duration": 1.5
+    }
+  ],
+  "animation": "knight_earth_split",
+  "sound": "amemaru:skill.knight.heavy_slash",
+  "fx": "unique_earth_horn"
+}

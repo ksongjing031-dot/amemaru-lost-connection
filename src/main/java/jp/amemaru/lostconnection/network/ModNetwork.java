@@ -435,6 +435,17 @@ public final class ModNetwork {
                 .decoder(jp.amemaru.lostconnection.network.s2c.TravelFxS2C::decode)
                 .consumerMainThread(jp.amemaru.lostconnection.network.s2c.TravelFxS2C::handle)
                 .add();
+        // 11月28日：ユニーク武器の固有スキルの一覧と、装備の特殊効果が働いた演出
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.SyncUniqueSkillsS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.SyncUniqueSkillsS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.SyncUniqueSkillsS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.SyncUniqueSkillsS2C::handle)
+                .add();
+        CHANNEL.messageBuilder(jp.amemaru.lostconnection.network.s2c.GearFxS2C.class, id++, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(jp.amemaru.lostconnection.network.s2c.GearFxS2C::encode)
+                .decoder(jp.amemaru.lostconnection.network.s2c.GearFxS2C::decode)
+                .consumerMainThread(jp.amemaru.lostconnection.network.s2c.GearFxS2C::handle)
+                .add();
     }
 
     /** 1人のプレイヤーに送る。 */

@@ -68,6 +68,10 @@ public final class ClientDefinitions {
 
     @Nullable
     public SyncDefinitionsS2C.SkillInfo skill(int index) {
+        if (index >= jp.amemaru.lostconnection.equipment.UniqueSkills.INDEX_BASE) {
+            // 11月28日：ユニーク武器の固有スキル（狙い・クールダウン・演出を、職業のスキルと同じように扱う）
+            return ClientUniqueSkills.skill(index);
+        }
         return index >= 0 && index < skills.size() ? skills.get(index) : null;
     }
 

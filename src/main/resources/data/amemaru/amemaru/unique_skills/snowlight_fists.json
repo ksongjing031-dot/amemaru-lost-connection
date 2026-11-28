@@ -1,0 +1,37 @@
+{
+  "_comment": "ユニーク武器の固有スキル（11月28日【補完】。tools/datagen/build_unique_skills.py）",
+  "item": "amemaru:snowlight_fists",
+  "name": "雪灯の百裂拳",
+  "description": "暖炉の火を閉じこめた拳で、前の敵へ六度打ちこむ。最後の一撃で雪が舞い、打たれた敵は凍りつく。",
+  "color": "#BFEFFF",
+  "cost": {
+    "mp": 24
+  },
+  "cooldown": 40,
+  "delivery": {
+    "type": "cone",
+    "radius": 4.5,
+    "angle": 80
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 0.6,
+      "hits": 6,
+      "hit_interval": 3
+    },
+    {
+      "type": "chill",
+      "stacks": 5,
+      "duration": 5,
+      "freeze": 2
+    }
+  ],
+  "tags": [
+    "fist"
+  ],
+  "animation": "monk_hundred",
+  "sound": "amemaru:skill.monk.jab_combo",
+  "fx": "unique_snowlight"
+}

@@ -178,6 +178,12 @@ public final class ModEffects {
     /** 守り：受けるダメージが減る。 */
     public static final RegistryObject<MobEffect> PROTECTED = EFFECTS.register("protected", () ->
             new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0xF4F0C8, false));
+    /**
+     * 認証（11月28日【補完】）：「第七の門鍵」を付けた人のまわりに味方が3人以上いる間、付けている人とその範囲の味方につく印。
+     * 受けるダメージが減る働きは {@code GearEffects.partyWard}（この状態は、働いていることを見せるためのもの）。
+     */
+    public static final RegistryObject<MobEffect> GATE_WARD = EFFECTS.register("gate_ward", () ->
+            new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0x5FE0A8, false));
     /** 鷹の眼差し・気功：会心が上がる。 */
     public static final RegistryObject<MobEffect> KEEN = EFFECTS.register("keen", () ->
             new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0xFFD27A, false));

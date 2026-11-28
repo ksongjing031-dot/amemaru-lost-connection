@@ -26,6 +26,8 @@ import java.util.function.Supplier;
 public final class UseSkillC2S {
     public static final int PRESS = 0;
     public static final int RELEASE = 1;
+    /** 11月28日：ユニーク武器の固有スキル（スキル枠ではなく、手に持った武器の技。初期値のキーはY）。 */
+    public static final int UNIQUE_SLOT = 15;
 
     private final int sequence;
     private final int action;
@@ -82,7 +84,7 @@ public final class UseSkillC2S {
 
     public void handle(Supplier<NetworkEvent.Context> context) {
         ServerPlayer player = context.get().getSender();
-        if (player == null || slot < 0 || slot >= PlayerData.LOADOUT_SIZE) {
+        if (player == null || slot < 0 || (slot >= PlayerData.LOADOUT_SIZE && slot != UNIQUE_SLOT)) {
             return;
         }
         if (targetPoint != null && (!Double.isFinite(targetPoint.x) || !Double.isFinite(targetPoint.y) || !Double.isFinite(targetPoint.z))) {
@@ -94,9 +96,16 @@ public final class UseSkillC2S {
             } else {
                 LockOnFacing.forget(player);
             }
-            SkillService.Result result = action == RELEASE
-                    ? SkillService.tryRelease(player, data, slot, targetEntity, targetPoint)
-                    : SkillService.tryUse(player, data, slot, targetEntity, targetPoint);
+            SkillService.Result result;
+            if (slot == UNIQUE_SLOT) {
+                // 固有スキルは溜めないので、押したときだけ使う
+                result = action == RELEASE ? new SkillService.Result(SkillService.Failure.NOT_CHARGING)
+                        : jp.amemaru.lostconnection.equipment.UniqueSkillService.tryUse(player, data, targetEntity, targetPoint);
+            } else {
+                result = action == RELEASE
+                        ? SkillService.tryRelease(player, data, slot, targetEntity, targetPoint)
+                        : SkillService.tryUse(player, data, slot, targetEntity, targetPoint);
+            }
             ModNetwork.sendTo(player, new SkillResultS2C(sequence, result.ok(),
                     result.failure() == null ? -1 : result.failure().ordinal()));
         });

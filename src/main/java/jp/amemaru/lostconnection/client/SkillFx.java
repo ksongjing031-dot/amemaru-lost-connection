@@ -707,7 +707,7 @@ public final class SkillFx {
                 FxWorld.add(new FxWorld.Flare(Anchor.center(id, new Vec3(0.0, 1.0, 0.0)), 1.2F, THUNDER, 6, FxTextures.STAR, 0.5F, 1));
             }
             default -> {
-                if (!JobFx.release(level, fx, message, caster, skill)) {
+                if (!JobFx.release(level, fx, message, caster, skill) && !UniqueSkillFx.release(level, fx, message, caster)) {
                     Fx.burst(level, ModParticles.GLOW.get(), to, 12, GOLD_LIGHT, 0.3F, 12, 0.15);
                 }
             }
@@ -817,7 +817,7 @@ public final class SkillFx {
                 FxWorld.shake(at, 7, 1.0F);
             }
             default -> {
-                if (!JobFx.impact(level, fx, message, caster)) {
+                if (!JobFx.impact(level, fx, message, caster) && !UniqueSkillFx.impact(level, fx, message)) {
                     Fx.burst(level, ModParticles.GLOW.get(), at, 16, GOLD_LIGHT, 0.35F, 12, 0.2);
                 }
             }
@@ -836,7 +836,7 @@ public final class SkillFx {
             Fx.burst(level, ModParticles.SPARK.get(), at, 16, 0xFFF6D0, 0.1F, 12, 0.6);
             return;
         }
-        if (JobFx.trigger(level, fx, message, caster)) {
+        if (JobFx.trigger(level, fx, message, caster) || UniqueSkillFx.trigger(level, fx, message)) {
             return;
         }
         Fx.burst(level, ModParticles.GLOW.get(), at, 10, GOLD_LIGHT, 0.3F, 10, 0.2);

@@ -151,6 +151,7 @@ public final class GearTooltips {
         for (SpecialEffect effect : def.effects()) {
             lines.add(Component.translatable("tooltip.amemaru.effect", effect.describe()).withStyle(ChatFormatting.LIGHT_PURPLE));
         }
+        uniqueSkillLines(stack, lines);
         // 11月25日：一式の効果（頭・胴・脚・足を同じシリーズでそろえると効く。今そろっている数も出す）
         if (!def.setEffects().isEmpty() && stack.getItem() instanceof jp.amemaru.lostconnection.item.AmemaruArmorItem armor) {
             net.minecraft.client.player.LocalPlayer local = net.minecraft.client.Minecraft.getInstance().player;
@@ -218,6 +219,30 @@ public final class GearTooltips {
         compareGear(stack, def, rules, lines);
     }
 
+    /**
+     * ユニーク武器の固有スキル（11月28日【補完】）：名前とキー、説明、MP・クールダウン、効き目の一覧。色は武器の色。
+     */
+    private static void uniqueSkillLines(ItemStack stack, List<Component> lines) {
+        jp.amemaru.lostconnection.network.s2c.SyncUniqueSkillsS2C.Entry entry = ClientUniqueSkills.forStack(stack);
+        if (entry == null) {
+            return;
+        }
+        SyncDefinitionsS2C.SkillInfo skill = entry.skill();
+        int color = entry.color();
+        lines.add(Component.translatable("tooltip.amemaru.unique_skill", skill.name(),
+                KeyBindings.UNIQUE_SKILL.getTranslatedKeyMessage()).withStyle(style -> style.withColor(color).withBold(true)));
+        lines.add(Component.literal(skill.description()).withStyle(ChatFormatting.GRAY));
+        int mp = skill.mpCost().length > 0 ? skill.mpCost()[0] : 0;
+        float cooldown = skill.cooldown().length > 0 ? skill.cooldown()[0] : 0.0F;
+        lines.add(Component.translatable("tooltip.amemaru.unique_skill_cost", mp, String.format(Locale.ROOT, "%.0f", cooldown))
+                .withStyle(ChatFormatting.DARK_AQUA));
+        if (!skill.details().isEmpty()) {
+            for (String line : skill.details().get(0)) {
+                lines.add(Component.literal("・" + line).withStyle(style -> style.withColor(jp.amemaru.lostconnection.client.fx.Fx.mix(color, 0xFFFFFF, 0.45F))));
+            }
+        }
+    }
+
     /** 今の装備（同じ場所）との比較。 */
     private static void compareGear(ItemStack stack, EquipmentDef def, GearRules rules, List<Component> lines) {
         LocalPlayer player = Minecraft.getInstance().player;
@@ -257,8 +282,15 @@ public final class GearTooltips {
         // 11月24日：固有の特殊効果と、品の説明（何階の品か）。言語ファイルの .effect・.desc（tools/datagen/build_floor_accessories.py）
         String base = stack.getDescriptionId();
         if (net.minecraft.client.resources.language.I18n.exists(base + ".effect")) {
-            lines.add(Component.translatable("tooltip.amemaru.effect", Component.translatable(base + ".effect"))
-                    .withStyle(ChatFormatting.LIGHT_PURPLE));
+            if (rarity == Rarity.UNIQUE) {
+                // 11月28日：ユニークのアクセサリーの効果は「固有スキル」（条件がそろうと自動で働き、状態のアイコンと足もとの環で見える）
+                lines.add(Component.translatable("tooltip.amemaru.unique_auto", Component.translatable(base + ".effect"))
+                        .withStyle(style -> style.withColor(0x5FE0A8).withBold(true)));
+                lines.add(Component.translatable("tooltip.amemaru.unique_auto_hint").withStyle(ChatFormatting.DARK_AQUA));
+            } else {
+                lines.add(Component.translatable("tooltip.amemaru.effect", Component.translatable(base + ".effect"))
+                        .withStyle(ChatFormatting.LIGHT_PURPLE));
+            }
         }
         if (net.minecraft.client.resources.language.I18n.exists(base + ".desc")) {
             lines.add(Component.translatable(base + ".desc").withStyle(ChatFormatting.GRAY, ChatFormatting.ITALIC));
@@ -387,7 +419,14 @@ public final class GearTooltips {
         if (diffs.isEmpty()) {
             lines.add(Component.translatable("tooltip.amemaru.compare_same").withStyle(ChatFormatting.DARK_GRAY));
         } else {
-            lines.addAll(diffs);
+            // 11月28日：ツールチップが縦に長くならないよう、2つずつ1行にまとめる
+            for (int k = 0; k < diffs.size(); k += 2) {
+                MutableComponent row = Component.empty().append(diffs.get(k));
+                if (k + 1 < diffs.size()) {
+                    row.append(Component.literal("　").withStyle(ChatFormatting.DARK_GRAY)).append(diffs.get(k + 1));
+                }
+                lines.add(row);
+            }
         }
     }
 

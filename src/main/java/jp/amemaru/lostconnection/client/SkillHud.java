@@ -73,6 +73,8 @@ public final class SkillHud {
             int y = baseY + (slot < 3 ? 0 : ROW_Y);
             drawSlot(graphics, font, state, slot, x, y, now, altMode, altHeld, partialTick);
         }
+        // 11月28日：ユニーク武器の固有スキル（持っているときだけ、上の段の右どなりに武器の色の枠で出す）
+        drawUnique(graphics, font, state, player, baseX + 3 * STEP_X, baseY, now, partialTick);
         drawGauge(graphics, font, state, baseX, baseY);
         drawCastBar(graphics, font, state, screenWidth, screenHeight, partialTick);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -148,6 +150,80 @@ public final class SkillHud {
             RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         }
         drawKey(graphics, font, slot, x, y, altMode);
+    }
+
+    /** 固有スキルが使えるようになった時（光らせるため）。 */
+    private static long uniqueReadyAt;
+    private static boolean uniqueWasCooling;
+
+    /**
+     * 固有スキルの枠（11月28日【補完】）：手に持ったユニーク武器の絵を、武器の色にそめた枠に入れる。使えるときは枠のまわりが
+     * ゆっくり光り、クールダウン中は職業のスキルと同じく影と秒を出す。右下はキー（初期値：Y）。
+     */
+    private static void drawUnique(GuiGraphics graphics, Font font, ClientPlayerState state, LocalPlayer player, int x, int y, long now,
+                                   float partialTick) {
+        net.minecraft.world.item.ItemStack held = player.getMainHandItem();
+        jp.amemaru.lostconnection.network.s2c.SyncUniqueSkillsS2C.Entry entry = ClientUniqueSkills.forStack(held);
+        if (entry == null) {
+            uniqueWasCooling = false;
+            return;
+        }
+        SyncDefinitionsS2C.SkillInfo skill = entry.skill();
+        int index = skill.index();
+        int color = entry.color();
+        float r = ((color >> 16) & 0xFF) / 255.0F;
+        float g = ((color >> 8) & 0xFF) / 255.0F;
+        float b = (color & 0xFF) / 255.0F;
+        int mpCost = skill.mpCost().length > 0 ? skill.mpCost()[0] : 0;
+        boolean affordable = state.mp() + 1.0E-6 >= mpCost;
+        int remaining = state.cooldownRemaining(index);
+        int total = state.cooldownTotal(index);
+        blend();
+        if (remaining <= 0 && affordable) {
+            float pulse = 0.5F + 0.5F * Mth.sin(now / 1000.0F * Mth.TWO_PI * 0.6F);
+            RenderSystem.setShaderColor(r, g, b, 0.45F + 0.4F * pulse);
+            graphics.blit(TEXTURE, x - 2, y - 2, SkillHudArt.U_HEX_GLOW, SkillHudArt.V_HEX, SkillHudArt.HEX_GLOW_W, SkillHudArt.HEX_GLOW_H,
+                    TEX, TEX);
+        }
+        RenderSystem.setShaderColor(0.55F + 0.45F * r, 0.55F + 0.45F * g, 0.55F + 0.45F * b, 1.0F);
+        graphics.blit(TEXTURE, x, y, SkillHudArt.U_HEX, SkillHudArt.V_HEX, SkillHudArt.HEX_W, SkillHudArt.HEX_H, TEX, TEX);
+        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        graphics.renderItem(held, x + 4, y + 5);
+        var pose = graphics.pose();
+        pose.pushPose();
+        // 武器の絵より手前に、暗くする影・秒・キーを描く
+        pose.translate(0.0F, 0.0F, 200.0F);
+        blend();
+        if (!affordable) {
+            graphics.blit(TEXTURE, x, y, SkillHudArt.U_HEX_DIM, SkillHudArt.V_HEX, SkillHudArt.HEX_W, SkillHudArt.HEX_H, TEX, TEX);
+        }
+        if (remaining > 0 && total > 0) {
+            float ratio = Mth.clamp((remaining - partialTick) / total, 0.0F, 1.0F);
+            int shade = Math.max(1, Math.round(SkillHudArt.HEX_H * ratio));
+            graphics.blit(TEXTURE, x, y, SkillHudArt.U_HEX_SHADE, SkillHudArt.V_HEX, SkillHudArt.HEX_W, shade, TEX, TEX);
+            String seconds = remaining >= 200 ? Integer.toString(Mth.ceil(remaining / 20.0F))
+                    : String.format(Locale.ROOT, "%.1f", remaining / 20.0F);
+            graphics.drawString(font, seconds, x + (SkillHudArt.HEX_W - font.width(seconds)) / 2, y + 9, 0xFFFFFF, true);
+            uniqueWasCooling = true;
+        } else if (uniqueWasCooling) {
+            uniqueWasCooling = false;
+            uniqueReadyAt = now;
+        }
+        long sinceReady = now - uniqueReadyAt;
+        if (sinceReady >= 0 && sinceReady < FLASH_MS) {
+            blend();
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F - sinceReady / (float) FLASH_MS);
+            graphics.blit(TEXTURE, x, y, SkillHudArt.U_HEX_FLASH, SkillHudArt.V_HEX, SkillHudArt.HEX_W, SkillHudArt.HEX_H, TEX, TEX);
+            RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+        }
+        String key = KeyBindings.UNIQUE_SKILL.getTranslatedKeyMessage().getString();
+        if (key.length() > 3) {
+            key = key.substring(0, 3);
+        }
+        pose.translate(x + SkillHudArt.HEX_W - 2, y + SkillHudArt.HEX_H - 7, 0.0F);
+        pose.scale(0.75F, 0.75F, 1.0F);
+        graphics.drawString(font, key, -font.width(key), 0, 0xFF000000 | color, true);
+        pose.popPose();
     }
 
     /** 枠の右下に、キーの名前を小さく出す（スキルツリーの画面のスキル枠でも使う）。 */

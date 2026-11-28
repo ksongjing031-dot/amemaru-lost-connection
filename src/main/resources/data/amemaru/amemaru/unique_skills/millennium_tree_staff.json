@@ -1,0 +1,50 @@
+{
+  "_comment": "ユニーク武器の固有スキル（11月28日【補完】。tools/datagen/build_unique_skills.py）",
+  "item": "amemaru:millennium_tree_staff",
+  "name": "千年樹の芽吹き",
+  "description": "杖の種を狙った地へ放つ。種は根を張って敵の足をからめ取り、千年樹の花が開く。花が咲いている間、中の敵は少しずつ傷つき、中の仲間は少しずつ癒える。",
+  "color": "#7ED957",
+  "cost": {
+    "mp": 40
+  },
+  "cooldown": 45,
+  "delivery": {
+    "type": "point",
+    "range": 20,
+    "radius": 4.5,
+    "impact_delay": 0.3
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "magic",
+      "coefficient": 1.6
+    },
+    {
+      "type": "root",
+      "duration": 2.5
+    },
+    {
+      "type": "zone",
+      "radius": 4.5,
+      "duration": 6,
+      "interval": 1.0,
+      "effects": [
+        {
+          "type": "damage",
+          "stat": "magic",
+          "coefficient": 0.25
+        },
+        {
+          "type": "heal",
+          "to": "allies",
+          "stat": "magic",
+          "coefficient": 0.2
+        }
+      ]
+    }
+  ],
+  "animation": "wizard_frost_circle",
+  "sound": "amemaru:skill.wizard.frost_circle",
+  "fx": "unique_millennium"
+}

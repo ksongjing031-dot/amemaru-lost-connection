@@ -1577,5 +1577,21 @@
         "stream": true
       }
     ]
+  },
+  "unique.awaken": {
+    "sounds": [
+      {
+        "name": "amemaru:unique/awaken"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.unique.awaken"
+  },
+  "unique.ward": {
+    "sounds": [
+      {
+        "name": "amemaru:unique/ward"
+      }
+    ],
+    "subtitle": "subtitles.amemaru.unique.ward"
   }
 }
