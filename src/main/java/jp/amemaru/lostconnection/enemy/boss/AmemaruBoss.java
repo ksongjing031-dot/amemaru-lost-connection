@@ -66,11 +66,18 @@ public abstract class AmemaruBoss extends AmemaruMob {
      * （{@code /amemaru admin boss share safe}）。
      */
     public static boolean shareSafe;
+    /**
+     * 11月28日：参加者全員を狙う技（一斉の印・大技）を、ボスが自分で出すか。CIの写真では止め、管理者のコマンドで出させる
+     * （{@code /amemaru admin boss party manual}。保存しない）。
+     */
+    public static boolean partyAuto = true;
 
     private final ServerBossEvent bossEvent;
     @Nullable
     private BossRoom room;
     private int phase = 1;
+    /** 11月28日：参加者全員を狙う技（一斉の印・大技）。 */
+    private final PartyAttacks party = new PartyAttacks(this);
 
     protected AmemaruBoss(EntityType<? extends AmemaruBoss> type, Level level, BossEvent.BossBarColor color) {
         super(type, level);
@@ -207,6 +214,7 @@ public abstract class AmemaruBoss extends AmemaruMob {
         enraged = false;
         setAttackMultiplier(baseAttackMultiplier);
         resetShare();
+        party.reset();
     }
 
     // ---------------------------------------------------------------- 人数補正と怒り（11月23日）
@@ -508,6 +516,65 @@ public abstract class AmemaruBoss extends AmemaruMob {
         shareTarget = null;
     }
 
+    // ---------------------------------------------------------------- 参加者全員を狙う技（11月28日）
+
+    /** 参加者全員を狙う技（自動テスト・管理者）。 */
+    public PartyAttacks partyAttacks() {
+        return party;
+    }
+
+    /**
+     * 全員を狙う技（一斉の印・大技）を出してよいか。ボスごとに、固有のギミックの最中や、よろめいている間（攻めどき）は止める
+     * （11月28日【補完】）。
+     */
+    protected boolean partyAttackAllowed() {
+        return true;
+    }
+
+    /** 全員を狙う技が当たった人に（ボスごとに、凍えなどを足す）。{@code skill} は {@code volley}・{@code nova}。 */
+    protected void onPartyHit(ServerPlayer player, String skill) {
+    }
+
+    /** 全員を狙う技の名前（定義にあるものだけ。{@code volley}・{@code nova}・{@code nova_out} など）。 */
+    public List<String> partyAttackNames() {
+        return party.names();
+    }
+
+    /** 管理者・CIの写真：全員を狙う技をすぐに出す（戦いの間だけ）。出せたら true。 */
+    public boolean forcePartyAttack(String name) {
+        if (room == null || !room.fighting() || !(level() instanceof ServerLevel level)) {
+            return false;
+        }
+        if (party.active()) {
+            party.cancel();
+        }
+        List<ServerPlayer> targets = new ArrayList<>();
+        for (ServerPlayer player : room.participants()) {
+            if (player.isAlive() && player.level() == level && !player.isSpectator() && !BossRoom.isDown(player)) {
+                targets.add(player);
+            }
+        }
+        if (targets.isEmpty() || !party.names().contains(name)) {
+            return false;
+        }
+        if (name.equals("volley")) {
+            return party.startVolley(level, targets);
+        }
+        int kind = switch (name) {
+            case "nova_out" -> PartyAttacks.NOVA_OUT;
+            case "nova_in" -> PartyAttacks.NOVA_IN;
+            case "nova_safe" -> PartyAttacks.NOVA_SAFE;
+            default -> {
+                EnemyDef def = def();
+                EnemyDef.Skill nova = def == null ? null : def.skills().get("nova");
+                int kinds = nova == null ? PartyAttacks.NOVA_SAFE : (int) Math.round(nova.param("kinds", PartyAttacks.NOVA_SAFE));
+                yield (kinds & PartyAttacks.NOVA_SAFE) != 0 ? PartyAttacks.NOVA_SAFE : (kinds & PartyAttacks.NOVA_IN) != 0
+                        ? PartyAttacks.NOVA_IN : PartyAttacks.NOVA_OUT;
+            }
+        };
+        return party.startNova(level, kind, targets, room.arenaCenter(), room.def().arenaRadius(), room.def().startRadius());
+    }
+
     /** 管理者のコマンドで出させられる技の名前（{@code /amemaru admin boss skill}）。 */
     public List<String> skillNames() {
         return List.of();
@@ -605,6 +672,7 @@ public abstract class AmemaruBoss extends AmemaruMob {
             }
             tickFightTimer(level);
             tickShare(level);
+            party.tick(level);
             tickBreathe();
             syncFight(ratio);
             if (castClear > 0 && tickCount >= castClear) {

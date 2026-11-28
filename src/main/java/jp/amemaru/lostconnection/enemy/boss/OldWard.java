@@ -95,6 +95,12 @@ public class OldWard extends AmemaruBoss {
         return new String[]{"skill_sweep", "skill_crack", "skill_cage", "skill_call", "skill_stun"};
     }
 
+    /** 11月28日：全員を狙う技は、節を折られて怯んでいる間（攻めどき）は出さない。 */
+    @Override
+    protected boolean partyAttackAllowed() {
+        return !stunned();
+    }
+
     @Override
     protected int phaseFor(double ratio) {
         if (ratio <= 0.3) {

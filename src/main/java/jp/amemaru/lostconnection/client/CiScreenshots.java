@@ -494,6 +494,8 @@ public final class CiScreenshots {
             {"cmd", null, "10", "gamemode creative @p"},
             // 11月24日：ボスの「みんなで受ける一撃」は、ひとりで受けると倒れる。CIはひとりなので、印と演出だけにする
             {"cmd", null, "5", "amemaru admin boss share safe"},
+            // 11月28日：参加者全員を狙う技（一斉の印・大技）は、ボスが自分では出さない（ほかの技の写真に印が写らないように）。出させて撮る
+            {"cmd", null, "5", "amemaru admin boss party manual"},
             {"p5_build_floor", null, "20"},
             {"await_floor", null, "0"},
             {"cmd", null, "80", "tp @p {at:21.5,3,-78.5} -90 6"},
@@ -632,6 +634,20 @@ public final class CiScreenshots {
             {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,61.5} 180 55"},
             {"cmd", null, "10", "amemaru admin boss skill 1 roots"},
             {"snap", null, "0", "phase5_boss_roots"},
+            // 11月28日：参加者全員を狙う技。一斉の印（全員の足もとの赤い円。下を向いて写す）と、大技（主のまわりの大きな円。離れて写す）
+            {"cmd", null, "60", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @e[type=amemaru:veldhorn,limit=1] {f1:192.5,15,51.5} 0 0"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,62.5} 180 60"},
+            {"cmd", null, "0", "amemaru admin boss skill 1 volley"},
+            {"await_ground", null, "4", "p8p_f1_volley"},
+            {"cmd", null, "70", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @e[type=amemaru:veldhorn,limit=1] {f1:192.5,15,51.5} 0 0"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,70.5} 180 22"},
+            {"cmd", null, "0", "amemaru admin boss skill 1 nova_out"},
+            {"await_ground", null, "12", "p8p_f1_nova_out"},
+            {"cmd", null, "70", "amemaru admin debug vitals @a 100 100"},
             // 11月25日：固有のギミック「大地の咆哮」（角を突き立てた構え・部屋じゅうの赤い円・止めるまでの残り）。
             // みんなで受ける一撃（11月24日）は、レイドのボスだけになった
             {"cmd", null, "50", "amemaru admin debug vitals @a 100 100"},
@@ -2059,6 +2075,17 @@ public final class CiScreenshots {
             {"snap", null, "20", "phase8_f7_boss_open"},
             {"cmd", null, "5", "effect clear @p amemaru:lost_fade"},
             {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
+            // 11月28日：参加者全員を狙う大技（金の円へ逃げこむ形・鏡像獣のそばの金の円へ寄る形）。上から写す
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f7:336.5,17,116.5} 180 10"},
+            {"cmd", null, "8", "amemaru admin boss skill 7 nova_safe"},
+            {"cmd", null, "1", "execute in amemaru:tower run tp @p {f7:336.5,40,113.5} 180 90"},
+            {"snap", null, "2", "p8p_f7_nova_safe"},
+            {"cmd", null, "100", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f7:336.5,17,124.5} 180 10"},
+            {"cmd", null, "8", "amemaru admin boss skill 7 nova_in"},
+            {"cmd", null, "1", "execute in amemaru:tower run tp @p {f7:336.5,40,116.5} 180 90"},
+            {"snap", null, "2", "p8p_f7_nova_in"},
+            {"cmd", null, "100", "amemaru admin debug vitals @a 100 100"},
             {"cmd", null, "5", "kill @e[type=amemaru:reflecta]"},
             {"snap_keep", null, "100", "phase8_f7_boss_defeated"},
             {"snap_keep", null, "120", "phase8_f7_boss_title"},

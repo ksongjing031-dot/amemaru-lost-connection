@@ -681,7 +681,18 @@ public final class StoryCommands {
                 // 11月24日：みんなで受ける一撃を、印と演出だけにする（safe）・もとに戻す（normal）。ひとりでの確かめ・CIの写真に
                 .then(Commands.literal("share")
                         .then(Commands.literal("safe").executes(ctx -> bossShare(ctx.getSource(), true)))
-                        .then(Commands.literal("normal").executes(ctx -> bossShare(ctx.getSource(), false))));
+                        .then(Commands.literal("normal").executes(ctx -> bossShare(ctx.getSource(), false))))
+                // 11月28日：参加者全員を狙う技を、ボスが自分で出す（auto）・管理者のコマンドで出させるときだけ（manual）。CIの写真に
+                .then(Commands.literal("party")
+                        .then(Commands.literal("auto").executes(ctx -> bossParty(ctx.getSource(), true)))
+                        .then(Commands.literal("manual").executes(ctx -> bossParty(ctx.getSource(), false))));
+    }
+
+    private static int bossParty(CommandSourceStack source, boolean auto) {
+        jp.amemaru.lostconnection.enemy.boss.AmemaruBoss.partyAuto = auto;
+        AdminCommands.log(source, "boss party " + (auto ? "auto" : "manual"));
+        source.sendSuccess(() -> Component.translatable(auto ? "commands.amemaru.boss.party_auto" : "commands.amemaru.boss.party_manual"), true);
+        return 1;
     }
 
     private static int bossHp(CommandSourceStack source, int floor, int percent) {
@@ -717,6 +728,10 @@ public final class StoryCommands {
         if (boss != null && boss.def() != null && boss.def().raid()) {
             names.add("share");
         }
+        // 11月28日：参加者全員を狙う技（一斉の印・大技）
+        if (boss != null) {
+            names.addAll(boss.partyAttackNames());
+        }
         return names;
     }
 
@@ -727,8 +742,10 @@ public final class StoryCommands {
             return 0;
         }
         // 11月24日：みんなで受ける一撃（敵の定義の技 share）。11月25日からは、レイドのボスだけ（ほかのボスでは出せない）
-        if ("share".equals(name) ? !boss.forceShare() : !boss.forceSkill(name)) {
-            source.sendFailure(Component.translatable("commands.amemaru.boss.skill_failed", floor, String.join("・", boss.skillNames())));
+        // 11月28日：参加者全員を狙う技（volley・nova・nova_out・nova_in・nova_safe）
+        boolean party = boss.partyAttackNames().contains(name);
+        if (party ? !boss.forcePartyAttack(name) : "share".equals(name) ? !boss.forceShare() : !boss.forceSkill(name)) {
+            source.sendFailure(Component.translatable("commands.amemaru.boss.skill_failed", floor, String.join("・", bossSkillNames(floor))));
             return 0;
         }
         AdminCommands.log(source, "boss skill " + floor + " " + name);

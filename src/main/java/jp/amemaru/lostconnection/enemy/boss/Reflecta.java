@@ -82,6 +82,18 @@ public class Reflecta extends AmemaruBoss {
         return new String[]{"skill_shards", "skill_prism", "skill_scatter", "skill_mirror"};
     }
 
+    /** 11月28日：全員を狙う技は、鏡の守りが割れている間（攻めどき）は出さない。 */
+    @Override
+    protected boolean partyAttackAllowed() {
+        return !wardBroken();
+    }
+
+    /** 11月28日：全員を狙う技が当たると、凍える。 */
+    @Override
+    protected void onPartyHit(ServerPlayer player, String skill) {
+        jp.amemaru.lostconnection.combat.PlayerColdService.chill(player, 1, 80);
+    }
+
     @Override
     protected int phaseFor(double ratio) {
         if (ratio <= 0.35) {

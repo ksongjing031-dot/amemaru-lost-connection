@@ -62,6 +62,11 @@ public final class BossImpactFx {
         boolean big = BIG.contains(message.boss() + ":" + message.skill());
         Vec3 at = message.at();
         float size = Math.max(1.0F, message.size());
+        if ("nova".equals(message.skill())) {
+            // 11月28日：全員を狙う大技。部屋いっぱいに衝撃波が2重に広がる（打たれた人の所には、別に小さな一撃が出る）
+            nova(at, size, theme);
+            return;
+        }
         switch (message.shape()) {
             case AmemaruMob.TELEGRAPH_CONE -> cone(at, message.yaw(), size, message.arg(), theme);
             case AmemaruMob.TELEGRAPH_LINE -> line(at, message.yaw(), size, message.arg(), theme, big);
@@ -71,6 +76,14 @@ public final class BossImpactFx {
         if (big || size >= 6.0F) {
             FxWorld.shake(at, big ? 14 : 8, big ? 0.9F : 0.45F);
         }
+    }
+
+    /** 全員を狙う大技（11月28日）：真ん中に光、部屋いっぱいに衝撃波が2重に広がり、画面が揺れる。 */
+    private static void nova(Vec3 at, float radius, Theme theme) {
+        FxWorld.add(new FxWorld.Flare(Anchor.at(at.add(0.0, 1.2, 0.0)), 6.0F, theme.light(), 16, FxTextures.GLOW, 0.0F, 3));
+        FxWorld.add(new FxWorld.Shockwave(at, 1.0F, radius, 30, theme.accent(), 2.8F, 0.75F));
+        FxWorld.later(5, () -> FxWorld.add(new FxWorld.Shockwave(at, 1.0F, radius * 0.85F, 26, theme.main(), 1.8F, 0.6F)));
+        FxWorld.shake(at, 16, 1.0F);
     }
 
     /** 扇：扇いっぱいを、2本の斬撃が走る（外は強い色、内は明るい色）。 */

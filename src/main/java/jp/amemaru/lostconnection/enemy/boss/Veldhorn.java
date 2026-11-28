@@ -118,6 +118,12 @@ public class Veldhorn extends AmemaruBoss {
         return new String[]{"skill_charge", "skill_stomp", "skill_roar", "skill_upthrust", "skill_kick", "skill_leap", "skill_roots"};
     }
 
+    /** 11月28日：全員を狙う技は、大地の咆哮の構えの間（角を打つ間）は出さない。 */
+    @Override
+    protected boolean partyAttackAllowed() {
+        return !earthRoaring();
+    }
+
     @Override
     protected int phaseFor(double ratio) {
         if (ratio <= 0.2) {

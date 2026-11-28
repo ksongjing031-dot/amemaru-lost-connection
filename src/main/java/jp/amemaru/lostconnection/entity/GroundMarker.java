@@ -39,6 +39,11 @@ public class GroundMarker extends Entity {
     public static final int KIND_SAFE = 4;
     /** 11月25日（8階）：氷の下から何かが来る所（無音の大魚・湖主の突き上げ。氷のひびの色）。 */
     public static final int KIND_CRACK = 5;
+    /**
+     * 11月28日：部屋のほぼ全体が打たれる所（ボスの大技）。うすい赤で広く塗り、内へ寄ってくる輪で「どこにいても当たる」を見せる。
+     * 逃げこむ所は、上に重ねる金の印（{@link #KIND_SAFE}）。
+     */
+    public static final int KIND_FIELD = 6;
     /** 音の色（白・青・金・紅）の、逃げこむ所（4階のボスの「残響の色」。KIND_NOTE + 音の番号）。 */
     public static final int KIND_NOTE = 10;
     /** 打ったあと、明るく見せておく長さ（tick） */

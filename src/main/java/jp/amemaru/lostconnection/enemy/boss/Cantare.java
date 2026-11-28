@@ -113,6 +113,12 @@ public class Cantare extends AmemaruBoss {
         return new String[]{"skill_wave", "skill_pillars", "skill_song", "skill_call", "skill_open"};
     }
 
+    /** 11月28日：全員を狙う技は、無防備な間（攻めどき）は出さない。 */
+    @Override
+    protected boolean partyAttackAllowed() {
+        return !open();
+    }
+
     @Override
     protected int phaseFor(double ratio) {
         if (ratio <= 0.3) {

@@ -110,6 +110,18 @@ public class Mune extends AmemaruBoss {
         return new String[]{"skill_rise", "skill_sweep", "skill_tail", "skill_veil", "skill_wave", "skill_dive", "dazed"};
     }
 
+    /** 11月28日：全員を狙う技は、静寂の帳の間（印が見えない）と、帳が破れて動けない間（攻めどき）は出さない。 */
+    @Override
+    protected boolean partyAttackAllowed() {
+        return !veiled() && !dazed();
+    }
+
+    /** 11月28日：全員を狙う技が当たると、凍える。 */
+    @Override
+    protected void onPartyHit(ServerPlayer player, String skill) {
+        jp.amemaru.lostconnection.combat.PlayerColdService.chill(player, 1, 80);
+    }
+
     @Override
     protected int phaseFor(double ratio) {
         if (ratio <= 0.35) {

@@ -24,8 +24,21 @@ public class GroundMarkerRenderer extends EntityRenderer<GroundMarker> {
             return;
         }
         poseStack.pushPose();
-        poseStack.translate(0.0, 0.07 + TelegraphDraw.waterLift(marker), 0.0);
-        if (marker.kind() == GroundMarker.KIND_SHARE) {
+        // 11月28日：大技の広い赤（下）と、逃げこむ金の円（上）が重なってちらつかないように、金を少し上に描く
+        double lift = marker.kind() == GroundMarker.KIND_SAFE ? 0.11 : marker.kind() == GroundMarker.KIND_FIELD ? 0.05 : 0.07;
+        poseStack.translate(0.0, lift + TelegraphDraw.waterLift(marker), 0.0);
+        if (marker.kind() == GroundMarker.KIND_FIELD) {
+            // 11月28日：部屋のほぼ全体が打たれる（ボスの大技）。うすく広く塗り、外から内へ輪が寄ってくる
+            int alpha = TelegraphDraw.alpha(progress, age);
+            TelegraphDraw.field(TelegraphDraw.consumer(buffer), poseStack, marker.radius(), progress, age, alpha);
+        } else if (marker.kind() == GroundMarker.KIND_SAFE && marker.radius() >= 3.5F) {
+            // 11月28日：大技から逃げこむ金の円は、内向きの矢じりで「ここへ」を見せる
+            int alpha = Math.min(255, TelegraphDraw.alpha(progress, age) + 50);
+            TelegraphDraw.withColor(kindColor(GroundMarker.KIND_SAFE), () -> {
+                TelegraphDraw.circle(TelegraphDraw.consumer(buffer), poseStack, marker.radius(), progress, alpha);
+                TelegraphDraw.gatherArrows(TelegraphDraw.consumer(buffer), poseStack, marker.radius(), age, alpha);
+            });
+        } else if (marker.kind() == GroundMarker.KIND_SHARE) {
             // 青の印：みんなで集まって受ける所。内向きの矢じりで「集まれ」を見せる（11月24日）
             int alpha = Math.min(255, TelegraphDraw.alpha(progress, age) + 30);
             TelegraphDraw.withColor(TelegraphDraw.SHARE_COLOR, () -> {
