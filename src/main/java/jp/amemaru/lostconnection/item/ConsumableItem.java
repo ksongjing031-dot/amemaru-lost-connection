@@ -56,6 +56,22 @@ public class ConsumableItem extends Item {
 
     /** 説明文の「HPが○%戻る」と「使ったあと○秒は使えない」の行（バニラの食べ物の説明にも使う。11月23日）。 */
     public static void restoreLines(ConsumableDef def, List<Component> lines) {
+        // 11月29日：キャンディー（しばらくステータスが上がる）
+        if (def.buff() != null) {
+            lines.add(Component.translatable("tooltip.amemaru.candy.line", ItemBuffService.text(def.buff())).withStyle(ChatFormatting.GOLD));
+            lines.add(Component.translatable("tooltip.amemaru.candy.one").withStyle(ChatFormatting.GRAY));
+        }
+        if (def.restore() != null) {
+            restoreAmountLine(def, lines);
+        }
+        if (def.cooldown() > 0) {
+            lines.add(Component.translatable(def.group().equals("food") ? "tooltip.amemaru.consumable.cooldown_food"
+                    : def.buff() != null && def.restore() == null ? "tooltip.amemaru.candy.cooldown" : "tooltip.amemaru.consumable.cooldown",
+                    number(def.cooldown())).withStyle(ChatFormatting.GRAY));
+        }
+    }
+
+    private static void restoreAmountLine(ConsumableDef def, List<Component> lines) {
         String what = def.restore() == ConsumableDef.Restore.HP ? "hp" : "mp";
         if (def.percent() > 0 && def.flat() > 0) {
             lines.add(Component.translatable("tooltip.amemaru.consumable." + what + "_both", number(def.percent()), number(def.flat()))
@@ -66,10 +82,6 @@ public class ConsumableItem extends Item {
         } else {
             lines.add(Component.translatable("tooltip.amemaru.consumable." + what + "_flat", number(def.flat()))
                     .withStyle(ChatFormatting.GREEN));
-        }
-        if (def.cooldown() > 0) {
-            lines.add(Component.translatable(def.group().equals("food") ? "tooltip.amemaru.consumable.cooldown_food"
-                    : "tooltip.amemaru.consumable.cooldown", number(def.cooldown())).withStyle(ChatFormatting.GRAY));
         }
     }
 

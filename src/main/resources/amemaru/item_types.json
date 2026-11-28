@@ -1130,6 +1130,34 @@
     {
       "id": "herb_tea",
       "stack": 16
+    },
+    {
+      "id": "candy_strength",
+      "stack": 32
+    },
+    {
+      "id": "candy_wisdom",
+      "stack": 32
+    },
+    {
+      "id": "candy_iron",
+      "stack": 32
+    },
+    {
+      "id": "candy_gale",
+      "stack": 32
+    },
+    {
+      "id": "candy_keen",
+      "stack": 32
+    },
+    {
+      "id": "candy_vigor",
+      "stack": 32
+    },
+    {
+      "id": "candy_mercy",
+      "stack": 32
     }
   ],
   "tools": [

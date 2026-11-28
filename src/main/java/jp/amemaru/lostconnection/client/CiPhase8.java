@@ -26,7 +26,7 @@ final class CiPhase8 {
     static boolean action(Minecraft minecraft, String[] shot, boolean first) {
         String kind = shot[0];
         if (!List.of("p8_bell", "p8_listen", "p8_knot", "p8_hold", "p8_valve", "p8_bench", "p8_bench_open", "p8_charm", "p8_lock",
-                "p8_bossfx", "p8_tooltip", "p8_say", "p8_settings").contains(kind)) {
+                "p8_bossfx", "p8_tooltip", "p8_say", "p8_settings", "p8_tips", "p8_eat", "p8_tabs").contains(kind)) {
             return false;
         }
         if (!first) {
@@ -95,6 +95,37 @@ final class CiPhase8 {
             // 11月25日：7階の合言葉の扉の前で、チャットに言葉を打ったのと同じ（サーバーの PassphraseService.say）
             case "p8_say" -> CiPhase3.onServer(minecraft, player -> jp.amemaru.lostconnection.AmemaruMod.LOGGER.info(
                     "[amemaru-ci] passphrase \"{}\": {}", shot[3], jp.amemaru.lostconnection.tower.iceforest.PassphraseService.say(player, shot[3])));
+            // 11月29日：品の説明文を2つ並べて描く（「名前,名前」。「-」で閉じる）。キャンディーの説明を撮る
+            case "p8_tips" -> {
+                if ("-".equals(shot[3])) {
+                    minecraft.setScreen(CiScreenshots.screenAfterClose());
+                } else {
+                    List<net.minecraft.world.item.ItemStack> stacks = new java.util.ArrayList<>();
+                    for (String name : shot[3].split(",")) {
+                        net.minecraft.world.item.Item item = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(
+                                jp.amemaru.lostconnection.AmemaruMod.id(name));
+                        if (item != null) {
+                            stacks.add(new net.minecraft.world.item.ItemStack(item));
+                        }
+                    }
+                    minecraft.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+                    minecraft.setScreen(new CiPhase3.TooltipScreen(stacks));
+                }
+            }
+            // 11月29日：キャンディーを食べたのと同じ（サーバーで使う。効き目の印が右上に出る）
+            case "p8_eat" -> CiPhase3.onServer(minecraft, player -> {
+                net.minecraft.world.item.Item item = net.minecraftforge.registries.ForgeRegistries.ITEMS.getValue(
+                        jp.amemaru.lostconnection.AmemaruMod.id(shot[3]));
+                jp.amemaru.lostconnection.item.ConsumableDef def = item == null ? null
+                        : jp.amemaru.lostconnection.item.ConsumableDefs.get(jp.amemaru.lostconnection.AmemaruMod.id(shot[3]));
+                if (def != null) {
+                    player.getCooldowns().removeCooldown(item);
+                    jp.amemaru.lostconnection.AmemaruMod.LOGGER.info("[amemaru-ci] eat {}: {}", shot[3],
+                            jp.amemaru.lostconnection.item.ConsumableService.consume(player, new net.minecraft.world.item.ItemStack(item), def));
+                }
+            });
+            // 11月29日：クリエイティブの6つのタブの中身（先頭の品）を並べた確かめの画面（「-」で閉じる）
+            case "p8_tabs" -> minecraft.setScreen("-".equals(shot[3]) ? CiScreenshots.screenAfterClose() : new TabsScreen());
             // 11月24日：ロックオンのキー（B）を1回押したのと同じ（見ている敵をロック。照準の印と名前・距離・HPを撮る）
             case "p8_lock" -> TargetLock.ciPress(minecraft);
             // 11月24日：お守りの枠に付ける（「-」で外す）。5階のユニーク「第七の門鍵」の、体に表示するモデルを撮る
@@ -164,6 +195,42 @@ final class CiPhase8 {
         FloorFeatures.LostWoods woods = def == null ? null : def.features().lostWoods(id);
         if (woods != null && level != null) {
             action.run(def, woods, level);
+        }
+    }
+
+    /** 11月29日：クリエイティブの6つのタブの名前・数と、中身の先頭の品を並べる（CI の写真）。 */
+    static final class TabsScreen extends net.minecraft.client.gui.screens.Screen {
+        TabsScreen() {
+            super(net.minecraft.network.chat.Component.empty());
+        }
+
+        @Override
+        public void render(net.minecraft.client.gui.GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
+            graphics.fill(0, 0, width, height, 0xF0101420);
+            int y = 4;
+            int rows = jp.amemaru.lostconnection.core.registry.ModCreativeTabs.Tab.values().length;
+            int step = Math.max(30, (height - 8) / rows);
+            for (jp.amemaru.lostconnection.core.registry.ModCreativeTabs.Tab tab : jp.amemaru.lostconnection.core.registry.ModCreativeTabs.Tab.values()) {
+                net.minecraft.world.item.CreativeModeTab creative = jp.amemaru.lostconnection.core.registry.ModCreativeTabs.registered(tab).get();
+                List<net.minecraft.world.item.Item> items = jp.amemaru.lostconnection.core.registry.ModCreativeTabs.items(tab);
+                graphics.renderItem(creative.getIconItem(), 6, y);
+                graphics.drawString(font, creative.getDisplayName().getString() + "（" + items.size() + "）", 26, y + 4, 0xFFF2D27A, false);
+                int perRow = Math.max(1, (width - 32) / 18);
+                for (int i = 0; i < Math.min(perRow, items.size()); i++) {
+                    graphics.renderItem(new net.minecraft.world.item.ItemStack(items.get(i)), 26 + i * 18, y + 14);
+                }
+                y += step;
+            }
+        }
+
+        @Override
+        public boolean isPauseScreen() {
+            return false;
+        }
+
+        @Override
+        public boolean shouldCloseOnEsc() {
+            return false;
         }
     }
 }

@@ -62,8 +62,9 @@ public final class ShopGameTests {
         check(helper, MarketPrices.loader().errors().isEmpty(), "相場の表に問題があります：" + MarketPrices.loader().errors());
         check(helper, ConsumableDefs.loader().errors().isEmpty(), "消耗品の定義に問題があります：" + ConsumableDefs.loader().errors());
         check(helper, ShopDefs.all().size() == 13, "店の定義が13軒ではありません：" + ShopDefs.all().keySet());
-        // 消耗品：回復薬（小・中）・マナ水（小・中）・香草茶と、11月23日の直しで数値を付けたバニラの食べ物15種
-        check(helper, ConsumableDefs.server().size() == 20, "消耗品の定義が20ではありません：" + ConsumableDefs.server().size());
+        // 消耗品：回復薬（小・中）・マナ水（小・中）・香草茶と、11月23日の直しで数値を付けたバニラの食べ物15種。
+        // 11月29日：キャンディー7つで27
+        check(helper, ConsumableDefs.server().size() == 27, "消耗品の定義が27ではありません：" + ConsumableDefs.server().size());
         for (jp.amemaru.lostconnection.item.ConsumableDef def : ConsumableDefs.server()) {
             check(helper, ForgeRegistries.ITEMS.containsKey(def.id()), "消耗品の定義の品がありません：" + def.id());
         }

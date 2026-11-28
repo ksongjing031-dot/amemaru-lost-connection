@@ -12,6 +12,34 @@
     {
       "item": "minecraft:pumpkin_pie",
       "price": 18
+    },
+    {
+      "item": "amemaru:candy_strength",
+      "price": 150
+    },
+    {
+      "item": "amemaru:candy_wisdom",
+      "price": 150
+    },
+    {
+      "item": "amemaru:candy_iron",
+      "price": 150
+    },
+    {
+      "item": "amemaru:candy_gale",
+      "price": 150
+    },
+    {
+      "item": "amemaru:candy_keen",
+      "price": 150
+    },
+    {
+      "item": "amemaru:candy_vigor",
+      "price": 150
+    },
+    {
+      "item": "amemaru:candy_mercy",
+      "price": 150
     }
   ],
   "buys": [
@@ -25,6 +53,34 @@
     },
     {
       "item": "minecraft:pumpkin_pie",
+      "ratio": 0.5
+    },
+    {
+      "item": "amemaru:candy_strength",
+      "ratio": 0.5
+    },
+    {
+      "item": "amemaru:candy_wisdom",
+      "ratio": 0.5
+    },
+    {
+      "item": "amemaru:candy_iron",
+      "ratio": 0.5
+    },
+    {
+      "item": "amemaru:candy_gale",
+      "ratio": 0.5
+    },
+    {
+      "item": "amemaru:candy_keen",
+      "ratio": 0.5
+    },
+    {
+      "item": "amemaru:candy_vigor",
+      "ratio": 0.5
+    },
+    {
+      "item": "amemaru:candy_mercy",
       "ratio": 0.5
     }
   ]

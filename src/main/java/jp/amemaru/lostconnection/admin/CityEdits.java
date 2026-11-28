@@ -691,6 +691,11 @@ final class CityEdits {
             }
             return true;
         }
+        // 空気の種類（ふつうの空気・洞窟の空気など）は、見た目が同じなので直しにしない（11月29日。CIの自動テストで、
+        // 建てた直後のギルドの上の空が、まれに洞窟の空気として読めて、直しに数えられていた）
+        if (want.isAir() && now.isAir()) {
+            return true;
+        }
         if (pair(a, b, Blocks.GRASS_BLOCK, Blocks.DIRT) || pair(a, b, Blocks.DIRT_PATH, Blocks.DIRT)
                 || pair(a, b, Blocks.FARMLAND, Blocks.DIRT) || pair(a, b, Blocks.ICE, Blocks.WATER)
                 || pair(a, b, Blocks.FROSTED_ICE, Blocks.WATER) || pair(a, b, Blocks.SNOW, Blocks.AIR)) {

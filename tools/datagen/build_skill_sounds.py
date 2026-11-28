@@ -68,8 +68,10 @@ MOTIFS = {
     "fire": [("entity.blaze.shoot", 0.6, 1.1, 0.08, 0), ("entity.ghast.shoot", 0.25, 1.5, 0.05, 0), ("block.fire.ambient", 0.7, 1.3, 0.1, 1)],
     "fire_hit": [("entity.generic.burn", 0.5, 1.2, 0.1, 0), ("entity.firework_rocket.blast", 0.35, 1.3, 0.1, 0),
                  ("block.fire.extinguish", 0.35, 1.5, 0.1, 1)],
+    # 11月29日（「技を打った時に動けなくなるときになる音がうるさい」）：3つ目は、プレイヤーが凍えて傷つく声（entity.player.hurt_freeze）を
+    # 鳴らしていて、氷の魔法を放つたびに、硬直の間に自分が傷ついたような声がしていた。声ではない、氷の澄んだ音にする
     "ice": [("block.powder_snow.break", 0.8, 0.9, 0.08, 0), ("block.amethyst_cluster.break", 0.6, 1.5, 0.1, 1),
-            ("entity.player.hurt_freeze", 0.4, 1.3, 0.05, 2)],
+            ("block.amethyst_block.hit", 0.35, 1.7, 0.08, 2)],
     "ice_hit": [("block.glass.break", 0.6, 1.3, 0.1, 0), ("block.powder_snow.step", 0.6, 1.0, 0.05, 0), ("block.amethyst_block.break", 0.5, 1.6, 0.1, 1)],
     "frost_field": [("block.powder_snow.place", 0.8, 0.8, 0.05, 0), ("item.elytra.flying", 0.2, 1.6, 0.0, 0),
                     ("block.amethyst_block.resonate", 0.6, 1.4, 0.05, 2)],

@@ -618,7 +618,7 @@ Phase 0-Aのとおり **R・G・V・Z・X・C** です（一時は、ボイス�
 | `skill.wizard.lamp_barrage` | 灯火の連弾 | 火の玉（高め） |
 | `skill.wizard.light_veil` | 光の帳 | ビーコンの選択（高め） |
 | `skill.wizard.star_burst` | 星爆 | 花火のきらめき |
-| `skill.wizard.icicle` | 氷柱 | 凍える音（高め） |
+| `skill.wizard.icicle` | 氷柱 | トライデントを投げる音（高め。11月29日まではプレイヤーが凍えて傷つく声で、硬直の間に自分が傷ついたように聞こえていた） |
 | `skill.wizard.frost_wave` | 凍てつく波動 | 粉雪が崩れる音（低め） |
 | `skill.wizard.thunder_call`・`thunderbolt` | 雷霆の呼び声・落雷 | リスポーンアンカーの充電・雷 |
 | `skill.knight.heaven_cleave_cast`・`heaven_cleave` | 天断ちの構え・断つ | ビーコンの選択（低め）・トライデントの雷（低め） |
