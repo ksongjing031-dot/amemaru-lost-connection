@@ -1,0 +1,58 @@
+{
+  "_comment": "氷の騎兵（9階の雑魚。Phase 0-A 9章の9階）。凍った馬に乗った近衛の騎士（enemy/castle/IceCavalry.java）。槍の突撃（charge。1階の欠け牙の狼と同じ突進。当たると凍える）。線の途中で壁にぶつかると、馬が転んでよろめく（stagger_seconds 秒動けず、受けるダメージ stagger_taken 倍。突撃を壁ぎわへ誘うのが攻略）。まわりにいる人へ、蹄の踏み鳴らし（stomp。まわり全部の円）。数値は【補完】",
+  "name": "氷の騎兵",
+  "floor": 9,
+  "level": 36,
+  "description": "凍った馬に乗った、近衛の騎士。馬も乗り手も、たてがみの先まで氷に覆われている。城の石畳を駆ける蹄の音だけが、今も昔のまま響く。",
+  "stats": {
+    "hp": 3200,
+    "attack": 240,
+    "defense": 22,
+    "move_speed": 0.3,
+    "follow_range": 24,
+    "aggro_range": 14
+  },
+  "exp": 80,
+  "skills": {
+    "charge": {
+      "power": 1.7,
+      "windup": 1.2,
+      "cooldown": 9.0,
+      "range": 18.0,
+      "min_range": 6.0,
+      "speed": 0.95,
+      "width": 1.4,
+      "recover": 1.0
+    },
+    "stomp": {
+      "power": 1.1,
+      "windup": 0.9,
+      "cooldown": 4.0,
+      "range": 3.0,
+      "angle": 360
+    }
+  },
+  "behavior": {
+    "stagger_seconds": 3.0,
+    "stagger_taken": 1.5,
+    "chill_stacks": 1,
+    "chill_seconds": 4.0
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/ice_cavalry",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_white",
+        "chance": 0.6
+      },
+      {
+        "item": "amemaru:crystal_fruit_azure",
+        "chance": 0.3
+      },
+      {
+        "item": "amemaru:royal_seal",
+        "chance": 1.0
+      }
+    ]
+  }
+}

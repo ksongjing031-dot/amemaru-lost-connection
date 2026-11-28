@@ -241,6 +241,30 @@ ACCESSORIES = [
     ("thousand_voice_stone", "千の声の喉石", "charm", None, 8, "rare", False, None, 0, 0,
      [{"type": "ally_power", "threshold": 8, "percent": 3}],
      "千声喰いののどの奥にあった、青い石。そばにいる仲間の声を集めて、力に変える。8階の名のある魔物が落とす。"),
+    # 9階「氷結した王城」（11月28日）：近衛の氷と王家のひと揃い。名前と中身は【補完】。素材は tools/datagen/build_floor9_data.py
+    # （王城の霜氷・近衛の氷・氷の蹄鉄・ほどけた頁・猟犬の青い首輪・前掛けのレース・王家の封蝋）。
+    # レアのお守りは、霜蹄の旗手（号令を受けたように足が前へ出る）と綴じ手（忘れたくない名前の頁を、抜け落ちないように綴じる）が落とす
+    ("guard_ice_battle_ring", "近衛氷の闘環", "ring", ["attack"], 9, "uncommon", False,
+     ing(("guard_ice", 3), ("ice_horseshoe", 2), ("royal_seal", 1), ("pedestal_cloth", 1)), 4, 28, [],
+     "近衛兵の鎧から剥がれた青い氷を、霜銀の芯に巻いた指輪。握ると、盾を構えたときのように背筋がのびる。"),
+    ("guard_ice_wisdom_ring", "近衛氷の智環", "ring", ["magic"], 9, "uncommon", False,
+     ing(("guard_ice", 3), ("torn_page", 2), ("royal_seal", 1), ("pedestal_cloth", 1)), 4, 28, [],
+     "近衛の氷の輪に、ほどけた頁の切れ端を細く巻いた指輪。頁の文字は読めないが、魔力を通すと青白く浮かぶ。"),
+    ("portrait_necklace", "肖像の首飾り", "necklace", None, 9, "uncommon", True,
+     ing(("lace_scrap", 3), ("castle_ice", 1), ("royal_seal", 1), ("pedestal_cloth", 1)), 4, 28, [],
+     "侍女の前掛けのレースに、小さな楕円の額を下げた首飾り。額の中は白いまま。持ち主が誰かを思い浮かべると、うっすら色がつく。"),
+    ("horseshoe_bracelet", "氷の蹄鉄の腕輪", "bracelet", None, 9, "uncommon", True,
+     ing(("ice_horseshoe", 3), ("frost_silver", 2), ("pedestal_cloth", 1)), 4, 28, [],
+     "氷の騎兵の馬が落とした蹄鉄を、霜銀の輪に打ち直した腕輪。歩くと、遠い石畳の蹄の音がする気がする。"),
+    ("name_charm", "名札のお守り", "charm", None, 9, "uncommon", True,
+     ing(("guard_ice", 2), ("hound_collar", 1), ("echo_fragment", 1), ("pedestal_cloth", 1)), 4, 28, [],
+     "王城の名札をまねた、小さな銀の札のお守り。自分の名前を刻んでおけば、忘れても札が覚えていてくれる。"),
+    ("bearer_tassel", "旗手の房飾り", "charm", None, 9, "rare", False, None, 0, 0,
+     [{"type": "move_speed", "percent": 6}],
+     "霜蹄の旗手の、凍った青い旗の房飾り。持つと、号令を受けたように足が前へ出る。9階の名のある魔物が落とす。"),
+    ("binder_bookmark", "綴じ糸の栞", "charm", None, 9, "rare", False, None, 0, 0,
+     [{"type": "lost_resist", "percent": 25}],
+     "綴じ手が頁を綴じていた、銀の糸の栞。挟んだ頁は決して抜け落ちない――忘れたくない名前も。9階の名のある魔物が落とす。"),
 ]
 
 # 1階の品（Phase 3 からある）：階の印と、効き目の説明だけ足す

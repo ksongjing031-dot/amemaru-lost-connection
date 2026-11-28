@@ -501,6 +501,11 @@ public final class TowerService {
                 && !jp.amemaru.lostconnection.tower.lake.BellService.allSolved(player.server, def)) {
             return false;
         }
+        // 11月28日（9階）：王家の肖像画がすべて戻ったら（みんな）
+        if (features.requires(FloorFeatures.SEAL_LINEAGE)
+                && !jp.amemaru.lostconnection.tower.castle.LineageService.allSolved(player.server, def)) {
+            return false;
+        }
         if (!features.requires(FloorFeatures.SEAL_PILLARS) || def.pillars().isEmpty()) {
             return true;
         }
@@ -739,6 +744,11 @@ public final class TowerService {
                 && !jp.amemaru.lostconnection.tower.lake.BellService.allSolved(player.server, def)) {
             int[] bells = jp.amemaru.lostconnection.tower.lake.BellService.count(player.server, def);
             return Component.translatable("message.amemaru.seal.bells", bells[0], bells[1]);
+        }
+        if (features.requires(FloorFeatures.SEAL_LINEAGE)
+                && !jp.amemaru.lostconnection.tower.castle.LineageService.allSolved(player.server, def)) {
+            int[] lineage = jp.amemaru.lostconnection.tower.castle.LineageService.count(player.server, def);
+            return Component.translatable("message.amemaru.seal.lineage", lineage[0], lineage[1]);
         }
         if (features.requires(FloorFeatures.SEAL_GUARDIANS)) {
             int done = guardiansDefeated(player, def);

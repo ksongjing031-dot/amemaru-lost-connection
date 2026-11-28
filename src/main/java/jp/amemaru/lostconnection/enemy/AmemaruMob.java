@@ -884,6 +884,30 @@ public abstract class AmemaruMob extends PathfinderMob implements GeoEntity, Ene
         return 1.0;
     }
 
+    /** 撃つ針の見た目（{@link jp.amemaru.lostconnection.entity.CrystalNeedle#STYLE_CRYSTAL} など。11月28日）。 */
+    public int projectileStyle() {
+        return jp.amemaru.lostconnection.entity.CrystalNeedle.STYLE_CRYSTAL;
+    }
+
+    /** 撃つ針が、受ける人の守りのいくらを通り抜けるか（定義の behavior.pierce。ふつうは 0。11月28日）。 */
+    public double projectilePierce() {
+        EnemyDef def = def();
+        return def == null ? 0.0 : def.behavior("pierce", 0.0);
+    }
+
+    /**
+     * 突進（{@link jp.amemaru.lostconnection.enemy.ai.ChargeGoal}）が終わったとき。{@code hitWall}：線の途中で壁にぶつかった。
+     * 返す数は、すき（tick）の最低の長さ（ふつうは 0。11月28日：9階の氷の騎兵は、壁にぶつかるとよろめく）。
+     */
+    public int onChargeEnded(boolean hitWall) {
+        return 0;
+    }
+
+    /** 突進のクールダウン（tick。ふつうは定義どおり。11月28日：9階の霜蹄の旗手は、続けて突進する）。 */
+    public int chargeCooldown(int normal) {
+        return normal;
+    }
+
     /**
      * 受けるダメージの倍率（魔力のダメージかどうかで変わる敵のため。11月24日：4階の結晶甲虫「硬いが魔法に弱い」）。
      * ふつうは {@link #damageTakenMultiplier(net.minecraft.world.entity.Entity)} と同じ。

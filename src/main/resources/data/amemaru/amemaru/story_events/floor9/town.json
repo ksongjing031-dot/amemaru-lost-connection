@@ -1,0 +1,37 @@
+{
+  "_comment": "城下町の跡（本人だけ。一人一度）。店の看板の名前が、どれも白く消えている【補完】",
+  "title": "城下町の跡",
+  "trigger": {
+    "type": "amemaru:floor_zone",
+    "floor": 9,
+    "zone": "town"
+  },
+  "scope": "player",
+  "once": false,
+  "replayable": true,
+  "conditions": {
+    "flags_none": [
+      "amemaru:story/castle_town_seen"
+    ]
+  },
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "凍った城下町。店の看板が並んでいるのに、どの看板にも、名前が書かれていない。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "戸口に、名札をかけるための釘だけが残っている。札は、どこへ行ったのだろう。",
+      "ticks": 120,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/castle_town_seen"
+      ]
+    }
+  ]
+}

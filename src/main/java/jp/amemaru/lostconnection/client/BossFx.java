@@ -64,7 +64,7 @@ public final class BossFx {
     private static final int INTRO_TICKS = 70;
     private static final int BANNER_TICKS = 56;
     /** 時を刻む・赤いふちを出す、ボスの様子（ギミックの構え）。 */
-    private static final Set<String> DANGER = Set.of("earth_roar", "flood", "echo", "sever", "gaze", "veil");
+    private static final Set<String> DANGER = Set.of("earth_roar", "flood", "echo", "sever", "gaze", "veil", "march");
     /** ボスごとの色（名前・光の波・段階の字）。 */
     private static final Map<String, Integer> ACCENT = Map.of(
             "veldhorn", 0xF2B25C,
@@ -74,7 +74,8 @@ public final class BossFx {
             "ancient_guardian", 0xF2D16B,
             "ordo", 0x9FD8FF,
             "reflecta", 0xC6BAF0,
-            "mune", 0xA8DCEC);
+            "mune", 0xA8DCEC,
+            "valgrim", 0x9CC8FF);
 
     // 今の戦い
     private static int bossEntity = -1;

@@ -1,0 +1,43 @@
+{
+  "_comment": "大広間（本人だけ。一人一度）。顔のない3枚の肖像画と、建国の碑【補完】",
+  "title": "大広間",
+  "trigger": {
+    "type": "amemaru:floor_zone",
+    "floor": 9,
+    "zone": "hall"
+  },
+  "scope": "player",
+  "once": false,
+  "replayable": true,
+  "conditions": {
+    "flags_none": [
+      "amemaru:story/castle_hall_seen"
+    ]
+  },
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "大広間の壁に、3枚の肖像画がかかっている。どれも、顔のところだけが白く抜けている。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "肖像画の下には、空っぽの名札の台座。奥の建国の碑に、何かが刻まれている。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "城じゅうに散らばった名前の札を集めて、肖像画に戻そう（札を持って、肖像画に触れる）。",
+      "ticks": 120,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/castle_hall_seen"
+      ]
+    }
+  ]
+}

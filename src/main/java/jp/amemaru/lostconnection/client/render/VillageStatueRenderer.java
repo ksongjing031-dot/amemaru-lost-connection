@@ -28,7 +28,7 @@ import java.util.Set;
  */
 public class VillageStatueRenderer implements BlockEntityRenderer<VillageStatueBlockEntity> {
     /** 体の細い見た目（腕が3ピクセル）。 */
-    private static final Set<String> SLIM = Set.of("woman", "mother", "buyer", "child_girl", "singer");
+    private static final Set<String> SLIM = Set.of("woman", "mother", "buyer", "child_girl", "singer", "noble_woman", "maid");
     private static final Map<String, ResourceLocation> TEXTURES = new HashMap<>();
 
     private final PlayerModel<LivingEntity> wide;
@@ -71,6 +71,15 @@ public class VillageStatueRenderer implements BlockEntityRenderer<VillageStatueB
         POSES.put("fish", new Pose(r(20, 0, 0), r(5, 0, 0), r(-60, 5, 0), r(-55, -5, 0), r(-90, 10, 0), r(-90, -10, 0), true));
         // 11月25日（8階）：湖底の祠の、最後の歌い手（顔を上げ、両手を胸の前で開いて歌っている）
         POSES.put("sing", new Pose(r(-28, 0, 0), r(-4, 0, 0), r(-58, -28, 10), r(-58, 28, -10), Z, r(6, 0, 0), false));
+        // 11月28日（9階）：凍った近衛兵（直立して、右手は斧槍を立て、左腕は盾を胸の前に構える）
+        POSES.put("guard", new Pose(Z, Z, r(-18, 0, 6), r(-62, 28, 0), Z, Z, false));
+        // 凍った近衛兵の敬礼（右手を額へ）
+        POSES.put("salute", new Pose(r(-4, 0, 0), Z, r(-132, -42, 0), r(0, 0, -3), Z, Z, false));
+        // 大広間で踊ったまま凍った貴族（相手の腰に右手、左手は相手の手をとって横へ）
+        POSES.put("dance_lead", new Pose(r(-6, 10, 0), r(0, 8, 0), r(-62, -22, 0), r(-88, 0, -38), r(-6, 0, 0), r(10, 0, 0), false));
+        POSES.put("dance_follow", new Pose(r(-10, -10, 0), r(0, -8, 0), r(-88, 0, 38), r(-112, 18, -6), r(8, 0, 0), r(-8, 0, 0), false));
+        // 盆を運ぶ侍女（両手を前で、盆を支える）
+        POSES.put("serve", new Pose(r(12, 0, 0), Z, r(-66, -14, 0), r(-66, 14, 0), Z, Z, false));
     }
 
     public VillageStatueRenderer(BlockEntityRendererProvider.Context context) {

@@ -25,7 +25,7 @@ import java.util.UUID;
 
 /**
  * 11月28日のご指示「ボスが一人をターゲットしてその人にしか攻撃をしないので、ボス参加している人全員をターゲットにする攻撃を
- * 追加して他のプレイヤーが一方的に攻撃できる状態を減らす」の自動テスト：1〜8階のどのボスにも一斉の印と大技があり、印は全員の
+ * 追加して他のプレイヤーが一方的に攻撃できる状態を減らす」の自動テスト：1〜9階のどのボスにも一斉の印と大技があり、印は全員の
  * 足もとに出て、遅れて今いる所を追いかける。大技は形どおりの所を打つ。
  */
 @GameTestHolder(AmemaruMod.MOD_ID)
@@ -33,10 +33,10 @@ import java.util.UUID;
 public final class PartyAttackGameTests {
     private static final String EMPTY = "empty3x3x3";
     private static final List<String> BOSSES = List.of("veldhorn", "old_ward", "hydram", "cantare", "ancient_guardian", "ordo", "reflecta",
-            "mune");
-    /** 固有のギミックをしくじったときの一撃（大技はこれより弱い。11月27日の決まり）。 */
+            "mune", "valgrim");
+    /** 固有のギミックをしくじったときの一撃（大技はこれより弱い。11月27日の決まり）。9階の近衛長は近衛の行進。 */
     private static final Map<String, List<String>> FAILURE = Map.of("veldhorn", List.of("earth_roar"), "hydram", List.of("flood"),
-            "cantare", List.of("echo"), "ancient_guardian", List.of("judge", "sever"), "ordo", List.of("gaze"));
+            "cantare", List.of("echo"), "ancient_guardian", List.of("judge", "sever"), "ordo", List.of("gaze"), "valgrim", List.of("march"));
 
     private PartyAttackGameTests() {
     }

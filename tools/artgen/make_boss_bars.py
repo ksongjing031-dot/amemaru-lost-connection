@@ -252,6 +252,26 @@ def mune():
     return img
 
 
+def valgrim():
+    """9階：近衛の青い帯に、白銀の鎖（盾の誓い）と、両端の盾"""
+    img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+    plate(img, hexc("3C5A9E"), hexc("1E3670"), hexc("9CC8FF"), hexc("12244E"))
+    d = ImageDraw.Draw(img)
+    for x in range(16, 238, 8):
+        d.ellipse([x, 3, x + 5, 7], outline=hexc("EAF4FF"))
+        d.ellipse([x + 4, 16, x + 9, 20], outline=hexc("C4DCF2"))
+
+    def cap(c):
+        d = ImageDraw.Draw(c)
+        d.polygon([(2, 4), (16, 4), (16, 14), (9, 21), (2, 14)], fill=hexc("2C4A9A"), outline=OUT)
+        d.line([(9, 6), (9, 17)], fill=hexc("EAF4FF"))
+        d.line([(5, 10), (13, 10)], fill=hexc("EAF4FF"))
+        d.point((9, 10), fill=hexc("9CC8FF"))
+    both_ends(img, cap)
+    slot(img)
+    return img
+
+
 def default():
     img = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     plate(img, hexc("3A3D4A"), hexc("22242C"), hexc("5A5E70"), hexc("14151A"))
@@ -265,7 +285,7 @@ def default():
 
 
 BARS = {"veldhorn": veldhorn, "old_ward": old_ward, "hydram": hydram, "cantare": cantare,
-        "ancient_guardian": ancient_guardian, "ordo": ordo, "reflecta": reflecta, "mune": mune, "default": default}
+        "ancient_guardian": ancient_guardian, "ordo": ordo, "reflecta": reflecta, "mune": mune, "valgrim": valgrim, "default": default}
 
 
 def sheet(images, out):
@@ -274,7 +294,7 @@ def sheet(images, out):
     rows = len(images)
     s = Image.new("RGBA", (W * scale + 40, rows * (H * scale + 18) + 10), (34, 36, 44, 255))
     colors = {"veldhorn": "E2B65A", "old_ward": "7ED957", "hydram": "4FB6F0", "cantare": "F2C94C", "ancient_guardian": "4FCC9E",
-              "ordo": "BFEFFF", "reflecta": "C9A8FF", "mune": "A8F7FF", "default": "E0C89A"}
+              "ordo": "BFEFFF", "reflecta": "C9A8FF", "mune": "A8F7FF", "valgrim": "9CC8FF", "default": "E0C89A"}
     for i, (name, img) in enumerate(images.items()):
         filled = img.copy()
         d = ImageDraw.Draw(filled)

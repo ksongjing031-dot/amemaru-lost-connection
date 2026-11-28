@@ -1,0 +1,56 @@
+{
+  "_comment": "書架霊（9階の雑魚。Phase 0-A 9章の9階「ページが舞う亡霊。魔法攻撃」）。宙に浮いて頁を撃つ（needle。1階の結晶蜂と同じ動き）。頁は魔法で、受ける人の守りの pierce を通り抜ける（鎧を通る魔法）。当たるとロスト状態「薄れ」（fade_seconds 秒。名前が「？？？」に見える。9階のロストの侵食「名前と顔の空白」）。狙った人の足もとに印を出し、頁を渦巻かせる（storm。radius）。数値は【補完】",
+  "name": "書架霊",
+  "floor": 9,
+  "level": 35,
+  "description": "王家の書庫の本から抜け出た亡霊。ほどけた頁が、ひらひらと体のまわりを舞っている。頁に書かれていたはずの名前は、どれも白く消えている。",
+  "stats": {
+    "hp": 1500,
+    "attack": 226,
+    "defense": 8,
+    "move_speed": 0.22,
+    "follow_range": 22,
+    "aggro_range": 14
+  },
+  "exp": 72,
+  "skills": {
+    "needle": {
+      "power": 0.9,
+      "windup": 0.8,
+      "cooldown": 2.8,
+      "range": 14,
+      "speed": 0.7
+    },
+    "storm": {
+      "power": 1.2,
+      "windup": 1.4,
+      "cooldown": 9.0,
+      "range": 14.0,
+      "radius": 2.5
+    }
+  },
+  "behavior": {
+    "keep_distance": 7,
+    "hover_height": 2.5,
+    "pierce": 0.5,
+    "fade_seconds": 8.0
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/shelf_wraith",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_white",
+        "chance": 0.6
+      },
+      {
+        "item": "amemaru:crystal_fruit_azure",
+        "chance": 0.3
+      },
+      {
+        "item": "amemaru:royal_seal",
+        "chance": 1.0
+      }
+    ]
+  },
+  "lost": true
+}

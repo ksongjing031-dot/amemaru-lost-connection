@@ -1,0 +1,1779 @@
+{
+  "_comment": "塔の9階「氷結した王城」（tools/mapgen/build_floor9.py が書き出す。手で直すときは、スクリプトを直して作り直す）",
+  "floor": 9,
+  "chapter": 2,
+  "name": "氷結した王城",
+  "chapter_title": "第2章　凍てついた記憶",
+  "recommended_level": [
+    36,
+    43
+  ],
+  "origin": [
+    36480,
+    60,
+    -384
+  ],
+  "size": [
+    768,
+    112,
+    768
+  ],
+  "structure": "amemaru:map/floor9/",
+  "piece_size": 48,
+  "entrance": {
+    "pos": [
+      384.5,
+      31,
+      736.5
+    ],
+    "yaw": 180
+  },
+  "return_circle": {
+    "center": [
+      384.5,
+      31,
+      744.5
+    ],
+    "radius": 2.6
+  },
+  "boss_room": {
+    "boss": "amemaru:valgrim",
+    "name": "近衛の間",
+    "spawn": {
+      "pos": [
+        384.5,
+        31,
+        130.5
+      ],
+      "yaw": 0
+    },
+    "arena": {
+      "center": [
+        384.5,
+        31,
+        152.5
+      ],
+      "radius": 47.0,
+      "y_min": 28,
+      "y_max": 59
+    },
+    "seal": [
+      [
+        382,
+        41,
+        232
+      ],
+      [
+        386,
+        44,
+        232
+      ]
+    ],
+    "start_radius": 34,
+    "respawn_seconds": 150,
+    "max_players": 8,
+    "hp_min_players": 2,
+    "hp_per_extra_player": 0.6,
+    "attack_per_extra_player": 0.1,
+    "pace_per_extra_player": 0.05,
+    "enrage_seconds": 1800,
+    "exit": {
+      "center": [
+        377.5,
+        31,
+        116.5
+      ],
+      "radius": 2.6
+    },
+    "next": {
+      "center": [
+        384.5,
+        31,
+        116.5
+      ],
+      "radius": 2.6
+    }
+  },
+  "pillars": [],
+  "pillars_done": "王家の名が、肖像画に戻った。近衛の回廊の封印が、静かにほどけていく……",
+  "spawns": [
+    {
+      "id": "town_hounds_w",
+      "enemy": "amemaru:frost_hound",
+      "center": [
+        300,
+        31,
+        662
+      ],
+      "radius": 14,
+      "max": 3,
+      "respawn_seconds": 80,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 40
+    },
+    {
+      "id": "town_hounds_e",
+      "enemy": "amemaru:frost_hound",
+      "center": [
+        468,
+        31,
+        664
+      ],
+      "radius": 14,
+      "max": 3,
+      "respawn_seconds": 80,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 40
+    },
+    {
+      "id": "town_hounds_s",
+      "enemy": "amemaru:frost_hound",
+      "center": [
+        330,
+        31,
+        712
+      ],
+      "radius": 12,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        2,
+        2
+      ],
+      "activation": 40
+    },
+    {
+      "id": "town_maids",
+      "enemy": "amemaru:forgotten_maid",
+      "center": [
+        384,
+        31,
+        690
+      ],
+      "radius": 12,
+      "max": 2,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 36
+    },
+    {
+      "id": "town_guards",
+      "enemy": "amemaru:frozen_guard",
+      "center": [
+        384,
+        31,
+        614
+      ],
+      "radius": 7,
+      "max": 2,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "bank_guards_w",
+      "enemy": "amemaru:frozen_guard",
+      "center": [
+        330,
+        31,
+        576
+      ],
+      "radius": 8,
+      "max": 2,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "bank_guards_e",
+      "enemy": "amemaru:frozen_guard",
+      "center": [
+        440,
+        31,
+        576
+      ],
+      "radius": 8,
+      "max": 2,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "soldiers",
+      "enemy": "amemaru:frozen_guard",
+      "center": [
+        384,
+        31,
+        531
+      ],
+      "radius": 16,
+      "max": 4,
+      "respawn_seconds": 90,
+      "group": [
+        2,
+        4
+      ],
+      "activation": 30
+    },
+    {
+      "id": "bailey_cavalry_w",
+      "enemy": "amemaru:ice_cavalry",
+      "center": [
+        300,
+        31,
+        500
+      ],
+      "radius": 20,
+      "max": 1,
+      "respawn_seconds": 100,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 44
+    },
+    {
+      "id": "bailey_cavalry_e",
+      "enemy": "amemaru:ice_cavalry",
+      "center": [
+        468,
+        31,
+        500
+      ],
+      "radius": 20,
+      "max": 1,
+      "respawn_seconds": 100,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 44
+    },
+    {
+      "id": "stables_cavalry",
+      "enemy": "amemaru:ice_cavalry",
+      "center": [
+        222,
+        31,
+        508
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 100,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 40
+    },
+    {
+      "id": "kennel_hounds",
+      "enemy": "amemaru:frost_hound",
+      "center": [
+        552,
+        31,
+        508
+      ],
+      "radius": 14,
+      "max": 4,
+      "respawn_seconds": 80,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 40
+    },
+    {
+      "id": "bailey_maid",
+      "enemy": "amemaru:forgotten_maid",
+      "center": [
+        384,
+        31,
+        472
+      ],
+      "radius": 10,
+      "max": 1,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 36
+    },
+    {
+      "id": "train_cavalry_n",
+      "enemy": "amemaru:ice_cavalry",
+      "center": [
+        100,
+        31,
+        372
+      ],
+      "radius": 20,
+      "max": 2,
+      "respawn_seconds": 100,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 44
+    },
+    {
+      "id": "train_cavalry_s",
+      "enemy": "amemaru:ice_cavalry",
+      "center": [
+        120,
+        31,
+        500
+      ],
+      "radius": 20,
+      "max": 2,
+      "respawn_seconds": 100,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 44
+    },
+    {
+      "id": "train_guards",
+      "enemy": "amemaru:frozen_guard",
+      "center": [
+        70,
+        31,
+        520
+      ],
+      "radius": 12,
+      "max": 3,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 32
+    },
+    {
+      "id": "garden_maids",
+      "enemy": "amemaru:forgotten_maid",
+      "center": [
+        666,
+        31,
+        446
+      ],
+      "radius": 16,
+      "max": 2,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 36
+    },
+    {
+      "id": "garden_hounds_s",
+      "enemy": "amemaru:frost_hound",
+      "center": [
+        650,
+        31,
+        520
+      ],
+      "radius": 16,
+      "max": 3,
+      "respawn_seconds": 80,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 40
+    },
+    {
+      "id": "garden_hounds_n",
+      "enemy": "amemaru:frost_hound",
+      "center": [
+        690,
+        31,
+        362
+      ],
+      "radius": 14,
+      "max": 3,
+      "respawn_seconds": 80,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 40
+    },
+    {
+      "id": "hall_guards_w",
+      "enemy": "amemaru:frozen_guard",
+      "center": [
+        370,
+        31,
+        418
+      ],
+      "radius": 10,
+      "max": 2,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "hall_guards_e",
+      "enemy": "amemaru:frozen_guard",
+      "center": [
+        398,
+        31,
+        418
+      ],
+      "radius": 10,
+      "max": 2,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "hall_maid",
+      "enemy": "amemaru:forgotten_maid",
+      "center": [
+        384,
+        31,
+        380
+      ],
+      "radius": 10,
+      "max": 1,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 34
+    },
+    {
+      "id": "barracks_guards",
+      "enemy": "amemaru:frozen_guard",
+      "center": [
+        292,
+        31,
+        318
+      ],
+      "radius": 14,
+      "max": 3,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "mess_guards",
+      "enemy": "amemaru:frozen_guard",
+      "center": [
+        292,
+        31,
+        356
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "armory_guards",
+      "enemy": "amemaru:frozen_guard",
+      "center": [
+        270,
+        31,
+        394
+      ],
+      "radius": 12,
+      "max": 2,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "west_hall_hounds",
+      "enemy": "amemaru:frost_hound",
+      "center": [
+        344,
+        31,
+        400
+      ],
+      "radius": 4,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        2,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "kitchen_maids",
+      "enemy": "amemaru:forgotten_maid",
+      "center": [
+        474,
+        31,
+        318
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 34
+    },
+    {
+      "id": "pantry_hounds",
+      "enemy": "amemaru:frost_hound",
+      "center": [
+        474,
+        31,
+        356
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 80,
+      "group": [
+        2,
+        2
+      ],
+      "activation": 34
+    },
+    {
+      "id": "laundry_maids",
+      "enemy": "amemaru:forgotten_maid",
+      "center": [
+        474,
+        31,
+        394
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 34
+    },
+    {
+      "id": "treasury_guards",
+      "enemy": "amemaru:frozen_guard",
+      "center": [
+        384,
+        31,
+        268
+      ],
+      "radius": 14,
+      "max": 3,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "guardroom_guards",
+      "enemy": "amemaru:frozen_guard",
+      "center": [
+        300,
+        31,
+        266
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "storage_hounds",
+      "enemy": "amemaru:frost_hound",
+      "center": [
+        470,
+        31,
+        266
+      ],
+      "radius": 14,
+      "max": 3,
+      "respawn_seconds": 80,
+      "group": [
+        2,
+        3
+      ],
+      "activation": 34
+    },
+    {
+      "id": "chapel_wraiths",
+      "enemy": "amemaru:shelf_wraith",
+      "center": [
+        298,
+        42,
+        370
+      ],
+      "radius": 16,
+      "max": 2,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 32
+    },
+    {
+      "id": "chapel_maid",
+      "enemy": "amemaru:forgotten_maid",
+      "center": [
+        298,
+        41,
+        412
+      ],
+      "radius": 12,
+      "max": 1,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 32
+    },
+    {
+      "id": "library_wraiths_n",
+      "enemy": "amemaru:shelf_wraith",
+      "center": [
+        450,
+        42,
+        332
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "library_wraiths_s",
+      "enemy": "amemaru:shelf_wraith",
+      "center": [
+        492,
+        42,
+        392
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "library_guard",
+      "enemy": "amemaru:frozen_guard",
+      "center": [
+        440,
+        41,
+        400
+      ],
+      "radius": 8,
+      "max": 1,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        1
+      ],
+      "activation": 28
+    },
+    {
+      "id": "ante_guards",
+      "enemy": "amemaru:frozen_guard",
+      "center": [
+        384,
+        41,
+        278
+      ],
+      "radius": 8,
+      "max": 2,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 26
+    },
+    {
+      "id": "gallery_wraiths_w",
+      "enemy": "amemaru:shelf_wraith",
+      "center": [
+        320,
+        42,
+        244
+      ],
+      "radius": 12,
+      "max": 2,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "gallery_wraiths_e",
+      "enemy": "amemaru:shelf_wraith",
+      "center": [
+        450,
+        42,
+        244
+      ],
+      "radius": 12,
+      "max": 2,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "gallery_guards",
+      "enemy": "amemaru:frozen_guard",
+      "center": [
+        384,
+        41,
+        246
+      ],
+      "radius": 8,
+      "max": 2,
+      "respawn_seconds": 90,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 26
+    },
+    {
+      "id": "roof_guards_w",
+      "enemy": "amemaru:frozen_guard",
+      "center": [
+        290,
+        51,
+        380
+      ],
+      "radius": 16,
+      "max": 2,
+      "respawn_seconds": 100,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "roof_guards_e",
+      "enemy": "amemaru:frozen_guard",
+      "center": [
+        480,
+        51,
+        380
+      ],
+      "radius": 16,
+      "max": 2,
+      "respawn_seconds": 100,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "roof_hounds_n",
+      "enemy": "amemaru:frost_hound",
+      "center": [
+        384,
+        51,
+        262
+      ],
+      "radius": 14,
+      "max": 2,
+      "respawn_seconds": 100,
+      "group": [
+        2,
+        2
+      ],
+      "activation": 30
+    },
+    {
+      "id": "corridor_guards",
+      "enemy": "amemaru:frozen_guard",
+      "center": [
+        384,
+        41,
+        226
+      ],
+      "radius": 5,
+      "max": 2,
+      "respawn_seconds": 100,
+      "group": [
+        1,
+        2
+      ],
+      "activation": 24
+    }
+  ],
+  "guardians": [
+    {
+      "id": "hoof_bearer",
+      "enemy": "amemaru:ice_cavalry",
+      "variant": "amemaru:ice_cavalry_bearer",
+      "pos": [
+        104.5,
+        31,
+        433.5
+      ],
+      "respawn_seconds": 300,
+      "activation": 30,
+      "pillar": -1
+    },
+    {
+      "id": "binder",
+      "enemy": "amemaru:shelf_wraith",
+      "variant": "amemaru:shelf_wraith_binder",
+      "pos": [
+        470.5,
+        42.0,
+        429.5
+      ],
+      "respawn_seconds": 300,
+      "activation": 22,
+      "pillar": -1
+    }
+  ],
+  "chests": [
+    {
+      "pos": [
+        395,
+        31,
+        740
+      ],
+      "loot": "amemaru:chests/floor9_castle"
+    },
+    {
+      "pos": [
+        268,
+        31,
+        652
+      ],
+      "loot": "amemaru:chests/floor9_castle"
+    },
+    {
+      "pos": [
+        498,
+        31,
+        704
+      ],
+      "loot": "amemaru:chests/floor9_castle"
+    },
+    {
+      "pos": [
+        458,
+        31,
+        680
+      ],
+      "loot": "amemaru:chests/floor9_castle"
+    },
+    {
+      "pos": [
+        330,
+        31,
+        470
+      ],
+      "loot": "amemaru:chests/floor9_castle"
+    },
+    {
+      "pos": [
+        440,
+        31,
+        470
+      ],
+      "loot": "amemaru:chests/floor9_castle"
+    },
+    {
+      "pos": [
+        64,
+        31,
+        532
+      ],
+      "loot": "amemaru:chests/floor9_castle"
+    },
+    {
+      "pos": [
+        98,
+        31,
+        422
+      ],
+      "loot": "amemaru:chests/floor9_castle",
+      "guardian": "hoof_bearer"
+    },
+    {
+      "pos": [
+        718,
+        31,
+        336
+      ],
+      "loot": "amemaru:chests/floor9_castle"
+    },
+    {
+      "pos": [
+        618,
+        31,
+        552
+      ],
+      "loot": "amemaru:chests/floor9_castle"
+    },
+    {
+      "pos": [
+        252,
+        31,
+        318
+      ],
+      "loot": "amemaru:chests/floor9_castle"
+    },
+    {
+      "pos": [
+        432,
+        31,
+        302
+      ],
+      "loot": "amemaru:chests/floor9_castle"
+    },
+    {
+      "pos": [
+        353,
+        31,
+        237
+      ],
+      "loot": "amemaru:chests/floor9_castle"
+    },
+    {
+      "pos": [
+        415,
+        31,
+        237
+      ],
+      "loot": "amemaru:chests/floor9_castle"
+    },
+    {
+      "pos": [
+        345,
+        41,
+        304
+      ],
+      "loot": "amemaru:chests/floor9_castle"
+    },
+    {
+      "pos": [
+        462,
+        41,
+        448
+      ],
+      "loot": "amemaru:chests/floor9_castle",
+      "guardian": "binder"
+    },
+    {
+      "pos": [
+        514,
+        41,
+        248
+      ],
+      "loot": "amemaru:chests/floor9_castle"
+    },
+    {
+      "pos": [
+        516,
+        67,
+        453
+      ],
+      "loot": "amemaru:chests/floor9_castle"
+    },
+    {
+      "pos": [
+        252,
+        67,
+        232
+      ],
+      "loot": "amemaru:chests/floor9_castle"
+    }
+  ],
+  "environment": {
+    "fog": [
+      30,
+      180
+    ],
+    "fog_color": "#B9C2D6",
+    "sky": "aurora",
+    "weather": "snow"
+  },
+  "abyss_y": 20,
+  "waypoints": [
+    {
+      "id": "gatehouse",
+      "name": "門楼の内",
+      "pos": [
+        384,
+        31,
+        556
+      ],
+      "arrive": {
+        "pos": [
+          384.5,
+          31,
+          554.5
+        ],
+        "yaw": 180
+      }
+    },
+    {
+      "id": "hall",
+      "name": "大広間",
+      "pos": [
+        370,
+        31,
+        446
+      ],
+      "arrive": {
+        "pos": [
+          370.5,
+          31,
+          444.5
+        ],
+        "yaw": 180
+      }
+    },
+    {
+      "id": "library",
+      "name": "王家の書庫",
+      "pos": [
+        436,
+        41,
+        316
+      ],
+      "arrive": {
+        "pos": [
+          436.5,
+          41,
+          314.5
+        ],
+        "yaw": 180
+      }
+    },
+    {
+      "id": "gallery",
+      "name": "肖像の回廊の前",
+      "pos": [
+        380,
+        41,
+        290
+      ],
+      "arrive": {
+        "pos": [
+          380.5,
+          41,
+          292.5
+        ],
+        "yaw": 0
+      }
+    }
+  ],
+  "travel_stone": [
+    376,
+    31,
+    738
+  ],
+  "seal_requires": "lineage+guardians",
+  "lineage": {
+    "groups": [
+      {
+        "id": "founding",
+        "name": "建国の肖像",
+        "door": {
+          "box": [
+            375,
+            41,
+            323,
+            393,
+            46,
+            323
+          ],
+          "block": "minecraft:blue_ice"
+        },
+        "guards": [
+          [
+            360,
+            31,
+            390
+          ],
+          [
+            408,
+            31,
+            404
+          ]
+        ]
+      },
+      {
+        "id": "chapel",
+        "name": "歌と鷹の肖像",
+        "door": {
+          "box": [
+            380,
+            41,
+            298,
+            388,
+            46,
+            299
+          ],
+          "block": "minecraft:blue_ice"
+        },
+        "guards": [
+          [
+            270,
+            41,
+            358
+          ],
+          [
+            270,
+            41,
+            394
+          ]
+        ]
+      },
+      {
+        "id": "family",
+        "name": "最後の家族",
+        "guards": [
+          [
+            320,
+            41,
+            246
+          ],
+          [
+            420,
+            41,
+            246
+          ]
+        ]
+      }
+    ],
+    "portraits": [
+      {
+        "id": "bertram",
+        "name": "ベルトラム",
+        "group": "founding",
+        "pos": [
+          350,
+          32,
+          366
+        ],
+        "facing": "east"
+      },
+      {
+        "id": "rosalinde",
+        "name": "ロザリンデ",
+        "group": "founding",
+        "pos": [
+          350,
+          32,
+          414
+        ],
+        "facing": "east"
+      },
+      {
+        "id": "edmund",
+        "name": "エドムント",
+        "group": "founding",
+        "pos": [
+          418,
+          32,
+          390
+        ],
+        "facing": "west"
+      },
+      {
+        "id": "sigrid",
+        "name": "シグリット",
+        "group": "chapel",
+        "pos": [
+          250,
+          42,
+          340
+        ],
+        "facing": "east"
+      },
+      {
+        "id": "halvard",
+        "name": "ハルヴァルト",
+        "group": "chapel",
+        "pos": [
+          250,
+          42,
+          376
+        ],
+        "facing": "east"
+      },
+      {
+        "id": "albrecht",
+        "name": "アルブレヒト",
+        "group": "chapel",
+        "pos": [
+          250,
+          42,
+          412
+        ],
+        "facing": "east"
+      },
+      {
+        "id": "oswin",
+        "name": "オスヴィン",
+        "group": "family",
+        "pos": [
+          300,
+          42,
+          234
+        ],
+        "facing": "south"
+      },
+      {
+        "id": "elvira",
+        "name": "エルヴィーラ",
+        "group": "family",
+        "pos": [
+          340,
+          42,
+          234
+        ],
+        "facing": "south"
+      },
+      {
+        "id": "liselotte",
+        "name": "リーゼロッテ",
+        "group": "family",
+        "pos": [
+          428,
+          42,
+          234
+        ],
+        "facing": "south"
+      }
+    ],
+    "plates": [
+      {
+        "id": "rosalinde",
+        "name": "ロザリンデ",
+        "pos": [
+          384,
+          31,
+          514
+        ]
+      },
+      {
+        "id": "tobias",
+        "name": "トビアス",
+        "pos": [
+          185,
+          31,
+          496
+        ]
+      },
+      {
+        "id": "halvard",
+        "name": "ハルヴァルト",
+        "pos": [
+          141,
+          35,
+          544
+        ]
+      },
+      {
+        "id": "sigrid",
+        "name": "シグリット",
+        "pos": [
+          666,
+          32,
+          422
+        ]
+      },
+      {
+        "id": "bertram",
+        "name": "ベルトラム",
+        "pos": [
+          266,
+          32,
+          432
+        ]
+      },
+      {
+        "id": "edmund",
+        "name": "エドムント",
+        "pos": [
+          434,
+          31,
+          372
+        ]
+      },
+      {
+        "id": "helga",
+        "name": "ヘルガ",
+        "pos": [
+          439,
+          32,
+          449
+        ]
+      },
+      {
+        "id": "elvira",
+        "name": "エルヴィーラ",
+        "pos": [
+          299,
+          44,
+          445
+        ]
+      },
+      {
+        "id": "oswin",
+        "name": "オスヴィン",
+        "pos": [
+          470,
+          42,
+          446
+        ]
+      },
+      {
+        "id": "albrecht",
+        "name": "アルブレヒト",
+        "pos": [
+          252,
+          67,
+          453
+        ]
+      },
+      {
+        "id": "liselotte",
+        "name": "リーゼロッテ",
+        "pos": [
+          516,
+          67,
+          232
+        ]
+      }
+    ],
+    "clues": [
+      {
+        "id": "founding",
+        "pos": [
+          384,
+          31,
+          341
+        ]
+      },
+      {
+        "id": "book",
+        "pos": [
+          470,
+          41,
+          360
+        ]
+      }
+    ],
+    "queen": {
+      "pos": [
+        488,
+        42,
+        244
+      ],
+      "facing": "west",
+      "door": {
+        "box": [
+          489,
+          41,
+          248,
+          492,
+          43,
+          249
+        ],
+        "block": "minecraft:calcite"
+      },
+      "latch": [
+        493,
+        42,
+        247
+      ],
+      "names": [
+        "イゼルナ",
+        "いぜるな",
+        "izeruna",
+        "izerna"
+      ],
+      "area": [
+        478,
+        40,
+        235,
+        489,
+        46,
+        253
+      ],
+      "open_seconds": 20
+    }
+  },
+  "relics": [
+    {
+      "id": "letter_1",
+      "pos": [
+        498,
+        42,
+        249
+      ],
+      "items": [
+        "amemaru:queen_letter_1"
+      ],
+      "flag": "amemaru:story/queen_letter_1",
+      "event": "amemaru:floor9/letter_1",
+      "record": "amemaru:f09_queen_letters"
+    },
+    {
+      "id": "letter_2",
+      "pos": [
+        516,
+        42,
+        260
+      ],
+      "items": [
+        "amemaru:queen_letter_2"
+      ],
+      "flag": "amemaru:story/queen_letter_2",
+      "event": "amemaru:floor9/letter_2",
+      "record": "amemaru:f09_queen_letters"
+    },
+    {
+      "id": "letter_3",
+      "pos": [
+        509,
+        42,
+        271
+      ],
+      "items": [
+        "amemaru:queen_letter_3"
+      ],
+      "flag": "amemaru:story/queen_letter_3",
+      "event": "amemaru:floor9/letter_3",
+      "record": "amemaru:f09_queen_letters"
+    }
+  ],
+  "boss_marks": {
+    "guard_circle": [
+      [
+        384,
+        30,
+        130
+      ]
+    ],
+    "guard_spots": [
+      [
+        377,
+        31,
+        125
+      ],
+      [
+        391,
+        31,
+        125
+      ],
+      [
+        378,
+        31,
+        137
+      ],
+      [
+        390,
+        31,
+        137
+      ]
+    ],
+    "reinforce": [
+      [
+        422,
+        31,
+        152
+      ],
+      [
+        403,
+        31,
+        185
+      ],
+      [
+        365,
+        31,
+        185
+      ],
+      [
+        346,
+        31,
+        152
+      ],
+      [
+        365,
+        31,
+        119
+      ],
+      [
+        403,
+        31,
+        119
+      ]
+    ],
+    "throne": [
+      [
+        384,
+        31,
+        110
+      ]
+    ],
+    "arena_center": [
+      [
+        384,
+        30,
+        152
+      ]
+    ]
+  },
+  "story_zones": [
+    {
+      "id": "enter_gate",
+      "box": [
+        368,
+        30,
+        726,
+        400,
+        36,
+        754
+      ]
+    },
+    {
+      "id": "town",
+      "box": [
+        368,
+        30,
+        649,
+        400,
+        36,
+        681
+      ]
+    },
+    {
+      "id": "soldiers",
+      "box": [
+        360,
+        30,
+        520,
+        408,
+        36,
+        542
+      ]
+    },
+    {
+      "id": "training",
+      "box": [
+        44,
+        30,
+        330,
+        160,
+        38,
+        560
+      ]
+    },
+    {
+      "id": "garden",
+      "box": [
+        608,
+        30,
+        330,
+        724,
+        38,
+        560
+      ]
+    },
+    {
+      "id": "hall",
+      "box": [
+        350,
+        30,
+        330,
+        418,
+        50,
+        451
+      ]
+    },
+    {
+      "id": "maids",
+      "box": [
+        430,
+        30,
+        414,
+        518,
+        36,
+        451
+      ]
+    },
+    {
+      "id": "treasury",
+      "box": [
+        350,
+        30,
+        234,
+        418,
+        36,
+        297
+      ]
+    },
+    {
+      "id": "chapel",
+      "box": [
+        250,
+        40,
+        300,
+        347,
+        50,
+        451
+      ]
+    },
+    {
+      "id": "library",
+      "box": [
+        421,
+        40,
+        300,
+        518,
+        50,
+        413
+      ]
+    },
+    {
+      "id": "gallery",
+      "box": [
+        262,
+        40,
+        234,
+        488,
+        50,
+        254
+      ]
+    },
+    {
+      "id": "study",
+      "box": [
+        493,
+        40,
+        246,
+        517,
+        50,
+        272
+      ]
+    },
+    {
+      "id": "tower_sw",
+      "box": [
+        238,
+        66,
+        443,
+        258,
+        71,
+        463
+      ]
+    },
+    {
+      "id": "tower_se",
+      "box": [
+        510,
+        66,
+        443,
+        530,
+        71,
+        463
+      ]
+    },
+    {
+      "id": "tower_nw",
+      "box": [
+        238,
+        66,
+        222,
+        258,
+        71,
+        242
+      ]
+    },
+    {
+      "id": "tower_ne",
+      "box": [
+        510,
+        66,
+        222,
+        530,
+        71,
+        242
+      ]
+    },
+    {
+      "id": "corridor",
+      "box": [
+        378,
+        30,
+        197,
+        390,
+        48,
+        231
+      ]
+    }
+  ]
+}

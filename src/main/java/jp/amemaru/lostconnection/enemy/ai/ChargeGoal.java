@@ -99,7 +99,7 @@ public class ChargeGoal extends Goal {
         phase = 0;
         mob.clearTelegraph();
         mob.clearBusy();
-        mob.startCooldown("charge", skill().cooldownTicks());
+        mob.startCooldown("charge", mob.chargeCooldown(skill().cooldownTicks()));
     }
 
     @Override
@@ -138,6 +138,8 @@ public class ChargeGoal extends Goal {
             if (traveled >= length || mob.horizontalCollision) {
                 phase = 3;
                 timer = (int) Math.round(skill.param("recover", 1.0) * 20.0);
+                // 11月28日：9階の氷の騎兵は、壁にぶつかるとよろめく
+                timer = Math.max(timer, mob.onChargeEnded(mob.horizontalCollision && traveled < length));
                 mob.setDeltaMovement(0.0, mob.getDeltaMovement().y, 0.0);
             }
             return;

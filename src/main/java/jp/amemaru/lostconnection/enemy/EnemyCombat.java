@@ -18,6 +18,8 @@ public final class EnemyCombat {
     @Nullable
     private static UUID pendingPlayer;
     private static double pendingPower = -1.0;
+    /** 11月28日：いまの攻撃が、守りのいくらを通り抜けるか（0〜1。9階の書架霊の魔法の頁）。 */
+    private static double pendingPierce = 0.0;
 
     private EnemyCombat() {
     }
@@ -30,6 +32,15 @@ public final class EnemyCombat {
      * @return 当たったか（受け流し・盾の構えなどで防がれたら false）
      */
     public static boolean strike(AmemaruMob mob, ServerPlayer player, double coefficient, @Nullable Entity direct) {
+        return strike(mob, player, coefficient, direct, 0.0);
+    }
+
+    /**
+     * 技を当てる（守りを通り抜ける魔法の技。11月28日：9階の書架霊の頁「鎧を通る魔法」【補完】）。
+     *
+     * @param pierce 受ける人の守り（防御）の、いくらを無いものとして計算するか（0〜1）
+     */
+    public static boolean strike(AmemaruMob mob, ServerPlayer player, double coefficient, @Nullable Entity direct, double pierce) {
         if (!player.isAlive() || player.isCreative() || player.isSpectator() || mob.isDeadOrDying()) {
             return false;
         }
@@ -39,8 +50,10 @@ public final class EnemyCombat {
         DamageSource source = direct == null ? mob.damageSources().mobAttack(mob) : mob.damageSources().mobProjectile(direct, mob);
         UUID previousPlayer = pendingPlayer;
         double previousPower = pendingPower;
+        double previousPierce = pendingPierce;
         pendingPlayer = player.getUUID();
         pendingPower = raw;
+        pendingPierce = Math.max(0.0, Math.min(1.0, pierce));
         try {
             player.invulnerableTime = 0;
             boolean hit = player.hurt(source, 1.0F);
@@ -54,8 +67,14 @@ public final class EnemyCombat {
         } finally {
             pendingPlayer = previousPlayer;
             pendingPower = previousPower;
+            pendingPierce = previousPierce;
             player.invulnerableTime = 0;
         }
+    }
+
+    /** いまの攻撃が守りのいくらを通り抜けるか（このModの敵の技でなければ 0）。{@link #takePending} より先に読む。 */
+    public static double pendingPierce(ServerPlayer player) {
+        return pendingPlayer != null && pendingPlayer.equals(player.getUUID()) && pendingPower >= 0 ? pendingPierce : 0.0;
     }
 
     /** いまの攻撃の元のダメージ（このModの敵の技でなければ -1）。{@code CombatService} が読む。 */

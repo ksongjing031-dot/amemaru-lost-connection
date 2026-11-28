@@ -463,6 +463,7 @@ public final class CombatService {
         double damage;
         if (fromEnemy) {
             // このModの敵の技は「敵の攻撃 × 技の倍率」、バニラの魔物は「バニラの値 × config の倍率」
+            double pierce = EnemyCombat.pendingPierce(player);
             double raw = EnemyCombat.takePending(player);
             if (raw < 0) {
                 raw = event.getAmount() * ServerConfig.VANILLA_MOB_DAMAGE_MULTIPLIER.get();
@@ -486,12 +487,14 @@ public final class CombatService {
                 ReactiveSkills.onDodged(player, data, now);
                 return;
             }
-            damage = raw * DamageCalculator.mitigation(data.getStats().get(StatType.DEFENSE))
+            // 11月28日：守りを通り抜ける魔法（9階の書架霊の頁）は、防御の一部を無いものとして計算する
+            damage = raw * DamageCalculator.mitigation(data.getStats().get(StatType.DEFENSE) * (1.0 - pierce))
                     * GearEffects.incomingMultiplier(player, data);
             damage *= CombatBonuses.incoming(player, data, attacker, now);
             damage = tauntMastery(player, damage, attacker, now);
             damage = reduce(player, data, damage, attacker, now, true);
             damage = shareWithBond(player, data, damage, attacker, now);
+            damage = shareWithOathShield(player, damage, attacker, now);
         } else {
             // 落下・溺れ・溶岩などは、最大HPに対する割合のまま（Phase 1）
             damage = event.getAmount() / vanillaMax * maxHp;
@@ -649,6 +652,26 @@ public final class CombatService {
             return damage;
         }
         takeBondShare(knight, shared, attacker, now);
+        return damage - shared;
+    }
+
+    /**
+     * 「近衛の誓盾」（9階のボスのレア。11月28日）：まわりに誓盾を持つ味方がいれば、受けるダメージの一部をその人が代わりに受ける
+     * （誓いの絆と同じ受け方。肩代わりした人には「肩代わり」の数字が出る）。
+     */
+    private static double shareWithOathShield(ServerPlayer player, double damage, @Nullable Entity attacker, long now) {
+        if (damage <= 0) {
+            return damage;
+        }
+        java.util.Map.Entry<ServerPlayer, Double> guard = jp.amemaru.lostconnection.equipment.GearEffects.oathGuard(player);
+        if (guard == null) {
+            return damage;
+        }
+        double shared = damage * guard.getValue() / 100.0;
+        if (shared <= 0) {
+            return damage;
+        }
+        takeBondShare(guard.getKey(), shared, attacker, now);
         return damage - shared;
     }
 

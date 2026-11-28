@@ -186,6 +186,13 @@ public final class ClientModEvents {
         event.registerEntityRenderer(ModEntities.FROST_CRANE.get(), context -> new AmemaruMobRenderer<>(context, "frost_crane", 0.5F));
         event.registerEntityRenderer(ModEntities.FOG_WRAITH.get(), context -> new AmemaruMobRenderer<>(context, "fog_wraith", 0.0F, true));
         event.registerEntityRenderer(ModEntities.MUNE.get(), jp.amemaru.lostconnection.client.render.LakeShadowRenderer::mune);
+        // 11月28日：9階
+        event.registerEntityRenderer(ModEntities.FROZEN_GUARD.get(), context -> new AmemaruMobRenderer<>(context, "frozen_guard", 0.5F, true));
+        event.registerEntityRenderer(ModEntities.ICE_CAVALRY.get(), context -> new AmemaruMobRenderer<>(context, "ice_cavalry", 0.9F));
+        event.registerEntityRenderer(ModEntities.SHELF_WRAITH.get(), context -> new AmemaruMobRenderer<>(context, "shelf_wraith", 0.0F, true));
+        event.registerEntityRenderer(ModEntities.FROST_HOUND.get(), context -> new AmemaruMobRenderer<>(context, "frost_hound", 0.5F));
+        event.registerEntityRenderer(ModEntities.FORGOTTEN_MAID.get(), context -> new AmemaruMobRenderer<>(context, "forgotten_maid", 0.4F, true));
+        event.registerEntityRenderer(ModEntities.VALGRIM.get(), context -> new AmemaruMobRenderer<>(context, "valgrim", 1.1F));
         event.registerEntityRenderer(ModEntities.YODOMI_SLIME.get(), context -> new AmemaruMobRenderer<>(context, "yodomi_slime", 0.6F));
         event.registerEntityRenderer(ModEntities.SOUJIKIHEI.get(), context -> new AmemaruMobRenderer<>(context, "soujikihei", 0.7F));
         event.registerEntityRenderer(ModEntities.KIBA_NAMAZU.get(), context -> new AmemaruMobRenderer<>(context, "kiba_namazu", 0.6F));
@@ -198,6 +205,9 @@ public final class ClientModEvents {
         // 11月25日：6階の凍った村人の氷像
         event.registerBlockEntityRenderer(jp.amemaru.lostconnection.core.registry.ModBlockEntities.VILLAGE_STATUE.get(),
                 jp.amemaru.lostconnection.client.render.VillageStatueRenderer::new);
+        // 11月28日：9階の王家の肖像画（仕掛けのブロックのうち、肖像画だけを描く）
+        event.registerBlockEntityRenderer(jp.amemaru.lostconnection.core.registry.ModBlockEntities.FLOOR_THING.get(),
+                jp.amemaru.lostconnection.client.render.PortraitRenderer::new);
     }
 
     /**

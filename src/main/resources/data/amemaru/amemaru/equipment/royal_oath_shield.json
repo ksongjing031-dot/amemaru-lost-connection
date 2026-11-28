@@ -1,0 +1,35 @@
+{
+  "slot": "offhand",
+  "generation": 2,
+  "series": "9階のレア装備",
+  "rarity": "epic",
+  "required_level": 38,
+  "jobs": [
+    "amemaru:knight"
+  ],
+  "stats": {
+    "defense": 15,
+    "hp": 54
+  },
+  "durability": 660,
+  "binding": "on_equip",
+  "effects": [
+    {
+      "type": "oath_guard",
+      "percent": 10,
+      "threshold": 6
+    }
+  ],
+  "rare": true,
+  "repair": [
+    {
+      "item": "amemaru:guard_ice",
+      "count": 2
+    },
+    {
+      "item": "amemaru:royal_seal",
+      "count": 1
+    }
+  ],
+  "description": "氷の近衛長ヴァルグリムが、女王の間の扉の前で構えつづけた大盾。表に、近衛の誓いの言葉が刻まれている。「この盾の後ろに立つ者を、わたしは忘れない」。持つ者のそばにいる仲間への攻撃を、少しだけ代わりに受け止める。"
+}

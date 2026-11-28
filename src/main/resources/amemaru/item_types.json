@@ -224,6 +224,9 @@
     },
     {
       "id": "frost_silver_shield"
+    },
+    {
+      "id": "royal_oath_shield"
     }
   ],
   "armor": [
@@ -724,6 +727,37 @@
       "id": "pearl_charm",
       "slot": "charm",
       "warning_ear": true
+    },
+    {
+      "id": "guard_ice_battle_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "guard_ice_wisdom_ring",
+      "slot": "ring"
+    },
+    {
+      "id": "portrait_necklace",
+      "slot": "necklace",
+      "model": "geckolib"
+    },
+    {
+      "id": "horseshoe_bracelet",
+      "slot": "bracelet",
+      "model": "geckolib"
+    },
+    {
+      "id": "name_charm",
+      "slot": "charm",
+      "model": "geckolib"
+    },
+    {
+      "id": "bearer_tassel",
+      "slot": "charm"
+    },
+    {
+      "id": "binder_bookmark",
+      "slot": "charm"
     }
   ],
   "materials": [
@@ -960,6 +994,90 @@
     {
       "id": "wish_tag_lake",
       "rarity": "epic"
+    },
+    {
+      "id": "castle_ice",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "guard_ice",
+      "rarity": "common"
+    },
+    {
+      "id": "ice_horseshoe",
+      "rarity": "common"
+    },
+    {
+      "id": "torn_page",
+      "rarity": "common"
+    },
+    {
+      "id": "hound_collar",
+      "rarity": "common"
+    },
+    {
+      "id": "lace_scrap",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "royal_seal",
+      "rarity": "rare"
+    },
+    {
+      "id": "name_plate_bertram",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "name_plate_rosalinde",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "name_plate_edmund",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "name_plate_sigrid",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "name_plate_halvard",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "name_plate_albrecht",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "name_plate_oswin",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "name_plate_elvira",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "name_plate_liselotte",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "name_plate_helga",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "name_plate_tobias",
+      "rarity": "uncommon"
+    },
+    {
+      "id": "queen_letter_1",
+      "rarity": "rare"
+    },
+    {
+      "id": "queen_letter_2",
+      "rarity": "rare"
+    },
+    {
+      "id": "queen_letter_3",
+      "rarity": "rare"
     }
   ],
   "fruits": [

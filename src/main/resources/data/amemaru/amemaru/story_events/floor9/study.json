@@ -1,0 +1,37 @@
+{
+  "_comment": "隠し部屋「女王の書斎」（本人だけ。一人一度）。女王の書簡3通【補完】",
+  "title": "女王の書斎",
+  "trigger": {
+    "type": "amemaru:floor_zone",
+    "floor": 9,
+    "zone": "study"
+  },
+  "scope": "player",
+  "once": false,
+  "replayable": true,
+  "conditions": {
+    "flags_none": [
+      "amemaru:story/castle_study_seen"
+    ]
+  },
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "小さな書斎。書き物机の上に、書きかけの名前の一覧が、凍ったまま残っている。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "机のまわりに、手紙が三通。女王が、誰かに宛てて書いたものらしい。",
+      "ticks": 120,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/castle_study_seen"
+      ]
+    }
+  ]
+}

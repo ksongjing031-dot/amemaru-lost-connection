@@ -22,6 +22,9 @@
   湖の鐘（5つの音の動機）が、向こう岸からこだまして返る。はじめは笛の旋律が、ところどころ半小節だけ途切れる（声が消える）。
   なかほどは合唱がゆっくり歌い、8小節ごとに1小節、心音と氷のきしみだけを残して、すべての音が消える。
   終わりは金管と太鼓と鐘で、旋律をはっきりと（11月25日）
+- 9階 氷の近衛長ヴァルグリム「近衛の誓い」：ト短調・4拍子・120。行進の小太鼓と、金管の「誓いの動機」。
+  なかほどは、合唱が誓いの歌をゆっくり歌い、兵の足音（低い太鼓）だけが残る（守れなかった隊長の祈り）。
+  終わりは小太鼓の連打と、金管と弦の刻みで、行進をはっきりと（11月28日）
 """
 
 import json
@@ -49,6 +52,7 @@ TITLES = {
     "ordo": "凍てついた村の灯",
     "reflecta": "鏡の湖",
     "mune": "声なき湖",
+    "valgrim": "近衛の誓い",
 }
 
 
@@ -812,6 +816,97 @@ def mune():
     return song, S.reverb_ir(4.2, 0.04, 6000.0, seed=29)
 
 
+# ---------------------------------------------------------------- 9階 氷の近衛長ヴァルグリム
+
+def valgrim():
+    song = S.Song(120, 48, seed=99)
+    rng = song.rng
+    song.bus("snare", -23.0, 0.35)
+    song.bus("march", -20.0, 0.3)       # 兵の足音（低い太鼓）
+    song.bus("strings", -22.0, 0.5)
+    song.bus("choir", -21.0, 0.6)
+    song.bus("brass", -20.0, 0.45)
+    song.bus("lead", -20.0, 0.45)
+    song.bus("bells", -25.0, 0.7)
+    song.bus("bass", -20.0, 0.2)
+    song.bus("timp", -19.0, 0.4)
+    song.bus("ost", -24.0, 0.35)
+    song.bus("riser", -28.0, 0.5)
+
+    names_a = ["Gm", "Gm", "Eb", "D", "Gm", "Bb", "Cm", "D", "Eb", "Bb", "Cm", "Gm", "Eb", "F", "D", "D"]
+    names_b = ["Cm", "Gm", "Eb", "Bb", "Cm", "Gm", "D", "D", "Eb", "Bb", "Cm", "Gm", "Ab", "Eb", "D", "D"]
+    names = names_a + names_b + names_a
+    voice = {"Gm": "G3 Bb3 D4 G4", "Eb": "Eb3 G3 Bb3 Eb4", "D": "D3 F#3 A3 D4", "Bb": "Bb2 D3 F3 Bb3", "Cm": "C3 Eb3 G3 C4",
+             "F": "F3 A3 C4 F4", "Ab": "Ab2 C3 Eb3 Ab3"}
+    low = {"Gm": "G1", "Eb": "Eb2", "D": "D2", "Bb": "Bb1", "Cm": "C2", "F": "F1", "Ab": "Ab1"}
+    ost = {"Gm": "G4 Bb4 D5", "Eb": "G4 Bb4 Eb5", "D": "F#4 A4 D5", "Bb": "F4 Bb4 D5", "Cm": "G4 C5 Eb5", "F": "F4 A4 C5",
+           "Ab": "Ab4 C5 Eb5"}
+    drum = [S.taiko(rng, 64.0, 0.9, 0.8) for _ in range(2)]
+    pick = lambda xs: (lambda: xs[int(rng.integers(len(xs)))])  # noqa: E731
+    chime = lambda f, on: S.bell(f, 2.2, index=2.0, ratio=2.0)  # noqa: E731
+
+    for bar in range(48):
+        sec = bar // 16
+        name = names[bar]
+        chord = triad(voice[name])
+        # 兵の足音：1拍目と3拍目の低い太鼓（ずっと。なかほどは小さく）
+        for k in (0, 2):
+            song.put("march", song.beat(bar, k), pick(drum)(), pan=-0.1 if k == 0 else 0.1, gain=(0.55 if sec == 1 else 0.9))
+        # 行進の小太鼓（はじめと終わり）：タ・タタ・タ・タタタ
+        if sec != 1:
+            for k, g in ((0.0, 0.9), (1.0, 0.6), (1.5, 0.55), (2.0, 0.8), (3.0, 0.6), (3.25, 0.45), (3.5, 0.55), (3.75, 0.5)):
+                song.put("snare", song.beat(bar, k), S.snare(rng, 200.0, 0.22, 1.0), pan=0.25, gain=g * (1.0 if sec == 2 else 0.8))
+        # 弦の和音（低く）。なかほどは長く
+        song.put("strings", song.beat(bar), S.strings(chord, song.dur(4) * 0.98, a=0.25 if sec != 1 else 0.6, r=0.5,
+                                                         bright=2400.0), pan=-0.1, gain=0.75 if sec == 0 else 0.85)
+        # ベース：行進は4分、なかほどは全音符
+        if sec == 1:
+            song.put("bass", song.beat(bar), S.bass(S.freq(low[name]), song.dur(3.8), rng, bright=420.0, kind="sine", sub=0.8))
+        else:
+            for k in range(4):
+                song.put("bass", song.beat(bar, k), S.bass(S.freq(low[name]), song.dur(0.8), rng, bright=800.0, kind="saw", sub=0.6),
+                         gain=1.0 if k % 2 == 0 else 0.75)
+        # 合唱（なかほど。2小節ずつ）と、近衛の鐘（なかほどの4小節ごと）
+        if sec == 1 and bar % 2 == 0:
+            song.put("choir", song.beat(bar), S.choir(chord, song.dur(8) * 0.97, vowel="o", a=0.8, r=1.2), gain=0.8)
+        if sec == 1 and bar % 4 == 0:
+            song.put("bells", song.beat(bar), chime(S.freq(low[name]) * 8, 0), pan=0.3, gain=0.6)
+        # 刻み（終わり）
+        if sec == 2:
+            arpeggio(song, "ost", bar, ost[name], [0, 1, 2, 1], 0.25, S.staccato_strings, pan=0.25, gain=0.75)
+            if bar % 2 == 0:
+                song.put("brass", song.beat(bar), S.brass(chord, song.dur(3.6), a=0.08, bright=2200.0), pan=-0.2, gain=0.6)
+        if bar % 4 == 0 and sec != 1:
+            song.put("timp", song.beat(bar), S.timpani(rng, S.freq(low[name]) * 2))
+        if bar in (46, 47):
+            for k in range(16):
+                song.put("snare", song.beat(bar, k * 0.25), S.snare(rng, 210.0, 0.16, 1.1), pan=0.2,
+                         gain=0.3 + 0.03 * k + 0.3 * (bar - 46))
+                song.put("timp", song.beat(bar, k * 0.25), S.timpani(rng, S.freq("D2") * 2, 0.6), gain=0.25 + 0.03 * k + 0.3 * (bar - 46))
+        if bar == 46:
+            song.put("riser", song.beat(bar), S.riser(rng, song.dur(8), 6500.0))
+        if bar % 16 == 15 and bar != 47:
+            song.put("riser", song.beat(bar), S.riser(rng, song.dur(4), 5500.0))
+
+    # 誓いの動機（金管）
+    melody_a = ("G4:1 D5:1 Bb4:1.5 A4:.5 | G4:2 D4:2 | Eb5:1 D5:1 C5:1 Bb4:1 | A4:3 r:1 |"
+                " G4:1 Bb4:1 D5:1 G5:1 | F5:1.5 Eb5:.5 D5:2 | C5:1 Eb5:1 G5:1 Eb5:1 | D5:3 r:1 |"
+                " Eb5:1.5 D5:.5 C5:1 Bb4:1 | D5:2 Bb4:2 | C5:1 D5:1 Eb5:1 G5:1 | G5:2 D5:2 |"
+                " Eb5:1 D5:1 C5:1 Bb4:1 | C5:1 Bb4:1 A4:2 | A4:1 Bb4:1 C5:1 F#4:1 | A4:3 r:1")
+    # 誓いの歌（合唱。ゆっくり）
+    melody_b = ("G4:2 Bb4:2 | C5:3 Bb4:1 | G4:2 Bb4:2 | D5:4 |"
+                " Eb5:2 D5:2 | C5:2 Bb4:2 | A4:4 | r:4 |"
+                " Bb4:2 C5:2 | D5:3 Eb5:1 | C5:2 Bb4:2 | Bb4:4 |"
+                " C5:2 Eb5:2 | Eb5:2 D5:2 | D5:4 | r:4")
+    horn = lambda f, on: S.brass([f], on, bright=2300.0)  # noqa: E731
+    play(song, "brass", 0, melody_a, horn, pan=-0.15, gain=0.9)
+    play(song, "choir", 16, melody_b, lambda f, on: S.choir([f], on, vowel="a", a=0.1, r=0.5), pan=0.1, gain=1.4)
+    play(song, "lead", 16, melody_b, lambda f, on: S.flute(f, on, rng), pan=-0.2, gain=0.4, octave=1)
+    play(song, "brass", 32, melody_a, horn, pan=-0.1, gain=1.0)
+    play(song, "lead", 32, melody_a, lambda f, on: S.bell(f, 1.6, index=2.2, ratio=3.5), pan=0.2, gain=0.6, octave=1)
+    return song, S.reverb_ir(3.4, 0.03, 6800.0, seed=31)
+
+
 SONGS = {
     "veldhorn": veldhorn,
     "old_ward": old_ward,
@@ -821,6 +916,7 @@ SONGS = {
     "ordo": ordo,
     "reflecta": reflecta,
     "mune": mune,
+    "valgrim": valgrim,
 }
 
 

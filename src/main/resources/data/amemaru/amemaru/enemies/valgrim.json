@@ -1,0 +1,156 @@
+{
+  "_comment": "9階のボス、氷の近衛長ヴァルグリム（Phase 0-A 9章の9階：今も女王を守っている近衛隊長の残響。部下を守る「盾の誓い」を使うため、部下と引き離すと崩れる。守れなかった隊長という点でガルドと重なる。enemy/boss/Valgrim.java）。盾の誓い（oath）：部下の近衛（valgrim_guard。始めは4人、近衛の円のまわり）は、近衛長から range の中にいる間は傷つかず、つながった部下がいる間は近衛長も受けるダメージ ward 倍。つながりが消えると崩れる（crumble：seconds 秒動けず taken 倍。立ち上がってから regroup 秒は崩れない）。立つと、離れた部下を呼び戻し（rally）、第2段階からは部屋のふちから増援（reinforce.count）。技：thrust（前の線）・bash（前の扇。押し返す）・spears（何人かへ向けて氷の槍の列。第3段階はまわり全部 ring 本）・guard（seconds 秒、前から受けるダメージ front 倍）・march（近衛の行進：誓いが limit 秒切れないと、部屋を横切る太い帯 width。しくじったときの一撃）。第3段階（30%）「守れなかった隊長」：誓いを解き、部下は砕ける。HPは2人のときの基準（ひとりでも2人ぶん）。数値は【補完】 11月28日のご指示「ボスが一人をターゲットしてその人にしか攻撃をしないので、ボス参加している人全員をターゲットにする攻撃を追加して他のプレイヤーが一方的に攻撃できる状態を減らす」【補完】：volley（一斉の印：参加者全員の足もとに円。waves 回、gap 秒ずつ遅れて追いかける）と nova（大技：kinds 1=ボスのまわり range・2=ボスのそばの金の円 safe_radius の外ぜんぶ・4=部屋の金の円 safe_count 個の外ぜんぶ）を足した（enemy/boss/PartyAttacks.java。tools/datagen/add_party_attacks.py）。",
+  "name": "氷の近衛長ヴァルグリム",
+  "floor": 9,
+  "level": 42,
+  "description": "女王の間の扉の前に立ちつづける、近衛隊長の残響。氷の大盾と、氷の槍。隊長の兜の羽飾りだけが、凍ってもなお青い。――部下を守ると誓った。女王を守ると誓った。そのどちらも、守れなかった。",
+  "stats": {
+    "hp": 140000,
+    "attack": 236,
+    "defense": 24,
+    "move_speed": 0.2,
+    "follow_range": 64,
+    "aggro_range": 48
+  },
+  "exp": 3400,
+  "skills": {
+    "thrust": {
+      "power": 1.5,
+      "windup": 1.2,
+      "anim_windup": 1.0,
+      "cooldown": 5.0,
+      "range": 9.0,
+      "width": 2.2
+    },
+    "bash": {
+      "power": 1.3,
+      "windup": 1.0,
+      "anim_windup": 0.9,
+      "cooldown": 6.0,
+      "range": 5.0,
+      "angle": 110,
+      "push": 1.4
+    },
+    "spears": {
+      "power": 1.4,
+      "windup": 1.7,
+      "anim_windup": 1.4,
+      "cooldown": 12.0,
+      "range": 22.0,
+      "lines": 3,
+      "ring": 8,
+      "gap": 2.2,
+      "radius": 1.4,
+      "first": 10.0
+    },
+    "guard": {
+      "power": 0.0,
+      "windup": 0.6,
+      "anim_windup": 0.6,
+      "cooldown": 20.0,
+      "range": 0.0,
+      "seconds": 5.0,
+      "front": 0.25,
+      "angle": 140,
+      "first": 16.0
+    },
+    "rally": {
+      "power": 0.0,
+      "windup": 1.2,
+      "anim_windup": 1.2,
+      "cooldown": 18.0,
+      "range": 30.0,
+      "seconds": 5.0,
+      "first": 12.0
+    },
+    "march": {
+      "power": 3.4,
+      "windup": 3.6,
+      "anim_windup": 3.0,
+      "cooldown": 10.0,
+      "range": 46.0,
+      "width": 12.0,
+      "limit": 45.0,
+      "push": 1.6
+    },
+    "oath": {
+      "power": 0.0,
+      "windup": 0.0,
+      "cooldown": 0.0,
+      "range": 12.0,
+      "ward": 0.35
+    },
+    "crumble": {
+      "power": 0.0,
+      "windup": 0.0,
+      "cooldown": 0.0,
+      "range": 0.0,
+      "seconds": 8.0,
+      "taken": 1.5,
+      "regroup": 6.0
+    },
+    "reinforce": {
+      "power": 0.0,
+      "windup": 0.0,
+      "cooldown": 0.0,
+      "range": 0.0,
+      "count": 2
+    },
+    "volley": {
+      "power": 1.25,
+      "windup": 1.5,
+      "cooldown": 22.0,
+      "range": 2.8,
+      "waves": 3,
+      "gap": 0.9,
+      "first": 14.0,
+      "lift": 0.35
+    },
+    "nova": {
+      "power": 2.2,
+      "windup": 3.4,
+      "cooldown": 46.0,
+      "range": 15.0,
+      "kinds": 5,
+      "safe_count": 3,
+      "safe_radius": 5.0,
+      "first": 32.0,
+      "lift": 0.6
+    }
+  },
+  "behavior": {
+    "hp_bars": 5
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/valgrim",
+    "pity": true,
+    "rare": [
+      {
+        "item": "amemaru:royal_oath_shield",
+        "chance": 4,
+        "rarity": "epic"
+      },
+      {
+        "item": "amemaru:royal_seal",
+        "chance": 100,
+        "count": 2,
+        "pity": false
+      },
+      {
+        "item": "amemaru:crystal_fruit_white",
+        "chance": 20,
+        "pity": false
+      },
+      {
+        "item": "amemaru:crystal_fruit_azure",
+        "chance": 15,
+        "pity": false
+      },
+      {
+        "item": "amemaru:crystal_fruit_violet",
+        "chance": 15,
+        "pity": false
+      }
+    ]
+  }
+}

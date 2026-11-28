@@ -1593,5 +1593,13 @@
       }
     ],
     "subtitle": "subtitles.amemaru.unique.ward"
+  },
+  "music.boss.valgrim": {
+    "sounds": [
+      {
+        "name": "amemaru:music/boss_valgrim",
+        "stream": true
+      }
+    ]
   }
 }

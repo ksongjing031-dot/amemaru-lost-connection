@@ -1,0 +1,53 @@
+{
+  "_comment": "忘れられた侍女（9階の雑魚。Phase 0-A 9章の9階）。仕える相手の名前を忘れたまま、城の仕事を続ける侍女の残響（enemy/castle/ForgottenMaid.java）。傷ついた城の敵のそばへ行き、1秒ごとに最大HPの tend.power を治す（最長 tend.windup 秒。相手の足もとに金の輪。大きな傷 interrupt でやめて逃げる）。先に倒す相手。人が近づく（flee_range）と離れる。追いつめられると、銀の盆で叩いて押し返す（tray）。数値は【補完】",
+  "name": "忘れられた侍女",
+  "floor": 9,
+  "level": 34,
+  "description": "白い前掛けの侍女の残響。手に銀の盆を持ち、今も城の廊下を行き来している。顔は白く抜け、仕えていたお方の名前も、もう思い出せない。",
+  "stats": {
+    "hp": 1600,
+    "attack": 180,
+    "defense": 8,
+    "move_speed": 0.24,
+    "follow_range": 20,
+    "aggro_range": 12
+  },
+  "exp": 66,
+  "skills": {
+    "tray": {
+      "power": 0.8,
+      "windup": 0.6,
+      "cooldown": 3.0,
+      "range": 2.2,
+      "angle": 90
+    },
+    "tend": {
+      "power": 0.05,
+      "windup": 6.0,
+      "cooldown": 8.0,
+      "range": 14.0
+    }
+  },
+  "behavior": {
+    "flee_range": 5.0,
+    "flee_speed": 1.3,
+    "interrupt": 0.15
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/forgotten_maid",
+    "rare": [
+      {
+        "item": "amemaru:crystal_fruit_white",
+        "chance": 0.6
+      },
+      {
+        "item": "amemaru:crystal_fruit_azure",
+        "chance": 0.3
+      },
+      {
+        "item": "amemaru:royal_seal",
+        "chance": 1.0
+      }
+    ]
+  }
+}

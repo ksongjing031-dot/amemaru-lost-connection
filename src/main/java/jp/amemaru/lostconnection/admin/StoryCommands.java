@@ -257,6 +257,23 @@ public final class StoryCommands {
                                             ctx.getSource().sendSuccess(() -> Component.translatable("commands.amemaru.floor.bells_reset"), true);
                                             return 1;
                                         }))))
+                // 11月28日（9階）：王家の肖像画を戻す（組ごと・すべて）・朝に戻す・女王の隠し扉を開ける（確かめ用）
+                .then(Commands.literal("lineage")
+                        .then(Commands.argument("floor", IntegerArgumentType.integer(1, 99)).suggests(FLOORS)
+                                .then(Commands.literal("solve")
+                                        .executes(ctx -> solveLineage(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"), ""))
+                                        .then(Commands.argument("group", com.mojang.brigadier.arguments.StringArgumentType.word())
+                                                .executes(ctx -> solveLineage(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"),
+                                                        com.mojang.brigadier.arguments.StringArgumentType.getString(ctx, "group")))))
+                                .then(Commands.literal("reset")
+                                        .executes(ctx -> {
+                                            jp.amemaru.lostconnection.tower.castle.LineageService.onDayChanged(ctx.getSource().getServer());
+                                            AdminCommands.log(ctx.getSource(), "floor lineage reset");
+                                            ctx.getSource().sendSuccess(() -> Component.translatable("commands.amemaru.floor.lineage_reset"), true);
+                                            return 1;
+                                        }))
+                                .then(Commands.literal("queen")
+                                        .executes(ctx -> openQueen(ctx.getSource(), IntegerArgumentType.getInteger(ctx, "floor"))))))
                 .then(Commands.literal("passphrase")
                         .then(Commands.argument("floor", IntegerArgumentType.integer(1, 99)).suggests(FLOORS)
                                 .then(Commands.literal("done")
@@ -305,6 +322,35 @@ public final class StoryCommands {
     }
 
     /** 8階の鐘の組を、正しく鳴らしきったことにする（group が "" なら、すべて）。 */
+    private static int solveLineage(CommandSourceStack source, int floor, String group) {
+        FloorDef def = FloorDefs.byNumber(floor);
+        if (def == null || def.features().lineage() == null) {
+            source.sendFailure(Component.translatable("commands.amemaru.floor.no_lineage", floor));
+            return 0;
+        }
+        if (!group.isEmpty() && !group.equals("all") && def.features().lineage().group(group) == null) {
+            source.sendFailure(Component.translatable("commands.amemaru.floor.no_lineage_group", group));
+            return 0;
+        }
+        jp.amemaru.lostconnection.tower.castle.LineageService.solve(source.getServer(), def, group.equals("all") ? "" : group);
+        int[] count = jp.amemaru.lostconnection.tower.castle.LineageService.count(source.getServer(), def);
+        AdminCommands.log(source, "floor lineage " + floor + " solve " + group);
+        source.sendSuccess(() -> Component.translatable("commands.amemaru.floor.lineage_solved", floor, count[0], count[1]), true);
+        return 1;
+    }
+
+    private static int openQueen(CommandSourceStack source, int floor) {
+        FloorDef def = FloorDefs.byNumber(floor);
+        if (def == null || def.features().lineage() == null || def.features().lineage().queen() == null) {
+            source.sendFailure(Component.translatable("commands.amemaru.floor.no_lineage", floor));
+            return 0;
+        }
+        jp.amemaru.lostconnection.tower.castle.LineageService.openQueenDoor(source.getServer(), def, null);
+        AdminCommands.log(source, "floor lineage " + floor + " queen");
+        source.sendSuccess(() -> Component.translatable("commands.amemaru.floor.lineage_queen", floor), true);
+        return 1;
+    }
+
     private static int solveBells(CommandSourceStack source, int floor, String which) {
         FloorDef def = FloorDefs.byNumber(floor);
         if (def == null || def.features().bells().isEmpty()) {

@@ -1,0 +1,48 @@
+{
+  "_comment": "近衛長の近衛（9階のボス、氷の近衛長ヴァルグリムの部下。見た目は凍れる近衛兵。enemy/boss/Valgrim.java が出す）。近衛長からoath.range の中にいる間は、盾の誓いでつながって傷つかない。図鑑には出さず、落とし物もない。数値は【補完】",
+  "name": "近衛長の近衛",
+  "model": "amemaru:frozen_guard",
+  "floor": 9,
+  "level": 40,
+  "description": "近衛長ヴァルグリムに盾の誓いを立てた近衛。隊長から離れると、誓いの光の鎖が切れる。",
+  "stats": {
+    "hp": 9000,
+    "attack": 214,
+    "defense": 30,
+    "move_speed": 0.24,
+    "follow_range": 48,
+    "aggro_range": 32
+  },
+  "exp": 0,
+  "skills": {
+    "thrust": {
+      "power": 1.1,
+      "windup": 1.0,
+      "cooldown": 4.0,
+      "range": 3.6,
+      "angle": 40
+    },
+    "bash": {
+      "power": 0.9,
+      "windup": 0.8,
+      "cooldown": 3.5,
+      "range": 2.6,
+      "angle": 100
+    }
+  },
+  "behavior": {
+    "wake_range": 5.0,
+    "dormant_taken": 0.3,
+    "shield_taken": 0.4,
+    "formation_taken": 0.2,
+    "formation_range": 4.0,
+    "shield_angle": 120.0,
+    "chill_seconds": 4.0,
+    "bash_push": 0.9
+  },
+  "drops": {
+    "loot_table": "amemaru:entities/valgrim_guard",
+    "rare": []
+  },
+  "bestiary": false
+}

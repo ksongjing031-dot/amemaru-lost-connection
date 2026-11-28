@@ -187,6 +187,19 @@ public final class ModItems {
             new ForgeSpawnEggItem(ModEntities.FOG_WRAITH, 0xB9C3CF, 0x6D7A8C, new Item.Properties()));
     public static final RegistryObject<Item> MUNE_SPAWN_EGG = ITEMS.register("mune_spawn_egg", () ->
             new ForgeSpawnEggItem(ModEntities.MUNE, 0xEEF2F6, 0x8FD8E8, new Item.Properties()));
+    // 11月28日：9階「氷結した王城」
+    public static final RegistryObject<Item> FROZEN_GUARD_SPAWN_EGG = ITEMS.register("frozen_guard_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.FROZEN_GUARD, 0xB8D4EC, 0x2E4A86, new Item.Properties()));
+    public static final RegistryObject<Item> ICE_CAVALRY_SPAWN_EGG = ITEMS.register("ice_cavalry_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.ICE_CAVALRY, 0xD6E6F4, 0x3A5C9A, new Item.Properties()));
+    public static final RegistryObject<Item> SHELF_WRAITH_SPAWN_EGG = ITEMS.register("shelf_wraith_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.SHELF_WRAITH, 0xE8E2D0, 0x6C86B8, new Item.Properties()));
+    public static final RegistryObject<Item> FROST_HOUND_SPAWN_EGG = ITEMS.register("frost_hound_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.FROST_HOUND, 0xDCE4EC, 0x2C4C8C, new Item.Properties()));
+    public static final RegistryObject<Item> FORGOTTEN_MAID_SPAWN_EGG = ITEMS.register("forgotten_maid_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.FORGOTTEN_MAID, 0xF4F2EE, 0x2A2E3E, new Item.Properties()));
+    public static final RegistryObject<Item> VALGRIM_SPAWN_EGG = ITEMS.register("valgrim_spawn_egg", () ->
+            new ForgeSpawnEggItem(ModEntities.VALGRIM, 0xC4DCF2, 0x1E3670, new Item.Properties()));
     // 11月24日：5階の結び台
     public static final RegistryObject<Item> BINDING_DAIS = ITEMS.register("binding_dais", () ->
             new BlockItem(ModBlocks.BINDING_DAIS.get(), new Item.Properties().rarity(Rarity.RARE)));
@@ -213,6 +226,19 @@ public final class ModItems {
             new BlockItem(ModBlocks.SONG_STELE.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> LAKE_TABLET = ITEMS.register("lake_tablet", () ->
             new BlockItem(ModBlocks.LAKE_TABLET.get(), new Item.Properties().rarity(Rarity.RARE)));
+    // 11月28日：9階
+    public static final RegistryObject<Item> ROYAL_PORTRAIT = ITEMS.register("royal_portrait", () ->
+            new BlockItem(ModBlocks.ROYAL_PORTRAIT.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> NAME_PLATE_STAND = ITEMS.register("name_plate_stand", () ->
+            new BlockItem(ModBlocks.NAME_PLATE_STAND.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> LINEAGE_STELE = ITEMS.register("lineage_stele", () ->
+            new BlockItem(ModBlocks.LINEAGE_STELE.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> LINEAGE_BOOK = ITEMS.register("lineage_book", () ->
+            new BlockItem(ModBlocks.LINEAGE_BOOK.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> QUEEN_LETTER = ITEMS.register("queen_letter", () ->
+            new BlockItem(ModBlocks.QUEEN_LETTER.get(), new Item.Properties().rarity(Rarity.RARE)));
+    public static final RegistryObject<Item> STUDY_LATCH = ITEMS.register("study_latch", () ->
+            new BlockItem(ModBlocks.STUDY_LATCH.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> MURAL_PANEL = ITEMS.register("mural_panel", () ->
             new BlockItem(ModBlocks.MURAL_PANEL.get(), new Item.Properties().rarity(Rarity.RARE)));
     public static final RegistryObject<Item> SOUND_PLATE = ITEMS.register("sound_plate", () ->

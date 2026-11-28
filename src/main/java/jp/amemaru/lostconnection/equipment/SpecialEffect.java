@@ -33,6 +33,8 @@ import java.util.Locale;
  *       7階の名のある魔物のレアのお守り【補完】。11月25日）</li>
  *   <li>{@code warning_ear}：ロスト状態「静寂」の間も、予兆の音が自分にだけ聞こえる（8階のボスのレア「湖主の髭弓」。Phase 0-A 20章。
  *       11月25日。働きはクライアントの {@code client.LakeSoundFilter}。{@code percent} は使わないが、100 と書く）</li>
+ *   <li>{@code oath_guard}：{@code threshold} ブロック以内の味方が敵から受けるダメージの {@code percent}% を、代わりに受ける（自分の
+ *       強化で軽くして受ける。9階のボスのレア「近衛の誓盾」。Phase 0-A 20章「近くの味方の被ダメージを少し肩代わり」。11月28日）</li>
  * </ul>
  *
  * <p>{@code source} は効く攻撃の種類（{@code any}：すべて、{@code melee}：近接攻撃だけ、{@code skill}：スキルだけ）。</p>
@@ -51,7 +53,8 @@ public record SpecialEffect(Type type, double chance, double percent, double thr
         COLD_RESIST("cold_resist"),
         DOUBLE_HIT("double_hit"),
         LOST_RESIST("lost_resist"),
-        WARNING_EAR("warning_ear");
+        WARNING_EAR("warning_ear"),
+        OATH_GUARD("oath_guard");
 
         private final String id;
 
@@ -70,8 +73,8 @@ public record SpecialEffect(Type type, double chance, double percent, double thr
                 }
             }
             throw new DefinitionException("特殊効果の種類「" + id + "」はありません（extra_damage・execute・heal_on_hit・"
-                    + "damage_reduction・regen・move_speed・heal_ward・ally_power・party_ward・cold_resist・double_hit・lost_resist "
-                    + "のどれかにしてください）");
+                    + "damage_reduction・regen・move_speed・heal_ward・ally_power・party_ward・cold_resist・double_hit・lost_resist・"
+                    + "warning_ear・oath_guard のどれかにしてください）");
         }
     }
 
@@ -114,7 +117,7 @@ public record SpecialEffect(Type type, double chance, double percent, double thr
         if (type == Type.EXECUTE && threshold <= 0) {
             throw new DefinitionException(where + "：execute には「threshold」（HPの割合）が要ります");
         }
-        if ((type == Type.ALLY_POWER || type == Type.PARTY_WARD) && threshold <= 0) {
+        if ((type == Type.ALLY_POWER || type == Type.PARTY_WARD || type == Type.OATH_GUARD) && threshold <= 0) {
             throw new DefinitionException(where + "：" + type.id() + " には「threshold」（味方を数える距離）が要ります");
         }
         return new SpecialEffect(type, chance, percent, threshold, source);
@@ -126,7 +129,7 @@ public record SpecialEffect(Type type, double chance, double percent, double thr
         if (type == Type.EXTRA_DAMAGE || type == Type.HEAL_ON_HIT || type == Type.DOUBLE_HIT) {
             return Component.translatable(key + (source == Source.ANY ? "" : "." + source.id), number(chance), number(percent));
         }
-        if (type == Type.EXECUTE || type == Type.ALLY_POWER || type == Type.PARTY_WARD) {
+        if (type == Type.EXECUTE || type == Type.ALLY_POWER || type == Type.PARTY_WARD || type == Type.OATH_GUARD) {
             return Component.translatable(key, number(threshold), number(percent));
         }
         return Component.translatable(key, number(percent));

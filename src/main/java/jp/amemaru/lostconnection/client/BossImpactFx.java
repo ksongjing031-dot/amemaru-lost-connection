@@ -44,11 +44,13 @@ public final class BossImpactFx {
             "ancient_guardian", new Theme(0x8E8A80, 0x4FCC9E, 0xD3FFEE, Material.STONE),
             "ordo", new Theme(0x7FC8F0, 0xBFEFFF, 0xFFFFFF, Material.ICE),
             "reflecta", new Theme(0x9A7CF0, 0xC9A8FF, 0xF0F4FF, Material.PRISM),
-            "mune", new Theme(0x2E6E9E, 0x7FDDE8, 0xA8F7FF, Material.WATER));
+            "mune", new Theme(0x2E6E9E, 0x7FDDE8, 0xA8F7FF, Material.WATER),
+            // 11月28日：9階の近衛長（氷の槍と、近衛の青）
+            "valgrim", new Theme(0x3C5A9E, 0x9CC8FF, 0xEAF4FF, Material.ICE));
 
     /** 固有のギミックをしくじったときの、大きな一撃（衝撃を大きく）。 */
     private static final java.util.Set<String> BIG = java.util.Set.of("veldhorn:earth_roar", "hydram:flood", "cantare:echo",
-            "ancient_guardian:judge", "ancient_guardian:sever", "ordo:gaze", "mune:wave");
+            "ancient_guardian:judge", "ancient_guardian:sever", "ordo:gaze", "mune:wave", "valgrim:march");
 
     private BossImpactFx() {
     }

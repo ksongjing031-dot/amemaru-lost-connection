@@ -21,6 +21,8 @@ import org.joml.Matrix4f;
  */
 public class CrystalNeedleRenderer extends EntityRenderer<CrystalNeedle> {
     private static final ResourceLocation TEXTURE = AmemaruMod.id("textures/entity/crystal_needle.png");
+    /** 11月28日：9階の書架霊の頁（{@code textures/entity/page_shard.png}、16×16）。 */
+    private static final ResourceLocation PAGE = AmemaruMod.id("textures/entity/page_shard.png");
 
     public CrystalNeedleRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -33,6 +35,11 @@ public class CrystalNeedleRenderer extends EntityRenderer<CrystalNeedle> {
 
     @Override
     public void render(CrystalNeedle entity, float yaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+        if (entity.style() == CrystalNeedle.STYLE_PAGE) {
+            renderPage(entity, partialTicks, poseStack, buffer);
+            super.render(entity, yaw, partialTicks, poseStack, buffer, packedLight);
+            return;
+        }
         poseStack.pushPose();
         poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, entity.yRotO, entity.getYRot()) - 90.0F));
         poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTicks, entity.xRotO, entity.getXRot())));
@@ -55,6 +62,29 @@ public class CrystalNeedleRenderer extends EntityRenderer<CrystalNeedle> {
         super.render(entity, yaw, partialTicks, poseStack, buffer, packedLight);
     }
 
+    /** 頁：くるくる回りながら飛ぶ、光る紙片（表と裏）。 */
+    private void renderPage(CrystalNeedle entity, float partialTicks, PoseStack poseStack, MultiBufferSource buffer) {
+        poseStack.pushPose();
+        float age = entity.tickCount + partialTicks;
+        poseStack.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTicks, entity.yRotO, entity.getYRot())));
+        poseStack.mulPose(Axis.XP.rotationDegrees(age * 31.0F));
+        poseStack.mulPose(Axis.ZP.rotationDegrees(Mth.sin(age * 0.6F) * 25.0F));
+        VertexConsumer consumer = buffer.getBuffer(RenderType.entityTranslucentEmissive(PAGE));
+        PoseStack.Pose pose = poseStack.last();
+        Matrix4f matrix = pose.pose();
+        Matrix3f normal = pose.normal();
+        float h = 0.28F;
+        vertex(consumer, matrix, normal, -h, -h, 0.0F, 1.0F);
+        vertex(consumer, matrix, normal, h, -h, 1.0F, 1.0F);
+        vertex(consumer, matrix, normal, h, h, 1.0F, 0.0F);
+        vertex(consumer, matrix, normal, -h, h, 0.0F, 0.0F);
+        vertex(consumer, matrix, normal, -h, h, 0.0F, 0.0F);
+        vertex(consumer, matrix, normal, h, h, 1.0F, 0.0F);
+        vertex(consumer, matrix, normal, h, -h, 1.0F, 1.0F);
+        vertex(consumer, matrix, normal, -h, -h, 0.0F, 1.0F);
+        poseStack.popPose();
+    }
+
     private static void vertex(VertexConsumer consumer, Matrix4f matrix, Matrix3f normal, float x, float y, float u, float v) {
         consumer.vertex(matrix, x, y, 0.0F)
                 .color(255, 255, 255, 255)
@@ -67,6 +97,6 @@ public class CrystalNeedleRenderer extends EntityRenderer<CrystalNeedle> {
 
     @Override
     public ResourceLocation getTextureLocation(CrystalNeedle entity) {
-        return TEXTURE;
+        return entity.style() == CrystalNeedle.STYLE_PAGE ? PAGE : TEXTURE;
     }
 }

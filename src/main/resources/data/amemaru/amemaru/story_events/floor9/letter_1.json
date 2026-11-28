@@ -1,0 +1,23 @@
+{
+  "_comment": "女王の書斎で、女王の書簡（一通目）を手に取ったとき（本人だけ。CastleBlocks.Letter → TempleService.takeRelic。持ち物queen_letter_1 と古代記録 f09_queen_letters）。Phase 0-A 9章の9階の古代記録【補完】",
+  "title": "女王の書簡（一通目）",
+  "trigger": {
+    "type": "amemaru:admin"
+  },
+  "scope": "player",
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "女王の書簡（一通目）を手に取った。インクのにじんだ、ていねいな字。最後に、たくさんの名前が並んでいる。",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "「わたしは、あなたたちを忘れたくない。だから毎晩、名前を書き留めています。」",
+      "ticks": 130,
+      "wait": true
+    }
+  ]
+}

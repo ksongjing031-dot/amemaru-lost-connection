@@ -1,0 +1,23 @@
+{
+  "_comment": "女王の肖像の前で、女王の名を呼び、隠し扉が初めて開いたとき（本人だけ。LineageService.callQueen）【補完】",
+  "title": "女王の名",
+  "trigger": {
+    "type": "amemaru:admin"
+  },
+  "scope": "player",
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "名前を呼ぶと、女王の肖像の空白の顔に、一瞬だけ、やわらかな色が差した。",
+      "ticks": 110,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "肖像の横の壁が、静かに奥へ下がっていく。……隠された部屋がある。",
+      "ticks": 110,
+      "wait": false
+    }
+  ]
+}

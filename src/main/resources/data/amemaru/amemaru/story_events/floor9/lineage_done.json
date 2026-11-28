@@ -1,0 +1,23 @@
+{
+  "_comment": "王家の系譜がすべて戻ったとき（その階にいる人に。LineageService）【補完】",
+  "title": "王家の系譜",
+  "trigger": {
+    "type": "amemaru:admin"
+  },
+  "scope": "player",
+  "replayable": true,
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "城じゅうの肖像画に、名前が戻った。空白だった顔は、まだ白いまま。……けれど、名前を呼ぶと、少しだけ近くに感じる。",
+      "ticks": 140,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "城の奥、近衛の回廊の先で、重い扉が開く音がした。",
+      "ticks": 110,
+      "wait": false
+    }
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "accessory",
+  "mastery": 4,
+  "mastery_exp": 28,
+  "ingredients": [
+    {
+      "item": "amemaru:lace_scrap",
+      "count": 3
+    },
+    {
+      "item": "amemaru:castle_ice",
+      "count": 1
+    },
+    {
+      "item": "amemaru:royal_seal",
+      "count": 1
+    },
+    {
+      "item": "amemaru:pedestal_cloth",
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "amemaru:portrait_necklace"
+  }
+}

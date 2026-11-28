@@ -43,7 +43,7 @@ public final class SoloCommands {
     /** 封印の条件の並び（言語ファイルの名前 {@code commands.amemaru.solo.part.<条件>} もこの順に出す）。 */
     private static final List<String> TOKENS = List.of(FloorFeatures.SEAL_PILLARS, FloorFeatures.SEAL_LOST_WOODS,
             FloorFeatures.SEAL_FLOODGATES, FloorFeatures.SEAL_MURALS, FloorFeatures.SEAL_STATUES, FloorFeatures.SEAL_LIGHTS,
-            FloorFeatures.SEAL_PASSPHRASE, FloorFeatures.SEAL_BELLS, FloorFeatures.SEAL_GUARDIANS);
+            FloorFeatures.SEAL_PASSPHRASE, FloorFeatures.SEAL_BELLS, FloorFeatures.SEAL_LINEAGE, FloorFeatures.SEAL_GUARDIANS);
 
     private SoloCommands() {
     }
@@ -110,6 +110,9 @@ public final class SoloCommands {
         if (features.requires(FloorFeatures.SEAL_BELLS)) {
             run(source, "amemaru admin floor bells " + floor + " solve", done, FloorFeatures.SEAL_BELLS);
         }
+        if (features.requires(FloorFeatures.SEAL_LINEAGE)) {
+            run(source, "amemaru admin floor lineage " + floor + " solve", done, FloorFeatures.SEAL_LINEAGE);
+        }
         if (features.requires(FloorFeatures.SEAL_GUARDIANS)) {
             run(source, "amemaru admin floor guardians " + floor + " done @s", done, FloorFeatures.SEAL_GUARDIANS);
         }
@@ -154,6 +157,9 @@ public final class SoloCommands {
         }
         if (!features.bells().isEmpty()) {
             run(source, "amemaru admin floor bells " + floor + " reset", done, FloorFeatures.SEAL_BELLS);
+        }
+        if (features.lineage() != null) {
+            run(source, "amemaru admin floor lineage " + floor + " reset", done, FloorFeatures.SEAL_LINEAGE);
         }
         run(source, "amemaru admin floor guardians " + floor + " reset @s", done, FloorFeatures.SEAL_GUARDIANS);
         run(source, "amemaru admin floor alert " + floor + " clear", new ArrayList<>(), "");

@@ -33,7 +33,10 @@ public final class ModBlockEntities {
                     ModBlocks.VILLAGE_HEARTH.get(), ModBlocks.LIGHT_SPRING.get(), ModBlocks.ICE_MIRROR.get(),
                     ModBlocks.LIGHT_TARGET.get(),
                     // 11月25日：8階の湖の鐘・歌の碑・湖底の祠の石板
-                    ModBlocks.LAKE_BELL.get(), ModBlocks.SONG_STELE.get(), ModBlocks.LAKE_TABLET.get()).build(null));
+                    ModBlocks.LAKE_BELL.get(), ModBlocks.SONG_STELE.get(), ModBlocks.LAKE_TABLET.get(),
+                    // 11月28日：9階の肖像画・名前の札の台・建国の碑・系譜の書・女王の書簡・留め金
+                    ModBlocks.ROYAL_PORTRAIT.get(), ModBlocks.NAME_PLATE_STAND.get(), ModBlocks.LINEAGE_STELE.get(),
+                    ModBlocks.LINEAGE_BOOK.get(), ModBlocks.QUEEN_LETTER.get(), ModBlocks.STUDY_LATCH.get()).build(null));
 
     /** 6階の凍った村人の氷像（どの姿・格好・向き・記憶か。11月25日）。 */
     @SuppressWarnings("DataFlowIssue")

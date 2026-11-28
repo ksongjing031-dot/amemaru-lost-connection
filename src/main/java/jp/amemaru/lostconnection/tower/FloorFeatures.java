@@ -47,6 +47,12 @@ import java.util.List;
  *       その日のうち）。{@code environment} の {@code silent}：音が戻る組を鳴らすまで、階じゅうの音が消えている</li>
  *   <li>{@code lake}：8階の湖（{@code ice_y}：氷の面の高さ。{@code rescue_seconds}：氷の下の水に落ちた人を、何秒で引き上げるか）。
  *       薄氷（2人以上が近くに乗ると割れる）と、敵やボスが割った氷の穴は {@code tower.lake.ThinIceService}</li>
+ *   <li>{@code lineage}：9階「氷結した王城」の王家の系譜（Phase 0-A 9章の9階「城中に散らばった名前の札を集め、肖像画の空白に正しく
+ *       戻す（名前を思い出させるパズル）」。11月28日）。肖像画の組 {@code groups}（そろうと {@code door} が開く）・肖像画
+ *       {@code portraits}・名前の札の台 {@code plates}（肖像画のない札は、まぎらわしい札）・手がかり {@code clues}・女王の肖像
+ *       {@code queen}（札はない。最後の組のあと、{@code area} の中で {@code names} のどれかをチャットで言うと、{@code door} が
+ *       {@code open_seconds} 秒開く。内がわの留め金 {@code latch}）。封印の条件 {@code lineage}：肖像画がすべて戻った（みんな。
+ *       その日のうち）。働きは {@code tower.castle.LineageService}</li>
  * </ul>
  */
 public record FloorFeatures(@Nullable Environment environment, List<LostWoods> lostWoods, List<Waypoint> waypoints,
@@ -54,12 +60,12 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
                             List<Floodgate> floodgates, List<WaterSection> waterSections, List<Mural> murals, List<Song> songs,
                             List<Relic> relics, java.util.Map<String, List<BlockPos>> bossMarks, int abyssY,
                             List<Hearth> hearths, List<MemoryStatue> memoryStatues, List<LightMaze> lightMazes,
-                            @Nullable Passphrase passphrase, List<BellGroup> bells, @Nullable Lake lake) {
+                            @Nullable Passphrase passphrase, List<BellGroup> bells, @Nullable Lake lake, @Nullable Lineage lineage) {
     /** 奈落のない階の {@link #abyssY}。 */
     public static final int NO_ABYSS = Integer.MIN_VALUE;
     public static final FloorFeatures NONE = new FloorFeatures(null, List.of(), List.of(), null, "pillars", List.of(), List.of(),
             List.of(), List.of(), List.of(), List.of(), java.util.Map.<String, List<BlockPos>>of(), NO_ABYSS, List.of(), List.of(),
-            List.of(), null, List.of(), null);
+            List.of(), null, List.of(), null, null);
     /** 11月25日（6階）：記憶の氷像がすべて溶けた（みんなで同じ。その日のうち）。 */
     public static final String SEAL_STATUES = "statues";
     /** 11月25日（7階）：光の迷路をすべて解いた（みんなで同じ。その日のうち）。 */
@@ -84,6 +90,75 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
 
     /** 8階の湖。{@code iceY}：氷の面の高さ（階の座標）。{@code rescueSeconds}：水に落ちた人を引き上げるまでの秒。 */
     public record Lake(int iceY, int rescueSeconds) {
+    }
+
+    /** 11月28日（9階）：王家の系譜がすべて戻った（みんなで同じ。その日のうち）。 */
+    public static final String SEAL_LINEAGE = "lineage";
+
+    /** 肖像画の組（9階）。そろうと {@code door} の箱が開く（ブロック → 空気。なければ開かない）。{@code guards}：札を間違えたときに、目を覚ます近衛兵の出る所。 */
+    public record LineageGroup(String id, String name, @Nullable Door door, List<BlockPos> guards) {
+    }
+
+    /** 肖像画（9階）。{@code id} は、はまる札の名前（札の台の {@code id} と同じ）。 */
+    public record Portrait(String id, String name, String group, BlockPos pos, net.minecraft.core.Direction facing) {
+    }
+
+    /** 名前の札の台（9階）。肖像画のない札は、まぎらわしい札（どの肖像画にもはまらない）。 */
+    public record NamePlate(String id, String name, BlockPos pos) {
+    }
+
+    /** 手がかり（9階の建国の碑・系譜の書）。 */
+    public record LineageClue(String id, BlockPos pos) {
+    }
+
+    /** 女王の肖像と、その横の隠し扉（9階）。 */
+    public record QueenPortrait(BlockPos pos, net.minecraft.core.Direction facing, Door door, BlockPos latch, List<String> names,
+                                AABB area, int openSeconds) {
+    }
+
+    /** 王家の系譜（9階）。 */
+    public record Lineage(List<LineageGroup> groups, List<Portrait> portraits, List<NamePlate> plates, List<LineageClue> clues,
+                          @Nullable QueenPortrait queen) {
+        @Nullable
+        public Portrait portrait(String id) {
+            for (Portrait portrait : portraits) {
+                if (portrait.id().equals(id)) {
+                    return portrait;
+                }
+            }
+            return null;
+        }
+
+        @Nullable
+        public NamePlate plate(String id) {
+            for (NamePlate plate : plates) {
+                if (plate.id().equals(id)) {
+                    return plate;
+                }
+            }
+            return null;
+        }
+
+        @Nullable
+        public LineageGroup group(String id) {
+            for (LineageGroup group : groups) {
+                if (group.id().equals(id)) {
+                    return group;
+                }
+            }
+            return null;
+        }
+
+        /** その組の肖像画。 */
+        public List<Portrait> portraitsOf(String group) {
+            List<Portrait> list = new ArrayList<>();
+            for (Portrait portrait : portraits) {
+                if (portrait.group().equals(group)) {
+                    list.add(portrait);
+                }
+            }
+            return list;
+        }
     }
 
     @Nullable
@@ -167,7 +242,8 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
      * ストーリーイベントが流れ、{@code quest} のクエストが始まる（なければ始めない）。
      */
     public record Relic(String id, BlockPos pos, List<net.minecraft.resources.ResourceLocation> items, net.minecraft.resources.ResourceLocation flag,
-                        String event, @Nullable net.minecraft.resources.ResourceLocation quest) {
+                        String event, @Nullable net.minecraft.resources.ResourceLocation quest,
+                        @Nullable net.minecraft.resources.ResourceLocation record) {
     }
 
     @Nullable
@@ -380,8 +456,9 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
         for (String token : seal.split("\\+")) {
             if (!token.equals(SEAL_PILLARS) && !token.equals(SEAL_LOST_WOODS) && !token.equals(SEAL_GUARDIANS)
                     && !token.equals(SEAL_FLOODGATES) && !token.equals(SEAL_MURALS) && !token.equals(SEAL_STATUES)
-                    && !token.equals(SEAL_LIGHTS) && !token.equals(SEAL_PASSPHRASE) && !token.equals(SEAL_BELLS)) {
-                throw new DefinitionException("「seal_requires」は pillars・lost_woods・guardians・floodgates・murals・statues・lights・passphrase・bells を"
+                    && !token.equals(SEAL_LIGHTS) && !token.equals(SEAL_PASSPHRASE) && !token.equals(SEAL_BELLS)
+                    && !token.equals(SEAL_LINEAGE)) {
+                throw new DefinitionException("「seal_requires」は pillars・lost_woods・guardians・floodgates・murals・statues・lights・passphrase・bells・lineage を"
                         + " + でつないだものにしてください（今は "
                         + seal + "）");
             }
@@ -490,8 +567,9 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
         List<Relic> relics = new ArrayList<>();
         for (JsonElement element : Json.optionalArray(json, "relics")) {
             JsonObject r = Json.asObject(element, "relics");
+            // 11月28日（9階）：record は、受け取ったときに記録帳に残す古代記録（女王の書簡）
             relics.add(new Relic(Json.string(r, "id"), FloorDef.blockPos(Json.array(r, "pos"), "relics.pos"), Json.idList(r, "items"),
-                    Json.id(r, "flag"), Json.optionalString(r, "event", ""), Json.optionalId(r, "quest")));
+                    Json.id(r, "flag"), Json.optionalString(r, "event", ""), Json.optionalId(r, "quest"), Json.optionalId(r, "record")));
         }
         java.util.Map<String, List<BlockPos>> marks = new java.util.LinkedHashMap<>();
         JsonObject markObject = Json.optionalObject(json, "boss_marks");
@@ -592,9 +670,78 @@ public record FloorFeatures(@Nullable Environment environment, List<LostWoods> l
         if (lk != null) {
             lake = new Lake(Json.optionalInt(lk, "ice_y", 24, 1, 300), Json.optionalInt(lk, "rescue_seconds", 4, 1, 60));
         }
+        Lineage lineage = lineage(Json.optionalObject(json, "lineage"));
+        if (requires(seal, SEAL_LINEAGE) && (lineage == null || lineage.portraits().isEmpty())) {
+            throw new DefinitionException("「seal_requires」が lineage なのに、「lineage」の肖像画がありません");
+        }
         return new FloorFeatures(env, List.copyOf(woods), List.copyOf(waypoints), travel, seal, List.copyOf(zones), List.copyOf(gates),
                 List.copyOf(sections), List.copyOf(murals), List.copyOf(songs), List.copyOf(relics), java.util.Map.copyOf(marks), abyss,
-                List.copyOf(hearths), List.copyOf(statues), List.copyOf(mazes), passphrase, List.copyOf(bellGroups), lake);
+                List.copyOf(hearths), List.copyOf(statues), List.copyOf(mazes), passphrase, List.copyOf(bellGroups), lake, lineage);
+    }
+
+    /** 王家の系譜（9階）を読む（なければ null）。 */
+    @Nullable
+    private static Lineage lineage(@Nullable JsonObject l) {
+        if (l == null) {
+            return null;
+        }
+        List<LineageGroup> groups = new ArrayList<>();
+        for (JsonElement element : Json.array(l, "groups")) {
+            JsonObject g = Json.asObject(element, "lineage.groups");
+            List<BlockPos> guards = new ArrayList<>();
+            for (JsonElement ge : Json.optionalArray(g, "guards")) {
+                guards.add(FloorDef.blockPos(ge.getAsJsonArray(), "lineage.groups.guards"));
+            }
+            groups.add(new LineageGroup(Json.string(g, "id"), Json.optionalString(g, "name", ""), door(Json.optionalObject(g, "door"),
+                    "lineage.groups.door"), List.copyOf(guards)));
+        }
+        List<Portrait> portraits = new ArrayList<>();
+        for (JsonElement element : Json.array(l, "portraits")) {
+            JsonObject p = Json.asObject(element, "lineage.portraits");
+            String group = Json.string(p, "group");
+            if (groups.stream().noneMatch(g -> g.id().equals(group))) {
+                throw new DefinitionException("肖像画「" + Json.string(p, "id") + "」の組「" + group + "」が「lineage.groups」にありません");
+            }
+            portraits.add(new Portrait(Json.string(p, "id"), Json.optionalString(p, "name", ""), group,
+                    FloorDef.blockPos(Json.array(p, "pos"), "lineage.portraits.pos"), facing(Json.optionalString(p, "facing", "south"))));
+        }
+        List<NamePlate> plates = new ArrayList<>();
+        for (JsonElement element : Json.array(l, "plates")) {
+            JsonObject p = Json.asObject(element, "lineage.plates");
+            plates.add(new NamePlate(Json.string(p, "id"), Json.optionalString(p, "name", ""),
+                    FloorDef.blockPos(Json.array(p, "pos"), "lineage.plates.pos")));
+        }
+        for (Portrait portrait : portraits) {
+            if (plates.stream().noneMatch(p -> p.id().equals(portrait.id()))) {
+                throw new DefinitionException("肖像画「" + portrait.id() + "」の名前の札が「lineage.plates」にありません");
+            }
+        }
+        List<LineageClue> clues = new ArrayList<>();
+        for (JsonElement element : Json.optionalArray(l, "clues")) {
+            JsonObject c = Json.asObject(element, "lineage.clues");
+            clues.add(new LineageClue(Json.string(c, "id"), FloorDef.blockPos(Json.array(c, "pos"), "lineage.clues.pos")));
+        }
+        QueenPortrait queen = null;
+        JsonObject q = Json.optionalObject(l, "queen");
+        if (q != null) {
+            List<String> names = new ArrayList<>();
+            for (JsonElement n : Json.array(q, "names")) {
+                names.add(n.getAsString());
+            }
+            Door door = door(Json.object(q, "door"), "lineage.queen.door");
+            queen = new QueenPortrait(FloorDef.blockPos(Json.array(q, "pos"), "lineage.queen.pos"), facing(Json.optionalString(q, "facing",
+                    "west")), door, FloorDef.blockPos(Json.array(q, "latch"), "lineage.queen.latch"), List.copyOf(names),
+                    box(Json.array(q, "area"), "lineage.queen.area"), Json.optionalInt(q, "open_seconds", 20, 3, 300));
+        }
+        return new Lineage(List.copyOf(groups), List.copyOf(portraits), List.copyOf(plates), List.copyOf(clues), queen);
+    }
+
+    private static net.minecraft.core.Direction facing(String text) {
+        net.minecraft.core.Direction dir = net.minecraft.core.Direction.byName(text);
+        if (dir == null || dir.getAxis().isVertical()) {
+            throw new DefinitionException("向きは north・south・east・west のどれかにしてください（今は " + text + "）");
+        }
+        return dir;
     }
 
     @Nullable

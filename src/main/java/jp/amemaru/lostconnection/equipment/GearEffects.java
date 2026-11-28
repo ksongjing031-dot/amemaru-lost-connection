@@ -248,6 +248,38 @@ public final class GearEffects {
         return best;
     }
 
+    /**
+     * 「近衛の誓盾」（9階のボスのレア。11月28日）：{@code player} が受けるダメージを肩代わりする人（まわりで、誓盾を持っていて、
+     * いちばん多く肩代わりする人。いなければ null）と、その割合（%）。自分自身・倒れている人・決闘の相手は肩代わりしない。
+     */
+    @javax.annotation.Nullable
+    public static java.util.Map.Entry<ServerPlayer, Double> oathGuard(ServerPlayer player) {
+        ServerPlayer best = null;
+        double bestPercent = 0.0;
+        for (ServerPlayer wearer : player.serverLevel().players()) {
+            if (wearer == player || !wearer.isAlive() || wearer.isSpectator()
+                    || jp.amemaru.lostconnection.player.DownHandler.isDown(wearer)
+                    || jp.amemaru.lostconnection.social.DuelService.areOpponents(player, wearer)) {
+                continue;
+            }
+            PlayerData data = PlayerDataCapability.get(wearer).orElse(null);
+            if (data == null) {
+                continue;
+            }
+            for (SpecialEffect effect : active(wearer, data)) {
+                if (effect.type() != SpecialEffect.Type.OATH_GUARD || effect.percent() <= bestPercent) {
+                    continue;
+                }
+                double radius = effect.threshold();
+                if (wearer.distanceToSqr(player) <= radius * radius) {
+                    best = wearer;
+                    bestPercent = effect.percent();
+                }
+            }
+        }
+        return best == null ? null : java.util.Map.entry(best, bestPercent);
+    }
+
     /** 回復の守り（4階のレア「祈り手の鈴」）：使い手の、回復したときの防御の上がり（%。なければ 0）。 */
     public static double healWard(ServerPlayer caster, PlayerData data) {
         double best = 0.0;

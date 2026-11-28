@@ -1,0 +1,282 @@
+{
+  "credit": "AMEMARU: 9階の仕掛け（tools/artgen/make_castle_things.py で生成）",
+  "texture_size": [
+    64,
+    64
+  ],
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:cutout",
+  "textures": {
+    "0": "amemaru:block/queen_letter",
+    "particle": "amemaru:block/queen_letter"
+  },
+  "elements": [
+    {
+      "name": "letter",
+      "from": [
+        3.5,
+        0,
+        4.5
+      ],
+      "to": [
+        12.5,
+        0.8,
+        11.5
+      ],
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          8,
+          0,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            9.75,
+            0,
+            12,
+            0.25
+          ],
+          "texture": "#0"
+        },
+        "south": {
+          "uv": [
+            12,
+            0,
+            14.25,
+            0.25
+          ],
+          "texture": "#0"
+        },
+        "east": {
+          "uv": [
+            4,
+            1.75,
+            5.75,
+            2
+          ],
+          "texture": "#0"
+        },
+        "west": {
+          "uv": [
+            5.75,
+            1.75,
+            7.5,
+            2
+          ],
+          "texture": "#0"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            2.25,
+            1.75
+          ],
+          "texture": "#0"
+        },
+        "down": {
+          "uv": [
+            2.25,
+            0,
+            4.5,
+            1.75
+          ],
+          "texture": "#0"
+        }
+      }
+    },
+    {
+      "name": "flap",
+      "from": [
+        4,
+        0.8,
+        5
+      ],
+      "to": [
+        12,
+        1.1,
+        8.5
+      ],
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          8,
+          0,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            1.75,
+            2,
+            2
+          ],
+          "texture": "#0"
+        },
+        "south": {
+          "uv": [
+            2,
+            1.75,
+            4,
+            2
+          ],
+          "texture": "#0"
+        },
+        "east": {
+          "uv": [
+            7.5,
+            1.75,
+            8.5,
+            2
+          ],
+          "texture": "#0"
+        },
+        "west": {
+          "uv": [
+            8.5,
+            1.75,
+            9.5,
+            2
+          ],
+          "texture": "#0"
+        },
+        "up": {
+          "uv": [
+            4.5,
+            0,
+            6.5,
+            1
+          ],
+          "texture": "#0"
+        }
+      }
+    },
+    {
+      "name": "seal",
+      "from": [
+        7,
+        0.8,
+        7.2
+      ],
+      "to": [
+        9.2,
+        1.5,
+        9.4
+      ],
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          8,
+          0,
+          8
+        ]
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            9.5,
+            1.75,
+            10.25,
+            2
+          ],
+          "texture": "#0"
+        },
+        "south": {
+          "uv": [
+            10.25,
+            1.75,
+            11,
+            2
+          ],
+          "texture": "#0"
+        },
+        "east": {
+          "uv": [
+            11,
+            1.75,
+            11.75,
+            2
+          ],
+          "texture": "#0"
+        },
+        "west": {
+          "uv": [
+            11.75,
+            1.75,
+            12.5,
+            2
+          ],
+          "texture": "#0"
+        },
+        "up": {
+          "uv": [
+            6.5,
+            0,
+            7.25,
+            0.75
+          ],
+          "texture": "#0"
+        }
+      }
+    },
+    {
+      "name": "ribbon",
+      "from": [
+        3.4,
+        0.2,
+        9.5
+      ],
+      "to": [
+        12.6,
+        0.9,
+        10.3
+      ],
+      "rotation": {
+        "angle": 22.5,
+        "axis": "y",
+        "origin": [
+          8,
+          0,
+          8
+        ]
+      },
+      "faces": {
+        "east": {
+          "uv": [
+            12.5,
+            1.75,
+            12.75,
+            2
+          ],
+          "texture": "#0"
+        },
+        "west": {
+          "uv": [
+            12.75,
+            1.75,
+            13,
+            2
+          ],
+          "texture": "#0"
+        },
+        "up": {
+          "uv": [
+            7.25,
+            0,
+            9.75,
+            0.25
+          ],
+          "texture": "#0"
+        }
+      }
+    }
+  ]
+}

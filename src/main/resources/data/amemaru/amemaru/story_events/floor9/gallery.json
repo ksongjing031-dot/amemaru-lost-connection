@@ -1,0 +1,37 @@
+{
+  "_comment": "肖像の回廊（本人だけ。一人一度）。最後の家族の肖像と、東の端の女王の肖像【補完】",
+  "title": "肖像の回廊",
+  "trigger": {
+    "type": "amemaru:floor_zone",
+    "floor": 9,
+    "zone": "gallery"
+  },
+  "scope": "player",
+  "once": false,
+  "replayable": true,
+  "conditions": {
+    "flags_none": [
+      "amemaru:story/castle_gallery_seen"
+    ]
+  },
+  "steps": [
+    {
+      "type": "amemaru:subtitle",
+      "text": "長い回廊に、肖像画が並んでいる。東の端に、ひときわ大きな女王の肖像。",
+      "ticks": 120,
+      "wait": true
+    },
+    {
+      "type": "amemaru:subtitle",
+      "text": "女王の肖像の下には、名札の台座さえない。……この方の名前は、札ではなく、声で呼ぶのかもしれない。",
+      "ticks": 120,
+      "wait": false
+    },
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/castle_gallery_seen"
+      ]
+    }
+  ]
+}

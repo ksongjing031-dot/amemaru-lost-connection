@@ -1,0 +1,57 @@
+{
+  "_comment": "9階のボス（氷の近衛長ヴァルグリム）が倒されたあと（ch2/valgrim_down）、忘れている間のガルドが、守れなかった隊長に自分を重ねる（Phase 0-A 9章の9階「守れなかった隊長という点でガルドと重なる」）。台詞は【補完】",
+  "npc": "amemaru:gard",
+  "priority": 42,
+  "conditions": {
+    "opening": 2,
+    "flags_all": [
+      "amemaru:ch2/gard_forgot",
+      "amemaru:ch2/valgrim_down"
+    ],
+    "flags_none": [
+      "amemaru:ch2/queen_down",
+      "amemaru:story/gard_captain_told"
+    ]
+  },
+  "start": "s1",
+  "nodes": {
+    "s1": {
+      "expression": "stern",
+      "text": "近衛の隊長を、倒したそうだな",
+      "next": "s2"
+    },
+    "s2": {
+      "text": "最後に、なんと言っていた",
+      "choices": [
+        {
+          "text": "隊の者たちの名を、呼べなかったと",
+          "next": "s3"
+        }
+      ]
+    },
+    "s3": {
+      "text": "……そうか",
+      "next": "s4"
+    },
+    "s4": {
+      "text": "俺も、15年前は呼べなかった。ロストで、隣の仲間が誰だか分からなくなった。……そして今、また呼べない",
+      "next": "s5"
+    },
+    "s5": {
+      "text": "だが、その隊長は、最後まで扉の前に立っていたんだろう。誰も守れなくても、立っていた",
+      "next": "s6"
+    },
+    "s6": {
+      "expression": "stern",
+      "text": "なら、俺も立っている。名前を思い出すまで、ここで、お前たちを送り出す"
+    }
+  },
+  "end_actions": [
+    {
+      "type": "amemaru:set_flags",
+      "add": [
+        "amemaru:story/gard_captain_told"
+      ]
+    }
+  ]
+}

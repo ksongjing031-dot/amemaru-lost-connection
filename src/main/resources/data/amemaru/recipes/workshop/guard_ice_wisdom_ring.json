@@ -1,0 +1,27 @@
+{
+  "type": "amemaru:workshop",
+  "workshop": "accessory",
+  "mastery": 4,
+  "mastery_exp": 28,
+  "ingredients": [
+    {
+      "item": "amemaru:guard_ice",
+      "count": 3
+    },
+    {
+      "item": "amemaru:torn_page",
+      "count": 2
+    },
+    {
+      "item": "amemaru:royal_seal",
+      "count": 1
+    },
+    {
+      "item": "amemaru:pedestal_cloth",
+      "count": 1
+    }
+  ],
+  "result": {
+    "item": "amemaru:guard_ice_wisdom_ring"
+  }
+}

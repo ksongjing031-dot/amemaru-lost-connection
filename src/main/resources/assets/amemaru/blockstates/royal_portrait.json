@@ -1,0 +1,34 @@
+{
+  "variants": {
+    "facing=south,restored=false": {
+      "model": "amemaru:block/royal_portrait"
+    },
+    "facing=south,restored=true": {
+      "model": "amemaru:block/royal_portrait_restored"
+    },
+    "facing=west,restored=false": {
+      "model": "amemaru:block/royal_portrait",
+      "y": 90
+    },
+    "facing=west,restored=true": {
+      "model": "amemaru:block/royal_portrait_restored",
+      "y": 90
+    },
+    "facing=north,restored=false": {
+      "model": "amemaru:block/royal_portrait",
+      "y": 180
+    },
+    "facing=north,restored=true": {
+      "model": "amemaru:block/royal_portrait_restored",
+      "y": 180
+    },
+    "facing=east,restored=false": {
+      "model": "amemaru:block/royal_portrait",
+      "y": 270
+    },
+    "facing=east,restored=true": {
+      "model": "amemaru:block/royal_portrait_restored",
+      "y": 270
+    }
+  }
+}
