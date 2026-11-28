@@ -104,6 +104,28 @@ public final class TelegraphDraw {
         }
     }
 
+    /**
+     * 部屋のほぼ全体が打たれる所（11月28日：ボスの大技）。広い所をうすく塗り、ふちを濃くし、外から内へ3本の輪が寄ってくる
+     * （打つときが近いほど速く、濃く）。
+     */
+    public static void field(VertexConsumer consumer, PoseStack poseStack, float radius, float progress, float age, int alpha) {
+        int segments = Math.max(SEGMENTS, Math.min(96, Math.round(radius * 2.0F)));
+        float speed = 0.012F + 0.03F * progress;
+        for (int i = 0; i < segments; i++) {
+            float a0 = (float) (i * Math.PI * 2.0 / segments);
+            float a1 = (float) ((i + 1) * Math.PI * 2.0 / segments);
+            wedge(consumer, poseStack, a0, a1, 0.0F, radius - 0.3F, alpha / 6);
+            wedge(consumer, poseStack, a0, a1, radius - 0.3F, radius, Math.min(255, alpha + 30));
+            for (int k = 0; k < 3; k++) {
+                float t = 1.0F - ((age * speed + k / 3.0F) % 1.0F);
+                float r = radius * t;
+                if (r > 0.6F) {
+                    wedge(consumer, poseStack, a0, a1, r - 0.35F, r, Math.round(alpha * 0.7F));
+                }
+            }
+        }
+    }
+
     /** 前の扇形（開き {@code angleDegrees}・半径 {@code radius}）。明るい弧が手前から広がる。 */
     public static void cone(VertexConsumer consumer, PoseStack poseStack, float angleDegrees, float radius, float progress, int alpha) {
         float half = (float) Math.toRadians(Mth.clamp(angleDegrees, 5.0F, 360.0F) / 2.0F);

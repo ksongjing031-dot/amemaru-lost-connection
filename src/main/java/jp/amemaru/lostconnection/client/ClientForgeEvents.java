@@ -145,6 +145,7 @@ public final class ClientForgeEvents {
         SkillHud.resetAnimations();
         SkillFx.reset();
         SkillInput.reset();
+        UniqueSkillFx.reset();
         TargetLock.reset();
         CombatTextRenderer.reset();
         ClientDown.reset();

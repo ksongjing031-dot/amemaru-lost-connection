@@ -252,7 +252,8 @@ public final class SkillRegistry {
         return new Snapshot(combat, production, skills, version, problems, trees);
     }
 
-    private static boolean checkEffects(List<EffectDef> effects, String where, List<String> problems) {
+    /** 効果の状態（status）がそろっているか（11月28日：ユニーク武器の固有スキルの確かめにも使う）。 */
+    public static boolean checkEffects(List<EffectDef> effects, String where, List<String> problems) {
         for (EffectDef effect : effects) {
             if (effect.type() == EffectDef.Type.STATUS) {
                 ResourceLocation id = effect.statusEffect();
@@ -272,7 +273,8 @@ public final class SkillRegistry {
         return true;
     }
 
-    private static void checkSound(@Nullable ResourceLocation sound, String where, List<String> problems) {
+    /** 音があるか（ないときは問題に足す）。 */
+    public static void checkSound(@Nullable ResourceLocation sound, String where, List<String> problems) {
         if (sound != null && !ForgeRegistries.SOUND_EVENTS.containsKey(sound)) {
             problems.add(where + "音「" + sound + "」がありません（音は鳴りません）");
         }

@@ -103,6 +103,18 @@ public class Ordo extends AmemaruBoss {
         return new String[]{"skill_icicle", "skill_blizzard", "skill_gaze", "skill_call", "skill_receive", "skill_remember"};
     }
 
+    /** 11月28日：全員を狙う技は、思い出してひざをついている間（攻めどき）は出さない。 */
+    @Override
+    protected boolean partyAttackAllowed() {
+        return !remembering();
+    }
+
+    /** 11月28日：全員を狙う技が当たると、凍える。 */
+    @Override
+    protected void onPartyHit(ServerPlayer player, String skill) {
+        jp.amemaru.lostconnection.combat.PlayerColdService.chill(player, 1, 80);
+    }
+
     @Override
     protected int phaseFor(double ratio) {
         if (ratio <= 0.35) {

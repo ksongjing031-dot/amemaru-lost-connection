@@ -87,6 +87,7 @@ public final class ClientModEvents {
         event.register(KeyBindings.OPEN_PARTY);
         event.register(KeyBindings.RETIRE);
         event.register(KeyBindings.LOCK_ON);
+        event.register(KeyBindings.UNIQUE_SKILL);
         for (KeyMapping key : KeyBindings.SKILLS) {
             event.register(key);
         }

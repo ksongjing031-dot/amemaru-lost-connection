@@ -650,6 +650,21 @@ public class SkillTreeScreen extends Screen {
         return null;
     }
 
+    /**
+     * 11月28日のご指示「スキルツリーの奥義は取れるまで詳細が？？？にして分からなくしましょう」：まだ取れない奥義か
+     * （名前・説明・数値・印を隠す）。開く条件（レベル・上位職・となりの節）がそろえば見せる【補完】：ツリーポイントが
+     * 足りないだけのときは、条件はそろっているので見せる。覚えた奥義と、選び直しで外した奥義の数値はいつも見せる。
+     */
+    boolean ultimateHidden(SkillInfo skill, int index, ClientPlayerState state) {
+        if (skill == null || !skill.ultimate() || state.rank(skill.index()) > 0) {
+            return false;
+        }
+        if (skill.jobIndex() != state.jobIndex()) {
+            return true;
+        }
+        return state.level() < skill.minLevel() || !state.promoted() || !connected(index, state);
+    }
+
     /** ステータスの節の、上がる分（数と%）。{@code [ステータスの番号, 値, %か(1/0)]} を並べる。 */
     private static List<float[]> statEntries(TreeNodeInfo node) {
         List<float[]> entries = new ArrayList<>();
@@ -1192,6 +1207,12 @@ public class SkillTreeScreen extends Screen {
         }
         graphics.blit(SkillHudArt.TEXTURE, x, y, size, size, u, SkillHudArt.V_NODE, SkillHudArt.NODE, SkillHudArt.NODE, 256, 256);
         int inset = Math.max(1, Math.round(size * 2.0F / SkillHudArt.NODE));
+        if (ultimateHidden(skill, index, state)) {
+            // 11月28日：まだ取れない奥義は、印を出さずに「？」だけ（形からも分からないように）
+            graphics.fill(x + inset, y + inset, x + size - inset, y + size - inset, 0xE00A0F1C);
+            drawQuestion(graphics, x + size / 2.0F, y + size / 2.0F, size);
+            return;
+        }
         if (rank <= 0 && !available) {
             float dim = reachable ? 0.72F : 0.42F;
             RenderSystem.setShaderColor(dim, dim + 0.03F, Math.min(1.0F, dim + 0.12F), 1.0F);
@@ -1214,6 +1235,18 @@ public class SkillTreeScreen extends Screen {
                 pose.popPose();
             }
         }
+    }
+
+    /** まだ分からない奥義の「？」（節の大きさに合わせて大きくする）。 */
+    private void drawQuestion(GuiGraphics graphics, float centerX, float centerY, int size) {
+        String mark = "？";
+        float scale = Mth.clamp(size / 20.0F, 0.6F, 2.0F);
+        PoseStack pose = graphics.pose();
+        pose.pushPose();
+        pose.translate(centerX, centerY, 0.0F);
+        pose.scale(scale, scale, 1.0F);
+        graphics.drawString(font, mark, -font.width(mark) / 2 + 1, -4, 0xFFC9A860, true);
+        pose.popPose();
     }
 
     /** スキルの節の下の、段階の印（上位職からの段階は、橙色）。 */
@@ -1377,9 +1410,9 @@ public class SkillTreeScreen extends Screen {
         blitArt(graphics, x, top, 24, 24, 72, 32, 32, 32);
         graphics.blit(job.icon(), x + 4, top + 4, 16, 16, 0, 0, 64, 64, 64, 64);
         graphics.drawString(font, UiStyle.clip(font, job.name(), width - 28), x + 28, top + 1, 0xFF000000 | job.color(), true);
-        graphics.drawString(font, UiStyle.clip(font, Component.translatable("screen.amemaru.skill_tree.kind.core").getString(), width - 28),
-                x + 28, top + 13, UiStyle.TEXT_DIM, false);
-        int y = top + 30;
+        int subLines = drawSubtitle(graphics, Component.translatable("screen.amemaru.skill_tree.kind.core").getString(), x + 28, top + 12,
+                width - 28);
+        int y = top + (subLines > 1 ? 34 : 30);
         int lines = UiStyle.wrapped(graphics, font, job.description(), x, y, width, UiStyle.TEXT, Math.max(1, Math.min(4, (bottom - y) / 10)));
         y += lines * 10 + 4;
         if (job.hasUpper() && y + 10 <= bottom) {
@@ -1427,6 +1460,11 @@ public class SkillTreeScreen extends Screen {
         if (skill == null) {
             return;
         }
+        int nodeIndex = selectedIndex();
+        if (ultimateHidden(skill, nodeIndex, state)) {
+            renderHiddenUltimate(graphics, state, job, skill, nodeIndex, x, top, right, bottom);
+            return;
+        }
         int width = right - x;
         int rank = state.rank(skill.index());
         RenderSystem.enableBlend();
@@ -1449,9 +1487,9 @@ public class SkillTreeScreen extends Screen {
         if (!skill.comboLabel().isEmpty()) {
             sub += "・【" + skill.comboLabel() + "】";
         }
-        graphics.drawString(font, UiStyle.clip(font, sub, width - 28), x + 28, top + 13, UiStyle.TEXT_DIM, false);
-
-        int descY = top + 28;
+        // 11月28日：入りきらないときは2行に折り返す（切って「…」にしない）
+        int subLines = drawSubtitle(graphics, sub, x + 28, top + 12, width - 28);
+        int descY = top + (subLines > 1 ? 34 : 28);
         UiStyle.wrapped(graphics, font, skill.description(), x, descY, width, UiStyle.TEXT, DESC_LINES);
         if (UiStyle.overflows(font, skill.description(), width, DESC_LINES)) {
             descriptionRect = new Rect(x, descY, right, descY + DESC_LINES * 10);
@@ -1491,6 +1529,74 @@ public class SkillTreeScreen extends Screen {
             }
         }
         linesRect = new Rect(x, linesTop, right, Math.max(linesTop + 10, y));
+    }
+
+    /** 名前の下の小さな説明（2行まで。入りきらない分は「…」）。描いた行の数を返す。 */
+    private int drawSubtitle(GuiGraphics graphics, String text, int x, int y, int width) {
+        List<String> parts = UiStyle.wrap(font, text, width);
+        int count = Math.min(2, parts.size());
+        for (int k = 0; k < count; k++) {
+            String line = parts.get(k);
+            if (k == count - 1 && parts.size() > count) {
+                line = UiStyle.clip(font, line + "…", width);
+            }
+            graphics.drawString(font, line, x, y + k * 10, UiStyle.TEXT_DIM, false);
+        }
+        return count;
+    }
+
+    /**
+     * まだ取れない奥義（11月28日）：名前・説明・数値は「？？？」にし、開く条件だけを見せる。
+     * 条件は、そろったものを緑の◆、まだのものを暗い◇で並べる。
+     */
+    private void renderHiddenUltimate(GuiGraphics graphics, ClientPlayerState state, JobInfo job, SkillInfo skill, int index, int x, int top,
+                                      int right, int bottom) {
+        int width = right - x;
+        RenderSystem.enableBlend();
+        RenderSystem.defaultBlendFunc();
+        graphics.blit(SkillHudArt.TEXTURE, x, top, 24, 24, SkillHudArt.U_NODE_ULTIMATE, SkillHudArt.V_NODE, SkillHudArt.NODE, SkillHudArt.NODE,
+                256, 256);
+        graphics.fill(x + 2, top + 2, x + 22, top + 22, 0xE00A0F1C);
+        drawQuestion(graphics, x + 12.0F, top + 12.0F, 24);
+        graphics.drawString(font, Component.translatable("screen.amemaru.skill_tree.hidden.name"), x + 28, top + 1, UiStyle.TEXT, true);
+        String schoolName = skill.schoolIndex() >= 0 && skill.schoolIndex() < job.schools().size() ? job.schools().get(skill.schoolIndex()).name()
+                : "";
+        String sub = schoolName.isEmpty() ? Component.translatable("screen.amemaru.skill_tree.ultimate").getString()
+                : Component.translatable("screen.amemaru.skill_tree.ultimate_of", schoolName).getString();
+        drawSubtitle(graphics, sub, x + 28, top + 12, width - 28);
+
+        int y = top + 30;
+        y += UiStyle.wrapped(graphics, font, Component.translatable("screen.amemaru.skill_tree.hidden.desc").getString(), x, y, width,
+                UiStyle.TEXT_DIM, 3) * 10 + 6;
+        if (y + 10 > bottom) {
+            return;
+        }
+        graphics.drawString(font, UiStyle.clip(font, Component.translatable("screen.amemaru.skill_tree.hidden.conditions").getString(), width), x,
+                y, UiStyle.TEXT_HEADER, false);
+        y += 12;
+        List<Component> labels = new ArrayList<>();
+        List<Boolean> met = new ArrayList<>();
+        labels.add(Component.translatable("screen.amemaru.skill_tree.hidden.level", skill.minLevel(), state.level()));
+        met.add(state.level() >= skill.minLevel());
+        if (job.hasUpper()) {
+            labels.add(Component.translatable("screen.amemaru.skill_tree.hidden.upper", job.upperName()));
+            met.add(state.promoted());
+        }
+        labels.add(Component.translatable("screen.amemaru.skill_tree.hidden.connect"));
+        met.add(connected(index, state));
+        int bullet = font.width("◆ ");
+        for (int k = 0; k < labels.size() && y + 10 <= bottom; k++) {
+            boolean ok = met.get(k);
+            graphics.drawString(font, ok ? "◆" : "◇", x + 2, y, ok ? UiStyle.TEXT_GOOD : UiStyle.TEXT_DIM, false);
+            graphics.drawString(font, UiStyle.clip(font, labels.get(k).getString(), width - bullet - 2), x + 2 + bullet, y,
+                    ok ? UiStyle.TEXT_GOOD : UiStyle.TEXT, false);
+            y += 11;
+        }
+        y += 5;
+        if (y + 10 <= bottom) {
+            UiStyle.wrapped(graphics, font, Component.translatable("screen.amemaru.skill_tree.ultimate_choice").getString(), x, y, width,
+                    UiStyle.TEXT_DIM, Math.max(1, (bottom - y) / 10));
+        }
     }
 
     /** 段階のつまみ（1〜5）と、見せている段階の状態（習得済み・次の段階・上位職から・Lvから）。 */
@@ -1794,6 +1900,17 @@ public class SkillTreeScreen extends Screen {
                 return lines;
             }
             int rank = state.rank(skill.index());
+            if (ultimateHidden(skill, index, state)) {
+                // 11月28日：まだ取れない奥義は、名前も「？？？」（取れない理由と、分かるようになる時だけ）
+                lines.add(Component.translatable("screen.amemaru.skill_tree.hidden.name").withStyle(ChatFormatting.AQUA).getVisualOrderText());
+                lines.add(Component.translatable("screen.amemaru.skill_tree.ultimate").withStyle(ChatFormatting.GRAY).getVisualOrderText());
+                lines.add(nodeStatus(index, state).getVisualOrderText());
+                for (String part : UiStyle.wrap(font, Component.translatable("screen.amemaru.skill_tree.hidden.tooltip").getString(), 200)) {
+                    lines.add(Component.literal(part).withStyle(ChatFormatting.GRAY).getVisualOrderText());
+                }
+                lines.add(Component.translatable("screen.amemaru.skill_tree.tooltip.click").withStyle(ChatFormatting.DARK_GRAY).getVisualOrderText());
+                return lines;
+            }
             lines.add(Component.literal(skill.name()).withStyle(ChatFormatting.AQUA).getVisualOrderText());
             MutableComponent second = Component.translatable("screen.amemaru.skill_tree.rank", rank, skill.maxRank());
             second.append("・").append(Component.translatable(skill.ultimate() ? "screen.amemaru.skill_tree.ultimate"

@@ -144,31 +144,6 @@ public final class SyncDefinitionsS2C {
         for (int i = 0; i < snapshot.skills().size(); i++) {
             SkillDef skill = snapshot.skills().get(i);
             JobDef job = snapshot.job(skill.job());
-            int max = skill.maxRank();
-            int[] costs = new int[max];
-            int[] mp = new int[max];
-            int[] gauge = new int[max];
-            float[] cooldown = new float[max];
-            float[] cast = new float[max];
-            float[] aim = new float[max];
-            float[] radius = new float[max];
-            float[] angle = new float[max];
-            int[] count = new int[max];
-            int[] countCharged = new int[max];
-            List<List<String>> details = new ArrayList<>();
-            for (int r = 1; r <= max; r++) {
-                costs[r - 1] = skill.rankCost(r);
-                mp[r - 1] = skill.mpCost(r);
-                gauge[r - 1] = skill.gaugeCost(r);
-                cooldown[r - 1] = (float) skill.cooldown(r);
-                cast[r - 1] = (float) skill.cast(r);
-                aim[r - 1] = (float) skill.delivery().aimRange(r);
-                radius[r - 1] = (float) skill.delivery().radius(r);
-                angle[r - 1] = (float) skill.delivery().angle(r);
-                count[r - 1] = skill.delivery().count(r);
-                countCharged[r - 1] = skill.delivery().countCharged(r);
-                details.add(SkillDescriber.describe(skill, job, r));
-            }
             int[] reqSkills = new int[skill.requirements().size()];
             int[] reqRanks = new int[reqSkills.length];
             for (int j = 0; j < reqSkills.length; j++) {
@@ -177,12 +152,7 @@ public final class SyncDefinitionsS2C {
             }
             // 奥義も流派ごと（2つから1つを選ぶ）なので、流派の番号を送る（奥義のつまみに出すかは ultimate で決める）
             int school = job == null ? -1 : job.schoolIndex(skill.school());
-            skills.add(new SkillInfo(i, skill.id(), snapshot.jobIndex(skill.job()), school, skill.row(), skill.column(),
-                    !skill.isActive(), skill.isUltimate(), skill.name(), skill.description(), skill.icon(), max, costs,
-                    skill.upperRank(), skill.minLevel(), reqSkills, reqRanks, skill.link().ordinal(),
-                    skill.delivery().type().ordinal(), skill.delivery().affects() == Affects.ALLIES, mp, gauge, cooldown, cast,
-                    aim, radius, skill.animation(), skill.castAnimation(), skill.fx(), details, (float) skill.chargeTime(),
-                    skill.chargeAnimation(), angle, count, countCharged, skill.combo().ordinal(), skill.tags()));
+            skills.add(skillInfo(skill, i, snapshot.jobIndex(skill.job()), school, job, reqSkills, reqRanks));
         }
         SyncDefinitionsS2C message = new SyncDefinitionsS2C(snapshot.version(), jobs, skills);
         List<TreeInfo> trees = new ArrayList<>();
@@ -208,6 +178,46 @@ public final class SyncDefinitionsS2C {
         }
         message.trees = trees;
         return message;
+    }
+
+    /**
+     * スキルの定義から、画面に要る分を作る（11月28日：ユニーク武器の固有スキルの同期でも使うため、ここに分けた）。
+     *
+     * @param job 職業（固有スキルのように職業がなければ null）
+     */
+    public static SkillInfo skillInfo(SkillDef skill, int index, int jobIndex, int school, @javax.annotation.Nullable JobDef job, int[] reqSkills,
+                                      int[] reqRanks) {
+        int max = skill.maxRank();
+        int[] costs = new int[max];
+        int[] mp = new int[max];
+        int[] gauge = new int[max];
+        float[] cooldown = new float[max];
+        float[] cast = new float[max];
+        float[] aim = new float[max];
+        float[] radius = new float[max];
+        float[] angle = new float[max];
+        int[] count = new int[max];
+        int[] countCharged = new int[max];
+        List<List<String>> details = new ArrayList<>();
+        for (int r = 1; r <= max; r++) {
+            costs[r - 1] = skill.rankCost(r);
+            mp[r - 1] = skill.mpCost(r);
+            gauge[r - 1] = skill.gaugeCost(r);
+            cooldown[r - 1] = (float) skill.cooldown(r);
+            cast[r - 1] = (float) skill.cast(r);
+            aim[r - 1] = (float) skill.delivery().aimRange(r);
+            radius[r - 1] = (float) skill.delivery().radius(r);
+            angle[r - 1] = (float) skill.delivery().angle(r);
+            count[r - 1] = skill.delivery().count(r);
+            countCharged[r - 1] = skill.delivery().countCharged(r);
+            details.add(SkillDescriber.describe(skill, job, r));
+        }
+        return new SkillInfo(index, skill.id(), jobIndex, school, skill.row(), skill.column(),
+                !skill.isActive(), skill.isUltimate(), skill.name(), skill.description(), skill.icon(), max, costs,
+                skill.upperRank(), skill.minLevel(), reqSkills, reqRanks, skill.link().ordinal(),
+                skill.delivery().type().ordinal(), skill.delivery().affects() == Affects.ALLIES, mp, gauge, cooldown, cast,
+                aim, radius, skill.animation(), skill.castAnimation(), skill.fx(), details, (float) skill.chargeTime(),
+                skill.chargeAnimation(), angle, count, countCharged, skill.combo().ordinal(), skill.tags());
     }
 
     private static float[] pairs(java.util.Map<StatType, Double> stats) {
@@ -272,55 +282,7 @@ public final class SyncDefinitionsS2C {
         }
         buf.writeVarInt(skills.size());
         for (SkillInfo skill : skills) {
-            buf.writeVarInt(skill.index());
-            buf.writeResourceLocation(skill.id());
-            buf.writeVarInt(skill.jobIndex());
-            buf.writeVarInt(skill.schoolIndex() + 1);
-            buf.writeVarInt(skill.row());
-            buf.writeVarInt(skill.column());
-            buf.writeBoolean(skill.passive());
-            buf.writeBoolean(skill.ultimate());
-            buf.writeUtf(skill.name());
-            buf.writeUtf(skill.description());
-            buf.writeResourceLocation(skill.icon());
-            buf.writeVarInt(skill.maxRank());
-            buf.writeVarIntArray(skill.rankCosts());
-            buf.writeVarInt(skill.upperRank());
-            buf.writeVarInt(skill.minLevel());
-            buf.writeVarInt(skill.requiredSkills().length);
-            for (int j = 0; j < skill.requiredSkills().length; j++) {
-                buf.writeVarInt(skill.requiredSkills()[j] + 1);
-                buf.writeVarInt(skill.requiredRanks()[j]);
-            }
-            buf.writeVarInt(skill.link());
-            buf.writeVarInt(skill.delivery());
-            buf.writeBoolean(skill.alliesOnly());
-            buf.writeVarIntArray(skill.mpCost());
-            buf.writeVarIntArray(skill.gaugeCost());
-            writeFloats(buf, skill.cooldown());
-            writeFloats(buf, skill.cast());
-            writeFloats(buf, skill.aimRange());
-            writeFloats(buf, skill.radius());
-            buf.writeUtf(skill.animation());
-            buf.writeUtf(skill.castAnimation());
-            buf.writeUtf(skill.fx());
-            buf.writeVarInt(skill.details().size());
-            for (List<String> lines : skill.details()) {
-                buf.writeVarInt(lines.size());
-                for (String line : lines) {
-                    buf.writeUtf(line);
-                }
-            }
-            buf.writeFloat(skill.chargeTime());
-            buf.writeUtf(skill.chargeAnimation());
-            writeFloats(buf, skill.angle());
-            buf.writeVarIntArray(skill.count());
-            buf.writeVarIntArray(skill.countCharged());
-            buf.writeVarInt(skill.combo());
-            buf.writeVarInt(skill.tags().size());
-            for (String tag : skill.tags()) {
-                buf.writeUtf(tag);
-            }
+            writeSkill(buf, skill);
         }
         buf.writeVarInt(trees.size());
         for (TreeInfo tree : trees) {
@@ -340,6 +302,122 @@ public final class SyncDefinitionsS2C {
             }
             buf.writeVarIntArray(tree.links());
         }
+    }
+
+    /** スキルの1つ分を書き出す（固有スキルの同期でも使う）。 */
+    public static void writeSkill(FriendlyByteBuf buf, SkillInfo skill) {
+        buf.writeVarInt(skill.index());
+        buf.writeResourceLocation(skill.id());
+        buf.writeVarInt(skill.jobIndex());
+        buf.writeVarInt(skill.schoolIndex() + 1);
+        buf.writeVarInt(skill.row());
+        buf.writeVarInt(skill.column());
+        buf.writeBoolean(skill.passive());
+        buf.writeBoolean(skill.ultimate());
+        buf.writeUtf(skill.name());
+        buf.writeUtf(skill.description());
+        buf.writeResourceLocation(skill.icon());
+        buf.writeVarInt(skill.maxRank());
+        buf.writeVarIntArray(skill.rankCosts());
+        buf.writeVarInt(skill.upperRank());
+        buf.writeVarInt(skill.minLevel());
+        buf.writeVarInt(skill.requiredSkills().length);
+        for (int j = 0; j < skill.requiredSkills().length; j++) {
+            buf.writeVarInt(skill.requiredSkills()[j] + 1);
+            buf.writeVarInt(skill.requiredRanks()[j]);
+        }
+        buf.writeVarInt(skill.link());
+        buf.writeVarInt(skill.delivery());
+        buf.writeBoolean(skill.alliesOnly());
+        buf.writeVarIntArray(skill.mpCost());
+        buf.writeVarIntArray(skill.gaugeCost());
+        writeFloats(buf, skill.cooldown());
+        writeFloats(buf, skill.cast());
+        writeFloats(buf, skill.aimRange());
+        writeFloats(buf, skill.radius());
+        buf.writeUtf(skill.animation());
+        buf.writeUtf(skill.castAnimation());
+        buf.writeUtf(skill.fx());
+        buf.writeVarInt(skill.details().size());
+        for (List<String> lines : skill.details()) {
+            buf.writeVarInt(lines.size());
+            for (String line : lines) {
+                buf.writeUtf(line);
+            }
+        }
+        buf.writeFloat(skill.chargeTime());
+        buf.writeUtf(skill.chargeAnimation());
+        writeFloats(buf, skill.angle());
+        buf.writeVarIntArray(skill.count());
+        buf.writeVarIntArray(skill.countCharged());
+        buf.writeVarInt(skill.combo());
+        buf.writeVarInt(skill.tags().size());
+        for (String tag : skill.tags()) {
+            buf.writeUtf(tag);
+        }
+    }
+
+    /** スキルの1つ分を読み込む（固有スキルの同期でも使う）。 */
+    public static SkillInfo readSkill(FriendlyByteBuf buf) {
+        int index = buf.readVarInt();
+        ResourceLocation id = buf.readResourceLocation();
+        int jobIndex = buf.readVarInt();
+        int schoolIndex = buf.readVarInt() - 1;
+        int row = buf.readVarInt();
+        int column = buf.readVarInt();
+        boolean passive = buf.readBoolean();
+        boolean ultimate = buf.readBoolean();
+        String name = buf.readUtf();
+        String description = buf.readUtf();
+        ResourceLocation icon = buf.readResourceLocation();
+        int maxRank = check(buf.readVarInt(), 16);
+        int[] costs = buf.readVarIntArray(16);
+        int upperRank = buf.readVarInt();
+        int minLevel = buf.readVarInt();
+        int reqCount = check(buf.readVarInt(), 16);
+        int[] reqSkills = new int[reqCount];
+        int[] reqRanks = new int[reqCount];
+        for (int j = 0; j < reqCount; j++) {
+            reqSkills[j] = buf.readVarInt() - 1;
+            reqRanks[j] = buf.readVarInt();
+        }
+        int link = buf.readVarInt();
+        int delivery = buf.readVarInt();
+        boolean alliesOnly = buf.readBoolean();
+        int[] mp = buf.readVarIntArray(16);
+        int[] gauge = buf.readVarIntArray(16);
+        float[] cooldown = readFloats(buf);
+        float[] cast = readFloats(buf);
+        float[] aim = readFloats(buf);
+        float[] radius = readFloats(buf);
+        String animation = buf.readUtf();
+        String castAnimation = buf.readUtf();
+        String fx = buf.readUtf();
+        int detailCount = check(buf.readVarInt(), 16);
+        List<List<String>> details = new ArrayList<>(detailCount);
+        for (int d = 0; d < detailCount; d++) {
+            int lineCount = check(buf.readVarInt(), MAX_LINES);
+            List<String> lines = new ArrayList<>(lineCount);
+            for (int l = 0; l < lineCount; l++) {
+                lines.add(buf.readUtf());
+            }
+            details.add(lines);
+        }
+        float chargeTime = buf.readFloat();
+        String chargeAnimation = buf.readUtf();
+        float[] angle = readFloats(buf);
+        int[] count = buf.readVarIntArray(16);
+        int[] countCharged = buf.readVarIntArray(16);
+        int combo = buf.readVarInt();
+        int tagCount = check(buf.readVarInt(), 16);
+        List<String> tags = new ArrayList<>(tagCount);
+        for (int t = 0; t < tagCount; t++) {
+            tags.add(buf.readUtf(64));
+        }
+        return new SkillInfo(index, id, jobIndex, schoolIndex, row, column, passive, ultimate, name, description, icon,
+                maxRank, costs, upperRank, minLevel, reqSkills, reqRanks, link, delivery, alliesOnly, mp, gauge, cooldown, cast,
+                aim, radius, animation, castAnimation, fx, details, chargeTime, chargeAnimation, angle, count, countCharged, combo,
+                tags);
     }
 
     public static SyncDefinitionsS2C decode(FriendlyByteBuf buf) {
@@ -395,65 +473,7 @@ public final class SyncDefinitionsS2C {
         int skillCount = check(buf.readVarInt(), MAX_ENTRIES);
         List<SkillInfo> skills = new ArrayList<>(skillCount);
         for (int i = 0; i < skillCount; i++) {
-            int index = buf.readVarInt();
-            ResourceLocation id = buf.readResourceLocation();
-            int jobIndex = buf.readVarInt();
-            int schoolIndex = buf.readVarInt() - 1;
-            int row = buf.readVarInt();
-            int column = buf.readVarInt();
-            boolean passive = buf.readBoolean();
-            boolean ultimate = buf.readBoolean();
-            String name = buf.readUtf();
-            String description = buf.readUtf();
-            ResourceLocation icon = buf.readResourceLocation();
-            int maxRank = check(buf.readVarInt(), 16);
-            int[] costs = buf.readVarIntArray(16);
-            int upperRank = buf.readVarInt();
-            int minLevel = buf.readVarInt();
-            int reqCount = check(buf.readVarInt(), 16);
-            int[] reqSkills = new int[reqCount];
-            int[] reqRanks = new int[reqCount];
-            for (int j = 0; j < reqCount; j++) {
-                reqSkills[j] = buf.readVarInt() - 1;
-                reqRanks[j] = buf.readVarInt();
-            }
-            int link = buf.readVarInt();
-            int delivery = buf.readVarInt();
-            boolean alliesOnly = buf.readBoolean();
-            int[] mp = buf.readVarIntArray(16);
-            int[] gauge = buf.readVarIntArray(16);
-            float[] cooldown = readFloats(buf);
-            float[] cast = readFloats(buf);
-            float[] aim = readFloats(buf);
-            float[] radius = readFloats(buf);
-            String animation = buf.readUtf();
-            String castAnimation = buf.readUtf();
-            String fx = buf.readUtf();
-            int detailCount = check(buf.readVarInt(), 16);
-            List<List<String>> details = new ArrayList<>(detailCount);
-            for (int d = 0; d < detailCount; d++) {
-                int lineCount = check(buf.readVarInt(), MAX_LINES);
-                List<String> lines = new ArrayList<>(lineCount);
-                for (int l = 0; l < lineCount; l++) {
-                    lines.add(buf.readUtf());
-                }
-                details.add(lines);
-            }
-            float chargeTime = buf.readFloat();
-            String chargeAnimation = buf.readUtf();
-            float[] angle = readFloats(buf);
-            int[] count = buf.readVarIntArray(16);
-            int[] countCharged = buf.readVarIntArray(16);
-            int combo = buf.readVarInt();
-            int tagCount = check(buf.readVarInt(), 16);
-            List<String> tags = new ArrayList<>(tagCount);
-            for (int t = 0; t < tagCount; t++) {
-                tags.add(buf.readUtf(64));
-            }
-            skills.add(new SkillInfo(index, id, jobIndex, schoolIndex, row, column, passive, ultimate, name, description, icon,
-                    maxRank, costs, upperRank, minLevel, reqSkills, reqRanks, link, delivery, alliesOnly, mp, gauge, cooldown, cast,
-                    aim, radius, animation, castAnimation, fx, details, chargeTime, chargeAnimation, angle, count, countCharged, combo,
-                    tags));
+            skills.add(readSkill(buf));
         }
         SyncDefinitionsS2C message = new SyncDefinitionsS2C(version, jobs, skills);
         int treeCount = check(buf.readVarInt(), MAX_ENTRIES);

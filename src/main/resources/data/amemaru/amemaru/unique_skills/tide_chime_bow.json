@@ -1,0 +1,42 @@
+{
+  "_comment": "ユニーク武器の固有スキル（11月28日【補完】。tools/datagen/build_unique_skills.py）",
+  "item": "amemaru:tide_chime_bow",
+  "name": "大水門の一矢",
+  "description": "握りの水門を開き、水をまとった一矢を放つ。当たった所で大水門が開いたように水があふれ、まわりの敵を押し流す。防御を3割無視する。",
+  "color": "#4FB6F0",
+  "cost": {
+    "mp": 24
+  },
+  "cooldown": 35,
+  "delivery": {
+    "type": "projectile",
+    "kind": "arrow",
+    "range": 36,
+    "speed": 2.6,
+    "radius": 0.5,
+    "explode": 3.5
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "attack",
+      "coefficient": 3.0,
+      "pierce": 30
+    },
+    {
+      "type": "knockback",
+      "strength": 0.9
+    },
+    {
+      "type": "status",
+      "effect": "amemaru:stagger",
+      "duration": 1.0
+    }
+  ],
+  "tags": [
+    "arrow"
+  ],
+  "animation": "archer_heavy",
+  "sound": "amemaru:skill.archer.piercing_shot",
+  "fx": "unique_tide_chime"
+}

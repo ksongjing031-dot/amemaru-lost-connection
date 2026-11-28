@@ -355,6 +355,57 @@ class Validator:
                 self.problems.append(f"{where}音「{sound}」がありません（{key}）")
         return len(self.problems) == before
 
+    # ------------------------------------------------------------------ 固有スキル（11月28日）
+
+    UNIQUE_FORBIDDEN = ("job", "school", "row", "column", "ultimate", "max_rank", "rank_costs", "upper_rank", "requires", "charge",
+                        "passive")
+
+    def check_unique_skills(self) -> int:
+        """ユニーク武器の固有スキル（unique_skills/*.json。UniqueSkillDef.java と同じ決まり）。数を返す。"""
+        folder = DATA / "unique_skills"
+        if not folder.is_dir():
+            return 0
+        animations = ROOT / "src/main/resources/assets/amemaru/player_animation"
+        items = set()
+        count = 0
+        for path in sorted(folder.glob("*.json")):
+            name = path.stem
+            where = f"unique_skills/{name}："
+            data = json.loads(path.read_text(encoding="utf-8"))
+            for key in self.UNIQUE_FORBIDDEN:
+                if key in data:
+                    self.problems.append(f"{where}固有スキルに「{key}」は書けません")
+            item = data.get("item", "")
+            if not item.startswith("amemaru:") or not (DATA / "equipment" / (item.split(":", 1)[1] + ".json")).is_file():
+                self.problems.append(f"{where}武器「{item}」の定義（equipment）がありません")
+            elif item in items:
+                self.problems.append(f"{where}武器「{item}」に固有スキルが2つあります")
+            else:
+                equipment = json.loads((DATA / "equipment" / (item.split(":", 1)[1] + ".json")).read_text(encoding="utf-8"))
+                if equipment.get("rarity") != "unique":
+                    self.warnings.append(f"{where}武器「{item}」はユニークではありません")
+            items.add(item)
+            fx = data.get("fx", "unique_" + name)
+            if not fx.startswith("unique_"):
+                self.problems.append(f"{where}「fx」は unique_ で始めてください")
+            if at(data, "cast", 1) > 0:
+                self.problems.append(f"{where}固有スキルに詠唱（cast）は付けられません")
+            if at(data, "cooldown", 1) < 5:
+                self.problems.append(f"{where}クールダウンは5秒以上にしてください")
+            animation = data.get("animation", "")
+            if animation and not (animations / (animation + ".json")).is_file():
+                self.problems.append(f"{where}モーション「{animation}」がありません")
+            merged = {k: v for k, v in data.items() if k not in ("item", "color")}
+            merged.update({"job": "amemaru:unique", "school": "unique", "row": 0, "type": "active", "max_rank": 1})
+            statuses: list = []
+            if self.check_skill("amemaru:unique/" + name, merged, statuses):
+                bad = [s for s in statuses if s[1] not in self.mob_effects]
+                if bad:
+                    self.problems.append(f"{where}状態「{bad[0][1]}」がありません")
+                else:
+                    count += 1
+        return count
+
     # ------------------------------------------------------------------ 全体
 
     AWAKENING_KEYS = {"damage", "skill_damage", "finisher_damage", "crit", "crit_damage", "taken", "cooldown", "heal", "gauge_max",
@@ -482,11 +533,12 @@ class Validator:
                 if len(node.get("choices", [])) > 4:
                     self.problems.append(f"dialogues/{path.relative_to(DATA / 'dialogues')}：場面「{node_id}」の選択肢が"
                                          f"{len(node['choices'])}つあります（4つまで）")
+        uniques = self.check_unique_skills()
         for warning in self.warnings:
             print("注意：" + warning)
         for problem in self.problems:
             print("問題：" + problem)
-        print(f"職業 {len(jobs)}・使えるスキル {len(skills)}・問題 {len(self.problems)}・注意 {len(self.warnings)}")
+        print(f"職業 {len(jobs)}・使えるスキル {len(skills)}・固有スキル {uniques}・問題 {len(self.problems)}・注意 {len(self.warnings)}")
         return 1 if self.problems else 0
 
 

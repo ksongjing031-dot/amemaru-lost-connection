@@ -1,0 +1,37 @@
+{
+  "_comment": "ユニーク武器の固有スキル（11月28日【補完】。tools/datagen/build_unique_skills.py）",
+  "item": "amemaru:still_lake_pearl_staff",
+  "name": "静湖の大波紋",
+  "description": "杖の真珠を狙った地に落とす。静かな湖に落ちた真珠のように、三重の波紋が広がって敵を打ち、敵の攻撃をしばらく弱める。",
+  "color": "#A8F7FF",
+  "cost": {
+    "mp": 50
+  },
+  "cooldown": 45,
+  "delivery": {
+    "type": "point",
+    "range": 24,
+    "radius": 6,
+    "impact_delay": 0.5
+  },
+  "effects": [
+    {
+      "type": "damage",
+      "stat": "magic",
+      "coefficient": 3.4
+    },
+    {
+      "type": "weaken",
+      "value": 20,
+      "duration": 6
+    },
+    {
+      "type": "knockback",
+      "strength": 0.5
+    }
+  ],
+  "animation": "wizard_star_burst",
+  "sound": "amemaru:skill.wizard.star_burst",
+  "impact_sound": "amemaru:skill.wizard.meteor_impact",
+  "fx": "unique_still_lake"
+}

@@ -62,6 +62,17 @@ public final class KeyBindings {
             GLFW.GLFW_KEY_B,
             CATEGORY);
 
+    /**
+     * ユニーク武器の固有スキル（初期値：Y。11月28日のご指示「ユニーク武器や装備には特殊効果や特殊スキルをつけましょう」【補完】）。
+     * 固有スキルのある武器を手に持っているときだけ働く。Y は試作版のスキル枠6の初期値だったが、新しい初期値に移したので空いている。
+     */
+    public static final KeyMapping UNIQUE_SKILL = new KeyMapping(
+            "key.amemaru.unique_skill",
+            KeyConflictContext.IN_GAME,
+            InputConstants.Type.KEYSYM,
+            GLFW.GLFW_KEY_Y,
+            CATEGORY);
+
     private static final int[] SKILL_DEFAULTS = {
             GLFW.GLFW_KEY_R, GLFW.GLFW_KEY_G, GLFW.GLFW_KEY_V, GLFW.GLFW_KEY_Z, GLFW.GLFW_KEY_X, GLFW.GLFW_KEY_C};
 

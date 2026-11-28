@@ -494,6 +494,8 @@ public final class CiScreenshots {
             {"cmd", null, "10", "gamemode creative @p"},
             // 11月24日：ボスの「みんなで受ける一撃」は、ひとりで受けると倒れる。CIはひとりなので、印と演出だけにする
             {"cmd", null, "5", "amemaru admin boss share safe"},
+            // 11月28日：参加者全員を狙う技（一斉の印・大技）は、ボスが自分では出さない（ほかの技の写真に印が写らないように）。出させて撮る
+            {"cmd", null, "5", "amemaru admin boss party manual"},
             {"p5_build_floor", null, "20"},
             {"await_floor", null, "0"},
             {"cmd", null, "80", "tp @p {at:21.5,3,-78.5} -90 6"},
@@ -632,6 +634,20 @@ public final class CiScreenshots {
             {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,61.5} 180 55"},
             {"cmd", null, "10", "amemaru admin boss skill 1 roots"},
             {"snap", null, "0", "phase5_boss_roots"},
+            // 11月28日：参加者全員を狙う技。一斉の印（全員の足もとの赤い円。下を向いて写す）と、大技（主のまわりの大きな円。離れて写す）
+            {"cmd", null, "60", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @e[type=amemaru:veldhorn,limit=1] {f1:192.5,15,51.5} 0 0"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,62.5} 180 60"},
+            {"cmd", null, "0", "amemaru admin boss skill 1 volley"},
+            {"await_ground", null, "4", "p8p_f1_volley"},
+            {"cmd", null, "70", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "2", "amemaru admin boss skill 1 stomp"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @e[type=amemaru:veldhorn,limit=1] {f1:192.5,15,51.5} 0 0"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f1:192.5,15,70.5} 180 22"},
+            {"cmd", null, "0", "amemaru admin boss skill 1 nova_out"},
+            {"await_ground", null, "12", "p8p_f1_nova_out"},
+            {"cmd", null, "70", "amemaru admin debug vitals @a 100 100"},
             // 11月25日：固有のギミック「大地の咆哮」（角を突き立てた構え・部屋じゅうの赤い円・止めるまでの残り）。
             // みんなで受ける一撃（11月24日）は、レイドのボスだけになった
             {"cmd", null, "50", "amemaru admin debug vitals @a 100 100"},
@@ -1079,7 +1095,9 @@ public final class CiScreenshots {
             {"snap_keep", null, "60", "p8c_pachinko"},
             {"cmd", null, "5", "amemaru admin casino machine 1 force k10"},
             {"snap_keep", null, "150", "p8c_pachinko_reach"},
-            {"snap_keep", null, "190", "p8c_pachinko_jackpot"},
+            // 11月28日：大当たりの瞬間（光・紙吹雪・光の輪・落ちてきた役物・波打つ「大当たり」）
+            {"snap_keep", null, "150", "p8c_pachinko_fanfare"},
+            {"snap_keep", null, "38", "p8c_pachinko_jackpot"},
             {"p8c_shoot", null, "10", "on:right:70"},
             {"snap_keep", null, "260", "p8c_pachinko_round"},
             {"screen", null, "10", "hold"},
@@ -1090,8 +1108,10 @@ public final class CiScreenshots {
             {"snap_keep", null, "12", "p8c_slot_spin"},
             {"p8c_aim", null, "12", "0:7"},
             {"p8c_aim", null, "12", "1:7"},
-            {"p8c_aim", null, "40", "2:7"},
-            {"snap_keep", null, "20", "p8c_slot_big"},
+            {"p8c_aim", null, "14", "2:7"},
+            // 11月28日：BIG のはじまり（帯の飛びこみと紙吹雪）
+            {"snap_keep", null, "1", "p8c_slot_bonus_in"},
+            {"snap_keep", null, "43", "p8c_slot_big"},
             {"screen", null, "10", "hold"},
             {"cmd", null, "30", "tp @p {at:17.5,-9,78.5} 0 10"},
             {"p8c_board", null, "30"},
@@ -1726,6 +1746,65 @@ public final class CiScreenshots {
             {"cmd", null, "3", "item replace entity @a weapon.mainhand with amemaru:still_lake_pearl_staff"},
             {"p6_front", null, "10"},
             {"snap", null, "20", "p8g_unique_still_lake_pearl_staff"},
+            // 11月28日「ユニーク武器には特殊スキルを」：固有スキル（Y）。60ブロック上の空に床を作り、訓練人形を前に置いて、
+            // 8本それぞれの技を後ろから撮る（武器の色の星の陣・技の演出・右下のスキル枠のとなりの固有スキルの枠）
+            {"view", null, "3", "third"},
+            {"cmd", null, "5", "time set noon"},
+            {"cmd", null, "20", "execute as @p at @p run fill ~-10 ~59 ~-12 ~10 ~59 ~10 minecraft:smooth_stone"},
+            {"cmd", null, "20", "execute as @p at @p run tp @s ~ ~60 ~ 180 14"},
+            {"cmd", null, "5", "amemaru admin level set @p 40"},
+            {"cmd", null, "10", "execute as @p at @p run amemaru admin dummy 20"},
+            {"cmd", null, "3", "amemaru admin job set @p amemaru:knight"},
+            {"cmd", null, "3", "item replace entity @a weapon.mainhand with amemaru:earth_horn_greatsword"},
+            {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
+            {"p8u_use", null, "9"},
+            {"snap", null, "1", "p8u_earth_horn"},
+            {"cmd", null, "3", "amemaru admin job set @p amemaru:wizard"},
+            {"cmd", null, "3", "item replace entity @a weapon.mainhand with amemaru:millennium_tree_staff"},
+            {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
+            {"p8u_use", null, "14"},
+            {"snap", null, "1", "p8u_millennium"},
+            {"cmd", null, "3", "amemaru admin job set @p amemaru:archer"},
+            {"cmd", null, "3", "item replace entity @a weapon.mainhand with amemaru:tide_chime_bow"},
+            {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
+            {"p8u_use", null, "6"},
+            {"snap", null, "1", "p8u_tide_chime"},
+            {"cmd", null, "3", "amemaru admin job set @p amemaru:healer"},
+            {"cmd", null, "3", "item replace entity @a weapon.mainhand with amemaru:hymn_great_bell"},
+            {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
+            {"p8u_use", null, "8"},
+            {"snap", null, "1", "p8u_hymn_bell"},
+            {"cmd", null, "3", "amemaru admin job set @p amemaru:knight"},
+            {"cmd", null, "3", "item replace entity @a weapon.mainhand with amemaru:jade_oath_sword"},
+            {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
+            {"p8u_use", null, "12"},
+            {"snap", null, "1", "p8u_jade_oath"},
+            {"cmd", null, "3", "amemaru admin job set @p amemaru:monk"},
+            {"cmd", null, "3", "item replace entity @a weapon.mainhand with amemaru:snowlight_fists"},
+            {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
+            {"p8u_use", null, "11"},
+            {"snap", null, "1", "p8u_snowlight"},
+            {"cmd", null, "3", "amemaru admin job set @p amemaru:rogue"},
+            {"cmd", null, "3", "item replace entity @a weapon.mainhand with amemaru:mirror_moon_daggers"},
+            {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
+            {"p8u_use", null, "7"},
+            {"snap", null, "1", "p8u_mirror_moon"},
+            {"cmd", null, "3", "amemaru admin job set @p amemaru:wizard"},
+            {"cmd", null, "3", "item replace entity @a weapon.mainhand with amemaru:still_lake_pearl_staff"},
+            {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
+            {"p8u_use", null, "15"},
+            {"snap", null, "1", "p8u_still_lake"},
+            // 一人称：右下の固有スキルの枠（クールダウンの影と秒・Yのキー）と、手に持った大剣の説明文（固有スキルの段）
+            {"cmd", null, "3", "amemaru admin job set @p amemaru:knight"},
+            {"cmd", null, "3", "item replace entity @a weapon.mainhand with amemaru:jade_oath_sword"},
+            {"cmd", null, "10", "amemaru admin debug vitals @a 100 100"},
+            {"view", null, "3", "first"},
+            {"p8u_use", null, "30"},
+            {"snap", null, "1", "p8u_hud"},
+            {"p8u_tooltip", null, "10", "held,amemaru:seventh_gate_key"},
+            {"snap", null, "5", "p8u_tooltip"},
+            {"p8u_tooltip", null, "5", "-"},
+            {"cmd", null, "20", "execute as @p at @p run tp @s ~ ~-60 ~"},
             {"cmd", null, "3", "item replace entity @a weapon.mainhand with minecraft:air"},
             // 11月27日：祈願（ガチャ）。塔の入口の広間の西に立つ祈願所の巫女ユノと、1階の祈願の画面。天井の1回前にして10回引き、
             // ★5の虹の演出（魔法陣と光の柱）と、めくったカードを撮る
@@ -1752,6 +1831,10 @@ public final class CiScreenshots {
             {"snap", null, "30", "phase8_f5_gate_key"},
             {"view", null, "5", "third"},
             {"snap", null, "20", "phase8_f5_gate_key_back"},
+            // 11月28日：門鍵の固有スキル「認証」が働いている見た目（足もとの翠の環・状態のアイコン・盾の光）
+            {"p8u_ward", null, "12", "on"},
+            {"snap", null, "2", "p8u_gate_ward"},
+            {"p8u_ward", null, "3", "-"},
             {"view", null, "5", "first"},
             {"p8_charm", null, "5", "-"},
             {"cmd", null, "10", "execute as @p at @p run tp @s ~ ~-40 ~"},
@@ -1992,6 +2075,19 @@ public final class CiScreenshots {
             {"snap", null, "20", "phase8_f7_boss_open"},
             {"cmd", null, "5", "effect clear @p amemaru:lost_fade"},
             {"cmd", null, "40", "amemaru admin debug vitals @a 100 100"},
+            // 11月28日：参加者全員を狙う大技（金の円へ逃げこむ形・鏡像獣のそばの金の円へ寄る形）。上から写す
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f7:336.5,17,116.5} 180 10"},
+            {"cmd", null, "8", "amemaru admin boss skill 7 nova_safe"},
+            {"cmd", null, "1", "execute in amemaru:tower run tp @p {f7:336.5,40,113.5} 180 90"},
+            {"snap", null, "2", "p8p_f7_nova_safe"},
+            {"cmd", null, "100", "amemaru admin debug vitals @a 100 100"},
+            // 上から落ちる間に大技に打たれた分を戻してから、次の形を写す（HPが減ったままの写真にしない）
+            {"cmd", null, "2", "amemaru admin debug vitals @a 100 100"},
+            {"cmd", null, "2", "execute in amemaru:tower run tp @p {f7:336.5,17,124.5} 180 10"},
+            {"cmd", null, "8", "amemaru admin boss skill 7 nova_in"},
+            {"cmd", null, "1", "execute in amemaru:tower run tp @p {f7:336.5,40,116.5} 180 90"},
+            {"snap", null, "2", "p8p_f7_nova_in"},
+            {"cmd", null, "100", "amemaru admin debug vitals @a 100 100"},
             {"cmd", null, "5", "kill @e[type=amemaru:reflecta]"},
             {"snap_keep", null, "100", "phase8_f7_boss_defeated"},
             {"snap_keep", null, "120", "phase8_f7_boss_title"},
@@ -2305,6 +2401,18 @@ public final class CiScreenshots {
                         next(13, 3);
                     }
                     case 5 -> {
+                        // 11月28日：まだ取れない奥義は「？？？」で、開く条件だけが見える
+                        if (tree != null) {
+                            tree.selectNode(firstUltimateNode());
+                        }
+                        next(13, 6);
+                    }
+                    case 6 -> {
+                        clean(minecraft);
+                        pendingShot = "skill_tree_ultimate_hidden";
+                        next(13, 3);
+                    }
+                    case 7 -> {
                         if (tree != null) {
                             tree.showStats();
                         }
@@ -3418,7 +3526,7 @@ public final class CiScreenshots {
             }
         } else if (CiPhase6.action(minecraft, shot, first) || CiPhase6Guild.action(minecraft, shot, first)
                 || CiPhase6Refine.action(minecraft, shot, first) || CiPhase7.action(minecraft, shot, first)
-                || CiParlor.action(minecraft, shot, first)
+                || CiParlor.action(minecraft, shot, first) || CiUnique.action(minecraft, shot, first)
                 || CiPhase8.action(minecraft, shot, first)) {
             next(stage + 1, first ? waitTicks : 0);
         } else if (phase5Action(minecraft, shot, first)) {
@@ -3975,6 +4083,23 @@ public final class CiScreenshots {
     }
 
     /** 今の職業のツリーの、その種類の最初の節の名前（なければ空）。 */
+    /** 今の職業のツリーの、最初の奥義の節（11月28日：まだ取れない奥義の写真に使う）。 */
+    private static String firstUltimateNode() {
+        jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C.TreeInfo tree = ClientDefinitions.get().tree(ClientPlayerState.get().jobIndex());
+        if (tree == null) {
+            return "";
+        }
+        for (jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C.TreeNodeInfo node : tree.nodes()) {
+            if (node.kindEnum() == jp.amemaru.lostconnection.job.def.SkillTreeDef.Kind.SKILL) {
+                jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C.SkillInfo skill = ClientDefinitions.get().skill(node.skill());
+                if (skill != null && skill.ultimate()) {
+                    return node.id();
+                }
+            }
+        }
+        return "";
+    }
+
     private static String firstTreeNode(jp.amemaru.lostconnection.job.def.SkillTreeDef.Kind kind) {
         jp.amemaru.lostconnection.network.s2c.SyncDefinitionsS2C.TreeInfo tree = ClientDefinitions.get().tree(ClientPlayerState.get().jobIndex());
         if (tree == null) {

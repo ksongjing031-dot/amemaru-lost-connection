@@ -136,6 +136,12 @@ public class AncientGuardian extends AmemaruBoss {
         return new String[]{"skill_sweep", "skill_beam", "skill_slam", "skill_barrier", "skill_stagger", "skill_judge", "skill_kneel"};
     }
 
+    /** 11月28日：全員を狙う技は、結界の間（結び台に乗っている間）と、膝をついている間は出さない。 */
+    @Override
+    protected boolean partyAttackAllowed() {
+        return !kneeling() && !barrier();
+    }
+
     @Override
     protected int phaseFor(double ratio) {
         if (ratio <= 0.35) {

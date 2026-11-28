@@ -49,6 +49,8 @@ public final class ServerEvents {
         event.addListener(EquipmentDefs.loader());
         event.addListener(AccessoryRules.loader());
         event.addListener(AccessoryDefs.loader());
+        // 11月28日：ユニーク武器の固有スキル
+        event.addListener(jp.amemaru.lostconnection.equipment.UniqueSkills.loader());
         event.addListener(EnemyDefs.loader());
         event.addListener(ProductionRules.loader());
         // Phase 5：塔の階・NPC・会話・ストーリーイベント・はじめの手引き・進行日の予定
@@ -109,8 +111,11 @@ public final class ServerEvents {
         jp.amemaru.lostconnection.network.s2c.SyncNpcsS2C npcs = jp.amemaru.lostconnection.network.s2c.SyncNpcsS2C.current();
         jp.amemaru.lostconnection.network.s2c.MarketStallsS2C stalls =
                 jp.amemaru.lostconnection.network.s2c.MarketStallsS2C.current(event.getPlayerList().getServer());
+        // 11月28日：ユニーク武器の固有スキル（職業のスキルの一覧の後に送る）
+        jp.amemaru.lostconnection.network.s2c.SyncUniqueSkillsS2C uniques = jp.amemaru.lostconnection.network.s2c.SyncUniqueSkillsS2C.current();
         if (joining != null) {
             ModNetwork.sendTo(joining, definitions);
+            ModNetwork.sendTo(joining, uniques);
             ModNetwork.sendTo(joining, content);
             ModNetwork.sendTo(joining, npcs);
             ModNetwork.sendTo(joining, stalls);
@@ -122,6 +127,7 @@ public final class ServerEvents {
         List<ServerPlayer> players = event.getPlayerList().getPlayers();
         for (ServerPlayer player : players) {
             ModNetwork.sendTo(player, definitions);
+            ModNetwork.sendTo(player, uniques);
             ModNetwork.sendTo(player, content);
             ModNetwork.sendTo(player, npcs);
             ModNetwork.sendTo(player, stalls);

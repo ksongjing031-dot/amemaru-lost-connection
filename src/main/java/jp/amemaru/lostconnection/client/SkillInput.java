@@ -103,6 +103,10 @@ public final class SkillInput {
                 }
             }
         }
+        // 11月28日：ユニーク武器の固有スキル（初期値：Y）
+        while (KeyBindings.UNIQUE_SKILL.consumeClick()) {
+            useUnique(minecraft, player);
+        }
         if (altMode && altDown(minecraft)) {
             // バニラがホットバーを切りかえる前に、1〜6の押下を受け取ってスキルにする
             KeyMapping[] hotbar = minecraft.options.keyHotbarSlots;
@@ -175,6 +179,52 @@ public final class SkillInput {
             while (key.consumeClick()) {
                 // 画面を開いている間の押下は捨てる
             }
+        }
+        while (KeyBindings.UNIQUE_SKILL.consumeClick()) {
+            // 固有スキルのキーも同じ
+        }
+    }
+
+    /**
+     * 手に持っているユニーク武器の固有スキルを使う（11月28日【補完】）。手元で軽く確かめ（武器・詠唱中・クールダウン・MP）、
+     * 狙いを決めて、スキル枠の代わりに固有スキルの印（{@link UseSkillC2S#UNIQUE_SLOT}）で送る。モーションは先に始める。
+     */
+    static void useUnique(Minecraft minecraft, LocalPlayer player) {
+        ClientPlayerState.get().noteCombat();
+        ClientPlayerState state = ClientPlayerState.get();
+        if (!state.hasData()) {
+            return;
+        }
+        jp.amemaru.lostconnection.network.s2c.SyncUniqueSkillsS2C.Entry entry = ClientUniqueSkills.forStack(player.getMainHandItem());
+        if (entry == null) {
+            fail(minecraft, Component.translatable("message.amemaru.unique.no_weapon"));
+            return;
+        }
+        SyncDefinitionsS2C.SkillInfo skill = entry.skill();
+        int skillIndex = skill.index();
+        if (chargingSlot >= 0 || state.castSkill() >= 0) {
+            fail(minecraft, Component.translatable("message.amemaru.skill.casting"));
+            return;
+        }
+        int remaining = state.cooldownRemaining(skillIndex);
+        if (remaining > 0) {
+            fail(minecraft, Component.translatable("message.amemaru.skill.cooldown", skill.name(),
+                    String.format(Locale.ROOT, "%.1f", remaining / 20.0)));
+            return;
+        }
+        if (skill.mpCost().length > 0 && state.mp() + 1.0E-6 < skill.mpCost()[0]) {
+            fail(minecraft, Component.translatable("message.amemaru.skill.no_mp"));
+            return;
+        }
+        Aim aim = aim(player, skill, 1);
+        sequence++;
+        remember(sequence, skillIndex);
+        ModNetwork.sendToServer(new UseSkillC2S(sequence, UseSkillC2S.PRESS, UseSkillC2S.UNIQUE_SLOT, aim.entityId, aim.point, aim.faceId));
+        if (aim.faceId >= 0) {
+            TargetLock.beginTurn();
+        }
+        if (PlayerAnimations.play(player, skill.animation())) {
+            SkillFx.markPredicted(skillIndex);
         }
     }
 

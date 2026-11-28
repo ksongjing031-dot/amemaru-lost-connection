@@ -1,0 +1,39 @@
+{
+  "_comment": "ユニーク武器の固有スキル（11月28日【補完】。tools/datagen/build_unique_skills.py）",
+  "item": "amemaru:hymn_great_bell",
+  "name": "終わらぬ聖歌",
+  "description": "神殿で最後まで鳴っていた大鈴を三度鳴らす。聖歌の波が届いた仲間（自分も）を癒し、障壁で包み、しばらく与えるダメージを上げる。",
+  "color": "#F2C94C",
+  "cost": {
+    "mp": 45
+  },
+  "cooldown": 50,
+  "delivery": {
+    "type": "around",
+    "radius": 9,
+    "affects": "allies",
+    "include_self": true
+  },
+  "effects": [
+    {
+      "type": "heal",
+      "stat": "magic",
+      "coefficient": 1.8
+    },
+    {
+      "type": "barrier",
+      "stat": "magic",
+      "coefficient": 1.2,
+      "duration": 8
+    },
+    {
+      "type": "buff",
+      "buff": "power_up",
+      "duration": 10,
+      "value": 12
+    }
+  ],
+  "animation": "healer_great_call",
+  "sound": "amemaru:skill.healer.great_call",
+  "fx": "unique_hymn_bell"
+}

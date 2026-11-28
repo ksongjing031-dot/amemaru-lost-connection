@@ -150,21 +150,45 @@ public class AccessoryScreen extends AbstractContainerScreen<AccessoryMenu> {
             graphics.drawString(font, Component.translatable("screen.amemaru.accessory.none"), 8, 18, UiStyle.TEXT_DIM, false);
             return;
         }
-        StringBuilder text = new StringBuilder();
+        // 11月28日：1行に入るだけ並べ、入りきらない分は「ほか N」にする（マウスを乗せると全部をツールチップで見せる）
+        totalLines.clear();
+        List<String> parts = new java.util.ArrayList<>();
         for (Map.Entry<StatType, Double> entry : totals.entrySet()) {
-            if (!text.isEmpty()) {
-                text.append("  ");
-            }
-            text.append(Component.translatable(entry.getKey().translationKey()).getString()).append(" +")
-                    .append(entry.getKey().format(entry.getValue()));
+            String part = Component.translatable(entry.getKey().translationKey()).getString() + " +" + entry.getKey().format(entry.getValue());
+            parts.add(part);
+            totalLines.add(Component.literal(part).withStyle(net.minecraft.ChatFormatting.GREEN));
         }
-        UiStyle.wrapped(graphics, font, text.toString(), 8, 18, imageWidth - 16, UiStyle.TEXT_GOOD, 1);
+        int room = imageWidth - 16;
+        int x = 8;
+        for (int k = 0; k < parts.size(); k++) {
+            String part = parts.get(k);
+            int left = parts.size() - k - 1;
+            String more = left > 0 ? Component.translatable("screen.amemaru.accessory.more", left).getString() : "";
+            int need = font.width(part) + (left > 0 ? 6 + font.width(more) : 0);
+            if (x + need > 8 + room) {
+                String rest = Component.translatable("screen.amemaru.accessory.more", parts.size() - k).getString();
+                graphics.drawString(font, rest, x, 18, UiStyle.TEXT_DIM, false);
+                break;
+            }
+            graphics.drawString(font, part, x, 18, UiStyle.TEXT_GOOD, false);
+            x += font.width(part) + 8;
+        }
     }
+
+    /** 合計の行（マウスを乗せたときのツールチップ用）。 */
+    private final List<Component> totalLines = new java.util.ArrayList<>();
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float partialTick) {
         renderBackground(graphics);
         super.render(graphics, mouseX, mouseY, partialTick);
         renderTooltip(graphics, mouseX, mouseY);
+        if (!totalLines.isEmpty() && menu.getCarried().isEmpty() && mouseX >= leftPos + 8 && mouseX < leftPos + imageWidth - 8
+                && mouseY >= topPos + 17 && mouseY < topPos + 27) {
+            List<Component> lines = new java.util.ArrayList<>();
+            lines.add(Component.translatable("screen.amemaru.accessory.totals").withStyle(net.minecraft.ChatFormatting.GRAY));
+            lines.addAll(totalLines);
+            graphics.renderComponentTooltip(font, lines, mouseX, mouseY);
+        }
     }
 }
