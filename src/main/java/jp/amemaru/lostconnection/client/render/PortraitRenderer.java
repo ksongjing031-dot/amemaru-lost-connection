@@ -72,11 +72,12 @@ public class PortraitRenderer implements BlockEntityRenderer<FloorThingBlockEnti
         PoseStack.Pose pose = poseStack.last();
         float z = -0.5F + 0.015F;
         quad(consumer, pose.pose(), pose.normal(), -1.5F, 1.0F, 1.5F, 5.0F, z, light);
-        // 名札（台座の前）：戻ると名前、空白の間は「？？？」。女王は何も書かれていない
+        // 名前（額のすぐ下、台座の棚の上の壁）：戻ると名前、空白の間は「？？？」。女王は何も書かれていない。
+        // 11月28日：前は名札の上に小さく描いていて、CI の写真（7ブロック先）では点にしか見えなかった。額の下に大きく
         if (!queen) {
             poseStack.pushPose();
-            poseStack.translate(0.0, 0.62, -0.5 + 0.25 + 0.01);
-            poseStack.scale(0.0125F, -0.0125F, 0.0125F);
+            poseStack.translate(0.0, 0.955, -0.5 + 0.03);
+            poseStack.scale(0.02F, -0.02F, 0.02F);
             Component text = restored ? Component.translatable("lineage.amemaru.portrait." + id + ".name")
                     : Component.literal("？？？");
             float width = font.width(text);

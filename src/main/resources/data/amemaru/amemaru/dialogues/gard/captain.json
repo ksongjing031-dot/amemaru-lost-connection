@@ -6,7 +6,8 @@
     "opening": 2,
     "flags_all": [
       "amemaru:ch2/gard_forgot",
-      "amemaru:ch2/valgrim_down"
+      "amemaru:ch2/valgrim_down",
+      "amemaru:story/gard_forgot_seen"
     ],
     "flags_none": [
       "amemaru:ch2/queen_down",

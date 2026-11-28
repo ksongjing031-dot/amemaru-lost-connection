@@ -115,6 +115,19 @@ public final class ClientStory {
         TEXTS.add(new ShownText(message.kind(), message.speaker(), message.text(), start, duration));
     }
 
+    /** 手がかりを {@code millis} だけ後ろへずらす（ボスのはじまりの名前が出ている間、手がかりの時計を進めない）。 */
+    public static void delayTips(long millis) {
+        if (TEXTS.stream().noneMatch(t -> t.kind() == StoryTextS2C.Kind.TIP)) {
+            return;
+        }
+        List<ShownText> list = new ArrayList<>(TEXTS);
+        TEXTS.clear();
+        for (ShownText t : list) {
+            TEXTS.add(t.kind() == StoryTextS2C.Kind.TIP ? new ShownText(t.kind(), t.speaker(), t.text(), t.start() + millis, t.durationMillis())
+                    : t);
+        }
+    }
+
     public static void showText(StoryTextS2C.Kind kind, String speaker, String text, int ticks) {
         show(new StoryTextS2C(kind, speaker, text, ticks));
     }

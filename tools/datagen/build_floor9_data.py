@@ -476,7 +476,9 @@ def dialogues():
                      "自分を重ねる（Phase 0-A 9章の9階「守れなかった隊長という点でガルドと重なる」）。台詞は【補完】"),
         ("npc", "amemaru:gard"),
         ("priority", 42),
-        ("conditions", OrderedDict([("opening", 2), ("flags_all", ["amemaru:ch2/gard_forgot", "amemaru:ch2/valgrim_down"]),
+        # 11月28日：先に「忘れた」の会話を聞いた人に（近衛長を倒すまで話しかけなかった人も、まず「忘れた」から）
+        ("conditions", OrderedDict([("opening", 2), ("flags_all", ["amemaru:ch2/gard_forgot", "amemaru:ch2/valgrim_down",
+                                                                   "amemaru:story/gard_forgot_seen"]),
                                     ("flags_none", ["amemaru:ch2/queen_down", "amemaru:story/gard_captain_told"])])),
         ("start", "s1"),
         ("nodes", OrderedDict([

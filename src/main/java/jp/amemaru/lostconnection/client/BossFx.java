@@ -144,6 +144,11 @@ public final class BossFx {
         if (introAge >= 0 && ++introAge >= INTRO_TICKS) {
             introAge = -1;
         }
+        // 11月28日：はじまりの名前が出ている間は、左上の手がかりを出さずに待たせる（手がかりの時計を進めない）。
+        // CI の写真で、9階のボスの名前と「盾の誓い」の手がかりが重なって読めなかった（どのボスも同じ）
+        if (introAge >= 0) {
+            ClientStory.delayTips(50L);
+        }
         if (bannerAge >= 0 && ++bannerAge >= BANNER_TICKS) {
             bannerAge = -1;
         }
@@ -609,6 +614,11 @@ public final class BossFx {
     /** 今の戦いのボス（なければ ""）。 */
     public static String currentBoss() {
         return bossKey;
+    }
+
+    /** はじまりの名前が出ている間か（そのあいだ、手がかりは出さない）。 */
+    public static boolean introActive() {
+        return introAge >= 0;
     }
 
     /** CIの写真：はじまりの名前が、すっかり出ている間か（出はじめと消えかけを除く）。 */
