@@ -58,24 +58,34 @@ public final class ConsumableService {
             player.displayClientMessage(Component.translatable("message.amemaru.consumable.down").withStyle(ChatFormatting.RED), true);
             return false;
         }
-        boolean hp = def.restore() == ConsumableDef.Restore.HP;
-        double before = hp ? data.getHp() : data.getMp();
-        double max = hp ? data.getStats().maxHp() : data.getStats().maxMp();
-        if (before >= max - 1.0E-6) {
-            player.displayClientMessage(Component.translatable(hp ? "message.amemaru.consumable.full_hp"
-                    : "message.amemaru.consumable.full_mp").withStyle(ChatFormatting.GRAY), true);
-            return false;
+        // 11月29日：キャンディー（buff だけの品）は、HP・MPを戻さない（満タンでも使える）
+        ConsumableDef.Restore restore = def.restore();
+        boolean hp = restore == ConsumableDef.Restore.HP;
+        if (restore != null) {
+            double before = hp ? data.getHp() : data.getMp();
+            double max = hp ? data.getStats().maxHp() : data.getStats().maxMp();
+            if (before >= max - 1.0E-6) {
+                if (def.buff() == null) {
+                    player.displayClientMessage(Component.translatable(hp ? "message.amemaru.consumable.full_hp"
+                            : "message.amemaru.consumable.full_mp").withStyle(ChatFormatting.GRAY), true);
+                    return false;
+                }
+            } else {
+                double amount = def.amount(max);
+                if (hp) {
+                    data.setHp(before + amount);
+                    VitalsService.pushVanillaHealth(player, data);
+                } else {
+                    data.setMp(before + amount);
+                }
+                double restored = (hp ? data.getHp() : data.getMp()) - before;
+                if (restored > 0) {
+                    CombatTextS2C.send(player, restored, hp ? CombatTextS2C.Kind.HEAL : CombatTextS2C.Kind.MP);
+                }
+            }
         }
-        double amount = def.amount(max);
-        if (hp) {
-            data.setHp(before + amount);
-            VitalsService.pushVanillaHealth(player, data);
-        } else {
-            data.setMp(before + amount);
-        }
-        double restored = (hp ? data.getHp() : data.getMp()) - before;
-        if (restored > 0) {
-            CombatTextS2C.send(player, restored, hp ? CombatTextS2C.Kind.HEAL : CombatTextS2C.Kind.MP);
+        if (def.buff() != null) {
+            ItemBuffService.apply(player, stack, def.buff());
         }
         ItemStack shown = stack.copy();
         if (!player.getAbilities().instabuild) {
@@ -101,8 +111,16 @@ public final class ConsumableService {
             level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.GENERIC_DRINK, SoundSource.PLAYERS, 0.8F,
                     hp ? 1.1F : 1.3F);
         }
-        level.sendParticles(hp ? ParticleTypes.HEART : ParticleTypes.GLOW, player.getX(), player.getY() + 1.2, player.getZ(),
-                hp ? (def.eat() ? 2 : 4) : (def.eat() ? 5 : 10), 0.35, 0.4, 0.35, 0.02);
+        if (restore != null) {
+            level.sendParticles(hp ? ParticleTypes.HEART : ParticleTypes.GLOW, player.getX(), player.getY() + 1.2, player.getZ(),
+                    hp ? (def.eat() ? 2 : 4) : (def.eat() ? 5 : 10), 0.35, 0.4, 0.35, 0.02);
+        }
+        if (def.buff() != null) {
+            // キャンディー：甘い音と、きらめき
+            level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 0.7F,
+                    1.6F);
+            level.sendParticles(ParticleTypes.INSTANT_EFFECT, player.getX(), player.getY() + 1.1, player.getZ(), 10, 0.35, 0.45, 0.35, 0.02);
+        }
         return true;
     }
 

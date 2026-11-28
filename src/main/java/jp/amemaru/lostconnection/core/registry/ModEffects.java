@@ -236,6 +236,54 @@ public final class ModEffects {
     public static final RegistryObject<MobEffect> HIDDEN = EFFECTS.register("hidden", () ->
             new AmemaruEffect(MobEffectCategory.BENEFICIAL, 0x50506A, false));
 
+    // ---------------------------------------------------------------- 11月29日：キャンディー
+
+    /**
+     * キャンディーの効き目（{@code ItemBuffService}）。ステータスの種類ごとに1つ（{@code candy_<種類>}。HUD と持ち物の画面に、
+     * 上がっている種類の印と残りの時間が出る）。上がる量は {@code ItemBuffService} がステータスに足す。牛乳で消える。
+     */
+    private static final java.util.Map<jp.amemaru.lostconnection.player.StatType, RegistryObject<MobEffect>> CANDY =
+            new java.util.EnumMap<>(jp.amemaru.lostconnection.player.StatType.class);
+
+    static {
+        for (jp.amemaru.lostconnection.player.StatType stat : jp.amemaru.lostconnection.player.StatType.values()) {
+            int color = candyColor(stat);
+            CANDY.put(stat, EFFECTS.register("candy_" + stat.id(), () -> new AmemaruEffect(MobEffectCategory.BENEFICIAL, color, false)));
+        }
+    }
+
+    /** そのステータスを上げるキャンディーの効き目。 */
+    public static MobEffect candy(jp.amemaru.lostconnection.player.StatType stat) {
+        return CANDY.get(stat).get();
+    }
+
+    /** キャンディーの効き目か。 */
+    public static boolean isCandy(MobEffect effect) {
+        for (RegistryObject<MobEffect> candy : CANDY.values()) {
+            if (candy.isPresent() && candy.get() == effect) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /** キャンディーの包み紙の色（アイコンと同じ。tools/artgen/make_candies.py）。 */
+    public static int candyColor(jp.amemaru.lostconnection.player.StatType stat) {
+        return switch (stat) {
+            case HP -> 0xE85A6E;
+            case MP -> 0x5A8CE8;
+            case ATTACK -> 0xE8503C;
+            case MAGIC -> 0x9A6AE8;
+            case DEFENSE -> 0x8C9AB4;
+            case SPEED -> 0x4CC8A0;
+            case CRIT -> 0xF0C040;
+            case CRIT_DAMAGE -> 0xF08A30;
+            case HEAL_POWER -> 0xF0A0C8;
+            case COOLDOWN_REDUCTION -> 0x60C8E8;
+            case LOST_RESIST -> 0xE8E8F4;
+        };
+    }
+
     private ModEffects() {
     }
 }

@@ -108,14 +108,14 @@ public final class UniqueSkillService {
     private static SkillService.Result fail(ServerPlayer player, SkillService.Failure failure) {
         if (failure.shown()) {
             player.displayClientMessage(Component.translatable(failure.key()).withStyle(ChatFormatting.RED), true);
-            player.playNotifySound(ModSounds.get("skill.fail"), SoundSource.PLAYERS, 0.6F, 1.0F);
+            SkillService.failSound(player);
         }
         return new SkillService.Result(failure);
     }
 
     private static SkillService.Result failText(ServerPlayer player, Component text, SkillService.Failure failure) {
         player.displayClientMessage(text.copy().withStyle(ChatFormatting.RED), true);
-        player.playNotifySound(ModSounds.get("skill.fail"), SoundSource.PLAYERS, 0.6F, 1.0F);
+        SkillService.failSound(player);
         return new SkillService.Result(failure);
     }
 

@@ -274,10 +274,29 @@ public final class SkillService {
         if (failure.shown()) {
             player.displayClientMessage(Component.translatable(failure.key()).withStyle(ChatFormatting.RED), true);
             if (failure != Failure.CANCELLED) {
-                player.playNotifySound(ModSounds.get("skill.fail"), SoundSource.PLAYERS, 0.6F, 1.0F);
+                failSound(player);
             }
         }
         return new Result(failure);
+    }
+
+    private static final java.util.Map<java.util.UUID, Long> LAST_FAIL_SOUND = new java.util.HashMap<>();
+
+    /**
+     * 「使えなかった」の音（ブッ）。11月29日（「技を打った時に動けなくなるときになる音がうるさい」）：続けて断られても、
+     * 0.5秒（10 tick）に1回まで、少し小さく鳴らす。
+     */
+    public static void failSound(ServerPlayer player) {
+        long now = player.level().getGameTime();
+        Long last = LAST_FAIL_SOUND.get(player.getUUID());
+        if (last != null && now - last >= 0 && now - last < 10) {
+            return;
+        }
+        LAST_FAIL_SOUND.put(player.getUUID(), now);
+        if (LAST_FAIL_SOUND.size() > 256) {
+            LAST_FAIL_SOUND.clear();
+        }
+        player.playNotifySound(ModSounds.get("skill.fail"), SoundSource.PLAYERS, 0.45F, 1.0F);
     }
 
     /**

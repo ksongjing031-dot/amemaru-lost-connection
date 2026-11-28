@@ -327,9 +327,9 @@
   "skill.wizard.icicle": {
     "sounds": [
       {
-        "name": "minecraft:entity.player.hurt_freeze",
+        "name": "minecraft:item.trident.throw",
         "type": "event",
-        "pitch": 1.4
+        "pitch": 1.5
       }
     ],
     "subtitle": "subtitles.amemaru.skill.wizard.icicle"

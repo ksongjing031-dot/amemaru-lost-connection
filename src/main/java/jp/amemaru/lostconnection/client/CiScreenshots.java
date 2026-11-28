@@ -2375,6 +2375,21 @@ public final class CiScreenshots {
             {"cmd", null, "2", "amemaru admin flag remove amemaru:story/promotion_ceremony_done @p"},
             {"cmd", null, "2", "amemaru admin flag remove amemaru:story/gard_expedition_told @p"},
             {"screen", null, "10", "hold"},
+            // 11月29日：クリエイティブの6つのタブ（名前・数と、中身の先頭の品）と、キャンディー（説明文・食べたあとの効き目の印）
+            {"p8_tabs", null, "20", "open"},
+            {"snap_keep", null, "10", "p8q_creative_tabs"},
+            {"p8_tabs", null, "5", "-"},
+            {"screen", null, "5", "hold"},
+            {"p8_tips", null, "20", "candy_strength,candy_keen"},
+            {"snap_keep", null, "10", "p8q_candy_tooltips"},
+            {"p8_tips", null, "5", "-"},
+            {"screen", null, "5", "hold"},
+            {"cmd", null, "40", "amemaru admin city tp plaza @p"},
+            {"view", null, "5", "first"},
+            {"p8_eat", null, "20", "candy_strength"},
+            {"snap", null, "20", "p8q_candy_buff"},
+            {"cmd", null, "5", "effect clear @p"},
+            {"screen", null, "10", "hold"},
             // 11月26日：見た目と音の設定の画面（Mod の一覧の「設定」から開く）。「曲を試しに聞く」で2階のボスの曲を流す
             // （録った音に、その曲が入っているかを tools/ci/boss_audio.py が確かめる）
             {"p8_settings", null, "20", "open"},

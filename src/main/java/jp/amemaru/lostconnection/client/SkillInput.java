@@ -96,22 +96,22 @@ public final class SkillInput {
             return;
         }
         boolean altMode = ClientConfig.skillControl() == ClientConfig.SkillControl.HOTBAR_ALT;
+        // 11月29日（「技を打った時に動けなくなるときになる音がうるさい」）：キーを押しっぱなしにすると、OSのキーの繰り返しが届き、
+        // そのたびにスキルを使おうとして、クールダウン中・詠唱中の「ブッ」という音が鳴り続けていた。押した瞬間の1回だけ使う
         for (int slot = 0; slot < KeyBindings.SKILLS.length; slot++) {
-            while (KeyBindings.SKILLS[slot].consumeClick()) {
-                if (!altMode) {
-                    use(minecraft, player, slot);
-                }
+            if (pressedOnce(KeyBindings.SKILLS[slot], SKILL_HELD, slot) && !altMode) {
+                use(minecraft, player, slot);
             }
         }
         // 11月28日：ユニーク武器の固有スキル（初期値：Y）
-        while (KeyBindings.UNIQUE_SKILL.consumeClick()) {
+        if (pressedOnce(KeyBindings.UNIQUE_SKILL, UNIQUE_HELD, 0)) {
             useUnique(minecraft, player);
         }
         if (altMode && altDown(minecraft)) {
             // バニラがホットバーを切りかえる前に、1〜6の押下を受け取ってスキルにする
             KeyMapping[] hotbar = minecraft.options.keyHotbarSlots;
             for (int slot = 0; slot < 6 && slot < hotbar.length; slot++) {
-                while (hotbar[slot].consumeClick()) {
+                if (pressedOnce(hotbar[slot], HOTBAR_HELD, slot)) {
                     use(minecraft, player, slot);
                 }
             }
@@ -183,6 +183,27 @@ public final class SkillInput {
         while (KeyBindings.UNIQUE_SKILL.consumeClick()) {
             // 固有スキルのキーも同じ
         }
+        java.util.Arrays.fill(SKILL_HELD, false);
+        java.util.Arrays.fill(UNIQUE_HELD, false);
+        java.util.Arrays.fill(HOTBAR_HELD, false);
+    }
+
+    private static final boolean[] SKILL_HELD = new boolean[16];
+    private static final boolean[] UNIQUE_HELD = new boolean[1];
+    private static final boolean[] HOTBAR_HELD = new boolean[9];
+
+    /**
+     * キーが「押された瞬間」か（11月29日）。たまった押下（キーの繰り返しを含む）はすべて捨て、前の tick にもう押されていたら、
+     * 繰り返しとして使わない。
+     */
+    private static boolean pressedOnce(KeyMapping key, boolean[] held, int index) {
+        boolean clicked = false;
+        while (key.consumeClick()) {
+            clicked = true;
+        }
+        boolean fresh = clicked && !held[index];
+        held[index] = key.isDown() || (clicked && held[index]);
+        return fresh;
     }
 
     /**
@@ -362,10 +383,15 @@ public final class SkillInput {
         PlayerAnimations.stop(minecraft.player);
     }
 
+    private static long lastFailSound;
+
     private static void fail(Minecraft minecraft, Component message) {
         minecraft.gui.setOverlayMessage(message.copy().withStyle(ChatFormatting.RED), false);
-        if (minecraft.player != null) {
-            minecraft.player.playSound(ModSounds.get("skill.fail"), 0.6F, 1.0F);
+        // 11月29日：続けて断られても、「ブッ」は0.5秒に1回まで（少し小さく）
+        long now = net.minecraft.Util.getMillis();
+        if (minecraft.player != null && now - lastFailSound >= 500L) {
+            lastFailSound = now;
+            minecraft.player.playSound(ModSounds.get("skill.fail"), 0.45F, 1.0F);
         }
     }
 
